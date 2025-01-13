@@ -238,8 +238,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/excluded' => 'fa-circle-minus',
             'core:i/expired' => 'fa-circle-exclamation text-warning',
             'core:i/externallink' => 'fa-arrow-up-right-from-square',
-            'core:i/file_export' => 'fa-download',
-            'core:i/file_import' => 'fa-upload',
             'core:i/file_plus' => 'fa-file-circle-plus',
             'core:i/files' => 'fa-file',
             'core:i/filter' => 'fa-filter',

@@ -26155,8 +26155,12 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   outline: 0;
 }
 
+a i.icon {
+  color: #1d2125;
+}
+
 .icon {
-  max-width: 24px;
+  max-width: 30px;
   max-height: 24px;
   margin: 0;
   padding: 0;
@@ -26168,25 +26172,25 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 }
 .icon.iconsize-medium {
   font-size: 32px;
-  width: 32px;
+  width: 40px;
   height: 32px;
-  max-width: 32px;
+  max-width: 40px;
   max-height: 32px;
 }
 .icon.iconsize-big {
-  width: 64px;
+  width: 80px;
   height: 64px;
-  max-width: 64px;
+  max-width: 80px;
   max-height: 64px;
   font-size: 64px;
 }
 .icon.emoticon {
-  max-width: 16px;
+  max-width: 20px;
   max-height: 16px;
 }
 
 img.icon {
-  width: 16px;
+  width: 20px;
   height: 16px;
 }
 
@@ -26223,7 +26227,7 @@ img.icon {
 }
 
 .icon-large > .icon {
-  width: 32px;
+  width: 40px;
   height: 32px;
 }
 
@@ -26235,43 +26239,43 @@ img.icon {
 
 .icon-size-1 .icon {
   height: 4px !important; /* stylelint-disable-line declaration-no-important */
-  width: 4px !important; /* stylelint-disable-line declaration-no-important */
+  width: 5px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-2 .icon {
   height: 8px !important; /* stylelint-disable-line declaration-no-important */
-  width: 8px !important; /* stylelint-disable-line declaration-no-important */
+  width: 10px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-3 .icon {
   height: 16px !important; /* stylelint-disable-line declaration-no-important */
-  width: 16px !important; /* stylelint-disable-line declaration-no-important */
+  width: 20px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-4 .icon {
   height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 24px !important; /* stylelint-disable-line declaration-no-important */
+  width: 30px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-5 .icon {
   height: 32px !important; /* stylelint-disable-line declaration-no-important */
-  width: 32px !important; /* stylelint-disable-line declaration-no-important */
+  width: 40px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-6 .icon {
   height: 40px !important; /* stylelint-disable-line declaration-no-important */
-  width: 40px !important; /* stylelint-disable-line declaration-no-important */
+  width: 50px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-7 .icon {
   height: 48px !important; /* stylelint-disable-line declaration-no-important */
-  width: 48px !important; /* stylelint-disable-line declaration-no-important */
+  width: 60px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
 }
 
@@ -26312,9 +26316,9 @@ img.icon {
   margin: 0;
   font-size: 32px;
   height: 32px;
-  width: 32px;
+  width: 40px;
   max-height: 32px;
-  max-width: 32px;
+  max-width: 40px;
 }
 .activityiconcontainer.small {
   width: 42px;
@@ -26329,9 +26333,9 @@ img.icon {
   max-height: 32px;
 }
 .activityiconcontainer.smaller .activityicon {
-  width: 32px;
+  width: 40px;
   height: 32px;
-  max-width: 32px;
+  max-width: 40px;
   max-height: 32px;
 }
 
@@ -26366,7 +26370,7 @@ img.icon {
 }
 
 .icon-box {
-  width: 48px;
+  width: 60px;
   height: 48px;
   display: inline-flex;
   justify-content: center;
@@ -26377,7 +26381,7 @@ img.icon {
 }
 .icon-box .icon {
   margin: 0;
-  height: 32px;
+  height: 40px;
   width: 32px;
 }
 
@@ -27329,7 +27333,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 .block-add .pluscontainer {
   border: 1px solid #3f89cc;
   border-radius: 50%;
-  width: 32px;
+  width: 40px;
   height: 32px;
 }
 .block-add:hover {
@@ -28164,7 +28168,7 @@ table.calendartable caption {
 }
 .course-section .action-menu .btn.btn-icon {
   height: 32px;
-  width: 32px;
+  width: 40px;
   border-radius: 0.5rem;
 }
 .course-section .action-menu.section-actions .btn.btn-icon {
@@ -28762,7 +28766,7 @@ table.calendartable caption {
 }
 .activity-item .activity-groupmode-info .groupmode-information {
   height: 32px;
-  width: 32px;
+  width: 40px;
   border-radius: 0.5rem;
 }
 .activity-item .activity-groupmode-info .groupmode-icon-info {
@@ -29053,7 +29057,7 @@ table.calendartable caption {
 }
 .activity.subsection .section .icons-collapse-expand:has(+ h4) {
   height: 24px;
-  width: 24px;
+  width: 30px;
   font-size: 0.8203125rem;
 }
 .activity.subsection .section h4 {
@@ -29567,7 +29571,7 @@ table.calendartable caption {
 #frontpage-category-combo .coursebox > .info > .coursename a {
   display: block;
   background-image: url([[pix:moodle|i/course]]);
-  background-size: 16px 16px;
+  background-size: 20px 16px;
   background-repeat: no-repeat;
   padding-left: 21px;
 }
@@ -29642,7 +29646,7 @@ table.calendartable caption {
 
 .course_category_tree .category.with_children > .info > .categoryname {
   background-image: url([[pix:moodle|t/expanded]]);
-  background-size: 16px 16px;
+  background-size: 20px 16px;
   background-repeat: no-repeat;
   background-position: center left;
 }
@@ -31466,7 +31470,7 @@ a.ygtvspacer:hover {
 }
 .message-app .btn.btn-link.btn-icon {
   height: 16px;
-  width: 16px;
+  width: 20px;
   padding: 0;
   border-radius: 50%;
   flex-shrink: 0;
@@ -31477,31 +31481,31 @@ a.ygtvspacer:hover {
 }
 .message-app .btn.btn-link.btn-icon.icon-size-1 {
   height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 24px !important; /* stylelint-disable-line declaration-no-important */
+  width: 25px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-2 {
   height: 28px !important; /* stylelint-disable-line declaration-no-important */
-  width: 28px !important; /* stylelint-disable-line declaration-no-important */
+  width: 30px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-3 {
   height: 36px !important; /* stylelint-disable-line declaration-no-important */
-  width: 36px !important; /* stylelint-disable-line declaration-no-important */
+  width: 40px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-4 {
   height: 44px !important; /* stylelint-disable-line declaration-no-important */
-  width: 44px !important; /* stylelint-disable-line declaration-no-important */
+  width: 50px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-5 {
   height: 52px !important; /* stylelint-disable-line declaration-no-important */
-  width: 52px !important; /* stylelint-disable-line declaration-no-important */
+  width: 60px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-6 {
   height: 60px !important; /* stylelint-disable-line declaration-no-important */
-  width: 60px !important; /* stylelint-disable-line declaration-no-important */
+  width: 70px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .btn.btn-link.btn-icon.icon-size-7 {
   height: 68px !important; /* stylelint-disable-line declaration-no-important */
-  width: 68px !important; /* stylelint-disable-line declaration-no-important */
+  width: 80px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .view-overview-body .section {
   display: block;
@@ -34712,7 +34716,7 @@ img.userpicture {
 .path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist .itemactions .dropdown-toggle,
 .path-mod-feedback #feedback_edit_form .feedback_itemlist.sortable-list-is-dragged .itemactions .dropdown-toggle {
   border-radius: 0.5rem;
-  width: 32px;
+  width: 40px;
   height: 32px;
 }
 .path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist.sortable-list-current-position,
@@ -35170,7 +35174,7 @@ p.arrow_button {
 
 .btn.btn-icon {
   height: 36px;
-  width: 36px;
+  width: 40px;
   font-size: 16px;
   line-height: 16px;
   padding: 0;
@@ -35188,43 +35192,43 @@ p.arrow_button {
 }
 .btn.btn-icon.icon-size-1 {
   height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 24px !important; /* stylelint-disable-line declaration-no-important */
+  width: 25px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 4px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-2 {
   height: 28px !important; /* stylelint-disable-line declaration-no-important */
-  width: 28px !important; /* stylelint-disable-line declaration-no-important */
+  width: 30px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 8px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-3 {
   height: 36px !important; /* stylelint-disable-line declaration-no-important */
-  width: 36px !important; /* stylelint-disable-line declaration-no-important */
+  width: 40px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 16px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-4 {
   height: 44px !important; /* stylelint-disable-line declaration-no-important */
-  width: 44px !important; /* stylelint-disable-line declaration-no-important */
+  width: 50px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 24px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-5 {
   height: 52px !important; /* stylelint-disable-line declaration-no-important */
-  width: 52px !important; /* stylelint-disable-line declaration-no-important */
+  width: 60px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 32px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-6 {
   height: 60px !important; /* stylelint-disable-line declaration-no-important */
-  width: 60px !important; /* stylelint-disable-line declaration-no-important */
+  width: 70px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 40px !important; /* stylelint-disable-line declaration-no-important */
 }
 .btn.btn-icon.icon-size-7 {
   height: 68px !important; /* stylelint-disable-line declaration-no-important */
-  width: 68px !important; /* stylelint-disable-line declaration-no-important */
+  width: 80px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
   line-height: 48px !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -37711,7 +37715,7 @@ div.editor_atto_toolbar button .icon {
 }
 .reportbuilder-table .action-menu .menubar .btn.btn-icon {
   height: 32px;
-  width: 32px;
+  width: 40px;
   border-radius: 0.5rem;
 }
 
