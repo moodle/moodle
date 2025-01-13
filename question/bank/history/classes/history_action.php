@@ -16,7 +16,9 @@
 
 namespace qbank_history;
 
+use core_question\local\bank\condition;
 use core_question\local\bank\question_action_base;
+use core_question\local\bank\filter_condition_manager;
 
 /**
  * Question bank column for the history action icon.
@@ -49,11 +51,29 @@ class history_action extends question_action_base {
         }
 
         if (question_has_capability_on($question, 'use')) {
+            $currentfilter = $this->qbank->base_url()->param('filter');
+            if ($currentfilter) {
+                $currentfilter = filter_condition_manager::update_filter_param_to_category(
+                    $currentfilter, $question->categoryid);
+            } else {
+                $currentfilter = json_encode([
+                    'category' => [
+                        'jointype' => condition::JOINTYPE_DEFAULT,
+                        'values' => [$question->categoryid],
+                        'filteroptions' => ['includesubcategories' => false],
+                    ],
+                    'hidden' => [
+                        'jointype' => condition::JOINTYPE_DEFAULT,
+                        'values' => [0],
+                    ],
+                ]);
+            }
+
             $url = helper::question_history_url(
                 $question->questionbankentryid,
                 $this->qbank->returnurl,
                 $this->qbank->course->id,
-                $this->qbank->base_url()->param('filter'),
+                $currentfilter,
             );
             return [$url, 't/log', $this->strpreview];
         }
