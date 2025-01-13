@@ -33,6 +33,22 @@
 class enrol_fee_plugin extends enrol_plugin {
 
     /**
+     * How this enrolment method should be displayed on the "Enrolment methods" page
+     *
+     * @param stdClass $instance
+     * @return string
+     */
+    public function get_instance_name_for_management_page(stdClass $instance): string {
+        $result = $this->get_instance_name($instance);
+        if (strlen((string)$instance->customchar1)) {
+            $context = context_course::instance($instance->courseid);
+            $result .= html_writer::empty_tag('br') .
+                html_writer::tag('em', format_string($instance->customchar1, true, ['context' => $context]));
+        }
+        return $result;
+    }
+
+    /**
      * Returns the list of currencies that the payment subsystem supports and therefore we can work with.
      *
      * @return array[currencycode => currencyname]
@@ -218,7 +234,11 @@ class enrol_fee_plugin extends enrol_plugin {
             echo '<p>'.get_string('nocost', 'enrol_fee').'</p>';
         } else {
 
+            $name = !empty($instance->name) ?
+                format_string($instance->name, true, ['context' => $context]) :
+                get_string('paymentrequired');
             $data = [
+                'name' => $name,
                 'isguestuser' => isguestuser() || !isloggedin(),
                 'cost' => \core_payment\helper::get_cost_as_string($cost, $instance->currency),
                 'instanceid' => $instance->id,
@@ -309,12 +329,17 @@ class enrol_fee_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @param MoodleQuickForm $mform
      * @param context $context
-     * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
 
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
         $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        $mform->addElement('text', 'customchar1', get_string('instancedescription', 'enrol_fee'));
+        $mform->setType('customchar1', PARAM_TEXT);
+        $mform->addHelpButton('customchar1', 'instancedescription', 'enrol_fee');
+        $mform->addRule('customchar1', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $options = $this->get_status_options();
         $mform->addElement('select', 'status', get_string('status', 'enrol_fee'), $options);
@@ -374,7 +399,6 @@ class enrol_fee_plugin extends enrol_plugin {
      * @param context $context The context of the instance we are editing
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK.
-     * @return void
      */
     public function edit_instance_validation($data, $files, $instance, $context) {
         $errors = array();

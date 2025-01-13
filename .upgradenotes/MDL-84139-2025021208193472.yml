@@ -1,0 +1,7 @@
+issueNumber: MDL-84139
+notes:
+  core_enrol:
+    - message: >-
+        New method enrol_plugin::get_instance_name_for_management_page() can
+        be used to display additional details next to the instance name.
+      type: improved

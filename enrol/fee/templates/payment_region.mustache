@@ -39,6 +39,7 @@
     Example context (json):
     {
         "cost": "$108.50",
+        "name": "This course requires a payment for entry.",
         "instanceid": 11,
         "description": "Enrolment in course Introduction to algorithms",
         "successurl": "https://moodlesite/course/view.php?id=2",
@@ -49,13 +50,13 @@
 <div class="enrol_fee_payment_region text-center">
     {{#isguestuser}}
         <div class="mdl-align">
-            <p>{{# str }} paymentrequired {{/ str}}</p>
+            <p>{{{name}}}</p>
             <p><b>{{cost}}</b></p>
             <p><a href="{{config.wwwroot}}/login/">{{# str }} loginsite {{/ str }}</a></p>
         </div>
     {{/isguestuser}}
     {{^isguestuser}}
-        <p>{{# str }} paymentrequired {{/ str}}</p>
+        <p>{{{name}}}</p>
         <p><b>{{cost}}</b></p>
         <button
             class="btn btn-secondary"
