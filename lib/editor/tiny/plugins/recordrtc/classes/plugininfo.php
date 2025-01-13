@@ -80,6 +80,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         $videotimelimit = get_config('tiny_recordrtc', 'videotimelimit');
         $screentimelimit = get_config('tiny_recordrtc', 'screentimelimit');
         [$videoscreenwidth, $videoscreenheight] = explode(',', get_config('tiny_recordrtc', 'screensize'));
+        $audiortcformat = (int) get_config('tiny_recordrtc', 'audiortcformat');
 
         // Update $allowedtypes to account for capabilities.
         $audioallowed = false;
@@ -125,6 +126,7 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
             'maxrecsize' => $maxrecsize,
             'videoscreenwidth' => $videoscreenwidth,
             'videoscreenheight' => $videoscreenheight,
+            'audiortcformat' => $audiortcformat,
         ];
 
         $data = [

@@ -149,4 +149,18 @@ if ($ADMIN->fulltree) {
     $name = get_string('allowedpausing', 'tiny_recordrtc');
     $setting = new admin_setting_configselect('tiny_recordrtc/allowedpausing', $name, '', 0, $options);
     $settings->add($setting);
+
+    // Audio format selection.
+    $audioformatoptions = [
+        '0' => get_string('audiortcformatdefault', 'tiny_recordrtc'),
+        '1' => get_string('audiortcformatmp3', 'tiny_recordrtc'),
+    ];
+    $setting = new admin_setting_configselect(
+        name: 'tiny_recordrtc/audiortcformat',
+        visiblename: get_string('audiortcformat', 'tiny_recordrtc'),
+        description: '',
+        defaultsetting: 0,
+        choices: $audioformatoptions,
+    );
+    $settings->add($setting);
 }
