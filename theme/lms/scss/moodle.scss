@@ -204,10 +204,31 @@ body {
   border: 1px solid #A78BFA !important;
 }
 
+.qnbutton.flagged {
+  color: #A78BFA !important;
+  border: 1px solid #A78BFA !important;
+}
+
 //.path-mod-quiz .qnbutton.thispage {
 //  color: #1D1D1D !important;
 //}
 
-.btn-primary:focus, .btn-primary.focus{
+.btn-primary:focus, .btn-primary.focus {
   outline: 0.2rem solid #29BA85;
+}
+
+.color-flagged {
+  color: #A78BFA !important;
+}
+
+.color-notyetanswered {
+  color: #9CA3AF !important;
+}
+
+.color-answered {
+  color: #34D399 !important;
+}
+
+.color-flagged-answered {
+  color: #FBBF24 !important;
 }

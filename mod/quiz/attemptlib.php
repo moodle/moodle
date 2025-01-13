@@ -3134,22 +3134,46 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base
 
   public function render_analytic_quiz()
   {
+    $notSeenCount = 0;
     $answeredCount = 0;
     $flaggedCount = 0;
+    $flaggedAnsweredCount = 0;
+    $totalunanswered = 0;
     foreach ($this->attemptobj->get_slots() as $slot) {
       $qa = $this->attemptobj->get_question_attempt($slot);
-
-      if ($qa->get_state()->is_finished()) {
+      if ($qa->get_state() == question_state::$invalid) {
+        $notSeenCount++;
+      }
+      if ($qa->get_state() == question_state::$todo || $qa->get_state() == question_state::$invalid) {
+        $totalunanswered++;
+      }
+      if ($qa->get_state() == question_state::$complete) {
         $answeredCount++;
       }
 
       if ($qa->is_flagged()) {
+        if ($qa->get_state() == question_state::$complete) {
+          $flaggedAnsweredCount++;
+        }
         $flaggedCount++;
       }
     }
-    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')',array('class' => ''));
-//    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')');
-//    $html .= html_writer::end_tag("div");
+
+    $html = html_writer::start_tag("div", array('class' => 'color-notyetanswered'));
+    $html .= '<i class="fa fa-clock-o" aria-hidden="true"></i>' . " Chưa trả lời (" . $totalunanswered . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-flagged'));
+    $html .= '<i class="fa fa-exclamation-circle" aria-hidden="true"></i>' . " Đã đánh dấu (" . $flaggedCount . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-answered'));
+    $html .= '<i class="fa fa-check-circle" aria-hidden="true"></i>' . " Đã trả lời (" . $answeredCount . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-flagged-answered'));
+    $html .= '<i class="fa fa-exclamation-circle" aria-hidden="true"></i>' . " Đã trả lời & đã đánh dấu (" . $flaggedAnsweredCount . ')';
+    $html .= html_writer::end_tag("div");
 
     return $html;
 
@@ -3180,27 +3204,54 @@ class quiz_review_nav_panel extends quiz_nav_panel_base
   {
     return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
   }
+
   public function render_analytic_quiz()
   {
+    $notSeenCount = 0;
     $answeredCount = 0;
     $flaggedCount = 0;
+    $flaggedAnsweredCount = 0;
+    $totalunanswered = 0;
     foreach ($this->attemptobj->get_slots() as $slot) {
       $qa = $this->attemptobj->get_question_attempt($slot);
-
-      if ($qa->get_state()->is_finished()) {
+      if ($qa->get_state() == question_state::$invalid) {
+        $notSeenCount++;
+      }
+      if ($qa->get_state() == question_state::$todo || $qa->get_state() == question_state::$invalid) {
+        $totalunanswered++;
+      }
+      if ($qa->get_state() == question_state::$complete) {
         $answeredCount++;
       }
 
       if ($qa->is_flagged()) {
+        if ($qa->get_state() == question_state::$complete) {
+          $flaggedAnsweredCount++;
+        }
         $flaggedCount++;
       }
     }
-    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')');
-//    $html .= html_writer::end_tag("div");
+
+    $html = html_writer::start_tag("div", array('class' => 'color-notyetanswered'));
+    $html .= '<i class="fa fa-clock-o" aria-hidden="true"></i>' . " Chưa trả lời (" . $totalunanswered . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-flagged'));
+    $html .= '<i class="fa fa-exclamation-circle" aria-hidden="true"></i>' . " Đã đánh dấu (" . $flaggedCount . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-answered'));
+    $html .= '<i class="fa fa-check-circle" aria-hidden="true"></i>' . " Đã trả lời (" . $answeredCount . ')';
+    $html .= html_writer::end_tag("div");
+
+    $html .= html_writer::start_tag("div", array('class' => 'color-flagged-answered'));
+    $html .= '<i class="fa fa-exclamation-circle" aria-hidden="true"></i>' . " Đã trả lời & đã đánh dấu (" . $flaggedAnsweredCount . ')';
+    $html .= html_writer::end_tag("div");
 
     return $html;
 
   }
+
   public function render_end_bits(mod_quiz_renderer $output)
   {
     $html = '';
