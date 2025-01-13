@@ -16,7 +16,7 @@
 
 namespace core;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use Slim\App;
 
 /**

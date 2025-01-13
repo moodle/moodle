@@ -17,7 +17,7 @@
 namespace core\router;
 
 use core\router;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;

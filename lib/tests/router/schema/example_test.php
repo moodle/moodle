@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace core\router\schema;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for examples.

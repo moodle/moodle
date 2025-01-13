@@ -21,7 +21,7 @@ use core\router\route;
 use core\router\schema\objects\array_of_strings;
 use core\router\schema\objects\schema_object;
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for parameters.

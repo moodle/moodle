@@ -19,7 +19,7 @@ namespace core\router\schema\objects;
 use core\param;
 use core\router\schema\referenced_object;
 use core\router\schema\specification;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use invalid_parameter_exception;
 
 /**

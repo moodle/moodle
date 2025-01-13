@@ -18,7 +18,7 @@ namespace core\router\middleware;
 
 use core\di;
 use core\router\response_handler;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 
