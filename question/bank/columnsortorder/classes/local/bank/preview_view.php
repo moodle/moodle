@@ -83,6 +83,7 @@ class preview_view extends view {
             'modifierfirstname' => 'Admin',
             'modifierlastname' => 'User',
             'timemodified' => 1691157311,
+            'isdummy' => true,
         ];
     }
 
