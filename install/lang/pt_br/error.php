@@ -34,7 +34,7 @@ $string['cannotcreatedboninstall'] = '<p> Não é possível criar o banco de dad
 <p> O administrador do site deve verificar a configuração do banco de dados. </p>';
 $string['cannotcreatelangdir'] = 'Impossível criar diretório lang';
 $string['cannotcreatetempdir'] = 'Impossível criar diretório temp';
-$string['cannotdownloadcomponents'] = 'Impossível fazer download dos componentes';
+$string['cannotdownloadcomponents'] = 'Não foi possível fazer o download dos componentes.';
 $string['cannotdownloadzipfile'] = 'Impossível fazer download do arquivo ZIP';
 $string['cannotfindcomponent'] = 'Impossível achar componente';
 $string['cannotsavemd5file'] = 'Impossível salvar arquivo md5';
