@@ -54,4 +54,12 @@ class plugin_feature extends plugin_features_base {
             400 => new question_text_format($qbank),
         ];
     }
+
+    #[\Override]
+    public function get_question_filters(?view $qbank = null): array {
+        return [
+            new questiontext_condition($qbank),
+        ];
+    }
+
 }
