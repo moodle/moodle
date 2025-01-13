@@ -152,7 +152,7 @@ body {
   width: 40px;
   height: 40px;
   line-height: 40px;
-  border-radius: 6px;
+  border-radius: 7px;
 }
 
 .trafficlight {
@@ -231,4 +231,39 @@ body {
 
 .color-flagged-answered {
   color: #FBBF24 !important;
+}
+
+.timer-box {
+  //display: inline-block;
+  //padding: 20px;
+  //width: 90px;
+  //height: 110px;
+  //border-radius: 10px;
+  //background-color: #ffe6e6;
+  //text-align: center;
+  //margin: 10px;
+
+  display: inline-block;
+  /* padding: 20px; */
+  padding-top: 16px;
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
+  background-color: #ffe6e6;
+  text-align: center;
+  margin: 10px;
+
+}
+
+.timer-box h1 {
+  color: #ff4d4d;
+  margin-bottom: 0;
+}
+
+.timer-box p {
+  margin-top: 0;
+  font-size: 1rem;
+  color: #333;
+}
+#quiz-timer {
 }

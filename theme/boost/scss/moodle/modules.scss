@@ -1338,15 +1338,19 @@ img.userpicture {
 }
 
 #quiz-timer-wrapper {
-    display: none;
-    position: sticky;
-    justify-content: end;
-    top: $navbar-height + 5px;
-    z-index: $zindex-sticky;
-    #quiz-timer {
-        border: $border-width solid $red;
-        background-color: $white;
-    }
+    //display: none;
+    //position: sticky;
+    //justify-content: center;
+    //top: $navbar-height - 25px;
+    //z-index: $zindex-sticky;
+
+    justify-content: center;
+    z-index: 1020;
+    width: fit-content;
+    display: flex;
+    right: 50px;
+    position: fixed;
+    top: 57px;
 }
 .pagelayout-embedded #quiz-timer-wrapper {
     top: 5px;

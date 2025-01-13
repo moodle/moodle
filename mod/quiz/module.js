@@ -108,7 +108,8 @@ M.mod_quiz.timer = {
         // If time has expired, set the hidden form field that says time has expired and submit
         if (secondsleft < 0) {
             M.mod_quiz.timer.stop(null);
-            Y.one('#quiz-time-left').setContent(M.util.get_string('timesup', 'quiz'));
+            $('.timer-box').remove();
+            Y.one('#timeup').setContent(M.util.get_string('timesup', 'quiz'));
             var input = Y.one('input[name=timeup]');
             input.set('value', 1);
             var form = input.ancestor('form');
@@ -133,9 +134,9 @@ M.mod_quiz.timer = {
         var minutes = Math.floor(secondsleft/60);
         secondsleft -= minutes*60;
         var seconds = secondsleft;
-        Y.one('#quiz-time-left').setContent(hours + ':' +
-                M.mod_quiz.timer.two_digit(minutes) + ':' +
-                M.mod_quiz.timer.two_digit(seconds));
+        Y.one('#quiz-time-left').setContent(hours);
+        Y.one('#quiz-minute-left').setContent(M.mod_quiz.timer.two_digit(minutes));
+        Y.one('#quiz-second-left').setContent(M.mod_quiz.timer.two_digit(seconds));
 
         // Arrange for this method to be called again soon.
         M.mod_quiz.timer.timeoutid = setTimeout(M.mod_quiz.timer.update, 100);

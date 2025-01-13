@@ -24,8 +24,20 @@
     }
 }}
 <div id="quiz-timer-wrapper" class="mb-2">
-    <div id="quiz-timer" class="quiz-timer-inner py-1 px-2 ml-auto" role="timer" aria-atomic="true" aria-relevant="text">
-        {{#str}} timeleft, quiz {{/str}}
-        <span id="quiz-time-left"></span>
+    <div id="quiz-timer" class="quiz-timer-inner" role="timer" aria-atomic="true"
+         aria-relevant="text">
+        <div class="timer-box">
+            <h1 id="quiz-time-left" style="font-weight: 700"></h1>
+            <p>Giờ</p>
+        </div>
+        <div class="timer-box">
+            <h1 id="quiz-minute-left" style="font-weight: 700"></h1>
+            <p>Phút</p>
+        </div>
+        <div class="timer-box">
+            <h1 id="quiz-second-left" style="font-weight: 700"></h1>
+            <p>Giây</p>
+        </div>
+        <span id="timeup"></span>
     </div>
 </div>

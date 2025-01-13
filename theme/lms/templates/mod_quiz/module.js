@@ -25,25 +25,29 @@
 
 M.mod_quiz = M.mod_quiz || {};
 
-M.mod_quiz.init_attempt_form = function(Y) {
+M.mod_quiz.init_attempt_form = function (Y) {
     M.core_question_engine.init_form(Y, '#responseform');
     Y.on('submit', M.mod_quiz.timer.stop, '#responseform');
-    require(['core_form/changechecker'], function(FormChangeChecker) {
+    require(['core_form/changechecker'], function (FormChangeChecker) {
         FormChangeChecker.watchFormById('responseform');
     });
 };
 
-M.mod_quiz.init_review_form = function(Y) {
+M.mod_quiz.init_review_form = function (Y) {
     M.core_question_engine.init_form(Y, '.questionflagsaveform');
-    Y.on('submit', function(e) { e.halt(); }, '.questionflagsaveform');
+    Y.on('submit', function (e) {
+        e.halt();
+    }, '.questionflagsaveform');
 };
 
-M.mod_quiz.init_comment_popup = function(Y) {
+M.mod_quiz.init_comment_popup = function (Y) {
     // Add a close button to the window.
     var closebutton = Y.Node.create('<input type="button" class="btn btn-secondary" />');
     closebutton.set('value', M.util.get_string('cancel', 'moodle'));
     Y.one('#id_submitbutton').ancestor().append(closebutton);
-    Y.on('click', function() { window.close() }, closebutton);
+    Y.on('click', function () {
+        window.close()
+    }, closebutton);
 }
 
 // Code for updating the countdown timer that is used on timed quizzes.
@@ -69,13 +73,13 @@ M.mod_quiz.timer = {
      * @param start, the timer starting time, in seconds.
      * @param preview, is this a quiz preview?
      */
-    init: function(Y, start, preview) {
+    init: function (Y, start, preview) {
         M.mod_quiz.timer.Y = Y;
-        M.mod_quiz.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
+        M.mod_quiz.timer.endtime = M.pageloadstarttime.getTime() + start * 1000;
         M.mod_quiz.timer.preview = preview;
         M.mod_quiz.timer.update();
         Y.one('#quiz-timer-wrapper').setStyle('display', 'flex');
-        require(['core_form/changechecker'], function(FormChangeChecker) {
+        require(['core_form/changechecker'], function (FormChangeChecker) {
             M.mod_quiz.timer.FormChangeChecker = FormChangeChecker;
         });
     },
@@ -83,7 +87,7 @@ M.mod_quiz.timer = {
     /**
      * Stop the timer, if it is running.
      */
-    stop: function(e) {
+    stop: function (e) {
         if (M.mod_quiz.timer.timeoutid) {
             clearTimeout(M.mod_quiz.timer.timeoutid);
         }
@@ -92,7 +96,7 @@ M.mod_quiz.timer = {
     /**
      * Function to convert a number between 0 and 99 to a two-digit string.
      */
-    two_digit: function(num) {
+    two_digit: function (num) {
         if (num < 10) {
             return '0' + num;
         } else {
@@ -101,14 +105,13 @@ M.mod_quiz.timer = {
     },
 
     // Function to update the clock with the current time left, and submit the quiz if necessary.
-    update: function() {
+    update: function () {
         var Y = M.mod_quiz.timer.Y;
-        var secondsleft = Math.floor((M.mod_quiz.timer.endtime - new Date().getTime())/1000);
+        var secondsleft = Math.floor((M.mod_quiz.timer.endtime - new Date().getTime()) / 1000);
 
         // If time has expired, set the hidden form field that says time has expired and submit
         if (secondsleft < 0) {
             M.mod_quiz.timer.stop(null);
-            Y.one('#quiz-time-left').setContent(M.util.get_string('timesup', 'quiz'));
             var input = Y.one('input[name=timeup]');
             input.set('value', 1);
             var form = input.ancestor('form');
@@ -123,26 +126,27 @@ M.mod_quiz.timer = {
         // If time has nearly expired, change the colour.
         if (secondsleft < 100) {
             Y.one('#quiz-timer').removeClass('timeleft' + (secondsleft + 2))
-                    .removeClass('timeleft' + (secondsleft + 1))
-                    .addClass('timeleft' + secondsleft);
+                .removeClass('timeleft' + (secondsleft + 1))
+                .addClass('timeleft' + secondsleft);
         }
 
         // Update the time display.
-        var hours = Math.floor(secondsleft/3600);
-        secondsleft -= hours*3600;
-        var minutes = Math.floor(secondsleft/60);
-        secondsleft -= minutes*60;
+        var hours = Math.floor(secondsleft / 3600);
+        secondsleft -= hours * 3600;
+        var minutes = Math.floor(secondsleft / 60);
+        secondsleft -= minutes * 60;
         var seconds = secondsleft;
-        Y.one('#quiz-time-left').setContent(hours + ':' +
-                M.mod_quiz.timer.two_digit(minutes) + ':' +
-                M.mod_quiz.timer.two_digit(seconds));
+        Y.one('#quiz-time-left').setContent(hours + 'Giờ');
+        Y.one('#quiz-minute-left').setContent(M.mod_quiz.timer.two_digit(minutes) + 'Phút');
+        Y.one('#quiz-second-left').setContent(M.mod_quiz.timer.two_digit(seconds) + 'Giây');
+
 
         // Arrange for this method to be called again soon.
         M.mod_quiz.timer.timeoutid = setTimeout(M.mod_quiz.timer.update, 100);
     },
 
     // Allow the end time of the quiz to be updated.
-    updateEndTime: function(timeleft) {
+    updateEndTime: function (timeleft) {
         var newtimeleft = new Date().getTime() + timeleft * 1000;
 
         // Timer might not have been initialized yet. We initialize it with
@@ -175,7 +179,7 @@ M.mod_quiz.filesUpload = {
     /**
      * Disable navigation block when uploading and enable navigation block when all files are uploaded.
      */
-    disableNavPanel: function() {
+    disableNavPanel: function () {
         var quizNavigationBlock = document.getElementById('mod_quiz_navblock');
         if (quizNavigationBlock) {
             if (M.mod_quiz.filesUpload.numberFilesUploading) {
@@ -189,7 +193,7 @@ M.mod_quiz.filesUpload = {
 
 M.mod_quiz.nav = M.mod_quiz.nav || {};
 
-M.mod_quiz.nav.update_flag_state = function(attemptid, questionid, newstate) {
+M.mod_quiz.nav.update_flag_state = function (attemptid, questionid, newstate) {
     var Y = M.mod_quiz.nav.Y;
     var navlink = Y.one('#quiznavbutton' + questionid);
     navlink.removeClass('flagged');
@@ -201,7 +205,7 @@ M.mod_quiz.nav.update_flag_state = function(attemptid, questionid, newstate) {
     }
 };
 
-M.mod_quiz.nav.init = function(Y) {
+M.mod_quiz.nav.init = function (Y) {
     M.mod_quiz.nav.Y = Y;
 
     Y.all('#quiznojswarning').remove();
@@ -218,7 +222,7 @@ M.mod_quiz.nav.init = function(Y) {
             submit.getDOMNode().click();
         };
 
-        Y.delegate('click', function(e) {
+        Y.delegate('click', function (e) {
             if (this.hasClass('thispage')) {
                 return;
             }
@@ -243,20 +247,20 @@ M.mod_quiz.nav.init = function(Y) {
     }
 
     if (Y.one('a.endtestlink')) {
-        Y.on('click', function(e) {
+        Y.on('click', function (e) {
             e.preventDefault();
             nav_to_page(-1);
         }, 'a.endtestlink');
     }
 
     // Navigation buttons should be disabled when the files are uploading.
-    require(['core_form/events'], function(formEvent) {
-        document.addEventListener(formEvent.eventTypes.uploadStarted, function() {
+    require(['core_form/events'], function (formEvent) {
+        document.addEventListener(formEvent.eventTypes.uploadStarted, function () {
             M.mod_quiz.filesUpload.numberFilesUploading++;
             M.mod_quiz.filesUpload.disableNavPanel();
         });
 
-        document.addEventListener(formEvent.eventTypes.uploadCompleted, function() {
+        document.addEventListener(formEvent.eventTypes.uploadCompleted, function () {
             M.mod_quiz.filesUpload.numberFilesUploading--;
             M.mod_quiz.filesUpload.disableNavPanel();
         });
@@ -268,22 +272,22 @@ M.mod_quiz.nav.init = function(Y) {
 };
 
 M.mod_quiz.secure_window = {
-    init: function(Y) {
+    init: function (Y) {
         if (window.location.href.substring(0, 4) == 'file') {
             window.location = 'about:blank';
         }
         Y.delegate('contextmenu', M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('mousedown',   M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
-        Y.delegate('mouseup',     M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
-        Y.delegate('dragstart',   M.mod_quiz.secure_window.prevent, document, '*');
+        Y.delegate('mousedown', M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
+        Y.delegate('mouseup', M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
+        Y.delegate('dragstart', M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('selectstart', M.mod_quiz.secure_window.prevent_selection, document, '*');
-        Y.delegate('cut',         M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('copy',        M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('paste',       M.mod_quiz.secure_window.prevent, document, '*');
-        Y.on('beforeprint', function() {
+        Y.delegate('cut', M.mod_quiz.secure_window.prevent, document, '*');
+        Y.delegate('copy', M.mod_quiz.secure_window.prevent, document, '*');
+        Y.delegate('paste', M.mod_quiz.secure_window.prevent, document, '*');
+        Y.on('beforeprint', function () {
             Y.one(document.body).setStyle('display', 'none');
         }, window);
-        Y.on('afterprint', function() {
+        Y.on('afterprint', function () {
             Y.one(document.body).setStyle('display', 'block');
         }, window);
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'press:67,86,88+ctrl');
@@ -294,7 +298,7 @@ M.mod_quiz.secure_window = {
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'down:67,86,88+meta');
     },
 
-    is_content_editable: function(n) {
+    is_content_editable: function (n) {
         if (n.test('[contenteditable=true]')) {
             return true;
         }
@@ -305,16 +309,16 @@ M.mod_quiz.secure_window = {
         return M.mod_quiz.secure_window.is_content_editable(n);
     },
 
-    prevent_selection: function(e) {
+    prevent_selection: function (e) {
         return false;
     },
 
-    prevent: function(e) {
+    prevent: function (e) {
         alert(M.util.get_string('functiondisabledbysecuremode', 'quiz'));
         e.halt();
     },
 
-    prevent_mouse: function(e) {
+    prevent_mouse: function (e) {
         if (e.button == 1 && /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/i.test(e.target.get('tagName'))) {
             // Left click on a button or similar. No worries.
             return;
@@ -326,20 +330,20 @@ M.mod_quiz.secure_window = {
         e.halt();
     },
 
-    init_close_button: function(Y, url) {
-        Y.on('click', function(e) {
+    init_close_button: function (Y, url) {
+        Y.on('click', function (e) {
             M.mod_quiz.secure_window.close(url, 0)
         }, '#secureclosebutton');
     },
 
-    close: function(url, delay) {
-        setTimeout(function() {
+    close: function (url, delay) {
+        setTimeout(function () {
             if (window.opener) {
                 window.opener.document.location.reload();
                 window.close();
             } else {
                 window.location.href = url;
             }
-        }, delay*1000);
+        }, delay * 1000);
     }
 };
