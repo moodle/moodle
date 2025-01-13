@@ -207,3 +207,7 @@ body {
 //.path-mod-quiz .qnbutton.thispage {
 //  color: #1D1D1D !important;
 //}
+
+.btn-primary:focus, .btn-primary.focus{
+  outline: 0.2rem solid #29BA85;
+}

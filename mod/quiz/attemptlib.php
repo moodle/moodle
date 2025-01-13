@@ -3056,6 +3056,8 @@ abstract class quiz_nav_panel_base
 
   abstract public function render_end_bits(mod_quiz_renderer $output);
 
+  abstract public function render_analytic_quiz();
+
   /**
    * Render the restart preview button.
    *
@@ -3130,6 +3132,29 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base
       array('id' => 'quiznojswarning'));
   }
 
+  public function render_analytic_quiz()
+  {
+    $answeredCount = 0;
+    $flaggedCount = 0;
+    foreach ($this->attemptobj->get_slots() as $slot) {
+      $qa = $this->attemptobj->get_question_attempt($slot);
+
+      if ($qa->get_state()->is_finished()) {
+        $answeredCount++;
+      }
+
+      if ($qa->is_flagged()) {
+        $flaggedCount++;
+      }
+    }
+    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')',array('class' => ''));
+//    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')');
+//    $html .= html_writer::end_tag("div");
+
+    return $html;
+
+  }
+
   public function render_end_bits(mod_quiz_renderer $output)
   {
     if ($this->page == -1) {
@@ -3155,7 +3180,27 @@ class quiz_review_nav_panel extends quiz_nav_panel_base
   {
     return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
   }
+  public function render_analytic_quiz()
+  {
+    $answeredCount = 0;
+    $flaggedCount = 0;
+    foreach ($this->attemptobj->get_slots() as $slot) {
+      $qa = $this->attemptobj->get_question_attempt($slot);
 
+      if ($qa->get_state()->is_finished()) {
+        $answeredCount++;
+      }
+
+      if ($qa->is_flagged()) {
+        $flaggedCount++;
+      }
+    }
+    $html = html_writer::tag("div", "Đã đánh dấu (" . $flaggedCount . ')');
+//    $html .= html_writer::end_tag("div");
+
+    return $html;
+
+  }
   public function render_end_bits(mod_quiz_renderer $output)
   {
     $html = '';
