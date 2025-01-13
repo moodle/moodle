@@ -210,6 +210,56 @@ final class users_test extends core_reportbuilder_testcase {
     }
 
     /**
+     * Test fullname columns when alternative fullname format is configured
+     */
+    public function test_datasource_alternative_fullname_columns(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('alternativefullnameformat', '(alternatename) firstname lastname');
+
+        $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Smith', 'alternatename' => 'JS']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname', 'sortenabled' => 1]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullnamewithlink']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullnamewithpicture']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullnamewithpicturelink']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(2, $content);
+
+        // Admin row.
+        [
+            $fullname,
+            $fullnamewithlink,
+            $fullnamewithpicture,
+            $fullnamewithpicturelink
+        ] = array_values($content[0]);
+
+        $this->assertEquals('Admin User', $fullname);
+        $this->assertStringContainsString('Admin User', $fullnamewithlink);
+        $this->assertStringContainsString('Admin User', $fullnamewithpicture);
+        $this->assertStringContainsString('Admin User', $fullnamewithpicturelink);
+
+        // User row.
+        [
+            $fullname,
+            $fullnamewithlink,
+            $fullnamewithpicture,
+            $fullnamewithpicturelink
+        ] = array_values($content[1]);
+
+        $this->assertEquals('(JS) John Smith', $fullname);
+        $this->assertStringContainsString('(JS) John Smith', $fullnamewithlink);
+        $this->assertStringContainsString('(JS) John Smith', $fullnamewithpicture);
+        $this->assertStringContainsString('(JS) John Smith', $fullnamewithpicturelink);
+    }
+
+    /**
      * Data provider for {@see test_datasource_filters}
      *
      * @return array[]
