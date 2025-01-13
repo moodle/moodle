@@ -16,7 +16,7 @@
 
 namespace core\router\response;
 
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for the access denied response.

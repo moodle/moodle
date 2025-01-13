@@ -17,7 +17,7 @@
 namespace core\router\schema\response;
 
 use core\router\response_handler;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 

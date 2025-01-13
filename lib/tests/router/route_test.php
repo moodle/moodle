@@ -24,7 +24,7 @@ use core\router\schema\parameters\path_parameter;
 use core\router\schema\parameters\query_parameter;
 use core\router\schema\request_body;
 use core\router\schema\response\response;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for user preference API handler.

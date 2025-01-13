@@ -18,7 +18,7 @@ namespace core\router\parameters;
 
 use core\exception\not_found_exception;
 use core\router\schema\referenced_object;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\ServerRequest;
 use stdClass;
 

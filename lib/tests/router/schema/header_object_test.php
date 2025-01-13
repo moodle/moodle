@@ -17,7 +17,7 @@
 namespace core\router\schema;
 
 use core\param;
-use core\tests\route_testcase;
+use core\tests\router\route_testcase;
 
 /**
  * Tests for header objects.
