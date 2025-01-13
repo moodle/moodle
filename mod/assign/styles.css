@@ -228,9 +228,11 @@
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link {
+    background: none 2px 4px / 16px 16px no-repeat;
     display: block;
     cursor: pointer;
     margin-bottom: 7px;
+    padding-left: 20px;
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link h4 {
@@ -247,13 +249,11 @@
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link-open {
-    padding: 0 5px 0 20px;
-    background: url([[pix:t/expanded]]) 2px center no-repeat;
+    background-image: url([[pix:t/expanded]]);
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link-closed {
-    padding: 0 5px 0 20px;
-    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+    background-image: url([[pix:t/collapsed]]);
 }
 
 /*rtl:raw:
