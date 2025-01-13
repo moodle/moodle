@@ -383,10 +383,11 @@ class question_bank_helper {
         }, $concatedcats);
 
         $bank = new stdClass();
-        $bank->name = $cminfo->get_formatted_name();
+        $bank->name = $cminfo->get_formatted_name(['escape' => false]);
         $bank->modid = $cminfo->id;
         $bank->contextid = $cminfo->context->id;
-        $bank->coursenamebankname = "{$cminfo->get_course()->shortname} - {$bank->name}";
+        $bank->coursenamebankname = format_string($cminfo->get_course()->shortname, true,
+                ['context' => $cminfo->context, 'escape' => false]) . " - {$bank->name}";
         $bank->cminfo = $cminfo;
         $bank->questioncategories = $categories;
 

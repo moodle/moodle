@@ -9,15 +9,15 @@ Feature: Adding questions to a quiz from the question bank
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | weeks |
+      | fullname                                                                                                                | shortname | format |
+      | <span lang="en" class="multilang">Test course</span><span lang="fr" class="multilang">Cours test</span> & < > " ' &amp; | C1        | weeks  |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity   | name    | intro                                     | course | idnumber |
-      | quiz       | Quiz 1  | Quiz 1 for testing the Add menu           | C1     | quiz1    |
-      | qbank      | Qbank 1 | Question bank 1 for testing the Add menu  | C1     | qbank1   |
+      | activity | name                                                                                                             | intro                                    | course | idnumber |
+      | quiz     | Quiz 1                                                                                                           | Quiz 1 for testing the Add menu          | C1     | quiz1    |
+      | qbank    | <span lang="en" class="multilang">Qbank</span><span lang="fr" class="multilang">Banqueq</span> 1 & < > " ' &amp; | Question bank 1 for testing the Add menu | C1     | qbank1   |
     And the following "question categories" exist:
       | contextlevel    | reference  | name              |
       | Activity module | quiz1      | Test questions    |
@@ -49,7 +49,9 @@ Feature: Adding questions to a quiz from the question bank
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
   Scenario: The questions can be filtered by tag on a shared question bank
-    Given I am on the "question 03 name" "core_question > edit" page logged in as teacher1
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "question 03 name" "core_question > edit" page logged in as teacher1
     And I set the following fields to these values:
       | Tags | qbanktag1 |
     And I press "Save changes"
@@ -61,7 +63,7 @@ Feature: Adding questions to a quiz from the question bank
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
     Then I should see "qbanktag1" in the "question 03 name" "table_row"
     And I should see "qbanktag2" in the "question 04 name" "table_row"
     And I apply question bank filter "Tag" with value "qbanktag1"
@@ -156,13 +158,15 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "question 02 name" on quiz page "2"
 
   Scenario: Adding a question to quiz from a shared question bank
-    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Current bank: Quiz 1"
     And I should see "question 01 name"
     And I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
     And I should see "question 03 name"
     But I should not see "question 01 name"
     And I click on "Select" "checkbox" in the "question 03 name" "table_row"
