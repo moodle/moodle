@@ -4765,7 +4765,13 @@ EOD;
      */
     public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate,
         bool $error = false): string {
-        return html_writer::script(js_writer::function_call('updateProgressBar', [$id, $percent, $msg, $estimate, $error]));
+        return html_writer::script(js_writer::function_call('updateProgressBar', [
+            $id,
+            round($percent, 1),
+            $msg,
+            $estimate,
+            $error,
+        ]));
     }
 
     /**
