@@ -1053,14 +1053,15 @@ function environment_check_database($version, $env_select) {
 
     $dbinfo = $DB->get_server_info();
     $current_version = normalize_version($dbinfo['version']);
-    $needed_version = $vendors[$current_vendor];
 
-/// Check we have a needed version
-    if (!$needed_version) {
+    // Check we have a needed version.
+    if (empty($vendors[$current_vendor])) {
         $result->setStatus(false);
         $result->setErrorCode(NO_DATABASE_VENDOR_VERSION_FOUND);
         return $result;
     }
+
+    $needed_version = $vendors[$current_vendor];
 
     // Check if the DB Vendor has been properly configured.
     // Hack: this is required when playing with MySQL and MariaDB since they share the same PHP module and base DB classes,
