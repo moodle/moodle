@@ -119,7 +119,7 @@ class header implements named_templatable, renderable {
         }
 
         // Delegated sections in main course page need to have h4 tag, h3 otherwise.
-        $data->headinglevel = ($section->is_delegated() && is_null($format->get_sectionid())) ? 4 : 3;
+        $data->headinglevel = ($section->get_component_instance() && is_null($format->get_sectionid())) ? 4 : 3;
 
         return $data;
     }

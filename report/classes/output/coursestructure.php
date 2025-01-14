@@ -71,7 +71,7 @@ class coursestructure implements \renderable, \templatable {
                 $sectioninfo = $this->modinfo->get_section_info($sectionnum);
 
                 // Don't show subsections here. We are showing them in the corresponding module.
-                if ($sectioninfo->is_delegated()) {
+                if ($sectioninfo->get_component_instance()) {
                     continue;
                 }
 
@@ -128,7 +128,7 @@ class coursestructure implements \renderable, \templatable {
             $sectioninfo = $this->modinfo->get_section_info($sectionnum);
 
             // Don't show subsections here. We are showing them in the corresponding module.
-            if ($sectioninfo->is_delegated()) {
+            if ($sectioninfo->get_component_instance()) {
                 continue;
             }
 

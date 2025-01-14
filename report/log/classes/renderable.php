@@ -226,7 +226,7 @@ class report_log_renderable implements renderable {
                     $sectioninfo = $modinfo->get_section_info($cm->sectionnum);
 
                     // Don't show subsections here. We are showing them in the corresponding module.
-                    if ($sectioninfo->is_delegated()) {
+                    if ($sectioninfo->get_component_instance()) {
                         continue;
                     }
 
