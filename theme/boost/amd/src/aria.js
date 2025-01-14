@@ -227,6 +227,23 @@ const dropdownFix = () => {
             });
         }
     });
+
+    // Prevent closing the dropdown when the autocomplete suggestions are visible.
+    document.addEventListener('hide.bs.dropdown', (e) => {
+        const dropdown = e.target.closest('.dropdown');
+        if (!dropdown) {
+            return;
+        }
+        const autocompleteSuggestions = document.querySelector('.form-autocomplete-suggestions:not([aria-hidden="true"])');
+        if (autocompleteSuggestions) {
+            // Dropdown should not be hidden while the autocomplete suggestions are visible inside.
+            e.preventDefault();
+            // Return the focus to the autocomplete input.
+            const autocompleteElement = autocompleteSuggestions.closest('[data-fieldtype="autocomplete"]');
+            const autocompleteInput = autocompleteElement.querySelector('.form-autocomplete-input input');
+            setTimeout(()=> autocompleteInput.focus(), 1000);
+        }
+    });
 };
 
 /**
