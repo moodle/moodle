@@ -73,9 +73,9 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         global $CFG;
 
         // When there are no policies or agreements context list is empty.
-        $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->manager->id);
+        $contextlist = provider::get_contexts_for_userid($this->manager->id);
         $this->assertEmpty($contextlist);
-        $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->user->id);
+        $contextlist = provider::get_contexts_for_userid($this->user->id);
         $this->assertEmpty($contextlist);
 
         // Create a policy.
@@ -85,11 +85,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         api::make_current($policy->get('id'));
 
         // After creating a policy, there should be manager context.
-        $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->manager->id);
+        $contextlist = provider::get_contexts_for_userid($this->manager->id);
         $this->assertEquals(1, $contextlist->count());
 
         // But when there are no agreements, user context list is empty.
-        $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->user->id);
+        $contextlist = provider::get_contexts_for_userid($this->user->id);
         $this->assertEmpty($contextlist);
 
         // Agree to the policy.
@@ -97,7 +97,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         api::accept_policies([$policy->get('id')]);
 
         // There should be user context.
-        $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->user->id);
+        $contextlist = provider::get_contexts_for_userid($this->user->id);
         $this->assertEquals(1, $contextlist->count());
     }
 
