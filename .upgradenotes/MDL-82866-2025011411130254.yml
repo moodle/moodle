@@ -1,0 +1,7 @@
+issueNumber: MDL-82866
+notes:
+  tool_lp:
+    - message: >-
+        behat_tool_lp_data_generators::the_following_lp_exist is deprecated. Use
+        the following "core_competency > [competency|framework|plan...]" exist:
+      type: deprecated

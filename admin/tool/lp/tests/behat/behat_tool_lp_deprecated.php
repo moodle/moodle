@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../../lib/behat/behat_deprecated_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
 use Behat\Behat\Tester\Exception\PendingException as PendingException;
@@ -40,7 +40,7 @@ use core_competency\user_evidence;
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_tool_lp_data_generators extends behat_base {
+class behat_tool_lp_deprecated extends behat_deprecated_base {
 
     /**
      * @var tool_lp data generator
@@ -98,12 +98,21 @@ class behat_tool_lp_data_generators extends behat_base {
      *
      * @Given /^the following lp "(?P<element_string>(?:[^"]|\\")*)" exist:$/
      *
+     * @todo MDL-78077 This will be deleted in Moodle 6.0.
+     * @deprecated since 5.0
+     *
      * @throws Exception
      * @throws PendingException
      * @param string    $elementname The name of the entity to add
      * @param TableNode $data
      */
+    #[\core\attribute\deprecated('behat_tool_lp_data_generators::the_following_lp_exist', since: '5.0')]
     public function the_following_lp_exist($elementname, TableNode $data) {
+        $this->deprecated_message([
+            'behat_tool_lp_data_generators::the_following_lp_exist is deprecated',
+            'Use: the following "core_competency > [competency|framework|plan...]" exist:',
+
+        ]);
 
         // Now that we need them require the data generators.
         require_once(__DIR__.'/../../../../../lib/phpunit/classes/util.php');
