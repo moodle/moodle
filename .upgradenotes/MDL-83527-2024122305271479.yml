@@ -1,0 +1,7 @@
+issueNumber: MDL-83527
+notes:
+  core_course:
+    - message: >-
+        course_get_cm_edit_actions is now deprecated. Formats should extend
+        core_courseformat\output\local\content\cm\controlmenu instead.
+      type: deprecated

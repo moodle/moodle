@@ -24,12 +24,18 @@
 
 namespace core_courseformat\output\local\content\cm;
 
-use action_menu;
-use action_menu_link;
 use cm_info;
+use core\context\module as context_module;
+use core\output\action_menu;
+use core\output\action_menu\link;
+use core\output\action_menu\link_secondary;
+use core\output\action_menu\subpanel;
+use core\output\pix_icon;
+use core\output\renderer_base;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\content\basecontrolmenu;
-use core_courseformat\output\local\courseformat_named_templatable;
+use core_courseformat\sectiondelegate;
+use core\url;
 use section_info;
 use stdClass;
 
@@ -45,6 +51,15 @@ class controlmenu extends basecontrolmenu {
     /** @var array optional display options */
     protected $displayoptions;
 
+    /** @var context_module|null modcontext the module context if any */
+    protected ?context_module $modcontext = null;
+
+    /** @var bool $canmanageactivities Optimization to know if the user can manage activities */
+    protected bool $canmanageactivities;
+
+    /** @var url $basemodurl the base mod.php url */
+    protected url $basemodurl;
+
     /**
      * Constructor.
      *
@@ -56,15 +71,24 @@ class controlmenu extends basecontrolmenu {
     public function __construct(course_format $format, section_info $section, cm_info $mod, array $displayoptions = []) {
         parent::__construct($format, $section, $mod, $mod->id);
         $this->displayoptions = $displayoptions;
+
+        $this->modcontext = context_module::instance($mod->id);
+        $this->canmanageactivities = has_capability('moodle/course:manageactivities', $this->modcontext);
+
+        $this->basemodurl = new url('/course/mod.php', ['sesskey' => sesskey()]);
+        $sectionnumreturn = $format->get_sectionnum();
+        if ($sectionnumreturn !== null) {
+            $this->basemodurl->param('sr', $sectionnumreturn);
+        }
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param renderer_base $output typically, the renderer that's calling this function
      * @return stdClass|null data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): ?stdClass {
+    public function export_for_template(renderer_base $output): ?stdClass {
 
         $mod = $this->mod;
 
@@ -96,24 +120,304 @@ class controlmenu extends basecontrolmenu {
      * Generate the action menu element.
      *
      * This method is public in case some block needs to modify the menu before output it.
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param renderer_base $output typically, the renderer that's calling this function
      * @return action_menu|null the activity action menu
      */
-    public function get_action_menu(\renderer_base $output): ?action_menu {
+    public function get_action_menu(renderer_base $output): ?action_menu {
 
         if (!empty($this->menu)) {
             return $this->menu;
         }
 
-        $mod = $this->mod;
-
         // In case module is delegating a section, we should return delegated section action menu.
-        if ($delegated = $mod->get_delegated_section_info()) {
+        if ($delegated = $this->mod->get_delegated_section_info()) {
             $controlmenuclass = $this->format->get_output_classname('content\\cm\\delegatedcontrolmenu');
-            $controlmenu = new $controlmenuclass($this->format, $delegated, $mod);
-
+            $controlmenu = new $controlmenuclass($this->format, $delegated, $this->mod);
             return $controlmenu->get_action_menu($output);
         }
+
+        // TODO remove this if as part of MDL-83530.
+        if (!$this->format->supports_components()) {
+            $this->menu = $this->get_action_menu_legacy($output);
+            return $this->menu;
+        }
+
+        $controls = $this->get_cm_control_items();
+        return $this->format_controls($controls);
+    }
+
+    /**
+     * Generate the edit control items of a course module.
+     *
+     * This method uses course_get_cm_edit_actions function to get the cm actions.
+     * However, format plugins can override the method to add or remove elements
+     * from the menu.
+     *
+     * @return array of edit control items
+     */
+    public function get_cm_control_items(): ?array {
+        $controls = [];
+
+        $controls['update'] = $this->get_cm_edit_item();
+        $controls['move'] = $this->get_cm_move_item();
+        $controls['moveright'] = $this->get_cm_moveend_item();
+        $controls['moveleft'] = $this->get_cm_movestart_item();
+        $controls['availability'] = $this->get_cm_visibility_item();
+        $controls['duplicate'] = $this->get_cm_duplicate_item();
+        $controls['assign'] = $this->get_cm_assign_item();
+        $controls['groupmode'] = $this->get_cm_groupmode_item();
+        $controls['delete'] = $this->get_cm_delete_item();
+
+        return $controls;
+    }
+
+    /**
+     * Generates the edit settings item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_edit_item(): ?link {
+        if (!$this->canmanageactivities) {
+            return null;
+        }
+
+        $url = new url($this->basemodurl, ['update' => $this->mod->id]);
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('i/settings', ''),
+            text: get_string('editsettings'),
+            attributes: [
+                'class' => 'editing_update',
+            ],
+        );
+    }
+
+    /**
+     * Generates the move item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_move_item(): ?link {
+        // Only show the move link if we are not already in the section view page.
+        if (!$this->canmanageactivities) {
+            return null;
+        }
+
+        $url = new url($this->basemodurl, ['copy' => $this->mod->id]);
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('i/dragdrop', ''),
+            text: get_string('move'),
+            attributes: [
+                // This tool requires ajax and will appear only when the frontend state is ready.
+                'class' => 'editing_movecm waitstate',
+                'data-action' => 'moveCm',
+                'data-id' => $this->mod->id,
+            ],
+        );
+    }
+
+    /**
+     * Check if the course module can be indented.
+     *
+     * @return bool
+     */
+    protected function can_indent_cm(): bool {
+        return $this->canmanageactivities
+            && !sectiondelegate::has_delegate_class('mod_'.$this->mod->modname)
+            && empty($this->displayoptions['disableindentation'])
+            && $this->format->uses_indentation();
+    }
+
+    /**
+     * Generates the move right item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_moveend_item(): ?link {
+        if (!$this->can_indent_cm() || $this->mod->indent > 0) {
+            return null;
+        }
+
+        $url = new url($this->basemodurl, ['id' => $this->mod->id, 'indent' => 1]);
+
+        $icon = (right_to_left()) ? 't/left' : 't/right';
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon($icon, ''),
+            text: get_string('moveright'),
+            attributes: [
+                'class' => 'editing_moveright',
+                'data-action' => 'cmMoveRight',
+                'data-keepopen' => true,
+                'data-sectionreturn' => $this->format->get_sectionnum(),
+                'data-id' => $this->mod->id,
+            ],
+        );
+    }
+
+    /**
+     * Generates the move left item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_movestart_item(): ?link {
+        if (!$this->can_indent_cm() || $this->mod->indent <= 0) {
+            return null;
+        }
+
+        $url = new url($this->basemodurl, ['id' => $this->mod->id, 'indent' => -1]);
+
+        $icon = (right_to_left()) ? 't/right' : 't/left';
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon($icon, ''),
+            text: get_string('moveleft'),
+            attributes: [
+                'class' => 'editing_moveleft',
+                'data-action' => 'cmMoveLeft',
+                'data-keepopen' => true,
+                'data-sectionreturn' => $this->format->get_sectionnum(),
+                'data-id' => $this->mod->id,
+            ],
+        );
+    }
+
+    /**
+     * Generates the visibility item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_visibility_item(): link_secondary|subpanel|null {
+        if (!has_capability('moodle/course:activityvisibility', $this->modcontext)) {
+            return null;
+        }
+        $outputclass = $this->format->get_output_classname('content\\cm\\visibility');
+        /** @var \core_courseformat\output\local\content\cm\visibility $output */
+        $output = new $outputclass($this->format, $this->section, $this->mod);
+        return $output->get_menu_item();
+    }
+
+    /**
+     * Generates the duplicate item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_duplicate_item(): ?link {
+        if (
+            !has_all_capabilities(
+                ['moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'],
+                $this->coursecontext
+            )
+            || !plugin_supports('mod', $this->mod->modname, FEATURE_BACKUP_MOODLE2)
+            || !course_allowed_module($this->mod->get_course(), $this->mod->modname)
+        ) {
+                return null;
+        }
+
+        $url = new url($this->basemodurl, ['duplicate' => $this->mod->id]);
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('t/copy', ''),
+            text: get_string('duplicate'),
+            attributes: [
+                'class' => 'editing_duplicate',
+                'data-action' => 'cmDuplicate',
+                'data-sectionreturn' => $this->format->get_sectionnum(),
+                'data-id' => $this->mod->id,
+            ],
+        );
+    }
+
+    /**
+     * Generates the assign roles item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_assign_item(): ?link {
+        if (
+            !has_capability('moodle/role:assign', $this->modcontext)
+            || sectiondelegate::has_delegate_class('mod_'.$this->mod->modname)
+        ) {
+            return null;
+        }
+
+        return new link_secondary(
+            url: new url('/admin/roles/assign.php', ['contextid' => $this->modcontext->id]),
+            icon: new pix_icon('t/assignroles', ''),
+            text: get_string('assignroles', 'role'),
+            attributes: [
+                'class' => 'editing_assign',
+                'data-sectionreturn' => $this->format->get_sectionnum(),
+            ],
+        );
+    }
+
+    /**
+     * Generates the group mode item for a course module.
+     *
+     * @return subpanel|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_groupmode_item(): ?subpanel {
+        if (
+            !$this->format->show_groupmode($this->mod)
+            || $this->mod->coursegroupmodeforce
+        ) {
+            return null;
+        }
+
+        $groupmodeclass = $this->format->get_output_classname('content\\cm\\groupmode');
+        /** @var \core_courseformat\output\local\content\cm\groupmode $groupmode */
+        $groupmode = new $groupmodeclass($this->format, $this->section, $this->mod);
+        return new subpanel(
+            text: get_string('groupmode', 'group'),
+            subpanel: $groupmode->get_choice_list(),
+            attributes: ['class' => 'editing_groupmode'],
+            icon: new pix_icon('t/groupv', '', 'moodle', ['class' => 'iconsmall']),
+        );
+    }
+
+    /**
+     * Generates the delete item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_delete_item(): ?link {
+        if (!$this->canmanageactivities) {
+            return null;
+        }
+
+        $url = new url($this->basemodurl, ['delete' => $this->mod->id]);
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('t/delete', ''),
+            text: get_string('delete'),
+            attributes: [
+                'class' => 'editing_delete text-danger',
+                'data-action' => 'cmDelete',
+                'data-sectionreturn' => $this->format->get_sectionnum(),
+                'data-id' => $this->mod->id,
+            ],
+        );
+    }
+
+    /**
+     * Generate the action menu element for old course formats.
+     *
+     * This method is public in case some block needs to modify the menu before output it.
+     *
+     * @todo Remove this method in Moodle 6.0 (MDL-83530).
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return action_menu|null the activity action menu
+     */
+    private function get_action_menu_legacy(\renderer_base $output): ?action_menu {
+        $mod = $this->mod;
 
         $controls = $this->cm_control_items();
 
@@ -133,7 +437,7 @@ class controlmenu extends basecontrolmenu {
         $menu->set_owner_selector($ownerselector);
 
         foreach ($controls as $control) {
-            if ($control instanceof action_menu_link) {
+            if ($control instanceof link) {
                 $control->add_class('cm-edit-action');
             }
             $menu->add($control);
@@ -151,9 +455,17 @@ class controlmenu extends basecontrolmenu {
      * However, format plugins can override the method to add or remove elements
      * from the menu.
      *
+     * @deprecated since Moodle 5.0
+     * @todo Remove this method in Moodle 6.0 (MDL-83530).
      * @return array of edit control items
      */
+    #[\core\attribute\deprecated(
+        replacement: 'get_cm_control_items',
+        since: '5.0',
+        mdl: 'MDL-83527',
+    )]
     protected function cm_control_items() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         $format = $this->format;
         $mod = $this->mod;
         $sectionreturn = $format->get_sectionnum();

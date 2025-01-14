@@ -1,0 +1,7 @@
+issueNumber: MDL-83527
+notes:
+  format_topics:
+    - message: >-
+        The get_highlight_control in the section controlmenu class is now
+        deprecated. Use get_section_highlight_item instead
+      type: deprecated
