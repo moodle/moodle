@@ -65,6 +65,7 @@
                     @extend .fa-solid;
                     content: fa-content($fa-var-caret-right);
                     font-size: 1rem;
+                    padding-top: .2rem;
                     right: .75rem;
                     position: absolute;
                 }

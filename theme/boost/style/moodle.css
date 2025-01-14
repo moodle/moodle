@@ -38086,6 +38086,7 @@ div.editor_atto_toolbar button .icon {
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
   content: "\f0da";
   font-size: 1rem;
+  padding-top: 0.2rem;
   right: 0.75rem;
   position: absolute;
 }
