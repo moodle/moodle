@@ -62,6 +62,7 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
             if ($module->canmanage) {
                 // Only create the form if it's different from the one that has been sent.
                 $modform = $form;
+                $module->open = true;
                 if (empty($form) || !in_array($module->id, array_keys($modules))) {
                     $modform = new \core_completion_defaultedit_form(
                         null,
@@ -74,7 +75,7 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                             'forceuniqueid' => true,
                         ],
                     );
-                    $module->modulecollapsed = true;
+                    $module->open = false;
                 }
 
                 $moduleform = manager::get_module_form($module->name, $course);

@@ -42,46 +42,32 @@
             {{#issite}}{{#str}}defaultactivitycompletionsite, core_completion{{/str}}{{/issite}}
             {{^issite}}{{#str}}defaultactivitycompletioncourse, core_completion{{/str}}{{/issite}}
         </div>
-
     </div>
-
     <div class="modules pt-3">
         {{#modules}}
             {{#canmanage}}
-                <div class="defaultactivitycompletion-item d-flex"
-                    id="activitycompletion-{{id}}"
-                >
-                    <a data-toggle="collapse"
-                        href="#activitycompletioncollapse-{{id}}"
-                        class="icons-collapse-expand {{#modulecollapsed}}collapsed{{/modulecollapsed}}"
-                        aria-expanded="{{^modulecollapsed}}true{{/modulecollapsed}}{{#modulecollapsed}}false{{/modulecollapsed}}"
-                        role="button"
-                    >
-                        <span class="collapsed-icon icon-no-margin me-1"
-                            title="{{#str}} expandcategory, core, {{formattedname}} {{/str}}">
-                            <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
-                            <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
-                            <span class="visually-hidden">{{#str}} expandcategory, core, {{formattedname}} {{/str}}</span>
-                        </span>
-                        <span class="expanded-icon icon-no-margin me-1"
-                            title="{{#str}} collapsecategory, core, {{formattedname}} {{/str}}">
-                            {{#pix}} t/expandedchevron, core {{/pix}}
-                            <span class="visually-hidden">{{#str}} collapsecategory, core, {{formatedname}} {{/str}}</span>
-                        </span>
-                        <img class="activityicon ms-4" src="{{icon}}" alt="" aria-hidden="true">
-                        <h2 class="activityname ms-3 mb-0">{{{formattedname}}}</h2>
-                    </a>
-                </div>
-                <div id="activitycompletioncollapse-{{id}}"
-                    class="defaultactivitycompletion-item-content collapse multi-collapse {{^modulecollapsed}}show{{/modulecollapsed}}"
-                    aria-labelledby="activitycompletion-{{id}}" role="group"
+            {{<core/local/collapsable_section}}
+                {{$titlecontent}}
+                    <img class="activityicon ms-2" src="{{icon}}" alt="" aria-hidden="true">
+                    <span class="activityname ms-3 mb-0">{{{formattedname}}}</span>
+                {{/titlecontent}}
+                {{$elementid}}activitycompletioncollapse-{{id}}{{/elementid}}
+                {{$extraclasses}}defaultactivitycompletion-item{{/extraclasses}}
+                {{$expandlabel}}
+                    {{#str}} expandcategory, core, {{formattedname}} {{/str}}
+                {{/expandlabel}}
+                {{$collapselabel}}
+                    {{#str}} collapsecategory, core, {{formattedname}} {{/str}}
+                {{/collapselabel}}
+                {{$extras}}
                     data-region="activitycompletion-{{name}}"
-                >
+                {{/extras}}
+                {{$sectioncontent}}
                     <hr class="row">
                     <div class="py-3">{{{formhtml}}}</div>
-                </div>
-
-                <hr class="row">
+                {{/sectioncontent}}
+            {{/core/local/collapsable_section}}
+            <hr class="row">
             {{/canmanage}}
         {{/modules}}
     </div>
