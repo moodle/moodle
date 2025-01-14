@@ -101,7 +101,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_report() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function data_for_report_returns() {
         return new external_single_structure(array (

@@ -56,7 +56,7 @@ class external extends \core_external\external_api {
     /**
      * Returns result type for get_relevant_users function.
      *
-     * @return external_description Result type
+     * @return \core_external\external_description Result type
      */
     public static function get_relevant_users_returns() {
         return new external_multiple_structure(

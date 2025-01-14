@@ -515,7 +515,7 @@ function message_page_type_list(string $pagetype, ?context $parentcontext, ?cont
  * @param  string   $sort           the column name to order by including optionally direction
  * @param  int      $limitfrom      limit from
  * @param  int      $limitnum       limit num
- * @return external_description
+ * @return \core_external\external_description
  * @since  2.8
  */
 function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $read = MESSAGE_GET_READ,

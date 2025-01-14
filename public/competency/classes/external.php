@@ -44,6 +44,7 @@ use core_competency\external\user_competency_plan_exporter;
 use core_competency\external\user_evidence_competency_exporter;
 use core_competency\external\user_evidence_exporter;
 use core_external\external_api;
+use core_external\external_description;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;

@@ -26,6 +26,12 @@
     "extra": {
         "haspublicdir": true
     },
+    "scripts": {
+        "rector": "./vendor-bin/rector/vendor/rector/rector/bin/rector",
+        "post-install-cmd": [
+            "@php .rector/install.php"
+        ]
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {

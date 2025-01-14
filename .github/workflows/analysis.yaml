@@ -1,0 +1,42 @@
+name: Static Analysis
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - MOODLE_[0-9]+_STABLE
+    tags-ignore:
+      - v[0-9]+.[0-9]+.[0-9]+*
+  workflow_dispatch:
+    inputs:
+      extra_options:
+        description: Additional options to apply
+        required: false
+        default: ''
+
+jobs:
+  rector:
+    name: Rector
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - uses: ramsey/composer-install@v4
+
+      - name: Rector Cache
+        uses: actions/cache@v6
+        with:
+          path: ".rector/cache"
+          key: ${{ runner.os }}-rector-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-rector-
+
+      # Full Rector run.
+      # The `--dry-run` arg will make Rector fail if any changes are needed, without actually applying them.
+      - name: Run Rector
+        run: php ./vendor-bin/rector/vendor/rector/rector/bin/rector --ansi --dry-run ${{ inputs.extra_options }}
