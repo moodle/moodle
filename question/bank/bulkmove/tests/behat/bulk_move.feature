@@ -122,3 +122,21 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I should see "Question 1"
     And I should see "Question 2"
     And I should not see "Question 3"
+
+  @javascript
+  Scenario: Move a question from one bank category to another from the history page.
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as teacher1
+    And I choose "History" action for "First question" in the question bank
+    And I click on "First question" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Move to"
+    # Select a different category to move the questions into.
+    And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And I click on "Test questions 6" item in the autocomplete list
+    And I press "Move questions"
+    And I click on "Confirm" "button"
+    # Then go check that new category, as we'll still be on history page here.
+    And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 6"
+    # Confirm that selected questions are moved to selected category while unselected questions are not moved.
+    Then I should see "First question"
