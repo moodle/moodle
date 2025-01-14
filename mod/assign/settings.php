@@ -239,6 +239,7 @@ if ($ADMIN->fulltree) {
 
     $options = [
         ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL => new lang_string('attemptreopenmethod_manual', 'mod_assign'),
+        ASSIGN_ATTEMPT_REOPEN_METHOD_AUTOMATIC => new lang_string('attemptreopenmethod_automatic', 'mod_assign'),
         ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS => new lang_string('attemptreopenmethod_untilpass', 'mod_assign'),
     ];
     $name = new lang_string('attemptreopenmethod', 'mod_assign');
