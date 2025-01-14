@@ -1,0 +1,8 @@
+issueNumber: MDL-82913
+notes:
+  core_reportbuilder:
+    - message: >-
+        When the `select` filter contains upto two options only then the
+        operator field is removed, switching to a simpler value selection field
+        only (this may affect your Behat scenarios)
+      type: changed

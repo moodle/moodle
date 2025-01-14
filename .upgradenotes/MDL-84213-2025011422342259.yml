@@ -1,0 +1,7 @@
+issueNumber: MDL-84213
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `select` filter type is now stricter in it's filtering, in that it
+        will now discard values that aren't present in available filter options
+      type: changed

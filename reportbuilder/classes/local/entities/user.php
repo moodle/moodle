@@ -364,7 +364,7 @@ class user extends base {
 
         // If the column has corresponding filter, determine the value from its options.
         $options = $this->get_options_for($fieldname);
-        if ($options !== null && array_key_exists($value, $options)) {
+        if ($options !== null && $value !== null && array_key_exists($value, $options)) {
             return $options[$value];
         }
 
