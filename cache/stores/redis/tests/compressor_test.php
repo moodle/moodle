@@ -37,16 +37,26 @@ require_once(__DIR__.'/../lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class compressor_test extends \advanced_testcase {
+    /** @var null|\cachestore_redis */
+    protected ?cachestore_redis $store = null;
 
-    /**
-     * Test set up
-     */
+    #[\Override]
     public function setUp(): void {
         if (!cachestore_redis::are_requirements_met() || !defined('TEST_CACHESTORE_REDIS_TESTSERVERS')) {
             $this->markTestSkipped('Could not test cachestore_redis. Requirements are not met.');
         }
 
         parent::setUp();
+    }
+
+    #[\Override]
+    protected function tearDown(): void {
+        parent::tearDown();
+
+        if ($this->store !== null) {
+            $this->store->purge();
+            $this->store = null;
+        }
     }
 
     /**
@@ -64,6 +74,7 @@ final class compressor_test extends \advanced_testcase {
         $config['serializer'] = $serializer;
         $store = new cachestore_redis('Test', $config);
         $store->initialise($definition);
+        $this->store = $store;
 
         return $store;
     }
