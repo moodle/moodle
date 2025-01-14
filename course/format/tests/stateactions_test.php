@@ -318,10 +318,14 @@ final class stateactions_test extends \advanced_testcase {
         $expectedexception = ($format === 'singleactivity');
 
         $cms = ['cm0', 'cm1', 'cm2', 'cm3'];
+        // All sections and cms that the user can access to.
+        $usersections = ['section0', 'section1', 'section2', 'section3'];
+
         $studentcms = ['cm0'];
         if ($format === 'social') {
             $cms = ['initialcm0', 'cm0', 'cm1', 'cm2', 'cm3'];
             $studentcms = ['initialcm0', 'cm0'];
+            $usersections = ['section0']; // Social format only uses section 0 (for all users).
         }
 
         return [
@@ -335,7 +339,7 @@ final class stateactions_test extends \advanced_testcase {
                 ],
                 'expectedresults' => [
                     'course' => ['course'],
-                    'section' => ['section0', 'section1', 'section2', 'section3'],
+                    'section' => array_intersect($usersections, ['section0', 'section1', 'section2', 'section3']),
                     'cm' => $cms,
                 ],
                 'expectedexception' => $expectedexception,
@@ -349,7 +353,7 @@ final class stateactions_test extends \advanced_testcase {
                 ],
                 'expectedresults' => [
                     'course' => ['course'],
-                    'section' => ['section0', 'section1', 'section2', 'section3'],
+                    'section' => array_intersect($usersections, ['section0', 'section1', 'section2', 'section3']),
                     'cm' => $cms,
                 ],
                 'expectedexception' => $expectedexception,
@@ -363,7 +367,7 @@ final class stateactions_test extends \advanced_testcase {
                 ],
                 'expectedresults' => [
                     'course' => ['course'],
-                    'section' => ['section0', 'section1', 'section3'],
+                    'section' => array_intersect($usersections, ['section0', 'section1', 'section3']),
                     'cm' => $studentcms,
                 ],
                 'expectedexception' => $expectedexception,
@@ -392,6 +396,7 @@ final class stateactions_test extends \advanced_testcase {
         }
         if ($format === 'social') {
             $usercms = ['initialcm0', ...$usercms];
+            $usersections = ['section0']; // Social format only uses section 0 (for all users).
         }
 
         return [
@@ -519,6 +524,7 @@ final class stateactions_test extends \advanced_testcase {
         }
         if ($format === 'social') {
             $usercms = ['initialcm0', ...$usercms];
+            $usersections = ['section0']; // Social format only uses section 0 (for all users).
         }
 
         return [

@@ -111,8 +111,8 @@ final class state_test extends \advanced_testcase {
         $sections = $modinfo->get_section_info_all();
 
         foreach ($sections as $key => $section) {
-            $this->assertEquals($section->id, $result->course->sectionlist[$key]);
             if (!$issocialformat || $format == 'theunittest') {
+                $this->assertEquals($section->id, $result->course->sectionlist[$key]);
                 if (!empty($section->uservisible)) {
                     $sectionstate = new $sectionclass($courseformat, $section);
                     $result->section[$key] = $sectionstate->export_for_template($renderer);

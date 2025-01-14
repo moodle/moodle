@@ -170,4 +170,20 @@ class format_social extends core_courseformat\base {
         // Social ony uses one section.
         return 1;
     }
+
+    /**
+     * Returns if a specific section is visible to the current user.
+     *
+     * Formats can override this method to implement any special section logic.
+     * Social format does not use any other sections than section 0 and
+     * used this method to hide all other sections from the Move section activity.
+     *
+     * @param section_info $section the section modinfo
+     * @return bool;
+     */
+    #[\Override]
+    public function is_section_visible(section_info $section): bool {
+        $visible = parent::is_section_visible($section);
+        return $visible && $section->section == 0;
+    }
 }
