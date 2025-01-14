@@ -73,13 +73,33 @@ $string['filter_accessdate'] = 'Access date';
 $string['filter_accessdate_enabled'] = 'Enable access date filter';
 $string['filter_accessdate_enabled_help'] = 'Only show the tour to new users or users who have accessed the site recently.';
 $string['filter_category'] = 'Category';
-$string['filter_category_help'] = 'Show the tour on a page that is associated with a course in the selected category.';
-$string['filter_course'] = 'Courses';
-$string['filter_course_help'] = 'Show the tour on a page that is associated with the selected course.';
+$string['filter_category_help'] = "Show this tour on pages associated with courses in the selected categories.";
+$string['filter_course'] = 'Selected courses';
+$string['filter_course_error_course_selection'] = 'You must select at least one course';
+$string['filter_course_help'] = 'Depending on the value of the Courses filter:
+ 
+* **Selected courses only**: Show this tour on pages associated with the selected courses.
+* **All courses except selected**: Do not show this tour on pages associated with the selected courses.';
+$string['filter_course_operator'] = 'Courses';
+$string['filter_course_operator_all'] = 'All courses';
+$string['filter_course_operator_except'] = 'All courses except selected';
+$string['filter_course_operator_help'] = "
+The tour can be configured to appear only on certain courses.  
+
+* **All courses**: Show this tour regardless of course.  
+* **Selected courses only**: Show this tour only on pages associated with the course(s) selected below.  
+* **All courses except selected**: Do not show this tour on pages associated with the course(s) selected below.";
+$string['filter_course_operator_select'] = 'Selected courses only';
 $string['filter_courseformat'] = 'Course format';
 $string['filter_courseformat_help'] = 'Show the tour on a page that is associated with a course using the selected course format.';
 $string['filter_cssselector'] = 'CSS selector';
 $string['filter_cssselector_help'] = 'Only show the tour when the specified CSS selector is found on the page.';
+$string['filter_exclude_category'] = 'Exclude categories';
+$string['filter_exclude_category_help'] = 'Do not show this tour on pages associated with the selected course categories.
+
+If you select a parent category, the related sub-categories will automatically be selected and cannot be selected individually.
+
+Unselect the parent category to select sub-categories again.';
 $string['filter_header'] = 'Tour filters';
 $string['filter_help'] = 'Select the conditions under which the tour will be shown. All of the filters must match for a tour to be shown to a user.';
 $string['filter_date_account_creation'] = 'User account creation date within';

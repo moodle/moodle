@@ -113,4 +113,16 @@ class edittour extends \moodleform {
 
         $this->add_action_buttons();
     }
+
+    #[\Override]
+    public function validation($data, $files): array {
+        $errors = parent::validation($data, $files);
+
+        // Loop through each filter class and merge any validation errors.
+        foreach (helper::get_all_filters() as $filterclass) {
+            $errors = array_merge($errors, $filterclass::validate_form($data, $files));
+        }
+
+        return $errors;
+    }
 }

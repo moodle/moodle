@@ -123,4 +123,17 @@ abstract class base {
 
         $tour->set_filter_values($filtername, $newvalue);
     }
+
+    /**
+     * Default validation for filter forms.
+     * Returns an empty array by default if not overridden.
+     *
+     * @param array $data  The submitted form data.
+     * @param array $files The files submitted with the form.
+     * @return array       The errors array.
+     */
+    public static function validate_form(array $data, array $files): array {
+        // Default implementation, returns no errors.
+        return [];
+    }
 }
