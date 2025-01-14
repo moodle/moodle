@@ -86,3 +86,23 @@ Feature: Use the qbank plugin manager page for question history
     And I click on "Continue" "button"
     And I should see "Question bank"
     And I should not see "First question"
+
+  Scenario: Resetting the columns in the question history view will return it to its default setting.
+    Given the following "user preferences" exist:
+      | user  | preference                       | value                                                           |
+      | admin | qbank_columnsortorder_hiddencols | qbank_usage\question_last_used_column-question_last_used_column |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name            | questiontext               |
+      | Test questions   | truefalse | Second question | Answer the second question |
+    When I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And "Last used" "qbank_columnsortorder > column header" should not exist
+    Then I should see "First question"
+    And I should see "Second question"
+    And I choose "History" action for "First question" in the question bank
+    And "First question" "table_row" should exist
+    And "Second question" "table_row" should not exist
+    And "Last used" "qbank_columnsortorder > column header" should not exist
+    And I follow "Reset columns"
+    And "Last used" "qbank_columnsortorder > column header" should exist
+    And "First question" "table_row" should exist
+    And "Second question" "table_row" should not exist
