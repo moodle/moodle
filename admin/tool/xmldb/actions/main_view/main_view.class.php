@@ -56,7 +56,6 @@ class main_view extends XMLDBAction {
             'checkdefaults' => 'tool_xmldb',
             'checkforeignkeys' => 'tool_xmldb',
             'checkbigints' => 'tool_xmldb',
-            'checkoraclesemantics' => 'tool_xmldb',
             'reconcilefiles' => 'tool_xmldb',
             'doc' => 'tool_xmldb',
             'filemodifiedoutfromeditor' => 'tool_xmldb',
@@ -107,10 +106,6 @@ class main_view extends XMLDBAction {
         // The check bigints button (only for MySQL and PostgreSQL) MDL-11038a
         if ($DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres') {
             $b .= '&nbsp;<a href="index.php?action=check_bigints&amp;sesskey=' . sesskey() . '">[' . $this->str['checkbigints'] . ']</a>';
-        }
-        // The check semantics button (only for Oracle) MDL-29416
-        if ($DB->get_dbfamily() == 'oracle') {
-            $b .= '&nbsp;<a href="index.php?action=check_oracle_semantics&amp;sesskey=' . sesskey() . '">[' . $this->str['checkoraclesemantics'] . ']</a>';
         }
         $b .= '&nbsp;<a href="index.php?action=check_foreign_keys&amp;sesskey=' . sesskey() . '">[' . $this->str['checkforeignkeys'] . ']</a>';
         $b .= '</p>';

@@ -532,7 +532,7 @@ class analysis {
                     // Insert from the beginning.
                     $remaining = array_splice($newcalculations, $batchsize);
 
-                    // Sorry mssql and oracle, this will be slow.
+                    // Sorry mssql, this will be slow.
                     $DB->insert_records('analytics_indicator_calc', $newcalculations);
                     $newcalculations = $remaining;
                 }

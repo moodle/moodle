@@ -733,21 +733,17 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
 
     $i = 0;
 
-    // Thanks Oracle for your non-ansi concat and type limits in coalesce. MDL-29912
-    if ($DB->get_dbfamily() == 'oracle') {
-        $concat = "(c.summary|| ' ' || c.fullname || ' ' || c.idnumber || ' ' || c.shortname)";
-    } else {
-        $concat = $DB->sql_concat("COALESCE(c.summary, '')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
-    }
+    $concat = $DB->sql_concat("COALESCE(c.summary, '')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
 
     foreach ($searchterms as $searchterm) {
         $i++;
 
-        $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
-                   /// will use it to simulate the "-" operator with LIKE clause
+        // Initially we aren't going to perform NOT LIKE searches, only MSSQL
+        // will use it to simulate the "-" operator with LIKE clause.
+        $NOT = false;
 
-    /// Under Oracle and MSSQL, trim the + and - operators and perform
-    /// simpler LIKE (or NOT LIKE) queries
+        // Under MSSQL, trim the + and - operators and perform
+        // simpler LIKE (or NOT LIKE) queries.
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
                 $NOT = true;
@@ -1107,7 +1103,7 @@ function get_my_remotecourses($userid=0) {
         $userid = $USER->id;
     }
 
-    // we can not use SELECT DISTINCT + text field (summary) because of MS SQL and Oracle, subselect used therefore
+    // We can not use SELECT DISTINCT + text field (summary) because of MS SQL, subselect used therefore.
     $sql = "SELECT c.id, c.remoteid, c.shortname, c.fullname,
                    c.hostid, c.summary, c.summaryformat, c.categoryname AS cat_name,
                    h.name AS hostname

@@ -454,6 +454,7 @@ class provider implements
 
         // Oracle does not support UNION on text fields, therefore we must get the itemdescription
         // and valuevalue after doing the union by joining on the result.
+        // TODO: Optimise the query, as Oracle-specific constraints no longer apply.
         $sql = "
             SELECT q.*,
 

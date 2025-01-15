@@ -102,7 +102,7 @@ Feature: View activity completion in the SCORM activity
     And I wait until "Score: 33" "text" exists
     And I switch to the main frame
     # We need to get some time till the last item is marked as done (or it won't be ready in slow databases).
-    # This could be a pause of a few seconds (working ok in super-slow oracle docker database), but re-visiting
+    # This could be a pause of a few seconds, but re-visiting
     # any of the pages seems to  be doing the work too under that very same slow environment.
     And I click on "Par?" "list_item"
     And I switch to "scorm_object" iframe

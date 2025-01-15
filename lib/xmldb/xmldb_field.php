@@ -48,7 +48,6 @@ class xmldb_field extends xmldb_object {
 
     /**
      * Note:
-     *  - Oracle: VARCHAR2 has a limit of 4000 bytes
      *  - SQL Server: NVARCHAR has a limit of 40000 chars
      *  - MySQL: VARCHAR 65,535 chars
      *  - PostgreSQL: no limit

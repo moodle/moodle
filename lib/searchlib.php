@@ -422,7 +422,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
         $type = $parsetree[$i]->getType();
         $value = $parsetree[$i]->getValue();
 
-    /// Under Oracle and MSSQL, transform TOKEN searches into STRING searches and trim +- chars
+        // Under MSSQL, transform TOKEN searches into STRING searches and trim +- chars.
         if (!$DB->sql_regex_supported()) {
             $value = trim($value, '+-');
             if ($type == TOKEN_EXACT) {

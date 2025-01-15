@@ -573,150 +573,6 @@ EOD;
         $this->assertSame(strtok('?'), 'b');
     }
 
-    public function test_tweak_param_names(): void {
-
-        // Note the tweak_param_names() method is only available in the oracle driver,
-        // hence we look for expected results indirectly, by testing various DML methods.
-        // with some "extreme" conditions causing the tweak to happen.
-        $DB = $this->tdb;
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        // Prepare some long column names.
-        $intnearmax = str_pad('long_int_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
-        $decnearmax = str_pad('long_dec_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
-        $strnearmax = str_pad('long_str_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
-        $intmax = str_pad('long_int_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
-        $decmax = str_pad('long_dec_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
-        $strmax = str_pad('long_str_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        // Add some correct columns with \xmldb_field::NAME_MAX_LENGTH minus 1 chars in the name.
-        $table->add_field($intnearmax, XMLDB_TYPE_INTEGER, '10');
-        $table->add_field($decnearmax, XMLDB_TYPE_NUMBER, '10,2');
-        $table->add_field($strnearmax, XMLDB_TYPE_CHAR, '100');
-        // Add some correct columns with xmldb_table::NAME_MAX_LENGTH chars in the name.
-        $table->add_field($intmax, XMLDB_TYPE_INTEGER, '10');
-        $table->add_field($decmax, XMLDB_TYPE_NUMBER, '10,2');
-        $table->add_field($strmax, XMLDB_TYPE_CHAR, '100');
-
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        $dbman->create_table($table);
-
-        $this->assertTrue($dbman->table_exists($tablename));
-
-        // Test insert record.
-        $rec1 = new \stdClass();
-        $rec1->{$intnearmax} = 62;
-        $rec1->{$decnearmax} = 62.62;
-        $rec1->{$strnearmax} = '62';
-        $rec1->{$intmax} = 63;
-        $rec1->{$decmax} = 63.63;
-        $rec1->{$strmax} = '63';
-
-        // Insert_record().
-        $rec1->id = $DB->insert_record($tablename, $rec1);
-        $this->assertEquals($rec1, $DB->get_record($tablename, array('id' => $rec1->id)));
-
-        // Update_record().
-        $DB->update_record($tablename, $rec1);
-        $this->assertEquals($rec1, $DB->get_record($tablename, array('id' => $rec1->id)));
-
-        // Set_field().
-        $rec1->{$intnearmax} = 620;
-        $DB->set_field($tablename, $intnearmax, $rec1->{$intnearmax},
-            array('id' => $rec1->id, $intnearmax => 62));
-        $rec1->{$decnearmax} = 620.62;
-        $DB->set_field($tablename, $decnearmax, $rec1->{$decnearmax},
-            array('id' => $rec1->id, $decnearmax => 62.62));
-        $rec1->{$strnearmax} = '620';
-        $DB->set_field($tablename, $strnearmax, $rec1->{$strnearmax},
-            array('id' => $rec1->id, $strnearmax => '62'));
-        $rec1->{$intmax} = 630;
-        $DB->set_field($tablename, $intmax, $rec1->{$intmax},
-            array('id' => $rec1->id, $intmax => 63));
-        $rec1->{$decmax} = 630.63;
-        $DB->set_field($tablename, $decmax, $rec1->{$decmax},
-            array('id' => $rec1->id, $decmax => 63.63));
-        $rec1->{$strmax} = '630';
-        $DB->set_field($tablename, $strmax, $rec1->{$strmax},
-            array('id' => $rec1->id, $strmax => '63'));
-        $this->assertEquals($rec1, $DB->get_record($tablename, array('id' => $rec1->id)));
-
-        // Delete_records().
-        $rec2 = $DB->get_record($tablename, array('id' => $rec1->id));
-        $rec2->id = $DB->insert_record($tablename, $rec2);
-        $this->assertEquals(2, $DB->count_records($tablename));
-        $DB->delete_records($tablename, (array) $rec2);
-        $this->assertEquals(1, $DB->count_records($tablename));
-
-        // Get_recordset().
-        $rs = $DB->get_recordset($tablename, (array) $rec1);
-        $iterations = 0;
-        foreach ($rs as $rec2) {
-            $iterations++;
-        }
-        $rs->close();
-        $this->assertEquals(1, $iterations);
-        $this->assertEquals($rec1, $rec2);
-
-        // Get_records().
-        $recs = $DB->get_records($tablename, (array) $rec1);
-        $this->assertCount(1, $recs);
-        $this->assertEquals($rec1, reset($recs));
-
-        // Get_fieldset_select().
-        $select = "id = :id AND
-                   $intnearmax = :$intnearmax AND
-                   $decnearmax = :$decnearmax AND
-                   $strnearmax = :$strnearmax AND
-                   $intmax = :$intmax AND
-                   $decmax = :$decmax AND
-                   $strmax = :$strmax";
-        $fields = $DB->get_fieldset_select($tablename, $intnearmax, $select, (array)$rec1);
-        $this->assertCount(1, $fields);
-        $this->assertEquals($rec1->{$intnearmax}, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, $decnearmax, $select, (array)$rec1);
-        $this->assertEquals($rec1->{$decnearmax}, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, $strnearmax, $select, (array)$rec1);
-        $this->assertEquals($rec1->{$strnearmax}, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, $intmax, $select, (array)$rec1);
-        $this->assertEquals($rec1->{$intmax}, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, $decmax, $select, (array)$rec1);
-        $this->assertEquals($rec1->{$decmax}, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, $strmax, $select, (array)$rec1);
-        $this->assertEquals($rec1->{$strmax}, reset($fields));
-
-        // Overlapping placeholders (progressive str_replace).
-        $nearmaxparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
-        $maxparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH, 'x');
-        $overlapselect = "id = :p AND
-                   $intnearmax = :param1 AND
-                   $decnearmax = :param2 AND
-                   $strnearmax = :{$nearmaxparam} AND
-                   $intmax = :{$maxparam} AND
-                   $decmax = :param_ AND
-                   $strmax = :param__";
-        $overlapparams = array(
-            'p' => $rec1->id,
-            'param1' => $rec1->{$intnearmax},
-            'param2' => $rec1->{$decnearmax},
-            $nearmaxparam => $rec1->{$strnearmax},
-            $maxparam => $rec1->{$intmax},
-            'param_' => $rec1->{$decmax},
-            'param__' => $rec1->{$strmax});
-        $recs = $DB->get_records_select($tablename, $overlapselect, $overlapparams);
-        $this->assertCount(1, $recs);
-        $this->assertEquals($rec1, reset($recs));
-
-        // Execute().
-        $DB->execute("DELETE FROM {{$tablename}} WHERE $select", (array)$rec1);
-        $this->assertEquals(0, $DB->count_records($tablename));
-    }
-
     public function test_get_tables(): void {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
@@ -4084,8 +3940,8 @@ EOD;
         $DB->insert_record($tablename, array('name'=>'aaaa', 'description'=>'aaaacccccccccccccccccc'));
         $DB->insert_record($tablename, array('name'=>'xxxx',   'description'=>'123456789a123456789b123456789c123456789d'));
 
-        // Only some supported databases truncate TEXT fields for comparisons, currently MSSQL and Oracle.
-        $dbtruncatestextfields = ($DB->get_dbfamily() == 'mssql' || $DB->get_dbfamily() == 'oracle');
+        // Only some supported databases truncate TEXT fields for comparisons, currently MSSQL.
+        $dbtruncatestextfields = ($DB->get_dbfamily() == 'mssql');
 
         if ($dbtruncatestextfields) {
             // Ensure truncation behaves as expected.
@@ -4162,7 +4018,7 @@ EOD;
             if ($family === 'mysql' or $family === 'mssql') {
                 $this->fail("Unique index is accent insensitive, this may cause problems for non-ascii languages. This is usually caused by accent insensitive default collation.");
             } else {
-                // This should not happen, PostgreSQL and Oracle do not support accent insensitive uniqueness.
+                // This should not happen, PostgreSQL does not support accent insensitive uniqueness.
                 $this->fail("Unique index is accent insensitive, this may cause problems for non-ascii languages.");
             }
             throw($e);
@@ -4414,7 +4270,8 @@ EOD;
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        // Regarding 1300 length - all drivers except Oracle support larger values (2K+), but this hits a limit on Oracle.
+        // Regarding the 1300 length - all supported drivers allow larger values (2K+),
+        // previously limited by Oracle, which no longer applies as Oracle support has been removed.
         $DB->insert_record($tablename, [
             'charshort' => 'áéíóú',
             'charlong' => str_repeat('A', 512),
@@ -5070,9 +4927,9 @@ EOD;
         $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe', 'name'=>'abc'));
 
         // Test grouping by expressions in the query. MDL-26819. Note that there are 4 ways:
-        // - By column position (GROUP by 1) - Not supported by mssql & oracle
+        // - By column position (GROUP by 1) - Not supported by mssql
         // - By column name (GROUP by course) - Supported by all, but leading to wrong results
-        // - By column alias (GROUP by casecol) - Not supported by mssql & oracle
+        // - By column alias (GROUP by casecol) - Not supported by mssql
         // - By complete expression (GROUP BY CASE ...) - 100% cross-db, this test checks it
         $sql = "SELECT (CASE WHEN course = 3 THEN 1 ELSE 0 END) AS casecol,
                        COUNT(1) AS countrecs,

@@ -188,7 +188,7 @@ abstract class moodle_database {
      *
      * The loaded class is within lib/dml directory and of the form: $type.'_'.$library.'_moodle_database'
      *
-     * @param string $type Database driver's type. (eg: mysqli, pgsql, mssql, sqldrv, oci, etc.)
+     * @param string $type Database driver's type. (eg: mysqli, pgsql, mssql, sqldrv, etc.)
      * @param string $library Database driver's library (native, pdo, etc.)
      * @param bool $external True if this is an external database.
      * @return ?moodle_database driver object or null if error, for example of driver object see {@see mysqli_native_moodle_database}
@@ -219,14 +219,14 @@ abstract class moodle_database {
     /**
      * Returns the database family type. (This sort of describes the SQL 'dialect')
      * Note: can be used before connect()
-     * @return string The db family name (mysql, postgres, mssql, oracle, etc.)
+     * @return string The db family name (mysql, postgres, mssql, etc.)
      */
     abstract public function get_dbfamily();
 
     /**
      * Returns a more specific database driver type
      * Note: can be used before connect()
-     * @return string The db type mysqli, pgsql, oci, mssql, sqlsrv
+     * @return string The db type mysqli, pgsql, mssql, sqlsrv
      */
     abstract protected function get_dbtype();
 

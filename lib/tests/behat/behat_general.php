@@ -2137,7 +2137,7 @@ EOF;
     }
 
     /**
-     * Checks if database family used is using one of the specified, else skip. (mysql, postgres, mssql, oracle, etc.)
+     * Checks if database family used is using one of the specified, else skip. (mysql, postgres, mssql, etc.)
      *
      * @Given /^database family used is one of the following:$/
      * @param TableNode $databasefamilies list of database.

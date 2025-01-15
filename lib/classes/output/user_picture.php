@@ -136,7 +136,7 @@ class user_picture implements renderable {
      *
      * @param string $tableprefix name of database table prefix in query
      * @param null|array $extrafields extra fields to be included in result
-     *      Do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE.
+     *      Do not include TEXT columns because it would break SELECT DISTINCT in MSSQL.
      * @param string $idalias alias of id field
      * @param string $fieldprefix prefix to add to all columns in their aliases, does not apply to 'id'
      * @return string

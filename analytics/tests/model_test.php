@@ -525,7 +525,7 @@ final class model_test extends \advanced_testcase {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
-        // 10000 should be enough to make oracle and mssql fail, if we want pgsql to fail we need around 70000
+        // 10000 should be enough to make mssql fail, if we want pgsql to fail we need around 70000
         // users, that is a few minutes just to create the users.
         $nusers = 10000;
 

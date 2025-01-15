@@ -92,7 +92,7 @@ final class qformat_xml_import_export_test extends advanced_testcase {
         $xml = preg_replace('~(?<=<!-- question: )([0-9]+)(?=  -->)~', '0', $xml);
 
         // Deal with how different databases output numbers. Only match when only thing in a tag.
-        $xml = preg_replace("~>.0000000<~", '>0<', $xml); // How Oracle outputs 0.0000000.
+        $xml = preg_replace("~>.0000000<~", '>0<', $xml); // Needed by MS SQL Server database.
         $xml = preg_replace("~(\.(:?[0-9]*[1-9])?)0*<~", '$1<', $xml); // Other cases of trailing 0s
         $xml = preg_replace("~([0-9]).<~", '$1<', $xml); // Stray . in 1. after last step.
 

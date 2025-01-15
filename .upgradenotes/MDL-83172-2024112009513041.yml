@@ -1,0 +1,5 @@
+issueNumber: MDL-83172
+notes:
+  core:
+    - message: Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
+      type: removed

@@ -353,7 +353,7 @@ function behat_is_test_site() {
  * Fix variables for parallel behat testing.
  * - behat_wwwroot = behat_wwwroot{behatrunprocess}
  * - behat_dataroot = behat_dataroot{behatrunprocess}
- * - behat_prefix = behat_prefix.{behatrunprocess}_ (For oracle it will be firstletter of prefix and behatrunprocess)
+ * - behat_prefix = behat_prefix.{behatrunprocess}
  **/
 function behat_update_vars_for_process() {
     global $CFG;
@@ -384,14 +384,8 @@ function behat_update_vars_for_process() {
         }
 
         // Set behat_prefix for db, just suffix run process number, to avoid max length exceed.
-        // For oracle only 2 letter prefix is possible.
         // NOTE: This will not work for parallel process > 9.
-        if ($CFG->dbtype === 'oci') {
-            $CFG->behat_prefix = substr($CFG->behat_prefix, 0, 1);
-            $CFG->behat_prefix .= "{$behatrunprocess}";
-        } else {
-            $CFG->behat_prefix .= "{$behatrunprocess}_";
-        }
+        $CFG->behat_prefix .= "{$behatrunprocess}_";
 
         if (!empty($CFG->behat_parallel_run[$behatrunprocess - 1])) {
             // Override allowed config vars.

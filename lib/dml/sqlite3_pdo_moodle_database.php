@@ -50,7 +50,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     /**
      * Returns database family type - describes SQL dialect
      * Note: can be used before connect()
-     * @return string db family name (mysql, postgres, mssql, oracle, etc.)
+     * @return string db family name (mysql, postgres, mssql, etc.)
      */
     public function get_dbfamily() {
         return 'sqlite';
@@ -59,7 +59,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     /**
      * Returns more specific database driver type
      * Note: can be used before connect()
-     * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
+     * @return string db type mysqli, pgsql, mssql, sqlsrv
      */
     protected function get_dbtype() {
         return 'sqlite3';

@@ -129,6 +129,7 @@ class qbank_helper {
              -- version we could consider digging the old code out of git history from
              -- just before the commit that added this comment.
              -- For relevant question_bank_entries, this gets the latest non-draft slot number.
+             -- TODO: Optimise the query, as Oracle-specific constraints no longer apply.
              LEFT JOIN (
                    SELECT lv.questionbankentryid,
                           MAX(CASE WHEN lv.status <> :draft THEN lv.version END) AS usableversion,

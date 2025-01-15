@@ -800,7 +800,6 @@ function quiz_update_open_attempts(array $conditions) {
     * Each database handles updates with inner joins differently:
     *  - mysql does not allow a FROM clause
     *  - postgres and mssql allow FROM but handle table aliases differently
-    *  - oracle requires a subquery
     *
     * Different code for each database.
     */
@@ -827,7 +826,7 @@ function quiz_update_open_attempts(array $conditions) {
                         JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
                        WHERE $attemptselect";
     } else {
-        // oracle, sqlite and others
+        // Sqlite and others.
         $updatesql = "UPDATE {quiz_attempts} quiza
                          SET timecheckstate = (
                            SELECT $timecheckstatesql

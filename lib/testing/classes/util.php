@@ -393,20 +393,6 @@ abstract class testing_util {
             }
             $rs->close();
             return $empties;
-        } else if ($dbfamily === 'oracle') {
-            $sequences = self::get_sequencenames();
-            $sequences = array_map('strtoupper', $sequences);
-            $lookup = array_flip($sequences);
-            $empties = [];
-            [$seqs, $params] = $DB->get_in_or_equal($sequences);
-            $sql = "SELECT sequence_name FROM user_sequences WHERE last_number = 1 AND sequence_name $seqs";
-            $rs = $DB->get_recordset_sql($sql, $params);
-            foreach ($rs as $seq) {
-                $table = $lookup[$seq->sequence_name];
-                $empties[$table] = $table;
-            }
-            $rs->close();
-            return $empties;
         } else {
             return [];
         }
@@ -527,48 +513,6 @@ abstract class testing_util {
             }
             if ($queries) {
                 $DB->change_database_structure(implode(';', $queries));
-            }
-        } else if ($dbfamily === 'oracle') {
-            $sequences = self::get_sequencenames();
-            $sequences = array_map('strtoupper', $sequences);
-            $lookup = array_flip($sequences);
-
-            $current = [];
-            [$seqs, $params] = $DB->get_in_or_equal($sequences);
-            $sql = "SELECT sequence_name, last_number FROM user_sequences WHERE sequence_name $seqs";
-            $rs = $DB->get_recordset_sql($sql, $params);
-            foreach ($rs as $seq) {
-                $table = $lookup[$seq->sequence_name];
-                $current[$table] = $seq->last_number;
-            }
-            $rs->close();
-
-            foreach ($data as $table => $records) {
-                // If table is not modified then no need to do anything.
-                if (!isset($updatedtables[$table])) {
-                    continue;
-                }
-                if (isset($structure[$table]['id']) && $structure[$table]['id']->auto_increment) {
-                    $lastrecord = end($records);
-                    if ($lastrecord) {
-                        $nextid = $lastrecord->id + 1;
-                    } else {
-                        $nextid = 1;
-                    }
-                    if (!isset($current[$table])) {
-                        $DB->get_manager()->reset_sequence($table);
-                    } else if ($nextid == $current[$table]) {
-                        continue;
-                    }
-                    // Reset as fast as possible.
-                    // Alternatively we could use http://stackoverflow.com/questions/51470/how-do-i-reset-a-sequence-in-oracle.
-                    $seqname = $sequences[$table];
-                    $cachesize = $DB->get_manager()->generator->sequence_cache_size;
-                    $DB->change_database_structure("DROP SEQUENCE $seqname");
-                    $DB->change_database_structure(
-                        "CREATE SEQUENCE $seqname START WITH $nextid INCREMENT BY 1 NOMAXVALUE CACHE $cachesize",
-                    );
-                }
             }
         } else {
             // Note: does mssql support any kind of faster reset?
