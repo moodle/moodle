@@ -229,6 +229,12 @@ final class users_test extends core_reportbuilder_testcase {
                 'user:fullname_operator' => text::CONTAINS,
                 'user:fullname_value' => 'Alfie',
             ], false],
+            'Filter picture' => ['user:picture', [
+                'user:picture_operator' => boolean_select::NOT_CHECKED,
+            ], true],
+            'Filter picture (no match)' => ['user:picture', [
+                'user:picture_operator' => boolean_select::CHECKED,
+            ], false],
             'Filter firstname' => ['user:firstname', [
                 'user:firstname_operator' => text::IS_EQUAL_TO,
                 'user:firstname_value' => 'Zoe',
