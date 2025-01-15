@@ -132,6 +132,20 @@ form.mform fieldset#id_previewareaheader .group1 {
     background-color: #fff;
 }
 
+.que.ddimageortext .transparent .dropzones > img {
+    border: none;
+}
+
+.que.ddimageortext .transparent .dropzones > img:hover {
+    border: 1px solid #000;
+}
+
+.que.ddimageortext .transparent img:not(.dropbackground):hover,
+.que.ddimageortext .droparea.transparent .dropzone,
+.que.ddimageortext .droparea.transparent .dropzone + img {
+    background-color: transparent;
+}
+
 .que.ddimageortext .group2,
 form.mform fieldset#id_previewareaheader .group2 {
     background-color: #b0c4de;

@@ -47,6 +47,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $dragids = array(); // Drag no -> dragid.
         if (!empty($question->options)) {
             $question->shuffleanswers = $question->options->shuffleanswers;
+            $question->dropzonevisibility = $question->options->dropzonevisibility;
             $question->drags = array();
             foreach ($question->options->drags as $drag) {
                 $dragindex = $drag->no - 1;
@@ -168,6 +169,16 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $dropzoneitem = array();
 
         $grouparray = array();
+
+        $options = [
+            0 => get_string('dropzonevisibility_showoption', 'qtype_ddimageortext'),
+            1 => get_string('dropzonevisibility_hideoption', 'qtype_ddimageortext'),
+        ];
+
+        $mform->addElement('select', 'dropzonevisibility',
+            get_string('dropzonevisibility', 'qtype_ddimageortext'), $options);
+        $mform->setDefault('dropzonevisibility', $this->get_default_value('dropzonevisibility', 0));
+        $mform->addHelpButton('dropzonevisibility', 'dropzonevisibility', 'qtype_ddimageortext');
         $grouparray[] = $mform->createElement('text', 'xleft',
                                                 get_string('xleft', 'qtype_ddimageortext'),
                                                 array('size' => 5, 'class' => 'tweakcss'));

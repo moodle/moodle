@@ -133,6 +133,8 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             }
 
             var numDrops = dragDropToImageForm.form.getFormValue('nodropzone', []);
+            var dropzonevisibility = dragDropToImageForm.form.getFormValue('dropzonevisibility', []);
+            var dropzonevisibilitystyle = dropzonevisibility === '1' ? 'background: transparent;' : '';
             for (var dropNo = 0; dropNo < numDrops; dropNo++) {
                 var dragNo = dragDropToImageForm.form.getFormValue('drops', [dropNo, 'choice']);
                 if (dragNo === '0') {
@@ -148,7 +150,8 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
                     }
                     // Althoug these are previews of drops, we also add the class name 'drag',
                     dropZoneHolder.append('<img class="droppreview group' + group + ' drop' + dropNo +
-                            '" src="' + imgUrl + '" alt="' + label + '" data-drop-no="' + dropNo + '">');
+                        '" src="' + imgUrl + '" alt="' + label + '" data-drop-no="' + dropNo +
+                        '" style="' + dropzonevisibilitystyle + '" >');
 
                 } else if (label !== '') {
                     dropZoneHolder.append('<div class="droppreview group' + group + ' drop' + dropNo +
@@ -288,6 +291,10 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             // Changes to Drop zones section: left, top and drag item.
             $('fieldset#id_dropzoneheader').on('change input', 'input, select', function(e) {
                 var input = $(e.target).closest('select, input');
+                if (input.attr('id') === 'id_dropzonevisibility') {
+                    return;
+                }
+
                 if (input.is('select')) {
                     dragDropToImageForm.createDropZones();
                 } else {
@@ -302,6 +309,15 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
 
             $(window).on('resize', function() {
                 dragDropToImageForm.updateDropZones();
+            });
+
+            $('#id_dropzonevisibility').on('change', function() {
+                let selectedvalue = $(this).val();
+                if (selectedvalue === "1") {
+                    $('.droppreview').css('background', 'transparent');
+                } else if (selectedvalue === "0") {
+                    $('.droppreview').css('background', '');
+                }
             });
         },
 
@@ -373,7 +389,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
                 return false; // Infinite, so can't be used up.
             }
 
-            return $('fieldset#id_dropzoneheader select').filter(function(i, selectNode) {
+            return $('fieldset#id_dropzoneheader select[name^="drops"]').filter(function(i, selectNode) {
                 return parseInt($(selectNode).val()) === value;
             }).length !== 0;
         },

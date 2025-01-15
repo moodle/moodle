@@ -37,6 +37,7 @@ Feature: Test duplicating a quiz containing a drag and drop onto image question
       | General feedback                    | <p>More information about the major features of the Earth's surface can be found in Block 3, Section 6.2.</p> |
       | Default mark                        | 1                                                    |
       | Shuffle                             | 0                                                    |
+      | id_dropzonevisibility               | 0                                                    |
       | id_drags_0_dragitemtype             | Draggable text                                       |
       | id_drags_0_draggroup                | 1                                                    |
       | id_draglabel_0                      | island<br/>arc                                       |
