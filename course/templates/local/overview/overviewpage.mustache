@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/local/overview/overviewpage
+
+    Course activity overview page template.
+
+    Example context (json):
+    {
+        "elements": [
+            {
+                "name": "Activity 1",
+                "shortname": "forum",
+                "icon": "<i class='icon fa fa-graduation-cap'></i>",
+                "overviewurl": "https://moodle.org"
+            },
+            {
+                "name": "Activity 2",
+                "shortname": "activity2",
+                "icon": "<i class='icon fa fa-graduation-cap'></i>",
+                "overviewurl": "https://moodle.org"
+            }
+        ],
+        "contextid": 1,
+        "courseid": 1
+    }
+}}
+<div id="course-overview-page">
+    {{#elements}}
+    {{<core/local/collapsable_section}}
+        {{$titlecontent}}{{{icon}}} {{name}}{{/titlecontent}}
+        {{$elementid}}{{shortname}}_overview{{/elementid}}
+        {{$extraclasses}}border border-1 rounded-3 p-3{{/extraclasses}}
+        {{$sectioncontent}}
+            <div class="d-flex flex-column justify-content-between">
+                {{#notification}}
+                    {{>core/notification_info}}
+                {{/notification}}
+                <div>
+                    <a
+                        class="btn btn-outline-secondary"
+                        href="{{overviewurl}}"
+                        role="button"
+                    >
+                        {{#str}} goto_overview, course, {{name}} {{/str}}
+                        <span class="ms-2">{{#pix}} i/arrow-right, core {{/pix}}</span>
+                    </a>
+                </div>
+            </div>
+        {{/sectioncontent}}
+    {{/core/local/collapsable_section}}
+    {{/elements}}
+</div>

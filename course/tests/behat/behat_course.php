@@ -205,6 +205,9 @@ class behat_course extends behat_base {
                     throw new Exception("The specified section $identifier does not exist.");
                 }
                 return new moodle_url('/course/' . $sectionpage, ['id' => $section->id]);
+            case 'activities':
+                $courseid = $this->get_course_id($identifier);
+                return new moodle_url('/course/overview.php', ['id' => $courseid]);
         }
         throw new Exception('Unrecognised core page type "' . $type . '."');
     }

@@ -219,6 +219,7 @@ $string['course:viewhiddencourses'] = 'View hidden courses';
 $string['course:viewhiddengroups'] = 'View hidden groups';
 $string['course:viewhiddensections'] = 'View hidden sections';
 $string['course:viewhiddenuserfields'] = 'View hidden user fields';
+$string['course:viewoverview'] = 'View course activities overview page';
 $string['course:viewparticipants'] = 'View participants';
 $string['course:viewscales'] = 'View scales';
 $string['course:visibility'] = 'Hide/show courses';

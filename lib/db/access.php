@@ -1025,6 +1025,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:viewoverview' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
     'moodle/course:changefullname' => array(
 
         'riskbitmask' => RISK_XSS,

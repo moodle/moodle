@@ -100,6 +100,7 @@ $string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';
 $string['filterbyname'] = 'Filter by name';
 $string['filterfirstactive'] = 'First ({$a->first})';
 $string['filterlastactive'] = 'Last ({$a->last})';
+$string['goto_overview'] = 'Go to {$a} overview';
 $string['gradetopassnotset'] = 'This course does not have a grade to pass set. It may be set in the grade item of the course (Gradebook setup).';
 $string['hideendedcoursestask'] = 'Hide courses on end date';
 $string['informationformodule'] = 'Information about the {$a} activity';
@@ -115,6 +116,10 @@ $string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
 <p>A number of students in {$a->coursename} have not accessed the course recently.</p>';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 <p>Courses with start dates in the next week have been identified as having no teacher or student enrolments.</p>';
+$string['overview_info'] = 'View all the activities in this course, including key details like due date and updates.';
+$string['overview_missing_notice'] = 'Check the overview page for more details.';
+$string['overview_missing_title'] = 'Information not available here for {$a} activities';
+$string['overview_page_title'] = 'Course activities: {$a}';
 $string['participants:perpage'] = 'Number of participants per page';
 $string['participants:perpage_help'] = 'The number of users shown per page on the participants page in each course.';
 $string['participantsnavigation'] = 'Participants tertiary navigation.';
