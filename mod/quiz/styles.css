@@ -743,6 +743,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
     display: flex;
+    flex-wrap: wrap;
     flex: 1 1 auto;
     min-height: 1.7em;
     padding-right: 2px;
@@ -812,6 +813,8 @@ table.quizreviewsummary td.cell {
     white-space: nowrap;
     background: #e6e6e6;
     padding: 0.1em 0;
+    display: flex;
+    align-items: baseline;
 }
 
 #page-mod-quiz-edit .mod_quiz_edit_forms {
