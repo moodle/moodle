@@ -35,8 +35,13 @@ class plugin_feature extends plugin_features_base {
      * @return bulk_move_action[]
      */
     public function get_bulk_actions(view $qbank): array {
-        return [
-            new bulk_move_action($qbank),
-        ];
+        // Don't return bulkmove if we are on the question history page.
+        if ($qbank->is_listing_specific_versions()) {
+            return [];
+        } else {
+            return [
+                new bulk_move_action($qbank),
+            ];
+        }
     }
 }
