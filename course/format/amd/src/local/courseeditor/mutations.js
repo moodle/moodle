@@ -579,9 +579,12 @@ export default class {
                 return;
             }
         }
+        const course = stateManager.get('course');
+        if (course.pageItem && course.pageItem.type === type && course.pageItem.id === id) {
+            return;
+        }
         stateManager.setReadOnly(false);
         // Remove the current page item.
-        const course = stateManager.get('course');
         course.pageItem = null;
         // Save the new page item.
         if (newPageItem) {

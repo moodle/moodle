@@ -23,7 +23,7 @@
  */
 
 import {BaseComponent} from 'core/reactive';
-import {debounce} from 'core/utils';
+import {throttle, debounce} from 'core/utils';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import Config from 'core/config';
 import inplaceeditable from 'core/inplace_editable';
@@ -151,7 +151,7 @@ export default class Component extends BaseComponent {
         this.addEventListener(
             document,
             "scroll",
-            this._scrollHandler
+            throttle(this._scrollHandler.bind(this), 50)
         );
     }
 
