@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatedboninstall'] = '<p>无法建立数据库</p>
 <p>指定数据库不存在。使用者没有权限建立数据库</p>
 <p>网站管理员需查明数据库状态.</p>';
-$string['cannotcreatelangdir'] = '无法创建 lang 目录。';
-$string['cannotcreatetempdir'] = '无法创建 temp 目录。';
+$string['cannotcreatelangdir'] = '无法创建lang目录。';
+$string['cannotcreatetempdir'] = '无法创建temp目录。';
 $string['cannotdownloadcomponents'] = '无法下载组件';
 $string['cannotdownloadzipfile'] = '无法下载 ZIP 文件。';
 $string['cannotfindcomponent'] = '找不到组件';
