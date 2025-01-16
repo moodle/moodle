@@ -1,0 +1,9 @@
+issueNumber: MDL-79281
+notes:
+  core_question:
+    - message: >-
+        The `get_bulk_actions()` method on the base `plugin_features_base` class
+        has been changed to allow a qbank view object to be passed through. This
+        is nullable and therefore optional for qbank plugins which don't need
+        to do so.
+      type: improved

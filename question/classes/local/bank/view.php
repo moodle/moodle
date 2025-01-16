@@ -321,7 +321,7 @@ class view {
      */
     protected function init_bulk_actions(): void {
         foreach ($this->plugins as $componentname => $plugin) {
-            $bulkactions = $plugin->get_bulk_actions();
+            $bulkactions = $plugin->get_bulk_actions($this);
             if (!is_array($bulkactions)) {
                 debugging("The method {$componentname}::get_bulk_actions() must return an " .
                     "array of bulk actions instead of a single bulk action. " .

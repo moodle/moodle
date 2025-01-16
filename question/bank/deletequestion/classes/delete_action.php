@@ -96,7 +96,7 @@ class delete_action extends question_action_base {
                     'q' . $question->id => 1,
                     'sesskey' => sesskey());
             $deleteparams = array_merge($deleteparams, $this->returnparams);
-            if ($this->qbank->base_url()->get_param('deleteall')) {
+            if (!$this->qbank->is_listing_specific_versions()) {
                 $deleteparams['deleteall'] = 1;
             }
             $url = new \moodle_url($this->deletequestionurl, $deleteparams);

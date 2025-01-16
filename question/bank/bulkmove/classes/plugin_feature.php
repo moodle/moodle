@@ -18,6 +18,7 @@ namespace qbank_bulkmove;
 
 use core_question\local\bank\bulk_action_base;
 use core_question\local\bank\plugin_features_base;
+use core_question\local\bank\view;
 
 /**
  * Class plugin_feature is the entrypoint for the features.
@@ -28,7 +29,8 @@ use core_question\local\bank\plugin_features_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_feature extends plugin_features_base {
-    public function get_bulk_actions(): array {
+    #[\Override]
+    public function get_bulk_actions(?view $qbank = null): array {
         return [
             new bulk_move_action(),
         ];
