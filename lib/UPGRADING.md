@@ -62,6 +62,14 @@
   ```
 
   For more information see [MDL-83705](https://tracker.moodle.org/browse/MDL-83705)
+- The following test classes have been moved into autoloadable locations:
+
+  | Old location | New classname |
+  | --- | --- |
+  | `\core\tests\route_testcase` | `\core\tests\router\route_testcase` |
+  | `\core\router\mocking_route_loader` | `\core\tests\router\mocking_route_loader` |
+
+  For more information see [MDL-83968](https://tracker.moodle.org/browse/MDL-83968)
 
 ### Deprecated
 
@@ -102,6 +110,9 @@
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
+
+  For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
 - Support for `subplugins.php` files has been removed. All subplugin metadata must be created in a `subplugins.json` file.
 
   For more information see [MDL-83703](https://tracker.moodle.org/browse/MDL-83703)

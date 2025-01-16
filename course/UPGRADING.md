@@ -13,6 +13,9 @@
 - The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
 
   For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)
+- course_get_cm_edit_actions is now deprecated. Formats should extend core_courseformat\output\local\content\cm\controlmenu instead.
+
+  For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
 ## 4.5
 

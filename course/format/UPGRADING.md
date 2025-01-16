@@ -16,6 +16,9 @@
 - All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
 
   For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
+- Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
+
+  For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
 ## 4.5
 

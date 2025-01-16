@@ -70,6 +70,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-83705](https://tracker.moodle.org/browse/MDL-83705)
+- The following test classes have been moved into autoloadable locations:
+
+  | Old location | New classname |
+  | --- | --- |
+  | `\core\tests\route_testcase` | `\core\tests\router\route_testcase` |
+  | `\core\router\mocking_route_loader` | `\core\tests\router\mocking_route_loader` |
+
+  For more information see [MDL-83968](https://tracker.moodle.org/browse/MDL-83968)
 
 #### Deprecated
 
@@ -110,6 +118,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
+
+  For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
 - Support for `subplugins.php` files has been removed. All subplugin metadata must be created in a `subplugins.json` file.
 
   For more information see [MDL-83703](https://tracker.moodle.org/browse/MDL-83703)
@@ -162,6 +173,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The course_format_ajax_support function is now deprecated. Use course_get_format($course)->supports_ajax() instead.
 
   For more information see [MDL-82351](https://tracker.moodle.org/browse/MDL-82351)
+- course_get_cm_edit_actions is now deprecated. Formats should extend core_courseformat\output\local\content\cm\controlmenu instead.
+
+  For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
 ### core_courseformat
 
@@ -179,6 +193,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
 
   For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
+- Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
+
+  For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
 ### core_enrol
 
@@ -291,6 +308,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - 'Activity' selector in social_activities block has been deleted.
 
   For more information see [MDL-83733](https://tracker.moodle.org/browse/MDL-83733)
+
+### format_topics
+
+#### Deprecated
+
+- The get_highlight_control in the section controlmenu class is now deprecated. Use get_section_highlight_item instead
+
+  For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
 ### gradereport_grader
 
@@ -419,6 +444,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove chat and survey support from tool_brickfield.
 
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
+### tool_lp
+
+#### Deprecated
+
+- behat_tool_lp_data_generators::the_following_lp_exist is deprecated. Use the following "core_competency > [competency|framework|plan...]" exist:
+
+  For more information see [MDL-82866](https://tracker.moodle.org/browse/MDL-82866)
 
 ### tool_mfa
 
