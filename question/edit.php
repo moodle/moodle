@@ -60,7 +60,6 @@ if (plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
     $PAGE->navbar->add($modnode->text, $modnode->action, $modnode->type, $modnode->shorttext, icon: $modnode->icon);
 }
 
-$thispageurl->param('deleteall', 1);
 $questionbank = new view($contexts, $thispageurl, $COURSE, $cm, $pagevars);
 
 $context = $contexts->lowest();
