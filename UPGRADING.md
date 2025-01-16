@@ -25,6 +25,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core_renderer::tag_list` function now has a new parameter named `displaylink`. When `displaylink` is set to `true`, the tag name will be displayed as a clickable hyperlink. Otherwise, it will be rendered as plain text.
 
   For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
+- The following test classes have been moved into autoloadable locations:
+
+  | Old location | New classname |
+  | --- | --- |
+  | `\core\tests\route_testcase` | `\core\tests\router\route_testcase` |
+  | `\core\router\mocking_route_loader` | `\core\tests\router\mocking_route_loader` |
+
+  For more information see [MDL-83968](https://tracker.moodle.org/browse/MDL-83968)
 
 ### core_completion
 
