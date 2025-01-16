@@ -145,22 +145,6 @@
                     content: fa-content($fa-var-caret-left);
                 }
             }
-            .carousel {
-                .carousel-inner {
-                    .carousel-item-prev.carousel-item-right,
-                    .carousel-item-next.carousel-item-left {
-                        transform: translateX(0);
-                    }
-                    .carousel-item-next,
-                    .carousel-item-right.active {
-                        transform: translateX(-100%);
-                    }
-                    .carousel-item-prev,
-                    .carousel-item-left.active {
-                        transform: translateX(100%);
-                    }
-                }
-            }
         }
     }
 }

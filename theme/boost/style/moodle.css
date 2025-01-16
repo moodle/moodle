@@ -38012,25 +38012,6 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
   word-wrap: normal;
 }
 
-/* Add commented out carousel transistions back in.
- *
- * The Css prefixer used in Moodle breaks on @supports syntax, See MDL-61515.
- */
-.carousel-item-next.carousel-item-left,
-.carousel-item-prev.carousel-item-right {
-  transform: translateX(0);
-}
-
-.carousel-item-next,
-.active.carousel-item-right {
-  transform: translateX(100%);
-}
-
-.carousel-item-prev,
-.active.carousel-item-left {
-  transform: translateX(-100%);
-}
-
 /**
  * Reset all of the forced style on the page.
  * - Remove borders on header and content.
@@ -39650,18 +39631,6 @@ div.editor_atto_toolbar button .icon {
 
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
   content: "\f0d9";
-}
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-prev.carousel-item-right,
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-next.carousel-item-left {
-  transform: translateX(0);
-}
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-next,
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-right.active {
-  transform: translateX(-100%);
-}
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-prev,
-.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-left.active {
-  transform: translateX(100%);
 }
 
 #page {
