@@ -256,6 +256,10 @@ class factor extends \core\plugininfo\base {
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig): void {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
+        $ADMIN = $adminroot; // May be used in settings.php.
+        $plugininfo = $this; // Also can be used inside settings.php.
 
         if (!$this->is_installed_and_upgraded()) {
             return;
@@ -269,9 +273,7 @@ class factor extends \core\plugininfo\base {
 
         $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
 
-        if ($adminroot->fulltree) {
-            include($this->full_path('settings.php'));
-        }
+        include($this->full_path('settings.php'));
 
         $adminroot->add($parentnodename, $settings);
     }

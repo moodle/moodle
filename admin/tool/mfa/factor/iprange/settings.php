@@ -27,35 +27,36 @@ defined('MOODLE_INTERNAL') || die();
 
 global $OUTPUT;
 
-$enabled = new admin_setting_configcheckbox('factor_iprange/enabled',
-    new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
-$enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('iprange', get_config('factor_iprange', 'enabled') ? 'enable' : 'disable');
-});
-$settings->add($enabled);
+if ($ADMIN->fulltree) {
+    $enabled = new admin_setting_configcheckbox('factor_iprange/enabled',
+        new lang_string('settings:enablefactor', 'tool_mfa'),
+        new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    $enabled->set_updatedcallback(function () {
+        \tool_mfa\manager::do_factor_action('iprange', get_config('factor_iprange', 'enabled') ? 'enable' : 'disable');
+    });
+    $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_iprange/weight',
-    new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    $settings->add(new admin_setting_configtext('factor_iprange/weight',
+        new lang_string('settings:weight', 'tool_mfa'),
+        new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
 
-// Current IP validation against list for description.
-$allowedips = get_config('factor_iprange', 'safeips');
-if (trim($allowedips) == '') {
-    $message = 'allowedipsempty';
-    $type = 'notifyerror';
-} else if (remoteip_in_list($allowedips)) {
-    $message = 'allowedipshasmyip';
-    $type = 'notifysuccess';
-} else {
-    $message = 'allowedipshasntmyip';
-    $type = 'notifyerror';
-};
-$info = $OUTPUT->notification(get_string($message, 'factor_iprange', ['ip' => getremoteaddr()]), $type);
+    // Current IP validation against list for description.
+    $allowedips = get_config('factor_iprange', 'safeips');
+    if (trim($allowedips) == '') {
+        $message = 'allowedipsempty';
+        $type = 'notifyerror';
+    } else if (remoteip_in_list($allowedips)) {
+        $message = 'allowedipshasmyip';
+        $type = 'notifysuccess';
+    } else {
+        $message = 'allowedipshasntmyip';
+        $type = 'notifyerror';
+    };
+    $info = $OUTPUT->notification(get_string($message, 'factor_iprange', ['ip' => getremoteaddr()]), $type);
 
-$settings->add(new admin_setting_configiplist('factor_iprange/safeips',
-    new lang_string('settings:safeips', 'factor_iprange'),
-    new lang_string('settings:safeips_help', 'factor_iprange',
-            ['info' => $info, 'syntax' => get_string('ipblockersyntax', 'admin')]), '', PARAM_TEXT));
-
+    $settings->add(new admin_setting_configiplist('factor_iprange/safeips',
+        new lang_string('settings:safeips', 'factor_iprange'),
+        new lang_string('settings:safeips_help', 'factor_iprange',
+                ['info' => $info, 'syntax' => get_string('ipblockersyntax', 'admin')]), '', PARAM_TEXT));
+}

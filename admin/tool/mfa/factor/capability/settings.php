@@ -25,19 +25,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_capability/enabled',
-    new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
-$enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('capability', get_config('factor_capability', 'enabled') ? 'enable' : 'disable');
-});
-$settings->add($enabled);
+if ($ADMIN->fulltree) {
+    $enabled = new admin_setting_configcheckbox('factor_capability/enabled',
+        new lang_string('settings:enablefactor', 'tool_mfa'),
+        new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    $enabled->set_updatedcallback(function () {
+        \tool_mfa\manager::do_factor_action('capability', get_config('factor_capability', 'enabled') ? 'enable' : 'disable');
+    });
+    $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_capability/weight',
-    new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    $settings->add(new admin_setting_configtext('factor_capability/weight',
+        new lang_string('settings:weight', 'tool_mfa'),
+        new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-// Admin passes bool logic is inverted due to negative capability check.
-$settings->add(new admin_setting_configcheckbox('factor_capability/adminpasses',
-    new lang_string('settings:adminpasses', 'factor_capability'),
-    new lang_string('settings:adminpasses_help', 'factor_capability'), 1, 0, 1));
+    // Admin passes bool logic is inverted due to negative capability check.
+    $settings->add(new admin_setting_configcheckbox('factor_capability/adminpasses',
+        new lang_string('settings:adminpasses', 'factor_capability'),
+        new lang_string('settings:adminpasses_help', 'factor_capability'), 1, 0, 1));
+}
