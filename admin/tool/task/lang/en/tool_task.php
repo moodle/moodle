@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['actions'] = 'Actions';
 $string['adhoc'] = 'Ad hoc';
 $string['adhoctaskid'] = 'Ad hoc task ID: {$a}';
 $string['adhoctaskrun'] = 'Ad hoc task run initiated';
@@ -52,7 +53,7 @@ $string['crondisabled'] = 'Cron is disabled. No new tasks will be started. The s
 $string['cronok'] = 'Cron is running frequently';
 $string['default'] = 'Default';
 $string['defaultx'] = 'Default: {$a}';
-$string['deletetask'] = 'Delete task';
+$string['deleteadhoctask'] = 'Delete ad hoc task {$a}';
 $string['disabled'] = 'Disabled';
 $string['disabled_help'] = 'Disabled scheduled tasks are not executed from cron, however they can still be executed manually via the CLI tool.';
 $string['edittaskschedule'] = 'Edit task schedule: {$a}';
@@ -143,5 +144,3 @@ $string['taskschedulemonth_help'] = 'Month field for task schedule. The field us
 * <strong>1,5</strong> Every January and May';
 $string['privacy:metadata'] = 'The Scheduled task configuration plugin does not store any personal data.';
 $string['viewlogs'] = 'View logs for {$a}';
-$string['actions'] = 'Actions';
-$string['deleteadhoctask'] = 'Delete ad hoc task {$a->id}';

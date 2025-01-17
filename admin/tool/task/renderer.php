@@ -324,7 +324,7 @@ class tool_task_renderer extends plugin_renderer_base {
                     'aria-label' => get_string('deleteadhoctask', 'tool_task', $taskid),
                     'data-confirmation' => 'modal',
                     'data-confirmation-type' => 'delete',
-                    'data-confirmation-title-str' => '["deleteadhoctask", "tool_task",{"id":'.$taskid.'}]',
+                    'data-confirmation-title-str' => '["deleteadhoctask", "tool_task", ' . $taskid . ']',
                     'data-confirmation-content-str' => '["confirmdeletetaskwithid", "tool_task", {"id":'.$taskid.'}]',
                     'data-confirmation-yes-button-str' => '["delete", "core"]',
                 ]
