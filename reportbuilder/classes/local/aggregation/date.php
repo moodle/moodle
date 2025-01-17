@@ -59,12 +59,10 @@ class date extends base {
      * @return string
      */
     public static function get_field_sql(string $field, int $columntype): string {
-        global $DB;
-
-        // Apply timezone offset for current user.
         $datenow = di::get(clock::class)->now();
 
-        return "({$field} + " . $datenow->getOffset() . ") - "  . $DB->sql_modulo($field, DAYSECS);
+        // Apply timezone offset for current user.
+        return "(FLOOR({$field} / " . DAYSECS . ") * " . DAYSECS . ") + " . $datenow->getOffset();
     }
 
     /**
