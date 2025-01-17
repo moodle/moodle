@@ -132,9 +132,10 @@ if ($delete || $archive) {
     }
 }
 
-if ($deactivate && has_capability('moodle/badges:configuredetails', $PAGE->context)) {
+if ($deactivate) {
     require_sesskey();
     $badge = new badge($deactivate);
+    require_capability('moodle/badges:configuredetails', $badge->get_context());
     if ($badge->is_locked()) {
         $badge->set_status(BADGE_STATUS_INACTIVE_LOCKED);
     } else {
