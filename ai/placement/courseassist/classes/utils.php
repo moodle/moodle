@@ -35,15 +35,16 @@ class utils {
      */
     public static function is_course_assist_available(\context $context): bool {
         [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_courseassist'), 2);
-        $manager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
-        if (!$manager::is_plugin_enabled($pluginname)) {
+        $pluginmanager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
+        if (!$pluginmanager::is_plugin_enabled($pluginname)) {
             return false;
         }
 
-        $providers = manager::get_providers_for_actions([summarise_text::class], true);
+        $aimanager = \core\di::get(manager::class);
+        $providers = $aimanager->get_providers_for_actions([summarise_text::class], true);
         if (!has_capability('aiplacement/courseassist:summarise_text', $context)
-            || !manager::is_action_available(summarise_text::class)
-            || !manager::is_action_enabled('aiplacement_courseassist', summarise_text::class)
+            || !$aimanager->is_action_available(summarise_text::class)
+            || !$aimanager->is_action_enabled('aiplacement_courseassist', summarise_text::class)
             || empty($providers[summarise_text::class])
         ) {
             return false;

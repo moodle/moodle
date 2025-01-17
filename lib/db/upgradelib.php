@@ -206,7 +206,7 @@ function upgrade_calculated_grade_items($courseid = null) {
     }
 
     if (!empty($possiblecourseids)) {
-        list($sql, $params) = $DB->get_in_or_equal($possiblecourseids);
+        [$sql, $params] = $DB->get_in_or_equal($possiblecourseids);
         // A calculated grade item grade min != 0 and grade max != 100 and the course setting is set to
         // "Initial min and max grades".
         $coursesql = "SELECT DISTINCT courseid
@@ -238,7 +238,7 @@ function upgrade_calculated_grade_items($courseid = null) {
         }
 
         if (!empty($categoryids)) {
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            [$sql, $params] = $DB->get_in_or_equal($categoryids);
             // A category with a calculation where the raw grade min and the raw grade max don't match the grade min and grade max
             // for the category.
             $coursesql = "SELECT DISTINCT gi.courseid
@@ -629,7 +629,7 @@ function upgrade_calendar_site_status(bool $output = true): bool {
     ];
 
     $targetsteps = array_merge(array_values($badsteps), array_values( $fixsteps));
-    list($insql, $inparams) = $DB->get_in_or_equal($targetsteps);
+    [$insql, $inparams] = $DB->get_in_or_equal($targetsteps);
     $foundsteps = $DB->get_fieldset_sql("
         SELECT DISTINCT version
           FROM {upgrade_log}
@@ -1897,4 +1897,132 @@ function upgrade_store_relative_url_sitehomepage() {
             ]);
         }
     }
+}
+
+/**
+ * Upgrade script to convert existing AI providers to provider instances.
+ */
+function upgrade_convert_ai_providers_to_instances() {
+    global $DB;
+    // Start with the azureai provider.
+    // Only migrate the provider if it is enabled.
+    $azureaiconfig = get_config('aiprovider_azureai');
+    if (!empty($azureaiconfig->enabled) || !empty($azureaiconfig->apikey)) {
+        // Create the instance config. We don't want everything from the provider config.
+        $instanceconfig = [
+            'aiprovider' => \aiprovider_azureai\provider::class,
+            'name' => get_string('pluginname', 'aiprovider_azureai'),
+            'apikey' => $azureaiconfig->apikey ?? '',
+            'endpoint' => $azureaiconfig->endpoint ?? '',
+            'enableglobalratelimit' => $azureaiconfig->enableglobalratelimit ?? 0,
+            'globalratelimit' => $azureaiconfig->globalratelimit ?? 100,
+            'enableuserratelimit' => $azureaiconfig->enableuserratelimit ?? 0,
+            'userratelimit' => $azureaiconfig->userratelimit ?? 10,
+        ];
+        $actionconfig = [
+            'core_ai\aiactions\generate_text' => [
+                'enabled' => $azureaiconfig->generate_text ?? true,
+                'settings' => [
+                    'deployment' => $azureaiconfig->action_generate_text_deployment ?? '',
+                    'apiversion' => $azureaiconfig->action_generate_text_apiversion ?? '2024-06-01',
+                    'systeminstruction' => $azureaiconfig->action_generate_text_systeminstruction
+                        ?? get_string('action_generate_text_instruction', 'core_ai'),
+                ],
+            ],
+            'core_ai\aiactions\generate_image' => [
+                'enabled' => $azureaiconfig->generate_image ?? true,
+                'settings' => [
+                    'deployment' => $azureaiconfig->action_generate_image_deployment ?? '',
+                    'apiversion' => $azureaiconfig->action_generate_image_apiversion ?? '2024-06-01',
+                ],
+            ],
+            'core_ai\aiactions\summarise_text' => [
+                'enabled' => $azureaiconfig->summarise_text ?? true,
+                'settings' => [
+                    'deployment' => $azureaiconfig->action_summarise_text_deployment ?? '',
+                    'apiversion' => $azureaiconfig->action_summarise_text_apiversion ?? '2024-06-01',
+                    'systeminstruction' => $azureaiconfig->action_generate_text_systeminstruction
+                        ?? get_string('action_summarise_text_instruction', 'core_ai'),
+                ],
+            ],
+        ];
+
+        // Because of the upgrade code restrictions we insert directly into the database and don't use the AI manager class.
+        $record = new stdClass();
+        $record->name = get_string('pluginname', 'aiprovider_azureai');
+        $record->provider = \aiprovider_azureai\provider::class;
+        $record->enabled = $azureaiconfig->enabled ?? false;
+        $record->config = json_encode($instanceconfig);
+        $record->actionconfig = json_encode($actionconfig);
+
+        $DB->insert_record('ai_providers', $record);
+    }
+
+    // Now do the same for the openai provider.
+    $openaiconfig = get_config('aiprovider_openai');
+    if (!empty($openaiconfig->enabled) || !empty($openaiconfig->apikey)) {
+        // Create the instance config. We don't want everything from the provider config.
+        $instanceconfig = [
+            'aiprovider' => \aiprovider_openai\provider::class,
+            'name' => get_string('pluginname', 'aiprovider_openai'),
+            'apikey' => $openaiconfig->apikey ?? '',
+            'orgid' => $openaiconfig->orgid ?? '',
+            'enableglobalratelimit' => $openaiconfig->enableglobalratelimit ?? 0,
+            'globalratelimit' => $openaiconfig->globalratelimit ?? 100,
+            'enableuserratelimit' => $openaiconfig->enableuserratelimit ?? 0,
+            'userratelimit' => $openaiconfig->userratelimit ?? 10,
+        ];
+        $actionconfig = [
+            'core_ai\aiactions\generate_text' => [
+                'enabled' => $openaiconfig->generate_text ?? true,
+                'settings' => [
+                    'model' => $openaiconfig->action_generate_text_model ?? 'gpt-4o',
+                    'endpoint' => $openaiconfig->action_generate_text_endpoint ?? 'https://api.openai.com/v1/chat/completions',
+                    'systeminstruction' => $openaiconfig->action_generate_text_systeminstruction
+                        ?? get_string('action_generate_text_instruction', 'core_ai'),
+                ],
+            ],
+            'core_ai\aiactions\generate_image' => [
+                'enabled' => $openaiconfig->generate_image ?? true,
+                'settings' => [
+                    'model' => $openaiconfig->action_generate_text_model ?? 'dall-e-3',
+                    'endpoint' => $openaiconfig->action_generate_text_endpoint ?? 'https://api.openai.com/v1/images/generations',
+                ],
+            ],
+            'core_ai\aiactions\summarise_text' => [
+                'enabled' => $openaiconfig->summarise_text ?? true,
+                'settings' => [
+                    'model' => $openaiconfig->action_generate_text_model ?? 'gpt-4o',
+                    'endpoint' => $openaiconfig->action_generate_text_endpoint ?? 'https://api.openai.com/v1/chat/completions',
+                    'systeminstruction' => $openaiconfig->action_generate_text_systeminstruction
+                        ?? get_string('action_summarise_text_instruction', 'core_ai'),
+                ],
+            ],
+        ];
+
+        $record = new stdClass();
+        $record->name = get_string('pluginname', 'aiprovider_openai');
+        $record->provider = \aiprovider_openai\provider::class;
+        $record->enabled = $openaiconfig->enabled ?? false;
+        $record->config = json_encode($instanceconfig);
+        $record->actionconfig = json_encode($actionconfig);
+
+        $DB->insert_record('ai_providers', $record);
+    }
+
+    // Finally remove the config settings from the plugin config table.
+    $azuresettings = ['enabled', 'apikey', 'endpoint', 'enableglobalratelimit', 'globalratelimit',
+        'enableuserratelimit', 'userratelimit', 'generate_text', 'action_generate_text_enabled', 'action_generate_text_deployment',
+        'action_generate_text_apiversion', 'action_generate_text_systeminstruction', 'generate_image',
+        'action_generate_image_enabled', 'action_generate_image_deployment', 'action_generate_image_apiversion',
+        'summarise_text', 'action_summarise_text_enabled', 'action_summarise_text_deployment', 'action_summarise_text_apiversion',
+        'action_summarise_text_systeminstruction'];
+    array_walk($azuresettings, static fn($setting) => unset_config($setting, 'aiprovider_azureai'));
+    $openaisettings = ['enabled', 'apikey', 'orgid', 'enableglobalratelimit', 'globalratelimit',
+        'enableuserratelimit', 'userratelimit', 'generate_text', 'action_generate_text_enabled', 'action_generate_text_model',
+        'action_generate_text_endpoint', 'action_generate_text_systeminstruction', 'generate_image',
+        'action_generate_image_enabled', 'action_generate_image_model', 'action_generate_image_endpoint',
+        'summarise_text', 'action_summarise_text_enabled', 'action_summarise_text_model', 'action_summarise_text_endpoint',
+        'action_summarise_text_systeminstruction'];
+    array_walk($openaisettings, static fn($setting) => unset_config($setting, 'aiprovider_openai'));
 }

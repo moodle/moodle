@@ -25,9 +25,9 @@ Feature: AI Course assist summarise
       | capability                              | permission | role    | contextlevel | reference |
       | aiplacement/courseassist:summarise_text | Prohibit   | custom2 | Course       | C1        |
     And I log in as "admin"
-    And I enable "openai" "aiprovider" plugin
-    And the following config values are set as admin:
-      | apikey | 123 | aiprovider_openai |
+    And the following "core_ai > ai providers" exist:
+      |provider         | name             | enabled | apikey | orgid |
+      |aiprovider_openai| OpenAI API test  | 1       | 123    | abc   |
     And I enable "courseassist" "aiplacement" plugin
 
   @javascript
@@ -41,10 +41,10 @@ Feature: AI Course assist summarise
 
   @javascript
   Scenario: Summarise text using AI is not available if provider is not enabled
-    Given I disable "openai" "aiprovider" plugin
+    Given I "disable" the ai provider with name "OpenAI API test"
     When I am on the "PageName1" "page activity" page logged in as teacher1
     Then "Summarise" "button" should not exist
-    And I enable "openai" "aiprovider" plugin
+    And I "enable" the ai provider with name "OpenAI API test"
     And I am on the "PageName1" "page activity" page logged in as teacher1
     And "Summarise" "button" should exist
 
@@ -52,10 +52,14 @@ Feature: AI Course assist summarise
   Scenario: Summarise text using AI is not available if provider action is not enabled
     Given the following config values are set as admin:
       | summarise_text |  | aiprovider_openai |
+    And I set the following action configuration for ai provider with name "OpenAI API test":
+      | action          | enabled |
+      | summarise_text  | 0       |
     When I am on the "PageName1" "page activity" page logged in as teacher1
     Then "Summarise" "button" should not exist
-    And the following config values are set as admin:
-      | summarise_text | 1 | aiprovider_openai |
+    And I set the following action configuration for ai provider with name "OpenAI API test":
+      | action          | enabled |
+      | summarise_text  | 1      |
     And I am on the "PageName1" "page activity" page logged in as teacher1
     And "Summarise" "button" should exist
 
@@ -74,15 +78,18 @@ Feature: AI Course assist summarise
   Scenario: Summarise text using AI is not available if provider action is not enabled and placement action is enabled
     Given the following config values are set as admin:
       | summarise_text |  | aiplacement_courseassist |
-      | summarise_text |  | aiprovider_openai        |
+    And I set the following action configuration for ai provider with name "OpenAI API test":
+      | action          | enabled |
+      | summarise_text  | 0       |
     When I am on the "PageName1" "page activity" page logged in as teacher1
     Then "Summarise" "button" should not exist
     And the following config values are set as admin:
       | summarise_text | 1 | aiplacement_courseassist |
     And I am on the "PageName1" "page activity" page logged in as teacher1
     And "Summarise" "button" should not exist
-    And the following config values are set as admin:
-      | summarise_text | 1 | aiprovider_openai |
+    And I set the following action configuration for ai provider with name "OpenAI API test":
+      | action          | enabled |
+      | summarise_text  | 1       |
     And I am on the "PageName1" "page activity" page logged in as teacher1
     And "Summarise" "button" should exist
 

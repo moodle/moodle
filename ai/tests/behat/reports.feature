@@ -1,4 +1,4 @@
-@report @core_ai
+@report @core_ai @core_ai_reports
 Feature: AI reports
   In order to view an AI report
   As an admin or system role manager
@@ -12,12 +12,12 @@ Feature: AI reports
       | user     | role    | contextlevel | reference |
       | manager1 | manager | System       |           |
     And the following config values are set as admin:
-      | enabled | 1   | aiprovider_openai |
-      | apikey  | 123 | aiprovider_openai |
-    And the following config values are set as admin:
       | enabled        | 1 | aiplacement_editor |
       | generate_text  | 1 | aiplacement_editor |
       | generate_image | 0 | aiplacement_editor |
+    And the following "core_ai > ai providers" exist:
+      |provider          | name             | enabled | apikey | orgid |
+      |aiprovider_openai | OpenAI API test  | 1       | 123    | abc   |
 
   @javascript @editor_tiny
   Scenario: Mangers with a system role can see who has accepted the AI policy

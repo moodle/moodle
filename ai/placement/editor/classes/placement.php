@@ -29,7 +29,7 @@ class placement extends \core_ai\placement {
      *
      * @return array An array of action class names.
      */
-    public function get_action_list(): array {
+    public static function get_action_list(): array {
         return [
             \core_ai\aiactions\generate_text::class,
             \core_ai\aiactions\generate_image::class,

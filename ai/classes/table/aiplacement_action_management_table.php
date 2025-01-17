@@ -36,6 +36,9 @@ class aiplacement_action_management_table extends flexible_table implements dyna
     /** @var array The list of actions this manager covers */
     protected array $actions;
 
+    /** @var \core_ai\manager The AI manager */
+    protected \core_ai\manager $manager;
+
     /**
      * Constructor.
      *
@@ -54,6 +57,7 @@ class aiplacement_action_management_table extends flexible_table implements dyna
 
         $this->setup_column_configuration();
         $this->set_filterset(new aiplacement_action_management_table_filterset());
+        $this->manager = \core\di::get(manager::class);
         $this->setup();
     }
 
@@ -134,7 +138,7 @@ class aiplacement_action_management_table extends flexible_table implements dyna
         ];
         $output = $OUTPUT->render_from_template('core_admin/table/namedesc', $params);
 
-        if (!manager::is_action_available($row->action)) {
+        if (!$this->manager->is_action_available($row->action)) {
             $providerurl = new moodle_url('/admin/settings.php', ['section' => 'aiprovider']);
             $output .= $OUTPUT->render_from_template('core_ai/admin_noproviders', [
                 'providerurl' => $providerurl->out(),
@@ -208,7 +212,7 @@ class aiplacement_action_management_table extends flexible_table implements dyna
             // Construct the row data.
             $rowdata = (object) [
                 'action' => $actionclass,
-                'enabled' => manager::is_action_enabled($this->pluginname, $actionclass),
+                'enabled' => $this->manager->is_action_enabled($this->pluginname, $actionclass),
             ];
             $this->add_data_keyed(
                 $this->format_row($rowdata),

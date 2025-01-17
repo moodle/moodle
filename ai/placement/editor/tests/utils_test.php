@@ -64,15 +64,11 @@ final class utils_test extends \advanced_testcase {
     ): void {
         // Provider is not enabled.
         $this->setUser($this->users[1]);
-        set_config('enabled', 0, 'aiprovider_openai');
         $this->assertFalse(utils::is_html_editor_placement_action_available(
             context: $this->context,
             actionname: $actionname,
             actionclass: $actionclass
         ));
-
-        set_config('enabled', 1, 'aiprovider_openai');
-        set_config('apikey', '123', 'aiprovider_openai');
 
         // Plugin is not enabled.
         $this->setUser($this->users[1]);
@@ -104,7 +100,6 @@ final class utils_test extends \advanced_testcase {
 
         // Plugin is enabled, user has capability and provider action is not available.
         $this->setUser($this->users[1]);
-        set_config($actionname, 0, 'aiprovider_openai');
         set_config($actionname, 1, 'aiplacement_editor');
         $this->assertFalse(utils::is_html_editor_placement_action_available(
             context: $this->context,
@@ -113,9 +108,14 @@ final class utils_test extends \advanced_testcase {
         ));
 
         // Plugin is enabled, user has capability, placement action is available and provider action is available.
+        $mockmanager = $this->createMock(\core_ai\manager::class);
+        $mockmanager->method('is_action_available')->willReturn(true);
+        $mockmanager->method('is_action_enabled')->willReturn(true);
+
+        \core\di::set(\core_ai\manager::class, function() use ($mockmanager) {
+            return $mockmanager;
+        });
         $this->setUser($this->users[1]);
-        set_config($actionname, 1, 'aiprovider_openai');
-        set_config($actionname, 1, 'aiplacement_editor');
         $this->assertTrue(utils::is_html_editor_placement_action_available(
             context: $this->context,
             actionname: $actionname,

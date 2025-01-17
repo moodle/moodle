@@ -1,0 +1,9 @@
+issueNumber: MDL-82922
+notes:
+  core_ai:
+    - message: >-
+        The ai_provider_management_table has been refactored to inherit from
+        flexible_table instead of plugin_management_table. As a result the
+        methods get_plugintype and get_action_url are now unused and have been
+        deprecated in the class.
+      type: deprecated
