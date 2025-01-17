@@ -30,20 +30,20 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = '管理目录';
-$string['availablelangs'] = '可用的语言包';
+$string['availablelangs'] = '可用语言包';
 $string['chooselanguagehead'] = '选择一种语言';
 $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。这个语言也会成为网站的缺省语言，不过以后可以随时更改。';
-$string['clialreadyconfigured'] = 'config.php 文件已存在。如果您想安装此网站，请使用 admin/cli/install_database.php。';
-$string['clialreadyinstalled'] = '文件config.php已存在。如果您想升级此网站，请使用admin/cli/upgrade.php。';
+$string['clialreadyconfigured'] = '配置文件 config.php 已存在。请使用 admin/cli/install_database.php 为此站点安装 Moodle。';
+$string['clialreadyinstalled'] = '配置文件 config.php 已存在。请使用 admin/cli/install_database.php 升级此站点的 Moodle。';
 $string['cliinstallheader'] = 'Moodle {$a}命令行安装程序';
-$string['clitablesexist'] = '数据库表已经存在，命令行安装不能继续。';
+$string['clitablesexist'] = '数据库表已经存在，命令行安装无法继续。';
 $string['databasehost'] = '数据库主机';
 $string['databasename'] = '数据库名';
 $string['databasetypehead'] = '选择数据库驱动';
 $string['dataroot'] = '数据目录';
 $string['datarootpermission'] = '数据目录权限';
 $string['dbprefix'] = '表格名称前缀';
-$string['dirroot'] = 'Moodle目录';
+$string['dirroot'] = 'Moodle 目录';
 $string['environmenthead'] = '检测您的运行环境...';
 $string['environmentsub2'] = '每个Moodle的发行版都有一些对PHP版本的最低要求和几个必须安装的PHP扩展。在每次安装和升级前会做完整的环境检查。如果您不知道如何安装新版或启用PHP扩展，请与服务器管理员联系。';
 $string['errorsinenvironment'] = '环境检查失败！';
@@ -67,24 +67,27 @@ $string['pathshead'] = '确认路径';
 $string['pathsrodataroot'] = '数据目录不可写';
 $string['pathsroparentdataroot'] = '父目录({$a->parent})不可写。安装程序无法建立数据目录({$a->dataroot})。';
 $string['pathssubadmindir'] = '有些网络主机使用/admin这个URL来访问控制面板或其它功能。很不幸，这个设置和Moodle管理页面的标准路径冲突。这个问题可以解决，只需在您的安装目录中把admin目录换名，然后把新名字输入到这里。例如<em>moodleadmin</em>。这么做会改变Moodle中的管理链接。';
-$string['pathssubdataroot'] = 'Moodle需要一个位置存放上传的文件。这个目录对于Web服务器用户(通常是“nobody”或“apache”)应当是可读可写的，但应当不能直接通过Web访问它。如果它不存在，安装程序会尝试建立。';
-$string['pathssubdirroot'] = 'Moodle安装的完整路径。';
-$string['pathssubwwwroot'] = '可以访问到Moodle的完整网址。
-Moodle不支持通过多个地址访问。如果您的网站有多个公开地址，您必须把这个地址以外的所有地址都设为永久重定向。如果您的网站既可以通过内部地址访问，也可以通过这个公开地址访问，那么请配置DNS使内部网用户也能使用公开地址。如果此地址不正确，请在浏览器中修改URL来重新安装，并设定另一个地址。';
+$string['pathssubdataroot'] = '<p>Moodle 将在其中存储用户上传的所有文件内容的目录。</p>
+<p>此目录应可由 Web 服务器用户（通常为 \'www-data\'、\'nobody\' 或 \'apache\'）读取和写入。</p>
+<p>它不能通过 Web 直接访问。</p>
+<p>如果该目录当前不存在，则在安装过程中将尝试创建该目录。</p>';
+$string['pathssubdirroot'] = '<p>包含 Moodle 代码的目录的完整路径。</p>';
+$string['pathssubwwwroot'] = '<p>将访问 Moodle 的完整地址，即用户在浏览器的地址栏中输入以访问Moodle 的地址。</p>
+<p>无法使用多个地址访问 Moodle。如果您的网站可以通过多个地址访问，请选择最简单的地址并为其他每个地址设置永久重定向。</p>
+<p>如果您的网站可以从 Internet 和内部网络（有时称为 Intranet）访问，请使用此处的公共地址。</p>
+<p>如果当前地址不正确，请更改浏览器地址栏中的 URL 并重新开始安装。</p>';
 $string['pathsunsecuredataroot'] = '数据目录所在位置不安全';
 $string['pathswrongadmindir'] = '管理目录不存在';
 $string['phpextension'] = '{$a} PHP扩展';
 $string['phpversion'] = 'PHP版本';
-$string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干已知的问题）以上的版本。</p>
-<p>您当前使用的是{$a}</p>
-<p>您必须升级PHP或者转移到一个有新版PHP的服务器上！<br />
-（如果正使用5.0.x，您也可以降级到4.4.x版）</p>
-';
+$string['phpversionhelp'] = '<p>Moodle 需要至少 5.6.5 或 7.1 的 PHP 版本（7.0.x 有一些引擎限制）。</p>
+<p>您当前运行的是版本 {$a}。</p>
+<p>您必须升级 PHP 或移动到具有较新 PHP 版本的主机。</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装并启用了<strong>{$a->packname} {$a->packversion}</strong>软件包。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>的此发行版包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
 $string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
-$string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>{$a->installername}</strong>软件包都是<a href="http://www.opensource.org/docs/definition_plain.html">开源</a>的，并且遵循<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>授权协议发布。';
+$string['welcomep50'] = '此软件包中所有应用程序的使用均受其各自许可证的约束。完整的 <strong>{$a->installername}</strong> 软件包是 <a href=“https://www.opensource.org/docs/definition_plain.html”>开源的，</a>并在 <a href=“https://www.gnu.org/copyleft/gpl.html”>GPL 许可证下分发</a>';
 $string['welcomep60'] = '接下来的页面会引导您通过一系列步骤在您的计算机上安装并配置好<strong>Moodle</strong>。您可以接受缺省的设置，或者根据需要修改它们。';
 $string['welcomep70'] = '点击“向后”按钮以继续<strong>Moodle</strong>的安装过程。';
 $string['wwwroot'] = '网站地址';
