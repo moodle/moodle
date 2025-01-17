@@ -122,7 +122,7 @@ class api {
     }
 
     /**
-     * Validate if current user have acces to the course_module if hidden.
+     * Validate if current user has access to the course_module if hidden.
      *
      * @param mixed $cmmixed The cm_info class, course module record or its ID.
      * @param bool $throwexception Throw an exception or not.
@@ -152,7 +152,7 @@ class api {
     }
 
     /**
-     * Validate if current user have acces to the course if hidden.
+     * Validate if current user has access to the course if hidden.
      *
      * @param mixed $courseorid The course or it ID.
      * @param bool $throwexception Throw an exception or not.
@@ -454,7 +454,7 @@ class api {
     }
 
     /**
-     * Read a the details for a single competency and return a record.
+     * Read the details for a single competency and return a record.
      *
      * Requires moodle/competency:competencyview capability at the system context.
      *
@@ -484,7 +484,7 @@ class api {
     }
 
     /**
-     * Perform a text search based and return all results and their parents.
+     * Perform a search based on a text and return all results and their parents.
      *
      * Requires moodle/competency:competencyview capability at the framework context.
      *
@@ -615,7 +615,7 @@ class api {
             $framework->set('id', 0);
             $framework = $framework->create();
 
-            // Array that match the old competencies ids with the new one to use when copying related competencies.
+            // Array that matches the old competencies ids with the new one to use when copying related competencies.
             $frameworkcompetency = competency::get_framework_tree($id);
             $matchids = self::duplicate_competency_tree($framework->get('id'), $frameworkcompetency, 0, 0);
 
@@ -705,7 +705,7 @@ class api {
         // Commit the transaction.
         $transaction->allow_commit();
 
-        // If all operations are successfull then trigger the delete event.
+        // If all operations are successful then trigger the delete event.
         $event->trigger();
 
         // Trigger deleted event competencies.
@@ -744,7 +744,7 @@ class api {
     }
 
     /**
-     * Read a the details for a single competency framework and return a record.
+     * Read the details for a single competency framework and return a record.
      *
      * Requires moodle/competency:competencyview capability at the system context.
      *
@@ -763,7 +763,7 @@ class api {
     }
 
     /**
-     * Logg the competency framework viewed event.
+     * Log the competency framework viewed event.
      *
      * @param competency_framework|int $frameworkorid The competency_framework object or competency framework id
      * @return bool
@@ -784,7 +784,7 @@ class api {
     }
 
     /**
-     * Logg the competency viewed event.
+     * Log the competency viewed event.
      *
      * @param competency|int $competencyorid The competency object or competency id
      * @return bool
@@ -1025,7 +1025,7 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
@@ -1084,7 +1084,7 @@ class api {
      */
     public static function count_proficient_competencies_in_course_for_user($courseid, $userid) {
         static::require_enabled();
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($courseid);
 
         // First we do a permissions check.
@@ -1107,7 +1107,7 @@ class api {
      */
     public static function count_competencies_in_course($courseid) {
         static::require_enabled();
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($courseid);
 
         // First we do a permissions check.
@@ -1138,7 +1138,7 @@ class api {
             $course = get_course($courseorid);
         }
 
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($course);
         $context = context_course::instance($course->id);
 
@@ -1217,7 +1217,7 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
@@ -1245,7 +1245,7 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
@@ -1457,7 +1457,7 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
 
         // First we do a permissions check.
@@ -1499,7 +1499,7 @@ class api {
         if (!is_object($cmorid)) {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
 
         // First we do a permissions check.
@@ -1535,7 +1535,7 @@ class api {
         if (!is_object($cmorid)) {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
-        // Check the user have access to the course module.
+        // Check the user has access to the course module.
         self::validate_course_module($cm);
 
         // First we do a permissions check.
@@ -1616,7 +1616,7 @@ class api {
      */
     public static function add_competency_to_course($courseid, $competencyid) {
         static::require_enabled();
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($courseid);
 
         // First we do a permissions check.
@@ -1630,7 +1630,7 @@ class api {
 
         $competency = new competency($competencyid);
 
-        // Can not add a competency that belong to a hidden framework.
+        // Can not add a competency that belongs to a hidden framework.
         if ($competency->get_framework()->get('visible') == false) {
             throw new coding_exception('A competency belonging to hidden framework can not be linked to course');
         }
@@ -1655,7 +1655,7 @@ class api {
      */
     public static function remove_competency_from_course($courseid, $competencyid) {
         static::require_enabled();
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($courseid);
 
         // First we do a permissions check.
@@ -1692,7 +1692,7 @@ class api {
      */
     public static function reorder_course_competency($courseid, $competencyidfrom, $competencyidto) {
         static::require_enabled();
-        // Check the user have access to the course.
+        // Check the user has access to the course.
         self::validate_course($courseid);
 
         // First we do a permissions check.
@@ -1954,7 +1954,7 @@ class api {
     }
 
     /**
-     * Read a the details for a single learning plan template and return a record.
+     * Read the details for a single learning plan template and return a record.
      *
      * Requires moodle/competency:templateview capability at the system context.
      *
@@ -2197,7 +2197,7 @@ class api {
 
         $competency = new competency($competencyid);
 
-        // Can not add a competency that belong to a hidden framework.
+        // Can not add a competency that belongs to a hidden framework.
         if ($competency->get_framework()->get('visible') == false) {
             throw new coding_exception('A competency belonging to hidden framework can not be added');
         }
@@ -2686,9 +2686,9 @@ class api {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        // Only plan with status DRAFT or ACTIVE can be unliked..
+        // Only plan with status DRAFT or ACTIVE can be unlinked..
         if ($plan->get('status') == plan::STATUS_COMPLETE) {
-            throw new coding_exception('Only draft or active plan can be unliked from a template');
+            throw new coding_exception('Only draft or active plan can be unlinked from a template');
         }
 
         // Early exit, it's already done...
@@ -3363,7 +3363,7 @@ class api {
         }
 
         if (!$plan->can_be_edited()) {
-            throw new coding_exception('A competency can not be added to a learning plan completed');
+            throw new coding_exception('A competency can not be added to a completed learning plan');
         }
 
         $competency = new competency($competencyid);
@@ -3406,7 +3406,7 @@ class api {
         }
 
         if (!$plan->can_be_edited()) {
-            throw new coding_exception('A competency can not be removed from a learning plan completed');
+            throw new coding_exception('A competency can not be removed from a completed learning plan');
         }
 
         $link = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));
@@ -3440,7 +3440,7 @@ class api {
         }
 
         if (!$plan->can_be_edited()) {
-            throw new coding_exception('A competency can not be reordered in a learning plan completed');
+            throw new coding_exception('A competency can not be reordered in a completed learning plan');
         }
 
         $down = true;
@@ -3492,7 +3492,7 @@ class api {
         if (!$uc || !$uc->can_read()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get('status') != user_competency::STATUS_WAITING_FOR_REVIEW) {
-            throw new coding_exception('The competency can not be cancel review request at this stage.');
+            throw new coding_exception('The competency review request can not be cancelled at this stage.');
         } else if (!$uc->can_request_review()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyrequestreview', 'nopermissions', '');
         }
@@ -3637,7 +3637,7 @@ class api {
         }
         $plan = new plan($planid);
         if ($plan->get('status') == plan::STATUS_COMPLETE) {
-            throw new coding_exception('To log the user competency in completed plan use user_competency_plan_viewed method.');
+            throw new coding_exception('To log the user competency in a completed plan use the user_competency_plan_viewed method.');
         }
 
         \core\event\competency_user_competency_viewed_in_plan::create_from_user_competency_viewed_in_plan($uc, $planid)->trigger();
@@ -3770,7 +3770,7 @@ class api {
         static::require_enabled();
         $competency = new competency($competencyid);
 
-        // This only check if we have the permission in either competency because both competencies
+        // This only checks if we have the permission in either competency because both competencies
         // should belong to the same framework.
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
@@ -4324,7 +4324,7 @@ class api {
                 // if rating outside a course
                 // - set the default grade and proficiency ONLY if there is no current grade
                 // else we are in a course
-                // - set the defautl grade and proficiency in the course ONLY if there is no current grade in the course
+                // - set the default grade and proficiency in the course ONLY if there is no current grade in the course
                 // - then check the course settings to see if we should push the rating outside the course
                 // - if we should push it
                 // --- push it only if the user_competency (outside the course) has no grade

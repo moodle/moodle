@@ -121,7 +121,7 @@ final class user_deleted_observer_test extends \advanced_testcase {
      * Ensure that a delete data request is being created upon user deletion
      * if a finished delete data request (excluding complete) for that user already exists.
      */
-    public function test_create_delete_data_request_canceled_delete_data_request_preexists(): void {
+    public function test_create_delete_data_request_cancelled_delete_data_request_preexists(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -135,7 +135,7 @@ final class user_deleted_observer_test extends \advanced_testcase {
         $requestid = $datarequest->get('id');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_CANCELLED);
 
-        // Validate that delete data request has been created and the status has been updated to 'Canceled'.
+        // Validate that delete data request has been created and the status has been updated to 'Cancelled'.
         $this->assertEquals(1, api::get_data_requests_count($user->id, [], [api::DATAREQUEST_TYPE_DELETE]));
         $this->assertFalse(api::has_ongoing_request($user->id, api::DATAREQUEST_TYPE_DELETE));
 
