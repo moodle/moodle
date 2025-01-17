@@ -17,9 +17,9 @@
 namespace aiprovider_openai;
 
 use core\http_client;
-use core_ai\aiactions\responses\response_base;
 use core_ai\process_base;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -38,14 +38,18 @@ abstract class abstract_processor extends process_base {
      *
      * @return UriInterface
      */
-    abstract protected function get_endpoint(): UriInterface;
+    protected function get_endpoint(): UriInterface {
+        return new Uri($this->provider->actionconfig[$this->action::class]['settings']['endpoint']);
+    }
 
     /**
      * Get the name of the model to use.
      *
      * @return string
      */
-    abstract protected function get_model(): string;
+    protected function get_model(): string {
+        return $this->provider->actionconfig[$this->action::class]['settings']['model'];
+    }
 
     /**
      * Get the system instructions.
