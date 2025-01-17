@@ -14,15 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiprovider_azureai;
-
 /**
- * Class process text summarisation.
+ * Hook listener callbacks for the Azure AI Provider.
  *
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class process_summarise_text extends process_generate_text {
 
-}
+defined('MOODLE_INTERNAL') || die();
+
+$callbacks = [
+    [
+        'hook' => \core_ai\hook\after_ai_provider_form_hook::class,
+        'callback' => \aiprovider_azureai\hook_listener::class . '::set_form_definition_for_aiprovider_azureai',
+    ],
+];

@@ -32,7 +32,7 @@ use Psr\Http\Message\UriInterface;
 class process_generate_text extends abstract_processor {
     #[\Override]
     protected function get_endpoint(): UriInterface {
-        $url = rtrim(get_config('aiprovider_azureai', 'endpoint'), '/')
+        $url = rtrim($this->provider->config['endpoint'], '/')
             . '/openai/deployments/'
             . $this->get_deployment_name()
             . '/chat/completions?api-version='
@@ -42,18 +42,8 @@ class process_generate_text extends abstract_processor {
     }
 
     #[\Override]
-    protected function get_deployment_name(): string {
-        return get_config('aiprovider_azureai', 'action_generate_text_deployment');
-    }
-
-    #[\Override]
-    protected function get_api_version(): string {
-        return get_config('aiprovider_azureai', 'action_generate_text_apiversion');
-    }
-
-    #[\Override]
     protected function get_system_instruction(): string {
-        return get_config('aiprovider_azureai', 'action_generate_text_systeminstruction');
+        return $this->provider->actionconfig[$this->action::class]['settings']['systeminstruction'];
     }
 
     #[\Override]
@@ -81,10 +71,10 @@ class process_generate_text extends abstract_processor {
         return new Request(
             method: 'POST',
             uri: '',
-            body: json_encode($requestobj),
             headers: [
                 'Content-Type' => 'application/json',
             ],
+            body: json_encode($requestobj),
         );
     }
 
