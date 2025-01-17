@@ -55,7 +55,6 @@ class Charset
     /**
      * @param string $tableName
      * @return void
-     *
      * @throws ValueErrorException for unsupported $tableName
      *
      * @todo add support for cp1252 as well as latin-2 .. latin-10

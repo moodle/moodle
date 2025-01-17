@@ -57,6 +57,7 @@ class Client
     const OPT_USE_CURL = 'use_curl';
     const OPT_VERIFY_HOST = 'verifyhost';
     const OPT_VERIFY_PEER = 'verifypeer';
+    const OPT_EXTRA_HEADERS = 'extra_headers';
 
     /** @var string */
     protected static $requestClass = '\\PhpXmlRpc\\Request';
@@ -259,6 +260,13 @@ class Client
     protected $user_agent;
 
     /**
+     * Additional headers to be included in the requests.
+     *
+     * @var string[]
+     */
+    protected $extra_headers = array();
+
+    /**
      * CURL handle: used for keep-alive
      * @internal
      */
@@ -299,6 +307,7 @@ class Client
         self::OPT_USERNAME,
         self::OPT_VERIFY_HOST,
         self::OPT_VERIFY_PEER,
+        self::OPT_EXTRA_HEADERS,
     );
 
     /**
@@ -669,7 +678,7 @@ class Client
      *
      * @todo check correctness of urlencoding cookie value (copied from php way of doing it, but php is generally sending
      *       response not requests. We do the opposite...)
-     * @todo strip invalid chars from cookie name? As per RFC6265, we should follow RFC2616, Section 2.2
+     * @todo strip invalid chars from cookie name? As per RFC 6265, we should follow RFC 2616, Section 2.2
      * @todo drop/rename $port parameter. Cookies are not isolated by port!
      * @todo feature-creep allow storing 'expires', 'secure', 'httponly' and 'samesite' cookie attributes (we could do
      *       as php, and allow $path to be an array of attributes...)
@@ -822,6 +831,7 @@ class Client
             return $this->multicall($req, $timeout, $method);
         } elseif (is_string($req)) {
             $n = new static::$requestClass('');
+            /// @todo we should somehow allow the caller to declare a custom contenttype too, esp. for the charset declaration
             $n->setPayload($req);
             $req = $n;
         }
@@ -986,7 +996,7 @@ class Client
             $uri = $path;
         }
 
-        // Cookie generation, as per RFC6265
+        // Cookie generation, as per RFC 6265
         // NB: the following code does not honour 'expires', 'path' and 'domain' cookie attributes set to client obj by the user...
         $cookieHeader = '';
         if (count($opts['cookies'])) {
@@ -996,6 +1006,11 @@ class Client
                 $cookieHeader .= ' ' . $name . '=' . $cookie['value'] . ";";
             }
             $cookieHeader = 'Cookie:' . $version . substr($cookieHeader, 0, -1) . "\r\n";
+        }
+
+        $extraHeaders = '';
+        if (is_array($this->extra_headers) && $this->extra_headers) {
+            $extraHeaders = implode("\r\n", $this->extra_headers) . "\r\n";
         }
 
         // omit port if default
@@ -1014,8 +1029,9 @@ class Client
             $encodingHdr .
             'Accept-Charset: ' . implode(',', $opts['accepted_charset_encodings']) . "\r\n" .
             $cookieHeader .
-            'Content-Type: ' . $req->getContentType() . "\r\nContent-Length: " .
-            strlen($payload) . "\r\n\r\n" .
+            'Content-Type: ' . $req->getContentType() . "\r\n" .
+            $extraHeaders .
+            'Content-Length: ' . strlen($payload) . "\r\n\r\n" .
             $payload;
 
         if ($opts['debug'] > 1) {
@@ -1337,6 +1353,10 @@ class Client
         // request compression header
         if ($encodingHdr) {
             $headers[] = $encodingHdr;
+        }
+
+        if (is_array($this->extra_headers) && $this->extra_headers) {
+            $headers = array_merge($headers, $this->extra_headers);
         }
 
         // Fix the HTTP/1.1 417 Expectation Failed Bug (curl by default adds a 'Expect: 100-continue' header when POST

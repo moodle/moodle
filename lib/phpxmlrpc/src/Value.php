@@ -443,7 +443,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * @param mixed $offset
      * @param mixed $value
      * @return void
-     *
      * @throws ValueErrorException|TypeErrorException
      */
     #[\ReturnTypeWillChange]
@@ -521,7 +520,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @param mixed $offset
      * @return void
-     *
      * @throws ValueErrorException|StateErrorException
      */
     #[\ReturnTypeWillChange]
