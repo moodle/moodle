@@ -507,11 +507,17 @@ class manager {
      * This function load the adhoc tasks for a given classname.
      *
      * @param string $classname
-     * @param bool $failedonly
-     * @param bool $skiprunning do not return tasks that are in the running state
+     * @param bool $failedonly Return only failed tasks
+     * @param bool $skiprunning Do not return tasks that are in the running state
+     * @param bool $dueonly Return only tasks that are due to run (nextruntime < now)
      * @return array
      */
-    public static function get_adhoc_tasks(string $classname, bool $failedonly = false, bool $skiprunning = false): array {
+    public static function get_adhoc_tasks(
+        string $classname,
+        bool $failedonly = false,
+        bool $skiprunning = false,
+        bool $dueonly = false
+    ): array {
         global $DB;
 
         $conds[] = 'classname = ?';
@@ -519,6 +525,8 @@ class manager {
 
         if ($failedonly) {
             $conds[] = 'faildelay > 0';
+        } else if ($dueonly) {
+            $conds[] = 'faildelay = 0';
         }
         if ($skiprunning) {
             $conds[] = 'timestarted IS NULL';
@@ -948,6 +956,17 @@ class manager {
         }
 
         return null;
+    }
+
+    /**
+     * This function will delete an adhoc task by id. The task will be removed
+     * from the database.
+     *
+     * @param int $taskid
+     */
+    public static function delete_adhoc_task(int $taskid): void {
+        global $DB;
+        $DB->delete_records('task_adhoc', ['id' => $taskid]);
     }
 
     /**
