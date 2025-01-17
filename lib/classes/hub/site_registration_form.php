@@ -51,6 +51,7 @@ class site_registration_form extends \moodleform {
         $mform = & $this->_form;
         $admin = get_admin();
         $site = get_site();
+        $registered = $this->_customdata['registered'];
 
         $siteinfo = registration::get_site_info([
             'name' => format_string($site->fullname, true, array('context' => context_course::instance(SITEID))),
@@ -163,7 +164,7 @@ class site_registration_form extends \moodleform {
         $mform->addElement('static', 'siteinfosummary', get_string('sendfollowinginfo', 'hub'), registration::get_stats_summary($siteinfo));
 
         // Check if it's a first registration or update.
-        if (registration::is_registered()) {
+        if ($registered) {
             $buttonlabel = get_string('updatesiteregistration', 'core_hub');
             $mform->addElement('hidden', 'update', true);
             $mform->setType('update', PARAM_BOOL);

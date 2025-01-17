@@ -96,7 +96,7 @@ class api {
         } else if (isset($curloutput['exception'])) {
             // Exception occurred on the remote side.
             self::process_curl_exception($token, $curloutput);
-        } else if ($info['http_code'] != 200) {
+        } else if (!empty($info['http_code']) && $info['http_code'] != 200) {
             throw new moodle_exception('errorconnect', 'hub', '', $info['http_code']);
         } else {
             return $curloutput;
@@ -162,6 +162,20 @@ class api {
         $info['imgurl'] = new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/webservice/download.php',
             ['filetype' => self::HUB_HUBSCREENSHOT_FILE_TYPE]);
         return $info;
+    }
+
+    /**
+     * Checks if current site is registered in hub.
+     *
+     * @return bool
+     */
+    public static function is_site_registered_in_hub(): bool {
+        global $CFG;
+
+        return self::call('hub_site_is_registered', [
+            'siteurl' => $CFG->wwwroot,
+            'sitesecret' => registration::get_secret(),
+        ]);
     }
 
     /**
