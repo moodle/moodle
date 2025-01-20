@@ -20,6 +20,11 @@ method normalizes a string containing a series of Internet addresses.
 * The method `count_modules_completed` now delegate the logic to count the
 completed modules to the DBMS improving the performance of the method.
 
+* New Behat step `\behat_general::the_url_should_match()` has been added
+  to allow checking the current URL. You can use it to check whether a
+  user has been redirected to the expected location.
+  e.g. `And the url should match "/mod/forum/view\.php\?id=[0-9]+"`
+
 === 4.4.5 ===
 
 * All uses of the following PHPUnit methods have been removed as these methods are deprecated upstream without direct replacement:

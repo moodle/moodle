@@ -67,6 +67,7 @@ Feature: grader report pagination
     Then I should see "103" node occurrences of type "tr" in the "user-grades" "table"
     And I should see "2" in the ".stickyfooter .pagination" "css_element"
     And I should not see "3" in the ".stickyfooter .pagination" "css_element"
+    And the url should match "/grade/report/grader/index\.php\?id=[0-9]+&report=grader&perpage=100$"
 
   @javascript
   Scenario: The pagination bar is only displayed when there is more than one page
