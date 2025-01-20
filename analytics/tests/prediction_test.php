@@ -783,7 +783,7 @@ final class prediction_test extends \advanced_testcase {
             'bad' => array(
                 'modelquality' => 'random',
                 'ncourses' => 50,
-                'expectedresults' => array(
+                'expected' => array(
                     '\core\analytics\time_splitting\single_range' => \core_analytics\model::LOW_SCORE,
                     '\core\analytics\time_splitting\quarters' => \core_analytics\model::LOW_SCORE,
                 )
@@ -791,7 +791,7 @@ final class prediction_test extends \advanced_testcase {
             'good' => array(
                 'modelquality' => 'perfect',
                 'ncourses' => 50,
-                'expectedresults' => array(
+                'expected' => array(
                     '\core\analytics\time_splitting\single_range' => \core_analytics\model::OK,
                     '\core\analytics\time_splitting\quarters' => \core_analytics\model::OK,
                 )
@@ -969,7 +969,7 @@ final class prediction_test extends \advanced_testcase {
             foreach ($cases as $key => $case) {
 
                 if (!$predictionsprocessor instanceof \mlbackend_python\processor || empty($testpythonserver)) {
-                    $extraparams = ['predictionsprocessor' => $classfullname, 'forcedconfig' => null];
+                    $extraparams = ['predictionsprocessorclass' => $classfullname, 'forcedconfig' => null];
                     $return[$key . '-' . $classfullname] = $case + $extraparams;
                 } else {
 
@@ -979,7 +979,7 @@ final class prediction_test extends \advanced_testcase {
                         'port' => TEST_MLBACKEND_PYTHON_PORT, 'secure' => false, 'username' => TEST_MLBACKEND_PYTHON_USERNAME,
                         'password' => TEST_MLBACKEND_PYTHON_PASSWORD]];
                     $casekey = $key . '-' . $classfullname . '-server';
-                    $return[$casekey] = $case + ['predictionsprocessor' => $classfullname, 'forcedconfig' => $forcedconfig];
+                    $return[$casekey] = $case + ['predictionsprocessorclass' => $classfullname, 'forcedconfig' => $forcedconfig];
                 }
             }
         }

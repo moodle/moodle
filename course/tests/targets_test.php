@@ -48,14 +48,14 @@ final class targets_test extends \advanced_testcase {
 
         return [
             'coursenotyetstarted' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, 10, 24, $year + 1)
                 ],
                 'isvalid' => get_string('coursenotyetstarted', 'course')
             ],
             'coursenostudents' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, 10, 24, $year - 2),
                     'enddate' => mktime(0, 0, 0, 10, 24, $year - 1)
@@ -63,7 +63,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('nocoursestudents', 'course')
             ],
             'coursenosections' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'format' => 'singleactivity',
                     'students' => true
@@ -71,7 +71,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('nocoursesections', 'course')
             ],
             'coursenoendtime' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'format' => 'topics',
                     'enddate' => 0,
@@ -80,7 +80,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('nocourseendtime', 'course')
             ],
             'courseendbeforestart' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'enddate' => mktime(0, 0, 0, 10, 23, $year - 2),
                     'students' => true
@@ -88,7 +88,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('errorendbeforestart', 'course')
             ],
             'coursetoolong' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, 10, 24, $year - 2),
                     'enddate' => mktime(0, 0, 0, 10, 23, $year),
@@ -97,7 +97,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('coursetoolong', 'course')
             ],
             'coursealreadyfinished' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, 10, 24, $year - 2),
                     'enddate' => mktime(0, 0, 0, 10, 23, $year - 1),
@@ -107,7 +107,7 @@ final class targets_test extends \advanced_testcase {
                 'fortraining' => false
             ],
             'coursenotyetfinished' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, $month - 1, 24, $year),
                     'enddate' => mktime(0, 0, 0, $month + 2, 23, $year),
@@ -116,7 +116,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('coursenotyetfinished', 'course')
             ],
             'coursenocompletion' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 0,
                     'startdate' => mktime(0, 0, 0, $month - 2, 24, $year),
                     'enddate' => mktime(0, 0, 0, $month - 1, 23, $year),
@@ -125,7 +125,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => get_string('completionnotenabledforcourse', 'completion')
             ],
             'coursehiddentraining' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, $month - 1, 24, $year - 1),
                     'enddate' => mktime(0, 0, 0, $month - 1, 23, $year),
@@ -135,7 +135,7 @@ final class targets_test extends \advanced_testcase {
                 'isvalid' => true,
             ],
             'coursehiddenprediction' => [
-                'params' => [
+                'courseparams' => [
                     'enablecompletion' => 1,
                     'startdate' => mktime(0, 0, 0, $month - 1, 24, $year),
                     'enddate' => mktime(0, 0, 0, $month - 1, 23, $year + 1),

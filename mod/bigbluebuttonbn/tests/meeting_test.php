@@ -120,7 +120,7 @@ final class meeting_test extends \advanced_testcase {
      * @covers ::create_meeting_data
      * @covers ::create_meeting_metadata
      */
-    public function test_create_meeting(int $type, ?string $groupname): void {
+    public function test_create_meeting(int $type, ?string $groupname, $groupmode, $canjoin): void {
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] =
             $this->prepare_meeting($type, $groupname, SEPARATEGROUPS, false);
@@ -142,7 +142,7 @@ final class meeting_test extends \advanced_testcase {
      * @covers ::get_meeting_info
      * @covers ::do_get_meeting_info
      */
-    public function test_get_meeting_info(int $type, ?string $groupname): void {
+    public function test_get_meeting_info(int $type, ?string $groupname, $groupmode, $canjoin): void {
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] = $this->prepare_meeting($type, $groupname);
         $meetinginfo = $meeting->get_meeting_info();

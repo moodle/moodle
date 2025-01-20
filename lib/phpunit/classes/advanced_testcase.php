@@ -20,6 +20,8 @@ use core\http_client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
 
 /**
  * Advanced PHPUnit test case customised for Moodle.
@@ -46,21 +48,16 @@ abstract class advanced_testcase extends base_testcase {
      * Note: use setUp() or setUpBeforeClass() in your test cases.
      *
      * @param string $name
-     * @param array  $data
-     * @param string $dataName
      */
-    final public function __construct($name = null, array $data = [], $dataname = '') {
-        parent::__construct($name, $data, $dataname);
+    final public function __construct(string $name) {
+        parent::__construct($name);
 
         $this->setBackupGlobals(false);
-        $this->setBackupStaticAttributes(false);
         $this->setPreserveGlobalState(false);
     }
 
-    /**
-     * Runs the bare test sequence.
-     */
-    final public function runBare(): void {
+    #[Before]
+    final public function setup_test_environment(): void {
         global $CFG, $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
@@ -71,28 +68,18 @@ abstract class advanced_testcase extends base_testcase {
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
 
-        try {
-            $this->setCurrentTimeStart();
-            parent::runBare();
-        } catch (Exception $ex) {
-            $e = $ex;
-        } catch (Throwable $ex) {
-            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
-            $e = $ex;
-        } finally {
-            // Reset global state after test and test failure.
-            $CFG = phpunit_util::get_global_backup('CFG');
-            $DB = phpunit_util::get_global_backup('DB');
+        $this->setCurrentTimeStart();
+    }
 
-            // We need to reset the autoloader.
-            \core_component::reset();
-        }
+    #[After]
+    final public function teardown_test_environment(): void {
+        global $CFG, $DB;
+        // Reset global state after test and test failure.
+        $CFG = phpunit_util::get_global_backup('CFG');
+        $DB = phpunit_util::get_global_backup('DB');
 
-        if (isset($e)) {
-            // Cleanup after failed expectation.
-            self::resetAllData();
-            throw $e;
-        }
+        // We need to reset the autoloader.
+        \core_component::reset();
 
         // Deal with any debugging messages.
         $debugerror = phpunit_util::display_debugging_messages(true);
@@ -698,8 +685,8 @@ abstract class advanced_testcase extends base_testcase {
             $params['userid'] = $matchuserid;
         }
 
-        $lock = $this->createMock(\core\lock\lock::class);
-        $cronlock = $this->createMock(\core\lock\lock::class);
+        $lock = $this->createStub(\core\lock\lock::class);
+        $cronlock = $this->createStub(\core\lock\lock::class);
 
         $tasks = $DB->get_recordset('task_adhoc', $params);
         foreach ($tasks as $record) {

@@ -603,7 +603,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 0,
                     'expirythreshold' => 12 * HOURSECS,
                 ],
-                'global settings' => (object) [
+                'globalsettings' => (object) [
                     'status' => ENROL_INSTANCE_ENABLED,
                     'roleid' => $studentrole->id,
                     'enrolperiod' => 0,
@@ -620,7 +620,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 0,
                     'expirythreshold' => DAYSECS,
                 ],
-                'global settings' => (object) [
+                'globalsettings' => (object) [
                     'status' => ENROL_INSTANCE_ENABLED,
                     'roleid' => $studentrole->id,
                     'enrolperiod' => 72 * HOURSECS,
@@ -637,7 +637,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 1,
                     'expirythreshold' => 0
                 ],
-                'global settings' => (object) [
+                'globalsettings' => (object) [
                     'status' => ENROL_INSTANCE_DISABLED,
                     'roleid' => $teacherrole->id,
                     'enrolperiod' => 0,
@@ -717,7 +717,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 0,
                     'expirythreshold' => 2 * DAYSECS,
                 ],
-                'update data' => (object) [
+                'updatedata' => (object) [
                     'status' => ENROL_INSTANCE_DISABLED,
                     'roleid' => $studentrole->id,
                     'enrolperiod' => 30 * DAYSECS,
@@ -734,7 +734,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 0,
                     'expirythreshold' => 0,
                 ],
-                'update data' => (object) [
+                'updatedata' => (object) [
                     'status' => ENROL_INSTANCE_ENABLED,
                     'roleid' => $teacherrole->id,
                     'enrolperiod' => 0,
@@ -751,7 +751,7 @@ final class lib_test extends \advanced_testcase {
                     'notifyall' => 1,
                     'expirythreshold' => 2 * DAYSECS,
                 ],
-                'update data' => (object) [
+                'updatedata' => (object) [
                     'status' => ENROL_INSTANCE_ENABLED,
                     'roleid' => $studentrole->id,
                     'enrolperiod' => 30 * DAYSECS,

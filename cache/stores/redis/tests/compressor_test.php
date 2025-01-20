@@ -178,11 +178,6 @@ final class compressor_test extends \advanced_testcase {
      * @return array
      */
     public static function provider_for_tests_setget(): array {
-        if (!cachestore_redis::are_requirements_met()) {
-            // Even though we skip all tests in this case, this provider can still show warnings about non-existing class.
-            return [];
-        }
-
         $data = [
             ['none, none',
                 \Redis::SERIALIZER_NONE, cachestore_redis::COMPRESSOR_NONE,
@@ -239,6 +234,7 @@ final class compressor_test extends \advanced_testcase {
      * Test we can use get and set with all combinations.
      *
      * @dataProvider provider_for_tests_setget
+     * @requires extension Redis
      * @param string $name
      * @param int $serializer
      * @param int $compressor
@@ -263,6 +259,7 @@ final class compressor_test extends \advanced_testcase {
      * Test we can use get and set many with all combinations.
      *
      * @dataProvider provider_for_tests_setget
+     * @requires extension Redis
      * @param string $name
      * @param int $serializer
      * @param int $compressor

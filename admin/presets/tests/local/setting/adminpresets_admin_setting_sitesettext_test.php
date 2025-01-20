@@ -70,22 +70,22 @@ final class adminpresets_admin_setting_sitesettext_test extends \advanced_testca
         return [
             'Fullname: different value' => [
                 'settingname' => 'fullname',
-                'setttingvalue' => 'New site fullname',
+                'settingvalue' => 'New site fullname',
                 'expectedsaved' => true,
             ],
             'Fullname: same value' => [
                 'settingname' => 'fullname',
-                'setttingvalue' => 'PHPUnit test site',
+                'settingvalue' => 'PHPUnit test site',
                 'expectedsaved' => false,
             ],
             'Summary: different value' => [
                 'settingname' => 'summary',
-                'setttingvalue' => 'This is a new site summary.',
+                'settingvalue' => 'This is a new site summary.',
                 'expectedsaved' => true,
             ],
             'Summary: same value' => [
                 'settingname' => 'summary',
-                'setttingvalue' => '',
+                'settingvalue' => '',
                 'expectedsaved' => false,
             ],
         ];

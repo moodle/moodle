@@ -662,7 +662,7 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:config' => CAP_ALLOW,
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => true,
                 'expect' => true,
             ],
@@ -670,21 +670,21 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:config' => CAP_ALLOW,
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => false,
                 'expect' => true,
             ],
             'Unrelated capability which is not set' => [
                 'capabilities' => [
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => true,
                 'expect' => false,
             ],
             'Unrelated capability which is not set (not owner)' => [
                 'capabilities' => [
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => false,
                 'expect' => false,
             ],
@@ -692,7 +692,7 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:config' => CAP_PREVENT,
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => true,
                 'expect' => false,
             ],
@@ -700,21 +700,21 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:config' => CAP_PREVENT,
                 ],
-                'testcapability' => 'config',
+                'capability' => 'config',
                 'isowner' => false,
                 'expect' => false,
             ],
             'Related capability which is not set' => [
                 'capabilities' => [
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => true,
                 'expect' => false,
             ],
             'Related capability which is not set (not owner)' => [
                 'capabilities' => [
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => false,
                 'expect' => false,
             ],
@@ -722,7 +722,7 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:editall' => CAP_ALLOW,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => true,
                 'expect' => true,
             ],
@@ -730,7 +730,7 @@ final class questionlib_test extends \advanced_testcase {
                 'capabilities' => [
                     'moodle/question:editall' => CAP_ALLOW,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => false,
                 'expect' => true,
             ],
@@ -739,7 +739,7 @@ final class questionlib_test extends \advanced_testcase {
                     'moodle/question:editall' => CAP_ALLOW,
                     'moodle/question:editmine' => CAP_PREVENT,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => true,
                 'expect' => true,
             ],
@@ -748,7 +748,7 @@ final class questionlib_test extends \advanced_testcase {
                     'moodle/question:editall' => CAP_ALLOW,
                     'moodle/question:editmine' => CAP_PREVENT,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => false,
                 'expect' => true,
             ],
@@ -757,7 +757,7 @@ final class questionlib_test extends \advanced_testcase {
                     'moodle/question:editall' => CAP_PREVENT,
                     'moodle/question:editmine' => CAP_ALLOW,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => true,
                 'expect' => true,
             ],
@@ -766,7 +766,7 @@ final class questionlib_test extends \advanced_testcase {
                     'moodle/question:editall' => CAP_PREVENT,
                     'moodle/question:editmine' => CAP_ALLOW,
                 ],
-                'testcapability' => 'edit',
+                'capability' => 'edit',
                 'isowner' => false,
                 'expect' => false,
             ],

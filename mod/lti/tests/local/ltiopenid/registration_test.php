@@ -407,7 +407,7 @@ EOD;
         $toolproxy['secret'] = 'peM7YDx420bo';
 
         $reghelper = $this->getMockBuilder(registration_helper::class)
-            ->setMethods(['get_tool_proxy'])
+            ->onlyMethods(['get_tool_proxy'])
             ->getMock();
         $map = [[$toolproxy['id'], $toolproxy]];
         $reghelper->method('get_tool_proxy')

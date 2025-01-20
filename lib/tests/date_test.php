@@ -308,7 +308,15 @@ final class date_test extends advanced_testcase {
         $this->assertSame('Pacific/Auckland', core_date::get_server_timezone());
 
         // Admin should fix the settings.
+        set_error_handler(function ($errno, $errstr): void {
+            $this->assertStringContainsString('Unknown or bad timezone', $errstr);
+            restore_error_handler();
+        }, E_ALL);
         $this->setTimezone('xxx/zzzz', 'Europe/Prague');
+        set_error_handler(function ($errno, $errstr): void {
+            $this->assertStringContainsString('Unknown or bad timezone', $errstr);
+            restore_error_handler();
+        }, E_ALL);
         $this->assertSame('Europe/Prague', core_date::get_server_timezone());
     }
 
@@ -490,17 +498,36 @@ final class date_test extends advanced_testcase {
         $this->assertSame('Europe/Prague', core_date::get_user_timezone(null));
         $this->assertSame('Europe/Prague', core_date::get_user_timezone());
 
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->setTimezone('xxx/yyy', 'Europe/London');
+        $this->assertCount(1, $invokable->get_invocations());
         $USER->timezone = 'abc/def';
         $CFG->forcetimezone = 'Europe/Berlin';
         $this->assertSame('Europe/Berlin', core_date::get_user_timezone(null));
         $this->assertSame('Europe/Berlin', core_date::get_user_timezone());
+        $this->assertCount(1, $invokable->get_invocations());
+        restore_error_handler();
 
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->setTimezone('xxx/yyy', 'Europe/London');
+        $this->assertCount(1, $invokable->get_invocations());
+        restore_error_handler();
+
         $USER->timezone = 'abc/def';
         $CFG->forcetimezone = 99;
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->assertSame('Europe/London', core_date::get_user_timezone(null));
+        $this->assertCount(1, $invokable->get_invocations());
+        restore_error_handler();
+
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->assertSame('Europe/London', core_date::get_user_timezone());
+        $this->assertCount(1, $invokable->get_invocations());
+        restore_error_handler();
 
         // User object parameter.
         $admin = get_admin();
@@ -572,14 +599,30 @@ final class date_test extends advanced_testcase {
         $this->assertSame('Europe/London', core_date::get_user_timezone('Europe/London'));
         $this->assertSame('Europe/Prague', core_date::get_user_timezone('xxx/zzz'));
         $USER->timezone = 'xxz/zzz';
-        $this->assertSame('Europe/Prague', core_date::get_user_timezone('99'));
 
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
+        $this->assertSame('Europe/Prague', core_date::get_user_timezone('99'));
+        $this->assertCount(0, $invokable->get_invocations());
+        restore_error_handler();
+
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->setTimezone('xxx', 'Europe/Prague');
+        $this->assertCount(1, $invokable->get_invocations());
+        restore_error_handler();
+
         $CFG->forcetimezone = '99';
         $USER->timezone = 'xxx';
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->assertSame('Europe/Prague', core_date::get_user_timezone('99'));
+        $this->assertCount(1, $invokable->get_invocations());
         $this->assertSame('Europe/Prague', core_date::get_user_timezone(99));
+        $this->assertCount(2, $invokable->get_invocations());
         $this->assertSame('Etc/GMT-1', core_date::get_user_timezone(1));
+        $this->assertCount(2, $invokable->get_invocations());
+        restore_error_handler();
 
         $this->setTimezone('Europe/Prague');
         $CFG->forcetimezone = 'Pacific/Auckland';
@@ -593,7 +636,11 @@ final class date_test extends advanced_testcase {
         $USER->timezone = 'Europe/London';
         $CFG->forcetimezone = 99;
         $tz = new DateTimeZone('Pacific/Auckland');
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_ALL);
         $this->assertSame('Pacific/Auckland', core_date::get_user_timezone($tz));
+        $this->assertCount(0, $invokable->get_invocations());
+        restore_error_handler();
     }
 
     /**

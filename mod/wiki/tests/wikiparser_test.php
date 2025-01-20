@@ -363,19 +363,19 @@ final class wikiparser_test extends \advanced_testcase {
     public static function format_parser_provider(): array {
         return [
             'creole' => [
-                'data' => 'creole',
+                'format' => 'creole',
                 'expected' => 'creole',
             ],
             'html' => [
-                'data' => 'html',
+                'format' => 'html',
                 'expected' => 'html',
             ],
             'wikimarkup' => [
-                'data' => 'nwiki',
+                'format' => 'nwiki',
                 'expected' => 'nwiki',
             ],
             'wrong format' => [
-                'data' => '../wrongformat123',
+                'format' => '../wrongformat123',
                 'expected' => 'exception',
             ],
         ];

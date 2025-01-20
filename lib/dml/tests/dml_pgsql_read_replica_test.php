@@ -280,6 +280,9 @@ final class dml_pgsql_read_replica_test extends \advanced_testcase {
         ];
 
         $this->resetDebugging();
+        set_error_handler(function ($errno, $errstr) {
+            $this->assertStringContainsString('could not connect to server', $errstr);
+        }, E_ALL);
         $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
         $this->assertNotEmpty($db2->get_records('user'));
@@ -301,5 +304,7 @@ final class dml_pgsql_read_replica_test extends \advanced_testcase {
         );
         // Attempt to connect to the existing DB host will succeed.
         $this->assertEquals("Readwrite db connection succeeded for host {$cfg->dbhost}", $debugging[1]);
+        $this->assertTrue(count($db2->get_records('user')) > 0);
+        restore_error_handler();
     }
 }

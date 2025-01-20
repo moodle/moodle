@@ -211,7 +211,7 @@ final class editor_test extends advanced_testcase {
                 'texteditors' => 'textarea,tiny',
                 'pluginname' => 'textarea',
                 'direction' => base::MOVE_DOWN,
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'tiny',
                     'textarea',
                 ]),
@@ -222,7 +222,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'tiny',
                 'direction' => base::MOVE_DOWN,
                 // Tiny is already at the bottom of the enabled plugins.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'textarea',
                     'tiny',
                 ]),
@@ -233,7 +233,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'atto',
                 'direction' => base::MOVE_DOWN,
                 // Atto is not enabled. No change expected.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'textarea',
                     'tiny',
                 ]),
@@ -243,7 +243,7 @@ final class editor_test extends advanced_testcase {
                 'texteditors' => 'textarea,tiny',
                 'pluginname' => 'tiny',
                 'direction' => base::MOVE_UP,
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'tiny',
                     'textarea',
                 ]),
@@ -254,7 +254,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'tiny',
                 'direction' => base::MOVE_UP,
                 // Tiny is already at the top of the enabled plugins.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'tiny',
                     'textarea',
                 ]),
@@ -265,7 +265,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'atto',
                 'direction' => base::MOVE_UP,
                 // Atto is not enabled. No change expected.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'textarea',
                     'tiny',
                 ]),
@@ -276,7 +276,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'atto',
                 'direction' => base::MOVE_UP,
                 // Atto is not enabled. No change expected.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'textarea',
                     'tiny',
                 ]),
@@ -287,7 +287,7 @@ final class editor_test extends advanced_testcase {
                 'pluginname' => 'fakeeditor',
                 'direction' => base::MOVE_UP,
                 // The fakeeditor plugin does not exist. No change expected.
-                'expected' => $getorder([
+                'neworder' => $getorder([
                     'textarea',
                     'tiny',
                 ]),

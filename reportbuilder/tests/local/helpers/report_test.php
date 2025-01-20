@@ -51,8 +51,10 @@ final class report_test extends advanced_testcase {
 
         $this->assertEquals('My report with tags', $report->get('name'));
         $this->assertEquals(datasource::TYPE_CUSTOM_REPORT, $report->get('type'));
-        $this->assertEqualsCanonicalizing(['cat', 'dog'],
-            core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id')));
+        $this->assertEqualsCanonicalizing(
+            ['cat', 'dog'],
+            array_values(core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id'))),
+        );
 
         $report = report::create_report((object) [
             'name' => 'My report without tags',
@@ -96,8 +98,10 @@ final class report_test extends advanced_testcase {
 
         $this->assertEquals('My renamed report adding tags', $reportupdated->get('name'));
         $this->assertTrue($reportupdated->get('uniquerows'));
-        $this->assertEqualsCanonicalizing(['cat', 'dog'],
-            core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $reportupdated->get('id')));
+        $this->assertEqualsCanonicalizing(
+            ['cat', 'dog'],
+            array_values(core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $reportupdated->get('id'))),
+        );
     }
 
     /**

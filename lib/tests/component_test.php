@@ -921,7 +921,7 @@ final class component_test extends \advanced_testcase {
                     ],
                 ],
                 'classname' => 'Psr\Http\Message\ServerRequestInterface',
-                'includedfiles' => "{$dirroot}/lib/psr/http-message/src/ServerRequestInterface.php",
+                'file' => "{$dirroot}/lib/psr/http-message/src/ServerRequestInterface.php",
             ],
             'PSR-4 namespaces can come from multiple sources - second source' => [
                 'psr0' => [],
@@ -932,7 +932,7 @@ final class component_test extends \advanced_testcase {
                     ],
                 ],
                 'classname' => 'Psr\Http\Message\ServerRequestFactoryInterface',
-                'includedfiles' => "{$dirroot}/lib/psr/http-factory/src/ServerRequestFactoryInterface.php",
+                'file' => "{$dirroot}/lib/psr/http-factory/src/ServerRequestFactoryInterface.php",
             ],
         ];
     }

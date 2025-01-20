@@ -134,15 +134,15 @@ final class httpsreplace_test extends \advanced_testcase {
     /**
      * Test upgrade_http_links
      * @param string $content Example content that we'll attempt to replace.
-     * @param string $ouputregex Regex for what output we expect.
+     * @param string $outputregex Regex for what output we expect.
      * @param string $expectedcontent What content we are expecting afterwards.
      * @dataProvider upgrade_http_links_provider
      */
-    public function test_upgrade_http_links($content, $ouputregex, $expectedcontent): void {
+    public function test_upgrade_http_links($content, $outputregex, $expectedcontent): void {
         global $DB;
 
         $this->resetAfterTest();
-        $this->expectOutputRegex($ouputregex);
+        $this->expectOutputRegex($outputregex);
 
         $finder = new tool_httpreplace_url_finder_mock();
 

@@ -209,12 +209,12 @@ final class question_engine_test extends advanced_testcase {
      * @dataProvider is_manual_grade_in_range_provider
      * @covers \question_engine::is_manual_grade_in_range
      * @param array $post The values to add to $_POST
-     * @param array $params The params to pass to is_manual_grade_in_range
+     * @param array $range The params to pass to is_manual_grade_in_range
      * @param bool $expected
      */
-    public function test_is_manual_grade_in_range(array $post, array $params, bool $expected): void {
+    public function test_is_manual_grade_in_range(array $post, array $range, bool $expected): void {
         $_POST[] = $post;
-        $this->assertEquals($expected, question_engine::is_manual_grade_in_range(...$params));
+        $this->assertEquals($expected, question_engine::is_manual_grade_in_range(...$range));
     }
 
     /**

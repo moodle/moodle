@@ -241,19 +241,19 @@ final class lib_test extends \advanced_testcase {
                 'name' => 'Test label 1',
                 'content' => '<p>Simple textual content<p>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Test label 1'
+                'expectedname' => 'Test label 1'
             ],
             'simple' => [
                 'name' => '',
                 'content' => '<p>Simple textual content<p>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Simple textual content'
+                'expectedname' => 'Simple textual content'
             ],
             'empty' => [
                 'name' => '',
                 'content' => '',
                 'format' => FORMAT_HTML,
-                'expected' => 'Test label 1'
+                'expectedname' => 'Test label 1'
             ],
             'withaudiocontent' => [
                 'name' => '',
@@ -263,7 +263,7 @@ final class lib_test extends \advanced_testcase {
 @@PLUGINFILE@@/moodle-hit-song.mp3
 </audio>&nbsp;</p>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Test with audio'
+                'expectedname' => 'Test with audio'
             ],
             'withvideo' => [
                 'name' => '',
@@ -273,7 +273,7 @@ final class lib_test extends \advanced_testcase {
     https://www.youtube.com/watch?v=xxxyy
 </video>&nbsp;</p>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Test video https://www.youtube.com/watch?v=xxxyy'
+                'expectedname' => 'Test video https://www.youtube.com/watch?v=xxxyy'
             ],
             'with video trimming' => [
                 'name' => '',
@@ -283,61 +283,61 @@ final class lib_test extends \advanced_testcase {
     https://www.youtube.com/watch?v=xxxyy
 </video>&nbsp;</p>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Test with video to be trimmed https://www.youtube....'
+                'expectedname' => 'Test with video to be trimmed https://www.youtube....'
             ],
             'with plain text' => [
                 'name' => '',
                 'content' => 'Content with @@PLUGINFILE@@/moodle-hit-song.mp3 nothing',
                 'format' => FORMAT_HTML,
-                'expected' => 'Content with nothing'
+                'expectedname' => 'Content with nothing'
             ],
             'with several spaces' => [
                 'name' => '',
                 'content' => "Content with @@PLUGINFILE@@/moodle-hit-song.mp3 \r &nbsp; several spaces",
                 'format' => FORMAT_HTML,
-                'expected' => 'Content with several spaces'
+                'expectedname' => 'Content with several spaces'
             ],
             'empty spaces' => [
                 'name' => '',
                 'content' => ' &nbsp; ',
                 'format' => FORMAT_HTML,
-                'expected' => 'Text and media area'
+                'expectedname' => 'Text and media area'
             ],
             'only html' => [
                 'name' => '',
                 'content' => '<audio controls="controls"><source src=""></audio>',
                 'format' => FORMAT_HTML,
-                'expected' => 'Text and media area'
+                'expectedname' => 'Text and media area'
             ],
             'markdown' => [
                 'name' => '',
                 'content' => "##Simple Title\n simple markdown format",
                 'format' => FORMAT_MARKDOWN,
-                'expected' => 'Simple Title simple markdown format'
+                'expectedname' => 'Simple Title simple markdown format'
             ],
             'markdown with pluginfile' => [
                 'name' => '',
                 'content' => "##Simple Title\n simple markdown format @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_MARKDOWN,
-                'expected' => 'Simple Title simple markdown format'
+                'expectedname' => 'Simple Title simple markdown format'
             ],
             'plain text' => [
                 'name' => '',
                 'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_PLAIN,
-                'expected' => 'Simple plain text'
+                'expectedname' => 'Simple plain text'
             ],
             'moodle format text' => [
                 'name' => '',
                 'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_MOODLE,
-                'expected' => 'Simple plain text'
+                'expectedname' => 'Simple plain text'
             ],
             'html format text' => [
                 'name' => '',
                 'content' => "<h1>Simple plain title</h1><p> with plain text</p> @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_HTML,
-                'expected' => 'Simple plain title with plain text'
+                'expectedname' => 'Simple plain title with plain text'
             ],
         ];
     }

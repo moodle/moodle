@@ -32,7 +32,7 @@ final class hide_ended_courses_task_test extends courses_tasks_testcase {
     /**
      * Test hide_ended_courses cron task.
      *
-     * @dataProvider get_courses_provider
+     * @dataProvider hide_end_courses_provider
      * @covers ::execute
      *
      * @param int $nextweekvisible Number of courses with the end date set to next week to be created.
@@ -112,5 +112,24 @@ final class hide_ended_courses_task_test extends courses_tasks_testcase {
             $this->assertInstanceOf('\\core\\event\\course_ended', $event);
             $this->assertArrayHasKey($event->courseid, array_flip($expected));
         }
+    }
+
+    /**
+     * Data provider for test_hide_ended_courses.
+     *
+     * @return array
+     */
+    public static function hide_end_courses_provider(): array {
+        return array_map(
+            function ($args): array {
+                return [
+                    'nextweekvisible' => $args['lastweekcount'],
+                    'yesterdayvisible' => $args['yesterdaycount'],
+                    'tomorrowvisible' => $args['tomorrowcount'],
+                    'createhidden' => $args['createvisible'] ?? true,
+                ];
+            },
+            self::get_courses_provider()
+        );
     }
 }

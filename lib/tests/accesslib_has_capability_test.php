@@ -367,32 +367,32 @@ final class accesslib_has_capability_test extends \advanced_testcase {
     public static function locked_context_provider(): array {
         return [
             'All unlocked' => [
-                'locked' => [
+                'lockedcontexts' => [
                 ],
-                'blockedwrites' => [
+                'blocked' => [
                 ],
             ],
             'User is locked (yes, this is weird)' => [
-                'locked' => [
+                'lockedcontexts' => [
                     'adminuser' => true,
                 ],
-                'blockedwrites' => [
+                'blocked' => [
                     'adminuser',
                 ],
             ],
             'Cat1/Block locked' => [
-                'locked' => [
+                'lockedcontexts' => [
                     'cat1block' => true,
                 ],
-                'blockedwrites' => [
+                'blocked' => [
                     'cat1block',
                 ],
             ],
             'Cat1' => [
-                'locked' => [
+                'lockedcontexts' => [
                     'cat1' => true,
                 ],
-                'blockedwrites' => [
+                'blocked' => [
                     'cat1',
                     'cat1block',
                     'cat1a',
@@ -414,11 +414,11 @@ final class accesslib_has_capability_test extends \advanced_testcase {
                 ],
             ],
             'Cat1 locked and a child explicitly unlocked' => [
-                'locked' => [
+                'lockedcontexts' => [
                     'cat1' => true,
                     'cat1a' => false,
                 ],
-                'blockedwrites' => [
+                'blocked' => [
                     'cat1',
                     'cat1block',
                     'cat1a',

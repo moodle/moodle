@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,6 +24,8 @@ use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base class for PHPUnit test cases customised for Moodle
@@ -54,10 +55,55 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @deprecated 3.0
      */
     public static function assertTag($matcher, $actual, $message = '', $ishtml = true) {
-        $dom = (new PHPUnit\Util\Xml\Loader)->load($actual, $ishtml);
+        if ($ishtml) {
+            $dom = self::loadHTML($actual);
+        } else {
+            $dom = (new PHPUnit\Util\Xml\Loader)->load($actual);
+        }
         $tags = self::findNodes($dom, $matcher, $ishtml);
         $matched = (is_array($tags) && count($tags) > 0) && $tags[0] instanceof DOMNode;
         self::assertTrue($matched, $message);
+    }
+
+    /**
+     * Load HTML into a DomDocument.
+     *
+     * Note: THis is a replacement for functionality removed from PHPUnit 10.
+     *
+     * @param string $actual
+     * @throws \PHPUnit\Util\Xml\XmlException
+     * @return DOMDocument
+     */
+    public static function loadHTML(string $actual): DOMDocument {
+        if ($actual === '') {
+            throw new \PHPUnit\Util\Xml\XmlException('Could not load XML from empty string');
+        }
+
+        $document = new DOMDocument;
+        $document->preserveWhiteSpace = false;
+
+        $internal  = libxml_use_internal_errors(true);
+        $message   = '';
+        $reporting = error_reporting(0);
+
+        $loaded = $document->loadHTML($actual);
+
+        foreach (libxml_get_errors() as $error) {
+            $message .= "\n" . $error->message;
+        }
+
+        libxml_use_internal_errors($internal);
+        error_reporting($reporting);
+
+        if ($loaded === false) {
+            if ($message === '') {
+                $message = 'Could not load XML for unknown reason';
+            }
+
+            throw new \PHPUnit\Util\Xml\XmlException($message);
+        }
+
+        return $document;
     }
 
     /**
@@ -72,7 +118,11 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @deprecated 3.0
      */
     public static function assertNotTag($matcher, $actual, $message = '', $ishtml = true) {
-        $dom = (new PHPUnit\Util\Xml\Loader)->load($actual, $ishtml);
+        if ($ishtml) {
+            $dom = self::loadHTML($actual);
+        } else {
+            $dom = (new PHPUnit\Util\Xml\Loader)->load($actual);
+        }
         $tags = self::findNodes($dom, $matcher, $ishtml);
         $matched = (is_array($tags) && count($tags) > 0) && $tags[0] instanceof DOMNode;
         self::assertFalse($matched, $message);
@@ -605,7 +655,56 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
      * @return int
      */
     protected static function getInvocationCount(InvocationOrder $counter): int {
+        if (method_exists($counter, 'numberOfInvocations')) {
+            return $counter->numberOfInvocations();
+        }
+
         return $counter->getInvocationCount();
     }
     // phpcs:enable
+
+    /**
+     * Get an invokable object for testing.
+     *
+     * This is a helper method to create an invokable object for testing which can be used to
+     * track invocations, including arguments provided.
+     *
+     * This can be useful for modifications to the error handler.
+     *
+     * @return object
+     */
+    protected static function get_invokable() {
+        return new class {
+            private array $invocations = [];
+            public function __invoke(...$args) {
+                $this->invocations[] = $args;
+            }
+
+            public function get_invocations(): array {
+                return $this->invocations;
+            }
+
+            public function get_invocation_count(): int {
+                return count($this->invocations);
+            }
+
+            public function reset(): void {
+                $this->invocations = [];
+            }
+        };
+    }
+
+    /**
+     * Determine whether the test is running in isolation.
+     *
+     * Note: This was previously a public method of the TestCase, but as removed in PHPUnit 10.
+     * There is no direct replacement, but we can use reflection to access the protected property.
+     * @return bool
+     */
+    public function isInIsolation(): bool {
+        $rc = new \ReflectionClass(TestCase::class);
+        $rcp = $rc->getProperty('inIsolation');
+
+        return $rcp->getValue($this);
+    }
 }

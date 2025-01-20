@@ -789,13 +789,13 @@ final class moodle_page_test extends \advanced_testcase {
             'User not a member of any cohort' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
-                'cohorts' => [],
+                'cohortthemes' => [],
                 'expected' => 'boost',
             ],
             'User member of one cohort which has a theme set' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
-                'cohorts' => [
+                'cohortthemes' => [
                     'classic',
                 ],
                 'expected' => 'classic',
@@ -803,7 +803,7 @@ final class moodle_page_test extends \advanced_testcase {
             'User member of one cohort which has a theme set, and one without a theme' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
-                'cohorts' => [
+                'cohortthemes' => [
                     'classic',
                     '',
                 ],
@@ -812,7 +812,7 @@ final class moodle_page_test extends \advanced_testcase {
             'User member of one cohort which has a theme set, and one with a different theme' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
-                'cohorts' => [
+                'cohortthemes' => [
                     'classic',
                     'someother',
                 ],
@@ -821,13 +821,13 @@ final class moodle_page_test extends \advanced_testcase {
             'User with a theme but not a member of any cohort' => [
                 'usertheme' => 'classic',
                 'sitetheme' => 'boost',
-                'cohorts' => [],
+                'cohortthemes' => [],
                 'expected' => 'classic',
             ],
             'User with a theme and member of one cohort which has a theme set' => [
                 'usertheme' => 'classic',
                 'sitetheme' => 'boost',
-                'cohorts' => [
+                'cohortthemes' => [
                     'boost',
                 ],
                 'expected' => 'classic',

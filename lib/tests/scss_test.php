@@ -132,9 +132,9 @@ CSS
      *
      * @dataProvider scss_compilation_provider
      * @param string $scss The raw scss to compile.
-     * @param string $expectedcss The expected CSS output.
+     * @param string $expected The expected CSS output.
      */
-    public function test_scss_compilation_with_sassc($scss, $expectedcss): void {
+    public function test_scss_compilation_with_sassc($scss, $expected): void {
         if (!defined('PHPUNIT_PATH_TO_SASSC')) {
             $this->markTestSkipped('Path to SassC not provided');
         }
@@ -142,6 +142,6 @@ CSS
         $this->resetAfterTest();
         set_config('pathtosassc', PHPUNIT_PATH_TO_SASSC);
         $compiler = new core_scss();
-        $this->assertSame($compiler->compile($scss), $expectedcss);
+        $this->assertSame($compiler->compile($scss), $expected);
     }
 }

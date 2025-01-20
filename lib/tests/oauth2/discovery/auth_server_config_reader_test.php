@@ -86,8 +86,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
     public static function config_provider(): array {
         return [
             'Valid, good issuer URL, good config' => [
-                'issuer_url' => 'https://app.example.com',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -122,7 +122,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com/.well-known/oauth-authorization-server'
@@ -161,8 +161,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Valid, issuer URL with path component confirming well known suffix placement' => [
-                'issuer_url' => 'https://app.example.com/some/path',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com/some/path',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -197,7 +197,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com/.well-known/oauth-authorization-server/some/path'
@@ -236,8 +236,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Valid, single trailing / path only' => [
-                'issuer_url' => 'https://app.example.com/',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com/',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -272,7 +272,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com/.well-known/oauth-authorization-server'
@@ -311,8 +311,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Invalid, non HTTPS issuer URL' => [
-                'issuer_url' => 'http://app.example.com',
-                'http_response' => new Response(
+                'issuerurl' => 'http://app.example.com',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -347,14 +347,14 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'exception' => \moodle_exception::class
                 ]
             ],
             'Invalid, query string in issuer URL' => [
-                'issuer_url' => 'https://app.example.com?test=cat',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com?test=cat',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -389,14 +389,14 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'exception' => \moodle_exception::class
                 ]
             ],
             'Invalid, fragment in issuer URL' => [
-                'issuer_url' => 'https://app.example.com/#cat',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com/#cat',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -431,14 +431,14 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'exception' => \moodle_exception::class
                 ]
             ],
             'Valid, port in issuer URL' => [
-                'issuer_url' => 'https://app.example.com:8080/some/path',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com:8080/some/path',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -473,7 +473,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => null,
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com:8080/.well-known/oauth-authorization-server/some/path'
@@ -512,8 +512,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Valid, alternate well known suffix, no path' => [
-                'issuer_url' => 'https://app.example.com',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -548,7 +548,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => 'openid-configuration', // An application using the openid well known, which is valid.
+                'altwellknownsuffix' => 'openid-configuration', // An application using the openid well known, which is valid.
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com/.well-known/openid-configuration'
@@ -587,8 +587,8 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Valid, alternate well known suffix, with path' => [
-                'issuer_url' => 'https://app.example.com/some/path/',
-                'http_response' => new Response(
+                'issuerurl' => 'https://app.example.com/some/path/',
+                'httpresponse' => new Response(
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
@@ -623,7 +623,7 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                         ]
                     ])
                 ),
-                'well_known_suffix' => 'openid-configuration', // An application using the openid well known, which is valid.
+                'altwellknownsuffix' => 'openid-configuration', // An application using the openid well known, which is valid.
                 'expected' => [
                     'request' => [
                         'url' => 'https://app.example.com/.well-known/openid-configuration/some/path/'
@@ -662,9 +662,9 @@ final class auth_server_config_reader_test extends \advanced_testcase {
                 ]
             ],
             'Invalid, bad response' => [
-                'issuer_url' => 'https://app.example.com',
-                'http_response' => new Response(404),
-                'well_known_suffix' => null,
+                'issuerurl' => 'https://app.example.com',
+                'httpresponse' => new Response(404),
+                'altwellknownsuffix' => null,
                 'expected' => [
                     'exception' => ClientException::class
                 ]

@@ -106,19 +106,35 @@ class lock {
     }
 
     /**
-     * Print debugging if this lock falls out of scope before being released.
+     * Release a lock if it has not already been released.
+     *
+     * @param bool $withexception If true, throw an exception if the lock has not been released.
+     * @throws \coding_exception
      */
-    public function __destruct() {
-        if (!$this->released && defined('PHPUNIT_TEST')) {
+    public function release_if_not_released(bool $withexception = false): void {
+        if (!$this->released) {
             $key = $this->key;
+
             $this->release();
-            throw new \coding_exception("A lock was created but not released at:\n" .
-                                        $this->caller . "\n\n" .
-                                        " Code should look like:\n\n" .
-                                        " \$factory = \core\lock\lock_config::get_lock_factory('type');\n" .
-                                        " \$lock = \$factory->get_lock($key);\n" .
-                                        " \$lock->release();  // Locks must ALWAYS be released like this.\n\n");
+
+            if ($withexception) {
+                throw new \core\exception\coding_exception(<<<EOF
+                    A lock was created but not released at: {$this->caller}
+
+                    Code should look like:
+
+                        \$factory = \core\lock\lock_config::get_lock_factory('type');
+                        \$lock = \$factory->get_lock($key);
+                        \$lock->release();  // Locks must ALWAYS be released like this.
+                EOF);
+            }
         }
     }
 
+    /**
+     * Print debugging if this lock falls out of scope before being released.
+     */
+    public function __destruct() {
+        $this->release_if_not_released(defined('PHPUNIT_TEST'));
+    }
 }

@@ -487,7 +487,8 @@ final class dml_test extends \database_driver_testcase {
         $DB = $this->tdb;
 
         require_once($CFG->dirroot . '/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php');
-        $fixture = new \test_dml_sql_debugging_fixture($this);
+        $databasemock = $this->getMockBuilder(\moodle_database::class)->getMock();
+        $fixture = new \test_dml_sql_debugging_fixture($databasemock);
 
         $sql = "SELECT * FROM {users}";
 
@@ -499,31 +500,31 @@ final class dml_test extends \database_driver_testcase {
         $CFG->debugsqltrace = 1;
         $out = $fixture->four($sql);
         $expected = <<<EOD
-SELECT * FROM {users}
--- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+SELECT \* FROM {users}
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
 EOD;
-        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+        $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 
         $CFG->debugsqltrace = 2;
         $out = $fixture->four($sql);
         $expected = <<<EOD
-SELECT * FROM {users}
--- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
--- line 73 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+SELECT \* FROM {users}
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
 EOD;
-        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+        $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 
         $CFG->debugsqltrace = 5;
         $out = $fixture->four($sql);
         $expected = <<<EOD
-SELECT * FROM {users}
--- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
--- line 73 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
--- line 82 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
--- line 91 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
--- line 517 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+SELECT \* FROM {users}
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two\(\)
+-- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three\(\)
+-- line \d+ of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four\(\)
 EOD;
-        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+        $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 
         $CFG->debugsqltrace = 0;
     }
@@ -4523,7 +4524,7 @@ EOD;
                 'name' => 'Bob',
                 'falias' => 'Dan, Grace',
             ],
-        ], $DB->get_records_sql($sql));
+        ], array_values($DB->get_records_sql($sql)));
     }
 
     /**

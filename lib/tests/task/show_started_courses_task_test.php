@@ -35,15 +35,15 @@ final class show_started_courses_task_test extends courses_tasks_testcase {
      * @dataProvider get_courses_provider
      * @covers ::execute
      *
-     * @param int $lastweekhidden Number of courses with the start date set to last week to be created.
-     * @param int $yesterdayhidden Number of courses with the start date set to yesterday to be created.
-     * @param int $tomorrowhidden Number of courses with the start date set to tomorrow to be created.
+     * @param int $lastweek Number of courses with the start date set to last week to be created.
+     * @param int $yesterday Number of courses with the start date set to yesterday to be created.
+     * @param int $tomorrow Number of courses with the start date set to tomorrow to be created.
      * @param bool $createvisible Whether visible courses should be created or not.
      */
     public function test_show_started_courses(
-        int $lastweekhidden,
-        int $yesterdayhidden,
-        int $tomorrowhidden,
+        int $lastweekcount,
+        int $yesterdaycount,
+        int $tomorrowcount,
         bool $createvisible = true
     ): void {
         global $DB;
@@ -61,15 +61,15 @@ final class show_started_courses_task_test extends courses_tasks_testcase {
         $tomorrow = $now + DAYSECS;
 
         // Hidden course that started last week.
-        for ($i = 0; $i < $lastweekhidden; $i++) {
+        for ($i = 0; $i < $lastweekcount; $i++) {
              $generator->create_course(['visible' => false, 'startdate' => $lastweek]);
         }
         // Hidden course that started yesterday.
-        for ($i = 0; $i < $yesterdayhidden; $i++) {
+        for ($i = 0; $i < $yesterdaycount; $i++) {
             $hiddencourses[] = $generator->create_course(['visible' => false, 'startdate' => $yesterday])->id;
         }
         // Hidden course that hasn't started yet.
-        for ($i = 0; $i < $tomorrowhidden; $i++) {
+        for ($i = 0; $i < $tomorrowcount; $i++) {
             $generator->create_course(['visible' => false, 'startdate' => $tomorrow]);
         }
         if ($createvisible) {
@@ -79,7 +79,7 @@ final class show_started_courses_task_test extends courses_tasks_testcase {
             $visiblecourses[] = $generator->create_course(['visible' => true, 'startdate' => $tomorrow])->id;
         }
         $visibletotal = count($visiblecourses) + 1;
-        $coursetotal = $visibletotal + $lastweekhidden + $yesterdayhidden + $tomorrowhidden;
+        $coursetotal = $visibletotal + $lastweekcount + $yesterdaycount + $tomorrowcount;
 
         // Check current courses have been created correctly.
         $this->assertEquals($coursetotal, $DB->count_records('course'));
@@ -96,14 +96,14 @@ final class show_started_courses_task_test extends courses_tasks_testcase {
         // Confirm the courses with yesterday as starting date are visible too. The rest should remain hidden.
         $this->assertEquals($coursetotal, $DB->count_records('course'));
         $courses = $DB->get_records('course', ['visible' => 1], '', 'id');
-        $this->assertCount($visibletotal + $yesterdayhidden, $courses);
+        $this->assertCount($visibletotal + $yesterdaycount, $courses);
         $expected = array_merge($hiddencourses, $visiblecourses);
         $this->assertEquals(asort($expected), asort($courses));
 
         // Check the started course event has been raised.
         $events = $sink->get_events();
         $sink->close();
-        $this->assertCount($yesterdayhidden, $events);
+        $this->assertCount($yesterdaycount, $events);
         foreach ($events as $event) {
             $this->assertInstanceOf('\\core\\event\\course_started', $event);
             $this->assertArrayHasKey($event->courseid, array_flip($expected));

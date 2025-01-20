@@ -89,13 +89,13 @@ final class data_request_test extends data_privacy_testcase {
      * Test the pseudo states of a data request with an export request.
      *
      * @dataProvider        status_state_provider
-     * @param       int     $status
+     * @param       int     $state
      * @param       bool    $resettable
      * @param       bool    $active
      */
-    public function test_pseudo_states_export(int $status, bool $resettable, bool $active): void {
+    public function test_pseudo_states_export(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
-        $uut->set('status', $status);
+        $uut->set('status', $state);
         $uut->set('type', api::DATAREQUEST_TYPE_EXPORT);
 
         $this->assertEquals($resettable, $uut->is_resettable());
@@ -106,13 +106,13 @@ final class data_request_test extends data_privacy_testcase {
      * Test the pseudo states of a data request with a delete request.
      *
      * @dataProvider        status_state_provider
-     * @param       int     $status
+     * @param       int     $state
      * @param       bool    $resettable
      * @param       bool    $active
      */
-    public function test_pseudo_states_delete(int $status, bool $resettable, bool $active): void {
+    public function test_pseudo_states_delete(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
-        $uut->set('status', $status);
+        $uut->set('status', $state);
         $uut->set('type', api::DATAREQUEST_TYPE_DELETE);
 
         $this->assertEquals($resettable, $uut->is_resettable());
@@ -123,11 +123,11 @@ final class data_request_test extends data_privacy_testcase {
      * Test the pseudo states of a data request.
      *
      * @dataProvider        status_state_provider
-     * @param       int     $status
+     * @param       int     $state
      */
-    public function test_can_reset_others($status): void {
+    public function test_can_reset_others(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
-        $uut->set('status', $status);
+        $uut->set('status', $state);
         $uut->set('type', api::DATAREQUEST_TYPE_OTHERS);
 
         $this->assertFalse($uut->is_resettable());
@@ -142,7 +142,7 @@ final class data_request_test extends data_privacy_testcase {
         $states = [];
         foreach (self::status_state_provider() as $thisstatus) {
             if (!$thisstatus['resettable']) {
-                $states[] = $thisstatus;
+                $states[] = ['state' => $thisstatus['state']];
             }
         }
 
@@ -153,11 +153,11 @@ final class data_request_test extends data_privacy_testcase {
      * Ensure that requests which are not resettable cause an exception to be thrown.
      *
      * @dataProvider        non_resettable_provider
-     * @param       int     $status
+     * @param       int     $state
      */
-    public function test_non_resubmit_request($status): void {
+    public function test_non_resubmit_request($state): void {
         $uut = new \tool_dataprivacy\data_request();
-        $uut->set('status', $status);
+        $uut->set('status', $state);
 
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('cannotreset', 'tool_dataprivacy'));

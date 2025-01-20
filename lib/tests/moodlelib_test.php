@@ -3215,14 +3215,14 @@ EOF;
         return array(
             'nopath' => array(
                 'wwwroot' => 'http://www.example.com',
-                'ids' => array(
+                'msgids' => array(
                     'a-custom-id' => '<a-custom-id@www.example.com>',
                     'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash@www.example.com>',
                 ),
             ),
             'path' => array(
                 'wwwroot' => 'http://www.example.com/path/subdir',
-                'ids' => array(
+                'msgids' => array(
                     'a-custom-id' => '<a-custom-id/path/subdir@www.example.com>',
                     'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash/path/subdir@www.example.com>',
                 ),
@@ -3283,7 +3283,7 @@ EOF;
             'nodiverts' => array(
                 'divertallemailsto' => null,
                 'divertallemailsexcept' => null,
-                array(
+                'addresses' => array(
                     'foo@example.com',
                     'test@real.com',
                     'fred.jones@example.com',
@@ -3291,12 +3291,12 @@ EOF;
                     'fred@example.com',
                     'fred+verp@example.com',
                 ),
-                false,
+                'expected' => false,
             ),
             'alldiverts' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => null,
-                array(
+                'addresses' => array(
                     'foo@example.com',
                     'test@real.com',
                     'fred.jones@example.com',
@@ -3304,65 +3304,65 @@ EOF;
                     'fred@example.com',
                     'fred+verp@example.com',
                 ),
-                true,
+                'expected' => true,
             ),
             'alsodiverts' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
-                array(
+                'addresses' => array(
                     'foo@example.com',
                     'test@real.com',
                     'fred.jones@example.com',
                     'Fred.Jones@Example.com',
                 ),
-                true,
+                'expected' => true,
             ),
             'divertsexceptions' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
-                array(
+                'addresses' => array(
                     'dev1@dev.com',
                     'fred@example.com',
                     'Fred@Example.com',
                     'fred+verp@example.com',
                 ),
-                false,
+                'expected' => false,
             ),
             'divertsexceptionsnewline' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => "@dev.com\nfred(\+.*)?@example.com",
-                array(
+                'addresses' => array(
                     'dev1@dev.com',
                     'fred@example.com',
                     'fred+verp@example.com',
                 ),
-                false,
+                'expected' => false,
             ),
             'alsodivertsnewline' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => "@dev.com\nfred(\+.*)?@example.com",
-                array(
+                'addresses' => array(
                     'foo@example.com',
                     'test@real.com',
                     'fred.jones@example.com',
                 ),
-                true,
+                'expected' => true,
             ),
             'alsodivertsblankline' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => "@dev.com\n",
-                [
+                'addresses' => [
                     'lionel@example.com',
                 ],
-                true,
+                'expected' => true,
             ),
             'divertsexceptionblankline' => array(
                 'divertallemailsto' => 'somewhere@elsewhere.com',
                 'divertallemailsexcept' => "@example.com\n",
-                [
+                'addresses' => [
                     'lionel@example.com',
                 ],
-                false,
+                'expected' => false,
             ),
         );
     }
