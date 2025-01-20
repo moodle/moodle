@@ -1,0 +1,10 @@
+issueNumber: MDL-83617
+notes:
+  tool_behat:
+    - message: >
+        New Behat step `\behat_general::the_url_should_match()` has been added
+        to allow checking the current URL. You can use it to check whether a
+        user has been redirected to the expected location.
+
+        e.g. `And the url should match "/mod/forum/view\.php\?id=[0-9]+"`
+      type: improved

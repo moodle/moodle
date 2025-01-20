@@ -204,7 +204,7 @@ if ($numusers > $maxusers) {
 }
 
 $perpagedata = [
-    'baseurl' => new moodle_url('/grade/report/grader/index.php', ['id' => s($courseid), 'report' => 'grader']),
+    'baseurl' => (new moodle_url('/grade/report/grader/index.php', ['id' => s($courseid), 'report' => 'grader']))->out(false),
     'options' => []
 ];
 foreach ($pagingoptions as $key => $name) {
