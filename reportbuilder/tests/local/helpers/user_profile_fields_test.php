@@ -237,6 +237,19 @@ final class user_profile_fields_test extends core_reportbuilder_testcase {
             $filters,
         ));
 
+        // Filter types.
+        $this->assertEquals([
+            boolean_select::class,
+            date::class,
+            select::class,
+            text::class,
+            text::class,
+            text::class,
+        ], array_map(
+            fn(filter $filter) => $filter->get_filter_class(),
+            $filters,
+        ));
+
         // Filter available.
         $this->assertEquals([
             true,
