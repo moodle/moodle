@@ -21,7 +21,7 @@ namespace core_reportbuilder\local\helpers;
 use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\entities\course;
-use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
 use core_reportbuilder\local\report\{column, filter};
 use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core_course\reportbuilder\datasource\{categories, courses};
@@ -72,6 +72,10 @@ final class custom_fields_test extends core_reportbuilder_testcase {
             ['categoryid' => $category->get('id'), 'type' => 'select', 'name' => 'Select', 'shortname' => 'select',
                 'configdata' => ['options' => "Cat\nDog", 'defaultvalue' => 'Cat']]);
 
+        $generator->create_field(
+            ['categoryid' => $category->get('id'), 'type' => 'number', 'name' => 'Number', 'shortname' => 'number',
+                'configdata' => ['defaultvalue' => 1]]);
+
         $courseentity = new course();
         $coursealias = $courseentity->get_table_alias('course');
 
@@ -89,39 +93,74 @@ final class custom_fields_test extends core_reportbuilder_testcase {
         $customfields = $this->generate_customfields();
 
         $columns = $customfields->get_columns();
-        $this->assertCount(5, $columns);
+        $this->assertCount(6, $columns);
         $this->assertContainsOnlyInstancesOf(column::class, $columns);
 
         // Column titles.
-        $this->assertEquals(
-            ['Text', 'Textarea', 'Checkbox', 'Date', 'Select'],
-            array_map(fn(column $column) => $column->get_title(), $columns)
-        );
+        $this->assertEquals([
+            'Text',
+            'Textarea',
+            'Checkbox',
+            'Date',
+            'Select',
+            'Number',
+        ], array_map(
+            fn(column $column) => $column->get_title(),
+            $columns,
+        ));
 
         // Column types.
-        $this->assertEquals(
-            [column::TYPE_TEXT, column::TYPE_LONGTEXT, column::TYPE_BOOLEAN, column::TYPE_TIMESTAMP, column::TYPE_TEXT],
-            array_map(fn(column $column) => $column->get_type(), $columns)
-        );
+        $this->assertEquals([
+            column::TYPE_TEXT,
+            column::TYPE_LONGTEXT,
+            column::TYPE_BOOLEAN,
+            column::TYPE_TIMESTAMP,
+            column::TYPE_TEXT,
+            column::TYPE_FLOAT,
+        ], array_map(
+            fn(column $column) => $column->get_type(),
+            $columns,
+        ));
 
         // Column sortable.
-        $this->assertEquals(
-            [true, false, true, true, true],
-            array_map(fn(column $column) => $column->get_is_sortable(), $columns)
-        );
+        $this->assertEquals([
+            true,
+            false,
+            true,
+            true,
+            true,
+            true,
+        ], array_map(
+            fn(column $column) => $column->get_is_sortable(),
+            $columns,
+        ));
 
         // Column available.
-        $this->assertEquals(
-            [true, true, true, true, true],
-            array_map(fn(column $column) => $column->get_is_available(), $columns),
-        );
+        $this->assertEquals([
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ], array_map(
+            fn(column $column) => $column->get_is_available(),
+            $columns,
+        ));
 
         // Column available, for non-privileged user.
         $this->setUser(null);
-        $this->assertEquals(
-            [true, true, false, true, true],
-            array_map(fn(column $column) => $column->get_is_available(), $customfields->get_columns()),
-        );
+        $this->assertEquals([
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+        ], array_map(
+            fn(column $column) => $column->get_is_available(),
+            $customfields->get_columns(),
+        ));
     }
 
     /**
@@ -165,27 +204,61 @@ final class custom_fields_test extends core_reportbuilder_testcase {
         $customfields = $this->generate_customfields();
 
         $filters = $customfields->get_filters();
-        $this->assertCount(5, $filters);
+        $this->assertCount(6, $filters);
         $this->assertContainsOnlyInstancesOf(filter::class, $filters);
 
         // Filter headers.
-        $this->assertEquals(
-            ['Text', 'Textarea', 'Checkbox', 'Date', 'Select'],
-            array_map(fn(filter $filter) => $filter->get_header(), $filters)
-        );
+        $this->assertEquals([
+            'Text',
+            'Textarea',
+            'Checkbox',
+            'Date',
+            'Select',
+            'Number',
+        ], array_map(
+            fn(filter $filter) => $filter->get_header(),
+            $filters,
+        ));
+
+        // Filter types.
+        $this->assertEquals([
+            text::class,
+            text::class,
+            boolean_select::class,
+            date::class,
+            select::class,
+            number::class,
+        ], array_map(
+            fn(filter $filter) => $filter->get_filter_class(),
+            $filters,
+        ));
 
         // Filter available.
-        $this->assertEquals(
-            [true, true, true, true, true],
-            array_map(fn(filter $filter) => $filter->get_is_available(), $filters),
-        );
+        $this->assertEquals([
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ], array_map(
+            fn(filter $filter) => $filter->get_is_available(),
+            $filters,
+        ));
 
         // Filter available, for non-privileged user.
         $this->setUser(null);
-        $this->assertEquals(
-            [true, true, false, true, true],
-            array_map(fn(filter $filter) => $filter->get_is_available(), $customfields->get_filters()),
-        );
+        $this->assertEquals([
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+        ], array_map(
+            fn(filter $filter) => $filter->get_is_available(),
+            $customfields->get_filters(),
+        ));
     }
 
     /**
@@ -206,6 +279,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
             ['shortname' => 'checkbox', 'value' => 0],
             ['shortname' => 'date', 'value' => 1669852800],
             ['shortname' => 'select', 'value' => 2],
+            ['shortname' => 'number', 'value' => 42],
         ]]);
 
         /** @var core_reportbuilder_generator $generator */
@@ -222,11 +296,13 @@ final class custom_fields_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_checkbox']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_date']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_select']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_number']);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [
                 'Category 1',
+                '',
                 '',
                 '',
                 '',
@@ -242,6 +318,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
                 'Yes',
                 '',
                 'Cat',
+                1,
             ],
             [
                 $category->name,
@@ -251,6 +328,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
                 'No',
                 userdate(1669852800),
                 'Dog',
+                42,
             ],
         ], array_map('array_values', $content));
     }
@@ -312,6 +390,18 @@ final class custom_fields_test extends core_reportbuilder_testcase {
                 'course:customfield_select_operator' => select::EQUAL_TO,
                 'course:customfield_select_value' => 3,
             ]],
+            'Filter by number custom field' => ['course:customfield_number', [
+                'course:customfield_number_operator' => number::EQUAL_TO,
+                'course:customfield_number_value1' => 42,
+            ], 'C2'],
+            'Filter by number custom field (default)' => ['course:customfield_number', [
+                'course:customfield_number_operator' => number::EQUAL_TO,
+                'course:customfield_number_value1' => 1,
+            ], 'C1'],
+            'Filter by number custom field (no match)' => ['course:customfield_number', [
+                'course:customfield_number_operator' => number::EQUAL_TO,
+                'course:customfield_number_value1' => 3,
+            ]],
         ];
     }
 
@@ -338,6 +428,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
             ['shortname' => 'checkbox', 'value' => 0],
             ['shortname' => 'date', 'value' => 1669852800],
             ['shortname' => 'select', 'value' => 2],
+            ['shortname' => 'number', 'value' => 42],
         ]]);
 
         /** @var core_reportbuilder_generator $generator */
