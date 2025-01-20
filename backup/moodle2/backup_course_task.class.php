@@ -161,6 +161,7 @@ class backup_course_task extends backup_task {
         // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
         // because they don't become transformed (section number) in backup/restore.
         $content = self::encode_links_helper($content, 'COURSEVIEWBYID',       '/course/view.php?id=');
+        $content = self::encode_links_helper($content, 'COURSESECTIONBYID',    '/course/section.php?id=');
 
         // A few other key course links.
         $content = self::encode_links_helper($content, 'GRADEINDEXBYID',       '/grade/index.php?id=');
