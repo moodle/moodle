@@ -39,11 +39,6 @@ function cc_convert ($dir) {
 
             $detected_requirements = detect_requirements();
 
-            if (!$detected_requirements["php5"]) {
-                echo $OUTPUT->notification(get_string('cc_import_req_php5', 'imscc'));
-                return false;
-            }
-
             if (!$detected_requirements["dom"]) {
                 echo $OUTPUT->notification(get_string('cc_import_req_dom', 'imscc'));
                 return false;
@@ -97,12 +92,6 @@ function cc_convert ($dir) {
 }
 
 function detect_requirements () {
-
-    if (floor(phpversion()) >= 5) {
-        $detected["php5"] = true;
-    } else {
-        $detected["php5"] = false;
-    }
 
     $detected["xsl"] = extension_loaded('xsl');
     $detected['dom'] = extension_loaded('dom');
