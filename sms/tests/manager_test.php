@@ -16,6 +16,8 @@
 
 namespace core_sms;
 
+use core_sms\task\send_sms_task;
+
 /**
  * Tests for sms manager
  *
@@ -421,21 +423,52 @@ final class manager_test extends \advanced_testcase {
         );
     }
 
-    public function test_async_not_supported_yet(): void {
+    /**
+     * Test sending SMS asynchronously.
+     */
+    public function test_send_async(): void {
         $this->resetAfterTest();
 
-        $manager = \core\di::get(\core_sms\manager::class);
+        $config = new \stdClass();
+        $config->priority = 50;
 
-        $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('Asynchronous sending is not yet implemented');
-        $manager->send(
+        $manager = \core\di::get(\core_sms\manager::class);
+        $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
+
+        $message = $manager->send(
             recipientnumber: '+447123456789',
             content: 'Hello, world!',
             component: 'core',
             messagetype: 'test',
             recipientuserid: null,
-            async: true,
         );
+
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertIsInt($message->id);
+        $this->assertEquals(message_status::GATEWAY_QUEUED, $message->status);
+        $this->assertEquals('Hello, world!', $message->content);
+
+        $messagedbrecords = $manager->get_messages();
+        $this->assertInstanceOf(\Generator::class, $messagedbrecords);
+        $messages = iterator_to_array($messagedbrecords);
+        $this->assertCount(1, $messages);
+
+        $storedmessage = $manager->get_message(['id' => $message->id]);
+        $this->assertEquals($message, $storedmessage);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(send_sms_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Now lets run the task and check if SMS is sent.
+        $this->run_all_adhoc_tasks();
+
+        $message = $manager->get_message(['id' => $message->id]);
+        $this->assertEquals(message_status::GATEWAY_SENT, $message->status);
     }
 
     public function test_send_no_gateway(): void {
