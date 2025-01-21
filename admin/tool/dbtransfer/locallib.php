@@ -141,11 +141,6 @@ function tool_dbtransfer_get_drivers() {
         $dbtype = $matches[1];
         $dblibrary = $matches[2];
 
-        if ($dbtype === 'sqlite3') {
-            // The sqlite3 driver is not fully working yet and should not be returned.
-            continue;
-        }
-
         $targetdb = moodle_database::get_driver_instance($dbtype, $dblibrary, false);
         if ($targetdb->driver_installed() !== true) {
             continue;

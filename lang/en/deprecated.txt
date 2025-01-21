@@ -163,3 +163,4 @@ imagecaption_help,core_badges
 issuername_help,core_badges
 language_help,core_badges
 version_help,core_badges
+sqliteextensionisnotpresentinphp,core_install

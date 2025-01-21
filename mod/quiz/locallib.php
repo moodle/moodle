@@ -826,15 +826,7 @@ function quiz_update_open_attempts(array $conditions) {
                         JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
                        WHERE $attemptselect";
     } else {
-        // Sqlite and others.
-        $updatesql = "UPDATE {quiz_attempts} quiza
-                         SET timecheckstate = (
-                           SELECT $timecheckstatesql
-                             FROM {quiz} quiz, ( $quizausersql ) quizauser
-                            WHERE quiz.id = quiza.quiz
-                              AND quizauser.id = quiza.id
-                         )
-                         WHERE $attemptselect";
+        throw new \core\exception\coding_exception("Unsupported database family: {$dbfamily}");
     }
 
     $DB->execute($updatesql, $params);
