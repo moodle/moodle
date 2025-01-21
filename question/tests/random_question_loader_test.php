@@ -680,4 +680,31 @@ final class random_question_loader_test extends \advanced_testcase {
 
         return [$category, $questions];
     }
+
+    /**
+     * Test that the random question loader excludes questions with invalid types.
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_invalid_questions_are_excluded(): void {
+
+        global $DB;
+
+        $this->resetAfterTest();
+
+        [$category, $questions] = $this->create_category_and_questions(4);
+        $loader = new random_question_loader(new qubaid_list([]));
+        $filters = question_filter_test_helper::create_filters([$category->id], false, []);
+
+        // Update one of the questions to have an invalid type.
+        $invalid = $questions[0];
+        $invalid->qtype = 'invalid';
+        $DB->update_record('question', $invalid);
+
+        // Assert that we get 1 less result back because the invalid type is excluded.
+        $result = $loader->get_filtered_questions($filters);
+        $this->assertEquals(count($questions) - 1, count($result));
+
+    }
+
 }

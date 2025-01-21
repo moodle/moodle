@@ -644,6 +644,14 @@ table.quizreviewsummary td.cell {
     position: relative;
 }
 
+#page-mod-quiz-edit ul.slots li.section li.activity.qtype_missingtype {
+    background-color: #f0c5c1;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity.qtype_missingtype .actions {
+    background-color: inherit;
+}
+
 #page-mod-quiz-edit ul.slots li.section li.activity.page {
     background: transparent;
 }

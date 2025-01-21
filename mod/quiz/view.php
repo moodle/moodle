@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\notification;
 use mod_quiz\access_manager;
 use mod_quiz\output\list_of_attempts;
 use mod_quiz\output\renderer;
@@ -261,6 +262,13 @@ if (!$viewobj->quizhasquestions) {
             }
         }
     }
+
+    // If the quiz has any invalid questions, we cannot attempt it.
+    if (in_array('missingtype', $quizobj->get_all_question_types_used())) {
+        $viewobj->preventmessages[] = $OUTPUT->notification(
+            get_string('quizinvalidquestions', 'mod_quiz'), notification::NOTIFY_ERROR, false);
+        $viewobj->buttontext = '';
+    }
 }
 
 $viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
@@ -270,7 +278,7 @@ echo $OUTPUT->header();
 
 if (!empty($gradinginfo->errors)) {
     foreach ($gradinginfo->errors as $error) {
-        $errortext = new \core\output\notification($error, \core\output\notification::NOTIFY_ERROR);
+        $errortext = new notification($error, notification::NOTIFY_ERROR);
         echo $OUTPUT->render($errortext);
     }
 }
