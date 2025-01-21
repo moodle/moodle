@@ -1076,18 +1076,9 @@ class edit_renderer extends \plugin_renderer_base {
 
         $editicon = $this->pix_icon('t/edit', $configuretitle, 'moodle', ['title' => '']);
         $qbankurlparams = [
-            'cmid' => $structure->get_cmid(),
-            'cat' => $slot->category . ',' . $slot->contextid,
+            'courseid' =>  $structure->get_courseid(),
+            'filter' => json_encode($slot->filtercondition['filter']),
         ];
-
-        $slottags = [];
-        if (isset($slot->randomtags)) {
-            $slottags = $slot->randomtags;
-        }
-        foreach ($slottags as $index => $slottag) {
-            $slottag = explode(',', $slottag);
-            $qbankurlparams["qtagids[{$index}]"] = $slottag[0];
-        }
 
         // If this is a random question, display a link to show the questions
         // selected from in the question bank.
