@@ -29,7 +29,7 @@ Feature: Filter questions by text found in the question text or general feedback
     And I should see "Question 5"
 
   Scenario: Filter by a single piece of text
-    When I apply question bank filter "Question content" with value "A"
+    When I apply question bank filter "Question text and general feedback" with value "A"
     Then I should see "Question 1"
     And I should see "Question 2"
     And I should not see "Question 3"
@@ -37,7 +37,7 @@ Feature: Filter questions by text found in the question text or general feedback
     And I should not see "Question 5"
 
   Scenario: Filter by any piece of text
-    When I apply question bank filter "Question content" with value "A, K"
+    When I apply question bank filter "Question text and general feedback" with value "A, K"
     Then I should see "Question 1"
     And I should see "Question 2"
     And I should see "Question 3"
@@ -45,8 +45,8 @@ Feature: Filter questions by text found in the question text or general feedback
     And I should not see "Question 4"
 
   Scenario: Filter by all pieces of text
-    When I add question bank filter "Question content"
-    And I set the field "Question content" to "F, G"
+    When I add question bank filter "Question text and general feedback"
+    And I set the field "Question text and general feedback" to "F, G"
     And I set the field "Match" in the "Filter 3" "fieldset" to "All"
     And I press "Apply filters"
     Then I should see "Question 1"
@@ -56,8 +56,8 @@ Feature: Filter questions by text found in the question text or general feedback
     Then I should not see "Question 5"
 
   Scenario: Exclude text by filter
-    When I add question bank filter "Question content"
-    And I set the field "Question content" to "A, Z"
+    When I add question bank filter "Question text and general feedback"
+    And I set the field "Question text and general feedback" to "A, Z"
     And I set the field "Match" in the "Filter 3" "fieldset" to "None"
     And I press "Apply filters"
     Then I should see "Question 5"
