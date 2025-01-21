@@ -25,6 +25,8 @@
 
 namespace core\event;
 
+use context_system;
+
 /**
  * Test for draft file added event.
  *
@@ -61,17 +63,18 @@ final class draft_file_added_test extends \advanced_testcase {
 
         // Event data for logging.
         $eventdata = [
-                'objectid' => $originalfile->get_id(),
-                'context' => $usercontext,
-                'other' => [
-                        'itemid' => $originalfile->get_itemid(),
-                        'filename' => $originalfile->get_filename(),
-                        'filesize' => $originalfile->get_filesize(),
-                        'filepath' => $originalfile->get_filepath(),
-                        'contenthash' => $originalfile->get_contenthash(),
-                ]
+            'objectid' => $originalfile->get_id(),
+            'context' => $usercontext,
+            'other' => [
+                'itemid' => $originalfile->get_itemid(),
+                'filename' => $originalfile->get_filename(),
+                'filesize' => $originalfile->get_filesize(),
+                'filepath' => $originalfile->get_filepath(),
+                'contenthash' => $originalfile->get_contenthash(),
+                'avscantime' => '1.234',
+            ],
         ];
-        $event = \core\event\draft_file_added::create($eventdata);
+        $event = draft_file_added::create($eventdata);
         $event->trigger();
 
         $events = $sink->get_events();
@@ -82,5 +85,43 @@ final class draft_file_added_test extends \advanced_testcase {
         $expected = "The user with id '{$user->id}' has uploaded file '/test.txt' to the draft file area with item id 0. ".
             "Size: 12{$nbsp}bytes. Content hash: {$originalfile->get_contenthash()}.";
         $this->assertSame($expected, $event->get_description());
+        $this->assertSame(1.234, $event->other['avscantime']);
+    }
+
+    public function test_avscantime_optional(): void {
+        $eventdata = [
+            'objectid' => 123,
+            'context' => context_system::instance(),
+            'other' => [
+                'itemid' => 789,
+                'filename' => 'test.txt',
+                'filesize' => 42,
+                'filepath' => '/',
+                'contenthash' => 'a2653cc92420a875358f09942e4b4665351fa49b',
+            ],
+        ];
+        $event = draft_file_added::create($eventdata);
+        $event->trigger();
+
+        // Mainly, we are asserting that creating the event does not throw an exception.
+        $this->assertInstanceOf(draft_file_added::class, $event);
+    }
+
+    public function test_avscantime_must_be_float(): void {
+        $this->expectException(\coding_exception::class);
+
+        $eventdata = [
+            'objectid' => 123,
+            'context' => context_system::instance(),
+            'other' => [
+                'itemid' => 789,
+                'filename' => 'test.txt',
+                'filesize' => 42,
+                'filepath' => '/',
+                'contenthash' => 'a2653cc92420a875358f09942e4b4665351fa49b',
+                'avscantime' => 'frog',
+            ],
+        ];
+        draft_file_added::create($eventdata);
     }
 }

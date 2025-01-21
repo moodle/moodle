@@ -76,7 +76,7 @@ class repository_upload extends repository {
      * @param string $author optional the name of the author of this file
      * @param bool $overwriteexisting optional user has asked to overwrite the existing file
      * @param int $areamaxbytes maximum size of the file area.
-     * @return object containing details of the file uploaded
+     * @return array containing details of the file uploaded
      */
     public function process_upload($saveasfilename, $maxbytes, $types = '*', $savepath = '/', $itemid = 0,
             $license = null, $author = '', $overwriteexisting = false, $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED) {
@@ -145,7 +145,9 @@ class repository_upload extends repository {
             }
         }
 
+        $avscanstarttime = microtime(true);
         \core\antivirus\manager::scan_file($_FILES[$elname]['tmp_name'], $_FILES[$elname]['name'], true);
+        $avscantime = microtime(true) - $avscanstarttime;
 
         // {@link repository::build_source_field()}
         $sourcefield = $this->get_file_source_info($_FILES[$elname]['name']);
@@ -251,6 +253,7 @@ class repository_upload extends repository {
                         'filesize' => $filesize,
                         'filepath' => $record->filepath,
                         'contenthash' => $storedfile->get_contenthash(),
+                        'avscantime' => $avscantime,
                 ],
         ]);
         $logevent->trigger();
