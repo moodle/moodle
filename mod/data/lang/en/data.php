@@ -88,12 +88,10 @@ $string['csvimport_help'] = 'Entries may be imported via a plain text file with 
 $string['csvwithselecteddelimiter'] = '<abbr title="Comma Separated Values">CSV</abbr>';
 $string['data:addinstance'] = 'Add a new database';
 $string['data:approve'] = 'Approve and undo approved entries';
-$string['data:comment'] = 'Write comments';
 $string['data:exportallentries'] = 'Export all database entries';
 $string['data:exportentry'] = 'Export a database entry';
 $string['data:exportownentry'] = 'Export own database entry';
 $string['data:exportuserinfo'] = 'Export user information';
-$string['data:managecomments'] = 'Manage comments';
 $string['data:manageentries'] = 'Manage entries';
 $string['data:managetemplates'] = 'Manage templates';
 $string['data:manageuserpresets'] = 'Manage presets';
@@ -479,7 +477,9 @@ $string['fieldids'] = 'Field ids';
 // Deprecated since Moodle 4.3.
 $string['completionentries'] = 'Require entries';
 
-// Deprecated since Moodle 4.4.
-
 // Deprecated since Moodle 4.5.
 $string['tagsdeleted'] = 'Database tags have been deleted';
+
+// Deprecated since Moodle 5.0.
+$string['data:comment'] = 'Write comments';
+$string['data:managecomments'] = 'Manage comments';
