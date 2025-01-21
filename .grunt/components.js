@@ -211,7 +211,7 @@ const getThirdPartyPaths = () => {
     const xpath = require('xpath');
 
     const thirdpartyfiles = getThirdPartyLibsList(fs.realpathSync('./'));
-    const libs = ['node_modules/', 'vendor/'];
+    const libs = ['node_modules/', 'vendor/', 'vendor-bin/'];
 
     const addLibToList = lib => {
         if (!lib.match('\\*') && fs.statSync(lib).isDirectory()) {

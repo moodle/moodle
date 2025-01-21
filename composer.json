@@ -9,7 +9,8 @@
     },
     "require-dev": {
         "filp/whoops": "^2.15",
-        "moodle/moodle-testing": "^1.0"
+        "moodle/moodle-testing": "^1.0",
+        "bamarni/composer-bin-plugin": "^1.9"
     },
     "autoload": {
         "psr-0": {
@@ -105,6 +106,9 @@
     "config": {
         "audit": {
             "block-insecure": false
+        },
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
         }
     }
 }
