@@ -3292,6 +3292,18 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ],
+    'core_message_set_unsent_message' => [
+        'classname' => 'core_message\external\set_unsent_message',
+        'description' => 'Store an unsent message string',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'core_message_get_unsent_message' => [
+        'classname' => 'core_message\external\get_unsent_message',
+        'description' => 'Get an unsent message string',
+        'type' => 'read',
+        'ajax' => true,
+    ],
 );
 
 $services = array(

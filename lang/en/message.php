@@ -266,6 +266,7 @@ $string['unreadnotification'] = 'Unread notification: {$a}';
 $string['unreadnotifications'] = 'There are {$a} unread notifications';
 $string['unreadnewgroupconversationmessage'] = 'New message from {$a->name} in {$a->conversationname}';
 $string['unreadnewmessage'] = 'New message from {$a}';
+$string['unsentmessagenotification'] = 'You have an unsent message. It will be lost if you leave this page.';
 $string['useentertosend'] = 'Use enter to send';
 $string['usercantbemessaged'] = 'You can\'t message this user due to their message preferences. Try adding them as a contact.';
 $string['userwouldliketocontactyou'] = '{$a} would like to contact you';
