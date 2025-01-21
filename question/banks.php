@@ -52,6 +52,7 @@ $pageurl = question_bank_helper::get_url_for_qbank_list($course->id);
 $PAGE->set_url($pageurl);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading(format_string($course->fullname, true, ['context' => $coursecontext]));
+$PAGE->set_title(get_string('questionbank_plural', 'question'));
 
 if ($createdefault) {
     require_sesskey();
