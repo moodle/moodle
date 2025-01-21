@@ -26,6 +26,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use external_api;
+use stdClass;
 
 /**
  * Update the filter condition for a random question.
@@ -80,13 +81,30 @@ class update_filter_condition extends external_api {
         self::validate_context($thiscontext);
         require_capability('mod/quiz:manage', $thiscontext);
 
-        // Update filter condition.
-        $setparams = [
+        // Validate question category is supplied in filter.
+        $decodedfiltercondition = json_decode($filtercondition, true);
+        $categoryid = (isset($decodedfiltercondition['filter']['category']['values'][0])) ?
+            $decodedfiltercondition['filter']['category']['values'][0] : false;
+        if (!$categoryid) {
+            throw new \moodle_exception('invalidcategoryid');
+        }
+
+        // Validate question category exists.
+        $categorycontextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid], MUST_EXIST);
+
+        // Validate set_reference record exists for this quiz and slot.
+        $setreferenceid = $DB->get_field('question_set_references', 'id', [
             'itemid' => $slotid,
             'questionarea' => 'slot',
             'component' => 'mod_quiz',
-        ];
-        $DB->set_field('question_set_references', 'filtercondition', $filtercondition, $setparams);
+        ], MUST_EXIST);
+
+        // Update set_reference record with new filtercondition and context.
+        $update = new stdClass();
+        $update->id = $setreferenceid;
+        $update->filtercondition = $filtercondition;
+        $update->questionscontextid = $categorycontextid;
+        $DB->update_record('question_set_references', $update);
 
         return ['message' => get_string('updatefilterconditon_success', 'mod_quiz')];
     }
