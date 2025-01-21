@@ -121,11 +121,13 @@ function qbank_comment_output_fragment_question_comment($args): string {
         $options = new \qbank_previewquestion\question_preview_options($question);
         $quba->set_preferred_behaviour($options->behaviour);
         $slot = $quba->add_question($question, $options->maxmark);
-        $quba->start_question($slot, $options->variant);
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
-        $displaydata['question'] = $quba->render_question($slot, $options, '1');
+        if (get_class($question->qtype) !== qtype_missingtype::class) {
+            $quba->start_question($slot, $options->variant);
+            $transaction = $DB->start_delegated_transaction();
+            question_engine::save_questions_usage_by_activity($quba);
+            $transaction->allow_commit();
+            $displaydata['question'] = $quba->render_question($slot, $options, '1');
+        }
     }
     $displaydata['comment'] = qbank_comment_preview_display($question, $args['courseid']);
     $displaydata['commenstdisabled'] = false;

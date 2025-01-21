@@ -52,6 +52,9 @@ class preview_action_column extends \core_question\local\bank\column_base {
         if (!question_has_capability_on($question, 'use')) {
             return;
         }
+        if (!\question_bank::is_question_valid($question)) {
+            return;
+        }
         $editrenderer = $PAGE->get_renderer('quiz', 'edit');
         echo $editrenderer->question_preview_icon($this->qbank->get_quiz(), $question);
     }

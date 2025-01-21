@@ -923,6 +923,11 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null, $restartversion = null) {
         $question = clone($questiondata);
+
+        if (!\question_bank::is_question_valid($question)) {
+            return '';
+        }
+
         if (isset($question->questionid)) {
 
             $question->id = $question->questionid;
