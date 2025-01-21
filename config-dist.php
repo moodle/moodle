@@ -773,7 +773,13 @@ $CFG->admin = 'admin';
 // Defaults to 60 minutes.
 //
 //      $CFG->enrolments_sync_interval = 3600
-
+//
+// Set limit for grade items that can be shown on a single page of the grader
+// report. Browsers struggle when the number of grade items is very large and
+// one tries to view all students.
+//
+//      $CFG->maxgradesperpage = 200000;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
