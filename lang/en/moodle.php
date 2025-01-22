@@ -297,6 +297,7 @@ $string['confirmednot'] = 'Your registration has not yet been confirmed. Please 
 $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm {$a} ?';
 $string['confirmcoursemove'] = 'Are you sure you want to move this course ({$a->course}) into this category ({$a->category})?';
 $string['considereddigitalminor'] = 'You are too young to create an account on this site.';
+$string['contactsbyrolelist'] = '{$a->role}: {$a->contacts}';
 $string['content'] = 'Content';
 $string['contentexport_aboutthiscourse'] = 'Course summary';
 $string['contentexport_coursesummary'] = 'This file is part of the content downloaded from <a href="{$a->courselink}">{$a->coursename}</a>.';
