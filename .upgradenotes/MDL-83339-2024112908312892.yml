@@ -1,0 +1,7 @@
+issueNumber: MDL-83339
+notes:
+  core_courseformat:
+    - message: >-
+        Deprecate the use of element ID selectors in favor of querySelector for Reactive
+        component initialisation. We will use '#id' instead of 'id' for example.
+      type: deprecated

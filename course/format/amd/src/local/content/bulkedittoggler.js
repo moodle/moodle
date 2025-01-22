@@ -25,6 +25,7 @@
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import Pending from 'core/pending';
+import log from "core/log";
 
 export default class Component extends BaseComponent {
 
@@ -54,8 +55,14 @@ export default class Component extends BaseComponent {
      * @return {Component}
      */
     static init(target, selectors) {
+        let element = document.querySelector(target);
+        // TODO Remove this if condition as part of MDL-83851.
+        if (!element) {
+            log.debug('Init component with id is deprecated, use a query selector instead.');
+            element = document.getElementById(target);
+        }
         return new this({
-            element: document.querySelector(target),
+            element,
             reactive: getCurrentCourseEditor(),
             selectors
         });

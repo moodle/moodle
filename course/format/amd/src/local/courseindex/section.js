@@ -26,6 +26,7 @@
 
 import SectionTitle from 'core_courseformat/local/courseindex/sectiontitle';
 import DndSection from 'core_courseformat/local/courseeditor/dndsection';
+import log from "core/log";
 
 export default class Component extends DndSection {
 
@@ -65,8 +66,14 @@ export default class Component extends DndSection {
      * @return {Component}
      */
     static init(target, selectors) {
+        let element = document.querySelector(target);
+        // TODO Remove this if condition as part of MDL-83851.
+        if (!element) {
+            log.debug('Init component with id is deprecated, use a query selector instead.');
+            element = document.getElementById(target);
+        }
         return new this({
-            element: document.getElementById(target),
+            element,
             selectors,
         });
     }
