@@ -52,6 +52,8 @@ class behat_admin_presets_deprecated extends behat_deprecated_base {
      * The range includes the endpoints. That is, a 10 byte file in considered to
      * be between "5" and "10" bytes, and between "10" and "20" bytes.
      *
+     * @deprecated since 5.0
+     *
      * @Then /^following "(?P<link_string>[^"]*)" "(?P<selector_string>[^"]*)" in the "(?P<element_container_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)" should download between "(?P<min_bytes>\d+)" and "(?P<max_bytes>\d+)" bytes$/
      * @param string $link the text of the link.
      * @param string $selectortype The type of what we look for
@@ -61,8 +63,8 @@ class behat_admin_presets_deprecated extends behat_deprecated_base {
      * @param int $maxexpectedsize the maximum expected file size in bytes.
      * @return void
      * @throws ExpectationException
-     * @deprecated since 5.0
      */
+    #[\core\attribute\deprecated('behat_admin_presets::following_in_the_should_download_between_and_bytes', since: '5.0')]
     final public function following_in_the_should_download_between_and_bytes(string $link, string $selectortype,
         string $nodeelement, string $nodeselectortype, int $minexpectedsize, int $maxexpectedsize): void {
 
@@ -111,14 +113,9 @@ class behat_admin_presets_deprecated extends behat_deprecated_base {
      * @param string $nodeselectortype The type of selector where we look in
      * @param string $nodeelement Element we look in
      * @return string the content of the downloaded file.
-     * @deprecated since 5.0
      */
     final public function download_file_from_link_within_node(string $selectortype, string $link,
         string $nodeselectortype, string $nodeelement): string {
-
-        $this->deprecated_message("behat_admin_presets::following_in_the_should_download_between_and_bytes
-            is deprecated. Use: the following element should download a file that:");
-
         // Find the link from ur specific node.
         $linknode = $this->get_node_in_container($selectortype, $link, $nodeselectortype, $nodeelement);
         $this->ensure_node_is_visible($linknode);
