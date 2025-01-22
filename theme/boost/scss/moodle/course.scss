@@ -515,6 +515,7 @@ $divider-hover-color: $primary !default;
         width: 100%;
         margin: map-get($spacers, 2) map-get($spacers, 1);
         border-top: $divider-width dashed $divider-color;
+        opacity: 1;
         .changenumsections.disabled & {
             border-top: $divider-width dashed $divider-color;
         }
