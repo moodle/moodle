@@ -26,21 +26,22 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../../lib/behat/behat_deprecated_base.php');
 require_once(__DIR__ . '/../../../../../lib/behat/behat_field_manager.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
- * Steps definitions related with admin presets.
+ * Steps definitions that are now deprecated and will be removed in the next releases.
  *
  * @package   tool_admin_presets
  * @category  test
  * @copyright 2021 Pimenko <support@pimenko.com><pimenko.com>
  * @author    Sylvain Revenu | Pimenko
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo      MDL-78077 This will be deleted in Moodle 6.0.
  */
-class behat_admin_presets extends behat_base {
+class behat_admin_presets_deprecated extends behat_deprecated_base {
 
     /**
      * Downloads the file from a specific link on the page and checks the size is in a given range.
@@ -50,6 +51,8 @@ class behat_admin_presets extends behat_base {
      *
      * The range includes the endpoints. That is, a 10 byte file in considered to
      * be between "5" and "10" bytes, and between "10" and "20" bytes.
+     *
+     * @deprecated since 5.0
      *
      * @Then /^following "(?P<link_string>[^"]*)" "(?P<selector_string>[^"]*)" in the "(?P<element_container_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)" should download between "(?P<min_bytes>\d+)" and "(?P<max_bytes>\d+)" bytes$/
      * @param string $link the text of the link.
@@ -61,8 +64,13 @@ class behat_admin_presets extends behat_base {
      * @return void
      * @throws ExpectationException
      */
+    #[\core\attribute\deprecated('behat_admin_presets::following_in_the_should_download_between_and_bytes', since: '5.0')]
     final public function following_in_the_should_download_between_and_bytes(string $link, string $selectortype,
         string $nodeelement, string $nodeselectortype, int $minexpectedsize, int $maxexpectedsize): void {
+
+        $this->deprecated_message("behat_admin_presets::following_in_the_should_download_between_and_bytes
+            is deprecated. Use: the following element should download a file that:");
+
         // If the minimum is greater than the maximum then swap the values.
         if ((int) $minexpectedsize > (int) $maxexpectedsize) {
             list($minexpectedsize, $maxexpectedsize) = [$maxexpectedsize, $minexpectedsize];
