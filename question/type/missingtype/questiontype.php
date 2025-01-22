@@ -93,4 +93,13 @@ class qtype_missingtype extends question_type {
 
         $mform->display();
     }
+
+    #[\Override]
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+    }
+
 }

@@ -1549,4 +1549,89 @@ final class questionlib_test extends \advanced_testcase {
         $this->assertEquals(2, $nextversion);
     }
 
+    /**
+     * Test moving a question category from one context to another
+     *
+     * @covers ::question_move_category_to_context
+     */
+    public function test_question_move_category_to_context(): void {
+
+        global $CFG, $DB;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = self::getDataGenerator()->create_course();
+
+        // Create a quiz activity to store our question in at the start.
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+        ]);
+
+        // And then create another one to move the category to.
+        $quiz2 = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+        ]);
+
+        // Get the question generator and the context of the activities.
+        $generator = self::getDataGenerator()->get_plugin_generator('core_question');
+        $context1 = \context_module::instance($quiz1->cmid);
+        $context2 = \context_module::instance($quiz2->cmid);
+
+        // Create a question category within our first quiz activity.
+        $category = $generator->create_question_category(['contextid' => $context1->id]);
+
+        // And create a question within that.
+        // We will use `truefalse` but it could be any type.
+        $question = $generator->create_question('truefalse', null, ['category' => $category->id]);
+
+        $areas = [
+            'questiontext' => '1.jpg',
+            'generalfeedback' => '2.jpg',
+        ];
+
+        // Add file records to each of the file areas, for our first quiz activity.
+        foreach ($areas as $area => $img) {
+            $fs = get_file_storage();
+            $filerecord = new \stdClass();
+            $filerecord->contextid = $context1->id;
+            $filerecord->component = 'question';
+            $filerecord->filearea = $area;
+            $filerecord->itemid = $question->id;
+            $filerecord->filepath = '/';
+            $filerecord->filename = $img;
+            $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+                '/lib/tests/fixtures/' . $img);
+        }
+
+        // Firstly, confirm that the file records exist and there were no problems creating them.
+        // We don't care in this test about the actual files in the data dir.
+        $files = $DB->get_records('files', [
+            'component' => 'question',
+            'itemid' => $question->id,
+            'contextid' => $context1->id,
+            'mimetype' => 'image/jpeg',
+        ]);
+
+        $this->assertCount(2, $files);
+
+        // Move the question category to another context.
+        question_move_category_to_context(
+            $category->id,
+            $context1->id,
+            $context2->id,
+        );
+
+        // Now check that the files have been moved to the new category.
+        $files = $DB->get_records('files', [
+            'component' => 'question',
+            'itemid' => $question->id,
+            'contextid' => $context2->id,
+            'mimetype' => 'image/jpeg',
+        ]);
+
+        $this->assertCount(2, $files);
+
+    }
+
 }
