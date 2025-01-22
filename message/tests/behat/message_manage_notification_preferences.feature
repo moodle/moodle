@@ -223,6 +223,7 @@ Feature: Manage notification preferences - Email
     Then I should see "Subscribed forum posts"
     And I navigate to "Messaging > Notification settings" in site administration
     And I click on "Subscribed forum posts" "checkbox"
+    And I click on "Save changes" "button"
     And I follow "Preferences" in the user menu
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
     And I should not see "Subscribed forum posts"
