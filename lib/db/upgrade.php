@@ -1504,5 +1504,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025030400.04);
     }
 
+    // Remove auth_mnet.
+    if ($oldversion < 2025030400.05) {
+        if (!file_exists($CFG->dirroot . "/auth/mnet/version.php")) {
+            uninstall_plugin('auth', 'mnet');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030400.05);
+    }
+
     return true;
 }

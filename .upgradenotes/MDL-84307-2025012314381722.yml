@@ -1,0 +1,5 @@
+issueNumber: MDL-84307
+notes:
+  core_auth:
+    - message: Removed auth_mnet plugin from core
+      type: removed
