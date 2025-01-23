@@ -1,9 +1,6 @@
 $breadcrumb-divider: "▶" !default;
 $breadcrumb-divider-rtl: "◀" !default;
 
-// Specific overrides to make Bootstrap RTL.
-@import "moodle/bootstrap-rtl";
-
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
 @import "moodle/variables";
