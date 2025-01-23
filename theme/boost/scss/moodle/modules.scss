@@ -1630,13 +1630,6 @@ $popout-header-height: 4rem;
             }
         }
     }
-    &#page-mod-feedback-manage_templates,
-    &#page-mod-feedback-use_templ {
-        .dropdown-item:hover a.text-danger {
-            color: $dropdown-link-hover-color !important;/* stylelint-disable-line declaration-no-important */
-            text-decoration: none;
-        }
-    }
 
     // Analysis page.
     table.analysis {
