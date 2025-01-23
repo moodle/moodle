@@ -38792,6 +38792,10 @@ span[data-flexitour=container] {
   z-index: 1041;
 }
 
+span[data-flexitour=container] .modal {
+  display: initial;
+  position: initial;
+}
 span[data-flexitour=container] .modal-dialog {
   /**
    * Remove all margins to:

@@ -22,6 +22,10 @@ span[data-flexitour="container"] {
 }
 
 span[data-flexitour="container"] {
+    .modal {
+        display: initial;
+        position: initial;
+    }
     .modal-dialog {
         /**
          * Remove all margins to:

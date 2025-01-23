@@ -53,17 +53,19 @@
     }
 
 }}
-<div class="modal-dialog" role="document" data-role="flexitour-step">
-  <div class="modal-content">
-    <div class="tooltip-arrow" data-role="arrow"></div>
-    <div class="modal-header">
-      <h5 class="modal-title" data-placeholder="title"></h5>
-    </div>
-    <div class="modal-body" data-placeholder="body">
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-role="next">{{# str }} nextstep, tool_usertours {{/ str }}</button>
-      <button class="btn btn-secondary" data-role="end"> {{endtourlabel}} </button>
+<div class="modal">
+  <div class="modal-dialog" role="document" data-role="flexitour-step">
+    <div class="modal-content">
+      <div class="tooltip-arrow" data-role="arrow"></div>
+      <div class="modal-header">
+        <h5 class="modal-title" data-placeholder="title"></h5>
+      </div>
+      <div class="modal-body" data-placeholder="body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-role="next">{{# str }} nextstep, tool_usertours {{/ str }}</button>
+        <button class="btn btn-secondary" data-role="end"> {{endtourlabel}} </button>
+      </div>
     </div>
   </div>
 </div>
