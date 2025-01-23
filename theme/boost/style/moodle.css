@@ -36665,6 +36665,9 @@ body {
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
   font-size: calc(0.9375rem * 1.10);
 }
+.stickyfooter .sticky-footer-content {
+  overflow: hidden;
+}
 @media (min-width: 768px) {
   .pagelayout-standard .stickyfooter .sticky-footer-content, body.limitedwidth.uses-drawers .stickyfooter .sticky-footer-content {
     max-width: 830px;
