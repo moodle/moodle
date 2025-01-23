@@ -156,3 +156,8 @@ imageauthorname,core_badges
 imageauthorname_help,core_badges
 imageauthorurl,core_badges
 imageauthorurl_help,core_badges
+siteevent,core_calendar
+categoryevent,core_calendar
+courseevent,core_calendar
+groupevent,core_calendar
+userevent,core_calendar

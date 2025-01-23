@@ -1,0 +1,7 @@
+issueNumber: MDL-84617
+notes:
+  core_calendar:
+    - message: >-
+        calendar_get_courselink(), calendar_events_by_day() functions have
+        been deprecated.
+      type: deprecated
