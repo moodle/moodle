@@ -148,16 +148,6 @@ class custom_completion extends activity_custom_completion {
                 break;
         }
 
-        // If not yet meeting the requirement and no attempts remain to complete it, mark it as failed.
-        if ($status === COMPLETION_INCOMPLETE) {
-            $scorm = $DB->get_record('scorm', ['id' => $this->cm->instance]);
-            $attemptcount = scorm_get_attempt_count($this->userid, $scorm);
-
-            if ($scorm->maxattempt > 0 && $attemptcount >= $scorm->maxattempt) {
-                $status = COMPLETION_COMPLETE_FAIL;
-            }
-        }
-
         return $status;
     }
 
@@ -217,4 +207,3 @@ class custom_completion extends activity_custom_completion {
         ];
     }
 }
-
