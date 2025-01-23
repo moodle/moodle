@@ -1,0 +1,7 @@
+issueNumber: MDL-83848
+notes:
+  core:
+    - message: >-
+        The behat/gherkin has been updated to 4.11.0 which introduces a breaking
+        change where backslashes in feature files need to be escaped.
+      type: changed
