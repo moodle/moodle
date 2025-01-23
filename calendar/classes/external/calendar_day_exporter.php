@@ -17,6 +17,7 @@
 namespace core_calendar\external;
 
 use core\external\exporter;
+use core_calendar\output\humantimeperiod;
 use core_date;
 use DateTimeImmutable;
 use renderer_base;
@@ -161,7 +162,12 @@ class calendar_day_exporter extends exporter {
             // We need to override default formatted time because it differs from day view.
             // Formatted time for day view adds a link to the day view.
             $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
-            $data->formattedtime = calendar_format_event_time($legacyevent, time(), null);
+            $humanperiod = humantimeperiod::create_from_timestamp(
+                starttimestamp: $legacyevent->timestart,
+                endtimestamp: $legacyevent->timestart + $legacyevent->timeduration,
+                link: new moodle_url(CALENDAR_URL . 'view.php'),
+            );
+            $data->formattedtime = $output->render($humanperiod);
 
             return $data;
         }, $this->related['events']);

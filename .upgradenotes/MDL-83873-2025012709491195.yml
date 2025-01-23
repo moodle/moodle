@@ -1,0 +1,8 @@
+issueNumber: MDL-83873
+notes:
+  core_calendar:
+    - message: >-
+        calendar_day_representation(), calendar_time_representation() and
+        calendar_format_event_time() functions have been deprecated and can't be
+        used anymore. Use humandate and humantimeperiod classes instead.
+      type: deprecated

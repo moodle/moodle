@@ -27,9 +27,10 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
+use core_calendar\output\humantimeperiod;
 use renderer_base;
-use moodle_url;
-use \core_calendar\local\event\container;
+use core\url;
+use core_calendar\local\event\container;
 
 /**
  * Class for displaying the day view.
@@ -45,7 +46,7 @@ class calendar_upcoming_exporter extends exporter {
     protected $calendar;
 
     /**
-     * @var moodle_url $url The URL for the upcoming view page.
+     * @var url $url The URL for the upcoming view page.
      */
     protected $url;
 
@@ -106,7 +107,7 @@ class calendar_upcoming_exporter extends exporter {
         $timestamp = $this->calendar->time;
 
         $cache = $this->related['cache'];
-        $url = new moodle_url('/calendar/view.php', [
+        $url = new url('/calendar/view.php', [
             'view' => 'upcoming',
             'time' => $timestamp,
             'course' => $this->calendar->course->id,
@@ -131,7 +132,12 @@ class calendar_upcoming_exporter extends exporter {
             // We need to override default formatted time because it differs from day view.
             // Formatted time for upcoming view adds a link to the day view.
             $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
-            $data->formattedtime = calendar_format_event_time($legacyevent, time(), null);
+            $humanperiod = humantimeperiod::create_from_timestamp(
+                starttimestamp: $legacyevent->timestart,
+                endtimestamp: $legacyevent->timestart + $legacyevent->timeduration,
+                link: new url(CALENDAR_URL . 'view.php'),
+            );
+            $data->formattedtime = $output->render($humanperiod);
 
             return $data;
         }, $this->related['events']);

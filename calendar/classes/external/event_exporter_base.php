@@ -29,14 +29,15 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . "/calendar/lib.php");
 require_once($CFG->libdir . "/filelib.php");
 
-use \core\external\exporter;
-use \core_calendar\local\event\container;
-use \core_calendar\local\event\entities\event_interface;
-use \core_calendar\local\event\entities\action_event_interface;
-use \core_course\external\course_summary_exporter;
-use \core\external\coursecat_summary_exporter;
-use \renderer_base;
-use moodle_url;
+use core\external\exporter;
+use core_calendar\local\event\container;
+use core_calendar\local\event\entities\event_interface;
+use core_calendar\local\event\entities\action_event_interface;
+use core_calendar\output\humantimeperiod;
+use core_course\external\course_summary_exporter;
+use core\external\coursecat_summary_exporter;
+use renderer_base;
+use core\url;
 
 /**
  * Class for displaying a calendar event.
@@ -369,18 +370,23 @@ class event_exporter_base extends exporter {
         $values['canedit'] = calendar_edit_event_allowed($legacyevent, true);
         $values['candelete'] = calendar_delete_event_allowed($legacyevent);
 
-        $deleteurl = new moodle_url('/calendar/delete.php', ['id' => $event->get_id(), 'course' => $courseid]);
+        $deleteurl = new url('/calendar/delete.php', ['id' => $event->get_id(), 'course' => $courseid]);
         $values['deleteurl'] = $deleteurl->out(false);
 
-        $editurl = new moodle_url('/calendar/event.php', ['action' => 'edit', 'id' => $event->get_id(),
+        $editurl = new url('/calendar/event.php', ['action' => 'edit', 'id' => $event->get_id(),
                 'course' => $courseid]);
         $values['editurl'] = $editurl->out(false);
-        $viewurl = new moodle_url('/calendar/view.php', ['view' => 'day', 'course' => $courseid,
+        $viewurl = new url('/calendar/view.php', ['view' => 'day', 'course' => $courseid,
                 'time' => $timesort]);
         $viewurl->set_anchor('event_' . $event->get_id());
         $values['viewurl'] = $viewurl->out(false);
-        $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
-                $timesort);
+        $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
+        $humanperiod = humantimeperiod::create_from_timestamp(
+            starttimestamp: $legacyevent->timestart,
+            endtimestamp: $legacyevent->timestart + $legacyevent->timeduration,
+            link: new url(CALENDAR_URL . 'view.php'),
+        );
+        $values['formattedtime'] = $output->render($humanperiod);
         $values['formattedlocation'] = calendar_format_event_location($legacyevent);
 
         if ($group = $event->get_group()) {
