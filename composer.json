@@ -44,8 +44,7 @@
         "ext-json": "*",
         "ext-hash": "*",
         "ext-fileinfo": "*",
-        "ext-sodium": "*",
-        "behat/gherkin": "~4.9.0"
+        "ext-sodium": "*"
     },
     "suggest": {
         "ext-mysqli": "Needed when Moodle uses MySQL or MariaDB database.",
