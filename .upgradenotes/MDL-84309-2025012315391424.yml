@@ -1,0 +1,5 @@
+issueNumber: MDL-84309
+notes:
+  core_block:
+    - message: Removed block_mnet_hosts plugin from core
+      type: removed
