@@ -86,12 +86,13 @@ final class matrix_user_manager_test extends \advanced_testcase {
      * @param string $expecteduserid The expected matrix user id
      */
     public function test_get_formatted_matrix_userid(
+        ?string $servername,
         string $server,
         string $username,
         string $expecteduserid,
     ): void {
         $this->resetAfterTest();
-
+        set_config('matrixhomeservername', $servername, 'communication_matrix');
         set_config('matrixhomeserverurl', $server, 'communication_matrix');
         $this->assertEquals(
             $expecteduserid,
@@ -106,27 +107,44 @@ final class matrix_user_manager_test extends \advanced_testcase {
      */
     public static function get_formatted_matrix_userid_provider(): array {
         return [
+            'servername' => [
+                'example.org',
+                'https://matrix.example.org',
+                'user',
+                '@user:example.org',
+            ],
+            'servername empty string' => [
+                '',
+                'https://matrix.example.org',
+                'user',
+                '@user:matrix.example.org',
+            ],
             'alphanumeric' => [
+                null,
                 'https://matrix.example.org',
                 'alphabet1',
                 '@alphabet1:matrix.example.org',
             ],
             'chara' => [
+                null,
                 'https://matrix.example.org',
                 'asdf#$%^&*()+{}|<>?!,asdf',
                 '@asdf.................asdf:matrix.example.org',
             ],
             'local server' => [
+                null,
                 'https://synapse',
                 'colin.creavey',
                 '@colin.creavey:synapse',
             ],
             'server with port' => [
+                null,
                 'https://matrix.example.org:8448',
                 'colin.creavey',
                 '@colin.creavey:matrix.example.org',
             ],
             'numeric username' => [
+                null,
                 'https://matrix.example.org',
                 '123456',
                 '@' . matrix_user_manager::MATRIX_USER_PREFIX . '123456:matrix.example.org',
