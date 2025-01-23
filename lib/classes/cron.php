@@ -392,6 +392,7 @@ class cron {
         mtrace('Execute scheduled task: ' . $fullname);
         self::set_process_title('Scheduled task: ' . get_class($task));
         self::trace_time_and_memory();
+        memory_reset_peak_usage();
         $predbqueries = null;
         $predbqueries = $DB->perf_get_queries();
         $pretime = microtime(1);
@@ -415,6 +416,7 @@ class cron {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
+            mtrace('... used ' . display_size(memory_get_peak_usage()) . ' peak memory');
             mtrace('Scheduled task complete: ' . $fullname);
             \core\task\manager::scheduled_task_complete($task);
         } catch (\Throwable $e) {
@@ -426,6 +428,7 @@ class cron {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
+            mtrace('... used ' . display_size(memory_get_peak_usage()) . ' peak memory');
             mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
             if ($CFG->debugdeveloper) {
                 if (!empty($e->debuginfo)) {
@@ -472,6 +475,7 @@ class cron {
         mtrace("Adhoc task custom data: " . $task->get_custom_data_as_string());
         self::set_process_title('Adhoc task: ' . $task->get_id() . ' ' . get_class($task));
         self::trace_time_and_memory();
+        memory_reset_peak_usage();
         $predbqueries = null;
         $predbqueries = $DB->perf_get_queries();
         $pretime = microtime(1);
@@ -524,6 +528,7 @@ class cron {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
+            mtrace('... used ' . display_size(memory_get_peak_usage()) . ' peak memory');
             mtrace("Adhoc task complete: " . get_class($task));
             \core\task\manager::adhoc_task_complete($task);
         } catch (\Throwable $e) {
@@ -535,6 +540,7 @@ class cron {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
+            mtrace('... used ' . display_size(memory_get_peak_usage()) . ' peak memory');
             mtrace("Adhoc task failed: " . get_class($task) . "," . $e->getMessage());
             if ($CFG->debugdeveloper) {
                 if (!empty($e->debuginfo)) {
