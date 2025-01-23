@@ -31,22 +31,14 @@ use tiny_premium\manager;
  */
 class plugininfo extends plugin implements plugin_with_configuration {
 
-    /**
-     * Determine if the plugin should be enabled by checking the capability and if the Tiny Premium API key is set.
-     *
-     * @param context $context The context that the editor is used within
-     * @param array $options The options passed in when requesting the editor
-     * @param array $fpoptions The filepicker options passed in when requesting the editor
-     * @param editor $editor The editor instance in which the plugin is initialised
-     * @return bool
-     */
+    #[\Override]
     public static function is_enabled(
         context $context,
         array $options,
         array $fpoptions,
         ?editor $editor = null
     ): bool {
-        return has_capability('tiny/premium:accesspremium', $context) && (get_config('tiny_premium', 'apikey') != false);
+        return has_capability('tiny/premium:use', $context) && (get_config('tiny_premium', 'apikey') != false);
     }
 
     /**
@@ -64,8 +56,16 @@ class plugininfo extends plugin implements plugin_with_configuration {
         array $fpoptions,
         ?editor $editor = null
     ): array {
+        $allowedplugins = [];
+
+        foreach (manager::get_enabled_plugins() as $plugin) {
+            if (has_capability("tiny/premium:use{$plugin}", $context)) {
+                $allowedplugins[] = $plugin;
+            }
+        }
+
         return [
-            'premiumplugins' => implode(',', manager::get_enabled_plugins()),
+            'premiumplugins' => implode(',', $allowedplugins),
         ];
     }
 }

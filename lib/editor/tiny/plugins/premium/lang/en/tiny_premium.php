@@ -31,7 +31,24 @@ $string['apikey_desc'] = 'Your API key is available on your <a href="https://www
 $string['emptyapikeywarning'] = 'Enabled TinyMCE Premium plugins will not be available until an API key is added.';
 $string['pluginname'] = 'TinyMCE Premium';
 $string['pluginnotfound'] = 'Tiny Premium plugin {$a} not found.';
-$string['premium:accesspremium'] = 'Access TinyMCE Premium features';
+$string['premium:use'] = 'Use TinyMCE premium';
+$string['premium:useaccessibilitychecker'] = 'Use TinyMCE Premium Accessibility Checker';
+$string['premium:useadvtable'] = 'Use TinyMCE Premium Advanced Table';
+$string['premium:useautocorrect'] = 'Use TinyMCE Premium Spelling Autocorrect';
+$string['premium:usecasechange'] = 'Use TinyMCE Premium Case Change';
+$string['premium:usechecklist'] = 'Use TinyMCE Premium Checklist';
+$string['premium:useeditimage'] = 'Use TinyMCE Premium Enhanced Image Editing';
+$string['premium:useexport'] = 'Use TinyMCE Premium Export';
+$string['premium:usefootnotes'] = 'Use TinyMCE Premium Footnotes';
+$string['premium:useformatpainter'] = 'Use TinyMCE Premium Format Painter';
+$string['premium:uselinkchecker'] = 'Use TinyMCE Premium Link Checker';
+$string['premium:usemath'] = 'Use TinyMCE Premium Math Tool';
+$string['premium:usepageembed'] = 'Use TinyMCE Premium Page Embed';
+$string['premium:usepermanentpen'] = 'Use TinyMCE Premium Permanent Pen';
+$string['premium:usepowerpaste'] = 'Use TinyMCE Premium Powerpaste';
+$string['premium:usetableofcontents'] = 'Use TinyMCE Premium Table of Contents';
+$string['premium:usetinymcespellchecker'] = 'Use TinyMCE Premium Spell Checker Pro';
+$string['premium:usetypography'] = 'Use TinyMCE Premium Advanced Typography';
 $string['premiumplugin:a11ychecker'] = 'Accessibility Checker';
 $string['premiumplugin:advtable'] = 'Advanced Table';
 $string['premiumplugin:autocorrect'] = 'Spelling Autocorrect';
@@ -55,3 +72,6 @@ $string['privacy:metadata'] = 'The Tiny premium plugin for TinyMCE does not stor
 
 // Deprecated since Moodle 4.5.
 $string['helplinktext'] = 'Premium plugins';
+
+// Deprecated since Moodle 5.0.
+$string['premium:accesspremium'] = 'Access TinyMCE Premium features';
