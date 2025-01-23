@@ -27,3 +27,15 @@ Feature: To be able to see and save user message preferences as admin
     And I follow "Preferences" in the user menu
     And I click on "Message preferences" "link"
     And the field "Email" matches value "0"
+
+  Scenario: Only active plugins have corresponding columns on the User preferences notification settings
+    # Needed for Mobile column to appear on User preferences notification settings.
+    Given the following config values are set as admin:
+      | airnotifieraccesskey | test123 |
+    And I log in as "admin"
+    And I follow "Preferences" in the user menu
+    When I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    # By default, web/popup is enabled. mobile/airnotifier is enabled using an earlier step while email is disabled.
+    Then "[data-processor-name='popup']" "css_element" should exist
+    And "[data-processor-name='email']" "css_element" should not exist
+    And "[data-processor-name='airnotifier']" "css_element" should exist
