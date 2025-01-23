@@ -26,6 +26,8 @@
 
 namespace core_badges\output;
 
+use core_badges\local\backpack\helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/badgeslib.php');
@@ -72,12 +74,12 @@ class issued_badge implements renderable {
         global $DB;
 
         $this->hash = $hash;
-        $assertion = new \core_badges_assertion($hash, badges_open_badges_backpack_api());
-        $this->issued = $assertion->get_badge_assertion();
+        // Get achievement credential data using OBv2.0 specification.
+        // In the future, we may want to support other OB versions.
+        $this->issued = helper::export_achievement_credential(OPEN_BADGES_V2, $hash);
         if (array_key_exists('issuedOn', $this->issued) && !is_numeric($this->issued['issuedOn'])) {
             $this->issued['issuedOn'] = strtotime($this->issued['issuedOn']);
         }
-        $this->badgeclass = $assertion->get_badge_class();
 
         $rec = $DB->get_record_sql('SELECT userid, visible, badgeid
                 FROM {badge_issued}
@@ -92,6 +94,13 @@ class issued_badge implements renderable {
             $this->recipient = $user;
             $this->visible = $rec->visible;
             $this->badgeid = $rec->badgeid;
+
+            // Get the badge class using OBv2.0 specification.
+            // In the future, we may want to support other OB versions.
+            $this->badgeclass = helper::export_credential(
+                OPEN_BADGES_V2,
+                $this->badgeid,
+            );
         }
     }
 

@@ -16,6 +16,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/badges/renderer.php');
+
+use core_badges\local\backpack\helper;
+use core_badges\local\backpack\ob_factory;
+
 /**
  * Open Badges Assertions specification 2.0
  * {@link https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion}
@@ -24,18 +30,19 @@ defined('MOODLE_INTERNAL') || die();
  * - Badge Assertion (information regarding a specific badge that was awarded to a badge earner)
  * - Badge Class (general information about a badge and what it is intended to represent)
  * - Issuer Class (general information of an issuing organisation)
- */
-require_once($CFG->libdir . '/badgeslib.php');
-require_once($CFG->dirroot . '/badges/renderer.php');
-
-/**
- * Class that represents badge assertion.
  *
  * @package    core_badges
  * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
+ * @deprecated since Moodle 5.1.
+ * @todo       MDL-85730 Final deprecation in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: '\core_badges\achievement_credential',
+    since: '5.1',
+    mdl: 'MDL-85621',
+)]
 class core_badges_assertion {
     /** @var object Issued badge information from database */
     private $_data;
@@ -51,9 +58,18 @@ class core_badges_assertion {
      *
      * @param string $hash Badge unique hash from badge_issued table.
      * @param int $obversion to control version JSON-LD.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\achievement_credential::instance()',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function __construct($hash, $obversion = OPEN_BADGES_V2) {
         global $DB;
+
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
 
         $this->_data = $DB->get_record_sql('
             SELECT
@@ -86,8 +102,17 @@ class core_badges_assertion {
      * Get the local id for this badge.
      *
      * @return int
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\achievement_credential::get_badge_id()',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_badge_id() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $badgeid = 0;
         if ($this->_data) {
             $badgeid = $this->_data->id;
@@ -99,8 +124,17 @@ class core_badges_assertion {
      * Get the local id for this badge assertion.
      *
      * @return string
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\achievement_credential::get_hash()',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_assertion_hash() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $hash = '';
         if ($this->_data) {
             $hash = $this->_data->uniquehash;
@@ -114,55 +148,23 @@ class core_badges_assertion {
      * @param boolean $issued Include the nested badge issued information.
      * @param boolean $usesalt Hash the identity and include the salt information for the hash.
      * @return array Badge assertion.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\helper::export_achievement_credential',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_badge_assertion($issued = true, $usesalt = true) {
-        global $CFG;
-        $assertion = array();
-        if ($this->_data) {
-            $hash = $this->_data->uniquehash;
-            $email = empty($this->_data->backpackemail) ? $this->_data->email : $this->_data->backpackemail;
-            $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => $this->_obversion));
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
 
-            if ($this->_obversion >= OPEN_BADGES_V2) {
-                $classurl = new moodle_url('/badges/badge_json.php', array('id' => $this->get_badge_id()));
-            } else {
-                $classurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'action' => 1));
-            }
-
-            // Required.
-            $assertion['uid'] = $hash;
-            $assertion['recipient'] = array();
-            if ($usesalt) {
-                $assertion['recipient']['identity'] = 'sha256$' . hash('sha256', $email . $CFG->badges_badgesalt);
-            } else {
-                $assertion['recipient']['identity'] = $email;
-            }
-            $assertion['recipient']['type'] = 'email'; // Currently the only supported type.
-            $assertion['recipient']['hashed'] = true; // We are always hashing recipient.
-            if ($usesalt) {
-                $assertion['recipient']['salt'] = $CFG->badges_badgesalt;
-            }
-            if ($issued) {
-                $assertion['badge'] = $classurl->out(false);
-            }
-            $assertion['verify'] = array();
-            $assertion['verify']['type'] = 'hosted'; // 'Signed' is not implemented yet.
-            $assertion['verify']['url'] = $assertionurl->out(false);
-            $assertion['issuedOn'] = $this->_data->dateissued;
-            if ($issued) {
-                $assertion['evidence'] = $this->_url->out(false); // Currently issued badge URL.
-            }
-            // Optional.
-            if (!empty($this->_data->dateexpire)) {
-                $assertion['expires'] = $this->_data->dateexpire;
-            }
-            $tags = $this->get_tags();
-            if (is_array($tags) && count($tags) > 0) {
-                $assertion['tags'] = $tags;
-            }
-            $this->embed_data_badge_version2($assertion, OPEN_BADGES_V2_TYPE_ASSERTION);
-        }
-        return $assertion;
+        return helper::export_achievement_credential(
+            helper::convert_apiversion($this->_obversion),
+            $this->get_assertion_hash(),
+            $issued,
+            $usesalt,
+        );
     }
 
     /**
@@ -170,63 +172,43 @@ class core_badges_assertion {
      *
      * @param boolean $issued Include the nested badge issuer information.
      * @return array Badge Class information.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\helper::export_credential',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_badge_class($issued = true) {
-        $class = [];
-        if ($this->_data) {
-            if (empty($this->_data->courseid)) {
-                $context = context_system::instance();
-            } else {
-                $context = context_course::instance($this->_data->courseid);
-            }
-            // Required.
-            $class['name'] = $this->_data->name;
-            $class['description'] = $this->_data->description;
-            $storage = get_file_storage();
-            $imagefile = $storage->get_file($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f3.png');
-            if ($imagefile) {
-                $imagedata = base64_encode($imagefile->get_content());
-            } else {
-                if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-                    // Unit tests the file might not exist yet.
-                    $imagedata = '';
-                } else {
-                    throw new coding_exception('Image file does not exist.');
-                }
-            }
-            $class['image'] = 'data:image/png;base64,' . $imagedata;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
 
-            $params = ['id' => $this->get_badge_id()];
-            $badgeurl = new moodle_url('/badges/badgeclass.php', $params);
-            $class['criteria'] = $badgeurl->out(false); // Currently badge URL.
-            if ($issued) {
-                $params = ['id' => $this->get_badge_id()];
-                $issuerurl = new moodle_url('/badges/issuer_json.php', $params);
-                $class['issuer'] = $issuerurl->out(false);
-            }
-            $tags = $this->get_tags();
-            if (is_array($tags) && count($tags) > 0) {
-                $class['tags'] = $tags;
-            }
-            $this->embed_data_badge_version2($class, OPEN_BADGES_V2_TYPE_BADGE);
-            if (!$issued) {
-                unset($class['issuer']);
-            }
-        }
-        return $class;
+        return helper::export_credential(
+            helper::convert_apiversion($this->_obversion),
+            $this->get_badge_id(),
+            $issued,
+        );
     }
 
     /**
      * Get badge issuer information.
      *
      * @return array Issuer information.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\helper::export_issuer',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_issuer() {
-        $badge = new badge($this->get_badge_id());
-        $issuer = $badge->get_badge_issuer();
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
 
-        $this->embed_data_badge_version2($issuer, OPEN_BADGES_V2_TYPE_ISSUER);
-        return $issuer;
+        return helper::export_issuer(
+            helper::convert_apiversion($this->_obversion),
+            $this->get_badge_id(),
+        );
     }
 
     /**
@@ -234,32 +216,40 @@ class core_badges_assertion {
      *
      * @param badge $badge Badge object.
      * @return array|bool List related badges.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\ob\badge_exporter_interface::export_related_badges',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_related_badges(badge $badge) {
-        global $DB;
-        $arraybadges = array();
-        $relatedbadges = $badge->get_related_badges(true);
-        if ($relatedbadges) {
-            foreach ($relatedbadges as $rb) {
-                $url = new moodle_url('/badges/badge_json.php', array('id' => $rb->id));
-                $arraybadges[] = array(
-                    'id'        => $url->out(false),
-                    'version'   => $rb->version,
-                    '@language' => $rb->language
-                );
-            }
-        }
-        return $arraybadges;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
+        $badgeexporter = ob_factory::create_badge_exporter_from_id(
+            $badge->id,
+            helper::convert_apiversion($this->_obversion),
+        );
+        return $badgeexporter->export_related_badges();
     }
 
     /**
      * Get endorsement of the badge.
      *
      * @return false|stdClass Endorsement information.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_endorsement() {
         global $DB;
-        $endorsement = array();
+
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $record = $DB->get_record_select('badge_endorsement', 'badgeid = ?', array($this->_data->id));
         return $record;
     }
@@ -268,46 +258,44 @@ class core_badges_assertion {
      * Get criteria of badge class.
      *
      * @return array|string Criteria information.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\ob\badge_exporter_interface::export_criteria',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_criteria_badge_class() {
-        $badge = new badge($this->_data->id);
-        $narrative = $badge->markdown_badge_criteria();
-        $params = ['id' => $this->get_badge_id()];
-        $badgeurl = new moodle_url('/badges/badgeclass.php', $params);
-        if (!empty($narrative)) {
-            $criteria = [];
-            $criteria['id'] = $badgeurl->out(false);
-            $criteria['narrative'] = $narrative;
-            return $criteria;
-        } else {
-            return $badgeurl->out(false);
-        }
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
+        $badgeexporter = ob_factory::create_badge_exporter_from_id(
+            $this->get_badge_id(),
+            helper::convert_apiversion(OPEN_BADGES_V2),
+        );
+        return $badgeexporter->export_criteria();
     }
 
     /**
      * Get alignment of the badge.
      *
      * @return array information.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        replacement: '\core_badges\local\backpack\ob\badge_exporter_interface::export_alignments',
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_alignments() {
-        global $DB;
-        $badgeid = $this->_data->id;
-        $alignments = array();
-        $items = $DB->get_records_select('badge_alignment', 'badgeid = ?', array($badgeid));
-        foreach ($items as $item) {
-            $alignment = array('targetName' => $item->targetname, 'targetUrl' => $item->targeturl);
-            if ($item->targetdescription) {
-                $alignment['targetDescription'] = $item->targetdescription;
-            }
-            if ($item->targetframework) {
-                $alignment['targetFramework'] = $item->targetframework;
-            }
-            if ($item->targetcode) {
-                $alignment['targetCode'] = $item->targetcode;
-            }
-            $alignments[] = $alignment;
-        }
-        return $alignments;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
+        $badgeexporter = ob_factory::create_badge_exporter_from_id(
+            $this->get_badge_id(),
+            helper::convert_apiversion(OPEN_BADGES_V2),
+        );
+        return $badgeexporter->export_alignments();
     }
 
     /**
@@ -315,8 +303,16 @@ class core_badges_assertion {
      *
      * @param array $json for assertion, badges, issuer.
      * @param string $type Content type.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     protected function embed_data_badge_version2(&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         // Specification Version 2.0.
         if ($this->_obversion >= OPEN_BADGES_V2) {
             $badge = new badge($this->_data->id);
@@ -390,8 +386,16 @@ class core_badges_assertion {
      * Get tags of the badge.
      *
      * @return array tags.
+     * @deprecated since Moodle 5.1.
+     * @todo       MDL-85730 Final deprecation in Moodle 6.0.
      */
+    #[\core\attribute\deprecated(
+        since: '5.1',
+        mdl: 'MDL-85621',
+    )]
     public function get_tags(): array {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         return array_values(\core_tag_tag::get_item_tags_array('core_badges', 'badge', $this->get_badge_id()));
     }
 }

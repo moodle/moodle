@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use core_badges\helper;
+use core_badges\local\backpack\ob_factory;
 use core_badges\tests\badges_testcase;
 use core\task\manager;
 
@@ -757,51 +758,6 @@ final class badgeslib_test extends badges_testcase {
         // As the badge has been awarded to user because core_badges_observer been called when the member has been added to the
         // cohort, there are no other users that can award this badge.
         $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
-    }
-
-    /**
-     * Test badges assertion generated when a badge is issued.
-     */
-    public function test_badges_assertion(): void {
-        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
-        $badge = new badge($this->coursebadge);
-        $this->assertFalse($badge->is_issued($this->user->id));
-
-        $criteriaoverall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
-        $criteriaoverall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ANY]);
-        $criteriaoverall1 = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id]);
-        $criteriaoverall1->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address']);
-
-        $this->user->address = 'Test address';
-        $sink = $this->redirectEmails();
-        user_update_user($this->user, false);
-        $this->assertCount(1, $sink->get_messages());
-        $sink->close();
-        // Check if badge is awarded.
-        $this->assertDebuggingCalled('Error baking badge image!');
-        $awards = $badge->get_awards();
-        $this->assertCount(1, $awards);
-
-        // Test Openbadge specification version 2.0.
-        // Get assertion version 2.
-        $award = reset($awards);
-        $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2);
-        $testassertion2 = $this->assertion2;
-
-        // Make sure JSON strings have the same structure.
-        $this->assertStringMatchesFormat($testassertion2->badge, json_encode($assertion2->get_badge_assertion()));
-        $this->assertStringMatchesFormat($testassertion2->class, json_encode($assertion2->get_badge_class()));
-        $this->assertStringMatchesFormat($testassertion2->issuer, json_encode($assertion2->get_issuer()));
-
-        // Test Openbadge specification version 2.1. It has the same format as OBv2.0.
-        // Get assertion version 2.1.
-        $award = reset($awards);
-        $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2P1);
-
-        // Make sure JSON strings have the same structure.
-        $this->assertStringMatchesFormat($testassertion2->badge, json_encode($assertion2->get_badge_assertion()));
-        $this->assertStringMatchesFormat($testassertion2->class, json_encode($assertion2->get_badge_class()));
-        $this->assertStringMatchesFormat($testassertion2->issuer, json_encode($assertion2->get_issuer()));
     }
 
     /**
