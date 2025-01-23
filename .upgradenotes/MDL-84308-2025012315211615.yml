@@ -1,0 +1,5 @@
+issueNumber: MDL-84308
+notes:
+  core_portfolio:
+    - message: Removed portfolio_mahara plugin from core
+      type: removed
