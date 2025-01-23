@@ -33,8 +33,8 @@ use html_writer;
 use section_info;
 use context_course;
 use editsection_form;
-use moodle_exception;
-use coding_exception;
+use core\exception\moodle_exception;
+use core\exception\coding_exception;
 use moodle_url;
 use lang_string;
 use core_external\external_api;
@@ -385,6 +385,37 @@ abstract class base {
             $this->modinfo = course_modinfo::instance($this->courseid, $USER->id);
         }
         return $this->modinfo;
+    }
+
+    /**
+     * Return a format state updates instance.
+     */
+    public function get_stateupdates_instance(): \core_courseformat\stateupdates {
+        $defaultupdatesclass = 'core_courseformat\\stateupdates';
+        $updatesclass = 'format_' . $this->format . '\\courseformat\\stateupdates';
+        if (!class_exists($updatesclass)) {
+            $updatesclass = $defaultupdatesclass;
+        }
+
+        $updates = new $updatesclass($this);
+        if (!is_a($updates, $defaultupdatesclass)) {
+            throw new coding_exception("The \"$updatesclass\" class must extend \"$defaultupdatesclass\"");
+        }
+
+        return $updates;
+    }
+
+    /**
+     * Return a format state actions instance.
+     * @return \core_courseformat\stateactions
+     */
+    public function get_stateactions_instance(): \core_courseformat\stateactions {
+        // Get the actions class from the course format.
+        $actionsclass = 'format_'. $this->format.'\\courseformat\\stateactions';
+        if (!class_exists($actionsclass)) {
+            $actionsclass = 'core_courseformat\\stateactions';
+        }
+        return new $actionsclass();
     }
 
     /**
@@ -886,7 +917,7 @@ abstract class base {
      * of the view script, it is not enough to change just this function. Do not forget
      * to add proper redirection.
      *
-     * @param int|stdClass|section_info $section Section object from database or just field course_sections.section
+     * @param int|stdClass|section_info|null $section Section object from database or just field course_sections.section
      *     if null the course view page is returned
      * @param array $options options for view URL. At the moment core uses:
      *     'navigation' (bool) if true and section not empty, the function returns section page; otherwise, it returns course page.
@@ -926,36 +957,87 @@ abstract class base {
     }
 
     /**
+     * The URL to update the course format.
+     *
+     * If no section is specified, the update will redirect to the general course page.
+     *
+     * @param string $action action name the reactive action
+     * @param array $ids list of ids to update
+     * @param int|null $targetsectionid optional target section id
+     * @param int|null $targetcmid optional target cm id
+     * @param moodle_url|null $returnurl optional custom return url
+     * @return moodle_url
+     */
+    public function get_update_url(
+        string $action,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null,
+        ?moodle_url $returnurl = null
+    ): moodle_url {
+        $params = [
+            'courseid' => $this->get_courseid(),
+            'sesskey' => sesskey(),
+            'action' => $action,
+        ];
+
+        if (count($ids) === 1) {
+            $params['id'] = reset($ids);
+        } else {
+            foreach ($ids as $key => $id) {
+                $params["ids[]"] = $id;
+            }
+        }
+
+        if ($targetsectionid) {
+            $params['sectionid'] = $targetsectionid;
+        }
+        if ($targetcmid) {
+            $params['cmid'] = $targetcmid;
+        }
+        if ($returnurl) {
+            $params['returnurl'] = $returnurl->out_as_local_url();
+        }
+        return new moodle_url('/course/format/update.php', $params);
+    }
+
+    /**
      * Return the old non-ajax activity action url.
      *
      * BrowserKit behats tests cannot trigger javascript events,
      * so we must translate to an old non-ajax url while non-ajax
      * course editing is still supported.
      *
+     * @deprecated since Moodle 5.0
+     * @todo Remove this method in Moodle 6.0 (MDL-83530).
+     *
      * @param string $action action name the reactive action
      * @param cm_info $cm course module
      * @return moodle_url
      */
+    #[\core\attribute\deprecated(
+        replacement: 'core_courseformat\base::get_update_url',
+        since: '5.0',
+        mdl: 'MDL-82767',
+    )]
     public function get_non_ajax_cm_action_url(string $action, cm_info $cm): moodle_url {
         $nonajaxactions = [
-            'cmDelete' => 'delete',
-            'cmDuplicate' => 'duplicate',
-            'cmHide' => 'hide',
-            'cmShow' => 'show',
-            'cmStealth' => 'stealth',
+            'cmDelete' => 'cm_delete',
+            'cmDuplicate' => 'cm_duplicate',
+            'cmHide' => 'cm_hide',
+            'cmShow' => 'cm_show',
+            'cmStealth' => 'cm_stealth',
         ];
         if (!isset($nonajaxactions[$action])) {
             throw new coding_exception('Unknown activity action: ' . $action);
         }
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $nonajaxaction = $nonajaxactions[$action];
-        $nonajaxurl = new moodle_url(
-            '/course/mod.php',
-            ['sesskey' => sesskey(), $nonajaxaction => $cm->id]
+        return $this->get_update_url(
+            action: $nonajaxaction,
+            ids: [$cm->id],
+            returnurl: $this->get_view_url($this->get_sectionnum(), ['navigation' => true]),
         );
-        if (!is_null($this->get_sectionid())) {
-            $nonajaxurl->param('sr', $this->get_sectionnum());
-        }
-        return $nonajaxurl;
     }
 
     /**

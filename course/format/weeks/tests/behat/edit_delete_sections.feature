@@ -63,7 +63,7 @@ Feature: Sections can be edited and deleted in weekly sections format
   Scenario: Deleting the last section in weeks format
     Given I should see "29 May - 4 June" in the "29 May - 4 June" "section"
     When I delete section "5"
-    Then I should see "Are you absolutely sure you want to completely delete \"29 May - 4 June\" and all the activities it contains?"
+    Then I should see "This will delete 29 May - 4 June and all the activities it contains."
     And I press "Delete"
     And I should not see "29 May - 4 June"
     And I should see "22 May - 28 May"

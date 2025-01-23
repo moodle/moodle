@@ -1161,7 +1161,7 @@ class behat_course extends behat_base {
                 ]
             );
         } else {
-            $this->execute("behat_forms::press_button", get_string('yes'));
+            $this->execute("behat_forms::press_button", get_string('delete'));
         }
 
         return $steps;

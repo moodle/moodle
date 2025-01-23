@@ -790,7 +790,10 @@ final class base_test extends advanced_testcase {
             $this->expectException(\coding_exception::class);
         }
         $result = $format->get_non_ajax_cm_action_url($action, $cminfo);
-        $this->assertEquals($assign0->cmid, $result->param($expectedparam));
+        if (!$exception) {
+            $this->assertDebuggingCalled();
+        }
+        $this->assertEquals($assign0->cmid, $result->param('id'));
     }
 
     /**

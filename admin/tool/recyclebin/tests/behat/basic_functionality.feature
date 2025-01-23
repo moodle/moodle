@@ -49,6 +49,7 @@ Feature: Basic recycle bin functionality
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I delete "Test assign 1" activity
+    And I run all adhoc tasks
     When I navigate to "Recycle bin" in current page administration
     Then I should see "Test assign 1"
     And I should see "Contents will be permanently deleted after 7 days"

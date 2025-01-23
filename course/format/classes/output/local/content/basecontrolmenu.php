@@ -84,6 +84,15 @@ abstract class basecontrolmenu implements named_templatable, renderable {
     }
 
     /**
+     * Change the default base URL to return after each action.
+     *
+     * @param url $baseurl
+     */
+    public function set_baseurl(url $baseurl) {
+        $this->baseurl = $baseurl;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output typically, the renderer that's calling this function

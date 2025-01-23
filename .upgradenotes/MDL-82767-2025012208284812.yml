@@ -1,0 +1,10 @@
+issueNumber: MDL-82767
+notes:
+  core_courseformat:
+    - message: >-
+        From now on, deleting an activity without Ajax will be consistent with
+        deleting an activity using Ajax. This ensures that all activity deletions
+        will use the recycle bin and avoid code duplication. If your format uses
+        the old non-Ajax method to bypass the recycle bin it won't work anymore
+        as the non-Ajax deletions are now handled in course/format/update.php.
+      type: changed

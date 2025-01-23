@@ -1,0 +1,11 @@
+issueNumber: MDL-82767
+notes:
+  core_courseformat:
+    - message: >-
+        A new course/format/update.php url is added as a non-ajax alternative to
+        the core_courseformat_course_update webservice
+      type: improved
+    - message: >-
+        The core_courseformat\base::get_non_ajax_cm_action_url is now
+        deprecated. Use get_update_url instead.
+      type: deprecated

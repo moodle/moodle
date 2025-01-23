@@ -51,3 +51,11 @@ Feature: Sections can be highlighted
     When I open section "3" edit menu
     And I click on "Unhighlight" "link" in the "Section 3" "section"
     Then I should not see "Highlighted" in the "Section 3" "section"
+
+  Scenario: Highlight and unhighlight a section can be done without ajax
+    # Without javascript hidden elements cannot be detected with a simple I should see step.
+    Given ".section.current" "css_element" should not exist
+    When I click on "Highlight" "link" in the "Section 2" "core_courseformat > Section actions menu"
+    Then ".section.current[data-number='2']" "css_element" should exist
+    And  I click on "Unhighlight" "link" in the "Section 2" "core_courseformat > Section actions menu"
+    And ".section.current" "css_element" should not exist

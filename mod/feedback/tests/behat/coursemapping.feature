@@ -228,7 +228,7 @@ Feature: Mapping courses in a feedback
     And I add the "Feedback" block
     And I add the "Main menu" block
     And I click on "Delete" "link" in the "Course feedback" activity
-    And I press "Yes"
+    And I press "Delete"
     And I turn editing mode off
     And I am on site homepage
     Then "Feedback" "block" should not exist
