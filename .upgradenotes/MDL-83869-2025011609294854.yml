@@ -1,0 +1,9 @@
+issueNumber: MDL-83869
+notes:
+  core:
+    - message: >
+        New generic collapsable section output added. Use
+        core\output\local\collapsable_section or include the
+        core/local/collapsable_section template to use it. See the full
+        documentation in the component library.
+      type: improved

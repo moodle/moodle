@@ -1,0 +1,147 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/collapsable_section
+
+    Standard collapsible section.
+
+    Optional blocks:
+    * extraclasses - additional classes.
+    * elementid - optional element id.
+    * titlecontent - the collpasible title content.
+    * sectioncontent - the collapsible content.
+    * extras - custom HTML attributes for the component.
+    * expandlabel - the label for the expand icon.
+    * collapselabel - the label for the collapse icon.
+
+    Example context (json):
+    {
+        "titlecontent": "New content",
+        "sectioncontent": "New content",
+        "classes": "someclass",
+        "extras": [
+            {
+                "attribute": "data-example",
+                "value": "something"
+            }
+        ],
+        "open": true,
+        "expandlabel": "Expand",
+        "collapselabel": "Collapse",
+        "elementid": "someuniqueid"
+    }
+}}
+<div
+    class="collapsable-section mb-3 {{!
+        }} {{$ extraclasses }} {{!
+            }} {{#classes}} {{classes}} {{/classes}} {{!
+        }} {{/ extraclasses }}"
+    id="{{$ elementid }}{{!
+            }}{{#elementid}}collapsable_section_{{elementid}}{{/elementid}}{{!
+            }}{{^elementid}}collapsable_section_{{uniqid}}{{/elementid}}{{!
+        }}{{/ elementid }}_collapsible"
+>
+    <div class="d-flex">
+        <div class="d-flex align-items-center position-relative">
+            <a
+                role="button"
+                data-toggle="collapse"
+                href="#{{$ elementid }}{{!
+                        }}{{#elementid}}{{elementid}}{{/elementid}}{{!
+                        }}{{^elementid}}collapsable_{{uniqid}}{{/elementid}}{{!
+                    }}{{/ elementid }}"
+                {{#open}} aria-expanded="true" {{/open}}
+                {{^open}} aria-expanded="false" {{/open}}
+                aria-controls="{{$ elementid }}{{!
+                        }}{{#elementid}}{{elementid}}{{/elementid}}{{!
+                        }}{{^elementid}}collapsable_{{uniqid}}{{/elementid}}{{!
+                    }}{{/ elementid }}"
+                class="btn btn-icon me-3 icons-collapse-expand justify-content-center {{!
+                    }} {{^open}} collapsed {{/open}}"
+            >
+                <span
+                    class="collapsed-icon icon-no-margin me-1"
+                    title="{{!
+                        }}{{$ expandlabel }}{{!
+                            }}{{#expandlabel}}{{expandlabel}}{{/expandlabel}}{{!
+                            }}{{^expandlabel}}{{#str}} expand, core {{/str}}{{/expandlabel}}{{!
+                        }}{{/ expandlabel }}{{!
+                    }}"
+                >
+                    <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
+                    <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
+                    <span class="sr-only">{{!
+                        }}{{$ expandlabel }}{{!
+                            }}{{#expandlabel}}{{expandlabel}}{{/expandlabel}}{{!
+                            }}{{^expandlabel}}{{#str}} expand, core {{/str}}{{/expandlabel}}{{!
+                        }}{{/ expandlabel }}{{!
+                    }}</span>
+                </span>
+                <span
+                    class="expanded-icon icon-no-margin me-1"
+                    title="{{!
+                        }}{{$ collapselabel }}{{!
+                            }}{{#collapselabel}}{{collapselabel}}{{/collapselabel}}{{!
+                            }}{{^collapselabel}}{{#str}} collapse, core {{/str}}{{/collapselabel}}{{!
+                        }}{{/ collapselabel }}{{!
+                    }}"
+                >
+                    {{#pix}} t/expandedchevron, core {{/pix}}
+                    <span class="sr-only">{{!
+                        }}{{$ collapselabel }}{{!
+                            }}{{#collapselabel}}{{collapselabel}}{{/collapselabel}}{{!
+                            }}{{^collapselabel}}{{#str}} collapse, core {{/str}}{{/collapselabel}}{{!
+                        }}{{/ collapselabel }}{{!
+                    }}</span>
+                </span>
+            </a>
+            <h3
+                class="d-flex align-self-stretch align-items-center mb-0"
+                id="{{$ elementid }}{{!
+                    }}{{#elementid}}collapsable_section_{{elementid}}{{/elementid}}{{!
+                    }}{{^elementid}}collapsable_section_{{uniqid}}{{/elementid}}{{!
+                }}{{/ elementid }}_title"
+            >
+                {{$ titlecontent }}
+                    {{{titlecontent}}}
+                {{/ titlecontent }}
+            </h3>
+        </div>
+    </div>
+    <div
+        id="{{$ elementid }}{{!
+                }}{{#elementid}}{{elementid}}{{/elementid}}{{!
+                }}{{^elementid}}collapsable_{{uniqid}}{{/elementid}}{{!
+            }}{{/ elementid }}"
+        class="content collapse {{#open}}show{{/open}} pt-3"
+        data-mdl-component="core/local/collapsable_section"
+        {{$ extras }}
+            {{#extras}}
+            {{attribute}}="{{value}}"
+            {{/extras}}
+        {{/ extras }}
+    >
+        {{$ sectioncontent }}
+            {{{sectioncontent}}}
+        {{/ sectioncontent }}
+    </div>
+</div>
+{{#js}}
+require(['core/local/collapsable_section/controls'], function(Controls) {
+    Controls.init();
+});
+{{/js}}
