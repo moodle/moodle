@@ -1339,7 +1339,20 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024121800.00);
     }
-    if ($oldversion < 2024121900.00) {
+
+    if ($oldversion < 2024121900.01) {
+        // Enable mod_subsection unless 'keepsubsectiondisabled' is set.
+        if ((empty($CFG->keepsubsectiondisabled) || !$CFG->keepsubsectiondisabled)
+                && $DB->get_record('modules', ['name' => 'subsection'])) {
+            $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+            $manager::enable_plugin('subsection', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024121900.01);
+    }
+
+    if ($oldversion < 2025011700.02) {
         // Define table ai_providers to be created.
         $table = new xmldb_table('ai_providers');
 
@@ -1366,19 +1379,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_convert_ai_providers_to_instances();
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024121900.00);
-    }
-
-    if ($oldversion < 2024121900.01) {
-        // Enable mod_subsection unless 'keepsubsectiondisabled' is set.
-        if ((empty($CFG->keepsubsectiondisabled) || !$CFG->keepsubsectiondisabled)
-                && $DB->get_record('modules', ['name' => 'subsection'])) {
-            $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
-            $manager::enable_plugin('subsection', 1);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024121900.01);
+        upgrade_main_savepoint(true, 2025011700.02);
     }
 
     return true;
