@@ -25,6 +25,9 @@
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
+- New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
+
+  For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
 
 ### Changed
 
@@ -62,6 +65,9 @@
   ```
 
   For more information see [MDL-83705](https://tracker.moodle.org/browse/MDL-83705)
+- The behat/gherkin has been updated to 4.11.0 which introduces a breaking change where backslashes in feature files need to be escaped.
+
+  For more information see [MDL-83848](https://tracker.moodle.org/browse/MDL-83848)
 - The following test classes have been moved into autoloadable locations:
 
   | Old location | New classname |

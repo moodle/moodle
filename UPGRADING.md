@@ -33,6 +33,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
+- New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
+
+  For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
 
 #### Changed
 
@@ -70,6 +73,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-83705](https://tracker.moodle.org/browse/MDL-83705)
+- The behat/gherkin has been updated to 4.11.0 which introduces a breaking change where backslashes in feature files need to be escaped.
+
+  For more information see [MDL-83848](https://tracker.moodle.org/browse/MDL-83848)
 - The following test classes have been moved into autoloadable locations:
 
   | Old location | New classname |
@@ -136,6 +142,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
 
+### core_ai
+
+#### Deprecated
+
+- The ai_provider_management_table has been refactored to inherit from flexible_table instead of plugin_management_table. As a result the methods get_plugintype and get_action_url are now unused and have been deprecated in the class.
+
+  For more information see [MDL-82922](https://tracker.moodle.org/browse/MDL-82922)
+
 ### core_analytics
 
 #### Removed
@@ -184,15 +198,33 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new core_courseformat\base::get_generic_section_name method is created to know how a specific format name the sections. This method is also used by plugins to know how to name the sections instead of using using a direct get_string on "sectionnamer" that may not exists.
 
   For more information see [MDL-82349](https://tracker.moodle.org/browse/MDL-82349)
+- A new course/format/update.php url is added as a non-ajax alternative to the core_courseformat_course_update webservice
+
+  For more information see [MDL-82767](https://tracker.moodle.org/browse/MDL-82767)
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
+
+#### Changed
+
+- From now on, deleting an activity without Ajax will be consistent with deleting an activity using Ajax. This ensures that all activity deletions will use the recycle bin and avoid code duplication. If your format uses the old non-Ajax method to bypass the recycle bin it won't work anymore as the non-Ajax deletions are now handled in course/format/update.php.
+
+  For more information see [MDL-82767](https://tracker.moodle.org/browse/MDL-82767)
 
 #### Deprecated
 
 - All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
 
   For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
+- The core_courseformat\base::get_non_ajax_cm_action_url is now deprecated. Use get_update_url instead.
+
+  For more information see [MDL-82767](https://tracker.moodle.org/browse/MDL-82767)
+- Many get actions from course/view.php and course/mod.php are now deprecated. Use the new course/format/update.php instead to replace all direct edit urls  in your code. The affected actions are: indent, duplicate, hide, show, stealth, delete, groupmode and marker (highlight). The course/format/updates.php uses the same parameters as the core_courseformat_course_update webservice
+
+  For more information see [MDL-82767](https://tracker.moodle.org/browse/MDL-82767)
+- Deprecate the use of element ID selectors in favor of querySelector for Reactive component initialisation. We will use '#id' instead of 'id' for example.
+
+  For more information see [MDL-83339](https://tracker.moodle.org/browse/MDL-83339)
 - Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
@@ -313,6 +345,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- In format topics, the section controlmenu class deprecates the get_course_url method. This may affect formats extending the topics format and adding extra items to the section menu. Use $this->format->get_update_url instead.
+
+  For more information see [MDL-82767](https://tracker.moodle.org/browse/MDL-82767)
 - The get_highlight_control in the section controlmenu class is now deprecated. Use get_section_highlight_item instead
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
@@ -423,6 +458,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove chat and survey styles. Important note: the styles have been moved to the plugins as CSS files (and not SCSS) so themes might now need to override the mod_chat and mod_survey styles specifically as css does not have any definition for primary, gray and other colors accessible in the original scss version.
 
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+
+### tool_admin_presets
+
+#### Deprecated
+
+- behat_admin_presets::following_in_the_should_download_between_and_bytes is deprecated. Use: the following element should download a file that:
+
+  For more information see [MDL-83035](https://tracker.moodle.org/browse/MDL-83035)
 
 ### tool_brickfield
 
