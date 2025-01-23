@@ -53,14 +53,18 @@ abstract class abstract_processor extends process_base {
      *
      * @return string
      */
-    abstract protected function get_deployment_name(): string;
+    protected function get_deployment_name(): string {
+        return $this->provider->actionconfig[$this->action::class]['settings']['deployment'];
+    }
 
     /**
      * Get the api version to use.
      *
      * @return string
      */
-    abstract protected function get_api_version(): string;
+    protected function get_api_version(): string {
+        return $this->provider->actionconfig[$this->action::class]['settings']['apiversion'];
+    }
 
     /**
      * Create the request object to send to the OpenAI API.

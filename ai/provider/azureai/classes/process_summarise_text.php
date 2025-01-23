@@ -24,18 +24,5 @@ namespace aiprovider_azureai;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class process_summarise_text extends process_generate_text {
-    #[\Override]
-    protected function get_deployment_name(): string {
-        return get_config('aiprovider_azureai', 'action_summarise_text_deployment');
-    }
 
-    #[\Override]
-    protected function get_api_version(): string {
-        return get_config('aiprovider_azureai', 'action_summarise_text_apiversion');
-    }
-
-    #[\Override]
-    protected function get_system_instruction(): string {
-        return get_config('aiprovider_azureai', 'action_summarise_text_systeminstruction');
-    }
 }

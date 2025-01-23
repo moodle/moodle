@@ -19,10 +19,8 @@ namespace aiprovider_openai;
 use core\http_client;
 use core_ai\ai_image;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Class process image generation.
@@ -37,16 +35,6 @@ class process_generate_image extends abstract_processor {
 
     /** @var string Response format: url or b64_json. */
     private string $responseformat = 'url';
-
-    #[\Override]
-    protected function get_endpoint(): UriInterface {
-        return new Uri(get_config('aiprovider_openai', 'action_generate_image_endpoint'));
-    }
-
-    #[\Override]
-    protected function get_model(): string {
-        return get_config('aiprovider_openai', 'action_generate_image_model');
-    }
 
     #[\Override]
     protected function query_ai_api(): array {
@@ -89,20 +77,20 @@ class process_generate_image extends abstract_processor {
     protected function create_request_object(string $userid): RequestInterface {
         return new Request(
             method: 'POST',
-            uri: '',
-            body: json_encode((object) [
-                'prompt' => $this->action->get_configuration('prompttext'),
-                'model' => $this->get_model(),
-                'n' => $this->numberimages,
-                'quality' => $this->action->get_configuration('quality'),
-                'response_format' => $this->responseformat,
-                'size' => $this->calculate_size($this->action->get_configuration('aspectratio')),
-                'style' => $this->action->get_configuration('style'),
-                'user' => $userid,
-            ]),
-            headers: [
-                'Content-Type' => 'application/json',
-            ],
+                uri: '',
+                headers: [
+                    'Content-Type' => 'application/json',
+                ],
+                body: json_encode((object) [
+                    'prompt' => $this->action->get_configuration('prompttext'),
+                    'model' => $this->get_model(),
+                    'n' => $this->numberimages,
+                    'quality' => $this->action->get_configuration('quality'),
+                    'response_format' => $this->responseformat,
+                    'size' => $this->calculate_size($this->action->get_configuration('aspectratio')),
+                    'style' => $this->action->get_configuration('style'),
+                    'user' => $userid,
+                ]),
         );
     }
 

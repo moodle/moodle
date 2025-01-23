@@ -26,7 +26,7 @@ namespace aiplacement_courseassist;
 class placement extends \core_ai\placement {
 
     #[\Override]
-    public function get_action_list(): array {
+    public static function get_action_list(): array {
         return [
             \core_ai\aiactions\summarise_text::class,
         ];

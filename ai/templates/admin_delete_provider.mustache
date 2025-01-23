@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_ai/admin_delete_provider
+
+    Template to display a call render the delete button for a provider.
+
+    Context variables required for this template:
+    * id - provider instance id.
+    * name - provider instance name.
+    * provider - provider name.
+    * delete-method - Webservice method name for delete.
+
+    Example context (json):
+    {
+        "id": 1,
+        "name": "Provider 1",
+        "provider": "aiprovider_openai",
+        "delete-method": "core_ai_delete_provider_instance"
+    }
+}}
+<a href="#"
+    id="provider-delete-{{id}}"
+    title="{{#str}}providerinstancedelete, core_ai{{/str}}"
+    class="ai-provider-delete"
+    data-action="provider-delete-{{id}}"
+    data-id="{{id}}"
+    data-name="{{name}}"
+    data-provider="{{provider}}"
+    data-delete-method="{{delete-method}}">
+  <i class="fa fa-trash"></i>&nbsp;{{#str}}delete, core{{/str}}
+</a>

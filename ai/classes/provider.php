@@ -16,6 +16,9 @@
 
 namespace core_ai;
 
+use core_ai\form\action_settings_form;
+use Spatie\Cloneable\Cloneable;
+
 /**
  * Class provider.
  *
@@ -24,6 +27,45 @@ namespace core_ai;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class provider {
+    use Cloneable;
+
+    /** @var string $provider The provider used to make this instance */
+    public readonly string $provider;
+
+    /** @var array The configuration for this instance. */
+    public readonly array $config;
+
+    /** @var array The action specific settings for this instance. */
+    public readonly array $actionconfig;
+
+    /**
+     * Create a new provider.
+     *
+     * @param bool $enabled Whether the gateway is enabled
+     * @param string $name The name of the provider config.
+     * @param string $config The configuration for this instance.
+     * @param string $actionconfig The action specific settings for this instance.
+     * @param int|null $id The id of the provider in the database.
+     */
+    public function __construct(
+        /** @var bool Whether the gateway is enabled */
+        public readonly bool $enabled,
+        /** @var string The name of the provider config. */
+        public string $name,
+        string $config,
+        string $actionconfig = '',
+        /** @var null|int The ID of the provider in the database, or null if it has not been persisted yet. */
+        public readonly ?int $id = null,
+    ) {
+        $this->provider = strstr(get_class($this), '\\', true);
+        $this->config = json_decode($config, true);
+        if ($actionconfig == '') {
+            $this->actionconfig = static::initialise_action_settings();
+        } else {
+            $this->actionconfig = json_decode($actionconfig, true);
+        }
+    }
+
     /**
      * Get the actions that this provider supports.
      *
@@ -31,7 +73,24 @@ abstract class provider {
      *
      * @return array An array of action class names.
      */
-    abstract public function get_action_list(): array;
+    abstract public static function get_action_list(): array;
+
+    /**
+     * Initialise the action settings array.
+     *
+     * @return array The initialised action settings.
+     */
+    public static function initialise_action_settings(): array {
+        $actions = static::get_action_list();
+        $actionconfig = [];
+        foreach ($actions as $action) {
+            $actionconfig[$action] = [
+                'enabled' => true,
+                'settings' => static::get_action_setting_defaults($action),
+            ];
+        }
+        return $actionconfig;
+    }
 
     /**
      * Given an action class name, return an array of sub actions
@@ -58,17 +117,23 @@ abstract class provider {
      * Get any action settings for this provider.
      *
      * @param string $action The action class name.
-     * @param \admin_root $ADMIN The admin root object.
-     * @param string $section The section name.
-     * @param bool $hassiteconfig Whether the current user has moodle/site:config capability.
-     * @return array An array of settings.
+     * @param array $customdata The customdata for the form.
+     * @return action_settings_form|bool The settings form for this action or false in no settings.
      */
-    public function get_action_settings(
+    public static function get_action_settings(
         string $action,
-        \admin_root $ADMIN,
-        string $section,
-        bool $hassiteconfig
-    ): array {
+        array $customdata = [],
+    ): action_settings_form|bool {
+        return false;
+    }
+
+    /**
+     * Get the default settings for an action.
+     *
+     * @param string $action The action class name.
+     * @return array The default settings for the action.
+     */
+    public static function get_action_setting_defaults(string $action): array {
         return [];
     }
 
@@ -78,7 +143,41 @@ abstract class provider {
      * @param aiactions\base $action The action to check.
      * @return array|bool True on success, array of error details on failure.
      */
-    abstract public function is_request_allowed(aiactions\base $action): array|bool;
+    public function is_request_allowed(aiactions\base $action): array|bool {
+        $ratelimiter = \core\di::get(rate_limiter::class);
+        $component = \core\component::get_component_from_classname(get_class($this));
+
+        // Check the user rate limit.
+        if (isset($this->config['enableuserratelimit']) && $this->config['enableuserratelimit']) {
+            if (!$ratelimiter->check_user_rate_limit(
+                component: $component,
+                ratelimit: $this->config['userratelimit'],
+                userid: $action->get_configuration('userid')
+            )) {
+                return [
+                    'success' => false,
+                    'errorcode' => 429,
+                    'errormessage' => 'User rate limit exceeded',
+                ];
+            }
+        }
+
+        // Check the global rate limit.
+        if (isset($this->config['enableglobalratelimit']) && $this->config['enableglobalratelimit']) {
+            if (!$ratelimiter->check_global_rate_limit(
+                component: $component,
+                ratelimit: $this->config['globalratelimit']
+            )) {
+                return [
+                    'success' => false,
+                    'errorcode' => 429,
+                    'errormessage' => 'Global rate limit exceeded',
+                ];
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Check if a provider has the minimal configuration to work.
@@ -87,5 +186,21 @@ abstract class provider {
      */
     public function is_provider_configured(): bool {
         return false;
+    }
+
+    /**
+     * Convert this object to a stdClass, suitable for saving to the database.
+     *
+     * @return \stdClass
+     */
+    public function to_record(): \stdClass {
+        return (object) [
+            'id' => $this->id,
+            'name' => $this->name,
+            'provider' => get_class($this),
+            'enabled' => $this->enabled,
+            'config' => json_encode($this->config),
+            'actionconfig' => json_encode($this->actionconfig),
+        ];
     }
 }

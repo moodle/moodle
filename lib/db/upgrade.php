@@ -1115,7 +1115,6 @@ function xmldb_main_upgrade($oldversion) {
         if (file_exists($CFG->dirroot . '/h5p/h5plib/v127/version.php')) {
             set_config('h5plibraryhandler', 'h5plib_v127');
         }
-
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024092600.00);
     }
@@ -1339,6 +1338,35 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024121800.00);
+    }
+    if ($oldversion < 2024121900.00) {
+        // Define table ai_providers to be created.
+        $table = new xmldb_table('ai_providers');
+
+        // Adding fields to table ai_providers.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('provider', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('config', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('actionconfig', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table ai_provider.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table ai_provider.
+        $table->add_index('provider', XMLDB_INDEX_NOTUNIQUE, ['provider']);
+
+        // Conditionally launch create table for ai_provider.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Now the instance table exists, migrate the existing providers.
+        upgrade_convert_ai_providers_to_instances();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024121900.00);
     }
 
     if ($oldversion < 2024121900.01) {

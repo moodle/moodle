@@ -37,9 +37,9 @@ class set_action extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'plugin' => new external_value(
+            'pluginaction' => new external_value(
                 PARAM_TEXT,
-                'The name of the plugin',
+                'The name of the plugin and the action to change state for',
                 VALUE_REQUIRED,
             ),
             'state' => new external_value(
@@ -47,34 +47,44 @@ class set_action extends external_api {
                 'The target state',
                 VALUE_REQUIRED,
             ),
+            'providerid' => new external_value(
+                PARAM_INT,
+                'The provider id',
+                VALUE_DEFAULT,
+                0
+            ),
         ]);
     }
 
     /**
      * Set the providers action state.
      *
-     * @param string $plugin The name of the plugin.
+     * @param string $pluginaction The name of the plugin and the action to change state for.
      * @param int $state The target state.
+     * @param int $providerid The provider id.
      * @return array
      */
     public static function execute(
-        string $plugin,
+        string $pluginaction,
         int $state,
+        int $providerid = 0
     ): array {
         // Parameter validation.
         [
-            'plugin' => $plugin,
+            'pluginaction' => $pluginaction,
             'state' => $state,
+            'providerid' => $providerid,
         ] = self::validate_parameters(self::execute_parameters(), [
-            'plugin' => $plugin,
+            'pluginaction' => $pluginaction,
             'state' => $state,
+            'providerid' => $providerid,
         ]);
 
         $context = system::instance();
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        [$plugin, $action] = explode('-', $plugin);
+        [$plugin, $action] = explode('-', $pluginaction);
         $actionname = get_string("action_$action", 'core_ai');
 
         if (!empty($state)) {
@@ -89,7 +99,13 @@ class set_action extends external_api {
             );
         }
 
-        manager::set_action_state($plugin, $action, $state);
+        $manager = \core\di::get(manager::class);
+        $manager->set_action_state(
+            plugin: $plugin,
+            actionbasename: $action,
+            enabled: $state,
+            instanceid: $providerid
+        );
 
         return [];
     }

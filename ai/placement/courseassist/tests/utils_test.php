@@ -16,6 +16,10 @@
 
 namespace aiplacement_courseassist;
 
+use core_ai\aiactions\generate_text;
+use core_ai\aiactions\summarise_text;
+use core_ai\manager;
+
 /**
  * AI Placement course assist utils test.
  *
@@ -42,11 +46,7 @@ final class utils_test extends \advanced_testcase {
 
         // Provider is not enabled.
         $this->setUser($user1);
-        set_config('enabled', 0, 'aiprovider_openai');
         $this->assertFalse(utils::is_course_assist_available($context));
-
-        set_config('enabled', 1, 'aiprovider_openai');
-        set_config('apikey', '123', 'aiprovider_openai');
 
         // Plugin is not enabled.
         $this->setUser($user1);
@@ -71,8 +71,18 @@ final class utils_test extends \advanced_testcase {
         $this->assertFalse(utils::is_course_assist_available($context));
 
         // Plugin is enabled, user has capability, placement action is available and provider action is available.
+        $mockmanager = $this->createMock(\core_ai\manager::class);
+        $mockmanager->method('is_action_available')->willReturn(true);
+        $mockmanager->method('is_action_enabled')->willReturn(true);
+        $mockmanager->method('get_providers_for_actions')->willReturn([
+            summarise_text::class => ['aiprovider_openai'],
+        ]);
+
+        \core\di::set(\core_ai\manager::class, function() use ($mockmanager) {
+            return $mockmanager;
+        });
+
         $this->setUser($user1);
-        set_config('summarise_text', 1, 'aiprovider_openai');
         set_config('summarise_text', 1, 'aiplacement_courseassist');
         $this->assertTrue(utils::is_course_assist_available($context));
     }

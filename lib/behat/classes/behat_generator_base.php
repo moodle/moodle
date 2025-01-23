@@ -228,7 +228,7 @@ abstract class behat_generator_base {
             foreach ($entityinfo['required'] as $requiredfield) {
                 if (!isset($elementdata[$requiredfield])) {
                     throw new Exception($this->name_for_errors($generatortype) .
-                            ' requires the field ' . $requiredfield . ' to be specified');
+                            ' requires the field "' . $requiredfield . '" to be specified');
                 }
             }
 

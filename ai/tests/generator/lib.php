@@ -87,4 +87,24 @@ class core_ai_generator extends component_generator_base {
         $action->timecompleted = time() + 1;
         $DB->insert_record('ai_action_register', $action);
     }
+
+    /**
+     * Creates AI provider instance.
+     *
+     * @param array $data
+     * @return void
+     */
+    public function create_ai_provider(array $data) {
+        $manager = \core\di::get(\core_ai\manager::class);
+        $classname = $data['provider'] . '\\' . 'provider';
+        $name = $data['name'];
+        $enabled = $data['enabled'];
+        unset($data['provider'], $data['name'], $data['enabled']);
+        $manager->create_provider_instance(
+            classname: $classname,
+            name: $name,
+            enabled: $enabled,
+            config: $data,
+        );
+    }
 }

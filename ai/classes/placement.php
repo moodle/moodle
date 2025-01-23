@@ -31,7 +31,7 @@ abstract class placement {
      *
      * @return array An array of action class names.
      */
-    abstract public function get_action_list(): array;
+    abstract public static function get_action_list(): array;
 
     /**
      * Given an action class name.

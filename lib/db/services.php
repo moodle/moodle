@@ -3260,6 +3260,12 @@ $functions = array(
         'ajax'        => true,
         'readonlysession' => true,
     ],
+    'core_ai_delete_provider_instance' => [
+        'classname'   => \core_ai\external\delete_provider_instance::class,
+        'description' => 'Delete a provider instance',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_ai_set_policy_status' => [
         'classname'   => 'core_ai\external\set_policy_status',
         'description' => 'Set a users AI policy acceptance',
@@ -3277,6 +3283,12 @@ $functions = array(
     'core_ai_set_action' => [
         'classname'   => 'core_ai\external\set_action',
         'description' => 'Update action',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_ai_set_provider_status' => [
+        'classname'   => \core_ai\external\set_provider_status::class,
+        'description' => 'Set a providers status',
         'type'        => 'write',
         'ajax'        => true,
     ],

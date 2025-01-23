@@ -44,6 +44,15 @@ class behat_core_ai_generator extends behat_generator_base {
                     'user' => 'userid',
                 ],
             ],
+            'ai providers' => [
+                'singular' => 'ai provider',
+                'datagenerator' => 'ai_provider',
+                'required' => [
+                    'provider',
+                    'name',
+                    'enabled',
+                ],
+            ],
         ];
     }
 }
