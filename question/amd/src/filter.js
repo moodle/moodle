@@ -39,8 +39,8 @@ import Fragment from 'core/fragment';
  * @param {string} callback Name of the callback for the fragment API (e.g question_data)
  * @param {string} view The class name of the question bank view class used for this page.
  * @param {Number} cmid If we are in an activitiy, the course module ID.
- * @param {string} pagevars JSON-encoded parameters from passed from the view, including filters and jointype.
- * @param {string} extraparams JSON-encoded additional parameters specific to this view class, used for re-rendering the view.
+ * @param {Object} pagevars JSON-encoded parameters from passed from the view, including filters and jointype.
+ * @param {Object} extraparams JSON-encoded additional parameters specific to this view class, used for re-rendering the view.
  */
 export const init = (
     filterRegionId,
@@ -53,7 +53,7 @@ export const init = (
     view,
     cmid,
     pagevars,
-    extraparams
+    extraparams,
 ) => {
 
     const SELECTORS = {
@@ -71,7 +71,7 @@ export const init = (
     const filterSet = document.querySelector(`#${filterRegionId}`);
 
     const viewData = {
-        extraparams,
+        extraparams: JSON.stringify(extraparams),
         cmid,
         view,
         cat: defaultcategoryid,
@@ -212,7 +212,6 @@ export const init = (
     });
 
     // Run apply filter at page load.
-    pagevars = JSON.parse(pagevars);
     let initialFilters;
     let jointype = null;
     if (pagevars.filter) {
