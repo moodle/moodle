@@ -1,0 +1,5 @@
+issueNumber: MDL-84310
+notes:
+  core_enrol:
+    - message: Removed enrol_mnet plugin from core
+      type: removed
