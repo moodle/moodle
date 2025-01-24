@@ -69,6 +69,158 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    access = "Allow"
+    description = "Allow inbound traffic"
+    destinationAddressPrefix = "*"
+    destinationAddressPrefixes = []
+    destinationPortRange = "1433"
+    destinationPortRanges = []
+    direction = "Inbound"
+    name = "AllowInbound"
+    priority = 102
+    protocol = "Tcp"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "*"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow Azure Load Balancer inbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Inbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
+    priority = 100
+    protocol = "*"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "AzureLoadBalancer"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow MI internal inbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Inbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-in-10-0-1-0-24-v11"
+    priority = 101
+    protocol = "*"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow communication with Azure Active Directory over https"
+    destinationAddressPrefix = "AzureActiveDirectory"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-aad-out-10-0-1-0-24-v11"
+    priority = 101
+    protocol = "Tcp"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow communication with the One DS Collector over https"
+    destinationAddressPrefix = "OneDsCollector"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-onedsc-out-10-0-1-0-24-v11"
+    priority = 102
+    protocol = "Tcp"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow",
+    description = "Allow MI internal outbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-out-10-0-1-0-24-v11"
+    priority = 103
+    protocol = "*"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow outbound communication with storage over HTTPS"
+    destinationAddressPrefix = "Storage.uksouth"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-p-out-10-0-1-0-24-v11"
+    priority = 104
+    protocol = "*"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow outbound communication with storage over HTTPS"
+    destinationAddressPrefix = "Storage.ukwest"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
+    priority = 105
+    protocol = "*"
+    resourceGroup = "LearningHub-Moodle-Test"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow AzureCloud outbound https traffic"
+    destinationAddressPrefix = "AzureCloud"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-optional-azure-out-10-0-1-0-24"
+    priority = 100
+    protocol = "Tcp"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
 }
 
 resource "azurerm_route_table" "route_table" {
