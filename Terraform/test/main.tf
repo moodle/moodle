@@ -70,77 +70,132 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "AllowInbound"
-    description                = "Allow inbound traffic"
-    direction                  = "Inbound"
-    access                     = "Allow"
-    priority                   = 102
-    protocol                   = "Tcp"
-  }
-  security_rule {
-    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
-    access = "Allow"
-    description = "Allow Azure Load Balancer inbound traffic"
+    access                  = "Allow"
+    description             = "Allow Azure Load Balancer inbound traffic"
+    destination_address_prefix =  "10.0.1.0/24"
+    destination_address_prefixes = []
+    destination_port_range = "*"
+    destination_port_ranges = []
     direction = "Inbound"
-    priority = 100
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
+    priority = 101
     protocol = "*"
+    source_address_prefix = "AzureLoadBalancer"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow MI internal inbound traffic"
+    destination_address_prefix = "10.0.1.0/24"
+    destination_address_prefixes = []
+    destination_port_range = "*"
+    destination_port_ranges = []
     direction = "Inbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-in-10-0-1-0-24-v11"
-    priority = 101
+    priority = 102
     protocol = "*"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow communication with Azure Active Directory over https"
+    destination_address_prefix = "AzureActiveDirectory"
+    destination_address_prefixes = []
+    destination_port_range = "443"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-aad-out-10-0-1-0-24-v11"
     priority = 101
     protocol = "Tcp"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow communication with the One DS Collector over https"
+    destination_address_prefix = "OneDsCollector"
+    destination_address_prefixes = []
+    destination_port_range = "443"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-onedsc-out-10-0-1-0-24-v11"
     priority = 102
     protocol = "Tcp"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow MI internal outbound traffic"
+    destination_address_prefix = "10.0.1.0/24"
+    destination_address_prefixes = []
+    destination_port_range = "*"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-out-10-0-1-0-24-v11"
     priority = 103
     protocol = "*"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow outbound communication with storage over HTTPS"
+    destination_address_prefix = "Storage.uksouth"
+    destination_address_prefixes = []
+    destination_port_range = "443"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-p-out-10-0-1-0-24-v11"
     priority = 104
     protocol = "*"
-
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow outbound communication with storage over HTTPS"
+    destination_address_prefix = "Storage.ukwest"
+    destination_address_prefixes = []
+    destination_port_range = "443"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
     priority = 105
     protocol = "*"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow AzureCloud outbound https traffic"
+    destination_address_prefix = "AzureCloud"
+    destination_address_prefixes = []
+    destination_port_range = "443"
+    destination_port_ranges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-optional-azure-out-10-0-1-0-24"
     priority = 100
     protocol = "Tcp"
+    source_address_prefix = "10.0.1.0/24"
+    source_address_prefixes = []
+    source_port_range = "*"
+    source_port_ranges = []
   }
 }
 
