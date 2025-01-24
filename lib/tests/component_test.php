@@ -315,7 +315,7 @@ final class component_test extends \advanced_testcase {
         $this->assertSame('datafield_checkbox', component::normalize_componentname('datafield_checkbox'));
 
         // Other plugin types.
-        $this->assertSame('auth_mnet', component::normalize_componentname('auth_mnet'));
+        $this->assertSame('auth_ldap', component::normalize_componentname('auth_ldap'));
         $this->assertSame('enrol_self', component::normalize_componentname('enrol_self'));
         $this->assertSame('block_html', component::normalize_componentname('block_html'));
         $this->assertSame('auth_oauth2', component::normalize_componentname('auth_oauth2'));
@@ -393,7 +393,7 @@ final class component_test extends \advanced_testcase {
             [['datafield', 'checkbox'], 'datafield_checkbox'],
 
             // Other plugin types.
-            [['auth', 'mnet'], 'auth_mnet'],
+            [['auth', 'ldap'], 'auth_ldap'],
             [['enrol', 'self'], 'enrol_self'],
             [['block', 'html'], 'block_html'],
             [['auth', 'oauth2'], 'auth_oauth2'],
