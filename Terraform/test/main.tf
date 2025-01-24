@@ -161,31 +161,19 @@ resource "azurerm_network_security_group" "nsg" {
   security_rule {
     access = "Allow"
     description = "Allow outbound communication with storage over HTTPS"
-    destinationAddressPrefix = "Storage.uksouth"
-    destinationAddressPrefixes = []
-    destinationPortRange = "443"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-p-out-10-0-1-0-24-v11"
     priority = 104
     protocol = "*"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
+
   }
   security_rule {
     access = "Allow"
     description = "Allow outbound communication with storage over HTTPS"
-    destinationAddressPrefix = "Storage.ukwest"
-    destinationAddressPrefixes = []
-    destinationPortRange = "443"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
     priority = 105
     protocol = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
