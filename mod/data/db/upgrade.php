@@ -41,6 +41,7 @@
 
 function xmldb_data_upgrade($oldversion) {
     global $DB;
+    $dbman = $DB->get_manager();
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
@@ -72,6 +73,19 @@ function xmldb_data_upgrade($oldversion) {
 
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2025041401) {
+
+        // Changing precision of field name on table data to (1333).
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'course');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2025041401, 'data');
+    }
 
     return true;
 }
