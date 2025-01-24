@@ -136,7 +136,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('basicltiname', 'lti'), ['size' => '64']);
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
 
         // Adding the optional "intro" and "introformat" pair of fields.
         $this->standard_intro_elements(get_string('basicltiintro', 'lti'));
