@@ -70,15 +70,16 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
   security_rule {
-    access = "Allow"
-    description = "Allow inbound traffic"
-    direction = "Inbound"
-    name = "AllowInbound"
-    priority = 102
-    protocol = "Tcp"
-    sourcePortRanges = []
+    name                       = "AllowInbound"
+    description                = "Allow inbound traffic"
+    direction                  = "Inbound"
+    access                     = "Allow"
+    priority                   = 102
+    protocol                   = "Tcp"
+    sourcePortRanges           = []
   }
   security_rule {
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
     access = "Allow"
     description = "Allow Azure Load Balancer inbound traffic"
     destinationAddressPrefix = "10.0.1.0/24"
@@ -185,26 +186,15 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
     priority = 105
     protocol = "*"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
     sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow AzureCloud outbound https traffic"
-    destinationAddressPrefix = "AzureCloud"
-    destinationAddressPrefixes = []
-    destinationPortRange = "443"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-optional-azure-out-10-0-1-0-24"
     priority = 100
     protocol = "Tcp"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
 }
 
