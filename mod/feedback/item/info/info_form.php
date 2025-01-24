@@ -39,7 +39,7 @@ class feedback_info_form extends feedback_item_form {
         $mform->addElement('text',
                             'name',
                             get_string('item_name', 'feedback'),
-                            array('size'=>FEEDBACK_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                            ['size' => FEEDBACK_ITEM_NAME_TEXTBOX_SIZE, 'maxlength' => 1333]);
         $mform->addElement('text',
                             'label',
                             get_string('item_label', 'feedback'),
