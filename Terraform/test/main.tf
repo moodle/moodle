@@ -72,10 +72,6 @@ resource "azurerm_network_security_group" "nsg" {
   security_rule {
     access = "Allow"
     description = "Allow inbound traffic"
-    destinationAddressPrefix = "*"
-    destinationAddressPrefixes = []
-    destinationPortRange = "1433"
-    destinationPortRanges = []
     direction = "Inbound"
     name = "AllowInbound"
     priority = 102
@@ -97,7 +93,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
     priority = 100
     protocol = "*"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "AzureLoadBalancer"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -114,7 +109,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-in-10-0-1-0-24-v11"
     priority = 101
     protocol = "*"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -131,7 +125,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-aad-out-10-0-1-0-24-v11"
     priority = 101
     protocol = "Tcp"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -148,7 +141,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-onedsc-out-10-0-1-0-24-v11"
     priority = 102
     protocol = "Tcp"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -165,7 +157,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-out-10-0-1-0-24-v11"
     priority = 103
     protocol = "*"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -182,7 +173,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-p-out-10-0-1-0-24-v11"
     priority = 104
     protocol = "*"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
@@ -199,7 +189,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
     priority = 105
     protocol = "*"
-    resourceGroup = "LearningHub-Moodle-Test"
     sourceAddressPrefix = "10.0.1.0/24"
     sourceAddressPrefixes = []
     sourcePortRange = "*"
