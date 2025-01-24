@@ -2,9 +2,6 @@ name: Deploy LearningHub-Moodle to Dev
 on:
   push:
     branches:
-      - ImplementCI-CDPipeline
-  pull_request:
-    branches:
       - CI
   workflow_dispatch:
   
