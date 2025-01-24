@@ -87,7 +87,6 @@ resource "azurerm_network_security_group" "nsg" {
     destinationPortRange = "*"
     destinationPortRanges = []
     direction = "Inbound"
-    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
     priority = 100
     protocol = "*"
     sourceAddressPrefix = "AzureLoadBalancer"
