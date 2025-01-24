@@ -1,0 +1,323 @@
+name: Deploy LearningHub-Moodle to Test
+on:
+  push:
+    branches:
+      - ImplementCI-CDPipelineTest
+      - RC
+  workflow_dispatch:
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # Grunt:
+  #   runs-on: ubuntu-22.04
+
+  #   steps:
+  #     - name: Checking out code
+  #       uses: actions/checkout@v4
+
+  #     - name: Configuring node & npm
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: '.nvmrc'
+
+  #     - name: Installing node stuff
+  #       run: npm install
+
+  #     - name: Running grunt
+  #       run: npx grunt
+
+  #     - name: Looking for uncommitted changes
+  #       Add all files to the git index and then run diff --cached to see all changes.
+  #       This ensures that we get the status of all files, including new files.
+  #       We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+  #       run: |
+  #         git add .
+  #         git reset -- npm-shrinkwrap.json
+  #         git diff --cached --exit-code
+
+  # PHPUnit:
+  #   runs-on: ${{ matrix.os }}
+  #   services:
+  #     exttests:
+  #       image: moodlehq/moodle-exttests
+  #       ports:
+  #         - 8080:80
+  #     redis:
+  #       image: redis
+  #       ports:
+  #         - 6379:6379
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         MySQL builds always run with the lowest PHP supported version.
+  #         - os: ubuntu-22.04
+  #           php: 8.2
+  #           extensions:
+  #           db: mysqli
+
+  #   steps:
+  #     - name: Setting up DB mysql
+  #       if: ${{ matrix.db == 'mysqli' }}
+  #       uses: moodlehq/mysql-action@v1
+  #       with:
+  #         collation server: utf8mb4_bin
+  #         mysql version: 8.4
+  #         mysql database: test
+  #         mysql user: test
+  #         mysql password: test
+  #         use tmpfs: true
+  #         tmpfs size: '1024M'
+  #         extra conf: --skip-log-bin
+
+  #     - name: Configuring git vars
+  #       uses: rlespinasse/github-slug-action@v4
+
+  #     - name: Setting up PHP ${{ matrix.php }}
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: ${{ matrix.php }}
+  #         extensions: ${{ matrix.extensions }}
+  #         ini-values: max_input_vars=5000
+  #         coverage: none
+
+  #     - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+  #       uses: actions/checkout@v4
+
+  #     - name: Setting up PHPUnit
+  #       env:
+  #         dbtype: ${{ matrix.db }}
+  #       run: |
+  #         echo "pathtophp=$(which php)" >> $GITHUB_ENV Inject installed pathtophp to env. The template config needs it.
+  #         cp .github/workflows/config-template.php config.php
+  #         mkdir ../moodledata
+  #         sudo locale-gen en_AU.UTF-8
+  #         php admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+  #     - name: Running PHPUnit tests
+  #       env:
+  #         dbtype: ${{ matrix.db }}
+  #         phpunit_options: ${{ secrets.phpunit_options }}
+  #       run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
+
+  terraform:
+    # needs: PHPUnit
+    runs-on: ubuntu-latest
+    environment: Test
+    name: 'Terraform LearningHub Moodle'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false  # Skip wrapper script installation
+
+      - name: 'Terraform init'
+        id: init
+        run: |
+          cd Terraform/test
+          terraform init "-backend-config=backend-test.tfvars"
+
+      # - name: 'Terraform destroy'
+      #   id: destroy
+      #   run: |
+      #     cd Terraform/test
+      #     terraform destroy -auto-approve \
+      #       -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
+      #       -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
+      #       -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
+      #       -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
+      #       -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
+      #       -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
+      #       -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
+      #       -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
+      #       -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}"
+      #       -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}"
+      #       -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}"
+      #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
+      #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
+      #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+      - name: 'Terraform apply'
+        id: apply
+        run: |
+          cd Terraform/test
+          terraform apply -auto-approve \
+            -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
+            -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
+            -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
+            -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
+            -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
+            -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
+            -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
+            -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
+            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
+            -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
+            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
+            -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+  create_persistent_storage:
+    needs: terraform
+    runs-on: ubuntu-latest
+    environment: Test
+    name: 'Create persistent volume and persistent volume claim'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Set output variable for PV existence
+        id: pv-existence
+        run: echo "::set-output name=pvexists::$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)"
+        shell: bash
+
+      - name: Conditionally create PersistentVolume
+        if: steps.pv-existence.outputs.pvexists == 'false'
+        run: kubectl apply -f kubectl/pv-definition-test.yml
+
+      - name: Set output variable for PVC existance
+        id: pvc-existence
+        run: echo "::set-output name=pvcexists::$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)"
+        shell: bash
+
+      - name: Conditionally create PersistentVolumeClaim
+        if: steps.pvc-existence.outputs.pvcexists == 'false'
+        run: kubectl apply -f kubectl/pvc-definition-test.yml
+
+      - name: Attach ACR to cluster
+        run: az aks update -n ${{ vars.AZURE_CLUSTER_NAME }} -g ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --attach-acr ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+
+      - name: Get SQL ManagedInstance resource ID
+        id: get_mi_id
+        run: |
+          mi_vnet_id=$(az network vnet list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query [0].id -o tsv)
+          echo "##[set-output name=mi_vnet_id;]$mi_vnet_id"
+
+      - name: Get node resource group
+        id: get_node_resource_group
+        run: |
+          node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
+          echo "##[set-output name=node_resource_group;]$node_resource_group"
+ 
+      - name: Get Node ID
+        id: get_node_id
+        run: |
+          node_id=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query [0].id -o tsv)
+          echo "##[set-output name=node_id;]$node_id"
+
+      - name: Get Cluster VNET name
+        id: get_cluster_vnet_name
+        run: |
+          vnet_name=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query "[].name" -o tsv)
+          echo "##[set-output name=vnet_name;]$vnet_name"
+
+      - name: Peer the vnets
+        run: |
+          az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
+          az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
+
+  build_and_push_docker_image:
+    needs: create_persistent_storage
+    runs-on: ubuntu-latest
+    environment: Test
+    name: 'Build and push learninghub moodle docker image'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Replace values in config.php
+        run : |
+          sed -i -e 's/DB-HOST-NAME/${{ vars.CONFIG_DB_HOST_NAME }}/g' config.php
+          sed -i -e 's/DB-NAME/${{ vars.CONFIG_DB_NAME }}/g' config.php
+          sed -i -e 's/DB-USER-NAME/${{ vars.SQL_ADMINISTRATOR_LOGIN }}/g' config.php
+          sed -i -e 's/DB-USER-PASSWORD/${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}/g' config.php
+          sed -i -e 's|WWW-ROOT|${{ vars.CONFIG_WWW_ROOT }}|g' config.php
+          sed -i -e 's|DATA-ROOT|/var/www/moodledata|g' config.php
+          sed -i -e 's/TOOL-GENERATOR-PASSWORD/${{ secrets.CONFIG_TOOL_GENERATOR_PASSWORD }}/g' config.php
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ vars.DOCKER_IMAGE_NAME }}:latest . 
+          docker push ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ vars.DOCKER_IMAGE_NAME }}:latest
+
+  deploy_learninghubmoodle_to_cluster:
+    needs: build_and_push_docker_image
+    runs-on: ubuntu-latest
+    environment: Test
+    name: 'Deploy learninghub moodle to AKS cluster'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Get Storage Account Key
+        id: get-storage-key
+        run: |
+          STORAGE_KEY=$(az storage account keys list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --account-name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query [0].value -o tsv)
+          echo "::set-output name=storage_key::$STORAGE_KEY"
+
+      - name: Create the default namespace secret
+        run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n default
+        continue-on-error: true
+
+      - name: Deploy application image to AKS cluster
+        run: kubectl apply -f kubectl/deployment-test.yml
+
+      - name: Create the loadbalancer service
+        run: kubectl apply -f kubectl/service-test.yml
+
+      - name: Restart the pods to reload the image
+        run: kubectl rollout restart deployment/learninghubmoodletest
