@@ -210,6 +210,7 @@ jobs:
 
       - name: Attach ACR to cluster
         run: az aks update -n ${{ vars.AZURE_CLUSTER_NAME }} -g ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --attach-acr ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+        continue-on-error: true
 
       - name: Get SQL ManagedInstance resource ID
         id: get_mi_id
