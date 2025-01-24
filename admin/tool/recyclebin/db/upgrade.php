@@ -45,21 +45,36 @@ function xmldb_tool_recyclebin_upgrade($oldversion) {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2024111500) {
 
-        // Changing precision of field fullname on table tool_recyclebin_category to (255).
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2025041401) {
+
+        // Changing precision of field shortname on table tool_recyclebin_category to (1333).
+        $table = new xmldb_table('tool_recyclebin_category');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'categoryid');
+
+        // Launch change of precision for field shortname.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field fullname on table tool_recyclebin_category to (1333).
         $table = new xmldb_table('tool_recyclebin_category');
         $field = new xmldb_field('fullname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'shortname');
 
         // Launch change of precision for field fullname.
         $dbman->change_field_precision($table, $field);
 
-        // Recyclebin savepoint reached.
-        upgrade_plugin_savepoint(true, 2024111500, 'tool', 'recyclebin');
-    }
+        // Changing precision of field name on table tool_recyclebin_course to (1333).
+        $table = new xmldb_table('tool_recyclebin_course');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'module');
 
-    // Automatically generated Moodle v5.0.0 release upgrade line.
-    // Put any upgrade step following this.
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Recyclebin savepoint reached.
+        upgrade_plugin_savepoint(true, 2025041401, 'tool', 'recyclebin');
+    }
 
     return true;
 }
