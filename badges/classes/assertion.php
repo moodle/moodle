@@ -357,10 +357,6 @@ class core_badges_assertion {
                 if (!empty($relatedbadges = $this->get_related_badges($badge))) {
                     $json['related'] = $relatedbadges;
                 }
-                if ($endorsement = $this->get_endorsement()) {
-                    $endorsementurl = new moodle_url('/badges/endorsement_json.php', array('id' => $this->_data->id));
-                    $json['endorsement'] = $endorsementurl->out(false);
-                }
                 if ($alignments = $this->get_alignments()) {
                     $json['alignments'] = $alignments;
                 }
