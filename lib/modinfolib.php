@@ -1482,6 +1482,12 @@ class cm_info implements IteratorAggregate {
     private $iconcomponent;
 
     /**
+     * The instance record form the module table
+     * @var stdClass
+     */
+    private $instancerecord;
+
+    /**
      * Name of module e.g. 'forum' (this is the same name as the module's main database
      * table) - from cached data in modinfo field
      * @var string
@@ -2214,6 +2220,25 @@ class cm_info implements IteratorAggregate {
         }
 
         return $cmrecord;
+    }
+
+    /**
+     * Return the activity database table record.
+     *
+     * The instance record will be cached after the first call.
+     *
+     * @return stdClass
+     */
+    public function get_instance_record() {
+        global $DB;
+        if (!isset($this->instancerecord)) {
+            $this->instancerecord = $DB->get_record(
+                table: $this->modname,
+                conditions: ['id' => $this->instance],
+                strictness: MUST_EXIST,
+            );
+        }
+        return $this->instancerecord;
     }
 
     /**

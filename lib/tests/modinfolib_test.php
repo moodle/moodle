@@ -2240,4 +2240,34 @@ final class modinfolib_test extends advanced_testcase {
         $cms = $sectioninfo->get_sequence_cm_infos();
         $this->assertCount(0, $cms);
     }
+
+    /**
+     * Test for cm_info::get_instance_record
+     *
+     * @covers \cm_info::get_instance_record
+     * @return void
+     */
+    public function test_section_get_instance_record(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 2]);
+        $activity = $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 0]);
+
+        $modinfo = get_fast_modinfo($course->id);
+        $cminfo = $modinfo->get_cm($activity->cmid);
+
+        $instancerecord = $DB->get_record('page', ['id' => $activity->id]);
+
+        $instance = $cminfo->get_instance_record();
+        $this->assertEquals($instancerecord, $instance);
+
+        // The instance record should be cached.
+        $DB->delete_records('page', ['id' => $activity->id]);
+
+        $instance2 = $cminfo->get_instance_record();
+        $this->assertEquals($instancerecord, $instance);
+        $this->assertEquals($instance, $instance2);
+    }
 }
