@@ -56,10 +56,10 @@ class book_chapter_edit_form extends moodleform {
         }
 
         $mform->addElement('text', 'title', get_string('chaptertitle', 'mod_book'),
-            ['size' => '30', 'maxlength' => '255']);
+            ['size' => '30', 'maxlength' => '1333']);
         $mform->setType('title', PARAM_RAW);
         $mform->addRule('title', null, 'required', null, 'client');
-        $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addRule('title', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
 
         $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_book'), $disabledmsg);
 
