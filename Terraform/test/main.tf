@@ -82,81 +82,41 @@ resource "azurerm_network_security_group" "nsg" {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
     access = "Allow"
     description = "Allow Azure Load Balancer inbound traffic"
-    destinationAddressPrefix = "10.0.1.0/24"
-    destinationAddressPrefixes = []
-    destinationPortRange = "*"
-    destinationPortRanges = []
     direction = "Inbound"
     priority = 100
     protocol = "*"
-    sourceAddressPrefix = "AzureLoadBalancer"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow MI internal inbound traffic"
-    destinationAddressPrefix = "10.0.1.0/24"
-    destinationAddressPrefixes = []
-    destinationPortRange = "*"
-    destinationPortRanges = []
     direction = "Inbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-in-10-0-1-0-24-v11"
     priority = 101
     protocol = "*"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow communication with Azure Active Directory over https"
-    destinationAddressPrefix = "AzureActiveDirectory"
-    destinationAddressPrefixes = []
-    destinationPortRange = "443"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-aad-out-10-0-1-0-24-v11"
     priority = 101
     protocol = "Tcp"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow communication with the One DS Collector over https"
-    destinationAddressPrefix = "OneDsCollector"
-    destinationAddressPrefixes = []
-    destinationPortRange = "443"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-onedsc-out-10-0-1-0-24-v11"
     priority = 102
     protocol = "Tcp"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
     description = "Allow MI internal outbound traffic"
-    destinationAddressPrefix = "10.0.1.0/24"
-    destinationAddressPrefixes = []
-    destinationPortRange = "*"
-    destinationPortRanges = []
     direction = "Outbound"
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-out-10-0-1-0-24-v11"
     priority = 103
     protocol = "*"
-    sourceAddressPrefix = "10.0.1.0/24"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
-    sourcePortRanges = []
   }
   security_rule {
     access = "Allow"
