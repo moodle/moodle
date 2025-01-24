@@ -11800,7 +11800,9 @@ class admin_setting_check extends admin_setting {
         $output = $OUTPUT->notification($loadingicon . $loadingstr, \core\output\notification::NOTIFY_INFO, false);
 
         // Add the action link.
-        $output .= $OUTPUT->render($this->check->get_action_link());
+        if ($actionlink = $this->check->get_action_link()) {
+            $output .= $OUTPUT->render($actionlink);
+        }
 
         // Wrap in a div with a reference. The JS getAndRender will replace this with the response from the webservice.
         $statusdiv = \html_writer::div($output, '', ['data-check-reference' => $domref]);
