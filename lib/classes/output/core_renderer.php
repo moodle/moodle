@@ -1353,7 +1353,9 @@ class core_renderer extends renderer_base {
         }
 
         // Add the action link.
-        $renderedresult .= $this->render_action_link($check->get_action_link());
+        if ($actionlink = $check->get_action_link()) {
+            $renderedresult .= $this->render_action_link($actionlink);
+        }
 
         return $renderedresult;
     }
