@@ -95,12 +95,6 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
              $json['related'] = $relateds;
         }
 
-        $endorsement = $badge->get_endorsement();
-        if (!empty($endorsement)) {
-            $endorsementurl = new moodle_url('/badges/endorsement_json.php', array('id' => $badge->id));
-            $json['endorsement'] = $endorsementurl->out(false);
-        }
-
         $alignments = $badge->get_alignments();
         if (!empty($alignments)) {
             foreach ($alignments as $item) {
