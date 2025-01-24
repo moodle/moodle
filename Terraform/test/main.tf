@@ -76,10 +76,6 @@ resource "azurerm_network_security_group" "nsg" {
     name = "AllowInbound"
     priority = 102
     protocol = "Tcp"
-    resourceGroup = "LearningHub-Moodle-Test"
-    sourceAddressPrefix = "*"
-    sourceAddressPrefixes = []
-    sourcePortRange = "*"
     sourcePortRanges = []
   }
   security_rule {
