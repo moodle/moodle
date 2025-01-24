@@ -76,7 +76,6 @@ resource "azurerm_network_security_group" "nsg" {
     access                     = "Allow"
     priority                   = 102
     protocol                   = "Tcp"
-    sourcePortRanges           = []
   }
   security_rule {
     name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
