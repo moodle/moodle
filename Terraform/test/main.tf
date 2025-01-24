@@ -155,7 +155,7 @@ resource "azurerm_network_security_group" "nsg" {
     sourcePortRanges = []
   }
   security_rule {
-    access = "Allow",
+    access = "Allow"
     description = "Allow MI internal outbound traffic"
     destinationAddressPrefix = "10.0.1.0/24"
     destinationAddressPrefixes = []
