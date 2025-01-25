@@ -100,7 +100,6 @@
             "login",
             "lp",
             "mentees",
-            "mnet_hosts",
             "myoverview",
             "myprofile",
             "navigation",
@@ -584,6 +583,7 @@
             "community",
             "course_overview",
             "messages",
+            "mnet_hosts",
             "participants",
             "quiz_results"
         ],

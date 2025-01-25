@@ -318,7 +318,7 @@ final class component_test extends \advanced_testcase {
         $this->assertSame('auth_mnet', component::normalize_componentname('auth_mnet'));
         $this->assertSame('enrol_self', component::normalize_componentname('enrol_self'));
         $this->assertSame('block_html', component::normalize_componentname('block_html'));
-        $this->assertSame('block_mnet_hosts', component::normalize_componentname('block_mnet_hosts'));
+        $this->assertSame('auth_oauth2', component::normalize_componentname('auth_oauth2'));
         $this->assertSame('local_amos', component::normalize_componentname('local_amos'));
         $this->assertSame('local_admin', component::normalize_componentname('local_admin'));
 
@@ -396,7 +396,7 @@ final class component_test extends \advanced_testcase {
             [['auth', 'mnet'], 'auth_mnet'],
             [['enrol', 'self'], 'enrol_self'],
             [['block', 'html'], 'block_html'],
-            [['block', 'mnet_hosts'], 'block_mnet_hosts'],
+            [['auth', 'oauth2'], 'auth_oauth2'],
             [['local', 'amos'], 'local_amos'],
             [['local', 'admin'], 'local_admin'],
 

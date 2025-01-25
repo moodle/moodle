@@ -1,0 +1,5 @@
+issueNumber: MDL-84309
+notes:
+  core_adminpresets:
+    - message: Removed block_mnet_hosts from admin presets
+      type: removed

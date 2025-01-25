@@ -1495,7 +1495,11 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2025030400.04) {
         if (!file_exists($CFG->dirroot . "/blocks/mnet_hosts/version.php")) {
             uninstall_plugin('block', 'mnet_hosts');
+
+            // Delete all the admin preset plugin states concerning mnet_hosts in adminpresets_plug table.
+            $DB->delete_records('adminpresets_plug', ['name' => 'mnet_hosts']);
         }
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2025030400.04);
     }

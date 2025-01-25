@@ -25,13 +25,13 @@ Feature: Edit capabilities
     And I click on "Edit Teacher role" "link"
     And I fill the capabilities form with the following permissions:
       | capability | permission |
-      | block/mnet_hosts:myaddinstance | Allow |
+      | block/online_users:myaddinstance | Allow |
       | moodle/site:messageanyuser | Inherit |
       | moodle/grade:managesharedforms | Prevent |
       | moodle/course:request | Prohibit |
     And I press "Save changes"
     When I follow "Edit Teacher role"
-    Then "block/mnet_hosts:myaddinstance" capability has "Allow" permission
+    Then "block/online_users:myaddinstance" capability has "Allow" permission
     And "moodle/site:messageanyuser" capability has "Not set" permission
     And "moodle/grade:managesharedforms" capability has "Prevent" permission
     And "moodle/course:request" capability has "Prohibit" permission
