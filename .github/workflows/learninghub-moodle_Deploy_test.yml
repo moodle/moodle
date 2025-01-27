@@ -2,7 +2,6 @@ name: Deploy LearningHub-Moodle to Test
 on:
   push:
     branches:
-      - ImplementCI-CDPipelineTest
       - RC
   workflow_dispatch:
   
@@ -30,9 +29,9 @@ jobs:
         run: npx grunt
 
       - name: Looking for uncommitted changes
-        Add all files to the git index and then run diff --cached to see all changes.
-        This ensures that we get the status of all files, including new files.
-        We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
         run: |
           git add .
           git reset -- npm-shrinkwrap.json
@@ -53,7 +52,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          MySQL builds always run with the lowest PHP supported version.
           - os: ubuntu-22.04
             php: 8.2
             extensions:
