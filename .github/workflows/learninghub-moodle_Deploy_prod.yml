@@ -2,7 +2,7 @@ name: Deploy LearningHub-Moodle to Production
 on:
   push:
     branches:
-      - ImplementCi-CDPipelineProd
+      - ImplementCI-CDPipelineProd
       - main
   workflow_dispatch:
   
