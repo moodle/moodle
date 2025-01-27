@@ -143,3 +143,5 @@ $string['privacy:markedsubmissionspath'] = 'markedsubmissions';
 $string['privacy:submissionpath'] = 'submission';
 $string['completionsubmit'] = 'Make a submission';
 $string['completiondetail:submit'] = 'Make a submission';
+$string['addsubmission'] = 'Add submission';
+$string['calendardue'] = '{$a} is due';
