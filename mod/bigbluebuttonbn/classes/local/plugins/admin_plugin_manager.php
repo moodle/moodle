@@ -191,22 +191,7 @@ class admin_plugin_manager {
      */
     public function get_sorted_plugins_list(): array {
         $names = core_component::get_plugin_list(extension::BBB_EXTENSION_PLUGIN_NAME);
-
-        $result = [];
-
-        foreach ($names as $name => $path) {
-            $idx = get_config(extension::BBB_EXTENSION_PLUGIN_NAME . '_' . $name, 'sortorder');
-            if (!$idx) {
-                $idx = 0;
-            }
-            while (array_key_exists($idx, $result)) {
-                $idx += 1;
-            }
-            $result[$idx] = $name;
-        }
-        ksort($result);
-
-        return $result;
+        return extension::get_sorted_plugins_list($names);
     }
 
     /**
