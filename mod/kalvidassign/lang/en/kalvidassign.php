@@ -141,3 +141,5 @@ $string['privacy:metadata:kalvidassignperpage'] = 'Number of assignment submissi
 $string['privacy:metadata:kalvidassignquickgrade'] = 'Quick grading preference for assignment submissions.';
 $string['privacy:markedsubmissionspath'] = 'markedsubmissions';
 $string['privacy:submissionpath'] = 'submission';
+$string['completionsubmit'] = 'Make a submission';
+$string['completiondetail:submit'] = 'Make a submission';
