@@ -54,10 +54,16 @@ function kalvidassign_add_instance($kalvidassign) {
         $event->modulename  = 'kalvidassign';
         $event->instance    = $kalvidassign->id;
         $event->eventtype   = 'due';
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->timestart   = $kalvidassign->timedue;
+        $event->timesort = $kalvidassign->timedue;
         $event->timeduration = 0;
 
+        // add calendar events
         calendar_event::create($event);
+        // add timeline reminder event if requested by user
+        $completionexpected = (!empty($kalvidassign->completionexpected)) ? $kalvidassign->completionexpected : null;
+        \core_completion\api::update_completion_date_event($kalvidassign->coursemodule, 'kalvidassign', $kalvidassign->id, $completionexpected);
     }
 
     kalvidassign_grade_item_update($kalvidassign);
@@ -93,6 +99,9 @@ function kalvidassign_update_instance($kalvidassign) {
 
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
+            // update timeline reminder event if requested by user
+            $completionexpected = (!empty($kalvidassign->completionexpected)) ? $kalvidassign->completionexpected : null;
+            \core_completion\api::update_completion_date_event($kalvidassign->coursemodule, 'kalvidassign', $kalvidassign->id, $completionexpected);
         } else {
             $event = new stdClass();
             $event->name        = $kalvidassign->name;
@@ -104,10 +113,16 @@ function kalvidassign_update_instance($kalvidassign) {
             $event->modulename  = 'kalvidassign';
             $event->instance    = $kalvidassign->id;
             $event->eventtype   = 'due';
+            $event->type = CALENDAR_EVENT_TYPE_ACTION;
             $event->timestart   = $kalvidassign->timedue;
+            $event->timesort = $kalvidassign->timedue;
             $event->timeduration = 0;
 
+            // add calendar events
             calendar_event::create($event);
+            // add timeline reminder event if requested by user
+            $completionexpected = (!empty($kalvidassign->completionexpected)) ? $kalvidassign->completionexpected : null;
+            \core_completion\api::update_completion_date_event($kalvidassign->coursemodule, 'kalvidassign', $kalvidassign->id, $completionexpected);
         }
     } else {
         $DB->delete_records('event', array('modulename' => 'kalvidassign', 'instance' => $kalvidassign->id));
@@ -468,4 +483,63 @@ function mod_kalvidassign_get_completion_active_rule_descriptions($cm) {
         }
     }
     return $descriptions;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_kalvidassign_core_calendar_provide_event_action(calendar_event $event,
+                                                             \core_calendar\action_factory $factory,
+                                                             int $userid = 0) {
+    global $USER;
+
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['kalvidassign'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('addsubmission', 'kalvidassign'),
+        new \moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)),
+        1,
+        true
+    );
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_kalvidassign_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'kalvidassign');
+
+    if ($eventtype === 'due') {
+        return get_string('calendardue', 'kalvidassign', $modulename);
+    } else {
+        return get_string('requiresaction', 'calendar', $modulename);
+    }
 }
