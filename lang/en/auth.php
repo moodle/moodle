@@ -38,7 +38,7 @@ $string['auth_changepasswordhelp'] = 'Change password help';
 $string['auth_changepasswordhelp_expl'] = 'Display lost password help to users who have lost their {$a} password. This will be displayed either as well as or instead of the <strong>Change Password URL</strong> or Internal Moodle password change.';
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their {$a} password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
-$string['auth_changingemailaddress'] = 'You have requested a change of email address, from {$a->oldemail} to {$a->newemail}. For security reasons, we are sending you an email message at the new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in that message. The confirmation link will expire in <b>10 minutes</b>';
+$string['auth_changingemailaddress'] = 'You requested a change of email address, from {$a->oldemail} to {$a->newemail}. For security reasons, we are sending you a message to your new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in the message. The confirmation link will expire in 10 minutes.';
 $string['authinstructions'] = 'Leave this blank for the default login instructions to be displayed on the login page. If you want to provide custom login instructions, enter them here.';
 $string['auth_invalidnewemailkey'] = 'Error: if you are trying to confirm a change of email address, you may have made a mistake in copying the URL we sent you by email. Please copy the address and try again.';
 $string['auth_loginpasswordtoggle'] = 'Password visibility toggle';
@@ -161,7 +161,7 @@ $string['showguestlogin'] = 'You can hide or show the guest login button on the 
 $string['showloginform'] = 'Display manual login form';
 $string['showloginform_desc'] = 'If all users on the site use an authentication method such as OAuth 2 that doesn\'t require them to enter a username and password, you can hide the manual login form. Note that users with manual accounts will not be able to log in.
 
-If you hide the manual login form then can\'t log in, you can display it again using the command line php admin/cli/cfg.php --name=showloginform --set=1.';
+If you hide the manual login form then can\'t log in, you can display it again using the command line php admin/cli/cfg.php --name=showloginform --set=1';
 $string['stdchangepassword'] = 'Use standard page for changing password';
 $string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';

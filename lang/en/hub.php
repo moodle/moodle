@@ -65,7 +65,7 @@ $string['errorws'] = '{$a}';
 $string['errorwstokenreset'] = '{$a}. Registration token on this site has been reset. You can now register your site again.';
 $string['errorregistrationupdate'] = 'An error occurred during registration update ({$a})';
 $string['experttipsandinsights'] = 'Expert tips and insights';
-$string['experttipsandinsightsdesc'] = 'Yes, sign me up for exclusive tips, strategies, and insights from Moodle experts and Certified Partners. Update your preferences or unsubscribe anytime, and view our <a href="{$a}" target="_blank">Privacy Policy</a> for more information.';
+$string['experttipsandinsightsdesc'] = 'Yes, sign me up for exclusive tips, strategies, and insights from Moodle experts and Certified Partners. Update your preferences or unsubscribe any time, as covered in our <a href="{$a}">Privacy Notice</a>.';
 $string['geolocation'] = 'Geolocation';
 $string['geolocation_help'] = 'In future we may provide location-based searching. If you want to specify the location for your course use a latitude/longitude value here (eg: -31.947884,115.871285).  One way to find this is to use Google Maps.';
 $string['imageurl'] = 'Image URL';
