@@ -48,6 +48,7 @@ if ($hassiteconfig) {
         array(
             LOCAL_KALTURAMYMEDIA_LINK_LOCATION_TOP_NAVIGATION_MENU => get_string('link_location_top_menu', 'local_mymedia'),
             LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU => get_string('link_location_side_menu', 'local_mymedia'),
+            LOCAL_KALTURAMYMEDIA_LINK_LOCATION_USER_NAVIGATION_MENU => get_string('link_location_user_menu', 'local_mymedia')
         )
     );
     $setting->plugin = 'local_mymedia';
