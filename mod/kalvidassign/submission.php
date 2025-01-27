@@ -142,6 +142,12 @@ if ($submission) {
                     'context'   => context_module::instance($cm->id)
         ));
         $event->trigger();
+
+        // update completionsubmit state if enabled on kalvidassign
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) && $kalvidassignobj->completionsubmit) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
     } else {
         notice(get_string('failedtoinsertsubmission', 'kalvidassign'), $url, $course);
     }

@@ -260,6 +260,9 @@ function kalvidassign_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
             break;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+            break;
         case FEATURE_GRADE_HAS_GRADE:
             return true;
             break;
@@ -406,4 +409,63 @@ function kalvidassign_grade_item_delete($kalvidassign) {
  */
 function kalvidassign_cron () {
     return false;
+}
+
+/**
+ * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function kalvidassign_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, completionsubmit';
+    if (!$kalvidassign = $DB->get_record('kalvidassign', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $kalvidassign->name;
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionsubmit'] = $kalvidassign->completionsubmit;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_kalvidassign_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionsubmit':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionsubmit', 'kalvidassign');
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }
