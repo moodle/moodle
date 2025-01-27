@@ -26,12 +26,13 @@
  * Customised version of SimplePie for Moodle
  */
 
-require_once($CFG->libdir.'/filelib.php');
+use SimplePie\SimplePie;
+use SimplePie\File;
+use SimplePie\Sanitize;
+use SimplePie\HTTP\Parser;
+use SimplePie\Misc;
 
-// PLEASE NOTE: we use the simplepie class _unmodified_
-// through the joys of OO. Distros are free to use their stock
-// version of this file.
-require_once($CFG->libdir.'/simplepie/autoloader.php');
+require_once($CFG->libdir.'/filelib.php');
 
 /**
  * Moodle Customised version of the SimplePie class
@@ -46,7 +47,7 @@ require_once($CFG->libdir.'/simplepie/autoloader.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_simplepie extends SimplePie\SimplePie {
+class moodle_simplepie extends SimplePie {
     /**
      * Constructor - creates an instance of the SimplePie class
      * with Moodle defaults.
@@ -62,10 +63,10 @@ class moodle_simplepie extends SimplePie\SimplePie {
 
         // Use the Moodle class for http requests
         $registry = $this->get_registry();
-        $registry->register(SimplePie\File::class, 'moodle_simplepie_file', true);
+        $registry->register(File::class, 'moodle_simplepie_file', true);
 
         // Use html purifier for text cleaning.
-        $registry->register(SimplePie\Sanitize::class, 'moodle_simplepie_sanitize', true);
+        $registry->register(Sanitize::class, 'moodle_simplepie_sanitize', true);
         $this->sanitize = new moodle_simplepie_sanitize();
 
         // Match moodle encoding
@@ -117,7 +118,7 @@ class moodle_simplepie extends SimplePie\SimplePie {
  * http requests. By using the moodle curl class
  * we ensure that the correct proxy configuration is used.
  */
-class moodle_simplepie_file extends SimplePie\File {
+class moodle_simplepie_file extends File {
 
     /**
      * The constructor is a copy of the stock simplepie File class which has
@@ -126,7 +127,7 @@ class moodle_simplepie_file extends SimplePie\File {
      */
     public function __construct($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false) {
         $this->url = $url;
-        $this->method = SimplePie\SimplePie::FILE_SOURCE_REMOTE | SimplePie\SimplePie::FILE_SOURCE_CURL;
+        $this->method = SimplePie::FILE_SOURCE_REMOTE | SimplePie::FILE_SOURCE_CURL;
 
         $curl = new curl();
         $curl->setopt( array(
@@ -151,7 +152,7 @@ class moodle_simplepie_file extends SimplePie\File {
             return false;
         }
 
-        $parser = new SimplePie\HTTP\Parser($this->headers);
+        $parser = new Parser($this->headers);
 
         if ($parser->parse()) {
             $this->headers = $parser->headers;
@@ -163,7 +164,7 @@ class moodle_simplepie_file extends SimplePie\File {
                     || $this->status_code == 307 || $this->status_code > 307 && $this->status_code < 400)
                     && isset($this->headers['location']) && $this->redirects < $redirects) {
                 $this->redirects++;
-                $location = SimplePie\Misc::absolutize_url($this->headers['location'], $url);
+                $location = Misc::absolutize_url($this->headers['location'], $url);
                 return $this->__construct($location, $timeout, $redirects, $headers);
             }
         }
@@ -174,7 +175,7 @@ class moodle_simplepie_file extends SimplePie\File {
 /**
  * Customised feed sanitization using HTMLPurifier.
  */
-class moodle_simplepie_sanitize extends SimplePie\Sanitize {
+class moodle_simplepie_sanitize extends \SimplePie\Sanitize {
     public function sanitize($data, $type, $base = '') {
         $data = trim($data);
 
@@ -182,20 +183,20 @@ class moodle_simplepie_sanitize extends SimplePie\Sanitize {
             return '';
         }
 
-        if ($type & SimplePie\SimplePie::CONSTRUCT_BASE64){
+        if ($type & SimplePie::CONSTRUCT_BASE64){
             $data = base64_decode($data);
         }
 
-        if ($type & SimplePie\SimplePie::CONSTRUCT_MAYBE_HTML) {
+        if ($type & SimplePie::CONSTRUCT_MAYBE_HTML) {
             if (preg_match('/(&(#(x[0-9a-fA-F]+|[0-9]+)|[a-zA-Z0-9]+)|<\/[A-Za-z][^\x09\x0A\x0B\x0C\x0D\x20\x2F\x3E]*'
-                    . SimplePie\SimplePie::PCRE_HTML_ATTRIBUTE . '>)/', $data)) {
-                $type |= SimplePie\SimplePie::CONSTRUCT_HTML;
+                    . SimplePie::PCRE_HTML_ATTRIBUTE . '>)/', $data)) {
+                $type |= SimplePie::CONSTRUCT_HTML;
             } else {
-                $type |= SimplePie\SimplePie::CONSTRUCT_TEXT;
+                $type |= SimplePie::CONSTRUCT_TEXT;
             }
         }
 
-        if ($type & SimplePie\SimplePie::CONSTRUCT_IRI) {
+        if ($type & SimplePie::CONSTRUCT_IRI) {
             $absolute = $this->registry->call('Misc', 'absolutize_url', array($data, $base));
             if ($absolute !== false) {
                 $data = $absolute;
@@ -203,17 +204,17 @@ class moodle_simplepie_sanitize extends SimplePie\Sanitize {
             $data = clean_param($data, PARAM_URL);
         }
 
-        if ($type & (SimplePie\SimplePie::CONSTRUCT_TEXT | SimplePie\SimplePie::CONSTRUCT_IRI)) {
+        if ($type & (SimplePie::CONSTRUCT_TEXT | SimplePie::CONSTRUCT_IRI)) {
             $data = htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
         }
 
         $data = purify_html($data);
 
         if ($this->remove_div) {
-            $data = preg_replace('/^<div' . SimplePie\SimplePie::PCRE_XML_ATTRIBUTE . '>/', '', $data);
+            $data = preg_replace('/^<div' . SimplePie::PCRE_XML_ATTRIBUTE . '>/', '', $data);
             $data = preg_replace('/<\/div>$/', '', $data);
         } else {
-            $data = preg_replace('/^<div' . SimplePie\SimplePie::PCRE_XML_ATTRIBUTE . '>/', '<div>', $data);
+            $data = preg_replace('/^<div' . SimplePie::PCRE_XML_ATTRIBUTE . '>/', '<div>', $data);
         }
 
         if ($this->output_encoding !== 'UTF-8') {

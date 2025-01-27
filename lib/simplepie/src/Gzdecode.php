@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -182,7 +181,7 @@ class Gzdecode
      */
     public function __set($name, $value)
     {
-        trigger_error("Cannot write property $name", E_USER_ERROR);
+        throw new Exception("Cannot write property $name");
     }
 
     /**

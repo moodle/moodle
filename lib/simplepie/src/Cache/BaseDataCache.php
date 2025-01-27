@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -86,12 +85,12 @@ final class BaseDataCache implements DataCache
     {
         $data = $this->cache->load();
 
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $default;
         }
 
         // ignore data if internal cache expiration time is not set
-        if (! array_key_exists('__cache_expiration_time', $data)) {
+        if (!array_key_exists('__cache_expiration_time', $data)) {
             return $default;
         }
 

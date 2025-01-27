@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -94,7 +93,7 @@ final class Psr16 implements DataCache
     {
         $data = $this->cache->get($key, $default);
 
-        if (! is_array($data) || $data === $default) {
+        if (!is_array($data) || $data === $default) {
             return $default;
         }
 
