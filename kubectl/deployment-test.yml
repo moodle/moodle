@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: learninghubmoodleimage
-        image: learninghubmoodlecrdev.azurecr.io/learninghubmoodleimage:latest
+        image: learninghubmoodlecrtest.azurecr.io/learninghubmoodleimage:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
