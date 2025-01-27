@@ -18,9 +18,9 @@ Feature: Add a default question bank
   Scenario: Add a default question bank to a course
     Given I am on the "C1" "Course" page logged in as "teacher1"
     When I navigate to "Question banks" in current page administration
-    Then I should see "This course does not have any question banks yet"
+    Then I should see "This course does not have any question banks yet."
     And I should see "Add"
     And I click on "Create default question bank" "button"
-    But I should not see "This course does not have any question banks yet"
+    But I should not see "This course does not have any question banks yet."
     And I should see "Default course question bank created"
     And I should see "Course 1 course question bank"
