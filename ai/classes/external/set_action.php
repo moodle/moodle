@@ -37,7 +37,7 @@ class set_action extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'pluginaction' => new external_value(
+            'plugin' => new external_value(
                 PARAM_TEXT,
                 'The name of the plugin and the action to change state for',
                 VALUE_REQUIRED,
@@ -59,23 +59,23 @@ class set_action extends external_api {
     /**
      * Set the providers action state.
      *
-     * @param string $pluginaction The name of the plugin and the action to change state for.
+     * @param string $plugin The name of the plugin and the action to change state for.
      * @param int $state The target state.
      * @param int $providerid The provider id.
      * @return array
      */
     public static function execute(
-        string $pluginaction,
+        string $plugin,
         int $state,
         int $providerid = 0
     ): array {
         // Parameter validation.
         [
-            'pluginaction' => $pluginaction,
+            'plugin' => $plugin,
             'state' => $state,
             'providerid' => $providerid,
         ] = self::validate_parameters(self::execute_parameters(), [
-            'pluginaction' => $pluginaction,
+            'plugin' => $plugin,
             'state' => $state,
             'providerid' => $providerid,
         ]);
@@ -84,7 +84,7 @@ class set_action extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        [$plugin, $action] = explode('-', $pluginaction);
+        [$plugin, $action] = explode('-', $plugin);
         $actionname = get_string("action_$action", 'core_ai');
 
         if (!empty($state)) {

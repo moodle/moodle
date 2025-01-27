@@ -53,16 +53,16 @@ export default class extends PluginManagementTable {
      * Set the plugin state (enabled or disabled).
      *
      * @param {string} methodname The web service to call.
-     * @param {string} pluginaction The name of the plugin and action to set the state for.
+     * @param {string} plugin The name of the plugin and action to set the state for.
      * @param {number} state The state to set.
      * @returns {Promise}
      */
-    setPluginState(methodname, pluginaction, state) {
+    setPluginState(methodname, plugin, state) {
         const providerid = this.providerid;
         return fetchMany([{
             methodname,
             args: {
-                pluginaction,
+                plugin,
                 state,
                 providerid,
             },
