@@ -42,8 +42,12 @@ class activity_completion implements renderable, templatable {
      * @param cm_completion_details $cmcompletion The course module information.
      */
     public function __construct(
+        /** @var cm_info $cminfo the activity cm_info. */
         protected cm_info $cminfo,
-        protected cm_completion_details $cmcompletion
+        /** @var cm_completion_details $cmcompletion the activity completion details. */
+        protected cm_completion_details $cmcompletion,
+        /** @var bool $smallbutton if the button is rendered small (like in course page). */
+        protected bool $smallbutton = true,
     ) {
     }
 
@@ -84,6 +88,8 @@ class activity_completion implements renderable, templatable {
             'overrideby' => $overrideby,
             'completiondetails' => $this->get_completion_details($overrideby),
             'accessibledescription' => $this->get_accessible_description($overrideby, $overallcompletion),
+            // For backward compatibility, the template uses small button by default when not set normal size.
+            'normalbutton' => !$this->smallbutton,
         ];
     }
 

@@ -15,11 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/cm/activity_info
+    @template core_courseformat/local/content/cm/completion
 
-    Container to display activity information on the course page such as:
-      - Activity completion requirements (automatic completion)
-      - Manual completion button
+    TODO describe template completion
 
     Example context (json):
     {
@@ -47,6 +45,25 @@
         ]
     }
 }}
-<div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
-    {{> core_courseformat/local/content/cm/completion }}
+{{#uservisible}}
+<div data-region="completion-info">
+        {{! Completion dropdown dialog }}
+        {{#completiondialog}}
+            <div
+                data-region="completionrequirements"
+                aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}"
+            >
+                {{> core/local/dropdown/dialog }}
+            </div>
+        {{/completiondialog}}
+
+        {{! Manual completion button }}
+        {{#showmanualcompletion}}
+            {{#istrackeduser}}
+                {{$ core_course/completion_manual }}
+                    {{> core_course/completion_manual }}
+                {{/ core_course/completion_manual }}
+            {{/istrackeduser}}
+        {{/showmanualcompletion}}
 </div>
+{{/uservisible}}

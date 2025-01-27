@@ -110,6 +110,7 @@ const toggleManualCompletionState = async(toggleButton) => {
             overallcomplete: completed,
             overallincomplete: !completed,
             istrackeduser: true, // We know that we're tracking completion for this user given the presence of this button.
+            normalbutton: !toggleButton.classList.contains('btn-sm'),
         };
         const renderObject = await Templates.renderForPromise('core_course/completion_manual', templateContext);
 

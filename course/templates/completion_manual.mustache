@@ -23,45 +23,63 @@
     {
         "cmid": 0,
         "overallcomplete": true,
-        "overallincomplete": false
+        "overallincomplete": false,
+        "normalbutton": true
     }
 }}
 {{#istrackeduser}}
     {{#overallcomplete}}
-        <button class="btn btn-success btn-sm text-nowrap" data-action="toggle-manual-completion" data-toggletype="manual:undo" data-cmid="{{cmid}}" data-activityname="{{activityname}}" data-withavailability="{{withavailability}}" {{!
-        }}{{#accessibledescription}}{{!
-            }}title="{{.}}" {{!
-            }}aria-label="{{.}}" {{!
-        }}{{/accessibledescription}}{{!
-        }}{{^accessibledescription}}{{!
-            }}title="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
-            }}aria-label="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
-        }}{{/accessibledescription}}>
+        <button
+            class="btn btn-success  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+            data-action="toggle-manual-completion"
+            data-toggletype="manual:undo"
+            data-cmid="{{cmid}}"
+            data-activityname="{{activityname}}"
+            data-withavailability="{{withavailability}}" {{!
+            }}{{#accessibledescription}}{{!
+                }}title="{{.}}" {{!
+                }}aria-label="{{.}}" {{!
+            }}{{/accessibledescription}}{{!
+            }}{{^accessibledescription}}{{!
+                }}title="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
+                }}aria-label="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
+            }}{{/accessibledescription}}
+        >
             <i class="fa fa-check" aria-hidden="true"></i> {{#str}} completion_manual:done, core_course {{/str}}
         </button>
     {{/overallcomplete}}
     {{#overallincomplete}}
-        <button class="btn btn-outline-secondary btn-sm text-nowrap" data-action="toggle-manual-completion" data-toggletype="manual:mark-done" data-cmid="{{cmid}}" data-activityname="{{activityname}}" data-withavailability="{{withavailability}}" {{!
-        }}{{#accessibledescription}}{{!
-            }}title="{{.}}" {{!
-            }}aria-label="{{.}}" {{!
-        }}{{/accessibledescription}}{{!
-        }}{{^accessibledescription}}{{!
-            }}title="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
-            }}aria-label="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
-        }}{{/accessibledescription}}>
+        <button
+            class="btn btn-outline-secondary  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+            data-action="toggle-manual-completion"
+            data-toggletype="manual:mark-done"
+            data-cmid="{{cmid}}"
+            data-activityname="{{activityname}}"
+            data-withavailability="{{withavailability}}" {{!
+            }}{{#accessibledescription}}{{!
+                }}title="{{.}}" {{!
+                }}aria-label="{{.}}" {{!
+            }}{{/accessibledescription}}{{!
+            }}{{^accessibledescription}}{{!
+                }}title="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
+                }}aria-label="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
+            }}{{/accessibledescription}}
+        >
             {{#str}} completion_manual:markdone, core_course {{/str}}
         </button>
     {{/overallincomplete}}
 {{/istrackeduser}}
 {{^istrackeduser}}
-    <button class="btn btn-outline-secondary btn-sm text-nowrap" disabled>
+    <button
+        class="btn btn-outline-secondary  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+        disabled
+    >
         {{#str}} completion_manual:markdone, core_course {{/str}}
     </button>
 {{/istrackeduser}}
 
 {{#js}}
 require(['core_course/manual_completion_toggle'], toggle => {
-    toggle.init()
+    toggle.init();
 });
 {{/js}}
