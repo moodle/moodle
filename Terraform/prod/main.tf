@@ -62,12 +62,142 @@ resource "azurerm_network_security_group" "nsg" {
     description                = "Allow inbound traffic"
     direction                  = "Inbound"
     access                     = "Allow"
-    priority                   = 100
+    priority                   = 102
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "1433"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow Azure Load Balancer inbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Inbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-healthprobe-in-10-0-1-0-24-v11"
+    priority = 100
+    protocol = "*"
+    sourceAddressPrefix = "AzureLoadBalancer"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow MI internal inbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Inbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-in-10-0-1-0-24-v11"
+    priority = 101
+    protocol = "*"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow communication with Azure Active Directory over https"
+    destinationAddressPrefix = "AzureActiveDirectory"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-aad-out-10-0-1-0-24-v11"
+    priority = 101
+    protocol = "Tcp"
+    provisioningState = "Succeeded"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow communication with the One DS Collector over https"
+    destinationAddressPrefix = "OneDsCollector"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-onedsc-out-10-0-1-0-24-v11"
+    priority = 102
+    protocol = "Tcp"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow MI internal outbound traffic"
+    destinationAddressPrefix = "10.0.1.0/24"
+    destinationAddressPrefixes = []
+    destinationPortRange = "*"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-internal-out-10-0-1-0-24-v11"
+    priority = 103
+    protocol = "*"
+    provisioningState = "Succeeded"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow outbound communication with storage over HTTPS"
+    destinationAddressPrefix = "Storage.northeurope"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-p-out-10-0-1-0-24-v11"
+    priority = 104
+    protocol = "*"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow outbound communication with storage over HTTPS"
+    destinationAddressPrefix = "Storage.westeurope"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-strg-s-out-10-0-1-0-24-v11"
+    priority = 105
+    protocol = "*"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
+  }
+  security_rule {
+    access = "Allow"
+    description = "Allow AzureCloud outbound https traffic"
+    destinationAddressPrefix = "AzureCloud"
+    destinationAddressPrefixes = []
+    destinationPortRange = "443"
+    destinationPortRanges = []
+    direction = "Outbound"
+    name = "Microsoft.Sql-managedInstances_UseOnly_mi-optional-azure-out-10-0-1-0-24"
+    priority = 100
+    protocol = "Tcp"
+    sourceAddressPrefix = "10.0.1.0/24"
+    sourceAddressPrefixes = []
+    sourcePortRange = "*"
+    sourcePortRanges = []
   }
 }
 
