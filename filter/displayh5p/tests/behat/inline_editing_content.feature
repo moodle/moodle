@@ -42,7 +42,7 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page logged in as "teacher1"
     And I navigate to "Settings" in current page administration
-    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Insert H5P content" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Private files" repository in file picker
     And I click on "greeting-card.h5p" "file" in repository content area
@@ -86,7 +86,7 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Insert H5P content" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
@@ -130,7 +130,7 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Insert H5P content" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
@@ -176,7 +176,7 @@ Feature: Inline editing H5P content anywhere
     # Add H5P content to the page.
     And I am on the "PageName1" "page activity" page
     And I navigate to "Settings" in current page administration
-    And I click on "Configure H5P content" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Insert H5P content" "button" in the "#fitem_id_page" "css_element"
     And I set the field "H5P URL or file upload" to "https://moodle.h5p.com/content/1290772960722742119"
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
@@ -219,7 +219,7 @@ Feature: Inline editing H5P content anywhere
       | Text block title | H5PTest     |
       | Content          | -           |
     And I configure the "H5PTest" block
-    And I click on "Configure H5P content" "button" in the "//div[contains(@id,'fitem_id_config_text')]" "xpath_element"
+    And I click on "Insert H5P content" "button" in the "//div[contains(@id,'fitem_id_config_text')]" "xpath_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
