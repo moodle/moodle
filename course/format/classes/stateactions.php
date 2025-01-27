@@ -142,65 +142,16 @@ class stateactions {
     }
 
     /**
-     * Move course sections to another location in the same course.
-     *
      * @deprecated since Moodle 4.4 MDL-77038.
-     * @todo MDL-80116 This will be deleted in Moodle 4.8.
-     * @param stateupdates $updates the affected course elements track
-     * @param stdClass $course the course object
-     * @param int[] $ids the list of affected course module ids
-     * @param int $targetsectionid optional target section id
-     * @param int $targetcmid optional target cm id
      */
-    public function section_move(
-        stateupdates $updates,
-        stdClass $course,
-        array $ids,
-        ?int $targetsectionid = null,
-        ?int $targetcmid = null
-    ): void {
-        debugging(
-            'The method stateactions::section_move() has been deprecated, please use stateactions::section_move_after() instead.',
-            DEBUG_DEVELOPER
-        );
-        // Validate target elements.
-        if (!$targetsectionid) {
-            throw new moodle_exception("Action cm_move requires targetsectionid");
-        }
-
-        $this->validate_sections($course, $ids, __FUNCTION__);
-
-        $coursecontext = context_course::instance($course->id);
-        require_capability('moodle/course:movesections', $coursecontext);
-
-        $modinfo = get_fast_modinfo($course);
-
-        // Target section.
-        $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
-        $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
-
-        $affectedsections = [$targetsection->section => true];
-
-        $sections = $this->get_section_info($modinfo, $ids);
-        foreach ($sections as $section) {
-            $affectedsections[$section->section] = true;
-            move_section_to($course, $section->section, $targetsection->section);
-        }
-
-        // Use section_state to return the section and activities updated state.
-        $this->section_state($updates, $course, $ids, $targetsectionid);
-
-        // All course sections can be renamed because of the resort.
-        $allsections = $modinfo->get_section_info_all();
-        foreach ($allsections as $section) {
-            // Ignore the affected sections because they are already in the updates.
-            if (isset($affectedsections[$section->section])) {
-                continue;
-            }
-            $updates->add_section_put($section->id);
-        }
-        // The section order is at a course level.
-        $updates->add_course_put();
+    #[\core\attribute\deprecated(
+        replacement: 'stateactions::section_move_after',
+        since: '5.0',
+        mdl: 'MDL-77038',
+        final: true,
+    )]
+    public function section_move(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
