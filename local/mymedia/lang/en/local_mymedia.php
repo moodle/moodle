@@ -33,4 +33,5 @@ $string['link_location'] = 'Link location';
 $string['link_location_desc'] = 'Choose where My Media link is displayed';
 $string['link_location_top_menu'] = 'Top navigation menu';
 $string['link_location_side_menu'] = 'Side navigation menu';
+$string['link_location_user_menu'] = 'User navigation menu';
 $string['privacy:metadata'] = 'My Media plugin does not store any personal data.';

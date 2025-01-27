@@ -23,6 +23,7 @@
 
 define('LOCAL_KALTURAMYMEDIA_LINK_LOCATION_TOP_NAVIGATION_MENU', 0);
 define('LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU', 1);
+define('LOCAL_KALTURAMYMEDIA_LINK_LOCATION_USER_NAVIGATION_MENU', 2);
 
 /**
  * This function adds my media links to the navigation block
@@ -53,26 +54,35 @@ function local_mymedia_extend_navigation($navigation) {
         return;
     }
 
-    // side navigation
-    if (get_config('local_mymedia', 'link_location') == LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU) {
-        $nodehome = $navigation->get('home');
-        if (empty($nodehome)){
-            $nodehome = $navigation;
-        }
-        $mymedia = get_string('nav_mymedia', 'local_mymedia');
-        $icon = new pix_icon('my-media', '', 'local_mymedia');
-        $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia', $icon);
-        $nodemymedia->showinflatnavigation = true;
-        return;
-    }
+    $linkLocation = get_config('local_mymedia', 'link_location');
+    $mymediaString = get_string('nav_mymedia', 'local_mymedia');
+    $mymediaUrl = '/local/mymedia/mymedia.php';
+    $fullMenuItem = "\n$mymediaString|$mymediaUrl";
 
-    // top navigation
-    $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
-    if (strpos($CFG->custommenuitems, $menuHeaderStr) !== false) {
-        //My Media is already part of the config, no need to add it again.
-        return;
+    // handle link placement based on link_location configuration
+    switch ($linkLocation) {
+        case LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU:
+            // add to side navigation
+            $nodehome = $navigation->get('home');
+            if (empty($nodehome)){
+                $nodehome = $navigation;
+            }
+            $icon = new pix_icon('my-media', '', 'local_mymedia');
+            $nodemymedia = $nodehome->add($mymediaString, new moodle_url($mymediaUrl), navigation_node::NODETYPE_LEAF, $mymediaString, 'mymedia', $icon);
+            $nodemymedia->showinflatnavigation = true;
+            break;
+        case LOCAL_KALTURAMYMEDIA_LINK_LOCATION_USER_NAVIGATION_MENU:
+            // add menu item to user menu if it does not already exist
+            if (strpos($CFG->customusermenuitems, $mymediaString) === false) {
+                $CFG->customusermenuitems .= $fullMenuItem;
+            }
+            break;
+        case LOCAL_KALTURAMYMEDIA_LINK_LOCATION_TOP_NAVIGATION_MENU:
+        default:
+            // add menu item to top navigation menu if it does not already exist
+            if (strpos($CFG->custommenuitems, $mymediaString) === false) {
+                $CFG->custommenuitems .= $fullMenuItem;
+            }
+            break;
     }
-
-    $myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
-    $CFG->custommenuitems .= $myMediaStr;
 }
