@@ -25,7 +25,6 @@
 namespace tiny_link;
 
 use context;
-use context_system;
 use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;

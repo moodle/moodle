@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny Link plugin version details.
+ * Capabilities for the tiny_link plugin.
  *
  * @package    tiny_link
- * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025012300;
-$plugin->requires  = 2024100100;
-$plugin->component = 'tiny_link';
+$capabilities = [
+    'tiny/link:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

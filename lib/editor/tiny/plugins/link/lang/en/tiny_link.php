@@ -28,6 +28,7 @@ $string['enterurl'] = 'Enter a URL';
 $string['openinnewwindow'] = 'Open in new window';
 $string['pluginname'] = 'Link';
 $string['link'] = 'Link';
+$string['link:use'] = 'Use TinyMCE link';
 $string['unlink'] = 'Unlink';
 $string['updatelink'] = 'Update link';
 $string['privacy:metadata'] = 'The link plugin for TinyMCE does not store any personal data.';
