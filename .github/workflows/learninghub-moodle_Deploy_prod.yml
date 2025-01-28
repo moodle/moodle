@@ -2,7 +2,6 @@ name: Deploy LearningHub-Moodle to Production
 on:
   push:
     branches:
-      - ImplementCI-CDPipelineProd
       - main
   workflow_dispatch:
   
@@ -11,99 +10,99 @@ permissions:
   contents: read
 
 jobs:
-  # Grunt:
-  #   runs-on: ubuntu-22.04
+  Grunt:
+    runs-on: ubuntu-22.04
 
-  #   steps:
-  #     - name: Checking out code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v4
 
-  #     - name: Configuring node & npm
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: '.nvmrc'
+      - name: Configuring node & npm
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
 
-  #     - name: Installing node stuff
-  #       run: npm install
+      - name: Installing node stuff
+        run: npm install
 
-  #     - name: Running grunt
-  #       run: npx grunt
+      - name: Running grunt
+        run: npx grunt
 
-  #     - name: Looking for uncommitted changes
-  #       # Add all files to the git index and then run diff --cached to see all changes.
-  #       # This ensures that we get the status of all files, including new files.
-  #       # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
-  #       run: |
-  #         git add .
-  #         git reset -- npm-shrinkwrap.json
-  #         git diff --cached --exit-code
+      - name: Looking for uncommitted changes
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        run: |
+          git add .
+          git reset -- npm-shrinkwrap.json
+          git diff --cached --exit-code
 
-  # PHPUnit:
-  #   runs-on: ${{ matrix.os }}
-  #   services:
-  #     exttests:
-  #       image: moodlehq/moodle-exttests
-  #       ports:
-  #         - 8080:80
-  #     redis:
-  #       image: redis
-  #       ports:
-  #         - 6379:6379
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       include:
-  #         - os: ubuntu-22.04
-  #           php: 8.2
-  #           extensions:
-  #           db: mysqli
+  PHPUnit:
+    runs-on: ${{ matrix.os }}
+    services:
+      exttests:
+        image: moodlehq/moodle-exttests
+        ports:
+          - 8080:80
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            php: 8.2
+            extensions:
+            db: mysqli
 
-  #   steps:
-  #     - name: Setting up DB mysql
-  #       if: ${{ matrix.db == 'mysqli' }}
-  #       uses: moodlehq/mysql-action@v1
-  #       with:
-  #         collation server: utf8mb4_bin
-  #         mysql version: 8.4
-  #         mysql database: test
-  #         mysql user: test
-  #         mysql password: test
-  #         use tmpfs: true
-  #         tmpfs size: '1024M'
-  #         extra conf: --skip-log-bin
+    steps:
+      - name: Setting up DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        uses: moodlehq/mysql-action@v1
+        with:
+          collation server: utf8mb4_bin
+          mysql version: 8.4
+          mysql database: test
+          mysql user: test
+          mysql password: test
+          use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
 
-  #     - name: Configuring git vars
-  #       uses: rlespinasse/github-slug-action@v4
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v4
 
-  #     - name: Setting up PHP ${{ matrix.php }}
-  #       uses: shivammathur/setup-php@v2
-  #       with:
-  #         php-version: ${{ matrix.php }}
-  #         extensions: ${{ matrix.extensions }}
-  #         ini-values: max_input_vars=5000
-  #         coverage: none
+      - name: Setting up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
 
-  #     - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-  #       uses: actions/checkout@v4
+      - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+        uses: actions/checkout@v4
 
-  #     - name: Setting up PHPUnit
-  #       env:
-  #         dbtype: ${{ matrix.db }}
-  #       run: |
-  #         echo "pathtophp=$(which php)" >> $GITHUB_ENV Inject installed pathtophp to env. The template config needs it.
-  #         cp .github/workflows/config-template.php config.php
-  #         mkdir ../moodledata
-  #         sudo locale-gen en_AU.UTF-8
-  #         php admin/tool/phpunit/cli/init.php --no-composer-self-update
+      - name: Setting up PHPUnit
+        env:
+          dbtype: ${{ matrix.db }}
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV Inject installed pathtophp to env. The template config needs it.
+          cp .github/workflows/config-template.php config.php
+          mkdir ../moodledata
+          sudo locale-gen en_AU.UTF-8
+          php admin/tool/phpunit/cli/init.php --no-composer-self-update
 
-  #     - name: Running PHPUnit tests
-  #       env:
-  #         dbtype: ${{ matrix.db }}
-  #         phpunit_options: ${{ secrets.phpunit_options }}
-  #       run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
+      - name: Running PHPUnit tests
+        env:
+          dbtype: ${{ matrix.db }}
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
 
   terraform:
-    # needs: PHPUnit
+    needs: PHPUnit
     runs-on: ubuntu-latest
     environment: Prod
     name: 'Terraform LearningHub Moodle'
@@ -127,31 +126,11 @@ jobs:
           cd Terraform/prod
           terraform init "-backend-config=backend-prod.tfvars"
 
-      - name: 'Terraform destroy'
-        id: destroy
-        run: |
-          cd Terraform/prod
-          terraform destroy -auto-approve \
-            -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
-            -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
-            -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
-            -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
-            -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
-            -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
-            -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
-            -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
-            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
-            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
-            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
-            -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
-            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
-            -var="SQLVcores=${{ vars.SQL_VCORES }}"
-
-      # - name: 'Terraform apply'
-      #   id: apply
+      # - name: 'Terraform destroy'
+      #   id: destroy
       #   run: |
       #     cd Terraform/prod
-      #     terraform apply -auto-approve \
+      #     terraform destroy -auto-approve \
       #       -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
       #       -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
       #       -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
@@ -166,6 +145,26 @@ jobs:
       #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
       #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
       #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+      - name: 'Terraform apply'
+        id: apply
+        run: |
+          cd Terraform/prod
+          terraform apply -auto-approve \
+            -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
+            -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
+            -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
+            -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
+            -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
+            -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
+            -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
+            -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
+            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
+            -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
+            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
+            -var="SQLVcores=${{ vars.SQL_VCORES }}"
 
   create_persistent_storage:
     needs: terraform
