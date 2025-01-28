@@ -656,6 +656,15 @@ $divider-hover-color: $primary !default;
             margin-left: 2rem;
         }
     }
+    .sticky-footer-content.bulkactions {
+        .btn {
+            --bs-btn-disabled-border-color: transparent;
+            &:focus {
+                outline: 0;
+                box-shadow: $input-btn-focus-box-shadow;
+            }
+        }
+    }
 }
 
 // Custom styles for bulk actions sticky footer in small devices.

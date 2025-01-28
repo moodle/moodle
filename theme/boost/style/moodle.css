@@ -31266,6 +31266,13 @@ table.calendartable caption {
     margin-left: 2rem;
   }
 }
+.bulkenabled .sticky-footer-content.bulkactions .btn {
+  --bs-btn-disabled-border-color: transparent;
+}
+.bulkenabled .sticky-footer-content.bulkactions .btn:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(15, 108, 191, 0.75);
+}
 
 @media (max-width: 767.98px) {
   .sticky-footer-content.bulkactions {
