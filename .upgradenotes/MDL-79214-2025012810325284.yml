@@ -1,0 +1,7 @@
+issueNumber: MDL-79214
+notes:
+  mod_folder:
+    - message: >-
+        Method htmllize_tree() has been removed. Please use
+        renderable_tree_elements instead
+      type: removed
