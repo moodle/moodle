@@ -93,8 +93,12 @@ class format_weeks extends core_courseformat\base {
         } else {
             $dates = $this->get_section_dates($section);
 
-            // We subtract 24 hours for display purposes.
-            $dates->end = ($dates->end - 86400);
+            // Find the prior day for display purposes.
+            $enddate = new DateTime();
+            $enddate->setTimezone(core_date::get_user_timezone_object());
+            $enddate->setTimestamp(intval($dates->end));
+            $enddate->modify('-1 day');
+            $dates->end = $enddate->getTimestamp();
 
             $dateformat = get_string('strftimedateshort');
             $weekday = userdate($dates->start, $dateformat);
