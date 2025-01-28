@@ -126,3 +126,19 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     And I press "Cancel"
     And I click on "Edit" "link" in the "Cohort 4" "table_row"
     And the field "Assign role" matches value "Non-editing teacher"
+
+  @javascript
+  Scenario: Uploading a cohort enrolment method with a non-default role applies only the specified role
+    Given the following "users" exist:
+      | username | firstname | lastname | email          |
+      | t1       | Teacher   | 1        | s1@example.com |
+    And the following "cohort members" exist:
+      | user | cohort |
+      | t1   | CV4    |
+    And I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort_multiple.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    And I click on "Upload courses" "button"
+    When I am on the "Course 1" "course" page
+    And I navigate to course participants
+    Then I should see "Non-editing teacher" in the "Teacher 1" "table_row"
+    And I should not see "Student" in the "Teacher 1" "table_row"
