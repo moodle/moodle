@@ -1,0 +1,109 @@
+name: Run tests for LearningHub-Moodle when create PR for RC
+on:
+  pull_request:
+    branches:
+      - RC
+  workflow_dispatch:
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  Grunt:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v4
+
+      - name: Configuring node & npm
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Installing node stuff
+        run: npm install
+
+      - name: Running grunt
+        run: npx grunt
+
+      - name: Looking for uncommitted changes
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        run: |
+          git add .
+          git reset -- npm-shrinkwrap.json
+          git diff --cached --exit-code
+
+  PHPUnit:
+    runs-on: ${{ matrix.os }}
+    environment: test-test
+    services:
+      exttests:
+        image: moodlehq/moodle-exttests
+        ports:
+          - 8080:80
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            php: 8.2
+            extensions:
+            db: mysqli
+
+    steps:
+      - name: Setting up DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        uses: moodlehq/mysql-action@v1
+        with:
+          collation server: utf8mb4_bin
+          mysql version: 8.4
+          mysql database: test
+          mysql user: test
+          mysql password: test
+          use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v4
+
+      - name: Setting up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+        uses: actions/checkout@v4
+
+      - name: Setting up PHPUnit
+        env:
+          dbtype: ${{ matrix.db }}
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV Inject installed pathtophp to env. The template config needs it.
+          cp .github/workflows/config-template.php config.php
+          mkdir ../moodledata
+          sudo locale-gen en_AU.UTF-8
+          php admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+      - name: Running PHPUnit tests
+        env:
+          dbtype: ${{ matrix.db }}
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
+
+      - name: Upload test results as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: phpunit-results
+          path: phpunit-results.xml
