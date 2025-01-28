@@ -2,7 +2,6 @@ name: Deploy LearningHub-Moodle to Production
 on:
   push:
     branches:
-      - ImplementCI-CDPipeline
       - main
   workflow_dispatch:
     inputs:
@@ -42,7 +41,7 @@ jobs:
 
       - name: Evaluate cluster node count
         id: evaluate_cluster_node_count
-        run: echo "::set-output name=clusternodecount::$(if [-z "${{ inputs.cluster_node_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_COUNT }}; else echo ${{ inputs.cluster_node_count }}; fi)"
+        run: echo "::set-output name=clusternodecount::$(if [ -z "${{ inputs.cluster_node_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_COUNT }}; else echo ${{ inputs.cluster_node_count }}; fi)"
         shell: bash
 
 
