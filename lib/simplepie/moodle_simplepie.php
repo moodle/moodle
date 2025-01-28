@@ -56,7 +56,7 @@ class moodle_simplepie extends SimplePie {
      * @param int $timeout how many seconds requests should wait for server response
      */
     public function __construct($feedurl = null, $timeout = 2) {
-        $cachedir = moodle_simplepie::get_cache_directory();
+        $cachedir = self::get_cache_directory();
         check_dir_exists($cachedir);
 
         parent::__construct();
@@ -104,7 +104,7 @@ class moodle_simplepie extends SimplePie {
      */
     public static function reset_cache() {
 
-        $cachedir = moodle_simplepie::get_cache_directory();
+        $cachedir = self::get_cache_directory();
 
         return remove_dir($cachedir);
     }
@@ -135,10 +135,9 @@ class moodle_simplepie_file extends File {
                 'CURLOPT_TIMEOUT' => $timeout,
                 'CURLOPT_CONNECTTIMEOUT' => $timeout ));
 
-
         if ($headers !== null) {
             // translate simplepie headers to those class curl expects
-            foreach($headers as $headername => $headervalue){
+            foreach ($headers as $headername => $headervalue) {
                 $headerstr = "{$headername}: {$headervalue}";
                 $curl->setHeader($headerstr);
             }
@@ -183,7 +182,7 @@ class moodle_simplepie_sanitize extends \SimplePie\Sanitize {
             return '';
         }
 
-        if ($type & SimplePie::CONSTRUCT_BASE64){
+        if ($type & SimplePie::CONSTRUCT_BASE64) {
             $data = base64_decode($data);
         }
 
