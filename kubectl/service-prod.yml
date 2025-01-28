@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: learninghubmoodle-service
+spec:
+  selector:
+    app: learninghubmoodleprod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

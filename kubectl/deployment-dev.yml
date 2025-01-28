@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learninghubmoodledev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: learninghubmoodledev
+  template:
+    metadata:
+      labels:
+        app: learninghubmoodledev
+    spec:
+      containers:
+      - name: learninghubmoodleimage
+        image: learninghubmoodlecrdev.azurecr.io/learninghubmoodleimage:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: moodledata
+          mountPath: /var/www/moodledata
+          readOnly: false
+      volumes:
+      - name: moodledata
+        persistentVolumeClaim:
+          claimName: moodledataclaim
