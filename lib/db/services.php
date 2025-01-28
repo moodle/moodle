@@ -1037,15 +1037,6 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/grade:manage',
     ),
-    'core_grades_get_enrolled_users_for_search_widget' => array (
-        'classname' => 'core_grades\external\get_enrolled_users_for_search_widget',
-        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
-            'Use core_grades_get_enrolled_users_for_selector instead. ' .
-            'Returns the enrolled users within and map some fields to the returned array of user objects.',
-        'type' => 'read',
-        'ajax' => true,
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
-    ),
     'core_grades_get_enrolled_users_for_selector' => array (
         'classname' => 'core_grades\external\get_enrolled_users_for_selector',
         'description' => 'Returns the enrolled users within and map some fields to the returned array of user objects.',
@@ -1053,15 +1044,6 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
-    'core_grades_get_groups_for_search_widget' => [
-        'classname' => 'core_group\external\get_groups_for_selector',
-        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
-            'Use core_group_get_groups_for_selector instead. ' .
-            'Get the group/(s) for a course',
-        'type' => 'read',
-        'ajax' => true,
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
-    ],
     'core_grades_get_groups_for_selector' => [
         'classname' => 'core_group\external\get_groups_for_selector',
         'description' => '** DEPRECATED ** Please do not call this function any more. ' .
@@ -1722,14 +1704,6 @@ $functions = array(
         'classname' => 'core\output\external',
         'methodname' => 'load_template_with_dependencies',
         'description' => 'Load a template and its dependencies for a renderable',
-        'type' => 'read',
-        'loginrequired' => false,
-        'ajax' => true,
-    ),
-    'core_output_load_fontawesome_icon_map' => array(
-        'classname' => 'core\output\external',
-        'methodname' => 'load_fontawesome_icon_map',
-        'description' => 'Load the mapping of names to icons',
         'type' => 'read',
         'loginrequired' => false,
         'ajax' => true,

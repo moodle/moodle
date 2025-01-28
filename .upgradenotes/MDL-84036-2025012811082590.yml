@@ -1,0 +1,7 @@
+issueNumber: MDL-84036
+notes:
+  report_insights:
+    - message: >-
+        report_insights_set_notuseful_prediction() external function has been
+        fully removed.
+      type: removed

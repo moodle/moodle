@@ -183,44 +183,4 @@ class external extends external_api {
             'strings' => new external_multiple_structure($resourcestructure),
         ]);
     }
-
-    /**
-     * Returns description of load_icon_map() parameters.
-     *
-     * @return external_function_parameters
-     */
-    public static function load_fontawesome_icon_map_parameters() {
-        return new external_function_parameters([]);
-    }
-
-    /**
-     * Return a mapping of icon names to icons.
-     *
-     * @deprecated since Moodle 3.10
-     * @return array the mapping
-     */
-    public static function load_fontawesome_icon_map() {
-        global $PAGE;
-
-        return load_fontawesome_map::execute($PAGE->theme->name);
-    }
-
-    /**
-     * Returns description of load_icon_map() result value.
-     *
-     * @return \core_external\external_description
-     */
-    public static function load_fontawesome_icon_map_returns() {
-        return load_fontawesome_map::execute_returns();
-    }
-
-    /**
-     * The `load_fontawesome_icon_map` function has been replaced with
-     * @see load_fontawesome_map::execute()
-     *
-     * @return bool
-     */
-    public static function load_fontawesome_icon_map_is_deprecated() {
-        return true;
-    }
 }
