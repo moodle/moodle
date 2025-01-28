@@ -14,11 +14,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024042202;
+$plugin->version   = 2024100700;
 $plugin->release = 'Kaltura release 4.5.0';
 $plugin->requires  = 2024042200;
 $plugin->component = 'block_kalturamediagallery';
 $plugin->dependencies = array(
-    'local_kaltura' => 2024042202,
-    'local_kalturamediagallery' => 2024042202
+    'local_kaltura' => 2024100700,
+    'local_kalturamediagallery' => 2024100700
 );

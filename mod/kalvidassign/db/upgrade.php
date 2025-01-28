@@ -85,7 +85,7 @@ function xmldb_kalvidassign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014023000.01, 'kalvidassign');
     }
 
-    if ($oldversion < 2023100903) {
+    if ($oldversion < 2024042202) {
 
         // Define field completionsubmit to be added to kalvidassign
         $table = new xmldb_table('kalvidassign');
@@ -97,7 +97,7 @@ function xmldb_kalvidassign_upgrade($oldversion) {
         }
 
         // kalvidassign savepoint reached
-        upgrade_mod_savepoint(true, 2023100903, 'kalvidassign');
+        upgrade_mod_savepoint(true, 2024042202, 'kalvidassign');
     }
 
     return true;
