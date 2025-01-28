@@ -24,7 +24,7 @@
 
 $string['action_apiversion'] = 'API version';
 $string['action_deployment'] = 'Deployment ID';
-$string['action_deployment_desc'] = 'The deployment ID that relates to the API endpoint  the provider uses for this action.';
+$string['action_deployment_desc'] = 'The deployment ID that relates to the API endpoint the provider uses for this action.';
 $string['action_systeminstruction'] = 'System instruction';
 $string['action_systeminstruction_desc'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['apikey'] = 'Azure AI API key';
