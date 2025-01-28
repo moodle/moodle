@@ -67,13 +67,7 @@ jobs:
 
       - name: Unlock Terraform state if locked
         run: |
-          if [ -f .terraform.tfstate.lock.info ]; then
-            LOCK_ID=$(jq -r '.ID' .terraform.tfstate.lock.info)
-            terraform force-unlock $LOCK_ID
-            echo "Unlocked Terraform state with ID: $LOCK_ID"
-          else
-            echo "No Terraform state lock found."
-          fi
+          terraform force-unlock 5012bec5-af98-0230-4f95-63e51573fdf9
 
       - name: 'Terraform apply'
         id: apply
