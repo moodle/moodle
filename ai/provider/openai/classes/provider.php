@@ -41,27 +41,7 @@ class provider extends \core_ai\provider {
         ];
     }
 
-    /**
-     * Generate a user id.
-     *
-     * This is a hash of the site id and user id,
-     * this means we can determine who made the request
-     * but don't pass any personal data to OpenAI.
-     *
-     * @param string $userid The user id.
-     * @return string The generated user id.
-     */
-    public function generate_userid(string $userid): string {
-        global $CFG;
-        return hash('sha256', $CFG->siteidentifier . $userid);
-    }
-
-    /**
-     * Update a request to add any headers required by the provider.
-     *
-     * @param RequestInterface $request
-     * @return RequestInterface
-     */
+    #[\Override]
     public function add_authentication_headers(RequestInterface $request): RequestInterface {
         if (isset($this->config['orgid'])) {
             return $request

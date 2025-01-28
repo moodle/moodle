@@ -16,10 +16,11 @@
 
 namespace aiprovider_ollama;
 
-use aiprovider_ollama\process_summarise_text;
 use core_ai\aiactions\base;
 use core_ai\provider;
 use GuzzleHttp\Psr7\Response;
+
+require_once(__DIR__ . '/testcase_helper_trait.php');
 
 /**
  * Test Generate text provider class for Ollama provider methods.
@@ -32,8 +33,14 @@ use GuzzleHttp\Psr7\Response;
  * @covers     \aiprovider_ollama\abstract_processor
  */
 final class process_summarise_text_test extends \advanced_testcase {
+
+    use testcase_helper_trait;
+
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
+
+    /** @var \core_ai\manager AI Manager. */
+    private $manager;
 
     /** @var provider The provider that will process the action. */
     protected provider $provider;
@@ -46,17 +53,17 @@ final class process_summarise_text_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
+        $this->resetAfterTest();
         // Load a response body from a file.
         $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_ollama', 'text_request_success.json'));
-        $this->create_provider();
+        $this->manager = \core\di::get(\core_ai\manager::class);
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+            ],
+        );
         $this->create_action();
-    }
-
-    /**
-     * Create the provider object.
-     */
-    private function create_provider(): void {
-        $this->provider = new \aiprovider_ollama\provider();
     }
 
     /**
@@ -84,7 +91,55 @@ final class process_summarise_text_test extends \advanced_testcase {
         $body = (object) json_decode($request->getBody()->getContents());
 
         $this->assertEquals('This is a test prompt', $body->prompt);
-        $this->assertEquals('llama3.1:8b', $body->model);
+        $this->assertEquals('llama3.2', $body->model);
+    }
+
+    /**
+     * Test create_request_object with extra model settings.
+     */
+    public function test_create_request_object_with_model_settings(): void {
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                'temperature' => '0.5',
+                'mirostat' => '1',
+                'seed' => '50',
+            ],
+        );
+        $processor = new process_summarise_text($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('llama3.2', $body->model);
+        $this->assertEquals('0.5', $body->options->temperature);
+        $this->assertEquals('1', $body->options->mirostat);
+        $this->assertEquals('50', $body->options->seed);
+
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\summarise_text::class,
+            actionconfig: [
+                'model' => 'my-custom-ollama',
+                'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                'modelextraparams' => '{"temperature": 0.5,"mirostat": 1,"seed": "50"}',
+            ],
+        );
+        $processor = new process_summarise_text($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('my-custom-ollama', $body->model);
+        $this->assertEquals('0.5', $body->options->temperature);
+        $this->assertEquals('1', $body->options->mirostat);
+        $this->assertEquals('50', $body->options->seed);
     }
 
     /**
@@ -287,14 +342,30 @@ final class process_summarise_text_test extends \advanced_testcase {
         $clock = $this->mock_clock_with_frozen();
 
         // Set the user rate limiter.
-        set_config('enableuserratelimit', 1, 'aiprovider_ollama');
-        set_config('userratelimit', 1, 'aiprovider_ollama');
+        $config = [
+            'enableuserratelimit' => true,
+            'userratelimit' => 1,
+            'endpoint' => "http://localhost:11434/",
+        ];
+
+        $provider = $this->manager->create_provider_instance(
+            classname: '\aiprovider_ollama\provider',
+            name: 'dummy',
+            config: $config,
+            actionconfig: [
+                \core_ai\aiactions\summarise_text::class => [
+                    'settings' => [
+                        'model' => 'llama3.2',
+                        'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                    ],
+                ],
+            ],
+        );
 
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
 
         // Case 1: User rate limit has not been reached.
-        $this->create_provider();
         $this->create_action($user1->id);
         // The response from Ollama.
         $mock->append(new Response(
@@ -302,7 +373,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertTrue($result->get_success());
 
@@ -314,9 +385,8 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $this->create_provider();
         $this->create_action($user1->id);
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
         $this->assertEquals('User rate limit exceeded', $result->get_errormessage());
@@ -325,7 +395,6 @@ final class process_summarise_text_test extends \advanced_testcase {
         // Case 3: User rate limit has not been reached for a different user.
         // Log in user2.
         $this->setUser($user2);
-        $this->create_provider();
         $this->create_action($user2->id);
         // The response from Ollama.
         $mock->append(new Response(
@@ -333,7 +402,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertTrue($result->get_success());
 
@@ -347,9 +416,8 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $this->create_provider();
         $this->create_action($user1->id);
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertTrue($result->get_success());
     }
@@ -368,14 +436,30 @@ final class process_summarise_text_test extends \advanced_testcase {
         $clock = $this->mock_clock_with_frozen();
 
         // Set the global rate limiter.
-        set_config('enableglobalratelimit', 1, 'aiprovider_ollama');
-        set_config('globalratelimit', 1, 'aiprovider_ollama');
+        $config = [
+            'enableglobalratelimit' => true,
+            'globalratelimit' => 1,
+            'endpoint' => "http://localhost:11434/",
+        ];
+
+        $provider = $this->manager->create_provider_instance(
+            classname: '\aiprovider_ollama\provider',
+            name: 'dummy',
+            config: $config,
+            actionconfig: [
+                \core_ai\aiactions\summarise_text::class => [
+                    'settings' => [
+                        'model' => 'llama3.2',
+                        'systeminstruction' => get_string('action_summarise_text_instruction', 'core_ai'),
+                    ],
+                ],
+            ],
+        );
 
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
 
         // Case 1: Global rate limit has not been reached.
-        $this->create_provider();
         $this->create_action($user1->id);
         // The response from Ollama.
         $mock->append(new Response(
@@ -383,7 +467,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertTrue($result->get_success());
 
@@ -395,9 +479,8 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $this->create_provider();
         $this->create_action($user1->id);
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
         $this->assertEquals('Global rate limit exceeded', $result->get_errormessage());
@@ -406,7 +489,6 @@ final class process_summarise_text_test extends \advanced_testcase {
         // Case 3: Global rate limit has been reached for a different user too.
         // Log in user2.
         $this->setUser($user2);
-        $this->create_provider();
         $this->create_action($user2->id);
         // The response from Ollama.
         $mock->append(new Response(
@@ -414,7 +496,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertFalse($result->get_success());
 
@@ -428,9 +510,8 @@ final class process_summarise_text_test extends \advanced_testcase {
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
         ));
-        $this->create_provider();
         $this->create_action($user1->id);
-        $processor = new process_summarise_text($this->provider, $this->action);
+        $processor = new process_summarise_text($provider, $this->action);
         $result = $processor->process();
         $this->assertTrue($result->get_success());
     }

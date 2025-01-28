@@ -17,10 +17,8 @@
 namespace aiprovider_ollama;
 
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Class process text generation.
@@ -31,34 +29,30 @@ use Psr\Http\Message\UriInterface;
  */
 class process_generate_text extends abstract_processor {
     #[\Override]
-    protected function get_endpoint(): UriInterface {
-        $url = rtrim(get_config('aiprovider_ollama', 'endpoint'), '/')
-            . '/api/generate';
-        return new Uri($url);
-    }
-
-    #[\Override]
-    protected function get_model(): string {
-        return get_config('aiprovider_ollama', 'action_generate_text_model');
-    }
-
-    #[\Override]
     protected function get_system_instruction(): string {
-        return get_config('aiprovider_ollama', 'action_generate_text_systeminstruction');
+        return $this->provider->actionconfig[$this->action::class]['settings']['systeminstruction'];
     }
 
     #[\Override]
-    protected function create_request_object(): RequestInterface {
+    protected function create_request_object(string $userid): RequestInterface {
         // Create the request object.
         $requestobj = new \stdClass();
         $requestobj->model = $this->get_model();
         $requestobj->stream = false;
         $requestobj->prompt = $this->action->get_configuration('prompttext');
+        $requestobj->user = $userid;
+        $requestobj->options = new \stdClass();
 
         // If there is a system string available, use it.
         $systeminstruction = $this->get_system_instruction();
         if (!empty($systeminstruction)) {
             $requestobj->system = $systeminstruction;
+        }
+
+        // Append the extra model settings.
+        $modelsettings = $this->get_model_settings();
+        foreach ($modelsettings as $setting => $value) {
+            $requestobj->options->$setting = $value;
         }
 
         return new Request(
@@ -87,6 +81,7 @@ class process_generate_text extends abstract_processor {
             'finishreason' => $bodyobj->done_reason,
             'prompttokens' => $bodyobj->prompt_eval_count,
             'completiontokens' => $bodyobj->eval_count,
+            'model' => $bodyobj->model ?? $this->get_model(), // Fallback to config model.
         ];
     }
 }

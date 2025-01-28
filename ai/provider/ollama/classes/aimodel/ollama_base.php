@@ -14,18 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiprovider_ollama;
+namespace aiprovider_ollama\aimodel;
 
 /**
- * Class process text summarisation.
+ * Ollama base AI model interface.
  *
  * @package    aiprovider_ollama
- * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
+ * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class process_summarise_text extends process_generate_text {
-    #[\Override]
-    protected function get_system_instruction(): string {
-        return $this->provider->actionconfig[$this->action::class]['settings']['systeminstruction'];
-    }
+interface ollama_base {
+
+    /** @var int MODEL_TYPE_TEXT Text model type. */
+    public const MODEL_TYPE_TEXT = 1;
+    /** @var int MODEL_TYPE_IMAGE Image model type. */
+    public const MODEL_TYPE_IMAGE = 2;
+
+    /**
+     * Get model type.
+     *
+     * @return int Model type.
+     */
+    public function model_type(): int;
 }

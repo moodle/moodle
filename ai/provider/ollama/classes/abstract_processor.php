@@ -17,9 +17,9 @@
 namespace aiprovider_ollama;
 
 use core\http_client;
-use core_ai\aiactions\responses\response_base;
 use core_ai\process_base;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -38,14 +38,46 @@ abstract class abstract_processor extends process_base {
      *
      * @return UriInterface
      */
-    abstract protected function get_endpoint(): UriInterface;
+    protected function get_endpoint(): UriInterface {
+        $url = rtrim($this->provider->config['endpoint'], '/')
+            . '/api/generate/';
+
+        return new Uri($url);
+    }
 
     /**
      * Get the name of the model to use.
      *
      * @return string
      */
-    abstract protected function get_model(): string;
+    protected function get_model(): string {
+        return $this->provider->actionconfig[$this->action::class]['settings']['model'];
+    }
+
+    /**
+     * Get the model settings.
+     *
+     * @return array
+     */
+    protected function get_model_settings(): array {
+        $settings = $this->provider->actionconfig[$this->action::class]['settings'];
+        if (!empty($settings['modelextraparams'])) {
+            // Custom model settings.
+            $params = json_decode($settings['modelextraparams'], true);
+            foreach ($params as $key => $param) {
+                $settings[$key] = $param;
+            }
+        }
+
+        // Unset unnecessary settings.
+        unset(
+            $settings['model'],
+            $settings['systeminstruction'],
+            $settings['providerid'],
+            $settings['modelextraparams'],
+        );
+        return $settings;
+    }
 
     /**
      * Get the system instructions.
@@ -53,16 +85,17 @@ abstract class abstract_processor extends process_base {
      * @return string
      */
     protected function get_system_instruction(): string {
-        return $this->action->get_system_instruction();
+        return $this->action::get_system_instruction();
     }
 
     /**
      * Create the request object to send to the Ollama API.
      * This object contains all the required parameters for the request.
      *
+     * @param string $userid The user id.
      * @return RequestInterface The request object to send to the Ollama API.
      */
-    abstract protected function create_request_object(): RequestInterface;
+    abstract protected function create_request_object(string $userid): RequestInterface;
 
     /**
      * Handle a successful response from the external AI api.
@@ -74,7 +107,7 @@ abstract class abstract_processor extends process_base {
 
     #[\Override]
     protected function query_ai_api(): array {
-        $request = $this->create_request_object();
+        $request = $this->create_request_object($this->provider->generate_userid($this->action->get_configuration('userid')));
         $request = $this->provider->add_authentication_headers($request);
 
         $client = \core\di::get(http_client::class);

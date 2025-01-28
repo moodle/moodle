@@ -16,8 +16,7 @@
 
 namespace aiprovider_ollama;
 
-use core_ai\aiactions;
-use core_ai\rate_limiter;
+use core_ai\form\action_settings_form;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -28,153 +27,60 @@ use Psr\Http\Message\RequestInterface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider extends \core_ai\provider {
-    /** @var bool Is basic authentication enabled. */
-    private bool $basicauthenabled;
 
-    /** @var string The basic auth username. */
-    private string $username;
-
-    /** @var string The basic auth password. */
-    private string $password;
-
-    /** @var bool Is global rate limiting for the API enabled. */
-    private bool $enableglobalratelimit;
-
-    /** @var int The global rate limit. */
-    private int $globalratelimit;
-
-    /** @var bool Is user rate limiting for the API enabled */
-    private bool $enableuserratelimit;
-
-    /** @var int The user rate limit. */
-    private int $userratelimit;
-
-    /**
-     * Class constructor.
-     */
-    public function __construct() {
-        // Basic auth enabled.
-        $this->basicauthenabled = get_config('aiprovider_ollama', 'enablebasicauth');
-        // Get basic auth username from config.
-        $this->username = get_config('aiprovider_ollama', 'username');
-        // Get basic auth password from config.
-        $this->password = get_config('aiprovider_ollama', 'password');
-        // Get global rate limit from config.
-        $this->enableglobalratelimit = get_config('aiprovider_ollama', 'enableglobalratelimit');
-        $this->globalratelimit = get_config('aiprovider_ollama', 'globalratelimit');
-        // Get user rate limit from config.
-        $this->enableuserratelimit = get_config('aiprovider_ollama', 'enableuserratelimit');
-        $this->userratelimit = get_config('aiprovider_ollama', 'userratelimit');
-    }
-
-    /**
-     * Get the list of actions that this provider supports.
-     *
-     * @return array An array of action class names.
-     */
-    public function get_action_list(): array {
+    #[\Override]
+    public static function get_action_list(): array {
         return [
             \core_ai\aiactions\generate_text::class,
             \core_ai\aiactions\summarise_text::class,
         ];
     }
 
+    #[\Override]
+    public static function get_action_settings(
+        string $action,
+        array $customdata = [],
+    ): action_settings_form|bool {
+        $actionname = substr($action, (strrpos($action, '\\') + 1));
+        $customdata['actionname'] = $actionname;
+        $customdata['action'] = $action;
+        $customdata['providername'] = 'aiprovider_ollama';
+        if ($actionname === 'generate_text' || $actionname === 'summarise_text') {
+            return new form\action_generate_text_form(customdata: $customdata);
+        }
 
-    /**
-     * Update a request to add any headers required by the provider.
-     *
-     * @param \Psr\Http\Message\RequestInterface $request
-     * @return \Psr\Http\Message\RequestInterface
-     */
+        return false;
+    }
+
+    #[\Override]
     public function add_authentication_headers(RequestInterface $request): RequestInterface {
-        if (!$this->basicauthenabled) {
+        if (empty($this->config['basicauthenabled'])) {
             return $request;
         } else {
-            // Add the Authorization header for basic auth
-            $authHeader = 'Basic ' . base64_encode($this->username . ':' . $this->password);
-            return $request
-                ->withAddedHeader('Authorization', $authHeader);
+            // Add the Authorization header for basic auth.
+            $authheader = 'Basic ' . base64_encode($this->config['username'] . ':' . $this->config['password']);
+            return $request->withAddedHeader('Authorization', $authheader);
         }
     }
 
-    /**
-     * Check if the request is allowed by the rate limiter.
-     *
-     * @param aiactions\base $action The action to check.
-     * @return array|bool True on success, array of error details on failure.
-     */
-    public function is_request_allowed(aiactions\base $action): array|bool {
-        $ratelimiter = \core\di::get(rate_limiter::class);
-        $component = \core\component::get_component_from_classname(get_class($this));
-
-        // Check the user rate limit.
-        if ($this->enableuserratelimit) {
-            if (!$ratelimiter->check_user_rate_limit(
-                component: $component,
-                ratelimit: $this->userratelimit,
-                userid: $action->get_configuration('userid')
-            )) {
-                return [
-                    'success' => false,
-                    'errorcode' => 429,
-                    'errormessage' => 'User rate limit exceeded',
-                ];
-            }
-        }
-
-        // Check the global rate limit.
-        if ($this->enableglobalratelimit) {
-            if (!$ratelimiter->check_global_rate_limit(
-                component: $component,
-                ratelimit: $this->globalratelimit
-            )) {
-                return [
-                    'success' => false,
-                    'errorcode' => 429,
-                    'errormessage' => 'Global rate limit exceeded',
-                ];
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Get any action settings for this provider.
-     *
-     * @param string $action The action class name.
-     * @param \admin_root $ADMIN The admin root object.
-     * @param string $section The section name.
-     * @param bool $hassiteconfig Whether the current user has moodle/site:config capability.
-     * @return array An array of settings.
-     */
-    public function get_action_settings(
-        string $action,
-        \admin_root $ADMIN,
-        string $section,
-        bool $hassiteconfig
-    ): array {
-        $actionname =  substr($action, (strrpos($action, '\\') + 1));
-        $settings = [];
+    #[\Override]
+    public static function get_action_setting_defaults(string $action): array {
+        $actionname = substr($action, (strrpos($action, '\\') + 1));
+        $customdata = [
+            'actionname' => $actionname,
+            'action' => $action,
+            'providername' => 'aiprovider_ollama',
+        ];
         if ($actionname === 'generate_text' || $actionname === 'summarise_text') {
-            // Add the model setting.
-            $settings[] = new \admin_setting_configtext(
-                "aiprovider_ollama/action_{$actionname}_model",
-                new \lang_string("action:{$actionname}:model", 'aiprovider_ollama'),
-                new \lang_string("action:{$actionname}:model_desc", 'aiprovider_ollama'),
-                'llama3.1:8b',
-                PARAM_TEXT,
-            );
-            // Add system instruction settings.
-            $settings[] = new \admin_setting_configtextarea(
-                "aiprovider_ollama/action_{$actionname}_systeminstruction",
-                new \lang_string("action:{$actionname}:systeminstruction", 'aiprovider_ollama'),
-                new \lang_string("action:{$actionname}:systeminstruction_desc", 'aiprovider_ollama'),
-                $action::get_system_instruction(),
-                PARAM_TEXT
-            );
+            $mform = new form\action_generate_text_form(customdata: $customdata);
+            return $mform->get_defaults();
         }
 
-        return $settings;
+        return [];
+    }
+
+    #[\Override]
+    public function is_provider_configured(): bool {
+        return !empty($this->config['endpoint']);
     }
 }
