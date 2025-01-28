@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,22 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin strings are defined here.
+ * Capabilities for the tiny_html plugin.
  *
- * @package     tiny_html
- * @category    string
- * @copyright   2023 Matt Porritt <matt.porritt@moodle.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tiny_html
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['html:use'] = 'Use TinyMCE HTML';
-$string['pluginname'] = 'HTML';
-$string['privacy:metadata'] = 'The HTML formatter plugin for TinyMCE does not store any personal data.';
-
-// Deprecated since Moodle 4.5.
-$string['helplinktext'] = 'HTML format helper';
+$capabilities = [
+    'tiny/html:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];
