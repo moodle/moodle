@@ -119,11 +119,11 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $listing = core_course_category::top()->get_children();
 
-        $attributes = array(
-                'class' => 'ms-1 list-unstyled',
-                'role' => 'tree',
-                'aria-labelledby' => 'category-listing-title'
-        );
+        $attributes = [
+            'class' => 'ms-1 list-unstyled list-group',
+            'role' => 'tree',
+            'aria-labelledby' => 'category-listing-title',
+        ];
 
         $html  = html_writer::start_div('category-listing card w-100');
         $html .= html_writer::tag('h3', get_string('categories'),
@@ -525,7 +525,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('card-body');
         $html .= $this->course_listing_actions($category, $course, $perpage);
         $html .= $this->listing_pagination($category, $page, $perpage, false, $viewmode);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml course-list'));
+        $html .= html_writer::start_tag('ul', ['class' => 'course-list list-group', 'role' => 'list']);
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
