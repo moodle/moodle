@@ -51,11 +51,12 @@ class core_shutdown_manager {
         self::$registered = true;
         register_shutdown_function(array('core_shutdown_manager', 'shutdown_handler'));
 
-        // Signal handlers should only be used when dealing with a CLI script.
-        // In the case of PHP called in a web server the server is the owning process and should handle the signal chain
-        // properly itself.
+        // Signal handlers are recommended for the best possible shutdown handling.
+        // They require the 'pcntl' extension to be loaded and the following functions to be available:
+        // 'pcntl_async_signals'
+        // 'pcntl_signal'
         // The 'pcntl' extension is optional and not available on Windows.
-        if (CLI_SCRIPT && extension_loaded('pcntl') && function_exists('pcntl_async_signals')) {
+        if (extension_loaded('pcntl') && function_exists('pcntl_async_signals')) {
             // We capture and handle SIGINT (Ctrl+C) and SIGTERM (termination requested).
             pcntl_async_signals(true);
             pcntl_signal(SIGINT, ['core_shutdown_manager', 'signal_handler']);
