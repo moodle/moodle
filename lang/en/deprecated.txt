@@ -180,3 +180,4 @@ globalratelimit_desc,aiprovider_openai
 orgid_desc,aiprovider_openai
 userratelimit,aiprovider_openai
 userratelimit_desc,aiprovider_openai
+cc_import_req_php5,core_imscc

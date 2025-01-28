@@ -253,11 +253,8 @@ class converter implements \core_files\converter_interface {
      * @param   string $to The destination type
      * @return  bool
      */
-    public static function supports($from, $to) {
-        // This is not a one-liner because of php 5.6.
-        $imports = self::$imports;
-        $exports = self::$exports;
-        return isset($imports[$from]) && isset($exports[$to]);
+    public static function supports($from, $to): bool {
+        return isset(self::$imports[$from]) && isset(self::$exports[$to]);
     }
 
     /**

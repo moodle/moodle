@@ -60,11 +60,6 @@ final class variablesubstituter_test extends \advanced_testcase {
     }
 
     public function test_division_by_zero_expression(): void {
-
-        if (intval(PHP_VERSION) < 7) {
-            $this->markTestSkipped('Division by zero triggers a PHP warning before PHP 7.');
-        }
-
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 0), '.');
         $this->expectException(\moodle_exception::class);
         $vs->calculate('{a} / {b}');

@@ -352,10 +352,6 @@ class S3
 	{
 		if (self::$__signingKeyResource !== false)
 		{
-			// TODO: Remove this block once PHP 8.0 becomes required.
-			if (PHP_MAJOR_VERSION < 8) {
-				openssl_free_key(self::$__signingKeyResource);
-			}
 			self::$__signingKeyResource = null;
 		}
 	}

@@ -68,9 +68,6 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @return bool
      */
     public function is_ready() {
-        if (version_compare(phpversion(), '7.0.0') < 0) {
-            return get_string('errorphp7required', 'mlbackend_php');
-        }
         return true;
     }
 
