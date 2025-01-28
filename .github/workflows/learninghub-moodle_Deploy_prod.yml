@@ -65,11 +65,6 @@ jobs:
       #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
       #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
 
-      - name: Unlock Terraform state if locked
-        run: |
-          cd Terraform/prod
-          terraform force-unlock -force 5012bec5-af98-0230-4f95-63e51573fdf9
-
       - name: 'Terraform apply'
         id: apply
         run: |
@@ -85,7 +80,7 @@ jobs:
             -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
             -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
             # -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
-            -var="ClusterNodeCount=${{ steps.evaluate_cluster_node_count.outputs.clusternodecount }}"
+            -var="ClusterNodeCount=${{ steps.evaluate_cluster_node_count.outputs.clusternodecount }}" \
             -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
             -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
             -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
