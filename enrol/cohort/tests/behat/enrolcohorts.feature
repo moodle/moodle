@@ -110,3 +110,26 @@ Feature: Cohort enrolment management
     And I set the field "groups[]" to "Beta2 cohort (2)"
     Then the "members" select box should contain "Bianca McAfee (s3@example.com)"
     And the "members" select box should contain "Abigail Wyatt (s5@example.com)"
+
+  @javascript
+  Scenario: Editing a cohort enrolment method's role should change participants' role
+    Given the following "users" exist:
+      | username | firstname | lastname | email          |
+      | s1       | Sandra    | Cole     | s1@example.com |
+    And the following "cohort members" exist:
+      | user | cohort |
+      | s1   | A1     |
+    When I log in as "teacher001"
+    And I add "Cohort sync" enrolment method in "Course 001" with:
+      | Cohort | Alpha1 |
+    And I should see "Cohort sync (Alpha1 - Student)"
+    And I navigate to course participants
+    And I should see "Student" in the "Sandra Cole" "table_row"
+    And I am on the "Course 001" "enrolment methods" page
+    And I click on "Edit" "link" in the "Alpha1" "table_row"
+    And I set the field "Assign role" to "Non-editing teacher"
+    And I click on "Save" "button"
+    Then I should see "Cohort sync (Alpha1 - Non-editing teacher)"
+    And I navigate to course participants
+    And I should see "Non-editing teacher" in the "Sandra Cole" "table_row"
+    And I should not see "Student" in the "Sandra Cole" "table_row"
