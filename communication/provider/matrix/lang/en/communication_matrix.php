@@ -23,10 +23,10 @@
  */
 
 $string['cachedef_serverversions'] = 'Matrix server version information for running servers';
-$string['matrixhomeservername'] = 'Homeserver Name';
+$string['matrixhomeservername'] = 'Homeserver name';
 $string['matrixhomeservername_desc'] = 'The part after <code>@user:</code> in your Matrix ID (e.g. <code>example.com</code> in <code>@user:example.com</code>)';
 $string['matrixhomeserverurl'] = 'Homeserver URL';
-$string['matrixhomeserverurl_desc'] = 'Server URL for connecting and creating accounts (e.g., https://matrix.example.com)';
+$string['matrixhomeserverurl_desc'] = 'Server URL for connecting and creating accounts e.g. https://matrix.example.com.';
 $string['matrixaccesstoken'] = 'Access token';
 $string['matrixaccesstoken_desc'] = 'Access token for the account which will perform actions on the homeserver.';
 $string['matrixelementurl'] = 'Element web URL';

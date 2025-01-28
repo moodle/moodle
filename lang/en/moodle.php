@@ -1517,20 +1517,18 @@ $string['newuser'] = 'New user';
 $string['newusernewpasswordsubj'] = 'New user account';
 $string['newusernewpasswordtext'] = 'Hi {$a->firstname},
 
-A new account has been created for you at \'{$a->sitename}\'
-and you have been issued with a new temporary password.
+An account has been created for you at \'{$a->sitename}\'.
 
-Your login information is:
    username: {$a->username}
    password: {$a->newpassword}
-             (you will have to change your password
-              when you log in for the first time)
+
+(You will be prompted to change your password when you log in for the first time.)
 
 To start using \'{$a->sitename}\', log in at
    {$a->link}
 
-If you need help, you can contact the site administrator,
-{$a->admin}';
+If you need help, contact the site administrator,
+{$a->signoff}';
 $string['newusers'] = 'New users';
 $string['newwindow'] = 'New window';
 $string['next'] = 'Next';

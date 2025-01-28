@@ -24,7 +24,7 @@
 
 $string['helplinktext'] = 'H5P helper';
 $string['modaltitle'] = 'Insert H5P content';
-$string['buttontitle'] = 'Configure H5P content';
+$string['buttontitle'] = 'Insert H5P content';
 $string['insert'] = 'Insert H5P content';
 $string['pluginname'] = 'Insert H5P';
 $string['browserepositories'] = 'Browse repositories...';
