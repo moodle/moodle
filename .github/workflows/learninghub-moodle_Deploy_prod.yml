@@ -8,7 +8,7 @@ on:
       cluster_node_count:
         description: 'The number of nodes to create in the AKS cluster'
         required: false
-        default: 2
+        default: 5
   
 permissions:
   id-token: write
@@ -64,6 +64,17 @@ jobs:
       #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
       #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
       #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+      - name: Unlock Terraform state if locked
+        if: failure()
+        run: |
+          if [ -f .terraform.tfstate.lock.info ]; then
+            LOCK_ID=$(jq -r '.ID' .terraform.tfstate.lock.info)
+            terraform force-unlock $LOCK_ID
+            echo "Unlocked Terraform state with ID: $LOCK_ID"
+          else
+            echo "No Terraform state lock found."
+          fi
 
       - name: 'Terraform apply'
         id: apply
