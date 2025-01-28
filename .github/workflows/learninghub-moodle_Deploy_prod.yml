@@ -2,8 +2,14 @@ name: Deploy LearningHub-Moodle to Production
 on:
   push:
     branches:
+      - ImplementCI-CDPipeline
       - main
   workflow_dispatch:
+    inputs:
+      cluster_node_count:
+        description: 'The number of nodes to create in the AKS cluster'
+        required: false
+        default: 2
   
 permissions:
   id-token: write
@@ -33,6 +39,12 @@ jobs:
         run: |
           cd Terraform/prod
           terraform init "-backend-config=backend-prod.tfvars"
+
+      - name: Evaluate cluster node count
+        id: evaluate_cluster_node_count
+        run: echo "::set-output name=clusternodecount::$(if [-z "${{ inputs.cluster_node_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_COUNT }}; else echo ${{ inputs.cluster_node_count }}; fi)"
+        shell: bash
+
 
       # - name: 'Terraform destroy'
       #   id: destroy
@@ -68,7 +80,8 @@ jobs:
             -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
             -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
             -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
-            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            # -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            -var="ClusterNodeCount=${{ steps.evaluate_cluster_node_count.outputs.clusternodecount }}"
             -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
             -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
             -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
