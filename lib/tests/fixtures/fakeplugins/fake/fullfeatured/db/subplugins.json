@@ -1,0 +1,11 @@
+{
+  "subplugintypes": {
+    "fullsubtype": "fullsubtype"
+  },
+  "deprecatedsubplugintypes": {
+    "fulldeprecatedsubtype": "fulldeprecatedsubtype"
+  },
+  "deletedsubplugintypes": {
+    "fulldeletedsubtype": "fulldeletedsubtype"
+  }
+}

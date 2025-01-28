@@ -7466,6 +7466,11 @@ function component_callback_exists($component, $function) {
     list($type, $name) = core_component::normalize_component($component);
     $component = $type . '_' . $name;
 
+    // Deprecated plugin type: callbacks not supported.
+    if (\core_component::is_plugintype_in_deprecation($type)) {
+        return false;
+    }
+
     $oldfunction = $name.'_'.$function;
     $function = $component.'_'.$function;
 
@@ -7512,6 +7517,15 @@ function component_class_callback($classname, $methodname, array $params, $defau
 
     if (!method_exists($classname, $methodname)) {
         return $default;
+    }
+
+    // If component can be found (flat class names not supported), and it's a deprecated plugintype, callbacks are unsupported.
+    $component = \core_component::get_component_from_classname($classname);
+    if ($component) {
+        [$type] = \core_component::normalize_component($component);
+        if (\core_component::is_plugintype_in_deprecation($type)) {
+            return $default;
+        }
     }
 
     $fullfunction = $classname . '::' . $methodname;

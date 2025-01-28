@@ -244,6 +244,11 @@ class manager {
     public static function queue_adhoc_task(adhoc_task $task, $checkforexisting = false) {
         global $DB;
 
+        // Don't queue tasks for deprecated components.
+        if (self::task_component_is_deprecated($task)) {
+            return false;
+        }
+
         if ($userid = $task->get_userid()) {
             // User found. Check that they are suitable.
             \core_user::require_active_user(\core_user::get_user($userid, '*', MUST_EXIST), true, true);
@@ -640,6 +645,12 @@ class manager {
 
         foreach ($records as $record) {
             $task = self::scheduled_task_from_record($record);
+
+            // Tasks belonging to deprecated plugin types are excluded.
+            if (self::task_component_is_deprecated($task)) {
+                continue;
+            }
+
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
             if ($task) {
                 $tasks[] = $task;
@@ -990,6 +1001,22 @@ class manager {
     }
 
     /**
+     * Helper to check whether a task's component is deprecated.
+     *
+     * @param task_base $task the task instance
+     * @return bool true if deprecated, false otherwise.
+     */
+    private static function task_component_is_deprecated(task_base $task): bool {
+        // Only supports plugin type deprecation. Info will be null for other, non-plugin components.
+        if ($info = \core_plugin_manager::instance()->get_plugin_info($task->get_component())) {
+            if ($info->is_deprecated() || $info->is_deleted()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * This function will dispatch the next scheduled task in the queue. The task will be handed out
      * with an open lock - possibly on the entire cron process. Make sure you call either
      * {@link scheduled_task_failed} or {@link scheduled_task_complete} to release the lock and reschedule the task.
@@ -1014,8 +1041,8 @@ class manager {
 
             $task = self::scheduled_task_from_record($record);
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
-            // Also check to see if task is disabled or enabled after applying overrides.
-            if (!$task || $task->get_disabled()) {
+            // Also check to see if task is disabled or enabled after applying overrides, or if the plugintype is deprecated.
+            if (!$task || $task->get_disabled() || self::task_component_is_deprecated($task)) {
                 continue;
             }
 

@@ -468,7 +468,10 @@ final class adhoc_task_test extends \advanced_testcase {
         $task = new \mod_fake\task\adhoc_component_task();
 
         manager::queue_adhoc_task($task);
-        $this->assertDebuggingCalled('Component not set and the class namespace does not match a valid component (mod_fake).');
+        $this->assertdebuggingcalledcount(
+            2,
+            array_fill(0, 2, 'Component not set and the class namespace does not match a valid component (mod_fake).'),
+        );
     }
 
     /**

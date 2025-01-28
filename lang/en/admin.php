@@ -515,6 +515,7 @@ $string['defaulthomepage'] = 'Start page for users';
 $string['defaultrequestcategory'] = 'Default category for course requests';
 $string['defaultsettinginfo'] = 'Default: {$a}';
 $string['defaultuserroleid'] = 'Default role for all users';
+$string['deletedplugintypesdetected'] = 'A deleted plugin, \'{$a}\', was detected. This should have been migrated/uninstalled during the deprecation window. This is now an unsupported plugin type and installation/upgrade cannot continue until this plugin is uninstalled.';
 $string['deleteincompleteusers'] = 'Delete incomplete users after';
 $string['deleteunconfirmed'] = 'Delete not fully setup users after';
 $string['deleteuser'] = 'Delete user';

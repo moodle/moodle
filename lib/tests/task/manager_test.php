@@ -347,4 +347,212 @@ final class manager_test extends \advanced_testcase {
 
         $this->resetAfterTest();
     }
+
+    /**
+     * Test verifying \core\task\manager behaviour for scheduled tasks when dealing with deprecated plugin types.
+     *
+     * This only verifies that existing tasks will not be listed, or returned for execution via existing APIs, like:
+     * - {@see \core\task\manager::get_all_scheduled_tasks}
+     * - {@see \core\task\manager::get_next_scheduled_task}
+     *
+     * I.e. Nothing prevents task->execute() from running if called directly.
+     *
+     * @return void
+     */
+    public function test_scheduled_tasks_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+        global $DB, $CFG;
+
+        $fakepluginroot = $CFG->libdir . '/tests/fixtures/fakeplugins/fake/fullfeatured';
+        require_once($fakepluginroot . '/classes/plugininfo/fullsubtype.php');
+        require_once($fakepluginroot . '/classes/plugininfo/fulldeprecatedsubtype.php');
+        require_once($fakepluginroot . '/fullsubtype/example/classes/task/scheduled_test.php');
+        require_once($fakepluginroot . '/fulldeprecatedsubtype/test/classes/task/scheduled_test.php');
+
+        // Inject stub plugininfo instances into a stub plugin manager, then inject that into the static cache via reflection.
+        // When the manager code calls core_plugin_manager::instance(), it'll get back the stub.
+        $stubavailableplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fullsubtype::class);
+        $stubavailableplugininfo->method('is_deprecated')->willReturn(false);
+        $stubavailableplugininfo->component = "fullsubtype_example";
+        $stubdeprecatedplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fulldeprecatedsubtype::class);
+        $stubdeprecatedplugininfo->method('is_deprecated')->willReturn(true);
+        $stubdeprecatedplugininfo->component = "fulldeprecatedsubtype_test";
+
+        $stubpluginman = $this->createStub(\core_plugin_manager::class);
+        $stubpluginman
+            ->method('get_plugin_info')
+            ->will($this->returnValueMap([
+                ['fullsubtype_example', $stubavailableplugininfo],
+                ['fulldeprecatedsubtype_test', $stubdeprecatedplugininfo],
+            ]));
+
+        $pluginman = new \ReflectionClass(\core_plugin_manager::class);
+        $pluginman->setStaticPropertyValue('singletoninstance', $stubpluginman);
+
+        $DB->delete_records('task_scheduled');
+
+        // Non-deprecated plugin type: is listed and is returned during scheduling.
+        $scheduledtask = new \fullsubtype_example\task\scheduled_test();
+        $DB->insert_record('task_scheduled', \core\task\manager::record_from_scheduled_task($scheduledtask));
+        $records = $DB->get_records('task_scheduled');
+        $this->assertCount(1, $records);
+
+        $this->assertInstanceOf(
+            \fullsubtype_example\task\scheduled_test::class,
+            \core\task\manager::get_all_scheduled_tasks()[0]
+        );
+        $now = time();
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertInstanceOf(\fullsubtype_example\task\scheduled_test::class, $task);
+        manager::scheduled_task_complete($task);
+
+        // Deprecated plugin type: isn't listed and isn't returned during scheduling.
+        $DB->delete_records('task_scheduled');
+        $scheduledtask = new \fulldeprecatedsubtype_test\task\scheduled_test();
+        $DB->insert_record('task_scheduled', \core\task\manager::record_from_scheduled_task($scheduledtask));
+        $records = $DB->get_records('task_scheduled');
+        $this->assertCount(1, $records);
+
+        $this->assertEmpty(\core\task\manager::get_all_scheduled_tasks());
+        $this->assertNull(\core\task\manager::get_next_scheduled_task($now));
+
+        // Task can still be executed directly.
+        $this->expectExceptionMessage('task->execute() called');
+        $scheduledtask->execute();
+    }
+
+    /**
+     * Test verifying \core\task\manager behaviour for adhoc tasks when dealing with deprecated plugin types.
+     *
+     * This only verifies that new tasks cannot be queued via:
+     * - {@see \core\task\manager::queue_adhoc_task}
+     * - {@see \core\task\manager::get_next_adhoc_task()}
+     *
+     * I.e. Nothing prevents task->execute() from running if called directly.
+     *
+     * @return void
+     */
+    public function test_queue_adhoc_task_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+        global $DB, $CFG;
+
+        $fakepluginroot = $CFG->libdir . '/tests/fixtures/fakeplugins/fake/fullfeatured';
+        require_once($fakepluginroot . '/classes/plugininfo/fullsubtype.php');
+        require_once($fakepluginroot . '/classes/plugininfo/fulldeprecatedsubtype.php');
+        require_once($fakepluginroot . '/classes/plugininfo/fulldeletedsubtype.php');
+        require_once($fakepluginroot . '/fullsubtype/example/classes/task/adhoc_test.php');
+        require_once($fakepluginroot . '/fulldeprecatedsubtype/test/classes/task/adhoc_test.php');
+        require_once($fakepluginroot . '/fulldeletedsubtype/demo/classes/task/adhoc_test.php');
+
+        // Inject stub plugininfo instances into a stub plugin manager, then inject that into the static cache via reflection.
+        // When the manager code calls core_plugin_manager::instance(), it'll get back the stub.
+        $stubavailableplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fullsubtype::class);
+        $stubavailableplugininfo->method('is_deprecated')->willReturn(false);
+        $stubavailableplugininfo->method('is_deleted')->willReturn(false);
+        $stubavailableplugininfo->component = "fullsubtype_example";
+        $stubdeprecatedplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fulldeprecatedsubtype::class);
+        $stubdeprecatedplugininfo->method('is_deprecated')->willReturn(true);
+        $stubdeprecatedplugininfo->method('is_deleted')->willReturn(false);
+        $stubdeprecatedplugininfo->component = "fulldeprecatedsubtype_test";
+        $stubdeletedplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fulldeletedsubtype::class);
+        $stubdeletedplugininfo->method('is_deprecated')->willReturn(false);
+        $stubdeletedplugininfo->method('is_deleted')->willReturn(true);
+        $stubdeletedplugininfo->component = "fulldeletedsubtype_demo";
+        $stubpluginman = $this->createStub(\core_plugin_manager::class);
+        $stubpluginman->method('get_plugin_info')
+            ->will($this->returnValueMap([
+                ['fullsubtype_example', $stubavailableplugininfo],
+                ['fulldeprecatedsubtype_test', $stubdeprecatedplugininfo],
+                ['fulldeletedsubtype_demo', $stubdeletedplugininfo],
+            ]));
+        $pluginmanrc = new \ReflectionClass(\core_plugin_manager::class);
+        $pluginmanrc->setStaticPropertyValue('singletoninstance', $stubpluginman);
+
+        $task1 = new \fullsubtype_example\task\adhoc_test(); // Available plugin type.
+        $task2 = new \fulldeprecatedsubtype_test\task\adhoc_test(); // Deprecated plugin type.
+        $task3 = new \fulldeletedsubtype_demo\task\adhoc_test(); // Deleted plugin type.
+
+        $DB->delete_records('task_adhoc');
+
+        // Task from a non-deprecated plugin type can be queued.
+        $this->assertIsInt(manager::queue_adhoc_task($task1));
+        $now = time();
+        $classname = get_class($task1);
+        $taskfromqueue = manager::get_next_adhoc_task($now, true, $classname);
+        $this->assertNotNull($taskfromqueue);
+        $taskfromqueue->execute();
+        manager::adhoc_task_complete($taskfromqueue);
+
+        // Task from a deprecated plugin type cannot be queued.
+        $this->assertTrue(\core_plugin_manager::instance()->get_plugin_info('fulldeprecatedsubtype_test')->is_deprecated());
+        $this->assertFalse(manager::queue_adhoc_task($task2));
+        $classname = get_class($task2);
+        $this->assertNull(manager::get_next_adhoc_task($now, true, $classname));
+
+        // Task from a deleted plugin type cannot be queued.
+        $this->assertTrue(\core_plugin_manager::instance()->get_plugin_info('fulldeletedsubtype_demo')->is_deleted());
+        $this->assertFalse(manager::queue_adhoc_task($task3));
+        $classname = get_class($task3);
+        $this->assertNull(manager::get_next_adhoc_task($now, true, $classname));
+    }
+
+    /**
+     * Test verifying \core\task\manager can still return and run adhoc tasks queued prior to plugin deprecation.
+     *
+     *  This only verifies that existing tasks can be fetched and run via:
+     *  - {@see \core\task\manager::get_next_adhoc_task()}
+     *
+     * @return void
+     */
+    public function test_run_existing_adhoc_task_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+        global $DB, $CFG;
+
+        $fakepluginroot = $CFG->libdir . '/tests/fixtures/fakeplugins/fake/fullfeatured';
+        require_once($fakepluginroot . '/classes/plugininfo/fullsubtype.php');
+        require_once($fakepluginroot . '/fullsubtype/example/classes/task/adhoc_test.php');
+
+        // Inject stub plugininfo instances into a stub plugin manager, then inject that into the static cache via reflection.
+        // When the task code calls core_plugin_manager::instance(), it'll get back the stub.
+        $stubavailableplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fullsubtype::class);
+        $stubavailableplugininfo->method('is_deprecated')->willReturn(false);
+        $stubavailableplugininfo->component = "fullsubtype_example";
+        $stubpluginman = $this->createStub(\core_plugin_manager::class);
+        $stubpluginman
+            ->method('get_plugin_info')
+            ->will($this->returnValueMap([
+                ['fullsubtype_example', $stubavailableplugininfo],
+            ]));
+        $pluginmanrc = new \ReflectionClass(\core_plugin_manager::class);
+        $pluginmanrc->setStaticPropertyValue('singletoninstance', $stubpluginman);
+
+        $task1 = new \fullsubtype_example\task\adhoc_test(); // An available plugin.
+
+        $DB->delete_records('task_adhoc');
+
+        // Queue the task for the available plugin.
+        $this->assertIsInt(manager::queue_adhoc_task($task1));
+        $this->assertEquals(1, $DB->count_records('task_adhoc'));
+
+        // Now, deprecate the plugin type by redefining the stubs and reinjecting into the stub plugin manager.
+        $stubdeprecatedplugininfo = $this->createStub(\fake_fullfeatured\plugininfo\fullsubtype::class);
+        $stubdeprecatedplugininfo->method('is_deprecated')->willReturn(true);
+        $stubdeprecatedplugininfo->component = "fullsubtype_example";
+        $stubpluginman = $this->createStub(\core_plugin_manager::class);
+        $stubpluginman
+            ->method('get_plugin_info')
+            ->will($this->returnValueMap([
+                ['fullsubtype_example', $stubdeprecatedplugininfo],
+            ]));
+        $pluginmanrc->setStaticPropertyValue('singletoninstance', $stubpluginman);
+
+        // Assert prior-queued tasks can be fetched and run.
+        $this->assertTrue(\core_plugin_manager::instance()->get_plugin_info('fullsubtype_example')->is_deprecated());
+        $classname = get_class($task1);
+        $now = time();
+        $taskfromqueue = manager::get_next_adhoc_task($now, true, $classname);
+        $this->assertNotNull($taskfromqueue);
+        $taskfromqueue->execute();
+        manager::adhoc_task_complete($taskfromqueue);
+    }
 }

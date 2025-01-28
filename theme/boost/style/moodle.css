@@ -26849,7 +26849,8 @@ img.icon {
 #page-admin-plugins .updateavailableinstallall input {
   margin: 0 3px 5px 0;
 }
-#page-admin-plugins #plugins-control-panel .status-missing td {
+#page-admin-plugins #plugins-control-panel .status-missing td,
+#page-admin-plugins #plugins-control-panel .deprecatedtype td {
   background-color: #fcefdc;
 }
 #page-admin-plugins #plugins-control-panel .pluginname .componentname {
@@ -26873,6 +26874,7 @@ img.icon {
 }
 
 #plugins-check-page #plugins-check .status-missing td,
+#plugins-check-page #plugins-check .deprecatedtype td,
 #plugins-check-page #plugins-check .status-downgrade td {
   background-color: #f4d6d2;
 }

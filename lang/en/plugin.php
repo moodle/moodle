@@ -47,6 +47,7 @@ $string['dependencymissing'] = 'Missing';
 $string['dependencyunavailable'] = 'Unavailable';
 $string['dependencyupload'] = 'Upload';
 $string['dependencyuploadmissing'] = 'Upload ZIP files';
+$string['deprecated_type'] = "Deprecated plugin type";
 $string['displayname'] = 'Plugin name';
 $string['err_response_curl'] = 'Unable to fetch available updates data - unexpected cURL error.';
 $string['err_response_format_version'] = 'Unexpected version of the response format. Please try to re-check for available updates.';

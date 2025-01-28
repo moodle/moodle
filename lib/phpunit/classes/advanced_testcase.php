@@ -772,22 +772,25 @@ abstract class advanced_testcase extends base_testcase {
      *
      * @param string $plugintype The name of the plugintype
      * @param string $path The path to the plugintype's root
+     * @param bool $deprecated whether to add the plugintype as a deprecated plugin type.
      */
     protected function add_mocked_plugintype(
         string $plugintype,
         string $path,
+        bool $deprecated = false,
     ): void {
         require_phpunit_isolation();
 
         $mockedcomponent = new \ReflectionClass(\core_component::class);
-        $plugintypes = $mockedcomponent->getStaticPropertyValue('plugintypes');
+        $propertyname = $deprecated ? 'deprecatedplugintypes' : 'plugintypes';
+        $plugintypes = $mockedcomponent->getStaticPropertyValue($propertyname);
 
         if (array_key_exists($plugintype, $plugintypes)) {
             throw new \coding_exception("The plugintype '{$plugintype}' already exists.");
         }
 
         $plugintypes[$plugintype] = $path;
-        $mockedcomponent->setStaticPropertyValue('plugintypes', $plugintypes);
+        $mockedcomponent->setStaticPropertyValue($propertyname, $plugintypes);
 
         $this->resetDebugging();
     }

@@ -310,9 +310,9 @@ class plugin_manager {
 
         $this->presentplugins = [];
 
-        $plugintypes = core_component::get_plugin_types();
-        foreach ($plugintypes as $type => $typedir) {
-            $plugs = core_component::get_plugin_list($type);
+        $allplugintypes = core_component::get_all_plugin_types();
+        foreach ($allplugintypes as $type => $typedir) {
+            $plugs = core_component::get_all_plugins_list($type);
             foreach ($plugs as $plug => $fullplug) {
                 $module = new stdClass();
                 $plugin = new stdClass();
@@ -371,21 +371,27 @@ class plugin_manager {
     /**
      * Returns a tree of known plugins and information about them
      *
+     * @param bool $includeindeprecation whether to include plugins which are in deprecation (deprecated or deleted status).
      * @return array 2D array. The first keys are plugin type names (e.g. qtype);
      *      the second keys are the plugin local name (e.g. multichoice); and
      *      the values are the corresponding objects extending {@link \core\plugininfo\base}
      */
-    public function get_plugins() {
+    public function get_plugins(bool $includeindeprecation = false) {
         $this->init_pluginsinfo_property();
 
         // Make sure all types are initialised.
         foreach ($this->pluginsinfo as $plugintype => $list) {
             if ($list === null) {
-                $this->get_plugins_of_type($plugintype);
+                $this->get_plugins_of_type($plugintype, $includeindeprecation);
             }
         }
 
-        return $this->pluginsinfo;
+        if ($includeindeprecation) {
+            return $this->pluginsinfo;
+        }
+        return array_filter($this->pluginsinfo, function($key) {
+            return !core_component::is_plugintype_in_deprecation($key);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -395,14 +401,16 @@ class plugin_manager {
      * If the given type is not known, empty array is returned.
      *
      * @param string $type plugin type, e.g. 'mod' or 'workshopallocation'
+     * @param bool $includeindeprecation whether to include plugins which are in deprecation (deprecated or deleted status).
      * @return \core\plugininfo\base[] (string) plugin name => corresponding subclass of {@link \core\plugininfo\base}
      */
-    public function get_plugins_of_type($type) {
+    public function get_plugins_of_type($type, bool $includeindeprecation = false) {
         global $CFG;
 
         $this->init_pluginsinfo_property();
 
-        if (!array_key_exists($type, $this->pluginsinfo)) {
+        $exclude = !$includeindeprecation && core_component::is_plugintype_in_deprecation($type);
+        if (!array_key_exists($type, $this->pluginsinfo) || $exclude) {
             return [];
         }
 
@@ -410,9 +418,9 @@ class plugin_manager {
             return $this->pluginsinfo[$type];
         }
 
-        $types = core_component::get_plugin_types();
+        $allplugintypes = core_component::get_all_plugin_types();
 
-        if (!isset($types[$type])) {
+        if (!isset($allplugintypes[$type])) {
             // Orphaned subplugins!
             $plugintypeclass = static::resolve_plugininfo_class($type);
             $this->pluginsinfo[$type] = $plugintypeclass::get_plugins($type, null, $plugintypeclass, $this);
@@ -420,7 +428,9 @@ class plugin_manager {
         }
 
         $plugintypeclass = static::resolve_plugininfo_class($type);
-        $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass, $this);
+        if (isset($allplugintypes[$type])) {
+            $plugins = $plugintypeclass::get_plugins($type, $allplugintypes[$type], $plugintypeclass, $this);
+        }
         $this->pluginsinfo[$type] = $plugins;
 
         return $this->pluginsinfo[$type];
@@ -435,13 +445,19 @@ class plugin_manager {
         }
         $this->pluginsinfo = [];
 
-        $plugintypes = $this->get_plugin_types();
-
+        // The pluginsinfo instance var contains keys for all plugin types, including those currently in deprecation.
+        // Other methods should filter their returns as needed, based on key checks, or by checking either
+        // $plugininfo->is_deprecated() or $plugininfo->is_deleted().
+        $plugintypes = array_merge(
+            $this->get_plugin_types(),
+            \core_component::get_deprecated_plugin_types(),
+            \core_component::get_deleted_plugin_types()
+        );
         foreach ($plugintypes as $plugintype => $plugintyperootdir) {
             $this->pluginsinfo[$plugintype] = null;
         }
 
-        // Add orphaned subplugin types.
+        // Add orphaned plugins.
         $this->load_installed_plugins();
         foreach ($this->installedplugins as $plugintype => $unused) {
             if (!isset($plugintypes[$plugintype])) {
@@ -457,8 +473,9 @@ class plugin_manager {
      * @return string name of pluginfo class for give plugin type
      */
     public static function resolve_plugininfo_class($type) {
-        $plugintypes = core_component::get_plugin_types();
-        if (!isset($plugintypes[$type])) {
+        $allplugintypes = core_component::get_all_plugin_types();
+
+        if (!isset($allplugintypes[$type])) {
             return '\core\plugininfo\orphaned';
         }
 
@@ -556,7 +573,7 @@ class plugin_manager {
         foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
             foreach (core_component::get_plugin_list($type) as $plugin => $componentdir) {
                 $component = $type . '_' . $plugin;
-                $subplugins = core_component::get_subplugins($component);
+                $subplugins = core_component::get_subplugins($component) ?? [];
                 if (!$subplugins) {
                     continue;
                 }
@@ -578,9 +595,13 @@ class plugin_manager {
      * If the given subplugin type is not actually a subplugin, returns false.
      *
      * @param string $subplugintype the name of subplugin type, eg. workshopform or quiz
+     * @param bool $includedeprecated whether to check deprecated subplugin types.
      * @return false|string the name of the parent plugin, eg. mod_workshop
      */
-    public function get_parent_of_subplugin($subplugintype) {
+    public function get_parent_of_subplugin($subplugintype, bool $includedeprecated = false) {
+        if (!$includedeprecated && core_component::is_plugintype_in_deprecation($subplugintype)) {
+            return false;
+        }
         $parent = core_component::get_subtype_parent($subplugintype);
         if (!$parent) {
             return false;
@@ -657,7 +678,7 @@ class plugin_manager {
      */
     public function get_plugin_info($component) {
         [$type, $name] = core_component::normalize_component($component);
-        $plugins = $this->get_plugins_of_type($type);
+        $plugins = $this->get_plugins_of_type($type, true);
         if (isset($plugins[$name])) {
             return $plugins[$name];
         } else {
@@ -1701,7 +1722,8 @@ class plugin_manager {
     public function get_plugintype_root($plugintype) {
 
         $plugintypepath = null;
-        foreach (core_component::get_plugin_types() as $type => $fullpath) {
+        $allplugintypes = core_component::get_all_plugin_types();
+        foreach ($allplugintypes as $type => $fullpath) {
             if ($type === $plugintype) {
                 $plugintypepath = $fullpath;
                 break;

@@ -17,6 +17,7 @@
 namespace core\hook;
 
 use core\di;
+use core\tests\fake_plugins_test_trait;
 
 /**
  * Hooks tests.
@@ -28,6 +29,9 @@ use core\di;
  * @covers \core\hook\manager
  */
 final class manager_test extends \advanced_testcase {
+
+    use fake_plugins_test_trait;
+
     /**
      * Test public factory method to get hook manager.
      */
@@ -479,6 +483,49 @@ final class manager_test extends \advanced_testcase {
         // Confirm the deprecated class callback is not called, as expected.
         $this->assertNull(component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true));
         $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test verifying that callbacks for deprecated plugins are not returned and hook dispatching won't call into these plugins.
+     *
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_get_callbacks_for_hook_deprecated_plugintype(): void {
+        $this->resetAfterTest();
+
+        // Inject the fixture 'fake' plugin type into component sources, which includes a single 'fake_fullfeatured' plugin.
+        // This 'fake_fullfeatured' plugin is an available plugin at this stage (not yet deprecated).
+        $this->add_full_mocked_plugintype(
+            plugintype: 'fake',
+            path: 'lib/tests/fixtures/fakeplugins/fake',
+        );
+
+        // Force reset the static instance cache \core\hook\manager::$instance so that a fresh instance is instantiated, ensuring
+        // the component lists are re-run and the hook manager can see the injected mock plugin and it's callbacks.
+        // Note: we can't use \core\hook\manager::phpunit_get_instance() because that doesn't load in component callbacks from disk.
+        $hookmanrc = new \ReflectionClass(\core\hook\manager::class);
+        $hookmanrc->setStaticPropertyValue('instance', null);
+        $manager = \core\hook\manager::get_instance();
+
+        // Get all registered callbacks for the hook listened to by the mock plugin (after_course_created).
+        $listeners = $manager->get_callbacks_for_hook(\core_course\hook\after_course_created::class);
+        $componentswithcallbacks = array_column($listeners, 'component');
+
+        // Verify the available mock plugin is returned as a listener.
+        $this->assertContains('fake_fullfeatured', $componentswithcallbacks);
+
+        // Deprecate the 'fake' plugin type.
+        $this->deprecate_full_mocked_plugintype('fake');
+
+        // Force a fresh plugin manager instance, again to ensure the up-to-date component lists are used.
+        $hookmanrc->setStaticPropertyValue('instance', null);
+        $manager = \core\hook\manager::get_instance();
+
+        // And verify the plugin is now not returned as a listener, since it's deprecated.
+        $listeners = $manager->get_callbacks_for_hook(\core_course\hook\after_course_created::class);
+        $componentswithcallbacks = array_column($listeners, 'component');
+        $this->assertNotContains('fake_fullfeatured', $componentswithcallbacks);
     }
 
     /**
