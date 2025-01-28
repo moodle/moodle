@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny text editor Autosave Plugin version file.
+ * Capabilities for the tiny_autosave plugin.
  *
  * @package    tiny_autosave
- * @copyright  2022 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025012300;
-$plugin->requires  = 2024100100;
-$plugin->component = 'tiny_autosave';
+$capabilities = [
+    'tiny/autosave:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

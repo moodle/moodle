@@ -78,3 +78,42 @@ Feature: Tiny editor autosave
     And I click on "New event" "button"
     When I click on "Show more..." "link" in the "New event" "dialogue"
     Then the field "Description" matches value ""
+
+  @javascript
+  Scenario: Permissions can be configured to control access to autosave
+    Given the following "roles" exist:
+      | name           | shortname | description         | archetype      |
+      | Custom teacher | custom1   | Limited permissions | editingteacher |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher3 | Teacher   | 3        | teacher3@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | teacher3 | C1     | custom1 |
+    And the following "activity" exists:
+      | activity | assign          |
+      | course   | C1              |
+      | name     | Test assignment |
+    And the following "permission overrides" exist:
+      | capability        | permission | role    | contextlevel | reference |
+      | tiny/autosave:use | Prohibit   | custom1 | Course       | C1        |
+    # Check plugin access as a role with prohibited permissions.
+    And I log in as "teacher3"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    And I set the field "Activity instructions" to "This is my draft"
+    And I log out
+    And I log in as "teacher3"
+    And I am on the "Test assignment" Activity page
+    When I navigate to "Settings" in current page administration
+    Then the field "Activity instructions" matches value ""
+    # Check plugin access as a role with allowed permissions.
+    And I log in as "teacher1"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    And I set the field "Activity instructions" to "This is my draft"
+    And I log out
+    And I log in as "teacher1"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    And the field "Activity instructions" matches value "This is my draft"
