@@ -67,6 +67,7 @@ jobs:
 
       - name: Unlock Terraform state if locked
         run: |
+          cd Terraform/prod
           terraform force-unlock 5012bec5-af98-0230-4f95-63e51573fdf9
 
       - name: 'Terraform apply'
