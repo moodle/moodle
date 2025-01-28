@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tiny_noautolink', language 'en'.
+ * Capabilities for the tiny_noautolink plugin.
  *
  * @package    tiny_noautolink
- * @copyright  2023 Meirza  <meirza.arson@moodle.com>
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['buttontitle'] = 'No auto-link';
-$string['infoaddsuccess'] = 'Auto-link prevention added.';
-$string['infoemptyselection'] = 'Select text and try again.';
-$string['inforemovesuccess'] = 'Auto-link prevention removed.';
-$string['noautolink:use'] = 'Use TinyMCE no auto-link';
-$string['pluginname'] = 'No auto-link';
-$string['privacy:metadata'] = 'The tiny_noautolink plugin does not store any personal data.';
+defined('MOODLE_INTERNAL') || die();
 
-// Deprecated since Moodle 4.5.
-$string['helplinktext'] = 'No auto-link helper';
-$string['errorinvalidurl'] = 'The selected content is not a URL. Please try again.';
+$capabilities = [
+    'tiny/noautolink:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];
