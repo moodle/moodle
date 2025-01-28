@@ -75,6 +75,7 @@ $string['link'] = 'Link';
 $string['loading'] = 'Preparing the image';
 $string['loop'] = 'Loop';
 $string['managefiles'] = 'Manage files';
+$string['media:use'] = 'Use TinyMCE insert media';
 $string['mediabuttontitle'] = 'Multimedia';
 $string['mediamanagerbuttontitle'] = 'Media manager';
 $string['mediamanagerproperties'] = 'Media manager';

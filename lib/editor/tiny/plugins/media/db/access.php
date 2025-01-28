@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny media plugin version details.
+ * Capabilities for the tiny_media plugin.
  *
  * @package    tiny_media
- * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025012300;
-$plugin->requires  = 2024100100;
-$plugin->component = 'tiny_media';
+$capabilities = [
+    'tiny/media:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];
