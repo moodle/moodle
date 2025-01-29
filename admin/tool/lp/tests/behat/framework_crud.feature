@@ -23,7 +23,7 @@ Feature: Manage competency frameworks
     And I press "Configure scales"
     And I click on "//input[@data-field='tool_lp_scale_default_1']" "xpath_element"
     And I click on "//input[@data-field='tool_lp_scale_proficient_1']" "xpath_element"
-    And I click on "//input[@value='Close']" "xpath_element"
+    And I click on "Save" "button" in the "Default competence scale" "dialogue"
     When I press "Save changes"
     Then I should see "Competency framework created"
     And I should see "Science Year-1"
