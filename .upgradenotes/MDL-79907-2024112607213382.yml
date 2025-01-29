@@ -1,0 +1,10 @@
+issueNumber: MDL-79907
+notes:
+  core_grades:
+    - message: >-
+        Final deprecation of
+          grade_structure::get_element_type_string(),
+          grade_structure::get_element_header(),
+          grade_structure::get_element_icon(),
+          grade_structure::get_activity_link()
+      type: removed

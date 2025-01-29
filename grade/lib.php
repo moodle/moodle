@@ -1434,69 +1434,35 @@ class grade_structure {
     public $items;
 
     /**
-     * Returns icon of element
-     *
-     * @param array &$element An array representing an element in the grade_tree
-     * @param bool  $spacerifnone return spacer if no icon found
-     *
-     * @return string icon or spacer
      * @deprecated since Moodle 4.4 - please use {@see grade_helper::get_element_icon()}
-     * @todo MDL-79907 This will be deleted in Moodle 4.8.
      */
-    public function get_element_icon(&$element, $spacerifnone=false) {
-        debugging('The function get_element_icon() is deprecated, please use grade_helper::get_element_icon() instead.',
-            DEBUG_DEVELOPER);
-        return grade_helper::get_element_icon($element, $spacerifnone);
+    #[\core\attribute\deprecated('grade_helper::get_element_icon', since: '4.4', mdl: 'MDL-77326', final: true)]
+    public function get_element_icon(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Returns the string that describes the type of the element.
-     *
-     * @param array $element An array representing an element in the grade_tree
-     * @return string The string that describes the type of the grade element
      * @deprecated since Moodle 4.4 - please use {@see grade_helper::get_element_type_string()}
-     * @todo MDL-79907 This will be deleted in Moodle 4.8.
      */
-    public function get_element_type_string(array $element): string {
-        debugging('The function get_element_type_string() is deprecated,' .
-            ' please use grade_helper::get_element_type_string() instead.',
-            DEBUG_DEVELOPER);
-        return grade_helper::get_element_type_string($element);
+    #[\core\attribute\deprecated('grade_helper::get_element_type_string', since: '4.4', mdl: 'MDL-77326', final: true)]
+    public function get_element_type_string(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Returns name of element optionally with icon and link
-     *
-     * @param array &$element An array representing an element in the grade_tree
-     * @param bool  $withlink Whether or not this header has a link
-     * @param bool  $icon Whether or not to display an icon with this header
-     * @param bool  $spacerifnone return spacer if no icon found
-     * @param bool  $withdescription Show description if defined by this item.
-     * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
-     *                         instead of "Category total" or "Course total"
-     * @param moodle_url|null $sortlink Link to sort column.
-     *
-     * @return string header
      * @deprecated since Moodle 4.4 - please use {@see grade_helper::get_element_header()}
-     * @todo MDL-79907 This will be deleted in Moodle 4.8.
      */
-    public function get_element_header(array &$element, bool $withlink = false, bool $icon = true,
-            bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
-            ?moodle_url $sortlink = null) {
-        debugging('The function get_element_header() is deprecated, please use grade_helper::get_element_header() instead.',
-            DEBUG_DEVELOPER);
-        return grade_helper::get_element_header($element, $withlink, $icon, $spacerifnone, $withdescription,
-            $fulltotal, $sortlink);
+    #[\core\attribute\deprecated('grade_helper::get_element_header', since: '4.4', mdl: 'MDL-77326', final: true)]
+    public function get_element_header(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
      * @deprecated since Moodle 4.4 - please use {@see grade_helper::get_activity_link()}
-     * @todo MDL-79907 This will be deleted in Moodle 4.8.
      */
-    private function get_activity_link($element) {
-        debugging('The function get_activity_link() is deprecated, please use grade_helper::get_activity_link() instead.',
-            DEBUG_DEVELOPER);
-        return grade_helper::get_activity_link($element);
+    #[\core\attribute\deprecated('grade_helper::get_activity_link', since: '4.4', mdl: 'MDL-77326', final: true)]
+    private function get_activity_link(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
