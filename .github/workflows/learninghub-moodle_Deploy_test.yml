@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - RC
-  workflow_dispatch:
   
 permissions:
   id-token: write

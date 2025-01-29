@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - CI
-  workflow_dispatch:
   
 permissions:
   id-token: write
