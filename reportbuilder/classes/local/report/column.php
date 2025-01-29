@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\report;
 
 use core\exception\coding_exception;
 use core\lang_string;
+use core\output\help_icon;
 use core_reportbuilder\local\helpers\{aggregation, database, join_trait};
 use core_reportbuilder\local\aggregation\base;
 use core_reportbuilder\local\models\column as column_model;
@@ -88,6 +89,9 @@ final class column {
 
     /** @var array $attributes */
     private $attributes = [];
+
+    /** @var help_icon|null $helpicon */
+    private $helpicon = null;
 
     /** @var bool $available Used to know if column is available to the current user or not */
     private $available = true;
@@ -697,6 +701,26 @@ final class column {
      */
     public function get_attributes(): array {
         return $this->attributes;
+    }
+
+    /**
+     * Set column help icon
+     *
+     * @param help_icon $helpicon
+     * @return self
+     */
+    public function set_help_icon(help_icon $helpicon): self {
+        $this->helpicon = $helpicon;
+        return $this;
+    }
+
+    /**
+     * Return column help icon
+     *
+     * @return help_icon|null
+     */
+    public function get_help_icon(): ?help_icon {
+        return $this->helpicon;
     }
 
     /**

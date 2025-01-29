@@ -1,0 +1,7 @@
+issueNumber: MDL-84016
+notes:
+  core_reportbuilder:
+    - message: >-
+        Columns added to system reports can render help icons in table headers
+        via `[set|get]_help_icon` column instance methods
+      type: improved
