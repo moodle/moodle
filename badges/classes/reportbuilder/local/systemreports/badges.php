@@ -240,7 +240,7 @@ class badges extends system_report {
             $badge = new \core_badges\badge($row->id);
             $row->badgename = $badge->name;
 
-            return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
+            return has_capability('moodle/badges:configurecriteria', $badge->get_context()) &&
                 $badge->has_criteria() &&
                 ($row->status == BADGE_STATUS_INACTIVE || $row->status == BADGE_STATUS_INACTIVE_LOCKED);
 
@@ -261,7 +261,7 @@ class badges extends system_report {
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
             $row->badgename = $badge->name;
-            return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
+            return has_capability('moodle/badges:configurecriteria', $badge->get_context()) &&
                 $badge->has_criteria() &&
                 $row->status != BADGE_STATUS_INACTIVE && $row->status != BADGE_STATUS_INACTIVE_LOCKED;
         }));
