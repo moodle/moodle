@@ -29080,6 +29080,10 @@ img.icon {
   text-align: left;
 }
 
+#page-admin-index .upgradekeyreq {
+  min-width: 220px;
+}
+
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
   display: block;
 }
