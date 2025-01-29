@@ -24,6 +24,7 @@ use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use core\output\help_icon;
 use lang_string;
 
 /**
@@ -145,6 +146,7 @@ class ai_action_register extends base {
             ->set_type(column::TYPE_INTEGER)
             ->add_field("COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens)", 'prompttokens')
             ->set_is_sortable(true)
+            ->set_help_icon(new help_icon('prompttokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
                 return $value ?? get_string('unknownvalue', 'core_ai');
             });
@@ -168,6 +170,7 @@ class ai_action_register extends base {
             ->set_type(column::TYPE_INTEGER)
             ->add_field("COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken)", 'completiontokens')
             ->set_is_sortable(true)
+            ->set_help_icon(new help_icon('completiontokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
                 return $value ?? get_string('unknownvalue', 'core_ai');
             });

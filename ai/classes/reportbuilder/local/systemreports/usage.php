@@ -77,7 +77,7 @@ class usage extends system_report {
      * unique identifier.
      */
     public function add_columns(): void {
-        $columns = [
+        $this->add_columns_from_entities([
             'ai_action_register:provider',
             'ai_action_register:actionname',
             'ai_action_register:timecreated',
@@ -86,9 +86,7 @@ class usage extends system_report {
             'ai_action_register:success',
             'context:name',
             'user:fullnamewithlink',
-        ];
-
-        $this->add_columns_from_entities($columns);
+        ]);
 
         // It's possible to set a default initial sort direction for one column.
         $this->set_initial_sort_column('ai_action_register:timecreated', SORT_DESC);
@@ -101,7 +99,7 @@ class usage extends system_report {
      * unique identifier.
      */
     protected function add_filters(): void {
-        $filters = [
+        $this->add_filters_from_entities([
             'ai_action_register:actionname',
             'ai_action_register:provider',
             'ai_action_register:timecreated',
@@ -110,8 +108,6 @@ class usage extends system_report {
             'ai_action_register:success',
             'context:level',
             'user:fullname',
-        ];
-
-        $this->add_filters_from_entities($filters);
+        ]);
     }
 }
