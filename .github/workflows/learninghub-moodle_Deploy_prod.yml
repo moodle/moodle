@@ -29,6 +29,7 @@ permissions:
 jobs:
   confirm-job:
     runs-on: ubuntu-latest
+    environment: ProdApproval
     steps:
       - name: Check confirmation
         run: |
