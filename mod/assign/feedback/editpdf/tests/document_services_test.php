@@ -90,6 +90,39 @@ final class document_services_test extends \advanced_testcase {
     }
 
     /**
+     * Test that save_jpg_to_pdf() method safely rejects a non-JPEG file with a JPEG extension.
+     */
+    public function test_save_jpg_to_pdf_rejects_non_jpeg(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
+        ]);
+        $fileplugin = $assign->get_plugin_by_type('assignsubmission', 'file');
+        $generator->create_submission([
+            'userid' => $user->id,
+            'cmid' => $assign->get_course_module()->id,
+            'file' => 'mod/assign/feedback/editpdf/tests/fixtures/heic.jpg',
+        ]);
+        $submission = $assign->get_user_submission($user->id, false);
+        $files = $fileplugin->get_files($submission, $user);
+        $this->assertEquals('image/jpeg', $files['/heic.jpg']->get_mimetype());
+
+        // Invoke the save_jpg_to_pdf method expecting there to be no exceptions.
+        $method = new \ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_jpg_to_pdf');
+        $retfile = $method->invoke(null, $assign, $user->id, 1, $files['/heic.jpg']);
+        $this->assertNull($retfile);
+        $this->assertDebuggingCalled("Could not convert {$files['/heic.jpg']->get_contenthash()} jpg to pdf: " .
+            "TCPDF ERROR: [Image] Unable to get the size of the image: ", DEBUG_ALL);
+    }
+
+    /**
      * Test that get_combined_document_for_attempt() method rotates the image only once.
      */
     public function test_get_combined_document_for_attempt_rotates_image(): void {
