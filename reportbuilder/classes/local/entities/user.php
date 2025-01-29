@@ -278,7 +278,7 @@ class user extends base {
         // Picture column.
         $columns[] = (new column(
             'picture',
-            new lang_string('userpicture', 'core_reportbuilder'),
+            new lang_string('picture'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
@@ -503,6 +503,16 @@ class user extends base {
             $this->get_entity_name(),
             $fullnamesql,
             $fullnameparams
+        ))
+            ->add_joins($this->get_joins());
+
+        // Picture filter.
+        $filters[] = (new filter(
+            boolean_select::class,
+            'picture',
+            new lang_string('picture'),
+            $this->get_entity_name(),
+            "CASE WHEN {$tablealias}.picture > 0 THEN 1 ELSE 0 END",
         ))
             ->add_joins($this->get_joins());
 

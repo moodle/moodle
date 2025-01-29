@@ -289,7 +289,6 @@ $string['userfullnamewithlink'] = 'Full name with link';
 $string['userfullnamewithpicture'] = 'Full name with picture';
 $string['userfullnamewithpicturelink'] = 'Full name with picture and link';
 $string['usermodified'] = 'Modified by';
-$string['userpicture'] = 'User picture';
 $string['userselect'] = 'Select user';
 $string['viewreport'] = 'View report';
 
@@ -302,3 +301,4 @@ $string['filterdateto'] = 'Date to';
 
 // Deprecated since Moodle 5.0.
 $string['privacy:metadata:preference:reportfilter'] = 'Stored report filter values';
+$string['userpicture'] = 'User picture';
