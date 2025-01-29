@@ -143,7 +143,7 @@ jobs:
       - name: Set output variable for PV existence
         id: pv-existence
         run: |
-          pvexists::$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)
+          pvexists=$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)
           echo "pvexists=$pvexists" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -154,7 +154,7 @@ jobs:
       - name: Set output variable for PVC existance
         id: pvc-existence
         run: |
-          pvcexists::$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)
+          pvcexists=$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)
           echo "pvcexists=$pvcexists" >> $GITHUB_OUTPUT
         shell: bash
 
