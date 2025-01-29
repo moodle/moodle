@@ -160,6 +160,7 @@ class restore_course_task extends restore_task {
         // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
         // because they don't become transformed (section number) in backup/restore.
         $rules[] = new restore_decode_rule('COURSEVIEWBYID',       '/course/view.php?id=$1',        'course');
+        $rules[] = new restore_decode_rule('COURSESECTIONBYID',    '/course/section.php?id=$1',     'course_section');
 
         // A few other key course links.
         $rules[] = new restore_decode_rule('GRADEINDEXBYID',       '/grade/index.php?id=$1',        'course');
