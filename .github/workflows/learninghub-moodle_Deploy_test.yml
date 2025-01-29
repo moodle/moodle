@@ -98,7 +98,9 @@ jobs:
 
       - name: Set output variable for PV existence
         id: pv-existence
-        run: echo "::set-output name=pvexists::$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)"
+        run: |
+          pvexists=$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)
+          echo "pvexists=$pvexists" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Conditionally create PersistentVolume
@@ -107,7 +109,9 @@ jobs:
 
       - name: Set output variable for PVC existance
         id: pvc-existence
-        run: echo "::set-output name=pvcexists::$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)"
+        run: |
+          pvcexists=$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)
+          echo "pvcexists=$pvcexists" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Conditionally create PersistentVolumeClaim
@@ -122,25 +126,25 @@ jobs:
         id: get_mi_id
         run: |
           mi_vnet_id=$(az network vnet list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query [0].id -o tsv)
-          echo "##[set-output name=mi_vnet_id;]$mi_vnet_id"
+          echo "mi_vnet_id=$mi_vnet_id" >> $GITHUB_OUTPUT
 
       - name: Get node resource group
         id: get_node_resource_group
         run: |
           node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
-          echo "##[set-output name=node_resource_group;]$node_resource_group"
+          echo "node_resource_group=$node_resource_group" >> $GITHUB_OUTPUT
  
       - name: Get Node ID
         id: get_node_id
         run: |
           node_id=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query [0].id -o tsv)
-          echo "##[set-output name=node_id;]$node_id"
+          echo "node_id=$node_id" >> $GITHUB_OUTPUT
 
       - name: Get Cluster VNET name
         id: get_cluster_vnet_name
         run: |
           vnet_name=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query "[].name" -o tsv)
-          echo "##[set-output name=vnet_name;]$vnet_name"
+          echo "vnet_name=$vnet_name" >> $GITHUB_OUTPUT
 
       - name: Peer the vnets
         run: |
@@ -214,7 +218,7 @@ jobs:
         id: get-storage-key
         run: |
           STORAGE_KEY=$(az storage account keys list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --account-name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query [0].value -o tsv)
-          echo "::set-output name=storage_key::$STORAGE_KEY"
+          echo "storage_key=$STORAGE_KEY" >> GITHUB_OUTPUT
 
       - name: Create the default namespace secret
         run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n default
