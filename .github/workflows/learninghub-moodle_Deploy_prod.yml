@@ -176,19 +176,19 @@ jobs:
         id: get_node_resource_group
         run: |
           node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
-          echo "##[set-output name=node_resource_group;]$node_resource_group"
+          echo "node_resource_group=$node_resource_group" >>$GUTHUB_OUTPUT
  
       - name: Get Node ID
         id: get_node_id
         run: |
           node_id=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query [0].id -o tsv)
-          echo "##[set-output name=node_id;]$node_id"
+          echo "node_id=$node_id" >> $GITHUB_OUTPUT
 
       - name: Get Cluster VNET name
         id: get_cluster_vnet_name
         run: |
           vnet_name=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query "[].name" -o tsv)
-          echo "##[set-output name=vnet_name;]$vnet_name"
+          echo "vnet_name=$vnet_name" >> $GITHUB_OUTPUT
 
       - name: Peer the vnets
         run: |
