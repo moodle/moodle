@@ -1,8 +1,5 @@
 name: Deploy LearningHub-Moodle to Production
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       cluster_node_count:
@@ -20,12 +17,27 @@ on:
         required: false
         default: 5
         type: number
+      confirm:
+        description: 'Are you sure you want to proceed? Type "yes" to confirm.'
+        required: true
+        default: 'no'
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
+  confirm-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "yes" ]; then
+            echo "Confirmation failed. Exiting workflow."
+            exit 1
+          fi
+          echo "Confirmation successful. Proceeding..."
+
   terraform:
     runs-on: ubuntu-latest
     environment: Prod
