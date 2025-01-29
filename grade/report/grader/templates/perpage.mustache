@@ -43,7 +43,7 @@
 </label>
 {{#js}}
     document.getElementById('{{uniqid}}').addEventListener('change', function(e) {
-        var url = new URL('{{baseurl}}');
+        var url = new URL('{{{baseurl}}}');
         url.searchParams.set('perpage', e.target.value);
 
         window.location.href = url;
