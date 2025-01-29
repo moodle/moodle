@@ -203,6 +203,10 @@ jobs:
 
       - name: Replace values in deployment-prod.yml
         run: sed -i -e 's/REPLICA-COUNT/${{ steps.evaluate_replica_count.outputs.replicacount }}/g' kubectl/deployment-prod.yml
+
+      - name: Show deployment-prod.yml
+        run: cat kubectl/deployment-prod.yml
+        shell: bash
   
       - name: 'Az CLI login'
         uses: azure/login@v1
