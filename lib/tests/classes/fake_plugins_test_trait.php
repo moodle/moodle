@@ -31,6 +31,37 @@ namespace core\tests;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait fake_plugins_test_trait {
+    /** @var bool Whether to fully reset the component cache after each test */
+    protected bool $fullcomponentreset = false;
+
+    /**
+     * Reset the component cache.
+     *
+     * This is an After test method that supplements the test tearDown to ensure the component cache is reset.
+     *
+     * Please note that the component cache is always partially reset in the main tearDown method.
+     * This method will extend the reset to also cause re-reads off disk.
+     */
+    #[\PHPUnit\Framework\Attributes\After]
+    public function reset_component_cache(): void {
+        if ($this->fullcomponentreset === true) {
+            \core\component::reset(true);
+        }
+        $this->fullcomponentreset = false;
+    }
+
+    /**
+     * Call this method to force the component cache to be fully reset after each test.
+     *
+     * Normally the component cache is reset, but only partially, to speed up the tests.
+     * This method will cause the reset to also cause re-reads off disk.
+     *
+     * @param bool $reset Whether to fully reset the component cache after each test
+     */
+    protected function fully_reset_component_after_test(bool $reset = true): void {
+        $this->fullcomponentreset = $reset;
+    }
+
     /**
      * Add a mocked plugintype at the component sources level, allowing \core\component to pick up the type and its plugins.
      *
@@ -50,8 +81,8 @@ trait fake_plugins_test_trait {
         string $path,
         bool $subpluginsupport = false
     ): void {
-
         require_phpunit_isolation();
+        $this->fully_reset_component_after_test(true);
 
         // Inject the plugintype into the mock component sources. This will be picked up during \core\component::init().
         $mockedcomponent = new \ReflectionClass(\core\component::class);
@@ -118,6 +149,8 @@ trait fake_plugins_test_trait {
     protected function deprecate_full_mocked_plugintype(
         string $plugintype,
     ): void {
+        $this->fully_reset_component_after_test(true);
+
         $mockedcomponent = new \ReflectionClass(\core\component::class);
         $componentsource = $mockedcomponent->getStaticPropertyValue('componentsource');
         $deprecatedkey = 'deprecatedplugintypes';
@@ -151,6 +184,8 @@ trait fake_plugins_test_trait {
     protected function delete_full_mocked_plugintype(
         string $plugintype,
     ): void {
+        $this->fully_reset_component_after_test(true);
+
         \core\component::classloader(\core\component::class);
         $mockedcomponent = new \ReflectionClass(\core\component::class);
         $componentsource = $mockedcomponent->getStaticPropertyValue('componentsource');

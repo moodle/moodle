@@ -486,9 +486,33 @@ class component {
      * Note: It should not be necessary to call this in regular code.
      * Please only use it where strictly required.
      */
-    public static function reset(): void {
+    public static function reset(
+        bool $fullreset = false,
+    ): void {
         // The autoloader will re-initialise if plugintypes is null.
         self::$plugintypes = null;
+
+        // Reset all caches to ensure they are reloaded.
+        self::$plugins = null;
+        self::$subsystems = null;
+        self::$parents = null;
+        self::$subplugins = null;
+        self::$deprecatedplugins = null;
+        self::$deletedplugins = null;
+        self::$deprecatedplugintypes = null;
+        self::$deletedplugintypes = null;
+        self::$deprecatedsubplugins = null;
+        self::$deletedsubplugins = null;
+        self::$apis = null;
+        self::$classmap = null;
+        self::$classmaprenames = null;
+        self::$filemap = null;
+
+        if ($fullreset) {
+            self::$componentsource = null;
+            self::$version = null;
+            self::$supportsubplugins = ['mod', 'editor', 'tool', 'local'];
+        }
     }
 
     /**

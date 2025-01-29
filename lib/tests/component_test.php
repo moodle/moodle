@@ -33,14 +33,12 @@ use ReflectionProperty;
  * @covers \core\component
  */
 final class component_test extends \advanced_testcase {
-
     use fake_plugins_test_trait;
 
     #[\Override]
     public function tearDown(): void {
         parent::tearDown();
 
-        component::reset();
         ini_set('error_log', null);
     }
 
