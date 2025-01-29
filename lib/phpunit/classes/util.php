@@ -530,6 +530,7 @@ class phpunit_util extends testing_util {
             <testsuite name="@component@_testsuite">
               <directory suffix="_test.php">@dir@</directory>
               <exclude>@dir@/classes</exclude>
+              <exclude>@dir@/fixtures</exclude>
             </testsuite>
 
         EOF;
@@ -621,8 +622,9 @@ class phpunit_util extends testing_util {
         $template = <<<EOT
             <testsuites>
               <testsuite name="@component@_testsuite">
-                <directory suffix="_test.php">.</directory>
-                <exclude>./classes</exclude>
+                <directory suffix="_test.php">tests</directory>
+                <exclude>tests/classes</exclude>
+                <exclude>tests/fixtures</exclude>
               </testsuite>
             </testsuites>
           EOT;
@@ -631,7 +633,7 @@ class phpunit_util extends testing_util {
               <directory suffix=".php">.</directory>
             </include>
             <exclude>
-              <directory suffix="_test.php">.</directory>
+              <directory suffix="_test.php">tests</directory>
             </exclude>
         EOT;
 
