@@ -196,7 +196,9 @@ jobs:
 
       - name: Evaluate replica count
         id: evaluate_replica_count
-        run: echo "::set-output name=replicacount::$(if [ -z "${{ inputs.replica_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_REPLICA_COUNT }}; else echo ${{ inputs.replica_count }}; fi)"
+        run: |
+          replicacount=$(if [ -z "${{ inputs.replica_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_REPLICA_COUNT }}; else echo ${{ inputs.replica_count }}; fi)"
+          echo "replicacount=$replicacount" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Replace values in deployment-prod.yml
