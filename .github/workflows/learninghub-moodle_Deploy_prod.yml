@@ -9,14 +9,17 @@ on:
         description: 'The number of nodes to create in the AKS cluster'
         required: false
         default: 5
+        type: number
       cluster_node_size:
         description: 'The size of each node in the AKS cluster'
         required: false
         default: 'Standard_DS2_v2'
+        type: string
       replica_count:
         description: 'The number of replicas (container) in the AKS cluster'
         required: false
         default: 5
+        type: number
 
 permissions:
   id-token: write
