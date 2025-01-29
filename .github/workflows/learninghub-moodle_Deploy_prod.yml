@@ -197,12 +197,7 @@ jobs:
           sed -i -e 's|DATA-ROOT|/var/www/moodledata|g' config.php
           sed -i -e 's/TOOL-GENERATOR-PASSWORD/${{ secrets.CONFIG_TOOL_GENERATOR_PASSWORD }}/g' config.php
 
-      - name: Evaluate replica count
-        id: evaluate_replica_count
-        run: |
-          replicacount=$(if [ -z "${{ inputs.replica_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_REPLICA_COUNT }}; else echo ${{ inputs.replica_count }}; fi)
-          echo "replicacount=$replicacount" >> $GITHUB_OUTPUT
-        shell: bash
+    
 
       - name: Replace values in deployment-prod.yml
         run: sed -i -e 's/REPLICA-COUNT/${{ steps.evaluate_replica_count.outputs.replicacount }}/g' kubectl/deployment-prod.yml
@@ -268,3 +263,13 @@ jobs:
 
       - name: Restart the pods to reload the image
         run: kubectl rollout restart deployment/learninghubmoodleprod
+
+      - name: Evaluate replica count
+        id: evaluate_replica_count
+        run: |
+          replicacount=$(if [ -z "${{ inputs.replica_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_REPLICA_COUNT }}; else echo ${{ inputs.replica_count }}; fi)
+          echo "replicacount=$replicacount" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Scale number of replicas
+        run: kubectl scale --replicas=${{ steps.evaluate_replica_count.outputs.replicacount }} deployment/learninghubmoodleprod
