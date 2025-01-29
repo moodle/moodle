@@ -170,7 +170,7 @@ jobs:
         id: get_mi_id
         run: |
           mi_vnet_id=$(az network vnet list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query [0].id -o tsv)
-          echo "##[set-output name=mi_vnet_id;]$mi_vnet_id"
+          echo "mi_vnet_id=$mi_vnet_id" >> $GITHUB_OUTPUT
 
       - name: Get node resource group
         id: get_node_resource_group
