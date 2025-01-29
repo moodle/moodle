@@ -196,15 +196,6 @@ jobs:
           sed -i -e 's|WWW-ROOT|${{ vars.CONFIG_WWW_ROOT }}|g' config.php
           sed -i -e 's|DATA-ROOT|/var/www/moodledata|g' config.php
           sed -i -e 's/TOOL-GENERATOR-PASSWORD/${{ secrets.CONFIG_TOOL_GENERATOR_PASSWORD }}/g' config.php
-
-    
-
-      - name: Replace values in deployment-prod.yml
-        run: sed -i -e 's/REPLICA-COUNT/${{ steps.evaluate_replica_count.outputs.replicacount }}/g' kubectl/deployment-prod.yml
-
-      - name: Show deployment-prod.yml
-        run: cat kubectl/deployment-prod.yml
-        shell: bash
   
       - name: 'Az CLI login'
         uses: azure/login@v1
