@@ -203,10 +203,11 @@ class user extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_fields($fullnameselect)
-            ->set_type(column::TYPE_TEXT)
             ->set_is_sortable($this->is_sortable('fullname'), $fullnamesort)
-            ->add_callback(static function(?string $value, stdClass $row) use ($viewfullnames): string {
-                if ($value === null) {
+            ->add_callback(static function($value, stdClass $row) use ($viewfullnames): string {
+
+                // Ensure we have at least one field present.
+                if (count(array_filter((array) $row, fn($field) => $field !== null)) === 0) {
                     return '';
                 }
 
@@ -234,12 +235,12 @@ class user extends base {
                 ->add_joins($this->get_joins())
                 ->add_fields($fullnameselect)
                 ->add_field("{$usertablealias}.id")
-                ->set_type(column::TYPE_TEXT)
                 ->set_is_sortable($this->is_sortable($fullnamefield), $fullnamesort)
-                ->add_callback(static function(?string $value, stdClass $row) use ($fullnamefield, $viewfullnames): string {
+                ->add_callback(static function($value, stdClass $row) use ($fullnamefield, $viewfullnames): string {
                     global $OUTPUT;
 
-                    if ($value === null) {
+                    // Ensure we have at least one field present.
+                    if (count(array_filter((array) $row, fn($field) => $field !== null)) === 0) {
                         return '';
                     }
 
@@ -263,7 +264,7 @@ class user extends base {
                             fullname($row, $viewfullnames));
                     }
 
-                    return $value;
+                    return (string) $value;
                 });
 
             // Picture fields need some more data.
