@@ -100,6 +100,26 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Checks, that current page PATH matches regular expression
+     *
+     * Example: Then the url should match "/course/index\.php"
+     * Example: Then the url should match "/mod/forum/view\.php\?id=[0-9]+"
+     * Example: And the url should match "^http://moodle\.org"
+     *
+     * @Then /^the url should match (?P<pattern>"(?:[^"]|\\")*")$/
+     * @param string $pattern The pattern that must match to the current url.
+     */
+    public function the_url_should_match($pattern) {
+        $url = $this->getSession()->getCurrentUrl();
+
+        if (preg_match($pattern, $url) === 1) {
+            return;
+        }
+
+        throw new ExpectationException(sprintf('The url "%s" should match with %s', $url, $pattern), $this->getSession());
+    }
+
+    /**
      * Reloads the current page.
      *
      * @Given /^I reload the page$/
