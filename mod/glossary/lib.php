@@ -1834,7 +1834,7 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 
     glossary_print_all_links($cm, $glossary, $mode, $hook);
 
-    glossary_print_sorting_links($cm, $mode, 'CREATION', 'asc');
+    glossary_print_sorting_links($cm, $mode, $sortkey, $sortorder);
 }
 /**
  * @param object $cm
@@ -2056,9 +2056,14 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
     $bopen  = '<b>';
     $bclose = '</b>';
 
-     $neworder = '';
-     $currentorder = '';
-     $currentsort = '';
+    $neworder = '';
+    $currentorder = '';
+    $currentsort = '';
+
+    if ($sortkey === '') {
+        $sortkey = 'CREATION';
+    }
+
      if ( $sortorder ) {
          if ( $sortorder == 'asc' ) {
              $currentorder = $asc;
@@ -2081,20 +2086,18 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
              $icon = " " . $OUTPUT->pix_icon('asc', $newordertitle, 'glossary');
          }
      }
-     $ficon     = '';
-     $fneworder = '';
-     $fbtag     = '';
-     $fendbtag  = '';
 
-     $sicon     = '';
-     $sneworder = '';
+    $ficon     = '';
+    $fneworder = '';
 
-     $sbtag      = '';
-     $fbtag      = '';
-     $fendbtag      = '';
-     $sendbtag      = '';
+    $sicon     = '';
+    $sneworder = '';
 
-     $sendbtag  = '';
+    $sbtag      = '';
+    $fbtag      = '';
+    $fendbtag      = '';
+
+    $sendbtag  = '';
 
      if ( $sortkey == 'CREATION' or $sortkey == 'FIRSTNAME' ) {
          $ficon       = $icon;
