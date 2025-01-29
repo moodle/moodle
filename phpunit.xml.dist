@@ -36,47 +36,59 @@
     <testsuite name="core_phpunit_testsuite">
       <directory suffix="_test.php">lib/phpunit/tests</directory>
       <exclude>lib/phpunit/tests/classes</exclude>
+      <exclude>lib/phpunit/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_test_testsuite">
       <directory suffix="_test.php">lib/testing/tests</directory>
       <exclude>lib/testing/tests/classes</exclude>
+      <exclude>lib/testing/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_ddl_testsuite">
       <directory suffix="_test.php">lib/ddl/tests</directory>
       <exclude>lib/ddl/tests/classes</exclude>
+      <exclude>lib/ddl/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_dml_testsuite">
       <directory suffix="_test.php">lib/dml/tests</directory>
       <exclude>lib/dml/tests/classes</exclude>
+      <exclude>lib/dml/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_testsuite">
       <directory suffix="_test.php">lib/tests</directory>
       <exclude>lib/tests/classes</exclude>
+      <exclude>lib/tests/fixtures</exclude>
       <!-- <directory suffix="_test.php">lib/ajax/tests</directory> -->
     </testsuite>
     <testsuite name="core_external_testsuite">
       <directory suffix="_test.php">lib/external/tests</directory>
       <exclude>lib/external/tests/classes</exclude>
+      <exclude>lib/external/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_favourites_testsuite">
       <directory suffix="_test.php">favourites/tests</directory>
       <exclude>favourites/tests/classes</exclude>
+      <exclude>favourites/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_form_testsuite">
       <directory suffix="_test.php">lib/form/tests</directory>
       <exclude>lib/form/tests/classes</exclude>
+      <exclude>lib/form/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_files_testsuite">
       <directory suffix="_test.php">lib/filestorage/tests</directory>
       <directory suffix="_test.php">lib/filebrowser/tests</directory>
       <directory suffix="_test.php">files/tests</directory>
       <exclude>lib/filestorage/tests/classes</exclude>
+      <exclude>lib/filestorage/tests/fixtures</exclude>
       <exclude>lib/filebrowser/tests/classes</exclude>
+      <exclude>lib/filebrowser/tests/fixtures</exclude>
       <exclude>files/tests/classes</exclude>
+      <exclude>files/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_filter_testsuite">
       <directory suffix="_test.php">filter/tests</directory>
       <exclude>filter/tests/classes</exclude>
+      <exclude>filter/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_role_testsuite">
       <directory suffix="_test.php">admin/roles/tests</directory>
@@ -157,145 +169,182 @@
     <testsuite name="core_cache_testsuite">
       <directory suffix="_test.php">cache/tests</directory>
       <exclude>cache/tests/classes</exclude>
+      <exclude>cache/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_calendar_testsuite">
       <directory suffix="_test.php">calendar/tests</directory>
       <exclude>calendar/tests/classes</exclude>
+      <exclude>calendar/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_enrol_testsuite">
       <directory suffix="_test.php">enrol/tests</directory>
       <exclude>enrol/tests/classes</exclude>
+      <exclude>enrol/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_group_testsuite">
       <directory suffix="_test.php">group/tests</directory>
       <exclude>group/tests/classes</exclude>
+      <exclude>group/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_message_testsuite">
       <directory suffix="_test.php">message/tests</directory>
       <exclude>message/tests/classes</exclude>
+      <exclude>message/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_notes_testsuite">
       <directory suffix="_test.php">notes/tests</directory>
       <exclude>notes/tests/classes</exclude>
+      <exclude>notes/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_tag_testsuite">
       <directory suffix="_test.php">tag/tests</directory>
       <exclude>tag/tests/classes</exclude>
+      <exclude>tag/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_rating_testsuite">
       <directory suffix="_test.php">rating/tests</directory>
       <exclude>rating/tests/classes</exclude>
+      <exclude>rating/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_repository_testsuite">
       <directory suffix="_test.php">repository/tests</directory>
       <exclude>repository/tests/classes</exclude>
+      <exclude>repository/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_userkey_testsuite">
       <directory suffix="_test.php">lib/userkey/tests</directory>
       <exclude>lib/userkey/tests/classes</exclude>
+      <exclude>lib/userkey/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_user_testsuite">
       <directory suffix="_test.php">user/tests</directory>
       <exclude>user/tests/classes</exclude>
+      <exclude>user/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_webservice_testsuite">
       <directory suffix="_test.php">webservice/tests</directory>
       <exclude>webservice/tests/classes</exclude>
+      <exclude>webservice/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_mnet_testsuite">
       <directory suffix="_test.php">mnet/tests</directory>
       <exclude>mnet/tests/classes</exclude>
+      <exclude>mnet/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_completion_testsuite">
       <directory suffix="_test.php">completion/tests</directory>
       <exclude>completion/tests/classes</exclude>
+      <exclude>completion/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_comment_testsuite">
       <directory suffix="_test.php">comment/tests</directory>
       <exclude>comment/tests/classes</exclude>
+      <exclude>comment/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_search_testsuite">
       <directory suffix="_test.php">search/tests</directory>
       <exclude>search/tests/classes</exclude>
+      <exclude>search/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_competency_testsuite">
       <directory suffix="_test.php">competency/tests</directory>
       <exclude>competency/tests/classes</exclude>
+      <exclude>competency/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_my_testsuite">
       <directory suffix="_test.php">my/tests</directory>
       <exclude>my/tests/classes</exclude>
+      <exclude>my/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_auth_testsuite">
       <directory suffix="_test.php">auth/tests</directory>
       <exclude>auth/tests/classes</exclude>
+      <exclude>auth/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_block_testsuite">
       <directory suffix="_test.php">blocks/tests</directory>
       <exclude>blocks/tests/classes</exclude>
+      <exclude>blocks/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_login_testsuite">
       <directory suffix="_test.php">login/tests</directory>
       <exclude>login/tests/classes</exclude>
+      <exclude>login/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_plagiarism_testsuite">
       <directory suffix="_test.php">plagiarism/tests</directory>
       <exclude>plagiarism/tests/classes</exclude>
+      <exclude>plagiarism/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_portfolio_testsuite">
       <directory suffix="_test.php">portfolio/tests</directory>
       <exclude>portfolio/tests/classes</exclude>
+      <exclude>portfolio/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_editor_testsuite">
       <directory suffix="_test.php">lib/editor/tests</directory>
       <exclude>lib/editor/tests/classes</exclude>
+      <exclude>lib/editor/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_rss_testsuite">
       <directory suffix="_test.php">rss/tests</directory>
       <exclude>rss/tests/classes</exclude>
+      <exclude>rss/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_table_testsuite">
       <directory suffix="_test.php">lib/table/tests</directory>
       <exclude>lib/table/tests/classes</exclude>
+      <exclude>lib/table/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_h5p_testsuite">
       <directory suffix="_test.php">h5p/tests</directory>
       <exclude>h5p/tests/classes</exclude>
+      <exclude>h5p/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_xapi_testsuite">
       <directory suffix="_test.php">lib/xapi/tests</directory>
       <exclude>lib/xapi/tests/classes</exclude>
+      <exclude>lib/xapi/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_contentbank_testsuite">
       <directory suffix="_test.php">contentbank/tests</directory>
       <exclude>contentbank/tests/classes</exclude>
+      <exclude>contentbank/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_payment_testsuite">
       <directory suffix="_test.php">payment/tests</directory>
       <exclude>payment/tests/classes</exclude>
+      <exclude>payment/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_reportbuilder_testsuite">
       <directory suffix="_test.php">reportbuilder/tests</directory>
       <exclude>reportbuilder/tests/classes</exclude>
+      <exclude>reportbuilder/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_adminpresets_testsuite">
       <directory suffix="_test.php">admin/presets/tests</directory>
       <exclude>admin/presets/tests/classes</exclude>
+      <exclude>admin/presets/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_admin_testsuite">
       <directory suffix="_test.php">admin/tests</directory>
       <exclude>admin/tests/classes</exclude>
+      <exclude>admin/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_communication_testsuite">
       <directory suffix="_test.php">communication/tests</directory>
       <exclude>communication/tests/classes</exclude>
+      <exclude>communication/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_ai_testsuite">
       <directory suffix="_test.php">ai/tests</directory>
       <exclude>ai/tests/classes</exclude>
+      <exclude>ai/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_sms_testsuite">
       <directory suffix="_test.php">sms/tests</directory>
+      <exclude>sms/tests/classes</exclude>
+      <exclude>sms/tests/fixtures</exclude>
     </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from
