@@ -68,7 +68,7 @@ jobs:
         id: evaluate_cluster_node_count
         run: |
           clusternodecount=$(if [ -z "${{ inputs.cluster_node_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_COUNT }}; else echo ${{ inputs.cluster_node_count }}; fi)
-          echo "clusternodecount=$clusternodecount" >> $GITHIB_OUTPUT
+          echo "clusternodecount=$clusternodecount" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Evaluate cluster node size
