@@ -43,12 +43,24 @@ Feature: Course index completion icons
   Scenario: Manual completion should update the course index completion
     Given I am on the "C1" "Course" page logged in as "student1"
     And "To do" "icon" should exist in the "courseindex-content" "region"
+    # Mark an uncompleted activity as completed.
     When I press "Mark as done"
     And I wait until "Done" "button" exists
     Then "Done" "icon" should exist in the "courseindex-content" "region"
     And I press "Done"
     And I wait until "Mark as done" "button" exists
     And "To do" "icon" should exist in the "courseindex-content" "region"
+    # Mark an completed activity as uncompleted (to discard any possible JS dependency, see MDL-84243).
+    And I press "Mark as done"
+    And I wait until "Done" "button" exists
+    And I reload the page
+    And "Done" "icon" should exist in the "courseindex-content" "region"
+    And I press "Done"
+    And I wait until "Mark as done" "button" exists
+    And "To do" "icon" should exist in the "courseindex-content" "region"
+    And I press "Mark as done"
+    And I wait until "Done" "button" exists
+    Then "Done" "icon" should exist in the "courseindex-content" "region"
 
   @javascript
   Scenario: Manual completion in an activity page should update the course index

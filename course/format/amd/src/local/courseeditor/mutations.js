@@ -471,8 +471,16 @@ export default class {
      * @param {bool} complete the new completion value
      */
     cmCompletion(stateManager, cmIds, complete) {
-        const newValue = (complete) ? 1 : 0;
-        this._setElementsValue(stateManager, 'cm', cmIds, 'completionstate', newValue);
+        const newState = (complete) ? 1 : 0;
+        stateManager.setReadOnly(false);
+        cmIds.forEach((id) => {
+            const element = stateManager.get('cm', id);
+            if (element) {
+                element.isoverallcomplete = complete;
+                element.completionstate = newState;
+            }
+        });
+        stateManager.setReadOnly(true);
     }
 
     /**
