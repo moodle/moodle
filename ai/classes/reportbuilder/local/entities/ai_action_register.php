@@ -16,11 +16,14 @@
 
 namespace core_ai\reportbuilder\local\entities;
 
+use core\di;
+use core_ai\manager;
+use core\component;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\number;
-use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
@@ -100,7 +103,15 @@ class ai_action_register extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$mainalias}.provider")
-            ->set_is_sortable(true);
+            ->set_is_sortable(true)
+            ->add_callback(static function(string $provider): string {
+                if (get_string_manager()->string_exists('pluginname', $provider)) {
+                    return get_string('pluginname', $provider);
+                } else {
+                    // Return as is if the lang string does not exist.
+                    return $provider;
+                }
+            });
 
         // Success column.
         $columns[] = (new column(
@@ -187,23 +198,40 @@ class ai_action_register extends base {
 
         // Action name filter.
         $filters[] = (new filter(
-            text::class,
+            select::class,
             'actionname',
             new lang_string('action', 'core_ai'),
             $this->get_entity_name(),
             "{$mainalias}.actionname",
         ))
-            ->add_joins($this->get_joins());
+            ->add_joins($this->get_joins())
+            ->set_options([
+                'explain_text' => new lang_string('action_explain_text', 'core_ai'),
+                'generate_image' => new lang_string('action_generate_image', 'core_ai'),
+                'generate_text' => new lang_string('action_generate_text', 'core_ai'),
+                'summarise_text' => new lang_string('action_summarise_text', 'core_ai'),
+            ]);
 
         // Provider filter.
         $filters[] = (new filter(
-            text::class,
+            select::class,
             'provider',
             new lang_string('provider', 'core_ai'),
             $this->get_entity_name(),
             "{$mainalias}.provider",
         ))
-            ->add_joins($this->get_joins());
+            ->add_joins($this->get_joins())
+            ->set_options_callback(static function(): array {
+                $providers = [];
+
+                $records = di::get(manager::class)->get_provider_records();
+                foreach ($records as $record) {
+                    $component = component::get_component_from_classname($record->provider);
+                    $providers[$component] = get_string('pluginname', $component);
+                }
+
+                return $providers;
+            });
 
         // Time created filter.
         $filters[] = (new filter(
