@@ -39,6 +39,7 @@ jobs:
           echo "Confirmation successful. Proceeding..."
 
   terraform:
+    needs: confirm-job
     runs-on: ubuntu-latest
     environment: Prod
     name: 'Terraform LearningHub Moodle'
