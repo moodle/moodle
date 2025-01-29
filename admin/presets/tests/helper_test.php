@@ -290,7 +290,10 @@ final class helper_test extends \advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $generator->create_preset(['name' => 'Preset 1']);
 
+        $invokable = self::get_invokable();
+        set_error_handler($invokable, E_WARNING);
         $presetid = helper::change_default_preset($preset);
+        restore_error_handler();
 
         if (empty($settings) && empty($plugins)) {
             // The preset hasn't been applied.

@@ -627,7 +627,12 @@ final class advanced_test extends \advanced_testcase {
         $this->assertSame('99', $CFG->timezone);
         $this->assertSame('Europe/Prague', date_default_timezone_get());
 
+        // Catch warning for invalid 'xxx' timezone.
+        set_error_handler(function ($errno, $errstr): void {
+            $this->assertStringContainsString('Unknown or bad timezone', $errstr);
+        }, E_WARNING);
         $this->setTimezone('xxx', 'Europe/Prague');
+        restore_error_handler();
         $this->assertSame('xxx', $CFG->timezone);
         $this->assertSame('Europe/Prague', date_default_timezone_get());
 
@@ -635,22 +640,18 @@ final class advanced_test extends \advanced_testcase {
         $this->assertSame('Australia/Perth', $CFG->timezone);
         $this->assertSame('Australia/Perth', date_default_timezone_get());
 
-        try {
-            $this->setTimezone('Pacific/Auckland', '');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-        }
-
-        try {
-            $this->setTimezone('Pacific/Auckland', 'xxxx');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-        }
-
-        try {
-            $this->setTimezone('Pacific/Auckland', null);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
+        // Catch warnings for other invalid cases.
+        $invalidtimezones = ['', 'xxxx', null];
+        foreach ($invalidtimezones as $invalidtz) {
+            set_error_handler(function ($errno, $errstr): void {
+                $this->assertStringContainsString('Unknown or bad timezone', $errstr);
+            }, E_WARNING);
+            try {
+                $this->setTimezone('Pacific/Auckland', $invalidtz);
+            } catch (\Throwable $e) {
+                $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
+            }
+            restore_error_handler();
         }
 
     }

@@ -438,7 +438,10 @@ final class manager_test extends \advanced_testcase {
         // Call the method to be tested.
         $manager = new manager();
         try {
+            $invokable = self::get_invokable();
+            set_error_handler($invokable, E_WARNING);
             list($xml, $preset, $settingsfound, $pluginsfound) = $manager->import_preset($filecontents);
+            restore_error_handler();
         } catch (\exception $e) {
             if ($expectedexception) {
                 $this->assertInstanceOf($expectedexception, $e);
