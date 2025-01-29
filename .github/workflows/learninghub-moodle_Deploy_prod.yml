@@ -9,7 +9,15 @@ on:
         description: 'The number of nodes to create in the AKS cluster'
         required: false
         default: 5
-  
+      cluster_node_size:
+        description: 'The size of each node in the AKS cluster'
+        required: false
+        default: 'Standard_DS2_v2'
+      replica_count:
+        description: 'The number of replicas (container) in the AKS cluster'
+        required: false
+        default: 5
+
 permissions:
   id-token: write
   contents: read
@@ -44,6 +52,10 @@ jobs:
         run: echo "::set-output name=clusternodecount::$(if [ -z "${{ inputs.cluster_node_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_COUNT }}; else echo ${{ inputs.cluster_node_count }}; fi)"
         shell: bash
 
+      - name: Evaluate cluster node size
+        id: evaluate_cluster_node_size
+        run: echo "::set-output name=clusternodesize::$(if [ -z "${{ inputs.cluster_node_size }}" ]; then echo ${{ vars.AZURE_CLUSTER_NODE_SIZE }}; else echo ${{ inputs.cluster_node_size }}; fi)"
+        shell: bash
 
       # - name: 'Terraform destroy'
       #   id: destroy
@@ -80,7 +92,7 @@ jobs:
             -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
             -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
             -var="ClusterNodeCount=${{ steps.evaluate_cluster_node_count.outputs.clusternodecount }}" \
-            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
+            -var="ClusterNodeSize=${{ steps.evaluate_cluster_node_size.outputs.clusternodesize }}" \
             -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
             -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
             -var="SQLVcores=${{ vars.SQL_VCORES }}"
@@ -181,6 +193,14 @@ jobs:
           sed -i -e 's|WWW-ROOT|${{ vars.CONFIG_WWW_ROOT }}|g' config.php
           sed -i -e 's|DATA-ROOT|/var/www/moodledata|g' config.php
           sed -i -e 's/TOOL-GENERATOR-PASSWORD/${{ secrets.CONFIG_TOOL_GENERATOR_PASSWORD }}/g' config.php
+
+      - name: Evaluate replica count
+        id: evaluate_replica_count
+        run: echo "::set-output name=replicacount::$(if [ -z "${{ inputs.replica_count }}" ]; then echo ${{ vars.AZURE_CLUSTER_REPLICA_COUNT }}; else echo ${{ inputs.replica_count }}; fi)"
+        shell: bash
+
+      - name: Replace values in deployment-prod.yml
+        run: sed -i -e 's/REPLICA-COUNT/${{ steps.evaluate_replica_count.outputs.replicacount }}/g' kubectl/deployment-prod.yml
   
       - name: 'Az CLI login'
         uses: azure/login@v1

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: learninghubmoodleprod
 spec:
-  replicas: 2
+  replicas: REPLICA-COUNT
   selector:
     matchLabels:
       app: learninghubmoodleprod
