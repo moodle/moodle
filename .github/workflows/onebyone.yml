@@ -85,7 +85,7 @@ jobs:
       - name: Setting up DB pgsql
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 13
+          postgresql version: 14
           postgresql db: test
           postgresql user: test
           postgresql password: test
