@@ -49,4 +49,11 @@ $capabilities = [
             'user' => CAP_ALLOW,
         ],
     ],
+    'tiny/recordrtc:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
 ];

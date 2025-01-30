@@ -31,15 +31,8 @@ use editor_tiny\plugin_with_menuitems;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menuitems, plugin_with_configuration {
-    /**
-     * Whether the plugin is enabled
-     *
-     * @param context $context The context that the editor is used within
-     * @param array $options The options passed in when requesting the editor
-     * @param array $fpoptions The filepicker options passed in when requesting the editor
-     * @param editor $editor The editor instance in which the plugin is initialised
-     * @return boolean
-     */
+
+    #[\Override]
     public static function is_enabled(
         context $context,
         array $options,
@@ -49,8 +42,9 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         // Disabled if:
         // - Not logged in or guest.
         // - Files are not allowed.
+        // - Doesn't have the correct capability.
         $canhavefiles = !empty($options['maxfiles']);
-        return isloggedin() && !isguestuser() && $canhavefiles;
+        return isloggedin() && !isguestuser() && $canhavefiles && has_capability('tiny/recordrtc:use', $context);
     }
 
     public static function get_available_buttons(): array {
