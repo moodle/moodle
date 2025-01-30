@@ -35,6 +35,7 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 use stdClass;
+use core\context\system;
 
 /**
  * TOTP factor class.
@@ -77,7 +78,7 @@ class factor extends object_factor_base {
     public function generate_totp_uri(string $secret): string {
         global $USER, $SITE, $CFG;
         $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
-        $sitename = str_replace(':', '', $SITE->fullname);
+        $sitename = str_replace(':', '', format_string($SITE->fullname, true, ['context' => system::instance()]));
         $issuer = $sitename.' '.$host;
         $totp = TOTP::create($secret);
         $totp->setLabel($USER->username);
@@ -177,13 +178,15 @@ class factor extends object_factor_base {
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
         $secret = \html_writer::tag('code', $secret);
 
+        $sitefullname = format_string($SITE->fullname, true, ['context' => system::instance()]);
+
         $manualtable = new \html_table();
         $manualtable->id = 'manualattributes';
         $manualtable->attributes['class'] = 'generaltable table table-bordered table-sm w-auto';
         $manualtable->attributes['style'] = 'width: auto;';
         $manualtable->data = [
             [get_string('setupfactor:key', 'factor_totp'), $secret],
-            [get_string('setupfactor:account', 'factor_totp'), "$SITE->fullname ($USER->username)"],
+            [get_string('setupfactor:account', 'factor_totp'), "{$sitefullname} ({$USER->username})"],
             [get_string('setupfactor:mode', 'factor_totp'), get_string('setupfactor:mode:timebased', 'factor_totp')],
         ];
 
