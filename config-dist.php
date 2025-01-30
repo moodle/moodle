@@ -789,17 +789,23 @@ $CFG->admin = 'admin';
 // polling should be done and latest update retrieved.
 // If no value is set, then it will default to 5 seconds.
 //
-// $CFG->progresspollinterval = 5;
+//      $CFG->progresspollinterval = 5;
 //
 // Default question bank module
 //
-// $CFG->corequestion_defaultqbankmod = 'qbank'
+//      $CFG->corequestion_defaultqbankmod = 'qbank'
 //
 // Question banks are only stored at activity module context and this setting defines which module type will
 // be used for creating question banks by default. This is in circumstances such as quiz backup & restores when
 // no target context can be found and the system needs to create a question bank to store the categories and questions.
-
-
+//
+// Set limit for grade items that can be shown on a single page of the grader
+// report. Browsers struggle when the number of grade items is very large and
+// one tries to view all students.
+//
+//      $CFG->maxgradesperpage = 200000;
+//
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
