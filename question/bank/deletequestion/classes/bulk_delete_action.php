@@ -16,6 +16,8 @@
 
 namespace qbank_deletequestion;
 
+use core_question\local\bank\view;
+
 /**
  * Class bulk_delete_action is the base class for delete bulk actions ui.
  *
@@ -35,7 +37,11 @@ class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
     }
 
     public function get_bulk_action_url(): \moodle_url {
-        return new \moodle_url('/question/bank/deletequestion/delete.php');
+        $params = [];
+        if (!$this->qbank->is_listing_specific_versions()) {
+            $params['deleteall'] = 1;
+        }
+        return new \moodle_url('/question/bank/deletequestion/delete.php', $params);
     }
 
     public function get_bulk_action_capabilities(): ?array {
