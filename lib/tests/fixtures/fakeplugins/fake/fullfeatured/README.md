@@ -21,7 +21,7 @@ Must be injected into core_compoent to be used.
 ## Usage in phpunit
 **Important:** Using this mock in the following way in tests causes a core_component cache rebuild, can impact other tests, and are slow! Use sparingly and always tag the unit test with ```@runInSeparateProcess```.
 
-### Injecting the plugin type into core_component: 
+### Injecting the plugin type into core_component:
 This is done at a low level and will cause core_component to rebuild, which will impact other tests.
 
     $this->add_full_mocked_plugintype(
