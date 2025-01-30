@@ -54,20 +54,32 @@ class mod_choice_external extends external_api {
      * @since Moodle 3.0
      */
     public static function get_choice_results_parameters() {
-        return new external_function_parameters (array('choiceid' => new external_value(PARAM_INT, 'choice instance id')));
+        return new external_function_parameters ([
+            'choiceid' => new external_value(PARAM_INT, 'choice instance id'),
+            'groupid' => new external_value(
+                PARAM_INT,
+                'Group ID. 0 for all participants, empty for active group.',
+                VALUE_DEFAULT,
+                null,
+            ),
+        ]);
     }
     /**
      * Returns user's results for a specific choice
      * and a list of those users that did not answered yet.
      *
      * @param int $choiceid the choice instance id
+     * @param int $groupid The group to use, 0 for all participants, null to calculate active group.
      * @return array of responses details
      * @since Moodle 3.0
      */
-    public static function get_choice_results($choiceid) {
-        global $USER, $PAGE;
+    public static function get_choice_results($choiceid, ?int $groupid = null) {
+        global $PAGE;
 
-        $params = self::validate_parameters(self::get_choice_results_parameters(), array('choiceid' => $choiceid));
+        $params = self::validate_parameters(self::get_choice_results_parameters(), [
+            'choiceid' => $choiceid,
+            'groupid' => $groupid,
+        ]);
 
         if (!$choice = choice_get_choice($params['choiceid'])) {
             throw new moodle_exception("invalidcoursemodule", "error");
@@ -77,10 +89,21 @@ class mod_choice_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        $groupmode = groups_get_activity_groupmode($cm);
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            if (is_null($groupid)) {
+                $groupid = groups_get_activity_group($cm);
+            }
+
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            $groupid = 0;
+        }
+
         // Check if we have to include responses from inactive users.
         $onlyactive = $choice->includeinactive ? false : true;
-        $users = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
+        $users = choice_get_response_data($choice, $cm, $groupmode, $onlyactive, $groupid);
         // Show those who haven't answered the question.
         if (!empty($choice->showunanswered)) {
             $choice->option[0] = get_string('notanswered', 'choice');
