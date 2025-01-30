@@ -4074,7 +4074,7 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
 
     // Now sort the array in regard to the current language.
     if ($order == 'CREATION') {
-        if ($sort == "DESC") {
+        if (strcasecmp($sort, 'DESC') === 0) {
             usort($filteredentries, function($a, $b) {
                 return $b->timecreated <=> $a->timecreated;
             });
@@ -4084,7 +4084,7 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
             });
         }
     } else if ($order == 'UPDATE') {
-        if ($sort == "DESC") {
+        if (strcasecmp($sort, 'DESC') === 0) {
             usort($filteredentries, function($a, $b) {
                 return $b->timemodified <=> $a->timemodified;
             });
@@ -4095,7 +4095,7 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
         }
     } else {
         // This means CONCEPT.
-        if ($sort == "DESC") {
+        if (strcasecmp($sort, 'DESC') === 0) {
             usort($filteredentries, function($a, $b) {
                 return format_string($b->concept) <=> format_string($a->concept);
             });
