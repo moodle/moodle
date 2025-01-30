@@ -44,9 +44,10 @@ class plugin_feature extends plugin_features_base {
         ];
     }
 
-    public function get_bulk_actions(): array {
+    #[\Override]
+    public function get_bulk_actions(?view $qbank = null): array {
         return [
-            new bulk_delete_action(),
+            new bulk_delete_action($qbank),
         ];
     }
 

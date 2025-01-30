@@ -66,6 +66,11 @@ function core_question_output_fragment_question_data(array $args): string {
 
     $viewclass = empty($args['view']) ? \core_question\local\bank\view::class : clean_param($args['view'], PARAM_NOTAGS);
 
+    // Make sure the class passed through is valid (exists and is view or subclass of view).
+    if (!class_exists($viewclass) || !is_a($viewclass, \core_question\local\bank\view::class, true)) {
+        throw new invalid_parameter_exception('view parameter must be a valid view class');
+    }
+
     if (!empty($args['lastchanged'])) {
         $thispageurl->param('lastchanged', clean_param($args['lastchanged'], PARAM_INT));
     }
@@ -75,8 +80,6 @@ function core_question_output_fragment_question_data(array $args): string {
     if (!empty($args['extraparams'])) {
         $thispageurl->param('extraparams', clean_param($args['extraparams'], PARAM_RAW));
     }
-    // This is highly suspicious, but it is the same approach taken in /question/edit.php. See MDL-79281.
-    $thispageurl->param('deleteall', 1);
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
     $questionbank->add_standard_search_conditions();
     ob_start();
