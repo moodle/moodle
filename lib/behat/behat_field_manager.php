@@ -166,6 +166,8 @@ class behat_field_manager {
                 case 'radio':
                     return 'radio';
                     break;
+                case 'datetime-local':
+                    return 'datetime_local';
                 default:
                     // Here we return false because all text-based
                     // fields should be included in the first switch case.

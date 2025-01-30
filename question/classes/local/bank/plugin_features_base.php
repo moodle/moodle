@@ -109,7 +109,14 @@ class plugin_features_base {
     /**
      * Return search conditions for the plugin.
      *
-     * @param view|null $qbank
+     * This is used by question bank view classes to get the list of available filters to display in the filter UI.
+     *
+     * This is also used to get the list of available filters for other purposes, for example resolving the list of questions
+     * selected by a set of filters, in which case the `$qbank` argument may be `null`
+     * {@see filter_condition_manager::get_condition_classes()}.
+     *
+     * @param view|null $qbank The current question bank view the filters are being rendered for, for example the main question
+     *     bank page, or the random question view.
      * @return condition[]
      */
     public function get_question_filters(?view $qbank = null): array {

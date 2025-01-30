@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/datafilter/filtertypes/datetime_mode
+
+    Moodle template for hidden, questiontext and subcategories filter.
+
+    Context variables required for this template:
+    * label - The label for the mode selector, available to assistive technology.
+    * filtertype - The filtertype class for this filter.
+    * modeoptions - An array of the available modes:
+        * value - The option value
+        * label - The visbile option label
+        * selected - Is this option currently selected?
+
+    Example context (json):
+    {
+        "label": "Modified time mode",
+        "filtertype": "datetime",
+        "modeoptions": [
+            {
+                "value": "before",
+                "label": "Before",
+                "selected": "selected"
+            },
+            {
+                "value": "after",
+                "label": "After",
+                "selected": ""
+            },
+            {
+                "value": "between",
+                "label": "Between",
+                "selected": ""
+            }
+        ]
+    }
+}}
+<label for="core-filter_row-{{filtertype}}-mode-{{uniqid}}" class="sr-only">{{label}}</label>
+<select
+    id="core-filter_row-{{filtertype}}-mode-{{uniqid}}"
+    name="{{filtertype}}-mode"
+    data-filterfield="{{filtertype}}-mode"
+    class="custom-select mr-2 mt-1"
+>
+    {{#modeoptions}}
+        <option value="{{value}}" {{selected}}>{{label}}</option>
+    {{/modeoptions}}
+</select>

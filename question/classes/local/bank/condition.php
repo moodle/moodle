@@ -59,11 +59,14 @@ abstract class condition {
     }
 
     /**
-     * Extract the required filter from the provided question bank view.
+     * Extract the required filter from the provided question bank view and set the initial values.
      *
-     * This will look for the filter matching {@see get_condition_key()}
+     * This will look for the filter matching {@see get_condition_key()} in the view's current filter parameter.
+     * If the filter is not being initialised to display the question bank UI (for example, to resolve a list of questions matching
+     * a set of filters), then the `$qbank` argument may be null, and any usage of it to set the initial filter state is skipped.
      *
-     * @param view|null $qbank
+     * @param ?view $qbank The question bank view the filter is being rendered for. This may only be used for setting the
+     *     initial state of the filter.
      */
     public function __construct(?view $qbank = null) {
         if (is_null($qbank)) {
