@@ -147,4 +147,24 @@ class filter_condition_manager {
 
         return $filter;
     }
+
+    /**
+     * Filter out invalid values from the filterconditions array,
+     *
+     * @param array $filterconditions
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function filter_invalid_values(array $filterconditions): array {
+
+        $classes = self::get_condition_classes();
+        foreach ($classes as $class) {
+            $condition = new $class();
+            $filterconditions = $condition->filter_invalid_values($filterconditions);
+        }
+
+        return $filterconditions;
+
+    }
+
 }
