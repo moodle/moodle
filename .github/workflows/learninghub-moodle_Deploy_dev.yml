@@ -95,21 +95,17 @@ jobs:
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
 
-      - name: Conditionally create PersistentVolume
+      - name: Create PersistentVolume
         run: kubectl apply -f kubectl/pv-definition-dev.yml
-        continue-on-error: true
 
-      - name: Conditionally create PersistentVolume for theme
+      - name: Create PersistentVolume for theme
         run: kubectl apply -f kubectl/pv-definition-theme-dev.yml
-        continue-on-error: true
   
-      - name: Conditionally create PersistentVolumeClaim
+      - name: Create PersistentVolumeClaim
         run: kubectl apply -f kubectl/pvc-definition-dev.yml
-        continue-on-error: true
    
-      - name: Conditionally create PersistentVolumeClaim for theme
-        run: kubectl apply -f kubectl/pvc-definition-theme.yml
-        continue-on-error: true
+      - name: Create PersistentVolumeClaim for theme
+        run: kubectl apply -f kubectl/pvc-definition-theme-dev.yml
 
       - name: Attach ACR to cluster
         run: az aks update -n ${{ vars.AZURE_CLUSTER_NAME }} -g ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --attach-acr ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
