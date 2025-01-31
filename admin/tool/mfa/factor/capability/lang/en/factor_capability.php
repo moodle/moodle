@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['capability:cannotpassfactor'] = 'STOPS a role from passing the MFA user capability factor.';
+$string['capability:cannotpassfactor'] = 'Must use other factor in MFA to authenticate';
 $string['pluginname'] = 'User capability';
 $string['privacy:metadata'] = 'The User capability factor plugin does not store any personal data.';
 $string['settings:adminpasses'] = 'Site admins can pass this factor';

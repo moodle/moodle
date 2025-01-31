@@ -19,7 +19,7 @@ namespace core_ai\table;
 use moodle_url;
 
 /**
- * Table to manage AI Provider plugins.
+ * Table to manage AI provider plugins.
  *
  * @package core_ai
  * @copyright 2024 Matt Porritt <matt.porritt@moodle.com>
