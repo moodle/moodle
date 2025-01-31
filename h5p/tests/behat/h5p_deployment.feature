@@ -26,7 +26,7 @@ Feature: Undeployed H5P content should be only available to users that can deplo
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
       | Course       | C1        | contenttype_h5p | teacher1 | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Content bank" "link" in the ".fp-repo-area" "css_element"
     And I click on "filltheblanks.h5p" "link"

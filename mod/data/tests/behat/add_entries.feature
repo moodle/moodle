@@ -81,7 +81,7 @@ Feature: Users can add entries to database activities
     And I am on the "Course 1" course page logged in as teacher1
     When I click on "Test database name" "link"
     And I click on "Add entry" "button"
-    And I click on "Configure H5P content" "button"
+    And I click on "Insert H5P content" "button"
     Then I should see "Browse repositories..." in the "Insert H5P content" "dialogue"
 
   @javascript
