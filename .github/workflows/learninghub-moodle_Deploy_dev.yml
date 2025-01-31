@@ -109,7 +109,7 @@ jobs:
       - name: Set output variable for PV theme existence
         id: pv-existence-theme
         run: |
-          pvexiststheme=$(if get pv theme > /dev/null 2>&1; then echo true; else echo false; fi)
+          pvexiststheme=$(if kubectl get pv theme > /dev/null 2>&1; then echo true; else echo false; fi)
           echo "pvexiststheme=$pvexiststheme" >> $GITHUB_OUTPUT
         shell: bash
   
@@ -132,7 +132,7 @@ jobs:
         id: pvc-existence-theme
         run: |
           pvcexiststheme=$(if kubectl get pvc themeclaim > /dev/null 2>&1; then echo true; else echo false; fi)
-          echo "pvcexiststheme=$pvcexiststheme" >> GITHUB_OUTPUT
+          echo "pvcexiststheme=$pvcexiststheme" >> $GITHUB_OUTPUT
   
       - name: Conditionally create PersistentVolumeClaim for theme
         if: steps.pvd-existence-theme.output.pvcexiststheme == 'false'
