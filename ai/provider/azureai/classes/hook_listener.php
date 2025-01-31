@@ -19,7 +19,7 @@ namespace aiprovider_azureai;
 use core_ai\hook\after_ai_provider_form_hook;
 
 /**
- * Hook listener for Azure AI Provider.
+ * Hook listener for Azure AI provider.
  *
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>

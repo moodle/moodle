@@ -19,7 +19,7 @@ namespace aiprovider_openai;
 use core_ai\hook\after_ai_provider_form_hook;
 
 /**
- * Hook listener for Open AI Provider.
+ * Hook listener for Open AI provider.
  *
  * @package    aiprovider_openai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>

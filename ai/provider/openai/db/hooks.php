@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Hook listener callbacks for the Open AI Provider.
+ * Hook listener callbacks for the Open AI provider.
  *
  * @package    aiprovider_openai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>

@@ -5,31 +5,31 @@ Feature: An administrator can manage AI subsystem settings
   I can manage AI subsystem settings
 
   @javascript
-  Scenario: An administrator can create AI Provider plugin instances using JavaScript
+  Scenario: An administrator can create AI provider plugin instances using JavaScript
     Given I am logged in as "admin"
     And I navigate to "AI > AI providers" in site administration
     And I should see "Nothing to display"
     When I click on "Create a new provider instance" "link"
-    And I select "OpenAI API Provider" from the "Choose AI Provider plugin" singleselect
+    And I select "OpenAI API provider" from the "Choose AI provider plugin" singleselect
     And I set the following fields to these values:
         | Name for instance     | OpenAI API provider test|
         | OpenAI API key        | 123                     |
         | OpenAI organization ID| abc                     |
     And I click on "Create instance" "button"
-    And I should see "OpenAI API provider test AI Provider instance created"
+    And I should see "OpenAI API provider test AI provider instance created"
     And I should see "OpenAI API provider test"
     And I click on "Create a new provider instance" "link"
-    And I select "Azure AI API Provider" from the "Choose AI Provider plugin" singleselect
+    And I select "Azure AI API provider" from the "Choose AI provider plugin" singleselect
     And I set the following fields to these values:
         | Name for instance    | Azure AI provider test                         |
         | Azure AI API key     | 123                                            |
         | Azure AI API endpoint| https://api.cognitive.microsofttranslator.com/ |
     And I click on "Create instance" "button"
-    And I should see "Azure AI provider test AI Provider instance created"
+    And I should see "Azure AI provider test AI provider instance created"
     And I should see "Azure AI provider test"
 
   @javascript
-  Scenario: An administrator can enable AI Provider plugin instances using JavaScript
+  Scenario: An administrator can enable AI provider plugin instances using JavaScript
     Given the following "core_ai > ai providers" exist:
       |provider         | name             | enabled | apikey | orgid |
       |aiprovider_openai| OpenAI API test  | 0       | 123    | abc   |
@@ -53,7 +53,7 @@ Feature: An administrator can manage AI subsystem settings
     Then I should see "Azure AI API test disabled."
 
   @javascript
-  Scenario: An administrator can configure AI Provider plugin instance
+  Scenario: An administrator can configure AI provider plugin instance
   action settings using JavaScript
     Given the following "core_ai > ai providers" exist:
       |provider         | name             | enabled | apikey | orgid |
@@ -71,16 +71,16 @@ Feature: An administrator can manage AI subsystem settings
     Then I should see "Generate text action settings updated"
 
   @javascript
-  Scenario: An administrator can delete AI Provider plugin instances using JavaScript
+  Scenario: An administrator can delete AI provider plugin instances using JavaScript
     Given the following "core_ai > ai providers" exist:
       |provider         | name             | enabled | apikey | orgid |
       |aiprovider_openai| OpenAI API test  | 0       | 123    | abc   |
     And I am logged in as "admin"
     And I navigate to "AI > AI providers" in site administration
     And I click on the "Delete" link in the table row containing "OpenAI API test"
-    And "Delete AI Provider instance" "dialogue" should be visible
-    And I click on "Delete" "button" in the "Delete AI Provider instance" "dialogue"
-    Then I should see "OpenAI API test AI Provider instance deleted"
+    And "Delete AI provider instance" "dialogue" should be visible
+    And I click on "Delete" "button" in the "Delete AI provider instance" "dialogue"
+    Then I should see "OpenAI API test AI provider instance deleted"
 
   @javascript
   Scenario: An administrator can control the enabled state of AI placement plugins using JavaScript
@@ -94,7 +94,7 @@ Feature: An administrator can manage AI subsystem settings
     Then I should see "Text editor placement disabled."
 
   @javascript
-  Scenario: Placement actions should be available when an Administrator enables AI Providers using JavaScript
+  Scenario: Placement actions should be available when an Administrator enables AI providers using JavaScript
     Given the following "core_ai > ai providers" exist:
       |provider         | name             | enabled | apikey | orgid |
       |aiprovider_openai| OpenAI API test  | 1       | 123    | abc   |
@@ -104,7 +104,7 @@ Feature: An administrator can manage AI subsystem settings
     Then I should not see "This action is unavailable."
 
   @javascript
-  Scenario: Placement actions should not be available when an Administrator disables AI Providers using JavaScript
+  Scenario: Placement actions should not be available when an Administrator disables AI providers using JavaScript
     Given the following "core_ai > ai providers" exist:
       |provider         | name             | enabled | apikey | orgid |
       |aiprovider_openai| OpenAI API test  | 1       | 123    | abc   |
