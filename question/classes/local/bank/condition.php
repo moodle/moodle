@@ -201,6 +201,21 @@ abstract class condition {
     }
 
     /**
+     * Method to be overridden in condition classes to filter out anything invalid from the filterconditions array.
+     *
+     * This can be applied anywhere where the $filterconditions array exists, to let condition plugins remove elements
+     * from the array, based on their own internal logic/validation. For example, this is used on the
+     * /mod/quiz/editrandom.php page to filter out question categories which no longer exist, which previously
+     * broke the editrandom page.
+     *
+     * @param array $filterconditions
+     * @return array
+     */
+    public function filter_invalid_values(array $filterconditions): array {
+        return $filterconditions;
+    }
+
+    /**
      * Given an array of filters, pick the entry that matches the condition key and return it.
      *
      * @param array $filters Array of filters, keyed by condition.
