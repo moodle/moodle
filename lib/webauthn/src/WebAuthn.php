@@ -30,6 +30,7 @@ class WebAuthn {
     private $_signatureCounter;
     private $_caFiles;
     private $_formats;
+    private $_androidKeyHashes;
 
     /**
      * Initialize a new WebAuthn server
@@ -87,6 +88,23 @@ class WebAuthn {
             }
         } else if (\is_file($path) && !\in_array(\realpath($path), $this->_caFiles)) {
             $this->_caFiles[] = \realpath($path);
+        }
+    }
+
+    /**
+     * add key hashes for android verification
+     * @param array<string> $hashes
+     * @return void
+     */
+    public function addAndroidKeyHashes($hashes) {
+        if (!\is_array($this->_androidKeyHashes)) {
+            $this->_androidKeyHashes = [];
+        }
+
+        foreach ($hashes as $hash) {
+            if (is_string($hash)) {
+                $this->_androidKeyHashes[] = $hash;
+            }
         }
     }
 
@@ -397,6 +415,8 @@ class WebAuthn {
         $data->rootValid = $rootValid;
         $data->userPresent = $userPresent;
         $data->userVerified = $userVerified;
+    	$data->isBackupEligible = $attestationObject->getAuthenticatorData()->getIsBackupEligible();
+        $data->isBackedUp = $attestationObject->getAuthenticatorData()->getIsBackup();
         return $data;
     }
 
@@ -601,6 +621,10 @@ class WebAuthn {
      * @throws WebAuthnException
      */
     private function _checkOrigin($origin) {
+        if (str_starts_with($origin, 'android:apk-key-hash:')) {
+            return $this->_checkAndroidKeyHashes($origin);
+        }
+
         // https://www.w3.org/TR/webauthn/#rp-id
 
         // The origin's scheme must be https
@@ -615,6 +639,19 @@ class WebAuthn {
         // The RP ID must be equal to the origin's effective domain, or a registrable
         // domain suffix of the origin's effective domain.
         return \preg_match('/' . \preg_quote($this->_rpId) . '$/i', $host) === 1;
+    }
+
+    /**
+     * checks if the origin value contains a known android key hash
+     * @param string $origin
+     * @return boolean
+     */
+    private function _checkAndroidKeyHashes($origin) {
+        $parts = explode('android:apk-key-hash:', $origin);
+        if (count($parts) !== 2) {
+            return false;
+        }
+        return in_array($parts[1], $this->_androidKeyHashes, true);
     }
 
     /**
