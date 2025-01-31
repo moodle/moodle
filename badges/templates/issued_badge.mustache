@@ -37,9 +37,6 @@
     * hasotherfields - Wheter the badge has other fields or not.
     * language - Badge language [optional].
     * version - Badge version [optional].
-    * imageauthorname - Badge image author name [optional].
-    * imageauthoremail - Badge image author email [optional].
-    * imageauthorurl - Badge image author URL [optional].
     * imagecaption - Badge image caption [optional].
     * endorsement - Badge endorsement data, with id, badgeid, issuername... [optional].
     * hasrelatedbadges - Whether the badge has related badges or not.
@@ -66,9 +63,6 @@
         "hasotherfields": true,
         "language": "English",
         "version": "1.0beta",
-        "imageauthorname": "Judit Blanque",
-        "imageauthoremail": "<a href=\"mailto:xxx\">judit@moodle.invalid</a>",
-        "imageauthorurl": "http://juditblanque.cat",
         "imagecaption": "This is a nice picture from my cat",
         "endorsement": {
             "id": "2",
@@ -253,38 +247,6 @@
                         </dl>
                     {{/language}}
 
-                    {{#imageauthorname}}
-                        <dl>
-                            <dt>
-                                {{#str}}imageauthorname, core_badges{{/str}}
-                            </dt>
-                            <dd>
-                                {{imageauthorname}}
-                            </dd>
-                        </dl>
-                    {{/imageauthorname}}
-
-                    {{#imageauthoremail}}
-                        <dl>
-                            <dt>
-                                {{#str}}imageauthoremail, core_badges{{/str}}
-                            </dt>
-                            <dd>
-                                {{{imageauthoremail}}}
-                            </dd>
-                        </dl>
-                    {{/imageauthoremail}}
-
-                    {{#imageauthorurl}}
-                        <dl>
-                            <dt>
-                                {{#str}}imageauthorurl, core_badges{{/str}}
-                            </dt>
-                            <dd>
-                                <a href="{{imageauthorurl}}" target="_blank">{{imageauthorurl}}</a>
-                            </dd>
-                        </dl>
-                    {{/imageauthorurl}}
                     {{#imagecaption}}
                         <dl>
                             <dt>

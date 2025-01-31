@@ -106,15 +106,6 @@ class badge {
     /** @var string What language is this badge written in. */
     public $language;
 
-    /** @var string The author of the image for this badge. */
-    public $imageauthorname;
-
-    /** @var string The email of the author of the image for this badge. */
-    public $imageauthoremail;
-
-    /** @var string The url of the author of the image for this badge. */
-    public $imageauthorurl;
-
     /** @var string The caption of the image for this badge. */
     public $imagecaption;
 
@@ -985,9 +976,6 @@ class badge {
         $fordb->version = $data->version;
         $fordb->language = $data->language;
         $fordb->description = $data->description;
-        $fordb->imageauthorname = $data->imageauthorname;
-        $fordb->imageauthoremail = $data->imageauthoremail;
-        $fordb->imageauthorurl = $data->imageauthorurl;
         $fordb->imagecaption = $data->imagecaption;
         $fordb->timecreated = $now;
         $fordb->timemodified = $now;
@@ -1047,9 +1035,6 @@ class badge {
         $this->version = trim($data->version);
         $this->language = $data->language;
         $this->description = $data->description;
-        $this->imageauthorname = $data->imageauthorname;
-        $this->imageauthoremail = $data->imageauthoremail;
-        $this->imageauthorurl = $data->imageauthorurl;
         $this->imagecaption = $data->imagecaption;
         $this->usermodified = $USER->id;
         $this->issuername = $data->issuername;

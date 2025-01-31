@@ -186,11 +186,6 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl[get_string('description', 'badges')] = $badge->description;
         $dl[get_string('createdon', 'search')] = userdate($badge->timecreated);
         $dl[get_string('badgeimage', 'badges')] = print_badge_image($badge, $context, 'large');
-        $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
-        $dl[get_string('imageauthoremail', 'badges')] =
-            html_writer::tag('a', $badge->imageauthoremail, array('href' => 'mailto:' . $badge->imageauthoremail));
-        $dl[get_string('imageauthorurl', 'badges')] =
-            html_writer::link($badge->imageauthorurl, $badge->imageauthorurl, array('target' => '_blank'));
         $dl[get_string('imagecaption', 'badges')] = $badge->imagecaption;
         $tags = \core_tag_tag::get_item_tags('core_badges', 'badge', $badge->id);
         $dl[get_string('tags', 'badges')] = $this->output->tag_list($tags, '');

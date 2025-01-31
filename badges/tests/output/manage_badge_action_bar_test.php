@@ -118,9 +118,6 @@ final class manage_badge_action_bar_test extends \advanced_testcase {
         $badge->status = BADGE_STATUS_ACTIVE;
         $badge->version = '1';
         $badge->language = 'en';
-        $badge->imageauthorname = 'Image author';
-        $badge->imageauthoremail = 'imageauthor@example.com';
-        $badge->imageauthorurl = 'http://image-author-url.domain.co.nz';
         $badge->imagecaption = 'Caption';
         $coursebadgeid = $DB->insert_record('badge', $badge, true);
         $badge = new \core_badges\badge($coursebadgeid);

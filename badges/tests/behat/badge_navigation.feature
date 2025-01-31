@@ -25,7 +25,6 @@ Feature: Test tertiary navigation as various users
       | language       | ca                               |
       | description    | Testing course badge description |
       | image          | badges/tests/behat/badge.png     |
-      | imageauthorurl | http://author.example.com        |
       | imagecaption   | Test caption image               |
     # Create a site badge.
     And the following "core_badges > Badge" exists:
@@ -35,7 +34,6 @@ Feature: Test tertiary navigation as various users
       | language       | ca                               |
       | description    | Testing site badge description   |
       | image          | badges/tests/behat/badge.png     |
-      | imageauthorurl | http://author.example.com        |
       | imagecaption   | Test caption image               |
     And the following "core_badges > Criterias" exist:
       | badge                | role           |

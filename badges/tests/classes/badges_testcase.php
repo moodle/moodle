@@ -85,9 +85,6 @@ abstract class badges_testcase extends \advanced_testcase {
         $fordb->message = "Test message body";
         $fordb->attachment = 1;
         $fordb->notification = 0;
-        $fordb->imageauthorname = "Image Author 1";
-        $fordb->imageauthoremail = "author@example.com";
-        $fordb->imageauthorurl = "http://author-url.example.com";
         $fordb->imagecaption = "Test caption image";
         $fordb->status = BADGE_STATUS_INACTIVE;
 

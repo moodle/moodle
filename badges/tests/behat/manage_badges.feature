@@ -12,7 +12,6 @@ Feature: Manage badges
       | language       | en                           |
       | description    | Test badge description       |
       | image          | badges/tests/behat/badge.png |
-      | imageauthorurl | http://author.example.com    |
       | imagecaption   | Test caption image           |
 
   Scenario: Copy a badge
@@ -154,7 +153,6 @@ Feature: Manage badges
       | language       | en                           |
       | description    | Test badge description       |
       | image          | badges/tests/behat/badge.png |
-      | imageauthorurl | http://author.example.com    |
       | imagecaption   | Test caption image           |
     And I log in as "admin"
     And I navigate to "Badges > Add a new badge" in site administration

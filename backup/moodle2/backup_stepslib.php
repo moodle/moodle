@@ -928,8 +928,7 @@ class backup_badges_structure_step extends backup_structure_step {
                 'timecreated', 'timemodified', 'usercreated', 'usermodified', 'issuername',
                 'issuerurl', 'issuercontact', 'expiredate', 'expireperiod', 'type', 'courseid',
                 'message', 'messagesubject', 'attachment', 'notification', 'status', 'nextcron',
-                'version', 'language', 'imageauthorname', 'imageauthoremail', 'imageauthorurl',
-                'imagecaption'));
+                'version', 'language', 'imagecaption'));
 
         $criteria = new backup_nested_element('criteria');
         $criterion = new backup_nested_element('criterion', array('id'), array('badgeid',

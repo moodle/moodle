@@ -262,19 +262,6 @@ class badge extends base {
                 }
             });
 
-        // Image author details.
-        foreach (['imageauthorname', 'imageauthoremail', 'imageauthorurl'] as $imageauthorfield) {
-            $columns[] = (new column(
-                $imageauthorfield,
-                new lang_string($imageauthorfield, 'core_badges'),
-                $this->get_entity_name()
-            ))
-                ->add_joins($this->get_joins())
-                ->set_type(column::TYPE_TEXT)
-                ->add_field("{$badgealias}.{$imageauthorfield}")
-                ->set_is_sortable(true);
-        }
-
         return $columns;
     }
 

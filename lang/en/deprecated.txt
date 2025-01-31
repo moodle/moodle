@@ -150,3 +150,9 @@ sitecommnews,core_hub
 sitecommnews_help,core_hub
 sitecommnewsyes,core_hub
 cc_import_req_php5,core_imscc
+imageauthoremail,core_badges
+imageauthoremail_help,core_badges
+imageauthorname,core_badges
+imageauthorname_help,core_badges
+imageauthorurl,core_badges
+imageauthorurl_help,core_badges

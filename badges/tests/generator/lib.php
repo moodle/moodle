@@ -69,9 +69,6 @@ class core_badges_generator extends component_generator_base {
             'status' => BADGE_STATUS_ACTIVE,
             'version' => OPEN_BADGES_V2,
             'language' => 'en',
-            'imageauthorname' => 'Image author',
-            'imageauthoremail' => 'author@example.com',
-            'imageauthorurl' => 'http://image.example.com/',
             'imagecaption' => 'Image caption'
         ], $record);
 

@@ -43,7 +43,6 @@ Feature: Backpack badges
       | language       | en                               |
       | description    | Test badge description           |
       | image          | badges/tests/behat/badge.png     |
-      | imageauthorurl | http://author.example.com        |
       | imagecaption   | Test caption image               |
     And the following "core_badges > Criteria" exists:
       | badge          | Test badge verify backpack       |
@@ -72,7 +71,6 @@ Feature: Backpack badges
       | language       | en                               |
       | description    | Test badge description           |
       | image          | badges/tests/behat/badge.png     |
-      | imageauthorurl | http://author.example.com        |
       | imagecaption   | Test caption image               |
     And the following "core_badges > Criteria" exists:
       | badge          | Test badge verify backpack       |

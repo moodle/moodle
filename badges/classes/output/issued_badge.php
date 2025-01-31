@@ -175,18 +175,6 @@ class issued_badge implements renderable {
             $data->hasotherfields = true;
             $data->version = $badge->version;
         }
-        if (!empty($badge->imageauthorname)) {
-            $data->hasotherfields = true;
-            $data->imageauthorname = $badge->imageauthorname;
-        }
-        if (!empty($badge->imageauthoremail)) {
-            $data->hasotherfields = true;
-            $data->imageauthoremail = obfuscate_mailto($badge->imageauthoremail, $badge->imageauthoremail);
-        }
-        if (!empty($badge->imageauthorurl)) {
-            $data->hasotherfields = true;
-            $data->imageauthorurl = $badge->imageauthorurl;
-        }
         if (!empty($badge->imagecaption)) {
             $data->hasotherfields = true;
             $data->imagecaption = $badge->imagecaption;

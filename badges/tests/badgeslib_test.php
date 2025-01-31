@@ -65,9 +65,6 @@ final class badgeslib_test extends badges_testcase {
         $this->assertEquals($badge->version, $clonedbadge->version);
         $this->assertEquals($badge->language, $clonedbadge->language);
         $this->assertEquals($badge->imagecaption, $clonedbadge->imagecaption);
-        $this->assertEquals($badge->imageauthorname, $clonedbadge->imageauthorname);
-        $this->assertEquals($badge->imageauthoremail, $clonedbadge->imageauthoremail);
-        $this->assertEquals($badge->imageauthorurl, $clonedbadge->imageauthorurl);
     }
 
     public function test_badge_status(): void {
@@ -251,9 +248,6 @@ final class badgeslib_test extends badges_testcase {
             $badge->version = "Version $i";
             $badge->language = "en";
             $badge->imagecaption = "Image caption $i";
-            $badge->imageauthorname = "Image author's name $i";
-            $badge->imageauthoremail = "author$i@example.com";
-            $badge->imageauthorname = "Image author's name $i";
 
             $badgeid = $DB->insert_record('badge', $badge, true);
             $badges[$badgeid] = new badge($badgeid);
@@ -332,9 +326,6 @@ final class badgeslib_test extends badges_testcase {
         $badge->version = "Version $i";
         $badge->language = "en";
         $badge->imagecaption = "Image caption";
-        $badge->imageauthorname = "Image author's name";
-        $badge->imageauthoremail = "author@example.com";
-        $badge->imageauthorname = "Image author's name";
 
         $badgeid = $DB->insert_record('badge', $badge, true);
         $badges[$badgeid] = new badge($badgeid);
