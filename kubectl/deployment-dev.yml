@@ -22,7 +22,12 @@ spec:
         - name: moodledata
           mountPath: /var/www/moodledata
           readOnly: false
+        - name: theme
+          mountPath: /var/www/html/theme
       volumes:
       - name: moodledata
         persistentVolumeClaim:
           claimName: moodledataclaim
+      - name: theme
+        persistentVolumeClaim:
+          claimName: themeclaim
