@@ -861,9 +861,12 @@ class behat_course extends behat_base {
      * @param int $sectionnumber The number of section
      */
     public function i_move_activity_to_section($activityname, $sectionnumber): void {
+        $this->require_javascript('Moving activities requires javascript.');
+
         // Ensure the destination is valid.
         $sectionxpath = $this->section_exists($sectionnumber);
 
+        // TODO: remove this if clause as part of MDL-83627 when YUI is removed from course.
         // Not all formats are compatible with the move tool.
         $activitynode = $this->get_activity_node($activityname);
         if (!$activitynode->find('css', "[data-action='moveCm']", false, false, 0)) {
@@ -872,29 +875,17 @@ class behat_course extends behat_base {
             return;
         }
 
-        // JS enabled.
-        if ($this->running_javascript()) {
-            $this->i_open_actions_menu($activityname);
-            $this->execute(
-                'behat_course::i_click_on_in_the_activity',
-                [get_string('move'), "link", $this->escape($activityname)]
-            );
-            $this->execute("behat_general::i_click_on_in_the", [
-                "[data-for='section'][data-number='$sectionnumber']",
-                'css_element',
-                "[data-region='modal-container']",
-                'css_element'
-            ]);
-        } else {
-            $this->execute(
-                'behat_course::i_click_on_in_the_activity',
-                [get_string('move'), "link", $this->escape($activityname)]
-            );
-            $this->execute(
-                'behat_general::i_click_on_in_the',
-                ["li.movehere a", "css_element", $this->escape($sectionxpath), "xpath_element"]
-            );
-        }
+        $this->i_open_actions_menu($activityname);
+        $this->execute(
+            'behat_course::i_click_on_in_the_activity',
+            [get_string('move'), "link", $this->escape($activityname)]
+        );
+        $this->execute("behat_general::i_click_on_in_the", [
+            "[data-for='section'][data-number='$sectionnumber']",
+            'css_element',
+            "[data-region='modal-container']",
+            'css_element',
+        ]);
     }
 
     /**
@@ -902,6 +893,7 @@ class behat_course extends behat_base {
      *
      * This step is experimental when using it in Javascript tests. Editing mode should be on.
      *
+     * @todo remove this module as part of MDL-83627.
      * @param string $activityname The activity name
      * @param int $sectionnumber The number of section
      */

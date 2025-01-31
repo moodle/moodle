@@ -153,13 +153,7 @@ class delegatedcontrolmenu extends basecontrolmenu {
         }
 
         // The move action uses visual elements on the course page.
-        $url = new url(
-            '/course/mod.php',
-            [
-                'sesskey' => sesskey(),
-                'copy' => $this->mod->id,
-            ]
-        );
+        $url = new url('/course/mod.php', ['sesskey' => sesskey()]);
 
         $sectionnumreturn = $this->format->get_sectionnum();
         if ($sectionnumreturn !== null) {

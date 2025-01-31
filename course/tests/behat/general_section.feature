@@ -23,11 +23,13 @@ Feature: General section does not show in navigation when empty
       | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
 
+  @javascript
   Scenario: General section is visible in navigation when it is not empty
     When I move "Test forum name" activity to section "0"
     And I am on "Course 1" course homepage
     Then I should see "General" in the "Navigation" "block"
 
+  @javascript
   Scenario: General section is not visible in navigation when it is empty
     When I move "Test forum name" activity to section "3"
     And I am on "Course 1" course homepage

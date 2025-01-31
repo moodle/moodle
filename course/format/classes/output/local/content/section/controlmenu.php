@@ -100,8 +100,6 @@ class controlmenu extends basecontrolmenu {
             $controls['duplicate'] = $this->get_section_duplicate_item();
             $controls['visibility'] = $this->get_section_visibility_item();
             $controls['movesection'] = $this->get_section_movesection_item();
-            $controls['moveup'] = $this->get_section_moveup_item();
-            $controls['movedown'] = $this->get_section_movedown_item();
             $controls['permalink'] = $this->get_section_permalink_item();
         }
 
@@ -285,11 +283,22 @@ class controlmenu extends basecontrolmenu {
      * or when javascript is not available.
      *
      * Note: this action will be removed, do not depend on it for your
-     * custom formats. For more information, see MDL-83562.
+     * custom formats. For more information, see MDL-83562. Use this method
+     * only if your format is not compatible with the move section modal
+     * and you are still migrating to components.
      *
+     * @deprecated since Moodle 5.0
+     * @todo Remove this method in Moodle 6.0 (MDL-83530).
      * @return link|null The menu item if applicable, otherwise null.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'core_courseformat\output\local\content\section::get_section_movesection_item',
+        since: '5.0',
+        reason: 'Non-ajax section move is deprecated.',
+        mdl: 'MDL-83562',
+    )]
     protected function get_section_moveup_item(): ?link {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         if (
             $this->section->sectionnum <= 1
             || $this->format->get_sectionid()
@@ -327,9 +336,18 @@ class controlmenu extends basecontrolmenu {
      * Note: this action will be removed, do not depend on it for your
      * custom formats. For more information, see MDL-83562.
      *
+     * @deprecated since Moodle 5.0
+     * @todo Remove this method in Moodle 6.0 (MDL-83530).
      * @return link|null The menu item if applicable, otherwise null.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'core_courseformat\output\local\content\section::get_section_movesection_item',
+        since: '5.0',
+        reason: 'Non-ajax section move is deprecated.',
+        mdl: 'MDL-83562',
+    )]
     protected function get_section_movedown_item(): ?link {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         $numsections = $this->format->get_last_section_number();
 
         if (

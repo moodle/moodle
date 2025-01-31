@@ -204,7 +204,7 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url($this->basemodurl, ['copy' => $this->mod->id]);
+        $url = new url($this->basemodurl);
 
         return new link_secondary(
             url: $url,

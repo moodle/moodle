@@ -38,7 +38,7 @@ $idnumber = optional_param('idnumber', '', PARAM_RAW);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
 $expandsection = optional_param('expandsection', -1, PARAM_INT);
-$move = optional_param('move', 0, PARAM_INT);
+$move = optional_param('move', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $marker = optional_param('marker', -1 , PARAM_INT); // TODO remove this param as part of MDL-83530.
 $switchrole = optional_param('switchrole', -1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
 $return = optional_param('return', 0, PARAM_LOCALURL);
@@ -244,8 +244,16 @@ if ($PAGE->user_allowed_editing()) {
         redirect(course_get_url($course, $newsection->section));
     }
 
-    if (!empty($section) && !empty($move) &&
-            has_capability('moodle/course:movesections', $context) && confirm_sesskey()) {
+    // TODO remove this if as part of MDL-83530.
+    if (
+        !empty($section)
+        && !empty($move)
+        && has_capability('moodle/course:movesections', $context) && confirm_sesskey()
+    ) {
+        debugging(
+            'The move param is deprecated. Please use the standard move modal instead.',
+            DEBUG_DEVELOPER
+        );
         $destsection = $section + $move;
         if (move_section_to($course, $section, $destsection)) {
             if ($course->id == SITEID) {
