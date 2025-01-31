@@ -380,7 +380,7 @@ class manager {
         $provider = new $classname(
             enabled: $enabled,
             name: $name,
-            config: $config ? json_encode($config) : '',
+            config: json_encode($config ?? []),
         );
 
         $id = $this->db->insert_record('ai_providers', $provider->to_record());
