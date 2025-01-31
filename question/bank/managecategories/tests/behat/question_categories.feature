@@ -112,3 +112,23 @@ Feature: A teacher can put questions in categories in the question bank
     When I reload the page
     Then I should see "Question 1" in the "categoryquestions" "table"
     And the field "Also show questions from subcategories" matches value "1"
+    And I am on the "Course 1" "core_question > course question bank" page
+    And the field "Also show questions from subcategories" matches value "1"
+
+  Scenario: Filter question by category and subcategories in Quiz question page
+    Given the following "activities" exist:
+      | activity | name      | course | idnumber |
+      | quiz     | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > Edit" page
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    When I set the field "Also show questions from subcategories" to "1"
+    And I click on "Apply filters" "button"
+    Then I should see "Question 1" in the "categoryquestions" "table"
+    And I set the field "Also show questions from subcategories" to "0"
+    And I click on "Apply filters" "button"
+    And I should not see "Question 1"
+    And I click on "Close" "button" in the "Add from the question bank at the end" "dialogue"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And the field "Also show questions from subcategories" matches value "0"

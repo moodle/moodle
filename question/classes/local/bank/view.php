@@ -244,7 +244,8 @@ class view {
                 $params['filter']['category'] = [
                     'jointype' => category_condition::JOINTYPE_DEFAULT,
                     'values' => [$category->id],
-                    'filteroptions' => ['includesubcategories' => false],
+                    'filteroptions' => ['includesubcategories' =>
+                        get_user_preferences('qbank_managecategories_includesubcategories_filter_default', false)],
                 ];
             }
             $params['filter']['hidden'] = [
