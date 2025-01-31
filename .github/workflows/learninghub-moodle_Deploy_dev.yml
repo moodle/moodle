@@ -108,7 +108,7 @@ jobs:
         continue-on-error: true
    
       - name: Conditionally create PersistentVolumeClaim for theme
-        run: kuvectl apply -f kubetl/pvc-definition-theme.yml
+        run: kubectl apply -f kubectl/pvc-definition-theme.yml
         continue-on-error: true
 
       - name: Attach ACR to cluster
