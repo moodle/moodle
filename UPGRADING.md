@@ -247,7 +247,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83641](https://tracker.moodle.org/browse/MDL-83641)
 
+### core_grades
+
+#### Removed
+
+- Final deprecation of
+    grade_structure::get_element_type_string(),
+    grade_structure::get_element_header(),
+    grade_structure::get_element_icon(),
+    grade_structure::get_activity_link()
+
+  For more information see [MDL-79907](https://tracker.moodle.org/browse/MDL-79907)
+
 ### core_question
+
+#### Added
+
+- The `get_bulk_actions()` method on the base `plugin_features_base` class has been changed to allow a qbank view object to be passed through. This is nullable and therefore optional for qbank plugins which don't need to do so.
+
+  For more information see [MDL-79281](https://tracker.moodle.org/browse/MDL-79281)
 
 #### Changed
 
@@ -466,6 +484,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - behat_admin_presets::following_in_the_should_download_between_and_bytes is deprecated. Use: the following element should download a file that:
 
   For more information see [MDL-83035](https://tracker.moodle.org/browse/MDL-83035)
+
+### tool_behat
+
+#### Added
+
+- New Behat step `\behat_general::the_url_should_match()` has been added to allow checking the current URL. You can use it to check whether a user has been redirected to the expected location.
+  e.g. `And the url should match "/mod/forum/view\.php\?id=[0-9]+"`
+
+  For more information see [MDL-83617](https://tracker.moodle.org/browse/MDL-83617)
 
 ### tool_brickfield
 

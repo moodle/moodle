@@ -1,5 +1,17 @@
 # core_grades (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Removed
+
+- Final deprecation of
+    grade_structure::get_element_type_string(),
+    grade_structure::get_element_header(),
+    grade_structure::get_element_icon(),
+    grade_structure::get_activity_link()
+
+  For more information see [MDL-79907](https://tracker.moodle.org/browse/MDL-79907)
+
 ## 4.5
 
 ### Changed
