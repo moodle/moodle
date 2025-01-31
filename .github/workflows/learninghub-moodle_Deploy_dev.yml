@@ -95,48 +95,21 @@ jobs:
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
 
-      - name: Set output variable for PV existence
-        id: pv-existence
-        run: |
-          pvexists=$(if kubectl get pv moodledata > /dev/null 2>&1; then echo true; else echo false; fi)
-          echo "pvexists=$pvexists" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Conditionally create PersistentVolume
-        if: steps.pv-existence.outputs.pvexists == 'false'
         run: kubectl apply -f kubectl/pv-definition-dev.yml
+        continue-on-error: true
 
-      - name: Set output variable for PV theme existence
-        id: pv-existence-theme
-        run: |
-          pvexiststheme=$(if kubectl get pv theme > /dev/null 2>&1; then echo true; else echo false; fi)
-          echo "pvexiststheme=$pvexiststheme" >> $GITHUB_OUTPUT
-        shell: bash
-  
       - name: Conditionally create PersistentVolume for theme
-        if: steps.pv-existence-theme.output.pvexiststheme == 'false'
         run: kubectl apply -f kubectl/pv-definition-theme-dev.yml
-
-      - name: Set output variable for PVC existence
-        id: pvc-existence
-        run: |
-          pvcexists=$(if kubectl get pvc moodledataclaim > /dev/null 2>&1; then echo true; else echo false; fi)
-          echo "pvcexists=$pvcexists" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Conditionally create PersistentVolumeClaim
-        if: steps.pvc-existence.outputs.pvcexists == 'false'
-        run: kubectl apply -f kubectl/pvc-definition-dev.yml
-
-      - name: Set output vairable for PVC theme existence
-        id: pvc-existence-theme
-        run: |
-          pvcexiststheme=$(if kubectl get pvc themeclaim > /dev/null 2>&1; then echo true; else echo false; fi)
-          echo "pvcexiststheme=$pvcexiststheme" >> $GITHUB_OUTPUT
+        continue-on-error: true
   
+      - name: Conditionally create PersistentVolumeClaim
+        run: kubectl apply -f kubectl/pvc-definition-dev.yml
+        continue-on-error: true
+   
       - name: Conditionally create PersistentVolumeClaim for theme
-        if: steps.pvd-existence-theme.output.pvcexiststheme == 'false'
         run: kuvectl apply -f kubetl/pvc-definition-theme.yml
+        continue-on-error: true
 
       - name: Attach ACR to cluster
         run: az aks update -n ${{ vars.AZURE_CLUSTER_NAME }} -g ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --attach-acr ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
