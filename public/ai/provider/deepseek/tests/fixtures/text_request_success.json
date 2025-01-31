@@ -1,0 +1,28 @@
+{
+    "id": "3a621831-3173-4437-b58a-f16287ecce85",
+    "object": "chat.completion",
+    "created": 1755253949,
+    "model": "deepseek-chat",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "Mono Potassium Phosphate (MKP), with the chemical formula KH₂PO₄, is a highly soluble fertilizer providing **phosphorus (P)** and **potassium (K)**.  \n\n### Key Features:  \n- **Nutrient Ratio:** 52% P₂O₅ (phosphorus) & 34% K₂O (potassium).  \n- **Uses:** Boosts root growth, flowering, and fruiting; used in hydroponics and foliar sprays.  \n- **Benefits:** Fast absorption, low salinity, pH-stabilizing.  \n- **Compatibility:** Mixes well with most fertilizers except calcium-based ones.  \n\nIdeal for crops needing **P & K** during flowering/fruiting stages."
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 23,
+        "completion_tokens": 150,
+        "total_tokens": 173,
+        "prompt_tokens_details": {
+            "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 23
+    },
+    "system_fingerprint": "fp_8802369eaa_prod0623_fp8_kvcache"
+}
