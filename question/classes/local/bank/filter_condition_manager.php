@@ -136,7 +136,8 @@ class filter_condition_manager {
             $filter['category'] = [
                 'jointype' => condition::JOINTYPE_DEFAULT,
                 'values' => [$category->id],
-                'filteroptions' => ['includesubcategories' => false],
+                'filteroptions' => ['includesubcategories' =>
+                    get_user_preferences('qbank_managecategories_includesubcategories_filter_default', false)],
             ];
         }
         $filter['hidden'] = [

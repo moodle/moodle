@@ -39,10 +39,14 @@ final class provider_test extends advanced_testcase {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         set_user_preference('qbank_managecategories_showdescriptions', 1, $user);
+        set_user_preference('qbank_managecategories_includesubcategories_filter_default', 1, $user);
         provider::export_user_preferences($user->id);
         $writer = writer::with_context(\context_system::instance());
         $prefs = $writer->get_user_preferences('qbank_managecategories');
         $this->assertEquals(1, $prefs->showdescr->value);
+        $this->assertEquals(1, $prefs->includesubcategories->value);
         $this->assertEquals(get_string('displaydescription', 'qbank_managecategories'), $prefs->showdescr->description);
+        $this->assertEquals(get_string('questionsubcategoriesdisplayed',
+            'qbank_managecategories'), $prefs->includesubcategories->description);
     }
 }
