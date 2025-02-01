@@ -47,6 +47,20 @@ class ClientResolver
     /** @var array */
     private $argDefinitions;
 
+    /**
+     * When using this option as default please make sure that, your config
+     * has at least one data type defined in `valid` otherwise it will be
+     * defaulted to `string`. Also, the default value will be the falsy value
+     * based on the resolved data type. For example, the default for `string`
+     * will be `''` and for bool will be `false`.
+     *
+     * @var string
+     */
+    const DEFAULT_FROM_ENV_INI = [
+        __CLASS__,
+        '_resolve_from_env_ini'
+    ];
+
     /** @var array Map of types to a corresponding function */
     private static $typeMap = [
         'resource' => 'is_resource',
@@ -91,7 +105,7 @@ class ClientResolver
             'valid'     => ['bool'],
             'doc'       => 'Set to true to disable endpoint urls configured using `AWS_ENDPOINT_URL` and `endpoint_url` shared config option.',
             'fn'        => [__CLASS__, '_apply_ignore_configured_endpoint_urls'],
-            'default'   => [__CLASS__, '_default_ignore_configured_endpoint_urls'],
+            'default'   => self::DEFAULT_FROM_ENV_INI,
         ],
         'endpoint' => [
             'type'  => 'value',
@@ -105,7 +119,7 @@ class ClientResolver
             'valid'    => ['string'],
             'doc'      => 'Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.',
             'fn'       => [__CLASS__, '_apply_region'],
-            'default'  => [__CLASS__, '_default_region']
+            'default'  => self::DEFAULT_FROM_ENV_INI
         ],
         'version' => [
             'type'     => 'value',
@@ -244,7 +258,7 @@ class ClientResolver
             'valid'     => ['bool', 'callable'],
             'doc'       => 'Set to true to disable request compression for supported operations',
             'fn'        => [__CLASS__, '_apply_disable_request_compression'],
-            'default'   => [__CLASS__, '_default_disable_request_compression'],
+            'default'   => self::DEFAULT_FROM_ENV_INI,
         ],
         'request_min_compression_size_bytes' => [
             'type'      => 'value',
@@ -308,6 +322,13 @@ class ClientResolver
             'doc'       => 'Set to false to disable checking for shared aws config files usually located in \'~/.aws/config\' and \'~/.aws/credentials\'.  This will be ignored if you set the \'profile\' setting.',
             'default'   => true,
         ],
+        'suppress_php_deprecation_warning' => [
+            'type'      => 'value',
+            'valid'     => ['bool'],
+            'doc' => 'Set to true to suppress PHP runtime deprecation warnings. The current deprecation campaign is PHP versions 8.0.x and below, taking effect on 1/13/2025.',
+            'default' => false,
+            'fn' => [__CLASS__, '_apply_suppress_php_deprecation_warning']
+        ],
         'account_id_endpoint_mode' => [
             'type'      => 'value',
             'valid'     => ['string'],
@@ -317,10 +338,10 @@ class ClientResolver
         ],
         'sigv4a_signing_region_set' => [
             'type' => 'value',
-            'valid' => ['array', 'string'],
+            'valid' => ['string', 'array'],
             'doc' => 'A comma-delimited list of supported regions sent in sigv4a requests.',
             'fn' => [__CLASS__, '_apply_sigv4a_signing_region_set'],
-            'default' => [__CLASS__, '_default_sigv4a_signing_region_set']
+            'default' => self::DEFAULT_FROM_ENV_INI
         ]
     ];
 
@@ -390,7 +411,15 @@ class ClientResolver
                             || $a['default'] instanceof \Closure
                         )
                     ) {
-                        $args[$key] = $a['default']($args);
+                        if ($a['default'] === self::DEFAULT_FROM_ENV_INI) {
+                            $args[$key] = $a['default'](
+                                $key,
+                                $a['valid'][0] ?? 'string',
+                                $args
+                            );
+                        } else {
+                            $args[$key] = $a['default']($args);
+                        }
                     } else {
                         $args[$key] = $a['default'];
                     }
@@ -581,15 +610,6 @@ class ClientResolver
             );
         }
         $args['config']['disable_request_compression'] = $value;
-    }
-
-    public static function _default_disable_request_compression(array &$args) {
-        return ConfigurationResolver::resolve(
-            'disable_request_compression',
-            false,
-            'bool',
-            $args
-        );
     }
 
     public static function _apply_min_compression_size($value, array &$args) {
@@ -971,68 +991,14 @@ class ClientResolver
         );
     }
 
-    public static function _apply_user_agent($inputUserAgent, array &$args, HandlerList $list)
+    public static function _apply_user_agent(
+        $inputUserAgent,
+        array &$args,
+        HandlerList $list
+    ): void
     {
-        // Add SDK version
-        $userAgent = ['aws-sdk-php/' . Sdk::VERSION];
-
-        // User Agent Metadata
-        $userAgent[] = 'ua/2.0';
-
-        // If on HHVM add the HHVM version
-        if (defined('HHVM_VERSION')) {
-            $userAgent []= 'HHVM/' . HHVM_VERSION;
-        }
-
-        // Add OS version
-        $disabledFunctions = explode(',', ini_get('disable_functions'));
-        if (function_exists('php_uname')
-            && !in_array('php_uname', $disabledFunctions, true)
-        ) {
-            $osName = "OS/" . php_uname('s') . '#' . php_uname('r');
-            if (!empty($osName)) {
-                $userAgent []= $osName;
-            }
-        }
-
-        // Add the language version
-        $userAgent []= 'lang/php#' . phpversion();
-
-        // Add exec environment if present
-        if ($executionEnvironment = getenv('AWS_EXECUTION_ENV')) {
-            $userAgent []= $executionEnvironment;
-        }
-
         // Add endpoint discovery if set
-        if (isset($args['endpoint_discovery'])) {
-            if (($args['endpoint_discovery'] instanceof \Aws\EndpointDiscovery\Configuration
-                && $args['endpoint_discovery']->isEnabled())
-            ) {
-                $userAgent []= 'cfg/endpoint-discovery';
-            } elseif (is_array($args['endpoint_discovery'])
-                && isset($args['endpoint_discovery']['enabled'])
-                && $args['endpoint_discovery']['enabled']
-            ) {
-                $userAgent []= 'cfg/endpoint-discovery';
-            }
-        }
-
-        // Add retry mode if set
-        if (isset($args['retries'])) {
-            if ($args['retries'] instanceof \Aws\Retry\Configuration) {
-                $userAgent []= 'cfg/retry-mode#' . $args["retries"]->getMode();
-            } elseif (is_array($args['retries'])
-                && isset($args["retries"]["mode"])
-            ) {
-                $userAgent []= 'cfg/retry-mode#' . $args["retries"]["mode"];
-            }
-        }
-
-        // AppID Metadata
-        if (!empty($args['app_id'])) {
-            $userAgent[] = 'app/' . $args['app_id'];
-        }
-
+        $userAgent = [];
         // Add the input to the end
         if ($inputUserAgent){
             if (!is_array($inputUserAgent)) {
@@ -1044,29 +1010,17 @@ class ClientResolver
 
         $args['ua_append'] = $userAgent;
 
-        $list->appendBuild(static function (callable $handler) use ($userAgent) {
-            return function (
-                CommandInterface $command,
-                RequestInterface $request
-            ) use ($handler, $userAgent) {
-                return $handler(
-                    $command,
-                    $request->withHeader(
-                        'X-Amz-User-Agent',
-                        implode(' ', array_merge(
-                            $userAgent,
-                            $request->getHeader('X-Amz-User-Agent')
-                        ))
-                    )->withHeader(
-                        'User-Agent',
-                        implode(' ', array_merge(
-                            $userAgent,
-                            $request->getHeader('User-Agent')
-                        ))
-                    )
+        $list->appendBuild(
+            Middleware::mapRequest(function (RequestInterface $request) use ($userAgent) {
+                return $request->withHeader(
+                    'X-Amz-User-Agent',
+                    implode(' ', array_merge(
+                        $userAgent,
+                        $request->getHeader('X-Amz-User-Agent')
+                    ))
                 );
-            };
-        });
+            })
+        );
     }
 
     public static function _apply_endpoint($value, array &$args, HandlerList $list)
@@ -1076,6 +1030,7 @@ class ClientResolver
             return;
         }
 
+        $args['endpoint_override'] = true;
         $args['endpoint'] = $value;
     }
 
@@ -1230,14 +1185,26 @@ class ClientResolver
         $args['config']['ignore_configured_endpoint_urls'] = $value;
     }
 
-    public static function _default_ignore_configured_endpoint_urls(array &$args)
+    public static function _apply_suppress_php_deprecation_warning($value, &$args)
     {
-        return ConfigurationResolver::resolve(
-            'ignore_configured_endpoint_urls',
-            false,
-            'bool',
-            $args
-        );
+        if ($value)  {
+            $args['suppress_php_deprecation_warning'] = true;
+        } elseif (!empty(getenv("AWS_SUPPRESS_PHP_DEPRECATION_WARNING"))) {
+            $args['suppress_php_deprecation_warning']
+                = \Aws\boolean_value(getenv("AWS_SUPPRESS_PHP_DEPRECATION_WARNING"));
+        } elseif (!empty($_SERVER["AWS_SUPPRESS_PHP_DEPRECATION_WARNING"])) {
+            $args['suppress_php_deprecation_warning'] =
+                \Aws\boolean_value($_SERVER["AWS_SUPPRESS_PHP_DEPRECATION_WARNING"]);
+        } elseif (!empty($_ENV["AWS_SUPPRESS_PHP_DEPRECATION_WARNING"])) {
+            $args['suppress_php_deprecation_warning'] =
+                \Aws\boolean_value($_ENV["AWS_SUPPRESS_PHP_DEPRECATION_WARNING"]);
+        }
+
+        if ($args['suppress_php_deprecation_warning'] === false
+            && PHP_VERSION_ID < 80100
+        ) {
+            self::emitDeprecationWarning();
+        }
     }
 
     public static function _default_endpoint(array &$args)
@@ -1289,26 +1256,12 @@ class ClientResolver
         }
     }
 
-    public static function _default_sigv4a_signing_region_set(array &$args)
-    {
-        return ConfigurationResolver::resolve(
-            'sigv4a_signing_region_set',
-            '',
-            'string'
-        );
-    }
-
     public static function _apply_region($value, array &$args)
     {
         if (empty($value)) {
             self::_missing_region($args);
         }
         $args['region'] = $value;
-    }
-
-    public static function _default_region(&$args)
-    {
-        return ConfigurationResolver::resolve('region', '', 'string');
     }
 
     public static function _missing_region(array $args)
@@ -1325,6 +1278,35 @@ A "region" configuration value is required for the "{$service}" service
 found at http://docs.aws.amazon.com/general/latest/gr/rande.html.
 EOT;
         throw new IAE($msg);
+    }
+
+    /**
+     * Resolves a value from env or config.
+     *
+     * @param $key
+     * @param $expectedType
+     * @param $args
+     *
+     * @return mixed|string
+     */
+    private static function _resolve_from_env_ini(
+        string $key,
+        string $expectedType,
+        array $args
+    ) {
+        static $typeDefaultMap = [
+            'int' => 0,
+            'bool' => false,
+            'boolean' => false,
+            'string' => '',
+        ];
+
+        return ConfigurationResolver::resolve(
+            $key,
+            $typeDefaultMap[$expectedType] ?? '',
+            $expectedType,
+            $args
+        );
     }
 
     /**
@@ -1392,7 +1374,8 @@ EOT;
         }
     }
 
-    private static function isValidService($service) {
+    private static function isValidService($service)
+    {
         if (is_null($service)) {
             return false;
         }
@@ -1400,12 +1383,30 @@ EOT;
         return isset($services[$service]);
     }
 
-    private static function isValidApiVersion($service, $apiVersion) {
+    private static function isValidApiVersion($service, $apiVersion)
+    {
         if (is_null($apiVersion)) {
             return false;
         }
         return is_dir(
             __DIR__ . "/data/{$service}/$apiVersion"
+        );
+    }
+
+    private static function emitDeprecationWarning()
+    {
+        $phpVersionString = phpversion();
+        trigger_error(
+            "This installation of the SDK is using PHP version"
+            .  " {$phpVersionString}, which will be deprecated on January"
+            .  " 13th, 2025.\nPlease upgrade your PHP version to a minimum of"
+            .  " 8.1.x to continue receiving updates for the AWS"
+            .  " SDK for PHP.\nTo disable this warning, set"
+            .  " suppress_php_deprecation_warning to true on the client constructor"
+            .  " or set the environment variable AWS_SUPPRESS_PHP_DEPRECATION_WARNING"
+            .  " to true.\nMore information can be found at: "
+            .   "https://aws.amazon.com/blogs/developer/announcing-the-end-of-support-for-php-runtimes-8-0-x-and-below-in-the-aws-sdk-for-php/\n",
+            E_USER_DEPRECATED
         );
     }
 }
