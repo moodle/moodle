@@ -49,20 +49,6 @@ Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlən
 $string['errorsinenvironment'] = 'Mühitin yoxlnılması yerinə yetirilmədi!';
 $string['installation'] = 'Quraşdırma';
 $string['langdownloaderror'] = 'Təəssüf ki,  "{$a}" dilini qurmaq mümkün olmadı. Quraşdırma prosesi ingilis dilində davam edəcək.';
-$string['memorylimithelp'] = '<p>Sizin serverdə PHP-də yaddaşın məhdudlaşdırılması  {$a}-da qurulub.</p>
-
-<p>Buna görə müəyyən müddətdən sonra yddaşla əlaqəli problemlər yarana bilər, xüsusən də Sizin çox sayda modullarınız və ya istifadəçiləriniz olarsa.</p>
-
-<p>Biz məsləhət görürük ki, əgər mümkünsə PHP-də yaddaşın məhdudlaşdırılması üçün daha böyük qiymət götürəsiniz, məsələn, 40M.
-   Bunu aşağıdakı üsullarla etmək olar:</p>
-<ol>
-<li>Əgər imkan varsa PHP-ni <i>--enable-memory-limit</i> açarı ilə kompilyasiya edin.
-Bu halda Moodle özü yaddaşa məhdudiyyət qoya bilir.</li>
-<li>Əgər Sizin php.ini faylını redaktə etməyə icazəniz varsa, <b>memory_limit</b>parametrini nə iləsə 40M kimi dəyişmək olar. Əgər icazəniz yoxdursa, administratordan xahiş edə bilərsiniz.</li>
-<li>Bəzi PHP serverlərində Moodle kataloqunda .htaccess faylı yaratmaq və aşağıdakı sətri daxil etmək olar:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>Buna baxmayaraq bəzi serverlərdə buna görə PHP-nin<b>bütünl</b> səhifələrinin işi dayana bilər (Siz səhifələrdə səhvləri görəcəksiniz). Belə olan halda .htaccess  faylını silmək lazımdır.</p></li>
-</ol>';
 $string['paths'] = 'Yollar';
 $string['pathserrcreatedataroot'] = 'Quraşdırma proqramı  ({$a->dataroot})  verilənlər kataloqunu yarada bilmir.';
 $string['pathshead'] = 'Yolları təsdiq edin';
@@ -79,10 +65,6 @@ $string['pathsunsecuredataroot'] = 'Verilənlər kataloqunun mövqeyi təhlükə
 $string['pathswrongadmindir'] = 'Admin kataloqu mövcud deyil';
 $string['phpextension'] = '{$a} PHP  geniçlənməsi';
 $string['phpversion'] = 'PHP versiyası';
-$string['phpversionhelp'] = '<p>Moodle üçün PHP-nin 4.3.0  və ondan yuxarı  və ya 5.1.0 və ondan yuxarı versiyaları(5.0.versiyasının bəzi problemləri məlumdur) lazımdır.</p>
-<p>İndi Siz, {$a} versiyasından istifadə edirsiniz</p>
-<p>Siz PHP-ni yeniləməlisiniz və ya PHP-nin daha yeni versiyası olan xostinqə keçməlisiniz!<br />
-(5.0.x  verisyası olarsa 4.4.x versiyasına qayıda bilərsiniz)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Siz bu səhifəni ona görə görürsünüz ki, <strong>{$a->packname} {$a->packversion}</strong> proqram paketini öz kompyüterinizdə müvəffəqiyyətlə qurmusunuz. Təbrik edirik!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>  proqram paketinin bu versiyasında <strong>Moodle</strong>un işləyəcəyi mühiti yaratmaq üçün aşağıdakı proqramlar var:';

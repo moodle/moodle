@@ -49,10 +49,6 @@ $string['pathshead'] = 'Staðfesta vefslóðir';
 $string['pathswrongadmindir'] = 'Admin skráarsafnið finnst ekki';
 $string['phpextension'] = '{$a} PHP viðbót';
 $string['phpversion'] = 'PHP útgáfa';
-$string['phpversionhelp'] = '<p>Moodle krefst útgáfu 4.3.0 eða 5.1.0 af PHP (5.0.x útgáfan inniheldur villur).</p>
-<p>Þú er með útgáfu {$a}</p>
-<p>Þú verður að uppfæra PHP eða velja vefþjónustu sem býður upp á nýrri útgáfu af PHP!<br/>
-(Ef þú notar útgáfu 5.0.x gætir þú hugsanlega breytt yfir í 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep70'] = 'Smelltu á "Áfram" hnappinn hér að neðan til þess að halda áfram uppsetningunni á <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Vefslóð';

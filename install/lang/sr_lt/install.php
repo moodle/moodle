@@ -50,17 +50,6 @@ Kompletna provera okruženja se vrši pre svake instalacije i nadogradnje postoj
 $string['errorsinenvironment'] = 'Provera okruženja nije prošla!';
 $string['installation'] = 'Instalacija';
 $string['langdownloaderror'] = 'Nažalost, jezik "{$a}" se ne može preuzeti. Proces instalacije biće nastavljen na engleskom jeziku.';
-$string['memorylimithelp'] = '<p>PHP ograničenje memorije za vaš server je trenutno podešeno na {$a}.</p>
-
-<p>Ovo podešavanje može kasnije da prouzrokuje da Moodle ima problema sa memorijom, posebno ako imate mnogo aktiviranih modula i/ili mnogo korisnika.</p>
-
-<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 40M. Postoji nekoliko načina na koje to može da se to uradi:</p><ol>
-<li>Ako možete, rekompajlirajte PHP sa <i>--enable-memory-limit</i>. Ovo će omogućiti Moodle sistemu da sam postavi memorijsko ograničenje.</li>
-<li>Ako imate pristup svojoj php.ini datoteci, možete promeniti vrednost za <b>memory_limit</b> na, recimo, 40M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi umesto vas.</li>
-<li>Na nekim PHP serverima možete da kreirate .htaccess datoteku u Moodle direktorijumu koja sadrži red:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Međutim, na nekim serverima to će sprečiti prikazivanje <b>svih</b> PHP stranica (videćete poruku o grešci kada budete gledali stranice), pa ćete sa tih servera morati da uklonite .htaccess datoteku.</p></li>
-</ol>';
 $string['paths'] = 'Putanje';
 $string['pathserrcreatedataroot'] = 'Instalaciona procedura ne može da kreira direktorijum baze podataka ({$a->dataroot}).';
 $string['pathshead'] = 'Potvrdi putanje';
@@ -77,9 +66,6 @@ $string['pathsunsecuredataroot'] = 'Lokacija direktorijuma sa podacima nije bezb
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionhelp'] = '<p>Moodle zahteva PHP verziju barem 5.6.5 ili 7.1 (7.0.x ima neka ograničenja).</p>
-<p>Trenutno koristite verziju {$a}</p>
-<p>Morate da nadogradite PHP ili da premestiti Moodle na veb server sa novijom verzijom PHP-a.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ovu stranicu vidite zato što ste uspešno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na svom serveru. Čestitamo!';
 $string['welcomep30'] = 'Ovo izdanje <strong>{$a->installername}</strong> uključuje aplikacije za kreiranje okruženja u kojem će <strong>Moodle</strong> uspešno funkcionisati, konkretno:';

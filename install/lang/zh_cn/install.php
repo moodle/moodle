@@ -49,18 +49,6 @@ $string['environmentsub2'] = '每个Moodle的发行版都有一些对PHP版本�
 $string['errorsinenvironment'] = '环境检查失败！';
 $string['installation'] = '安装';
 $string['langdownloaderror'] = '很不幸，无法下载“{$a}”语言包。安装过程将以英文继续。';
-$string['memorylimithelp'] = '<p>您服务器的PHP内存限制是{$a}。</p>
-
-<p>这会使Moodle在将来运行是碰到内存问题，特别是您安装了很多模块并且/或者有很多用户。</p>
-
-<p>我们建议可能的话把限制设定的高一些，譬如40M。有几种方法可以做到这一点：</p>
-<ol>
-<li>如果可以，重新编译PHP并使用<i>--enable-memory-limit</i>选项。这允许Moodle自己设定内存限制。</li>
-<li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值，如40M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
-<li>在一些PHP服务器上，您可以在Moodle目录中创建一个.htaccess文件并包含如下内容:
-<blockquote>php_value memory_limit 40M</blockquote>
-<p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
-</ol>';
 $string['paths'] = '路径';
 $string['pathserrcreatedataroot'] = '安装程序无法建立数据目录({$a->dataroot})。';
 $string['pathshead'] = '确认路径';
@@ -80,9 +68,6 @@ $string['pathsunsecuredataroot'] = '数据目录所在位置不安全';
 $string['pathswrongadmindir'] = '管理目录不存在';
 $string['phpextension'] = '{$a} PHP扩展';
 $string['phpversion'] = 'PHP版本';
-$string['phpversionhelp'] = '<p>Moodle 需要至少 5.6.5 或 7.1 的 PHP 版本（7.0.x 有一些引擎限制）。</p>
-<p>您当前运行的是版本 {$a}。</p>
-<p>您必须升级 PHP 或移动到具有较新 PHP 版本的主机。</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装并启用了<strong>{$a->packname} {$a->packversion}</strong>软件包。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>的此发行版包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';

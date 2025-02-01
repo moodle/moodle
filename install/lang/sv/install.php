@@ -50,22 +50,6 @@ En fullständig kontroll av miljön görs före varje installation och uppgrader
 $string['errorsinenvironment'] = 'Kontrollen av miljön misslyckades';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" gick tyvärr inte att ladda ner. Installationen kommer att fullföljas på engelska.';
-$string['memorylimithelp'] = '<p>PHP-minnesgränsen för servern är för närvarande inställd på {$a}.</p>
-
-<p>Detta kan leda till att Moodle får minnesproblem senare, särskilt om du har många moduler aktiverade och/eller många användare.</p>
-
-<p>Vi rekommenderar att du konfigurerar PHP med en högre gräns om möjligt, till exempel 40M.
-   Det finns flera sätt som du kan prova att göra detta på:</p>
-<ol>
-<li>Om du kan, kompilera om PHP med <code>--enable-memory-limit</code>.
-    Detta gör det möjligt för Moodle att själv ställa in minnesgränsen.</li>
-<li>Om du har tillgång till din php.ini fil kan du ändra <code>memory_limit</code>
-    inställningen till t.ex. 40M.  Om du inte har åtkomst kan du be administratören göra detta åt dig.</li>
-<li>På vissa PHP-servrar kan du skapa en HTACCESS-fil i Moodle-katalogen
-    som innehåller denna rad:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Dock kan detta för vissa servrar resultera i att <b>alla</b> PHP-sidor slutar fungera (du får felmeddelande då du försöker visa dem). I dessa fall behöver du ta bort .htaccess-filen.</p></li>
-</ol>';
 $string['paths'] = 'Sökvägar';
 $string['pathserrcreatedataroot'] = 'Installationsprogrammet kan inte skapa datakatalogen <code>{$a->dataroot}</code>.';
 $string['pathshead'] = 'Bekräfta sökvägar';
@@ -87,9 +71,6 @@ $string['pathsunsecuredataroot'] = 'Platsen för dataroot är inte säker';
 $string['pathswrongadmindir'] = 'Admin-katalogen saknas';
 $string['phpextension'] = '{$a} PHP-tillägg';
 $string['phpversion'] = 'PHP-version';
-$string['phpversionhelp'] = '<p>Moodle kräver minst PHP-version 5.6.5 eller 7.1 (7.0.x har vissa motorbegränsningar).</p>
-<p>Du använder för närvarande version {$a}.</p>
-<p>Du måste uppgradera PHP eller flytta till en server med en nyare version av PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denna sida eftersom installationen av <strong>{$a->packname} {$a->packversion}</strong>-paketet lyckades.';
 $string['welcomep30'] = 'Den här versionen av <strong>{$a->installername}</strong> innehåller program för att skapa en miljö där <strong>Moodle</strong> kommer att fungera, nämligen:';

@@ -50,25 +50,6 @@ Pred vsako namestitvijo ali posodobitvijo se izvede popolna preverba okolja. Kon
 $string['errorsinenvironment'] = 'Preverjanje okolja ni uspelo!';
 $string['installation'] = 'Namestitev';
 $string['langdownloaderror'] = 'Žal jezika »{$a}« ni mogoče namestiti. Postopek namestitve se bo nadaljeval v angleščini.';
-$string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem strežniku nastavljena na {$a}.</p>
-
-<p>To lahko povzroči, da bo imel Moodle pozneje težave s pomnilnikom. Še posebej,
-   če imate omogočenih veliko modulov oziroma veliko uporabnikov.</p>
-
-<p>Priporočamo, da konfigurirate PHP z višjo omejitvijo, če je možno npr. 40M.
-   To lahko poskusite storiti na več načinov:</p>
-<ol>
-<li>Če lahko, ponovno prevedite PHP z <i>--enable-memory-limit</i>.
-    To bo omogočilo, da bo Moodle sam nastavil omejitev pomnilnik zase.</li>
-<li>Če imate dostop do vaše datoteke php.ini, lahko spremenite vrednost <b>memory_limit</b>
-    v tej datoteki na, recimo, 40M.  Če nimate dostopa, boste morda
-    lahko prosili vašega skrbnika, da to naredi za vas.</li>
-<li>Na nekaterih strežnikih PHP lahko ustvarite datoteko .htaccess v imeniku Moodle,
-    ki naj vsebuje to vrstico:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>Vendar lahko to na nekaterih strežnikih prepreči delovanje <b>vseh</b> PHP strani
-    (ob prikazu strani boste videli napake) in boste morali odstraniti datoteko .htaccess.</p></li>
-</ol>';
 $string['paths'] = 'Poti';
 $string['pathserrcreatedataroot'] = 'Podatkovni imenik ({$a->dataroot}) ne more biti ustvarjen z namestitvenim programom.';
 $string['pathshead'] = 'Potrdite poti';
@@ -88,9 +69,6 @@ $string['pathsunsecuredataroot'] = 'Lokacija korenske podatkovne mape ni varna';
 $string['pathswrongadmindir'] = 'Skrbniški imenik ne obstaja';
 $string['phpextension'] = '{$a} PHP razširitev';
 $string['phpversion'] = 'Različica PHP';
-$string['phpversionhelp'] = '<p>Moodle zahteva različico PHP vsaj 5.6.5 ali 7.1 (7.0.x ima vrsto mehanskih težav).</p>
-<p>Vaša trenutna različica je {$a}</p>
-<p>Posodobiti in nadgraditi morate PHP ali premakniti program na gostitelja z novejšo različico PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'To stran vidite, ker ste uspešno namestili in
     zagnali paket <strong>{$a->packname} {$a->packversion}</strong> na vašem računalniku. Čestitamo!';

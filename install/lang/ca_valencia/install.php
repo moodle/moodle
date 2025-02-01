@@ -34,18 +34,6 @@ $string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja exist
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordes de Moodle {$a}';
 $string['clitablesexist'] = 'Les taules de la base de dades ja existeixen. La instal·lació per línia d\'ordes no pot continuar.';
 $string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no es pot baixar. La instal·lació prosseguirà en anglés.';
-$string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor actualment està definit en {$a}.</p>
-
-<p>Això pot causar que Moodle tinga problemes de memòria més avant, especialment, si teniu molts mòduls habilitats i/o molts usuaris.</p>
-
-<p>És recomanable que configureu el PHP amb un límit superior, com ara 40 MB, sempre que siga possible. Hi ha diverses maneres de fer això:</p>
-<ol>
-<li>Si podeu, recompileu el PHP amb <i>--enable-memory-limit</i>. Això permetrà que Moodle definisca el límit de memòria per si mateix.</li>
-<li>Si teniu accés al fitxer php.ini, podeu canviar el paràmetre <b>memory_limit</b> a 40 MB. Si no hi teniu accés, podeu demanar al vostre administrador que vos ho faça.</li>
-<li>En alguns servidors PHP podeu crear un fitxer .htaccess dins el directori de Moodle amb aquesta línia:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Tanmateix, en alguns servidors això farà que no funcione <b>cap</b> pàgina PHP (es visualitzaran errors); en aquest cas, hauríeu de suprimir el fitxer .htaccess.</p></li>
-</ol>';
 $string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o alguna cosa semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nom nou ací. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
 $string['pathssubdataroot'] = '<p>Directori on Moodle emmagatzemarà els materials pujats pels usuaris.</p>
 <p>Aquest directori hauria de tindre permisos de lectura i escriptura per a l\'usuari del servidor web (normalment «www-data», «nobody», or «apache»).</p>
@@ -53,9 +41,6 @@ $string['pathssubdataroot'] = '<p>Directori on Moodle emmagatzemarà els materia
 <p>L\'instal·lador provarà de crear-lo si no existeix.</p>';
 $string['pathssubwwwroot'] = '<p>L\'adreça web completa on s\'accedirà a Moodle; per exemple, l\'adreça que els usuaris introduiran a la barra d\'adreces del navegador per accedir a Moodle.</p> <p> No és possible accedir a Moodle utilitzant diferents adreces. Si el vostre lloc és accessible a través de diferents adreces, trieu-ne la més fàcil i configureu una redirecció permanent per a cadascuna de les altres adreces.</p> <p>
 Si el vostre lloc és accessible tant des d\'Internet com des d\'una xarxa interna (anomenada de vegades intranet), utilitzeu l\'adreça pública ací.</p> <p>Si l\'adreça actual no és correcta, canvieu l\'URL a la barra d\'adreces del navegador i reinicieu la instal·lació.';
-$string['phpversionhelp'] = '<p>Moodle necessita una versió de PHP 4.3.0 o 5.1.0 (les versions 5.0.x tenien uns quants problemes coneguts).</p>
-<p>A hores d\'ara esteu utilitzant la versió {$a}.</p>
-<p>Vos cal actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.<br />(Si esteu utilitzant la versió 5.0.x, alternativament també podríeu tornar arrere a la 4.4.x)</p>';
 $string['welcomep20'] = 'Esteu veient esta pàgina perquè heu instal·lat amb èxit i heu executat el paquet <strong>{$a->packname} {$a->packversion}</strong>. Felicitacions.';
 $string['welcomep30'] = 'Aquesta versió de <strong>{$a->installername}</strong> inclou les aplicacions necessàries per crear un entorn en el qual funcione <strong>Moodle</strong>, concretament:';
 $string['welcomep50'] = 'L\'ús de totes les aplicacions d\'aquest paquet és governat per les seues llicències respectives. El paquet <strong>{$a->installername}</strong> complet és

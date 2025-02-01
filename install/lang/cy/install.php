@@ -50,25 +50,6 @@ Bydd yr amgylchedd yn cael ei brofi\'n llawn cyn pob proses osod a diweddaru. Cy
 $string['errorsinenvironment'] = 'Wedi methu profi\'r amgylchedd!';
 $string['installation'] = 'Gosod';
 $string['langdownloaderror'] = 'Yn anffodus, ni lwyddwyd i lwytho\'r iaith ganlynol: "{$a}". Bydd y broses osod yn parhau yn Gymraeg.';
-$string['memorylimithelp'] = '<p>Mae maint y cof PHP yn eich gweinydd ar hyn o bryd yn {$a}.</p>
-
-<p>Gall hyn arwain at broblemau â\'r cof yn nes ymlaen, yn enwedig
-   os ydych wedi galluogi llawer o fodiwlau a/neu lawer o ddefnyddwyr.</p>
-
-<p>Rydym yn argymell eich bod yn ffurfweddu PHP gyda mwy o gof os yn bosib, megis 40M.
-   Mae sawl ffordd o wneud hyn:</p>
-<ol>
-<li>Os ydych yn gallu, ceisiwch ail-grynhoi PHP gyda <i>--enable-memory-limit</i>.
-    Bydd hyn yn gadael i Moodle osod maint y cof ei hun.</li>
-<li>Os ydych yn gallu mynd i mewn i\'ch ffeil php.ini, gallwch newid y gosodiad <b>memory_limit</b>
-    yn y fan honno i tua 40M. Os nad ydych chi\'n gallu gwneud hyn eich hun, efallai
-    y gallech ofyn i\'ch gweinyddwr wneud hyn i chi.</li>
-<li>Ar rai gweinyddion PHP, gallwch greu ffeil .htaccess yng nghyfeiriadur Moodle
-    sy\'n cynnwys y llinell hon:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
-    <p>Fodd bynnag, ar rai gweinyddion bydd hyn yn atal <b>pob</b> tudalen PHP rhag gweithio
-    (bydd gwallau\'n ymddangos pan fyddwch yn edrych ar dudalennau) felly bydd rhaid i chi dynnu\'r ffeil .htaccess file.</p></li>
-</ol>';
 $string['paths'] = 'Llwybrau';
 $string['pathserrcreatedataroot'] = 'Dydy\'r rhaglen osod ddim yn gallu creu\'r cyfeiriadur data ({$a->dataroot}).';
 $string['pathshead'] = 'Cadarnhau llwybrau';
@@ -86,10 +67,6 @@ $string['pathsunsecuredataroot'] = 'Dydy lleoliad y data gwraidd ddim yn ddiogel
 $string['pathswrongadmindir'] = 'Cyfeiriadur y gweinyddwr';
 $string['phpextension'] = 'Estyniad PHP {$a}';
 $string['phpversion'] = 'Fersiwn PHP';
-$string['phpversionhelp'] = '<p>Mae angen o leiaf fersiwn PHP 4.3.0 neu 5.1.0 ar Moodle (mae llawer o broblemau gyda 5.0.x).</p>
-<p>Ar hyn o bryd, rydych yn rhedeg fersiwn {$a}</p>
-<p>Rhaid i chi uwchraddio PHP neu newid i westeiwr â fersiwn fwy diweddar o PHP!<br/>
-(Os oes gennych 5.0.x gallech hefyd is-raddio i fersiwn 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Rydych chi\'n gweld y dudalen hon gan eich bod wedi gosod a
     lansio\'r pecyn <strong>{$a->packname} {$a->packversion}</strong> yn llwyddiannus ar eich cyfrifiadur. Llongyfarchiadau!';

@@ -49,7 +49,6 @@ $string['environmentsub2'] = 'Cada nova versão do Moodle tem pré-requisitos m�
 $string['errorsinenvironment'] = 'A verificação do sistema falhou!';
 $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Não foi possível descarregar o idioma \'<b>{$a}</b>\' . O processo de instalação continuará em Inglês.';
-$string['memorylimithelp'] = '<p>O limite de memória para o PHP definido atualmente no servidor é <b>{$a}</b>.</p><p>Um número elevado de módulos em utilização ou de utilizadores registados pode fazer com que o Moodle apresente problemas de falta de memória.</p><p>É recomendado que o PHP seja configurado com um limite de memória de pelo menos 40MB. Esta configuração pode ser definida de diversas formas:</p><ol><li>Compilação do PHP com o parâmetro <b>--enable-memory-limit</b>. Esta definição permitirá ao próprio Moodle definir o valor a utilizar.</li><li>Alteração do parâmetro <b>memory_limit</b> no ficheiro de configuração do PHP para um valor igual ou superior a 40MB.</li><li>Criação de um ficheiro <b>.htaccess</b> na raiz da pasta do Moodle com a linha <b>php_value memory_limit 40M</b><p><strong>Atenção</strong>: Em alguns servidores esta configuração impedirá o funcionamento de <b>todas</b> as páginas PHP. Nestes casos, não poderá ser utilizado o ficheiro <b>.htaccess</b>.</p></li></ol>';
 $string['paths'] = 'Caminhos';
 $string['pathserrcreatedataroot'] = 'O programa de instalação não conseguiu criar a pasta dos dados <b>{$a->dataroot}</b>.';
 $string['pathshead'] = 'Confirmar caminhos';
@@ -66,9 +65,6 @@ $string['pathsunsecuredataroot'] = 'A localização da pasta dos dados não é s
 $string['pathswrongadmindir'] = 'A pasta <b>admin</b> não existe';
 $string['phpextension'] = 'Extensão <b>{$a}</b> do PHP';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>A instalação do Moodle só é possível se no servidor estiver instalada, pelo menos, a versão 5.6.5 do PHP (a versão 7.0.x tem algumas limitações).</p>
-<p>A versão atualmente instalada é {$a}.</p>
-<p>É necessário atualizar a versão do PHP ou migrar para um servidor com a referida versão.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'A apresentação desta página confirma a correta instalação e ativação do pacote <strong>{$a->packname} {$a->packversion}</strong> no servidor.';
 $string['welcomep30'] = 'Esta versão do pacote <strong>{$a->installername}</strong> inclui as aplicações necessárias para o correto funcionamento do  <strong>Moodle</strong>, nomeadamente:';

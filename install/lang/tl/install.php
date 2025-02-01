@@ -39,28 +39,7 @@ $string['dirroot'] = 'Direktoryo ng Moodle';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['installation'] = 'Pagluklok';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang "{$a}" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';
-$string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay kasalukuyang nakatakda sa {$a}.</p>
-
-<p>Maaaring magdulot ito ng mga problemang pangmemorya sa Moodle sa mga susunod na panahon, lalo na kung marami kang naka-enable na modyul at/o marami kang tagagamit.</p>
-
-<p>Iminumungkahi namin na isaayos mo ang PHP na may mas mataas na limit kung maaari, tulad ng 40M.  May iba\'t-ibang paraan na magagawa ka upang ito ay maisakatuparan:</p>
-<ol>
-<li>Kung maaari mong gawin, muling ikompayl ang PHP na may <i>--enable-memory-limit</i>.
-     Pahihintulutan nito ang Moodle na itakda ang memory limit sa sarili nito.</li>
-<li>Kung mapapasok mo ang iyong php.ini file, mababago mo ang <b>memory_limit</b>
-    na setting doon at gawin itong mga 40M.  Kung wala kang karapatang pasukin ito
-    baka puwede mong hilingin sa administrador na gawin ito para sa iyo.</li>
-<li>Sa ilang PHP server maaari kang lumikha ng isang file na .htaccess sa direktoryo ng Moodle
-    na naglalaman ng linyang ito:
-   <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>Subali\'t sa ilang server ay pipigilin nito ang paggana ng <b>lahat</b> ng pahinang PHP
-    (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang .htaccess file.</p></li>
-</ol>';
 $string['phpversion'] = 'Bersiyon ng PHP';
-$string['phpversionhelp'] = '<p>Kinakailangan ng Moodle ang isang bersiyon ng PHP na kahit man lamang 4.3.0. o 5.1.0 (ang 5.0.x ay maraming problema)</p>
-<p>Sa kasalukuyan ay pinatatakbo mo ang bersiyong {$a}</p>
-<p>Kailangan mong gawing bago ang PHP o lumipat sa isang host na may mas bagong bersiyon ng PHP!<br />(Sa kaso ng 5.0.x ay maaari mo ring ibaba ang bersiyon sa 4.4.x)
-</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Nakikita mo ang pahinang ito dahil matagumpay mong nailuklok at napagana ang paketeng <strong>{$a->packname} {$a->packversion}</strong> sa iyong kompyuter.  Maligayang bati!';
 $string['welcomep30'] = 'Ang lathala ng <strong>{$a->installername}</strong> na ito ay naglalaman ng mga aplikasyon na lilikha ng kapaligiran na tatakbuhan ng  <strong>Moodle</strong>, ito ay ang mga sumusunod:';

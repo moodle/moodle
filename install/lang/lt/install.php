@@ -49,7 +49,6 @@ $string['environmentsub2'] = 'Kiekvienas „Moodle“ leidimas turi minimalius P
 $string['errorsinenvironment'] = 'Aplinkos patikra nepavyko!';
 $string['installation'] = 'Diegimas';
 $string['langdownloaderror'] = 'Deja, {$a} kalbos atsisiųsti nepavyko. Diegimo procesas bus tęsiamas anglų kalba.';
-$string['memorylimithelp'] = '<p>Serverio PHP atminties limitas dabar nustatytas kaip {$a}.</p> <p>Vėliau dėl to „Moodle“ gali iškilti atminties problemų, ypač jei įjungta daug modulių ir (arba) yra daug naudotojų.</p> <p>Rekomenduojame sukonfigūruoti didesnį PHP limitą, jei galima, pvz., 40M. Galite pabandyti tai atlikti keliais būdais:</p> <ol> <li>Jei galite, pakartotinai sukompiliuokite PHP naudodami <i>--enable-memory-limit</i>. Taip „Moodle“ pati galės nustatyti atminties limitą.</li> <li>Jei turite prieigą prie php.ini failo, galite pakeisti <b>memory_limit</b> parametro reikšmę į 40M ar pan. Jei prieigos neturite, galite paprašyti, kad tai padarytų administratorius.</li> <li>Kai kuriuose PHP serveriuose „Moodle“ kataloge galite sukurti .htaccess failą, kuriame būtų ši eilutė : <blockquote><div>php_value memory_limit 40M</div></blockquote> <p>Tačiau kai kuriuose serveriuose dėl to neveiks <b>visi</b> PHP puslapiai (peržiūrėdami puslapius matysite klaidą), todėl the .htaccess failą teks pašalinti.</p></li> </ol>';
 $string['paths'] = 'Keliai';
 $string['pathserrcreatedataroot'] = 'Diegimo programa negali sukurti duomenų katalogo ({$a->dataroot}).';
 $string['pathshead'] = 'Patvirtinti kelius';
@@ -63,9 +62,6 @@ $string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus'
 $string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
 $string['phpversion'] = 'PHP versija';
-$string['phpversionhelp'] = '<p>Moodle reikalinga bent 5.6.5 arba 7.1 PHP versija (7.0.x turi tam tikrų variklio apribojimų).</p>
-<p>Šiuo metu naudojate {$a} versiją.</p>
-<p>Turite atnaujinti PHP arba perkelti į prieglobą su naujesne PHP versija.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Matote šį puslapį, nes į kompiuterį sėkmingai įdiegėte ir paleidote <strong>{$a->packname} {$a->packversion}</strong> paketą. Sveikiname!';
 $string['welcomep30'] = 'Šiame <strong>{$a->installername}</strong> leidime yra taikomosios programos, skirtos aplinkai, kurioje veiks <strong>Moodle</strong>, sukurti:';

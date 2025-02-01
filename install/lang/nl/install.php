@@ -50,17 +50,6 @@ De volledige installatie-omgeving wordt gecontroleerd voor elke installatie en u
 $string['errorsinenvironment'] = 'Fouten in je omgeving!';
 $string['installation'] = 'Installatie';
 $string['langdownloaderror'] = 'De taal "{$a}" kon niet worden gedownload. Het installatieproces gaat verder in het Engels.';
-$string['memorylimithelp'] = '<p>De PHP-geheugenlimiet van je server is ingesteld op {$a}.</p>
-<p>Hierdoor kan Moodle geheugenproblemen krijgen, vooral als je veel modules installeert en/of veel gebruikers hebt.</p>
-
-<p>We raden je aan PHP met een hogere geheugenlimiet te configureren indien mogelijk, bijvoorbeeld 40Mb. Er zijn verschillende mogelijkheden om dat te doen. Je kunt proberen:
-<ol>
-<li>Indien je kunt PHP hercompileren met <i>--enable-memory-limit</i>.
-Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
-<li>Als je toegang hebt tot het php.ini-bestand, kun je de <b>memory_limit</b>-instelling veranderen naar bv 40Mb. Als je geen toegang hebt kun je je systeembeheerder vragen dit voor je te wijzigen.</li>
-<li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.</li>
-</ol>';
 $string['paths'] = 'Paden';
 $string['pathserrcreatedataroot'] = 'Datamap ({$a->dataroot}) kan niet aangemaakt worden door het installatiescript';
 $string['pathshead'] = 'Bevestig paden';
@@ -80,9 +69,6 @@ $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
 $string['phpextension'] = '{$a} PHP-extentie';
 $string['phpversion'] = 'PHP-versie';
-$string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 5.6.5 of 7.1 nodig (7.0.x heeft een aantal beperkingen).</p>
-<p>De huidige versie op je server is {$a}</p>
-<p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP.<br />';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>{$a->packname} {$a->packversion}</strong> packet op je computer gezet en gestart hebt. Proficiat!';
 $string['welcomep30'] = 'Deze uitgave van <strong>{$a->installername}</strong> bevat de software die nodig is om een omgeving te creëren waarin <strong>Moodle</strong> zal werken, namelijk:';
