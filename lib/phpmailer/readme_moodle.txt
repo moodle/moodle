@@ -8,7 +8,6 @@ To upgrade this library:
 2. Remove everything inside lib/phpmailer/ folder except README_MOODLE.txt, moodle_phpmailer.php and moodle_phpmailer_oauth.php.
 3. Extract the contents of the release archive to lib/phpmailer.
 4. Remove the following files that were extracted:
-   - composer.json
    - get_oauth_token.php
    - SECURITY.md
    - src/POP3.php
