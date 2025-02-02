@@ -733,7 +733,7 @@ All rights reserved.</copyright>
     <location>symfony/deprecation-contracts</location>
     <name>Symfony Deprecation contracts</name>
     <description>A generic function and convention to trigger deprecation notices</description>
-    <version>3.5.0</version>
+    <version>3.5.1</version>
     <license>MIT</license>
     <repository>https://github.com/symfony/deprecation-contracts</repository>
   </library>
