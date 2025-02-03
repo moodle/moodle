@@ -4,7 +4,7 @@ metadata:
   name: themeclaim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   resources:
     requests:
       storage: 5Gi

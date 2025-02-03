@@ -4,7 +4,7 @@ metadata:
   name: moodledataclaim
 spec:
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteMany
   resources:
     requests:
       storage: 5Gi
