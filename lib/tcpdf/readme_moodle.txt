@@ -12,6 +12,11 @@ Important
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
 
+2025/02/04
+----------
+Upgrade to tcpdf TCPDF 6.8.2 (MDL-84354)
+by Stevani Andolo <stevani@hotmail.com.au>
+
 2024/06/16
 ----------
 Upgrade to tcpdf TCPDF 6.7.5 (MDL-81658)
