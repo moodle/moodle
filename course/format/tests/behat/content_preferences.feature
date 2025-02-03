@@ -37,7 +37,7 @@ Feature: Course content collapsed user preferences
     And I should see "Activity sample 2" in the "region-main" "region"
     And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "Collapse" "link" in the "Section 1" "section"
+    And I click on ".course-section[data-number='1'] .icons-collapse-expand" "css_element"
     When I reload the page
     Then I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
@@ -45,7 +45,7 @@ Feature: Course content collapsed user preferences
     And I should see "Activity sample 2" in the "region-main" "region"
     And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "Collapse" "link" in the "Section 2" "section"
+    And I click on ".course-section[data-number='2'] .icons-collapse-expand" "css_element"
     And I reload the page
     And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
@@ -53,7 +53,7 @@ Feature: Course content collapsed user preferences
     And I should not see "Activity sample 2" in the "region-main" "region"
     And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "Collapse" "link" in the "Section 3" "section"
+    And I click on ".course-section[data-number='3'] .icons-collapse-expand" "css_element"
     And I reload the page
     And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
@@ -61,12 +61,12 @@ Feature: Course content collapsed user preferences
     And I should not see "Activity sample 2" in the "region-main" "region"
     And I should see "Section 3" in the "region-main" "region"
     And I should not see "Activity sample 3" in the "region-main" "region"
-    And I click on "Expand" "link" in the "Section 2" "section"
-    And I click on "Expand" "link" in the "Section 3" "section"
+    And I click on ".course-section[data-number='2'] .icons-collapse-expand" "css_element"
+    And I click on ".course-section[data-number='3'] .icons-collapse-expand" "css_element"
     And I reload the page
     And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
-    And I click on "Collapse" "link" in the "Section 4" "section"
+    And I click on ".course-section[data-number='4'] .icons-collapse-expand" "css_element"
     And I turn editing mode on
     And I delete section "1"
     And I click on "Delete" "button" in the ".modal" "css_element"
