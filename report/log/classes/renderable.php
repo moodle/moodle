@@ -96,13 +96,6 @@ class report_log_renderable implements renderable {
     /** @var array Index of delegated sections (indexed by component and itemid) */
     protected $delegatedbycm;
 
-    /**
-     * @var array group ids
-     * @deprecated since Moodle 4.4 - please do not use this public property
-     * @todo MDL-81155 remove this property as it is not used anymore.
-     */
-    public $grouplist;
-
     /** @var bool if the page is activity page */
     public $isactivitypage;
 
@@ -447,7 +440,6 @@ class report_log_renderable implements renderable {
         if (!empty($cgroups)) {
             $grouplist = array_column($cgroups, 'name', 'id');
         }
-        $this->grouplist = $grouplist; // Keep compatibility with MDL-41465.
         return $grouplist;
     }
 
