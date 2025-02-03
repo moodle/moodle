@@ -303,13 +303,13 @@ class manager {
             $defaultconfig = $classname::initialise_action_settings();
 
             // Return the default value.
-            return $defaultconfig[$actionclass]['enabled'];
+            return array_key_exists($actionclass, $defaultconfig) && $defaultconfig[$actionclass]['enabled'];
 
         } else {
             // Get the provider instance.
             $providers = $this->get_provider_instances(['id' => $instanceid]);
             $provider = reset($providers);
-            return $provider->actionconfig[$actionclass]['enabled'];
+            return array_key_exists($actionclass, $provider->actionconfig) && $provider->actionconfig[$actionclass]['enabled'];
         }
     }
 
