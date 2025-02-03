@@ -43,6 +43,7 @@ class manager {
             'footnotes',
             'formatpainter',
             'linkchecker',
+            'math',
             'pageembed',
             'permanentpen',
             'powerpaste',
