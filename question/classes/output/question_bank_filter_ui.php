@@ -134,7 +134,7 @@ class question_bank_filter_ui extends datafilter {
             'quizcmid' => $this->extraparams['quizcmid'] ?? $this->cmid,
             'component' => $this->component,
             'callback' => $this->callback,
-            'view' => str_replace('\\', '\\\\', $this->view),
+            'view' => $this->view,
             'cmid' => $this->cmid ?? 0,
             'pagevars' => json_encode($this->pagevars),
             'extraparams' => json_encode($this->extraparams),

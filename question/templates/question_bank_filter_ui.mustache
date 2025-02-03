@@ -29,7 +29,7 @@
         "quizcmid": "4",
         "component": "core_quiz",
         "callback": "get_question_data",
-        "view": "\\\\core\\\\question\\\\local\\\\bank\\\\view",
+        "view": "\\core\\question\\local\\bank\\view",
         "cmid": "4",
         "pagevars": "[]",
         "extraparams": "[]"
@@ -42,7 +42,19 @@
 
 {{#js}}
     require(['core_question/filter'], function(Filter) {
-        Filter.init('core-filter-{{uniqid}}', {{courseid}}, {{categoryid}}, {{perpage}}, {{contextid}}, {{quizcmid}},
-                '{{component}}', '{{callback}}', '{{view}}', {{cmid}}, '{{{pagevars}}}', '{{{extraparams}}}');
+        Filter.init(
+            {{#quote}}core-filter-{{uniqid}}{{/quote}},
+            {{courseid}},
+            {{categoryid}},
+            {{perpage}},
+            {{contextid}},
+            {{quizcmid}},
+            {{#quote}}{{component}}{{/quote}},
+            {{#quote}}{{callback}}{{/quote}},
+            {{#quote}}{{view}}{{/quote}},
+            {{cmid}},
+            {{{pagevars}}},
+            {{{extraparams}}},
+        );
     });
 {{/js}}
