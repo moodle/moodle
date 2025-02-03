@@ -18,3 +18,13 @@ body.mce-content-body a {
     color: #495057;
     border-left: 5px solid #8f959e;
 }
+
+.mce-content-body svg[contentEditable=false] {
+    cursor: not-allowed;
+}
+
+.mce-content-body p > math,
+.mce-content-body p > svg {
+    display: inline-block;
+    outline: 3px solid #b4d7ff;
+}
