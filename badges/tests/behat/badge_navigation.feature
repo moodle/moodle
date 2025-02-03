@@ -61,7 +61,7 @@ Feature: Test tertiary navigation as various users
       | user       | createbutton     | activetab |
       | admin      | should exist     | More      |
       | teacher    | should exist     | More      |
-      | nonediting | should not exist | Badges    |
+      | nonediting | should not exist | More      |
 
   Scenario: Check navigation as a student
     Given I am on the "C1" "Course" page logged in as "student1"

@@ -3162,6 +3162,16 @@ class global_navigation extends navigation_node {
                 navigation_node::TYPE_SETTING, null, 'communication');
         }
 
+        if ($navoptions->overview) {
+            $coursenode->add(
+                text: get_string('activities'),
+                action: new moodle_url('/course/overview.php', ['id' => $course->id]),
+                type: self::TYPE_CONTAINER,
+                key: 'courseoverview',
+                icon: new pix_icon('i/info', ''),
+            );
+        }
+
         return true;
     }
     /**
