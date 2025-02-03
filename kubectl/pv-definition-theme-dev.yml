@@ -15,7 +15,7 @@ spec:
     driver: file.csi.azure.com
     volumeHandle: "moodleCluster#learninghubmoodledev#moodletheme"  # make sure this volumeid is unique for every identical share in the cluster
     volumeAttributes:
-      shareName: theme
+      shareName: moodletheme
     nodeStageSecretRef:
       name: azure-secret
       namespace: default
