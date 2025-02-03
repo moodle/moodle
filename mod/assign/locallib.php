@@ -2799,6 +2799,13 @@ class assign {
                     continue;
                 }
 
+                // CBLUE START - MDL-84098 : Fix failed task due to suspended users.
+                if ($user->suspended) {
+                    mtrace('User ' . $submission->userid . ' is suspended');
+                    continue;
+                }
+                //CBLUE END - MDL-84098 : Fix failed task due to suspended users
+
                 // Use a cache to prevent the same DB queries happening over and over.
                 if (!array_key_exists($submission->course, $courses)) {
                     mtrace('Could not find course ' . $submission->course);

@@ -212,6 +212,8 @@ class notification_helper {
      * @return array The users after all filtering has been applied.
      */
     public static function get_users_within_assignment(int $assignmentid, string $type): array {
+        global $DB;
+
         // Get assignment data.
         $assignmentobj = self::get_assignment_data($assignmentid);
 
@@ -219,6 +221,15 @@ class notification_helper {
         $users = $assignmentobj->list_participants(0, true);
 
         foreach ($users as $key => $user) {
+            //CBLUE START - MDL-84098 : Fix failed task due to suspended users
+            // Get the user.
+            $db_user = $DB->get_record('user', ['id' => $user->id]);
+            if (empty($db_user) || $db_user->suspended) {
+                unset($users[$key]);
+                continue;
+            }
+            //CBLUE END - MDL-84098 : Fix failed task due to suspended users
+
             // Check if the user has submitted already.
             $submission = $assignmentobj->get_user_submission($user->id, false);
             if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
@@ -326,6 +337,14 @@ class notification_helper {
             return;
         }
 
+        // CBLUE START - MDL-84098 : Fix failed task due to suspended users
+        // Get the user and check they are a still a valid participant.
+        $user = $assignmentobj->get_participant($userid);
+        if (empty($user) || $user->suspended) {
+            return;
+        }
+        // CBLUE END - MDL-84098 : Fix failed task due to suspended users
+
         // Build the user's notification message.
         $user = $assignmentobj->get_participant($userid);
         $urlparams = [
@@ -384,9 +403,11 @@ class notification_helper {
 
         // Get the user and check they are a still a valid participant.
         $user = $assignmentobj->get_participant($userid);
-        if (empty($user)) {
+        //CBLUE START - MDL-84098 : Fix failed task due to suspended users
+        if (empty($user) || $user->suspended) {
             return;
         }
+        //CBLUE END - MDL-84098 : Fix failed task due to suspended users
 
         // Check if the due date still considered overdue.
         $assignmentobj->update_effective_access($userid);
@@ -466,6 +487,16 @@ class notification_helper {
      * @param int $userid The user id.
      */
     public static function send_due_digest_notification_to_user(int $userid): void {
+        // CBLUE START - MDL-84098 : Fix failed task due to suspended users.
+        global $DB;
+
+        // Get the user.
+        $db_user = $DB->get_record('user', ['id' => $userid]);
+        if (empty($db_user) || $db_user->suspended) {
+            return;
+        }
+        // CBLUE END - MDL-84098 : Fix failed task due to suspended users.
+
         // Get all the user's assignments due in 7 days.
         $assignments = self::get_due_digest_assignments_for_user($userid);
         $assignmentsfordigest = [];
