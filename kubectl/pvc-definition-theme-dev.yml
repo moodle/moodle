@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: themeclaim
+  name: moodlethemeclaim
 spec:
   accessModes:
     - ReadOnlyMany
@@ -9,4 +9,4 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: azurefile-csi
-  volumeName: theme
+  volumeName: moodletheme

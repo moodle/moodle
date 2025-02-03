@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   annotations:
     pv.kubernetes.io/provisioned-by: file.csi.azure.com
-  name: theme
+  name: moodletheme
 spec:
   capacity:
     storage: 5Gi
@@ -13,7 +13,7 @@ spec:
   storageClassName: azurefile-csi
   csi:
     driver: file.csi.azure.com
-    volumeHandle: "moodleCluster#learninghubmoodledev#theme"  # make sure this volumeid is unique for every identical share in the cluster
+    volumeHandle: "moodleCluster#learninghubmoodledev#moodletheme"  # make sure this volumeid is unique for every identical share in the cluster
     volumeAttributes:
       shareName: theme
     nodeStageSecretRef:
