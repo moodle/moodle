@@ -46,9 +46,9 @@ jobs:
             -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
             -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
             -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
-            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}"
-            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}"
-            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}"
+            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
             -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
             -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
             -var="SQLVcores=${{ vars.SQL_VCORES }}"
