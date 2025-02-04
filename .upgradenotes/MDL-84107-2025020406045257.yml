@@ -1,0 +1,12 @@
+issueNumber: MDL-84107
+notes:
+  mlbackend_php:
+    - message: >-
+        The plugin `mlbackend_php` has been removed and replaced by `mlbackend_python` as the
+        new default value for the Analytics setting `predictionsprocessor`.
+        The plugin is available at https://github.com/moodlehq/moodle-mlbackend_php.
+      type: removed
+  core:
+    - message: >-
+        Analytics is now disabled by default on new installs.
+      type: changed
