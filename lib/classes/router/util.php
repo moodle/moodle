@@ -16,8 +16,9 @@
 
 namespace core\router;
 
-use moodle_url;
+use core\url;
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Routing\RouteContext;
 
@@ -31,51 +32,102 @@ use Slim\Routing\RouteContext;
  * - helpers to fetch the \core\router\route instance
  *
  * @package    core
- * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class util {
     /**
      * Redirect to the specified URL, carrying all parameters across too.
      *
-     * @param string|moodle_url $path
+     * @param string|url $path
      * @param array $excludeparams Any parameters to exclude from the query params
      * @codeCoverageIgnore
      */
     public static function redirect_with_params(
-        string|moodle_url $path,
+        string|url $path,
         array $excludeparams = [],
     ): never {
         $params = $_GET;
-        $url = new moodle_url(
+        $url = new url(
             $path,
             $params,
         );
-        $url->remove_params($excludeparams);
+        $url->remove_params(...$excludeparams);
 
         redirect($url);
     }
 
     /**
-     * Redirect to the route at the callable supplied.
+     * Redirect to the requested callable.
      *
-     * @param callable|array|string $callable
-     * @param array $params Any parameters to include in the path
-     * @codeCoverageIgnore
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array|callable|string $callable
+     * @param null|array $pathparams
+     * @param null|array $queryparams
+     * @param null|array $excludeparams A list of any parameters to remove the URI during the redirect
+     * @return ResponseInterface
      */
     public static function redirect_to_callable(
-        callable|array|string $callable,
-        array $params = [],
-    ): never {
-        $params = array_merge(
-            $_GET,
-            $params,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array|callable|string $callable,
+        ?array $pathparams = null,
+        ?array $queryparams = null,
+        ?array $excludeparams = null,
+    ): ResponseInterface {
+        // Provide defaults for the path and query params if not specified.
+        if ($pathparams === null) {
+            $pathparams = $request->getQueryParams();
+        }
+        if ($queryparams === null) {
+            $queryparams = $request->getQueryParams();
+        }
+
+        // Generate a URI from the callable and the parameters.
+        $url = self::get_path_for_callable(
+            $callable,
+            $pathparams ?? [],
+            $queryparams ?? [],
         );
 
-        $url = self::get_path_for_callable($callable, $params, $params);
+        // Remove any params.
+        $url->remove_params($excludeparams);
 
-        redirect($url);
+        return self::redirect($response, $url);
     }
+
+    /**
+     * Generate a Page Not Found result.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \Slim\Exception\HttpNotFoundException
+     */
+    public static function throw_page_not_found(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): ResponseInterface {
+        throw new \Slim\Exception\HttpNotFoundException($request);
+    }
+
+    /**
+     * Redirect to a URL.
+     *
+     * @param ResponseInterface $response
+     * @param string|url $url
+     * @return ResponseInterface
+     */
+    public static function redirect(
+        ResponseInterface $response,
+        string|url $url,
+    ): ResponseInterface {
+        return $response
+            ->withStatus(302)
+            ->withHeader('Location', (string) $url);
+    }
+
 
     /**
      * Get the route name for the specified callable.
@@ -103,13 +155,13 @@ class util {
      * @param string|array|callable $callable the Callable to get the URI for
      * @param array $params Any parameters to include in the path
      * @param array $queryparams Any parameters to include in the query string
-     * @return moodle_url
+     * @return url
      */
     public static function get_path_for_callable(
         string|array|callable $callable,
-        array $params,
-        array $queryparams,
-    ): moodle_url {
+        array $params = [],
+        array $queryparams = [],
+    ): url {
         global $CFG;
 
         $router = \core\di::get(\core\router::class);
@@ -118,7 +170,7 @@ class util {
 
         $routename = self::get_route_name_for_callable($callable);
 
-        return new moodle_url(
+        return new url(
             url: $parser->fullUrlFor(
                 new Uri($CFG->wwwroot),
                 $routename,
@@ -149,7 +201,7 @@ class util {
     }
 
     /**
-     * Get the instance of the \route\router\route attribute for the specified callable if one is available.
+     * Get the instance of the \core\router\route attribute for the specified callable if one is available.
      *
      * @param callable|array|string $callable
      * @return null|route The route if one was found.

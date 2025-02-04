@@ -43,7 +43,7 @@ trait route_controller {
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        throw new \Slim\Exception\HttpNotFoundException($request);
+        return util::throw_page_not_found($request, $response);
     }
 
     /**
@@ -57,9 +57,7 @@ trait route_controller {
         ResponseInterface $response,
         string|moodle_url $url,
     ): ResponseInterface {
-        return $response
-            ->withStatus(302)
-            ->withHeader('Location', (string) $url);
+        return util::redirect($response, $url);
     }
 
     /**
@@ -81,25 +79,14 @@ trait route_controller {
         ?array $queryparams = null,
         ?array $excludeparams = null,
     ): ResponseInterface {
-        // Provide defaults for the path and query params if not specified.
-        if ($pathparams === null) {
-            $pathparams = $request->getQueryParams();
-        }
-        if ($queryparams === null) {
-            $queryparams = $request->getQueryParams();
-        }
-
-        // Generate a URI from the callable and the parameters.
-        $url = util::get_path_for_callable(
+        return util::redirect_to_callable(
+            $request,
+            $response,
             $callable,
-            $pathparams ?? [],
-            $queryparams ?? [],
+            $pathparams,
+            $queryparams,
+            $excludeparams,
         );
-
-        // Remove any params.
-        $url->remove_params($excludeparams);
-
-        return self::redirect($response, $url);
     }
 
     /**
