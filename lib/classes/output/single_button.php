@@ -94,12 +94,6 @@ class single_button implements renderable {
     protected $type;
 
     /**
-     * @var bool True if button is primary button. Used for styling.
-     * @deprecated since Moodle 4.2
-     */
-    private $primary = false;
-
-    /**
      * @var bool True if button disabled, false if normal
      */
     public $disabled = false;
@@ -147,14 +141,9 @@ class single_button implements renderable {
         moodle_url $url,
         $label,
         $method = 'post',
-        $type = self::BUTTON_SECONDARY,
+        string $type = self::BUTTON_SECONDARY,
         $attributes = []
     ) {
-        if (is_bool($type)) {
-            debugging('The boolean $primary is deprecated and replaced by $type,
-            use single_button::BUTTON_PRIMARY or self::BUTTON_SECONDARY instead');
-            $type = $type ? self::BUTTON_PRIMARY : self::BUTTON_SECONDARY;
-        }
         $this->url = clone($url);
         $this->label = $label;
         $this->method = $method;
@@ -194,44 +183,25 @@ class single_button implements renderable {
     /**
      * Magic setter method.
      *
-     * This method manages access to some properties and will display deprecation message when accessing 'primary' property.
-     *
      * @param string $name
      * @param mixed $value
      */
     public function __set($name, $value) {
-        switch ($name) {
-            case 'primary':
-                debugging('The primary field is deprecated, use the type field instead');
-                // Here just in case we modified the primary field from outside {@see \mod_quiz_renderer::summary_page_controls}.
-                $this->type = $value ? self::BUTTON_PRIMARY : self::BUTTON_SECONDARY;
-                break;
-            case 'type':
-                $this->type = in_array($value, self::BUTTON_TYPES) ? $value : self::BUTTON_SECONDARY;
-                break;
-            default:
-                $this->$name = $value;
+        if ($name === 'type') {
+            $this->type = in_array($value, self::BUTTON_TYPES) ? $value : self::BUTTON_SECONDARY;
+        } else {
+            $this->$name = $value;
         }
     }
 
     /**
      * Magic method getter.
      *
-     * This method manages access to some properties and will display deprecation message when accessing 'primary' property.
-     *
      * @param string $name
      * @return mixed
      */
     public function __get($name) {
-        switch ($name) {
-            case 'primary':
-                debugging('The primary field is deprecated, use type field instead');
-                return $this->type == self::BUTTON_PRIMARY;
-            case 'type':
-                return $this->type;
-            default:
-                return $this->$name;
-        }
+        return $this->$name;
     }
 
     /**

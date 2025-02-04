@@ -1,0 +1,8 @@
+issueNumber: MDL-75875
+notes:
+  core:
+    - message: >-
+        Remove support deprecated boolean 'primary' parameter in
+        \core\output\single_button. The 4th parameter is now a string and not a
+        boolean (the use was to set it to true to have a primary button)
+      type: removed

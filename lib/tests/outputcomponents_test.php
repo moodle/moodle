@@ -613,54 +613,6 @@ EOF;
     }
 
     /**
-     * Test for checking the template context data for the single_select element legacy API.
-     * @covers \single_button
-     */
-    public function test_single_button_deprecated(): void {
-        global $PAGE;
-        $url = new \moodle_url('/');
-        $realname = 'realname';
-        $attributes = [
-            'data-dummy' => 'dummy',
-        ];
-
-        // Test that when we use a true boolean value for the 4th parameter this is set as primary type.
-        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_PRIMARY, $attributes);
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('primary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-
-        // Test that when we use a false boolean value for the 4th parameter this is set as secondary type.
-        $singlebutton = new single_button($url, $realname, 'post', false, $attributes);
-        $this->assertDebuggingCalled();
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('secondary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-
-        // Test that when we set the primary value, then this is reflected in the type.
-        $singlebutton->primary = false;
-        $this->assertDebuggingCalled();
-        $this->assertEquals(single_button::BUTTON_SECONDARY, $singlebutton->type);
-        $singlebutton->primary = true;
-        $this->assertDebuggingCalled();
-        $this->assertEquals(single_button::BUTTON_PRIMARY, $singlebutton->type);
-        // Then set the type directly.
-
-        $singlebutton->type = single_button::BUTTON_DANGER;
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals('danger', $data->type);
-
-    }
-
-    /**
      * Test for checking the template context data for the url_select element.
      */
     public function test_url_select(): void {
