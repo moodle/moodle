@@ -73,56 +73,9 @@ final class scheduled_task_test extends \advanced_testcase {
     }
 
     public function test_get_next_scheduled_time(): void {
-        global $CFG;
         $this->resetAfterTest();
 
-        $this->setTimezone('Europe/London');
-
-        // Let's specify the hour we are going to use initially for the test.
-        // (note that we pick 01:00 that is tricky for Europe/London, because
-        // it's exactly the Daylight Saving Time Begins hour.
-        $testhour = 1;
-
-        // Test job run at 1 am.
-        $testclass = new scheduled_test_task();
-
-        // All fields default to '*'.
-        $testclass->set_hour($testhour);
-        $testclass->set_minute('0');
-        // Next valid time should be 1am of the next day.
-        $nexttime = $testclass->get_next_scheduled_time();
-
-        $oneamdate = new \DateTime('now', new \DateTimeZone('Europe/London'));
-        $oneamdate->setTime($testhour, 0, 0);
-
-        // Once a year (currently last Sunday of March), when changing to Daylight Saving Time,
-        // Europe/London 01:00 simply doesn't exists because, exactly at 01:00 the clock
-        // is advanced by one hour and becomes 02:00. When that happens, the DateInterval
-        // calculations cannot be to advance by 1 day, but by one less hour. That is exactly when
-        // the next scheduled run will happen (next day 01:00).
-        $isdaylightsaving = false;
-        if ($testhour < (int)$oneamdate->format('H')) {
-            $isdaylightsaving = true;
-        }
-
-        // Make it 1 am tomorrow if the time is after 1am.
-        if ($oneamdate->getTimestamp() < time()) {
-            $oneamdate->add(new \DateInterval('P1D'));
-            if ($isdaylightsaving) {
-                // If today is Europe/London Daylight Saving Time Begins, expectation is 1 less hour.
-                $oneamdate->sub(new \DateInterval('PT1H'));
-            }
-        }
-        $oneam = $oneamdate->getTimestamp();
-
-        $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
-
-        // Disabled flag does not affect next time.
-        $testclass->set_disabled(true);
-        $nexttime = $testclass->get_next_scheduled_time();
-        $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
-
-        // Now test for job run every 10 minutes.
+        // Test for job run every 10 minutes.
         $testclass = new scheduled_test_task();
 
         // All fields default to '*'.
@@ -305,6 +258,176 @@ final class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals(strtotime('2023-10-29 02:00 GMT'), $four);
         // This time is now unambiguous in Europe/London.
         $this->assertEquals(strtotime('2023-10-29 02:00 Europe/London'), $four);
+    }
+
+    /**
+     * Tests get_next_scheduled_time for tasks set to run at the hour the time changes
+     * for Daylight Saving Time.
+     */
+    public function test_get_next_scheduled_time_dst_hour(): void {
+        $this->resetAfterTest();
+
+        // Check a timezone where the clock change happens at 1am.
+        $this->setTimezone('Europe/London');
+        // Test task is set to run every day at 1am and 3am.
+        $task = new scheduled_test_task();
+        $task->set_hour('1, 3');
+        $task->set_minute('0');
+
+        // DST change forwards. Check times in GMT to ensure it progresses as normal.
+        $now = strtotime('2025-03-30 00:59 GMT');
+        $this->assertEquals(strtotime('2025-03-30 00:59 Europe/London'), $now);
+        $nexttime = $task->get_next_scheduled_time($now);
+        $this->assertEquals(strtotime('2025-03-30 01:00 GMT'), $nexttime);
+        $this->assertEquals(strtotime('2025-03-30 02:00 Europe/London'), $nexttime);
+
+        // Check the next run is at 3am.
+        $nexttime = $task->get_next_scheduled_time($nexttime);
+        $this->assertEquals(strtotime('2025-03-30 02:00 GMT'), $nexttime);
+        $this->assertEquals(strtotime('2025-03-30 03:00 Europe/London'), $nexttime);
+
+        // Test task is set to run every day at 1am.
+        $task = new scheduled_test_task();
+        $task->set_hour('1');
+        $task->set_minute('0');
+
+        // DST change backwards.
+        $now = strtotime('2025-10-25 00:01 GMT');
+        $this->assertEquals(strtotime('2025-10-25 01:01 Europe/London'), $now);
+        $nexttime = $task->get_next_scheduled_time($now);
+        // The next time is 1:00 Europe/London, but we won't explicitly test that because
+        // there are two 1:00s so it might fail depending on implementation.
+        $this->assertEquals(strtotime('2025-10-26 01:00 GMT'), $nexttime);
+
+        // Check a timezone where the clock change happens at midnight.
+        $this->setTimezone('Africa/Cairo');
+        // Test task is set to run every day at midnight and 3am.
+        $task = new scheduled_test_task();
+        $task->set_hour('0, 3');
+        $task->set_minute('0');
+
+        // DST change forwards. Check times in GMT to ensure it progresses as normal.
+        $now = strtotime('2025-04-24 23:59 GMT+2');
+        $this->assertEquals(strtotime('2025-04-24 23:59 Africa/Cairo'), $now);
+        $nexttime = $task->get_next_scheduled_time($now);
+        $this->assertEquals(strtotime('2025-04-25 00:00 GMT+2'), $nexttime);
+        $this->assertEquals(strtotime('2025-04-25 01:00 Africa/Cairo'), $nexttime);
+
+        // Test task is set to run every day at 11pm.
+        $task = new scheduled_test_task();
+        $task->set_hour('23');
+        $task->set_minute('0');
+
+        // DST change backwards.
+        $now = strtotime('2025-10-29 23:01 GMT+3');
+        $this->assertEquals(strtotime('2025-10-29 23:01 Africa/Cairo'), $now);
+        $nexttime = $task->get_next_scheduled_time($now);
+        // The next time is 00:00 Africa/Cairo, but we won't explicitly test that because
+        // there are two 00:00s so it might fail depending on implementation.
+        $this->assertEquals(strtotime('2025-10-30 23:00 GMT+2'), $nexttime);
+    }
+
+    /**
+     * Tests get_next_scheduled_time for tasks set to run at minute intervals during
+     * the hour the time changes for Daylight Saving Time.
+     */
+    public function test_get_next_scheduled_time_dst_hour_minute(): void {
+        $this->resetAfterTest();
+
+        // Check a timezone where the clock change happens at 1am.
+        $this->setTimezone('Europe/London');
+        // Test task is set to run every day at 1:00, 1:20, 1:40.
+        $task = new scheduled_test_task();
+        $task->set_hour('1');
+        $task->set_minute('*/20');
+
+        // DST change forwards. 1am doesn't exist so the runs happen during the following hour.
+        $before = strtotime('2025-03-30 00:59 GMT');
+        $this->assertEquals(strtotime('2025-03-30 00:59 Europe/London'), $before);
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2025-03-30 02:00 Europe/London'), $one);
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2025-03-30 02:20 Europe/London'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2025-03-30 02:40 Europe/London'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2025-03-31 01:00 Europe/London'), $four);
+
+        // DST change backwards. 1am happens twice, but we only expect the runs to happen during
+        // the second occurrence.
+        $before = strtotime('2025-10-25 23:59 GMT');
+        $this->assertEquals(strtotime('2025-10-26 00:59 Europe/London'), $before);
+        // The next 3 times happen during the second occurrence of 01:00 Europe/London, but we
+        // won't explicitly test that because there are two 01:00s so it might fail depending
+        // on implementation.
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2025-10-26 01:00 GMT'), $one);
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2025-10-26 01:20 GMT'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2025-10-26 01:40 GMT'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2025-10-27 1:00 GMT'), $four);
+        $this->assertEquals(strtotime('2025-10-27 1:00 Europe/London'), $four);
+
+        // Test task is set to run every thirty minutes over the time change - midnight to 3am.
+        $task = new scheduled_test_task();
+        $task->set_hour('0,1,2,3');
+        $task->set_minute('*/30');
+
+        // DST change forwards. We expect 1am to be skipped, but not replaced by the next hour
+        // as the task will run anyway during 2am.
+        $before = strtotime('2025-03-29 23:59 GMT');
+        $this->assertEquals(strtotime('2025-03-29 23:59 Europe/London'), $before);
+        $midnight = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2025-03-30 00:00 Europe/London'), $midnight);
+        $midnightb = $task->get_next_scheduled_time($midnight);
+        $this->assertEquals(strtotime('2025-03-30 00:30 Europe/London'), $midnightb);
+        // 1am is skipped because it doesn't exist.
+        $two = $task->get_next_scheduled_time($midnightb);
+        $this->assertEquals(strtotime('2025-03-30 02:00 Europe/London'), $two);
+        $twob = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2025-03-30 02:30 Europe/London'), $twob);
+        $three = $task->get_next_scheduled_time($twob);
+        $this->assertEquals(strtotime('2025-03-30 03:00 Europe/London'), $three);
+        $threeb = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2025-03-30 03:30 Europe/London'), $threeb);
+        $nextday = $task->get_next_scheduled_time($threeb);
+        $this->assertEquals(strtotime('2025-03-31 00:00 Europe/London'), $nextday);
+
+        // DST change backwards. A bit of a weird one - the task actually runs for an extra
+        // hour because 1am happens twice.
+        $before = strtotime('2025-10-25 22:59 GMT');
+        $this->assertEquals(strtotime('2025-10-25 23:59 Europe/London'), $before);
+        $midnight = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2025-10-25 23:00 GMT'), $midnight);
+        $this->assertEquals(strtotime('2025-10-26 00:00 Europe/London'), $midnight);
+        $midnightb = $task->get_next_scheduled_time($midnight);
+        $this->assertEquals(strtotime('2025-10-25 23:30 GMT'), $midnightb);
+        $this->assertEquals(strtotime('2025-10-26 00:30 Europe/London'), $midnightb);
+        $one = $task->get_next_scheduled_time($midnightb);
+        // The next 4 times happen during 01:00 Europe/London, but we won't explicitly test that
+        // because there are two 01:00s so it might fail depending on implementation.
+        $this->assertEquals(strtotime('2025-10-26 00:00 GMT'), $one);
+        $oneb = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2025-10-26 00:30 GMT'), $oneb);
+        // 1am happens again because of the hour change.
+        $oneagain = $task->get_next_scheduled_time($oneb);
+        $this->assertEquals(strtotime('2025-10-26 01:00 GMT'), $oneagain);
+        $oneagainb = $task->get_next_scheduled_time($oneagain);
+        $this->assertEquals(strtotime('2025-10-26 01:30 GMT'), $oneagainb);
+        // Times are now unambiguous in Europe/London.
+        $two = $task->get_next_scheduled_time($oneagainb);
+        $this->assertEquals(strtotime('2025-10-26 02:00 GMT'), $two);
+        $this->assertEquals(strtotime('2025-10-26 02:00 Europe/London'), $two);
+        $twob = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2025-10-26 02:30 Europe/London'), $twob);
+        $three = $task->get_next_scheduled_time($twob);
+        $this->assertEquals(strtotime('2025-10-26 03:00 Europe/London'), $three);
+        $threeb = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2025-10-26 03:30 Europe/London'), $threeb);
+        $nextday = $task->get_next_scheduled_time($threeb);
+        $this->assertEquals(strtotime('2025-10-27 00:00 Europe/London'), $nextday);
     }
 
     public function test_timezones(): void {
