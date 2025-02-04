@@ -97,18 +97,9 @@ class question_history_view extends view {
         return false;
     }
 
-    /**
-     * Default sort for question data.
-     * @return array
-     */
+    #[\Override]
     protected function default_sort(): array {
-        $defaultsort = [];
-        if (class_exists('\\qbank_viewcreator\\creator_name_column')) {
-            $sort = 'qbank_viewcreator\creator_name_column-timecreated';
-        }
-        $defaultsort[$sort] = 1;
-
-        return $defaultsort;
+        return ['qbank_history__version_number_column' => 1];
     }
 
     protected function build_query(): void {
