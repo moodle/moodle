@@ -8,7 +8,7 @@ spec:
   capacity:
     storage: 5Gi
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: azurefile-csi
   csi:
