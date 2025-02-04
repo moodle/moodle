@@ -137,4 +137,37 @@ final class events_test extends \advanced_testcase {
         $sink->close();
 
     }
+
+    /**
+     * Test the course activities overview page viewed.
+     *
+     * There is no external API for viewing course information so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     *
+     * @covers \core\event\course_overview_viewed
+     */
+    public function test_course_overview_viewed_event(): void {
+
+        // Create a course.
+        $data = new \stdClass();
+        $course = $this->getDataGenerator()->create_course($data);
+
+        $eventparams = [
+            'context' => \context_course::instance($course->id),
+        ];
+        $event = \core\event\course_overview_viewed::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_overview_viewed', $event);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+
+    }
 }
