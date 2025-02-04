@@ -18,7 +18,7 @@ Feature: Teacher can edit a marking guide state
       | activity | course | name     | advancedgradingmethod_submissions |
       | assign   | C1     | Assign 1 | guide                             |
 
-  Scenario: Marking guide state can be changed to draft
+  Scenario Outline: Marking guide state can be changed
     Given I am on the "Course 1" course page logged in as teacher1
     And I go to "Assign 1" advanced grading definition page
     And I set the following fields to these values:
@@ -28,12 +28,12 @@ Feature: Teacher can edit a marking guide state
       | Criterion name    | Description for students         | Description for markers         | Maximum score |
       | Grade Criteria 1  | Grade 1 description for students | Grade 1 description for markers | 70            |
       | Grade Criteria 2  | Grade 2 description for students | Grade 2 description for markers | 30            |
-    And I press "Save marking guide and make it ready"
-    And I should not see "Please note: the advanced grading form is not ready at the moment. Simple grading method will be used until the form has a valid status."
-    And I should not see "Assign 1 marking guide Draft"
-    And I should see "Assign 1 marking guide Ready for use"
-    And I click on "Edit the current form definition" "link"
-    When I press "Save as draft"
-    Then I should see "Please note: the advanced grading form is not ready at the moment. Simple grading method will be used until the form has a valid status."
-    And I should see "Assign 1 marking guide Draft"
-    And I should not see "Assign 1 marking guide Ready for use"
+    When I press "<buttonname>"
+    Then I <drafttextvisibility> see "Please note: the advanced grading form is not ready at the moment. Simple grading method will be used until the form has a valid status."
+    And I <drafttextvisibility> see "Assign 1 marking guide Draft"
+    And I <readytextvisibility> see "Assign 1 marking guide Ready for use"
+
+    Examples:
+      | buttonname                           | drafttextvisibility | readytextvisibility |
+      | Save marking guide and make it ready | should not          | should              |
+      | Save as draft                        | should              | should not          |
