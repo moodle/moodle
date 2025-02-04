@@ -103,7 +103,7 @@ jobs:
         run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
 
       - name: Upload test results as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: phpunit-results
           path: phpunit-results.xml
