@@ -82,6 +82,11 @@ class mod_feedback_completion extends mod_feedback_structure {
                 $params['userid'] = $nonanonymouseuserid;
             }
             $this->completed = $DB->get_record('feedback_completed', $params, '*', MUST_EXIST);
+
+            if (!groups_user_groups_visible($this->feedback->course, $this->completed->userid, $cm)) {
+                throw new moodle_exception('nopermissiontoshow');
+            }
+
             $this->courseid = $this->completed->courseid;
         }
     }
