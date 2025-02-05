@@ -24,6 +24,8 @@
 
 namespace core_analytics;
 
+use core_analytics\tests\mlbackend_configuration_trait;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/fixtures/test_indicator_max.php');
@@ -42,6 +44,7 @@ require_once(__DIR__ . '/fixtures/test_analysis.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class model_test extends \advanced_testcase {
+    use mlbackend_configuration_trait;
 
     /** @var model Store Model. */
     protected $model;
@@ -95,6 +98,10 @@ final class model_test extends \advanced_testcase {
     public function test_delete(): void {
         global $DB;
 
+        if (!self::is_mlbackend_python_configured()) {
+            $this->markTestSkipped('mlbackend_python is not configured.');
+        }
+
         $this->resetAfterTest(true);
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
@@ -139,6 +146,10 @@ final class model_test extends \advanced_testcase {
      */
     public function test_clear(): void {
         global $DB;
+
+        if (!self::is_mlbackend_python_configured()) {
+            $this->markTestSkipped('mlbackend_python is not configured.');
+        }
 
         $this->resetAfterTest(true);
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
@@ -379,6 +390,10 @@ final class model_test extends \advanced_testcase {
      * Test that import_model import models' configurations.
      */
     public function test_import_model_config(): void {
+        if (!self::is_mlbackend_python_configured()) {
+            $this->markTestSkipped('mlbackend_python is not configured.');
+        }
+
         $this->resetAfterTest(true);
 
         $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
@@ -421,6 +436,10 @@ final class model_test extends \advanced_testcase {
      * Test export_config
      */
     public function test_export_config(): void {
+        if (!self::is_mlbackend_python_configured()) {
+            $this->markTestSkipped('mlbackend_python is not configured.');
+        }
+
         $this->resetAfterTest(true);
 
         $this->model->enable('\\core\\analytics\\time_splitting\\quarters');

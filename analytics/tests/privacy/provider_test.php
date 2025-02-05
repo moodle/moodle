@@ -28,6 +28,7 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
+use core_analytics\tests\mlbackend_configuration_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,6 +45,7 @@ require_once(__DIR__ . '/../fixtures/test_target_course_users.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class provider_test extends \core_privacy\tests\provider_testcase {
+    use mlbackend_configuration_trait;
 
     /** @var \core_analytics\model Store Model 1. */
     protected $model1;
@@ -88,6 +90,10 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
     protected $c2;
 
     public function setUp(): void {
+        if (!self::is_mlbackend_python_configured()) {
+            $this->markTestSkipped('mlbackend_python is not configured.');
+        }
+
         parent::setUp();
 
         $this->resetAfterTest(true);
