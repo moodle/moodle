@@ -106,7 +106,7 @@ class redis extends handler implements SessionHandlerInterface {
     protected bool $clustermode = false;
 
     /** @var int Maximum number of retries for cache store operations. */
-    const MAX_RETRIES = 5;
+    protected int $maxretries = 3;
 
     /** @var int $firstaccesstimeout The initial timeout (seconds) for the first browser access without login. */
     protected int $firstaccesstimeout = 180;
@@ -114,8 +114,8 @@ class redis extends handler implements SessionHandlerInterface {
     /** @var clock A clock instance */
     protected clock $clock;
 
-    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
-    const CONNECTION_TIMEOUT = 10;
+    /** @var int $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
+    protected int $connectiontimeout = 3;
 
     /**
      * Create new instance of handler.
@@ -204,6 +204,14 @@ class redis extends handler implements SessionHandlerInterface {
             $this->compressor = $CFG->session_redis_compressor;
         }
 
+        if (isset($CFG->session_redis_connection_timeout)) {
+            $this->connectiontimeout = (int)$CFG->session_redis_connection_timeout;
+        }
+
+        if (isset($CFG->session_redis_max_retries)) {
+            $this->maxretries = (int)$CFG->session_redis_max_retries;
+        }
+
         $this->clock = di::get(clock::class);
     }
 
@@ -278,10 +286,10 @@ class redis extends handler implements SessionHandlerInterface {
             }
         }
 
-        // MDL-59866: Add retries for connections (up to 5 times) to make sure it goes through.
+        // Add retries for connections to make sure it goes through.
         $counter = 1;
         $exceptionclass = $this->clustermode ? 'RedisClusterException' : 'RedisException';
-        while ($counter <= self::MAX_RETRIES) {
+        while ($counter <= $this->maxretries) {
             $this->connection = null;
             // Make a connection to Redis server(s).
             try {
@@ -293,8 +301,8 @@ class redis extends handler implements SessionHandlerInterface {
                         $this->connection = new \RedisCluster(
                             name: null,
                             seeds: $trimmedservers,
-                            timeout: self::CONNECTION_TIMEOUT, // Timeout.
-                            read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                            timeout: $this->connectiontimeout, // Timeout.
+                            read_timeout: $this->connectiontimeout, // Read timeout.
                             persistent: true,
                             auth: $this->auth,
                             context: !empty($opts) ? $opts : null,
@@ -303,8 +311,8 @@ class redis extends handler implements SessionHandlerInterface {
                         $this->connection = new \RedisCluster(
                             null,
                             $trimmedservers,
-                            self::CONNECTION_TIMEOUT,
-                            self::CONNECTION_TIMEOUT,
+                            $this->connectiontimeout,
+                            $this->connectiontimeout,
                             true,
                             $this->auth,
                             !empty($opts) ? $opts : null
@@ -318,19 +326,19 @@ class redis extends handler implements SessionHandlerInterface {
                         $this->connection->connect(
                             host: $server,
                             port: $port,
-                            timeout: self::CONNECTION_TIMEOUT, // Timeout.
+                            timeout: $this->connectiontimeout, // Timeout.
                             retry_interval: $delay,
-                            read_timeout: self::CONNECTION_TIMEOUT, // Read timeout.
+                            read_timeout: $this->connectiontimeout, // Read timeout.
                             context: $opts,
                         );
                     } else {
                         $this->connection->connect(
                             $server,
                             $port,
-                            self::CONNECTION_TIMEOUT,
+                            $this->connectiontimeout,
                             null,
                             $delay,
-                            self::CONNECTION_TIMEOUT,
+                            $this->connectiontimeout,
                             $opts
                         );
                     }
@@ -383,7 +391,7 @@ class redis extends handler implements SessionHandlerInterface {
                 return true;
             } catch (RedisException | RedisClusterException $e) {
                 $redishost = $this->clustermode ? implode(',', $this->host) : $server . ':' . $port;
-                $logstring = "Failed to connect (try {$counter} out of " . self::MAX_RETRIES . ") to Redis ";
+                $logstring = "Failed to connect (try {$counter} out of " . $this->maxretries . ") to Redis ";
                 $logstring .= "at ". $redishost .", the error returned was: {$e->getMessage()}";
                 debugging($logstring);
             }
