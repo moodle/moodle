@@ -190,7 +190,7 @@ final class question_type_test extends \advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'stamp',
-                'versionid', 'questionbankentryid'])) {
+                'versionid', 'questionbankentryid', 'hints'])) {
                 if (!empty($actualquestiondata)) {
                     $this->assertEquals($value, $actualquestiondata->$property);
                 }
@@ -202,6 +202,11 @@ final class question_type_test extends \advanced_testcase {
                 $this->assertEquals($value, $actualquestiondata->options->$optionname);
             }
         }
+
+        $this->assertCount(1, $actualquestiondata->hints);
+        $hint = array_pop($actualquestiondata->hints);
+        $this->assertEquals($formdata->hint[0]['text'], $hint->hint);
+        $this->assertEquals($formdata->hint[0]['format'], $hint->hintformat);
 
         $this->assertObjectHasProperty('subquestions', $actualquestiondata->options);
 

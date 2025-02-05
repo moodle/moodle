@@ -133,7 +133,7 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->defaultmark = 1.0;
         $fromform->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
 
-        $fromform->unitrole = '3';
+        $fromform->unitrole = '0';
         $fromform->unitpenalty = 0.1;
         $fromform->unitgradingtypes = '1';
         $fromform->unitsleft = '0';
@@ -186,6 +186,20 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->feedback[2]['text'] = 'Completely wrong.';
 
         $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+        $fromform->hint = [
+            [
+                'text' => 'Add',
+                'format' => FORMAT_HTML,
+            ],
+        ];
+
+        $fromform->unit = [
+            'x',
+        ];
+        $fromform->multiplier = [
+            '1.0',
+        ];
 
         return $fromform;
     }
