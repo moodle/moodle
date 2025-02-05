@@ -233,6 +233,7 @@ export default class Component extends DndCmItem {
             return '#';
         }
 
-        return `${section.sectionurl}#${cm.anchor}`;
+        const sectionurl = section.sectionurl.split("#")[0];
+        return `${sectionurl}#${cm.anchor}`;
     }
 }
