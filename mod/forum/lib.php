@@ -1702,6 +1702,9 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
     if (empty($forumsort)) {
         $forumsort = forum_get_default_sort_order();
     }
+    if (!str_contains($forumsort, 'id')) {
+        $forumsort .= ', d.id DESC';
+    }
     if (empty($fullpost)) {
         $postdata = "p.id, p.subject, p.modified, p.discussion, p.userid, p.created";
     } else {
@@ -1737,7 +1740,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
                    $umtable
              WHERE d.forum = ? AND p.parent = 0
                    $timelimit $groupselect $updatedsincesql
-          ORDER BY $forumsort, d.id DESC";
+          ORDER BY $forumsort";
 
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
@@ -4831,7 +4834,7 @@ function forum_discussion_update_last_post($discussionid) {
     $sql = "SELECT id, userid, modified
               FROM {forum_posts}
              WHERE discussion=?
-             ORDER BY modified DESC";
+             ORDER BY modified DESC, id DESC";
 
 // Lets go find the last post
     if (($lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1))) {
