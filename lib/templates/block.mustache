@@ -7,7 +7,7 @@
         "class": "block block_html",
         "showskiplink": true,
         "type": "html",
-        "ariarole": "complementary",
+        "ariarole": "",
         "title": "Test block",
         "blockinstanceid": 1,
         "content": "<p>Hello block world!</p>"
@@ -22,7 +22,7 @@
 {{! Start Block Container }}
 <section id="{{id}}"
      class="{{#hidden}}hidden{{/hidden}} {{class}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-3"
-     role="{{ariarole}}"
+     {{#ariarole}}role="{{.}}"{{/ariarole}}
      data-block="{{type}}"
      data-instance-id="{{blockinstanceid}}"
      {{#arialabel}}

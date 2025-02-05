@@ -66,7 +66,7 @@
                     <div> {{{ output.region_main_settings_menu }}} </div>
                 </div>
                 {{/hasregionmainsettingsmenu}}
-                <section id="region-main" class="region-main-content" aria-label="{{#str}}content{{/str}}">
+                <div id="region-main" class="region-main-content">
                     {{#hasregionmainsettingsmenu}}
                         <div class="region_main_settings_menu_proxy"></div>
                     {{/hasregionmainsettingsmenu}}
@@ -77,18 +77,18 @@
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}
-                </section>
+                </div>
             </div>
             <div class="columnleft blockcolumn {{#haspreblocks}} has-blocks {{/haspreblocks}}">
-                <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                <div data-region="blocks-column" class="d-print-none">
                     {{{ sidepreblocks }}}
-                </section>
+                </div>
             </div>
 
             <div class="columnright blockcolumn {{#haspostblocks}} has-blocks {{/haspostblocks}}">
-                <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                <div data-region="blocks-column" class="d-print-none">
                     {{{ sidepostblocks }}}
-                </section>
+                </div>
             </div>
         </div>
     </div>
