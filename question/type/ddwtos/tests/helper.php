@@ -99,6 +99,13 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         $fromform->penalty = 0.3333333;
         $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
+        $fromform->hint = [
+            [
+                'text' => 'Fast',
+                'format' => FORMAT_HTML,
+            ],
+        ];
+
         return $fromform;
     }
 
