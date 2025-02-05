@@ -1666,8 +1666,13 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $params = array('blockname' => $blockname);
             } else if (!empty($search['modulelist'])) {
                 // Search courses that have module with specified name.
-                $where = "c.id IN (SELECT DISTINCT module.course ".
-                        "FROM {".$search['modulelist']."} module)";
+                if (array_key_exists($search['modulelist'], core_component::get_plugin_list('mod'))) {
+                    // If module plugin exists, use module name as table name.
+                    $where = "c.id IN (SELECT DISTINCT module.course FROM {{$search['modulelist']}} module)";
+                } else {
+                    // Otherwise, return empty list of courses.
+                    $where = '1=0';
+                }
                 $params = array();
             } else if (!empty($search['tagid'])) {
                 // Search courses that are tagged with the specified tag.
