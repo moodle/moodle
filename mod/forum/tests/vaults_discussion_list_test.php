@@ -258,27 +258,31 @@ final class vaults_discussion_list_test extends \advanced_testcase {
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, null, 'manual');
 
-        $this->assertEquals([], $vault->get_from_forum_id($forum->id, true, true,
-            null, 0, 0, $user));
+        $this->assertEquals([], $vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true, $user->id,
+            null, 0, 0));
 
         $now = time();
-        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user, ['timestart' => $now - 10, 'timemodified' => 1]);
-        [$discussion2, $post2] = $this->helper_post_to_forum($forum, $user, ['timestart' => $now - 9, 'timemodified' => 2]);
-        [$hiddendiscussion, $post3] = $this->helper_post_to_forum($forum, $user, ['timestart' => $now + 10, 'timemodified' => 3]);
+        [$discussion1, $post1] = $this->helper_post_to_forum($forum, $user, ['timestart' => $now - 10, 'timemodified' => $now + 1]);
+        [$discussion2, $post2] = $this->helper_post_to_forum($forum, $user, ['timestart' => $now - 9, 'timemodified' => $now + 2]);
+        [$hiddendiscussion, $post3] = $this->helper_post_to_forum(
+            $forum,
+            $user,
+            ['timestart' => $now + 10, 'timemodified' => $now + 3]
+        );
         [$groupdiscussion1, $post4] = $this->helper_post_to_forum(
             $forum,
             $user,
-            ['timestart' => $now - 8, 'timemodified' => 4, 'groupid' => 1]
+            ['timestart' => $now - 8, 'timemodified' => $now + 4, 'groupid' => 1]
         );
         [$groupdiscussion2, $post5] = $this->helper_post_to_forum(
             $forum,
             $user,
-            ['timestart' => $now - 7, 'timemodified' => 5, 'groupid' => 2]
+            ['timestart' => $now - 7, 'timemodified' => $now + 5, 'groupid' => 2]
         );
         [$hiddengroupdiscussion, $post6] = $this->helper_post_to_forum(
             $forum,
             $user,
-            ['timestart' => $now + 11, 'timemodified' => 6, 'groupid' => 3]
+            ['timestart' => $now + 11, 'timemodified' => $now + 6, 'groupid' => 3]
         );
 
         $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true,
@@ -356,10 +360,10 @@ final class vaults_discussion_list_test extends \advanced_testcase {
         $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true,
             $user->id, $vault::SORTORDER_LASTPOST_DESC, 0, 0));
         $this->assertCount(6, $summaries);
-        $this->assertEquals($groupdiscussion2->id, $summaries[0]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion1->id, $summaries[1]->get_discussion()->get_id());
-        $this->assertEquals($hiddendiscussion->id, $summaries[2]->get_discussion()->get_id());
-        $this->assertEquals($hiddengroupdiscussion->id, $summaries[3]->get_discussion()->get_id());
+        $this->assertEquals($hiddengroupdiscussion->id, $summaries[0]->get_discussion()->get_id());
+        $this->assertEquals($hiddendiscussion->id, $summaries[1]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion2->id, $summaries[2]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion1->id, $summaries[3]->get_discussion()->get_id());
         $this->assertEquals($discussion2->id, $summaries[4]->get_discussion()->get_id());
         $this->assertEquals($discussion1->id, $summaries[5]->get_discussion()->get_id());
 
@@ -369,10 +373,10 @@ final class vaults_discussion_list_test extends \advanced_testcase {
         $this->assertCount(6, $summaries);
         $this->assertEquals($discussion1->id, $summaries[0]->get_discussion()->get_id());
         $this->assertEquals($discussion2->id, $summaries[1]->get_discussion()->get_id());
-        $this->assertEquals($hiddengroupdiscussion->id, $summaries[2]->get_discussion()->get_id());
-        $this->assertEquals($hiddendiscussion->id, $summaries[3]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion1->id, $summaries[4]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion2->id, $summaries[5]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion1->id, $summaries[2]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion2->id, $summaries[3]->get_discussion()->get_id());
+        $this->assertEquals($hiddendiscussion->id, $summaries[4]->get_discussion()->get_id());
+        $this->assertEquals($hiddengroupdiscussion->id, $summaries[5]->get_discussion()->get_id());
 
         // Sort discussions by replies DESC.
         $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true,
@@ -422,27 +426,27 @@ final class vaults_discussion_list_test extends \advanced_testcase {
         $this->pin_discussion($discussion1);
         $this->pin_discussion($hiddendiscussion);
 
-        $summaries = array_values($vault->get_from_forum_id($forum->id, true, null,
+        $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true, null,
             $vault::SORTORDER_LASTPOST_DESC, 0, 0));
         $this->assertCount(6, $summaries);
         $this->assertEquals($hiddendiscussion->id, $summaries[0]->get_discussion()->get_id());
         $this->assertEquals($discussion1->id, $summaries[1]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion2->id, $summaries[2]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion1->id, $summaries[3]->get_discussion()->get_id());
-        $this->assertEquals($hiddengroupdiscussion->id, $summaries[4]->get_discussion()->get_id());
+        $this->assertEquals($hiddengroupdiscussion->id, $summaries[2]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion2->id, $summaries[3]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion1->id, $summaries[4]->get_discussion()->get_id());
         $this->assertEquals($discussion2->id, $summaries[5]->get_discussion()->get_id());
 
-        $summaries = array_values($vault->get_from_forum_id($forum->id, true, null,
+        $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true, null,
             $vault::SORTORDER_LASTPOST_ASC, 0, 0));
         $this->assertCount(6, $summaries);
         $this->assertEquals($discussion1->id, $summaries[0]->get_discussion()->get_id());
         $this->assertEquals($hiddendiscussion->id, $summaries[1]->get_discussion()->get_id());
         $this->assertEquals($discussion2->id, $summaries[2]->get_discussion()->get_id());
-        $this->assertEquals($hiddengroupdiscussion->id, $summaries[3]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion1->id, $summaries[4]->get_discussion()->get_id());
-        $this->assertEquals($groupdiscussion2->id, $summaries[5]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion1->id, $summaries[3]->get_discussion()->get_id());
+        $this->assertEquals($groupdiscussion2->id, $summaries[4]->get_discussion()->get_id());
+        $this->assertEquals($hiddengroupdiscussion->id, $summaries[5]->get_discussion()->get_id());
 
-        $summaries = array_values($vault->get_from_forum_id($forum->id, true, null,
+        $summaries = array_values($vault->get_from_forum_id_and_group_id($forum->id, [1, 2, 3], true, null,
             $vault::SORTORDER_REPLIES_DESC, 0, 0));
         $this->assertCount(6, $summaries);
         $this->assertEquals($discussion1->id, $summaries[0]->get_discussion()->get_id());

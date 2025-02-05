@@ -226,6 +226,11 @@ class mod_forum_external extends external_api {
                 'allowed values are: ' . implode(',', $directionallowedvalues));
         }
 
+        $orderbysql = "{$sortby} {$sortdirection}";
+        if (!empty($sortby) && $sortby != 'id') {
+            $orderbysql .= ", id {$sortdirection}";
+        }
+
         $managerfactory = mod_forum\local\container::get_manager_factory();
         $capabilitymanager = $managerfactory->get_capability_manager($forum);
 
@@ -234,7 +239,7 @@ class mod_forum_external extends external_api {
                 $USER,
                 $discussion->get_id(),
                 $capabilitymanager->can_view_any_private_reply($USER),
-                "{$sortby} {$sortdirection}"
+                $orderbysql
             );
 
         $builderfactory = mod_forum\local\container::get_builder_factory();
