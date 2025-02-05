@@ -285,7 +285,7 @@ All rights reserved.</copyright>
     <location>amd/src/loglevel.js</location>
     <name>loglevel.js</name>
     <description>Minimal lightweight simple logging for JavaScript.</description>
-    <version>1.9.1</version>
+    <version>1.9.2</version>
     <license>MIT</license>
     <repository>https://github.com/pimterry/loglevel/</repository>
     <copyrights>
