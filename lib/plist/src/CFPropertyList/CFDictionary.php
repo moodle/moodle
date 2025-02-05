@@ -86,7 +86,7 @@ class CFDictionary extends CFType implements Iterator
     * @return void
     * @uses $value for adding $key $value pair
     */
-    public function add($key, CFType $value = null)
+    public function add($key, ?CFType $value = null)
     {
       // anything but CFType is null, null is an empty string - sad but true
         if (!$value) {

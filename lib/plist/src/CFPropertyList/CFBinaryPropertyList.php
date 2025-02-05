@@ -738,7 +738,7 @@ abstract class CFBinaryPropertyList
         $format = $formats[$nbytes-1];
 
         if ($nbytes == 3) {
-            $buff = "\0" . implode("\0", str_split($buff, 3));
+            $buff = "\0" . implode("\0", mb_str_split($buff, 3));
         }
         return unpack($format, $buff);
     }

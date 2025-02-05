@@ -523,7 +523,7 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator
    * @return void
    * @uses $value for adding $value
    */
-    public function add(CFType $value = null)
+    public function add(?CFType $value = null)
     {
       // anything but CFType is null, null is an empty string - sad but true
         if (!$value) {
