@@ -205,7 +205,12 @@ if (!empty($automatedbackups)) {
 
 // In progress course restores.
 if (async_helper::is_async_enabled()) {
-    echo $OUTPUT->heading_with_help(get_string('asyncrestoreinprogress', 'backup'), 'asyncrestoreinprogress', 'backup');
+    echo $OUTPUT->heading_with_help(
+        get_string('asyncrestoreinprogress', 'backup'),
+        'asyncrestoreinprogress',
+        'backup',
+        classnames: ['mt-6']
+    );
     echo $OUTPUT->container_start();
     $renderer = $PAGE->get_renderer('core', 'backup');
     echo $renderer->restore_progress_viewer($USER->id, $context);
