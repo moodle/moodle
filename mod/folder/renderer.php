@@ -91,55 +91,11 @@ class mod_folder_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Internal function - creates htmls structure suitable for YUI tree.
-     *
      * @deprecated since Moodle 4.3
      */
-    protected function htmllize_tree($tree, $dir) {
-        global $CFG;
-
-        debugging(
-            'Method htmllize_tree() is deprecated. Please use renderable_tree_elements instead',
-            DEBUG_DEVELOPER
-        );
-
-        if (empty($dir['subdirs']) and empty($dir['files'])) {
-            return '';
-        }
-        $result = '<ul>';
-        foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
-            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
-            $filename = html_writer::tag('div', $filename, array('class' => 'fp-filename-icon'));
-            $result .= html_writer::tag('li', $filename. $this->htmllize_tree($tree, $subdir));
-        }
-        foreach ($dir['files'] as $file) {
-            $filename = $file->get_filename();
-            $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
-                $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
-            $filenamedisplay = clean_filename($filename);
-            if (file_extension_in_typegroup($filename, 'web_image')) {
-                $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
-                $image = html_writer::empty_tag('img', array('src' => $image));
-            } else {
-                $image = $this->output->pix_icon(file_file_icon($file), $filenamedisplay, 'moodle');
-            }
-            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                html_writer::tag('span', $filenamedisplay, array('class' => 'fp-filename'));
-            $urlparams = null;
-            if ($tree->folder->forcedownload) {
-                $urlparams = ['forcedownload' => 1];
-            }
-            $filename = html_writer::tag('span',
-                html_writer::link($url->out(false, $urlparams), $filename),
-                ['class' => 'fp-filename-icon']
-            );
-            $result .= html_writer::tag('li', $filename);
-        }
-        $result .= '</ul>';
-
-        return $result;
+    #[\core\attribute\deprecated('renderable_tree_elements()', since: '4.3', mdl: 'MDL-78847', final: true)]
+    protected function htmllize_tree() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
