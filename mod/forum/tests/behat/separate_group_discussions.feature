@@ -193,14 +193,14 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     When I am on the "Standard forum name" "forum activity" page logged in as student4
     Then I should see "All participants"
     And I should see "Initial Disc ALL"
-    And I should see "You are not able to create a discussion"
+    And I should see "You are not able to create a discussion because you are not a member of any group."
     And I should not see "Add discussion topic"
 
   Scenario: Students in non-participation groups can see all group discussions, but not post.
     When I am on the "Standard forum name" "forum activity" page logged in as student3
     Then I should see "All participants"
     And I should see "Initial Disc ALL"
-    And I should see "You are not able to create a discussion"
+    And I should see "You are not able to create a discussion because you are not a member of any group."
     And I should not see "Add discussion topic"
 
   Scenario: Students in multiple group can post in all of their group individually
