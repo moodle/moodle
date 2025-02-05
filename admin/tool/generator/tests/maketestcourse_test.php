@@ -158,7 +158,7 @@ final class maketestcourse_test extends \advanced_testcase {
 
         // Users that started discussions are the same.
         $forums = $modinfo->get_instances_of('forum');
-        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
+        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC, d.id ASC');
         $lastusernumber = 0;
         $discussionstarters = array();
         foreach ($discussions as $discussion) {
