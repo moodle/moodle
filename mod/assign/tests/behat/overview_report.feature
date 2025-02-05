@@ -102,3 +102,14 @@ Feature: Testing overview integration in mod_assign
     And I should see "-" in the "Date assign" "table_row"
     And I should see "-" in the "No submissions" "table_row"
     And I should see "50.00" in the "Pending grades" "table_row"
+
+  Scenario: The assign index redirect to the activities overview
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Activities" block
+    And I click on "Assignments" "link" in the "Activities" "block"
+    Then I should see "View all the activities in this course"
+    And I should see "Name" in the "assign_overview_collapsible" "region"
+    And I should see "Due date" in the "assign_overview_collapsible" "region"
+    And I should see "Submissions" in the "assign_overview_collapsible" "region"
+    And I should see "Actions" in the "assign_overview_collapsible" "region"

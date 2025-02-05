@@ -699,8 +699,6 @@ class assign {
             $o .= $this->view_plugin_grading_batch_operation();
         } else if ($action == 'viewpluginpage') {
              $o .= $this->view_plugin_page();
-        } else if ($action == 'viewcourseindex') {
-             $o .= $this->view_course_index();
         } else if ($action == 'viewbatchsetmarkingworkflowstate') {
              $o .= $this->view_batch_set_workflow_state();
         } else if ($action == 'viewbatchmarkingallocation') {
@@ -3253,97 +3251,6 @@ class assign {
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
-    }
-
-    /**
-     * View a summary listing of all assignments in the current course.
-     *
-     * @return string
-     */
-    private function view_course_index() {
-        global $USER;
-
-        $o = '';
-
-        $course = $this->get_course();
-        $strplural = get_string('modulenameplural', 'assign');
-
-        if (!$cms = get_coursemodules_in_course('assign', $course->id, 'm.duedate')) {
-            $o .= $this->get_renderer()->notification(get_string('thereareno', 'moodle', $strplural));
-            $o .= $this->get_renderer()->continue_button(new moodle_url('/course/view.php', array('id' => $course->id)));
-            return $o;
-        }
-
-        $strsectionname = '';
-        $usesections = course_format_uses_sections($course->format);
-        $modinfo = get_fast_modinfo($course);
-
-        if ($usesections) {
-            $strsectionname = course_get_format($course)->get_generic_section_name();
-            $sections = $modinfo->get_section_info_all();
-        }
-        $courseindexsummary = new assign_course_index_summary($usesections, $strsectionname);
-
-        $timenow = time();
-
-        $currentsection = '';
-        foreach ($modinfo->instances['assign'] as $cm) {
-            if (!$cm->uservisible) {
-                continue;
-            }
-
-            $timedue = $cms[$cm->id]->duedate;
-
-            $sectionname = '';
-            if ($usesections && $cm->sectionnum) {
-                $sectionname = get_section_name($course, $sections[$cm->sectionnum]);
-            }
-
-            $submitted = '';
-            $context = context_module::instance($cm->id);
-
-            $assignment = new assign($context, $cm, $course);
-
-            // Apply overrides.
-            $assignment->update_effective_access($USER->id);
-            $timedue = $assignment->get_instance()->duedate;
-
-            if (has_capability('mod/assign:submit', $context) &&
-                !has_capability('moodle/site:config', $context)) {
-                $cangrade = false;
-                if ($assignment->get_instance()->teamsubmission) {
-                    $usersubmission = $assignment->get_group_submission($USER->id, 0, false);
-                } else {
-                    $usersubmission = $assignment->get_user_submission($USER->id, false);
-                }
-
-                if (!empty($usersubmission->status)) {
-                    $submitted = get_string('submissionstatus_' . $usersubmission->status, 'assign');
-                } else {
-                    $submitted = get_string('submissionstatus_', 'assign');
-                }
-
-                $gradinginfo = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
-                if (isset($gradinginfo->items[0]->grades[$USER->id]) &&
-                        !$gradinginfo->items[0]->grades[$USER->id]->hidden ) {
-                    $grade = $gradinginfo->items[0]->grades[$USER->id]->str_grade;
-                } else {
-                    $grade = '-';
-                }
-            } else if (has_capability('mod/assign:grade', $context)) {
-                $submitted = $assignment->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
-                $grade = $assignment->count_submissions_need_grading();
-                $cangrade = true;
-            }
-
-            $courseindexsummary->add_assign_info($cm->id, $cm->get_formatted_name(),
-                $sectionname, $timedue, $submitted, $grade, $cangrade);
-        }
-
-        $o .= $this->get_renderer()->render($courseindexsummary);
-        $o .= $this->view_footer();
-
-        return $o;
     }
 
     /**

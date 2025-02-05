@@ -1220,10 +1220,19 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render a course index summary
      *
+     * @deprecated since Moodle 5.0 (MDL-83888).
+     * @todo MDL-84429 Final deprecation in Moodle 6.0.
      * @param \assign_course_index_summary $indexsummary
      * @return string
      */
+    #[\core\attribute\deprecated(
+        since: '5.0',
+        mdl: 'MDL-83888',
+        reason: 'The assign_course_index_summary class is not used anymore.',
+    )]
     public function render_assign_course_index_summary(\assign_course_index_summary $indexsummary) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+
         $o = '';
 
         $strplural = get_string('modulenameplural', 'assign');
