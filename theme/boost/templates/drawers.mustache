@@ -79,10 +79,10 @@
             {{$id}}theme_boost-drawers-blocks{{/id}}
             {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawercontent}}
-                <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                <div class="d-print-none">
                     {{{ addblockbutton }}}
                     {{{ sidepreblocks }}}
-                </section>
+                </div>
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
             {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
@@ -142,7 +142,7 @@
                         <div> {{{ regionmainsettingsmenu }}} </div>
                     </div>
                     {{/hasregionmainsettingsmenu}}
-                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                    <div id="region-main">
 
                         {{#hasregionmainsettingsmenu}}
                             <div class="region_main_settings_menu_proxy"></div>
@@ -162,7 +162,7 @@
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
 
-                    </section>
+                    </div>
                 </div>
             </div>
         </div>

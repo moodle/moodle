@@ -29,6 +29,9 @@ defined('BEHAT_SITE_RUNNING') || die('Only available on Behat test server');
 $PAGE->set_pagelayout('secure');
 $PAGE->set_url('/lib/tests/fixtures/securetestpage.php');
 $PAGE->set_context(context_system::instance());
+$title = 'Secure test page';
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
