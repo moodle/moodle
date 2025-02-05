@@ -72,7 +72,7 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoption = new backup_nested_element('calculated_option', array('id'), array(
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering', 'shownumcorrect'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($calculatedrecords);
