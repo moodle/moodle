@@ -16,7 +16,6 @@ Feature: Display badges
       | language       | ca                               |
       | description    | Testing system badge description |
       | image          | badges/tests/behat/badge.png     |
-      | imageauthorurl | http://author.example.com        |
       | imagecaption   | My caption image                 |
     And the following "core_badges > Criterias" exist:
       | badge                | role           |

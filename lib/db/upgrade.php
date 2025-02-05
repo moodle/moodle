@@ -1392,5 +1392,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025012400.01);
     }
 
+    if ($oldversion < 2025013100.01) {
+        // Remove imageauthorname, imageauthoremail and imageauthorurl fields for badges.
+        $table = new xmldb_table('badge');
+        $fields = [
+            'imageauthorname',
+            'imageauthoremail',
+            'imageauthorurl',
+        ];
+
+        foreach ($fields as $field) {
+            $field = new xmldb_field($field);
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025013100.01);
+    }
+
     return true;
 }

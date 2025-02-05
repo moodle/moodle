@@ -1,0 +1,10 @@
+issueNumber: MDL-83909
+notes:
+  core_badges:
+    - message: >-
+        The fields imageauthorname, imageauthoremail, and imageauthorurl have
+        been removed from badges due to confusion and their absence from the
+        official specification. These fields also do not appear in OBv3.0.
+        Additionally, the image_author_json.php file has been removed as it is
+        no longer needed.
+      type: removed

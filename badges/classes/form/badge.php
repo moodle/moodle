@@ -83,15 +83,6 @@ class badge extends moodleform {
             $mform->insertElementBefore($currentimage, 'image');
         }
         $mform->addHelpButton('image', 'badgeimage', 'badges');
-        $mform->addElement('text', 'imageauthorname', get_string('imageauthorname', 'badges'), ['size' => '70']);
-        $mform->setType('imageauthorname', PARAM_TEXT);
-        $mform->addHelpButton('imageauthorname', 'imageauthorname', 'badges');
-        $mform->addElement('text', 'imageauthoremail', get_string('imageauthoremail', 'badges'), ['size' => '70']);
-        $mform->setType('imageauthoremail', PARAM_TEXT);
-        $mform->addHelpButton('imageauthoremail', 'imageauthoremail', 'badges');
-        $mform->addElement('text', 'imageauthorurl', get_string('imageauthorurl', 'badges'), ['size' => '70']);
-        $mform->setType('imageauthorurl', PARAM_URL);
-        $mform->addHelpButton('imageauthorurl', 'imageauthorurl', 'badges');
         $mform->addElement('text', 'imagecaption', get_string('imagecaption', 'badges'), ['size' => '70']);
         $mform->setType('imagecaption', PARAM_TEXT);
         $mform->addHelpButton('imagecaption', 'imagecaption', 'badges');
@@ -216,14 +207,6 @@ class badge extends moodleform {
 
         if ($data['expiry'] == 1 && $data['expiredate'] <= time()) {
             $errors['expirydategr'] = get_string('error:invalidexpiredate', 'badges');
-        }
-
-        if ($data['imageauthoremail'] && !validate_email($data['imageauthoremail'])) {
-            $errors['imageauthoremail'] = get_string('invalidemail');
-        }
-
-        if ($data['imageauthorurl'] && !preg_match('@^https?://.+@', $data['imageauthorurl'])) {
-            $errors['imageauthorurl'] = get_string('invalidurl', 'badges');
         }
 
         return $errors;

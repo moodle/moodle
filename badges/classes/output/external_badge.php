@@ -125,10 +125,6 @@ class external_badge implements renderable {
         }
         $data->badgeimage = $this->issued->image;
         if (is_object($data->badgeimage)) {
-            if (!empty($data->badgeimage->author)) {
-                $data->hasotherfields = true;
-                $data->imageauthorname = $data->badgeimage->author;
-            }
             if (!empty($data->badgeimage->caption)) {
                 $data->hasotherfields = true;
                 $data->imagecaption = $data->badgeimage->caption;

@@ -25,7 +25,6 @@ Feature: Badges not shown when there are no existing badges.
       | Version | 1.1 |
       | Language | Basque |
       | Description | Testing course badge description |
-      | Image author | http://author.example.com |
       | Image caption | Test caption image |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I click on "Create badge" "button"

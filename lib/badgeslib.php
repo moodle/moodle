@@ -124,7 +124,6 @@ define('OPEN_BADGES_V2_TYPE_ASSERTION', 'Assertion');
 define('OPEN_BADGES_V2_TYPE_BADGE', 'BadgeClass');
 define('OPEN_BADGES_V2_TYPE_ISSUER', 'Issuer');
 define('OPEN_BADGES_V2_TYPE_ENDORSEMENT', 'Endorsement');
-define('OPEN_BADGES_V2_TYPE_AUTHOR', 'Author');
 
 define('BACKPACK_MOVE_UP', -1);
 define('BACKPACK_MOVE_DOWN', 1);
@@ -445,9 +444,6 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
             'dateexpire'    => $badge->dateexpire,
             'version'       => $badge->version,
             'language'      => $badge->language,
-            'imageauthorname'  => $badge->imageauthorname,
-            'imageauthoremail' => $badge->imageauthoremail,
-            'imageauthorurl'   => $badge->imageauthorurl,
             'imagecaption'     => $badge->imagecaption,
         ];
     }

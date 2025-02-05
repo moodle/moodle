@@ -288,9 +288,6 @@ final class badge_test extends \advanced_testcase {
             'status' => BADGE_STATUS_ACTIVE_LOCKED,
             'version' => OPEN_BADGES_V2,
             'language' => 'en',
-            'imageauthorname' => 'Image author',
-            'imageauthoremail' => 'author@example.com',
-            'imageauthorurl' => 'http://image.example.com/',
             'imagecaption' => 'Image caption',
             'tags' => [],
         ];

@@ -367,12 +367,6 @@ $string['hidden'] = 'Hidden';
 $string['hiddenbadge'] = 'Unfortunately, the badge owner has not made this information available.';
 $string['hostedurl'] = 'External URL';
 $string['hostedurldescription'] = 'External URL where the badge is hosted';
-$string['imageauthoremail'] = 'Image author\'s email';
-$string['imageauthoremail_help'] = 'If specified, the email address of the badge image author is displayed on the badge page.';
-$string['imageauthorname'] = 'Image author\'s name';
-$string['imageauthorname_help'] = 'If specified, the name of the badge image author is displayed on the badge page.';
-$string['imageauthorurl'] = 'Image author\'s URL';
-$string['imageauthorurl_help'] = 'If specified, a link to the badge image author\'s website is displayed on the badge page. The URL should have a prefix http:// or https://.';
 $string['invalidurl'] = 'Invalid URL';
 $string['issuancedetails'] = 'Badge expiry';
 $string['issuedbadge'] = 'Issued badge information';
@@ -601,3 +595,11 @@ $string['backpackemail_help'] = 'The email address associated with your backpack
 $string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
 $string['reviewbadge'] = 'Changes in badge access';
+
+// Deprecated since Moodle 5.0.
+$string['imageauthoremail'] = 'Image author\'s email';
+$string['imageauthoremail_help'] = 'If specified, the email address of the badge image author is displayed on the badge page.';
+$string['imageauthorname'] = 'Image author\'s name';
+$string['imageauthorname_help'] = 'If specified, the name of the badge image author is displayed on the badge page.';
+$string['imageauthorurl'] = 'Image author\'s URL';
+$string['imageauthorurl_help'] = 'If specified, a link to the badge image author\'s website is displayed on the badge page. The URL should have a prefix http:// or https://.';

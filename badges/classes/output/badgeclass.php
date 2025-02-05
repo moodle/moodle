@@ -119,18 +119,6 @@ class badgeclass implements renderable {
             $data->hasotherfields = true;
             $data->version = $this->badge->version;
         }
-        if (!empty($this->badge->imageauthorname)) {
-            $data->hasotherfields = true;
-            $data->imageauthorname = $this->badge->imageauthorname;
-        }
-        if (!empty($this->badge->imageauthoremail)) {
-            $data->hasotherfields = true;
-            $data->imageauthoremail = obfuscate_mailto($this->badge->imageauthoremail, $this->badge->imageauthoremail);
-        }
-        if (!empty($this->badge->imageauthorurl)) {
-            $data->hasotherfields = true;
-            $data->imageauthorurl = $this->badge->imageauthorurl;
-        }
         if (!empty($this->badge->imagecaption)) {
             $data->hasotherfields = true;
             $data->imagecaption = $this->badge->imagecaption;

@@ -2789,9 +2789,6 @@ class restore_badges_structure_step extends restore_structure_step {
                 'nextcron'       => $data->nextcron,
                 'version'        => $data->version,
                 'language'       => $data->language,
-                'imageauthorname' => $data->imageauthorname,
-                'imageauthoremail' => $data->imageauthoremail,
-                'imageauthorurl' => $data->imageauthorurl,
                 'imagecaption'   => $data->imagecaption
         );
 
