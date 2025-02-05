@@ -106,12 +106,18 @@ final class question_type_test extends \advanced_testcase {
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
         $this->assertEquals($syscontext->id, $questiondata->contextid);
-        $this->assertEquals([], $questiondata->hints);
+        $this->assertCount(1, $questiondata->hints);
+        $hint = array_pop($questiondata->hints);
+        $this->assertEquals('Add', $hint->hint);
+        $this->assertEquals(FORMAT_HTML, $hint->hintformat);
 
         // Options.
         $this->assertEquals($questiondata->id, $questiondata->options->question);
-        $this->assertEquals([], $questiondata->options->units);
-        $this->assertEquals(qtype_numerical::UNITNONE, $questiondata->options->showunits);
+        $this->assertCount(1, $questiondata->options->units);
+        $unit = array_pop($questiondata->options->units);
+        $this->assertEquals($unit->unit, 'x');
+        $this->assertEquals($unit->multiplier, '1.0');
+        $this->assertEquals(qtype_numerical::UNITOPTIONAL, $questiondata->options->showunits);
         $this->assertEquals(0, $questiondata->options->unitgradingtype); // Unit role is none, so this is 0.
         $this->assertEquals($fromform->unitpenalty, $questiondata->options->unitpenalty);
         $this->assertEquals($fromform->unitsleft, $questiondata->options->unitsleft);

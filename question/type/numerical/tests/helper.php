@@ -164,6 +164,13 @@ class qtype_numerical_test_helper extends question_test_helper {
         $form->qtype = 'numerical';
         $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
+        $form->hint = [
+            [
+                'text' => 'Just over 3',
+                'format' => FORMAT_HTML,
+            ],
+        ];
+
         return $form;
     }
 
