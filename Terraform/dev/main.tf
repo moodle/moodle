@@ -258,3 +258,14 @@ resource "azurerm_mssql_managed_database" "sqldb" {
   name = "LearningHubMoodle"
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
 }
+
+resource "azurerm_redis_cache" "moodle_cache" {
+  name                = "moodle-cache"
+  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  location = azurerm_resource_group.learningHubMoodleResourceGroup.location
+  capacity            = 2
+  family              = "C"
+  sku_name            = "Standard"
+  non_ssl_port_enabled = false
+  minimum_tls_version = "1.2"
+}
