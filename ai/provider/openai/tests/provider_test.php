@@ -41,11 +41,9 @@ final class provider_test extends \advanced_testcase {
 
         // Create the provider instance.
         $this->manager = \core\di::get(\core_ai\manager::class);
-        $config = ['data' => 'goeshere'];
         $this->provider = $this->manager->create_provider_instance(
             classname: '\aiprovider_openai\provider',
             name: 'dummy',
-            config: $config,
         );
     }
 
