@@ -267,6 +267,6 @@ resource "azurerm_redis_cache" "moodle_cache" {
   capacity            = 2
   family              = "C"
   sku_name            = "Standard"
-  non_ssl_port_enabled = false
+  non_ssl_port_enabled = true
   minimum_tls_version = "1.2"
 }
