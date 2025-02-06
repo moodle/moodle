@@ -259,6 +259,17 @@ resource "azurerm_mssql_managed_database" "sqldb" {
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
 }
 
+data "azurerm_virtual_network" "aks_vnet" {
+  name                = "aks-vnet-10306673"
+  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
+}
+
+data "azurerm_subnet" "aks_subnet" {
+  name                 = "aks-subnet"
+  virtual_network_name = data.azurerm_virtual_network.aks_vnet.name
+  resource_group_name  = data.azurerm_virtual_network.aks_vnet.resource_group_name
+}
+
 resource "azurerm_redis_cache" "moodle_cache" {
   name                = "moodle-cache"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
@@ -268,4 +279,7 @@ resource "azurerm_redis_cache" "moodle_cache" {
   sku_name            = "Standard"
   non_ssl_port_enabled = false
   minimum_tls_version = "1.2"
+  private_endpoint {
+    subnet_id = data.azurerm_subnet.aks_subnet.id
+  }
 }
