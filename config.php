@@ -33,10 +33,10 @@ $CFG->phpunit_dataroot = 'phpu_moodledata';
 
 // $CFG->cache_store = 'redis';
 // $CFG->session_save_handler = 'redis';
-$CFG->session_handler_class = '\\core\\session\\redis';
-$CFG->session_redis_host = 'REDIS-HOST-NAME';
-$CFG->session_redis_port = 6379;
-$CFG->session_redis_auth = 'REDIS-PASSWORD';
+// $CFG->session_handler_class = '\\core\\session\\redis';
+// $CFG->session_redis_host = 'REDIS-HOST-NAME';
+// $CFG->session_redis_port = 6379;
+// $CFG->session_redis_auth = 'REDIS-PASSWORD';
 
 require_once(__DIR__ . '/lib/setup.php');
 
