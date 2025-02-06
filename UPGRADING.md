@@ -166,6 +166,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-66873](https://tracker.moodle.org/browse/MDL-66873)
 
+### core_badges
+
+#### Removed
+
+- The fields imageauthorname, imageauthoremail, and imageauthorurl have been removed from badges due to confusion and their absence from the official specification. These fields also do not appear in OBv3.0. Additionally, the image_author_json.php file has been removed as it is no longer needed.
+
+  For more information see [MDL-83909](https://tracker.moodle.org/browse/MDL-83909)
+
 ### core_completion
 
 #### Added
@@ -228,6 +236,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
+
+#### Removed
+
+- The old UI for moving activities and sections without javascript is not avaiable anymore from the actions dropdown. From now, on the only UI to move activities and sections is using the move action in the course editor. Format plugins can still use the old links to make the "move here" elements appear, but they will show deprecated messages. All the non-ajax moving will be removed in Moodle 6.0.
+
+  For more information see [MDL-83562](https://tracker.moodle.org/browse/MDL-83562)
+
+#### Fixed
+
+- HTML IDs relating to section collapse/expand have been changed in the course format templates.
+  - core_courseformat/local/content/section/header #collapssesection{{num}} has been changed to #collapsesectionid{{id}}
+  - core_courseformat/local/content/section/content #coursecontentcollapse{{num}} had been changed to #coursecontentcollapseid{{id}}
+
+  For more information see [MDL-82679](https://tracker.moodle.org/browse/MDL-82679)
 
 ### core_enrol
 
@@ -293,6 +315,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- New `report` helper class `get_report_row_count` method for retrieving row count of custom or system report, without having to retrieve the report content
+
+  For more information see [MDL-74488](https://tracker.moodle.org/browse/MDL-74488)
 - New `get_deprecated_tables` method in base entity, to be overridden when an entity no longer uses a table (due to column/filter re-factoring, etc) in order to avoid breaking third-party reports
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
@@ -305,15 +330,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core_reportbuilder_testcase` class has been moved to new autoloaded `core_reportbuilder\tests\core_reportbuilder_testcase` location, affected tests no longer have to manually require `/reportbuilder/tests/helpers.php`
 
   For more information see [MDL-84000](https://tracker.moodle.org/browse/MDL-84000)
+- Columns added to system reports can render help icons in table headers via `[set|get]_help_icon` column instance methods
+
+  For more information see [MDL-84016](https://tracker.moodle.org/browse/MDL-84016)
 
 #### Changed
 
 - The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
 
   For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
-- Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, rather than manually counting via the prior properties
+- Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, or by calling the helper method `report::get_report_row_count`
 
   For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
+
+#### Deprecated
+
+- The `schedule` helper class `get_schedule_report_count` method is now deprecated, existing code should instead use `report::get_report_row_count`
+
+  For more information see [MDL-74488](https://tracker.moodle.org/browse/MDL-74488)
 
 #### Removed
 
@@ -422,6 +456,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The 'use_template' template has been removed as it is not needed anymore.
 
   For more information see [MDL-81744](https://tracker.moodle.org/browse/MDL-81744)
+
+### mod_folder
+
+#### Removed
+
+- Method htmllize_tree() has been removed. Please use renderable_tree_elements instead
+
+  For more information see [MDL-79214](https://tracker.moodle.org/browse/MDL-79214)
 
 ### mod_h5pactivity
 

@@ -1,5 +1,13 @@
 # core_badges (subsystem) Upgrade notes
 
+## 5.0dev
+
+### Removed
+
+- The fields imageauthorname, imageauthoremail, and imageauthorurl have been removed from badges due to confusion and their absence from the official specification. These fields also do not appear in OBv3.0. Additionally, the image_author_json.php file has been removed as it is no longer needed.
+
+  For more information see [MDL-83909](https://tracker.moodle.org/browse/MDL-83909)
+
 ## 4.5
 
 ### Added

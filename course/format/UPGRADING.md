@@ -38,6 +38,20 @@
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
+### Removed
+
+- The old UI for moving activities and sections without javascript is not avaiable anymore from the actions dropdown. From now, on the only UI to move activities and sections is using the move action in the course editor. Format plugins can still use the old links to make the "move here" elements appear, but they will show deprecated messages. All the non-ajax moving will be removed in Moodle 6.0.
+
+  For more information see [MDL-83562](https://tracker.moodle.org/browse/MDL-83562)
+
+### Fixed
+
+- HTML IDs relating to section collapse/expand have been changed in the course format templates.
+  - core_courseformat/local/content/section/header #collapssesection{{num}} has been changed to #collapsesectionid{{id}}
+  - core_courseformat/local/content/section/content #coursecontentcollapse{{num}} had been changed to #coursecontentcollapseid{{id}}
+
+  For more information see [MDL-82679](https://tracker.moodle.org/browse/MDL-82679)
+
 ## 4.5
 
 ### Added
