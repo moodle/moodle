@@ -965,3 +965,36 @@ function check_igbinary322_version(environment_results $result) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return null;
 }
+
+/**
+ * Copies a rectangular portion of the source image to another rectangle in the destination image
+ *
+ * This function calls imagecopyresampled() if it is available and GD version is 2 at least.
+ * Otherwise it reimplements the same behaviour. See the PHP manual page for more info.
+ *
+ * @link http://php.net/manual/en/function.imagecopyresampled.php
+ * @param resource|\GdImage $dst_img the destination GD image resource
+ * @param resource|\GdImage $src_img the source GD image resource
+ * @param int $dst_x vthe X coordinate of the upper left corner in the destination image
+ * @param int $dst_y the Y coordinate of the upper left corner in the destination image
+ * @param int $src_x the X coordinate of the upper left corner in the source image
+ * @param int $src_y the Y coordinate of the upper left corner in the source image
+ * @param int $dst_w the width of the destination rectangle
+ * @param int $dst_h the height of the destination rectangle
+ * @param int $src_w the width of the source rectangle
+ * @param int $src_h the height of the source rectangle
+ * @return ?bool tru on success, false otherwise
+ *
+ * @deprecated Since Moodle 5.0
+ * @todo Final deprecation on Moodle 6.0. See MDL-84734.
+ */
+#[\core\attribute\deprecated(
+    replacement: 'imagecopyresampled',
+    since: '5.0',
+    mdl: 'MDL-84449',
+    reason: 'GD is a strict requirement, so use imagecopyresampled() instead.'
+)]
+function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
+}

@@ -27,67 +27,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Copies a rectangular portion of the source image to another rectangle in the destination image
- *
- * This function calls imagecopyresampled() if it is available and GD version is 2 at least.
- * Otherwise it reimplements the same behaviour. See the PHP manual page for more info.
- *
- * @link http://php.net/manual/en/function.imagecopyresampled.php
- * @param resource|\GdImage $dst_img the destination GD image resource
- * @param resource|\GdImage $src_img the source GD image resource
- * @param int $dst_x vthe X coordinate of the upper left corner in the destination image
- * @param int $dst_y the Y coordinate of the upper left corner in the destination image
- * @param int $src_x the X coordinate of the upper left corner in the source image
- * @param int $src_y the Y coordinate of the upper left corner in the source image
- * @param int $dst_w the width of the destination rectangle
- * @param int $dst_h the height of the destination rectangle
- * @param int $src_w the width of the source rectangle
- * @param int $src_h the height of the source rectangle
- * @return ?bool tru on success, false otherwise
- */
-function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
-    global $CFG;
-
-    if (function_exists('imagecopyresampled')) {
-       return imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y,
-                                 $dst_w, $dst_h, $src_w, $src_h);
-    }
-
-    $totalcolors = imagecolorstotal($src_img);
-    for ($i=0; $i<$totalcolors; $i++) {
-        if ($colors = imagecolorsforindex($src_img, $i)) {
-            imagecolorallocate($dst_img, $colors['red'], $colors['green'], $colors['blue']);
-        }
-    }
-
-    $scalex = ($src_w - 1) / $dst_w;
-    $scaley = ($src_h - 1) / $dst_h;
-
-    $scalex2 = $scalex / 2.0;
-    $scaley2 = $scaley / 2.0;
-
-    for ($j = 0; $j < $dst_h; $j++) {
-        $sy = $j * $scaley;
-
-        for ($i = 0; $i < $dst_w; $i++) {
-            $sx = $i * $scalex;
-
-            $c1 = imagecolorsforindex($src_img, imagecolorat($src_img, (int)$sx, (int)$sy + $scaley2));
-            $c2 = imagecolorsforindex($src_img, imagecolorat($src_img, (int)$sx, (int)$sy));
-            $c3 = imagecolorsforindex($src_img, imagecolorat($src_img, (int)$sx + $scalex2, (int)$sy + $scaley2));
-            $c4 = imagecolorsforindex($src_img, imagecolorat($src_img, (int)$sx + $scalex2, (int)$sy));
-
-            $red = (int) (($c1['red'] + $c2['red'] + $c3['red'] + $c4['red']) / 4);
-            $green = (int) (($c1['green'] + $c2['green'] + $c3['green'] + $c4['green']) / 4);
-            $blue = (int) (($c1['blue'] + $c2['blue'] + $c3['blue'] + $c4['blue']) / 4);
-
-            $color = imagecolorclosest($dst_img, $red, $green, $blue);
-            imagesetpixel($dst_img, $i + $dst_x, $j + $dst_y, $color);
-        }
-    }
-}
-
-/**
  * Stores optimised icon images in icon file area.
  *
  * Since 2.9 this function will generate an icon in the same format as the original file when possible.
@@ -225,9 +164,9 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         $half = floor($image->height / 2.0);
     }
 
-    imagecopybicubic($im1, $im, 0, 0, $cx - $half, $cy - $half, 100, 100, $half * 2, $half * 2);
-    imagecopybicubic($im2, $im, 0, 0, $cx - $half, $cy - $half, 35, 35, $half * 2, $half * 2);
-    imagecopybicubic($im3, $im, 0, 0, $cx - $half, $cy - $half, 512, 512, $half * 2, $half * 2);
+    imagecopyresampled($im1, $im, 0, 0, $cx - $half, $cy - $half, 100, 100, $half * 2, $half * 2);
+    imagecopyresampled($im2, $im, 0, 0, $cx - $half, $cy - $half, 35, 35, $half * 2, $half * 2);
+    imagecopyresampled($im3, $im, 0, 0, $cx - $half, $cy - $half, 512, 512, $half * 2, $half * 2);
 
     $fs = get_file_storage();
 
@@ -390,7 +329,7 @@ function resize_image_from_image($original, $imageinfo, $width, $height, $forcec
         $newimage = imagecreate($canvaswidth, $canvasheight);
     }
 
-    imagecopybicubic($newimage, $original, $dstx, $dsty, 0, 0, $targetwidth, $targetheight, $originalwidth, $originalheight);
+    imagecopyresampled($newimage, $original, $dstx, $dsty, 0, 0, $targetwidth, $targetheight, $originalwidth, $originalheight);
 
     if ($imagefnc === 'imagejpeg') {
         // Function imagejpeg() accepts less arguments than imagepng() but we need to make $imagefnc accept the same
