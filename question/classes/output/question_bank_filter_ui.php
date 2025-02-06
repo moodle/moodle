@@ -138,6 +138,7 @@ class question_bank_filter_ui extends datafilter {
             'cmid' => $this->cmid ?? 0,
             'pagevars' => json_encode($this->pagevars),
             'extraparams' => json_encode($this->extraparams),
+            'showallbutton' => true,
         ];
     }
 }
