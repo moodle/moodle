@@ -52,8 +52,7 @@ if ($provider) {
 
 if ($id !== 0) { // If we have an id we are updating an existing provider instance.
     $manager = \core\di::get(\core_ai\manager::class);
-    $providerrecord = $manager->get_provider_records(['id' => $id]);
-    $providerrecord = reset($providerrecord);
+    $providerrecord = $manager->get_provider_record(['id' => $id], MUST_EXIST);
     $plugin = explode('\\', $providerrecord->provider);
     $plugin = $plugin[0];
 

@@ -109,7 +109,30 @@ final class manager_test extends \advanced_testcase {
             classname: $this::class,
             name: 'dummy',
         );
+    }
 
+    /**
+     * Test get_provider_record method
+     */
+    public function test_get_provider_record(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a dummy provider record directly in the database.
+        $config = ['data' => 'goeshere'];
+        $record = new \stdClass();
+        $record->name = 'dummy1';
+        $record->provider = 'dummy';
+        $record->enabled = 1;
+        $record->config = json_encode($config);
+        $record->actionconfig = json_encode(['generate_text' => 1]);
+        $record->id = $DB->insert_record('ai_providers', $record);
+
+        $manager = \core\di::get(\core_ai\manager::class);
+        $provider = $manager->get_provider_record(['provider' => 'dummy']);
+
+        $this->assertEquals($record->id, $provider->id);
     }
 
     /**
