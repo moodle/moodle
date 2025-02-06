@@ -16,6 +16,7 @@
 
 namespace tool_brickfield\local\htmlchecker\common\checks;
 
+use core_text;
 use tool_brickfield\local\htmlchecker\common\brickfield_accessibility_test;
 
 /**
@@ -41,7 +42,7 @@ class img_alt_is_too_long extends brickfield_accessibility_test {
 
         foreach ($this->get_all_elements('img') as $img) {
             $alttextlengthlimit = 125;
-            if ($img->hasAttribute('alt') && strlen($img->getAttribute('alt')) > $alttextlengthlimit) {
+            if ($img->hasAttribute('alt') && core_text::strlen($img->getAttribute('alt')) > $alttextlengthlimit) {
                 $this->add_report($img);
             }
         }
