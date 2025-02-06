@@ -205,12 +205,12 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $fromform->penalty = '0.3333333';
         $fromform->hint = array(
             array(
-                'text' => '<p>Incorrect placements will be removed.</p>',
+                'text' => '<p>1. Incorrect placements will be removed.</p>',
                 'format' => FORMAT_HTML,
             ),
             array(
                 'text' => '<ul>
-                           <li>The abyssal plain is a flat almost featureless expanse of ocean '.
+                           <li>2. The abyssal plain is a flat almost featureless expanse of ocean '.
                            'floor 4km to 6km below sea-level.</li>
                            <li>The continental rise is the gently sloping part of the ocean floor beyond the continental slope.</li>
                            <li>The continental shelf is the gently sloping ocean floor just offshore from the land.</li>
@@ -224,12 +224,12 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
                 'format' => FORMAT_HTML,
             ),
             array(
-                'text' => '<p>Incorrect placements will be removed.</p>',
+                'text' => '<p>3. Incorrect placements will be removed.</p>',
                 'format' => FORMAT_HTML,
             ),
             array(
                 'text' => '<ul>
-                           <li>The abyssal plain is a flat almost featureless expanse of ocean '.
+                           <li>4. The abyssal plain is a flat almost featureless expanse of ocean '.
                            'floor 4km to 6km below sea-level.</li>
                            <li>The continental rise is the gently sloping part of the ocean floor beyond the continental slope.</li>
                            <li>The continental shelf is the gently sloping ocean floor just offshore from the land.</li>
