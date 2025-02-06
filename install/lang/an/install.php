@@ -50,21 +50,6 @@ Una comprebación de l\'entorno completo se realiza antes de cada instalación y
 $string['errorsinenvironment'] = 'La comprebación de l\'entorno fallo!';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'L\'idioma "{$a}" no podió estar descargau. Lo proceso d\'instalación continará en Anglés.';
-$string['memorylimithelp'] = '<p>Lo limite de memoria PHP en o suyo servidor ye actualment {$a}.</p>
-
-<p>Esto puede ocasionar que Moodle tienga problemas de memoria mas abance, especialment si vusté tiene activaus muitos modulos y/u muitos usuarios.</p>
-
-<p>Recomendamos que configure PHP con o limite mas alto posible, y.g. 40M.
-I hai quantas formas de fer esto:</p>
-<ol>
-<li>Si puede fer-lo, recompile PHP con <i>--enable-memory-limit</i>.
-Esto fa que Moodle fixe per ell mesmo lo limite de memoria.</li>
-<li>Si tiene acceso a lo fichero php.ini, puede cambiar l\'achuste <b>memory_limit</b>
-a, digamos, 40M. Si no lo tiene, pida a lo suyo administrador que lo faiga per vusté.</li>
-<li>En qualques servidors PHP vusté puede creyar en o directorio Moodle un fichero .htaccess que contienga esta linia:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Manimenos, en qualques servidors esto fa que <b>totas</b> las pachinas PHP deixen de funcionar (podrá veyer las errors quan mire las pachinas) de traza que habrá d\'eliminar lo fichero .htaccess.</p></li>
-</ol>';
 $string['paths'] = 'Rotas';
 $string['pathserrcreatedataroot'] = 'Lo directorio d\'os datos ({$a->dataroot}) no puede estar creyau per l\'instalador.';
 $string['pathshead'] = 'Confirme las rotas';
@@ -78,10 +63,6 @@ $string['pathsunsecuredataroot'] = 'La ubicación de dataroot no ye segura';
 $string['pathswrongadmindir'] = 'Lo directorio admin no existe';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle requiere a lo menos una versión de PHP 4.3.0 u 5.1.0 ((5.0.x tiene una serie de problemas conoixius).</p>
-<p>En este momento ye executando la versión {$a}</p>
-<p>Ha d\'actualizar PHP u tresladar-se a unatro servidor con una versión mas recient de PHP!<br />
-(En caso de 5.0.x podría tamién revertir a la versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Si ye veyendo esta pachina ye perque ha puesto executar lo paquet <strong>{$a->packname} {$a->packversion}</strong> en o suyo ordinador. Parabiens!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las

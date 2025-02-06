@@ -50,20 +50,6 @@ Volledige omgewingskontrole word vóór elke installasie en opgradering gedoen. 
 $string['errorsinenvironment'] = 'Omgewingskontrole het misluk!';
 $string['installation'] = 'Installasie';
 $string['langdownloaderror'] = 'Jammer, die taal "{$a}" kon nie afgelaai word nie. Die installasieproses sal in Engels voortgesit word.';
-$string['memorylimithelp'] = '<p>Die PHP-geheueperk vir jou bediener is tans op {$a} gestel.</p>
-
-<p>Dit kan veroorsaak dat Moodle mettertyd geheueprobleme ervaar, veral as baie modules aangeskakel en/of daar baie gebruikers is.</p>
-
-<p>Ons beveel aan dat jy, indien moontlik, PHP herkonfigureer met \'n hoër perk, soos 40M.
-   Jy kan verskeie maniere probeer om dit te doen:</p>
-<ol>
-<li>As jy kan, herkompileer PHP met <i>--enable-memory-limit</i>.
-    Dit sal Moodle in staat stel om self die geheueperk te stel.</li>
-<li>As jy toegang tot jou php.ini-lêer het, kan jy die <b>memory_limit</b>-instelling daarin verander tot iets soos 40M.  As jy nie toegang het nie, kan jy dalk jou administrateur vra om dit vir jou te doen.</li>
-<li>Op sommige PHP-bedieners kan jy \'n .htaccess-lêer in die Moodle-gids skep wat hierdie lyn bevat:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>Op sommige bedieners kan dit egter verhoed dat <b>alle</b> PHP-blaaie werk  (jy sal foute sien wanneer jy na die blaaie kyk), en daarom sal jy die .htaccess-lêer moet verwyder.</p></li>
-</ol>';
 $string['paths'] = 'Roetes';
 $string['pathserrcreatedataroot'] = 'Datagids ({$a->dataroot}) kan nie deur installeerder geskep word nie.';
 $string['pathshead'] = 'Bevestig roetes';
@@ -83,9 +69,6 @@ $string['pathsunsecuredataroot'] = 'Ligging van datastam is nie veilig nie';
 $string['pathswrongadmindir'] = 'Admingids bestaan nie';
 $string['phpextension'] = '{$a} PHP-uitbreiding';
 $string['phpversion'] = 'PHP-weergawe';
-$string['phpversionhelp'] = '<p>Moodle vereis \'n PHP-weergawe van ten minste 5.6.5 of 7.1 (7.0.x het \'n paar enjinbeperkings).</p>
-<p>Jy gebruik tans weergawe {$a}.</p>
-<p>Jy moet PHP opgradeer of na \'n gasheer met \'n nuwer weergawe van PHP verskuif.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Jy sien hierdie blad omdat jy die <strong>{$a->packname} {$a->packversion}</strong>-pakket suksesvol geïnstalleer en op jou rekenaar laat loop het. Baie geluk!';
 $string['welcomep30'] = 'Hierdie vrystelling van die <strong>{$a->installername}</strong> sluit die toepassings in om \'n omgewing te skep waarbinne <strong>Moodle</strong> gaan funksioneer, naamlik:';

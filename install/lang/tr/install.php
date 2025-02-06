@@ -49,28 +49,6 @@ $string['environmentsub2'] = 'Her Moodle dağıtımı, bazı PHP versiyon gereks
 $string['errorsinenvironment'] = 'Ortam kontrolu başarısız oldu!';
 $string['installation'] = 'Kurulum';
 $string['langdownloaderror'] = 'Maalesef "{$a}" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';
-$string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek sınırı şu anda {$a} olarak ayarlanmıştır.</p>
-
-<p>Özellikle bir çok modülü etkinleştirilmiş ve/veya çok fazla kullanıcınız
-varsa bu durum daha sonra bazı bellek sorunlarına sebep olabilir.</p>
-
-<p>PHP\'yi mümkünse 40M gibi daha yüksek bir limitle yapılandırmanızı öneririz.
-Bunu yapmanın birkaç yolunu bulabilirsiniz:</p>
-<ol>
-<li>Bunu yapmaya yetkiliyseniz, PHP\'yi <i>--enable-memory-limit</i> ile yeniden derleyin.
-Bu, Moodle\'nın kendi kendine bellek limitini ayarlasına izin verecektir.</li>
-
-<li>php.ini dosyasına erişim hakkınız varsa, <b>memory_limit</b> ayarını 40M gibi
-bir ayarla değiştirin. Erişim hakkınız yoksa, bunu sistem yöneticinizden sizin
-için yapmasını isteyin.</li>
-
-<li>Bazı PHP sunucularında Moodle klasörü içinde şu ayarı içeren bir
-.htaccess dosyası oluşturabilirsiniz:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Ancak, bazı sunucularda bu durum çalışan <b>bütün</b> PHP sayfalarını engelleyecektir.
-(sayfanız altına baktığınızda bazı hatalar göreceksiniz)
-Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>
-</ol>';
 $string['paths'] = 'Dizin yolları';
 $string['pathserrcreatedataroot'] = 'Veri Klasörü ({$a->dataroot}) kurulum tarafından oluşturulamıyor.';
 $string['pathshead'] = 'Dizin yollarını onayla';
@@ -91,9 +69,6 @@ $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionhelp'] = '<p>Moodle en az 5.6.5 veya 7.1 PHP sürümü gerektirir (7.0.x bazı motor sınırlamalarına sahiptir).</p>
-<p>Şu anda {$a} sürümünü çalıştırıyorsunuz.</p>
-<p>PHP\'yi yükseltmeli veya daha yeni bir PHP sürümüne sahip bir ana bilgisayara geçmelisiniz.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Bu sayfayı <strong>{$a->packname} {$a->packversion}</strong> paketini ilgisayarınıza başarıyla kurduğunuz için görüyorsunuz. Tebrikler!';
 $string['welcomep30'] = '<strong> {$a-> installername} </strong>\'in bu sürümü, <strong> Moodle </strong>\'ın çalışacağı bir ortam oluşturmak için uygulamaları içerir:';

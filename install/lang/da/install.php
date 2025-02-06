@@ -50,17 +50,6 @@ Installationsprogrammet udfører et tjek før hver installation og opgradering. 
 $string['errorsinenvironment'] = 'Systemtjekket mislykkedes!';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke downloadet. Installationen vil fortsætte på engelsk.';
-$string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p>
-
-<p>Det kan forårsage at der opstår problemer senere, især hvis du har mange moduler aktiveret eller mange brugere.</p>
-
-<p>Vi anbefaler at du konfigurerer PHP med mere hukommelse, f.eks. 40M. Der er flere måder hvorpå du kan ændre det.</p>
-<ol>
-<li>Hvis du har mulighed for det, kan du rekompilere PHP med <i>--enable-memory-limit</i>. Det vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.</li>
-<li>Hvis du har adgang til php.ini filen kan du ændre <b>memory_limit</b>-indstillingen til noget i retning af 40M. Hvis du ikke har direkte adgang til den kan du bede systemadministratoren om at gøre det for dig.</li>
-<li>På nogle servere kan du oprette en \'.htaccess\'-fil og gemme den i moodle-mappen med linjen: <blockquote><div>php_value memory_limit 40M</div></blockquote>
-
-<p>Det kan dog på nogle servere forhindre <b>alle</b> PHP-siderne i at virke (du vil se fejl når du ser på siderne). I så fald kan du blive nødt til at fjerne \'.htaccess\'filen igen.</p></li> </ol>';
 $string['paths'] = 'Stier';
 $string['pathserrcreatedataroot'] = 'Datamappen ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
 $string['pathshead'] = 'Bekræft stier';
@@ -80,9 +69,6 @@ $string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
 $string['phpversion'] = 'PHP-version';
-$string['phpversionhelp'] = '<p>Moodle kræver mindst PHP version 5.6.5. eller 7.1 (7.0.x har nogle maskinbegrænsninger).</p>
-<p>Webserveren bruger i øjeblikket version {$a}</p>
-<p>Du bliver nødt til at opgradere PHP eller flytte systemet over på en anden webserver der har en nyere version af PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.
 Tillykke med det!';

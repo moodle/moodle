@@ -49,17 +49,6 @@ $string['environmentsub2'] = 'Hver Moodle-utgivelse har minimumskrav til PHP ver
 $string['errorsinenvironment'] = 'Miljøkontroll feilet!';
 $string['installation'] = 'Installasjon';
 $string['langdownloaderror'] = 'Beklageligvis kunne ikke språkpakken "{$a}" lastes ned. Installasjonsprosessen vil fortsette på Engelsk.';
-$string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>
-<p>Dette kan skape minneproblemer for Moodle senere, spesielt hvis du har mange moduler tillatt og/eller mange brukere.</p>
-<p>Vi anbefaler at du konfigurer PHP med en høyere grense enn mulig, for eksepmel 40M. Det er flere måter å gjøre dette på.:</p>
-<ol>
-<li>Hvis du har muligheten, rekompiler PHP med<i>--enable-memory-limit</i>.
-Dette vil tillate Moodle å sette minnegrensen selv.</li>
-<li>Hvis du har tilgang til php.ini fila di, kan du endre <b>memory_limit</b> innstillinga der til omtrent 40M. Hvis du ikke har tilgang kan du be administrator gjøre dette for deg.</li>
-<li>På noen PHP-servere kan du lage en .htaccess fil i Moodlemappen som inneholder denne linjen:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-    <p>Uansett, på noen servere kan dette forhindre <b>alle</b> PHP sider fra å virke (du vil se feilmeldinger når du ser på sider) og da må du fjerne .htaccess fila.</p></li>
-</ol>';
 $string['paths'] = 'Stier';
 $string['pathserrcreatedataroot'] = 'Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathshead'] = 'Bekreft stier';
@@ -78,9 +67,6 @@ $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
 $string['phpextension'] = '{$a} PHP-tillegg';
 $string['phpversion'] = 'PHP versjon';
-$string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 5.6.5 eller 7.1.0 (7.0.x har noen begrensninger).</p>
-<Du kjører nå versjon {$a}</p>
-<p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne siden fordi du nå har fullført installeringen og kjøringen av pakken <strong>{$a->packname} {$a->packversion}</strong> på datamaskinen din. Gratulerer!';
 $string['welcomep30'] = 'Denne versjonen av <strong>{$a->installername}</strong> inneholder programmer for å lage et miljø som <strong>Moodle</strong> jobber i, nemlig:';

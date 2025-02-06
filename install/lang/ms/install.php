@@ -47,15 +47,6 @@ $string['environmentsub2'] = 'Setiap pelepasan Moodle mempunyai keperluan minimu
 $string['errorsinenvironment'] = 'Semakan persekitaran gagal!';
 $string['installation'] = 'Pemasangan';
 $string['langdownloaderror'] = 'Malangnya fail bahasa "{$a}" tidak dapat dimuat turun. Proses pemasangan akan diteruskan dalam Bahasa Inggeris.';
-$string['memorylimithelp'] = '<p> Had memori PHP untuk pelayan anda  ditetapkan kepada {$a}. </p>
-
-<p> Hal ini akan menyebabkan Moodle untuk mendapat masalah memori di kemudian hari, terutama jika anda mempunyai banyak modul yang diaktifkan dan/atau ramai pengguna. </p>
-
-<p> Kami menyarankan anda mengkonfigurasikan PHP dengan had yang lebih tinggi jika memungkinkan, seperti 40M. Ada beberapa cara untuk melakukan hal ini yang anda boleh cuba: </p>
-<ol>
-<li> Jika anda mampu, kompil semula PHP dengan <i>--enable-memory-limit.</i> Hal ini akan membolehkan Moodle untuk menetapkan batas memori itu sendiri. </li>
-<li> Jika anda mempunyai akses ke fail php.ini, anda boleh menukar setting <b>memory_limit</b> di sana untuk sesuatu seperti 40M. Jika anda tidak mempunyai akses anda mungkin boleh meminta pentadbir anda untuk melakukan ini untuk anda. </li>
-<li> Pada beberapa server PHP anda boleh mencipta baris fail .htaccess di direktori Moodle mengandungi ini: <blockquote><div> php_value memory_limit 40M </div></blockquote><p> Namun, pada beberapa server ini akan mencegah <b>semua</b> laman PHP dari berjalan (anda akan melihat ralat ketika anda melihat halaman), sehingga anda hapuskan file .htaccess. </p></li></ol>';
 $string['paths'] = 'Laluan';
 $string['pathserrcreatedataroot'] = 'Direktori data ({$a->dataroot}) tidak boleh diwujudkan oleh pemasang.';
 $string['pathshead'] = 'Sahkan laluan';
@@ -70,9 +61,6 @@ $string['pathsunsecuredataroot'] = 'Lokasi dataroot tidak selamat';
 $string['pathswrongadmindir'] = 'Direktori admin tidak wujud';
 $string['phpextension'] = 'Sambungan PHP {$a}';
 $string['phpversion'] = 'Versi PHP';
-$string['phpversionhelp'] = '<p> Moodle memerlukan versi PHP minimal 4.3.0 atau 5.1.0 (5.0.x memiliki sejumlah masalah yang diketahui). </p>
-<p> Anda sedang menjalankan versi {$a} </p>
-<p> Anda harus upgrade PHP atau berpindah ke host dengan versi terbaru PHP! <br /> (Dalam kes 5.0.x Anda juga boleh turun taraf ke versi 4.4.x) </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Anda melihat halaman ini kerana anda telah berjaya memasang dan melancarkan pakej <strong>{$a->packname} {$a->packversion}</strong> di komputer anda. Tahniah!';
 $string['welcomep30'] = 'Keluaran ini <strong>{$a->installername}</strong> termasuk aplikasi untuk mencipta sebuah persekitaran di mana <strong>Moodle</strong> akan beroperasi, iaitu:';

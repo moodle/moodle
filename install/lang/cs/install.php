@@ -49,20 +49,6 @@ $string['environmentsub2'] = 'Každé vydání Moodle vyžaduje určitou minimá
 $string['errorsinenvironment'] = 'Kontrola serverového prostředí selhala!';
 $string['installation'] = 'Instalace';
 $string['langdownloaderror'] = 'Bohužel, jazyk "{$a}" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';
-$string['memorylimithelp'] = '<p>Limit paměti pro PHP skripty je na vašem serveru momentálně nastaven na {$a}.</p>
-
-<p>To může později způsobovat Moodlu problémy, zvláště při větším množství modulů a/nebo uživatelů.</p>
-
-<p>Je-li to možné, doporučujeme vám nastavit v PHP vyšší limit, např. 40M. Můžete to provést několika způsoby:</p>
-<ol>
-<li>Můžete-li, překompilujte PHP s volbou <i>--enable-memory-limit</i>.
-Moodle si tak bude sám moci nastavit potřebný limit.</li>
-<li>Máte-li přístup k souboru php.ini, změňte nastavení <b>memory_limit</b>
-na hodnotu blízkou 40M. Nemáte-li taková práva, požádejte správce vašeho webového serveru, aby toto nastavení provedl on.</li>
-<li>Na některých serverech můžete v kořenovém adresáři Moodlu vytvořit soubor .htaccess s následujícím řádkem:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Bohužel, v některých případech tím vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybová hlášení), takže budete muset soubor .htaccess zase odstranit.</p></li>
-</ol>';
 $string['paths'] = 'Cesty';
 $string['pathserrcreatedataroot'] = 'Datový adresář ({$a->dataroot}) nemůže být tímto průvodcem instalací vytvořen.';
 $string['pathshead'] = 'Potvrdit cesty';
@@ -82,9 +68,6 @@ $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpe
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
 $string['phpextension'] = '{$a} PHP rozšíření';
 $string['phpversion'] = 'Verze PHP';
-$string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 5.6.5 PHP nebo 7.1 (7.0.x má určitá omezení jádra).</p>
-<p>Nyní používáte PHP verzi {$a}.</p>
-<p>PHP musíte upgradovat, nebo přejít k hostiteli s vyšší verzí!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Tuto stránku vidíte, protože jste úspěšně nainstalovali a spustili  balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = 'Tato verze <strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';

@@ -49,16 +49,6 @@ $string['environmentsub2'] = 'Chaque version de Moodle nécessite une version mi
 $string['errorsinenvironment'] = 'Échec de la vérification de l’environnement !';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'La langue « {$a} » n’a pas pu être téléchargée. La suite de l’installation se déroulera en anglais. Vous pourrez télécharger et installer d’autres langues à la fin de l’installation';
-$string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur est actuellement de {$a}.</p>
-<p>Cette valeur trop basse risque de générer des problèmes de manque de mémoire pour Moodle, notamment si vous utilisez beaucoup de modules et/ou si vous avez un grand nombre d’utilisateurs.</p>
-<p>Il est recommandé de configurer PHP avec une limite de mémoire aussi élevée que possible, par exemple 40 Mo. Vous pouvez obtenir cela de différentes façons :</p>
-<ol>
-<li>si vous en avez la possibilité, recompilez PHP avec l’option <em>--enable-memory-limit</em>. Cela permettra à Moodle de fixer lui-même sa limite de mémoire ;</li>
-<li>si vous avez accès à votre fichier « php.ini », vous pouvez attribuer au paramètre <b>memory_limit</b> une valeur comme 40M. Si vous n’y avez pas accès, demandez à l’administrateur de le faire pour vous ;</li>
-<li>sur certains serveurs, vous pouvez créer dans le dossier principal de Moodle un fichier « .htaccess » contenant cette ligne :
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Cependant, sur certains serveurs, cela empêchera le fonctionnement correct de <b>tous</b> les fichiers PHP (vous verrez s’afficher des erreurs lors de la consultation de pages). Dans ce cas, vous devrez supprimer le fichier « .htaccess ».</p></li>
-</ol>';
 $string['paths'] = 'Chemins';
 $string['pathserrcreatedataroot'] = 'Le dossier de données ({$a->dataroot}) ne peut pas être créé par l’installeur.';
 $string['pathshead'] = 'Confirmer les chemins d’accès';
@@ -78,9 +68,6 @@ $string['pathsunsecuredataroot'] = 'L’emplacement du dossier de données n’e
 $string['pathswrongadmindir'] = 'Le dossier d’administration n’existe pas';
 $string['phpextension'] = 'Extension PHP {$a}';
 $string['phpversion'] = 'Version de PHP';
-$string['phpversionhelp'] = '<p>Moodle nécessite au minimum la version 5.6.5 ou 7.1 (la version 7.0.x a des limitations avec certains moteurs de base de données).</p>
-<p>Vous utilisez actuellement la version {$a}.</p>
-<p>Veuillez mettre à jour PHP ou passer à un hébergement avec une version plus récente de PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Vous voyez cette page, car vous avez installé Moodle correctement et lancé le logiciel <strong>{$a->packname} {$a->packversion}</strong> sur votre ordinateur. Félicitations !';
 $string['welcomep30'] = 'Cette version de <b>{$a->installername}</b> comprend des logiciels qui créent un environnement dans lequel <b>Moodle</b> va fonctionner, à savoir :';

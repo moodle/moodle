@@ -64,10 +64,6 @@ $string['pathsunsecuredataroot'] = 'Locația dataroot nu este sigură';
 $string['pathswrongadmindir'] = 'Directorul admin nu există';
 $string['phpextension'] = 'extensie PHP {$a}';
 $string['phpversion'] = 'Versiune PHP';
-$string['phpversionhelp'] = '<p>Moodle necesită o versiune PHP de cel puțin  4.3.0 sau 5.1.0 (5.0.x are un număr de probleme cunscute).</p>
-<p>Momentan rulați versiunea {$a}</p>
-<p>Trebuie să upgradați PHP sau să îl mutați pe o gazdă cu o nouă versiune de PHP!<br />
-(În cazul 5.0.x puteți, de asemenea, să downgradați la versiunea 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lansat cu succes pachetul  <strong>{$a->packname} {$a->packversion}</strong> în computerul dumneavoastră. Felicitări!';
 $string['welcomep30'] = 'Această versiune <strong>{$a->installername}</strong> include aplicații pentru a crea un mediu în care <strong>Moodle</strong> va funcționa, și anume:';

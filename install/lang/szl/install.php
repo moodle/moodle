@@ -49,20 +49,6 @@ $string['environmentsub2'] = 'Kożde wydanie Moodle mŏ pewne minimalne wymŏgan
 $string['errorsinenvironment'] = 'Kōntrola strzodowiska zakōńczōnōm #niypowodzynie!';
 $string['installation'] = 'Instalacyjŏ';
 $string['langdownloaderror'] = 'Niystety gŏdka "{$a}" niy może ôstać pobrany. Proces instalacyje bydzie kōntynuowany w gŏdce angelskim.';
-$string['memorylimithelp'] = '<p>Limit pamiyńci PHP dlŏ Twojigo serwera je ustawiōny terŏźnie na {$a}.</p>
-
-<p> Może to stworzić sytuacyjõ, co w nij Moodle bydzie mioł w prziszłości problymy z pamiyńciōm, ôsobliwie jeźli mŏsz udostympniōnych moc modułōw i/abo moc używŏczōw.</p>
-
-<p>Jeźli je to możliwe, zalycōmy ustawiynie kōnfiguracyje PHP z wyższym limitym, bp. 40M.
-Istnieje pŏrã spōsobōw przekludzyniŏ tyj ôperacyje, co możesz sprōbować:</p>
-<ol>
-<li>Jeźli możesz przekompiluj PHP za pōmocōm <i>--enable-memory-limit</i>.
-Przizwoli to Moodle ustawić samoczynnie limit pamiyńci.</li>
-<li>Jeźli mŏsz przistymp do zbioru konfiguracyjnego php.ini, możesz w nim zmiynić ustawiynie <b>memory_limit</b> do srogości bp. 40M. W przipŏdku, kej niy posiadŏsz przistympu możesz poprosić swojigo administratora coby zrobiōł to za Ciebie.</li>
-<li>Na niykerych serwerach PHP idzie stworzić zbiōr. htaccess w katalogu Moodle zawiyrajōncy miyniōnõ lynijõ:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>A dyć na niykerych serwerach bydzie niy dozwolało to nŏleżne fungowanie <b>wszyjskich</b> strōn PHP (ujzdrzisz błyndy na wyświytlanych strōnach), tedy bydziesz musioł wychrōnić zbiōr .htaccess.</p></li>
-</ol>';
 $string['paths'] = 'Chodnika';
 $string['pathserrcreatedataroot'] = 'Katalog danych ({$a->dataroot}) niy może ôstać utworzōny bez instalatōr.';
 $string['pathshead'] = 'Potwiyrdź chodnika';
@@ -76,9 +62,6 @@ $string['pathsunsecuredataroot'] = 'Lokalizacyjŏ głownego katalogu danych niy 
 $string['pathswrongadmindir'] = 'Katalog admin niy istnieje';
 $string['phpextension'] = 'rozszyrzynie PHP {$a}';
 $string['phpversion'] = 'Wersyjŏ PHP';
-$string['phpversionhelp'] = '<p>Moodle wymŏgŏ wersyje PHP aby 5.6.5 abo 7.1 (7.0.x mŏ pewne ôgraniczyniŏ motora).</p>
-<p>Aktualnie używŏsz wersyje {$a}.</p>
-<p>Musisz zaktualizować PHP abo przeniyś na host z nowszõ wersyjōm PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Widzisz tã strōnã, pōniywŏż z powodzyniym zainstalowołś i sztartnōłś <strong>{$a->packname} {$a->packversion}</strong> na swojim kōmputrze.';
 $string['welcomep30'] = 'Tyn instalatōr <strong>{$a->installername}</strong> zawiyrŏ aplikacyje, by stworzić strzodowisko, co w niymu bydzie fungować <strong>Moodle</strong>, to znaczy';

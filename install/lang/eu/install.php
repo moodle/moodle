@@ -49,23 +49,6 @@ $string['environmentsub2'] = 'Moodleko bertsio bakoitzak PHPko gutxieneko bertsi
 $string['errorsinenvironment'] = 'Huts egin du ingurunearen egiaztatzeak!';
 $string['installation'] = 'Instalazioa';
 $string['langdownloaderror'] = 'Zoritxarrez "{$a}" hizkuntza ezin izan da jaitsi. Instalazio-prozesuak ingelesez jarraituko du.';
-$string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga {$a} da une honetan.</p>
-
-<p>Aurrerago honek Moodleri arazoak sor diezaizkioke,
-bereziki modulu edo/eta erabiltzaile asko badituzu.</p>
-
-<p>PHP memoria-muga ahal bezain altu konfiguratzea aholkatzen dizugu, ad. 40M.
-Hori egiteko modu asko daude:</p>
-<ol>
-<li>Ahal baduzu, PHP <i>--enable-memory-limit</i>-ekin berriz konpilatu.
-Horrek Moodle-k berak memoria-muga ezartzea ahalbidetzen du.</li>
-<li>php.ini fitxategirako sarbidea baduzu,<b>memory_limit</b> ezarpena alda dezakezu
-40Mra, adibidez. Sarbiderik ez baduzu, zure administratzaileari egin dezala eska diezaiokezu.</li>
-<li>PHP zerbitzari batzuetan Moodle-ren direktorioan beheko lerro hau daukan .htaccess fitxategia sor dezakezu:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Hala ere, zerbitzari batzuetan horrek PHP orri <b>guztiek</b> ez funtzionatzea ekar dezake
-(orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
-</ol>';
 $string['paths'] = 'Bideak';
 $string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
 $string['pathshead'] = 'Egiaztatu bideak';
@@ -85,9 +68,6 @@ $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
 $string['pathswrongadmindir'] = 'Admin direktorioa ez da existitzen';
 $string['phpextension'] = '{$a} PHP hedapena';
 $string['phpversion'] = 'PHP bertsioa';
-$string['phpversionhelp'] = '<p>Moodlek PHP 5.6.5 edo 7.1 bertsioetako bat behar du (7.0.x bertsioek muga batzuk dituzte). </p>
-<p>Zure une honetako bertsioa {$a} da.</p>
-<p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea zure ordenagailuan instalatu ahal izan duzu. Zorionak!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>ren bertsio honek <strong>Moodle</strong>-k

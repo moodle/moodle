@@ -53,28 +53,6 @@ $string['environmentsub2'] = 'לכל התקנת Moodle יש דרישות מינ�
 $string['errorsinenvironment'] = 'בדיקת הסביבה נכשלה!';
 $string['installation'] = 'התקנה';
 $string['langdownloaderror'] = 'לצערינו השפה "{$a}" לא הותקנה. תהליך ההתקנה ימשיך באנגלית.';
-$string['memorylimithelp'] = '<p>
-גבול הזיכרון של ה-PHP לשרת שלך כרגע מכוון ל-{$a}
-</p>
-<p>
-דבר זה עלול לגרום בעיות זיכרון בהמשך, במיוחד אם יש לך רכיבים רבים פעילים אוו הרבה משתמשים. </p>
-<p> אנו ממליצים שתעצב את הגדרת ה-PHP עם ערך גבוה להגבלת הזיכרון, כמו 40M.
-ישנן דרכים רבות לכך:
-<ol>
-<il>
-אם תוכל להדר את PHP שוב עם <i> -- enable-memory-limit </i>
-דבר זה יאפשר ל-Moodle להגדיר את גבול הזיכרון לבד. </i>
-<i> אם יש לך גישה לקובץ ה-php.ini, תוכל לשנות את משתנה ה- <b> memory_limit </b>
-שנה שם את הערך למשל ל-40M. אם אין לך גישה לקובץ זה תוכל לבקש ממנהל המערכת שלך שיעשה זאת עבורך.
-</i>
-<i> בכמה שרתי PHP תוכל ליצור קובץ  .htaccess בספריית  ה-Moodle שלך בצירוף שורה זו:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p> בכל אופן, בכמה שרתים דבר זה ימנע <b>מכל </b> הדפים לעבוד ( אם תראה שגיאות כאשר תיכנס לדפים) תדע כי הינך צריך להסיר את הקובץ  .htaccess.
-</p>
-</il>
-</ol>
-
-</p>';
 $string['paths'] = 'נתיבים';
 $string['pathserrcreatedataroot'] = 'ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין.';
 $string['pathshead'] = 'נתיבים מאושרים';
@@ -86,11 +64,6 @@ $string['pathsunsecuredataroot'] = 'ספריית המידע (Data Directory) ל�
 $string['pathswrongadmindir'] = 'ספריית ה-admin לא קיימת';
 $string['phpextension'] = 'הרחבת PHP {$a}';
 $string['phpversion'] = 'גירסת PHP';
-$string['phpversionhelp'] = '<p>גרסת PHP חייבת להיות לפחות 4.3.0 או 5.1.0 (בגרסאות 5.0 קיימות מספר בעיות ידועות) </p>
-<p> במערכת שלך פועלת כרגע גרסת {$a} </p>
-<p> אתה חייב לשדרג את גרסת ה-PHP שלך או לעבור למחשב מארח עם עם גירסת PHP חדשה! <br/>
-(במקרים של גרסת 5.0 תוכל גם לרדת בגרסה ל- 4.4)
-</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'הינך רואה את עמוד זה מפני שהתקנת והפעלת בהלכה את <strong>{$a->packname} {$a->packversion}</strong>
 חבילה במחשבך. ברכותינו!';

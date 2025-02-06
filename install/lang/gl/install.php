@@ -50,25 +50,6 @@ Antes de cada instalación ou actualización faise unha comprobación completa d
 $string['errorsinenvironment'] = 'A comprobación do contorno no foi satisfactoria!';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Non foi posíbel descargar o idioma «{$a}». O proceso de instalación continuará en inglés.';
-$string['memorylimithelp'] = '<p>O límite de memoria PHP no seu servidor está estabelecido en {$a}.</p>
-
-<p>Isto pode facer que Moodle teña problemas de memoria máis adiante, especialmente
-    se vostede ten activados un feixe de módulos e/ou unha gran cantidade de usuarios.</p>
-
-<p>Recomendámoslle que configure PHP co límite máis alto posíbel, p.ex. 40M.
-    Hai varias maneiras de facer isto que vostede pode probar:</p>
-<ol>
-<li>Se vostede e quen de facelo, volva compilar PHP con <i>--enable-memory-limit</i>.
-    Isto fai que sexa Moodle quen estabeleza o límite de memoria.</li>
-<li>Se vostede ten acceso ao ficheiro php.ini, pode cambiar o <b>memory_limit</b>
-    estabelecéndoo en, digamos, 40M. Se vostede non ten acceso, podería
-    solicitarlle ao administrador que o faga por vostede.</li>
-<li>Nalgúns servidores PHP, pode crear un ficheiro .htaccess no directorio Moodle
-    que conteña a seguinte liña:
-    <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>Porén, nalgúns servidores isto impide que traballen <b>todas</b> as páxinas PHP
-    (poderá ver os erros cando se miran as páxinas) de modo que terá que eliminar o ficheiro .htaccess.</p></li>
-</ol>';
 $string['paths'] = 'Rutas';
 $string['pathserrcreatedataroot'] = 'O instalador non pode crear o directorio de datos ({$a->dataroot}).';
 $string['pathshead'] = 'Confirme as rutas';
@@ -90,9 +71,6 @@ $string['pathsunsecuredataroot'] = 'A localización de dataroot non é segura';
 $string['pathswrongadmindir'] = 'Non existe o directorio Admin';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de PHP 5.6.5 ou 7.1 (7.0.x ten algunhas limitacións do motor).</p>
-<p>Neste momento está executandose a versión {$a}</p>
-<p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP!<br />';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se esta a ver esta páxina é porque puido instalar correctamente e
     executar o paquete <strong>{$a->packname} {$a->packversion}</strong> no seu computador. Parabéns!';

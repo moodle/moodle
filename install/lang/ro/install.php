@@ -50,25 +50,6 @@ Verificarea completă a mediului se face înainte de fiecare instalare și upgra
 $string['errorsinenvironment'] = 'Verificarea mediului eșuată!';
 $string['installation'] = 'Instalare';
 $string['langdownloaderror'] = 'Din păcate, limba "{$a}" nu a putut fi descărcată. Procesul de instalare va continua în limba engleză.';
-$string['memorylimithelp'] = '<p> Limita de memorie PHP pentru serverul dvs. este setată în prezent la {$a}. </p>
-
-<p> Acest lucru poate determina Moodle să aibă probleme de memorie mai târziu, în special
-   dacă aveți o mulțime de module activate și / sau o mulțime de utilizatori. </p>
-
-<p> Vă recomandăm să configurați PHP cu o limită mai mare, dacă este posibil, cum ar fi 40M.
-   Există mai multe moduri de a face acest lucru pe care le puteți încerca: </p>
-<ol>
-<li> Dacă puteți, recompilați PHP cu <i> --enable-memory-limit </i>.
-    Aceasta va permite Moodle să stabilească singură limita de memorie. </li>
-<li> Dacă aveți acces la fișierul php.ini, puteți schimba <b> memory_limit </b>
-    stabilind acolo ceva de genul 40M. Dacă nu aveți acces, s-ar putea
-    să îi puteți cere administratorului să facă acest lucru pentru dvs. </li>
-<li> Pe unele servere PHP puteți crea un fișier .htaccess în directorul Moodle
-    care conține această linie:
-    <blockquote> <div> php_value memory_limit 40M </div> </blockquote>
-    <p> Cu toate acestea, pe unele servere, acest lucru va împiedica <b> toate </b> paginile PHP să funcționeze
-    (veți vedea erori când vă uitați la pagini), așa că va trebui să eliminați fișierul .htaccess. </p> </li>
-</ol>';
 $string['paths'] = 'Căi';
 $string['pathserrcreatedataroot'] = 'Data directory ({$a->dataroot}) nu poate fi creat de către installer.';
 $string['pathshead'] = 'Confirmare căi';
@@ -90,9 +71,6 @@ $string['pathsunsecuredataroot'] = 'Locația dataroot nu este sigură';
 $string['pathswrongadmindir'] = 'Directorul admin nu există';
 $string['phpextension'] = 'extensie PHP {$a}';
 $string['phpversion'] = 'Versiune PHP';
-$string['phpversionhelp'] = '<p> Moodle necesită o versiune PHP de cel puțin 5.6.5 sau 7.1 (7.0.x are unele limitări ale motorului). </p>
-<p> În prezent executați versiunea {$a}. </p>
-<p> Trebuie să faceți upgrade PHP sau să vă mutați la o gazdă cu o versiune mai nouă de PHP. </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lansat cu succes pachetul  <strong>{$a->packname} {$a->packversion}</strong> în computerul dumneavoastră. Felicitări!';
 $string['welcomep30'] = 'Această versiune <strong>{$a->installername}</strong> include aplicații pentru a crea un mediu în care <strong>Moodle</strong> va funcționa, și anume:';

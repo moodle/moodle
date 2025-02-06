@@ -39,25 +39,7 @@ $string['dirroot'] = 'Direutoriu Moodle';
 $string['environmenthead'] = 'Verificando\'l so ámbitu ...';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Desgraciadamente l\'idioma "{$a}" nun ta instaláu. El procesu d\'instalación va siguir n\'inglés.';
-$string['memorylimithelp'] = '<p>La llende de memoria del PHP del so servidor ta actualmente establecida en {$a}.</p>
-
-<p>Esto va facer que Moodle tenga problemes de memoria más tarde, especialmente si tien munchos módulos y/o munchos usuarios.</p>
-
-<p>Recomendamos que configure PHP con una llende más grande si ye posible, como por exemplu 40M.
-   Esisten varies formes nes que pue intentar facer esta modificación:</p>
-<ol>
-<li>Si pue, recompile PHP con <i>--enable-memory-limit</i>.
-   Esto va permitir que\'l propiu Moodle modifique la llende de memoria.</li>
-<li>Si tien accesu al so ficheru php.ini pue modificar el valor de <b>memory_limit</b> a daqué paecío a 40M.  Si nun tien accesu a esi ficheru igual pue pidir al alministrador del sistema que lo faiga.</li>
-<li>En dellos servidores PHP pue crear un ficheru .htaccess nel direutoriu Moodle cola ringlera que vien darréu:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
-    <p>De toles maneres, en dellos servidores esto va provocar que <b>nun funcione nenguna</b>páxina en PHP (va ver erros de la qu\'intente ver les páxines) polo que va tener qu\'esborrar el ficheru .htaccess.</p></li>
-</ol>';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle necesita una versión de PHP de 4.3.0 como mínimo o 5.1.0 (5.0.x tien problemes conocíos).</p>
-<p>Actualmente tien instalada la versión {$a}</p>
-<p>Tien d\'actualizar el PHP o migrar a otru servidor con una versión más nueva de PHP!<br/>
-(Nel casu de tener una versión 5.0.x pue tornar a una versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ta viendo esta páxina porque consiguió instalar y arrancar el paquete <strong>{$a->packname} {$a->packversion}</strong> nel so ordeandor. ¡Felicidaes!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> inclúi les aplicaciones pa crear l\'ámbitu nel que <strong>Moodle</strong> pue funcionar, llamaes:';
