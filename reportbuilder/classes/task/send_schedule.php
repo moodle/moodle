@@ -21,7 +21,7 @@ namespace core_reportbuilder\task;
 use core\{clock, di};
 use core\task\adhoc_task;
 use core_user;
-use core_reportbuilder\local\helpers\schedule as helper;
+use core_reportbuilder\local\helpers\{report, schedule as helper};
 use core_reportbuilder\local\models\schedule;
 use moodle_exception;
 
@@ -109,8 +109,8 @@ class send_schedule extends adhoc_task {
             }
 
             // Apply special handling if report is empty (default is to send it anyway).
-            if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND &&
-                    $scheduleattachment !== null && helper::get_schedule_report_count($schedule) === 0) {
+            if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND && $scheduleattachment !== null &&
+                    report::get_report_row_count($schedule->get('reportid')) === 0) {
 
                 $this->log('Empty report, skipping');
             } else {
@@ -126,7 +126,7 @@ class send_schedule extends adhoc_task {
                         \core\cron::setup_user($user);
 
                         if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND &&
-                            helper::get_schedule_report_count($schedule) === 0) {
+                                report::get_report_row_count($schedule->get('reportid')) === 0) {
 
                             $this->log('Empty report, skipping', 2);
                             continue;

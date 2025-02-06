@@ -204,6 +204,24 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
+     * Return total row count for report table. Note we'd typically use {@see query_db} and then read the {@see totalrows}
+     * property to reduce DB calls, however we can use this method when we specifically don't also need to obtain all data
+     *
+     * @return int
+     */
+    public function get_total_row_count(): int {
+        global $DB;
+
+        $counttablesql = $this->get_table_sql(false);
+        $counttablealias = database::generate_alias();
+
+        return $DB->count_records_sql(
+            "SELECT COUNT(1) FROM ({$counttablesql}) {$counttablealias}",
+            $this->sql->params,
+        );
+    }
+
+    /**
      * Override parent method of the same, to ensure that any columns with custom sort fields are accounted for
      *
      * Because the base table_sql has "special" handling of fullname columns {@see table_sql::contains_fullname_columns}, we need

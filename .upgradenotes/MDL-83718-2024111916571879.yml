@@ -4,6 +4,6 @@ notes:
     - message: >-
         Report table instances no longer populate the `countsql` and
         `countparams` class properties. Instead calling code can access
-        `totalrows` to obtain the same value, rather than manually counting via
-        the prior properties
+        `totalrows` to obtain the same value, or by calling the helper
+        method `report::get_report_row_count`
       type: changed

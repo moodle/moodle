@@ -23,6 +23,7 @@ use invalid_parameter_exception;
 use core\persistent;
 use core_reportbuilder\datasource;
 use core_reportbuilder\manager;
+use core_reportbuilder\table\{custom_report_table_view, system_report_table};
 use core_reportbuilder\local\models\{audience as audience_model, column, filter, report as report_model, schedule};
 use core_tag_tag;
 
@@ -495,6 +496,25 @@ class report {
         ], 'filterorder');
 
         return static::reorder_persistents_by_field($filter, $filters, $position, 'filterorder');
+    }
+
+    /**
+     * Get total row count for given custom or system report
+     *
+     * @param int $reportid
+     * @param array $parameters Applicable for system reports only
+     * @return int
+     */
+    public static function get_report_row_count(int $reportid, array $parameters = []): int {
+        $report = new report_model($reportid);
+        if ($report->get('type') === datasource::TYPE_CUSTOM_REPORT) {
+            $table = custom_report_table_view::create($report->get('id'));
+        } else {
+            $table = system_report_table::create($report->get('id'), $parameters);
+            $table->guess_base_url();
+        }
+        $table->setup();
+        return $table->get_total_row_count();
     }
 
     /**
