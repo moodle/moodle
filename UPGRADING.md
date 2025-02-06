@@ -42,6 +42,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83917](https://tracker.moodle.org/browse/MDL-83917)
 
+### core_courseformat
+
+#### Fixed
+
+- HTML IDs relating to section collapse/expand have been changed in the course format templates.
+  - core_courseformat/local/content/section/header #collapssesection{{num}} has been changed to #collapsesectionid{{id}}
+  - core_courseformat/local/content/section/content #coursecontentcollapse{{num}} had been changed to #coursecontentcollapseid{{id}}
+
+  For more information see [MDL-82679](https://tracker.moodle.org/browse/MDL-82679)
+
 ### core_question
 
 #### Added

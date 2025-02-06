@@ -1,5 +1,15 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 4.5.1+
+
+### Fixed
+
+- HTML IDs relating to section collapse/expand have been changed in the course format templates.
+  - core_courseformat/local/content/section/header #collapssesection{{num}} has been changed to #collapsesectionid{{id}}
+  - core_courseformat/local/content/section/content #coursecontentcollapse{{num}} had been changed to #coursecontentcollapseid{{id}}
+
+  For more information see [MDL-82679](https://tracker.moodle.org/browse/MDL-82679)
+
 ## 4.5.1
 
 ### Added
