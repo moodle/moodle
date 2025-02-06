@@ -36,6 +36,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   tags = {
     environment = var.Environment
   }
+  temporary_name_for_rotation = "tmpnodepool1"
 }
 
 resource "azurerm_container_registry" "containerRegistry" {
