@@ -1,6 +1,6 @@
 # mod_assign Upgrade notes
 
-## 4.5.1+
+## 4.5.2
 
 ### Fixed
 
