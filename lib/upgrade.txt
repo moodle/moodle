@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.3.12 ===
 * A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text.
   This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+* The public method `get_slashargument` has been added to the `moodle_url` class.
 
 === 4.3.8 ===
 
