@@ -252,7 +252,7 @@ jobs:
         id: get-storage-key
         run: |
           STORAGE_KEY=$(az storage account keys list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --account-name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query [0].value -o tsv)
-          echo "storage_key=$STORAGE_KEY" >> GITHUB_OUTPUT
+          echo "storage_key=$STORAGE_KEY" >> $GITHUB_OUTPUT
 
       - name: Create the default namespace secret
         run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n default
