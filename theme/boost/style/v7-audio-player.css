@@ -1,0 +1,16 @@
+.playkit-ap-top-controls {
+  display: none !important;
+}
+
+.playkit-ap-left-controls {
+  display: none;
+}
+
+.playkit-ap-mini-audio-player-view.playkit-ap-medium .playkit-ap-right-controls {
+  width: 100%;
+}
+
+.playkit-ap-mini-audio-player-view.playkit-ap-medium {
+  height: auto;
+}
+
