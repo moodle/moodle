@@ -26,7 +26,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name       = "default"
     node_count = var.ClusterNodeCount
     vm_size    = var.ClusterNodeSize
-    temporary_name_for_rotation = "tmpnodepool1"
+    temporary_name_for_rotation = "tmpnodepool2"
   }
   identity {
     type = "SystemAssigned"
@@ -261,7 +261,7 @@ resource "azurerm_mssql_managed_database" "sqldb" {
 }
 
 resource "azurerm_redis_cache" "moodle_cache" {
-  name                = "moodle-cache"
+  name                = "moodle-cache-prod"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   location = azurerm_resource_group.learningHubMoodleResourceGroup.location
   capacity            = 2

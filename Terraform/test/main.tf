@@ -261,7 +261,7 @@ resource "azurerm_mssql_managed_database" "sqldb" {
 }
 
 resource "azurerm_redis_cache" "moodle_cache" {
-  name                = "moodle-cache"
+  name                = "moodle-cache-test"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   location = azurerm_resource_group.learningHubMoodleResourceGroup.location
   capacity            = 2
