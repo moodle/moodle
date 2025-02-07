@@ -1,0 +1,14 @@
+issueNumber: MDL-83026
+notes:
+  core_badges:
+    - message:
+        Added fields `courseid` and `coursefullname` to
+        `badgeclass_exporter`, which is used in the return structure
+        of external function `core_badges_get_badge`.
+      type: improved
+    - message:
+        Added field `coursefullname` to `user_badge_exporter`, which
+        is used in the return structure of external functions
+        `core_badges_get_user_badge_by_hash` and
+        `core_badges_get_user_badges`.
+      type: improved

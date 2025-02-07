@@ -122,6 +122,11 @@ class user_badge_exporter extends exporter {
                 'optional' => true,
                 'null' => NULL_ALLOWED,
             ],
+            'coursefullname' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Full name of the course',
+                'optional' => true,
+            ],
             'message' => [
                 'type' => PARAM_RAW,
                 'description' => 'Message',
