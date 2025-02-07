@@ -26,7 +26,7 @@ require('../config.php');
 require_once("$CFG->libdir/formslib.php");
 
 $id = required_param('id', PARAM_INT);
-$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 if (!isloggedin()) {
     $referer = get_local_referer();
@@ -69,17 +69,17 @@ if (!core_course_category::can_view_course_info($course) && !is_enrolled($contex
     throw new \moodle_exception('coursehidden', '', $CFG->wwwroot . '/');
 }
 
-// get all enrol forms available in this course
+// Get all enrol widgets available in this course.
 $enrols = enrol_get_plugins(true);
 $enrolinstances = enrol_get_instances($course->id, true);
-$forms = array();
+$widgets = [];
 foreach($enrolinstances as $instance) {
     if (!isset($enrols[$instance->enrol])) {
         continue;
     }
-    $form = $enrols[$instance->enrol]->enrol_page_hook($instance);
-    if ($form) {
-        $forms[$instance->id] = $form;
+    $widget = $enrols[$instance->enrol]->enrol_page_hook($instance);
+    if ($widget) {
+        $widgets[$instance->id] = $widget;
     }
 }
 
@@ -98,30 +98,10 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('enrolmentoptions','enrol'));
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('enrolmentoptions','enrol'));
-
+/** @var core_course_renderer $courserenderer */
 $courserenderer = $PAGE->get_renderer('core', 'course');
-echo $courserenderer->course_info_box($course);
-
-//TODO: find if future enrolments present and display some info
-
-foreach ($forms as $form) {
-    echo $form;
-}
-
-if (!$forms) {
-    if (isguestuser()) {
-        notice(get_string('noguestaccess', 'enrol'), get_login_url());
-    } else if ($returnurl) {
-        notice(get_string('notenrollable', 'enrol'), $returnurl);
-    } else {
-        $url = get_local_referer(false);
-        if (empty($url)) {
-            $url = new moodle_url('/index.php');
-        }
-        notice(get_string('notenrollable', 'enrol'), $url);
-    }
-}
-
+$content = $courserenderer->enrolment_options($course, $widgets,
+    $returnurl ? new \core\url($returnurl) : null);
+echo $OUTPUT->header();
+echo $content;
 echo $OUTPUT->footer();
