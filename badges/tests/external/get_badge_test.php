@@ -16,6 +16,7 @@
 
 namespace core_badges\external;
 
+use core_badges\tests\external_helper;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -23,7 +24,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-require_once($CFG->libdir . '/badgeslib.php');
 
 /**
  * Tests for external function get_badge.
@@ -37,59 +37,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @coversDefaultClass \core_badges\external\get_badge
  */
 final class get_badge_test extends externallib_advanced_testcase {
-    /**
-     * Prepare the test.
-     *
-     * @return array
-     */
-    private function prepare_test_data(): array {
-        global $DB;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        set_config('enablebadges', 1);
-
-        // Mock up a site badge.
-        $now = time();
-        $badge = new \stdClass();
-        $badge->id = null;
-        $badge->name = "Test badge site";
-        $badge->description  = "Testing badges site";
-        $badge->timecreated  = $now;
-        $badge->timemodified = $now;
-        $badge->usercreated  = 2;
-        $badge->usermodified = 2;
-        $badge->expiredate    = null;
-        $badge->expireperiod  = null;
-        $badge->type = BADGE_TYPE_SITE;
-        $badge->courseid = null;
-        $badge->messagesubject = "Test message subject for badge";
-        $badge->message = "Test message body for badge";
-        $badge->attachment = 1;
-        $badge->notification = 0;
-        $badge->status = BADGE_STATUS_ACTIVE;
-        $badge->version = '1';
-        $badge->language = 'en';
-        $badge->imageauthorname = 'Image author';
-        $badge->imageauthoremail = 'imageauthor@example.com';
-        $badge->imageauthorurl = 'http://image-author-url.domain.co.nz';
-        $badge->imagecaption = 'Caption';
-
-        $badgeid   = $DB->insert_record('badge', $badge, true);
-        $badge->id = $badgeid;
-
-        $context           = \context_system::instance();
-        $badge->badgeurl   = \moodle_url::make_webservice_pluginfile_url(
-            $context->id,
-            'badges',
-            'badgeimage',
-            $badge->id,
-            '/',
-            'f3'
-        )->out(false);
-        $badge->status = BADGE_STATUS_ACTIVE_LOCKED;
-
-        return ['badge' => (array) $badge];
-    }
+    use external_helper;
 
     /**
      * Test get badge by id without enablebadges active in moodle.
@@ -102,7 +50,7 @@ final class get_badge_test extends externallib_advanced_testcase {
 
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage('Badges are not enabled on this site.');
-        get_badge::execute($data['badge']['id']);
+        get_badge::execute($data['sitebadge']['id']);
     }
 
     /**
@@ -113,9 +61,44 @@ final class get_badge_test extends externallib_advanced_testcase {
         $data = $this->prepare_test_data();
 
         // Test with an existing badge.
-        $result = get_badge::execute($data['badge']['id']);
+        $result = get_badge::execute($data['sitebadge']['id']);
         $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
-        $this->assertEquals($data['badge']['name'], $result['badge']['name']);
+        $this->assertEquals('BadgeClass', $result['badge']['type']);
+        $badgeurl = new \moodle_url('/badges/badgeclass.php', ['id' => $data['sitebadge']['id']]);
+        $this->assertEquals($badgeurl->out(false), $result['badge']['id']);
+        $this->assertEquals($data['sitebadge']['issuername'], $result['badge']['issuer']);
+        $this->assertEquals($data['sitebadge']['name'], $result['badge']['name']);
+        $this->assertEquals($data['sitebadge']['badgeurl'], $result['badge']['image']);
+        $this->assertEquals($data['sitebadge']['description'], $result['badge']['description']);
+        $this->assertEquals($data['sitebadge']['issuerurl'], $result['badge']['hostedUrl']);
+        $this->assertEquals($data['sitebadge']['alignment'], $result['badge']['alignment']);
+        $this->assertEmpty($result['warnings']);
+    }
+
+    /**
+     * Test get badge by id with an unprivileged user.
+     * @covers ::execute
+     */
+    public function test_get_badge_with_unprivileged_user(): void {
+        $data = $this->prepare_test_data();
+        foreach ($data['sitebadge']['alignment'] as &$alignment) {
+            unset($alignment['targetDescription']);
+            unset($alignment['targetFramework']);
+            unset($alignment['targetCode']);
+        }
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        $result = get_badge::execute($data['sitebadge']['id']);
+        $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
+        $this->assertEquals('BadgeClass', $result['badge']['type']);
+        $badgeurl = new \moodle_url('/badges/badgeclass.php', ['id' => $data['sitebadge']['id']]);
+        $this->assertEquals($badgeurl->out(false), $result['badge']['id']);
+        $this->assertEquals($data['sitebadge']['issuername'], $result['badge']['issuer']);
+        $this->assertEquals($data['sitebadge']['name'], $result['badge']['name']);
+        $this->assertEquals($data['sitebadge']['badgeurl'], $result['badge']['image']);
+        $this->assertEquals($data['sitebadge']['description'], $result['badge']['description']);
+        $this->assertEquals($data['sitebadge']['issuerurl'], $result['badge']['hostedUrl']);
+        $this->assertEquals($data['sitebadge']['alignment'], $result['badge']['alignment']);
         $this->assertEmpty($result['warnings']);
     }
 
@@ -124,7 +107,7 @@ final class get_badge_test extends externallib_advanced_testcase {
      * @covers ::execute
      */
     public function test_get_badge_with_invalid_badge_id(): void {
-        $data = $this->prepare_test_data();
+        $this->prepare_test_data();
 
         $this->expectException(\moodle_exception::class);
         get_badge::execute(123);
