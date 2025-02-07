@@ -1,0 +1,5 @@
+issueNumber: MDL-84351
+notes:
+  core:
+    - message: The public method `get_slashargument` has been added to the `url` class.
+      type: improved

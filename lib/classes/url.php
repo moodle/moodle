@@ -936,6 +936,17 @@ All values that are not arrays should be a string.');
     public function get_port() {
         return $this->port;
     }
+
+    /**
+     * Returns the 'slashargument' portion of a URL. For example, if the URL is
+     * http://www.example.org.com/pluginfile.php/1/core_admin/logocompact/ then this will
+     * return '1/core_admin/logocompact/'.
+     *
+     * @return string Slash argument as string.
+     */
+    public function get_slashargument(): string {
+        return $this->slashargument;
+    }
 }
 
 // Alias this class to the old name.
