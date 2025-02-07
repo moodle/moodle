@@ -56,9 +56,11 @@ final class resourceoverview_test extends \advanced_testcase {
      * @covers ::get_extra_type_overview
      * @dataProvider get_extra_type_overview_provider
      * @param string $resourcetype
+     * @param string|null $expected
      */
     public function test_get_extra_type_overview(
         string $resourcetype,
+        ?string $expected,
     ): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -74,9 +76,14 @@ final class resourceoverview_test extends \advanced_testcase {
         $items = $overview->get_extra_overview_items();
         $result = $items['type'];
 
+        if ($expected === null) {
+            $this->assertNull($result);
+            return;
+        }
+
         $this->assertEquals(get_string('resource_type'), $result->get_name());
-        $this->assertEquals($cm->modfullname, $result->get_value());
-        $this->assertEquals($cm->modfullname, $result->get_content());
+        $this->assertEquals($expected, $result->get_value());
+        $this->assertEquals($expected, $result->get_content());
     }
 
     /**
@@ -88,18 +95,72 @@ final class resourceoverview_test extends \advanced_testcase {
         return [
             'book' => [
                 'resourcetype' => 'book',
+                'expected' => 'Book',
             ],
             'folder' => [
                 'resourcetype' => 'folder',
+                'expected' => 'Folder',
             ],
             'page' => [
                 'resourcetype' => 'page',
+                'expected' => 'Page',
             ],
             'resource' => [
                 'resourcetype' => 'resource',
+                'expected' => 'File',
             ],
             'url' => [
                 'resourcetype' => 'url',
+                'expected' => 'URL',
+            ],
+            // Activities without integration.
+            'bigbluebuttonbn' => [
+                'resourcetype' => 'bigbluebuttonbn',
+                'expected' => null,
+            ],
+            'choice' => [
+                'resourcetype' => 'choice',
+                'expected' => null,
+            ],
+            'data' => [
+                'resourcetype' => 'data',
+                'expected' => null,
+            ],
+            'forum' => [
+                'resourcetype' => 'forum',
+                'expected' => null,
+            ],
+            'glossary' => [
+                'resourcetype' => 'glossary',
+                'expected' => null,
+            ],
+            'h5pactivity' => [
+                'resourcetype' => 'h5pactivity',
+                'expected' => null,
+            ],
+            'lesson' => [
+                'resourcetype' => 'lesson',
+                'expected' => null,
+            ],
+            'lti' => [
+                'resourcetype' => 'lti',
+                'expected' => null,
+            ],
+            'qbank' => [
+                'resourcetype' => 'qbank',
+                'expected' => null,
+            ],
+            'quiz' => [
+                'resourcetype' => 'quiz',
+                'expected' => null,
+            ],
+            'scorm' => [
+                'resourcetype' => 'scorm',
+                'expected' => null,
+            ],
+            'wiki' => [
+                'resourcetype' => 'wiki',
+                'expected' => null,
             ],
         ];
     }

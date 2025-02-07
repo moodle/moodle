@@ -4868,6 +4868,12 @@ function course_output_fragment_course_overview($args) {
     $format = course_get_format($course);
     $renderer = $format->get_renderer($PAGE);
 
+    // Plugins with not implemented overview table will have an extra link to the index.php.
+    $overvietableclass = $format->get_output_classname('overview\missingoverviewnotice');
+    /** @var \core_courseformat\output\local\overview\missingoverviewnotice $output */
+    $output = new $overvietableclass($course, $modname);
+    $content .= $renderer->render($output);
+
     $overvietableclass = $format->get_output_classname('overview\\overviewtable');
     /** @var \core_courseformat\output\local\overview\overviewtable $output */
     $output = new $overvietableclass($course, $modname);

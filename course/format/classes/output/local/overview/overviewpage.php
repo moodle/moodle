@@ -138,10 +138,6 @@ class overviewpage implements renderable, named_templatable {
         string $modname,
         string $modfullname
     ): stdClass {
-        if (!$this->activity_has_overview_integration($modname)) {
-            return $this->export_legacy_overview($output, $modname, $modfullname);
-        }
-
         return (object) [
             'fragment' => $this->export_overview_fragment($modname),
             'icon' => $this->get_activity_overview_icon($output, $modname),
@@ -163,64 +159,6 @@ class overviewpage implements renderable, named_templatable {
             return $output->pix_icon('monologo', '', 'mod_page', ['class' => 'icon iconsize-medium']);
         }
         return $output->pix_icon('monologo', '', "mod_$modname", ['class' => 'icon iconsize-medium']);
-    }
-
-    /**
-     * Exports the legacy overview for a given module.
-     *
-     * This export only applies to modules that do not have an overview integration.
-     *
-     * @param \renderer_base $output
-     * @param string $modname
-     * @param string $modfullname
-     * @return stdClass
-     */
-    private function export_legacy_overview(
-        \renderer_base $output,
-        string $modname,
-        string $modfullname
-    ): stdClass {
-        if ($modname === 'resource') {
-            $legacyoverview = 'resources.php';
-            $message = get_string('overview_missing_title', 'core_course', get_string('resource'));
-        } else {
-            $legacyoverview = '/mod/' . $modname . '/index.php';
-            $pluginman = plugin_manager::instance();
-            $message = get_string('overview_missing_title', 'core_course', $pluginman->plugin_name($modname));
-        }
-
-        $notification = new notification(
-            message: get_string('overview_missing_notice', 'core_course'),
-            messagetype: \core\notification::INFO,
-            closebutton: false,
-            title: $message,
-            titleicon: 'i/circleinfo',
-        );
-
-        return (object)[
-            'overviewurl' => new url($legacyoverview, ['id' => $this->course->id]),
-            'icon' => $this->get_activity_overview_icon($output, $modname),
-            'name' => $modfullname,
-            'shortname' => $modname,
-            'notification' => $notification->export_for_template($output),
-            'open' => in_array($modname, $this->expanded),
-        ];
-    }
-
-    /**
-     * Checks if a given activity module has an overview integration.
-     *
-     * The method search for an integration class named `\mod_{modname}\courseformat\overview`.
-     *
-     * @param string $modname The name of the activity module.
-     * @return bool True if the activity module has an overview integration, false otherwise.
-     */
-    private function activity_has_overview_integration(string $modname): bool {
-        $classname = 'mod_' . $modname . '\courseformat\overview';
-        if ($modname === 'resource') {
-            $classname = 'core_courseformat\local\overview\resourceoverview';
-        }
-        return class_exists($classname);
     }
 
     /**

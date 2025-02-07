@@ -37,6 +37,18 @@ class resourceoverview extends \core_courseformat\activityoverviewbase {
      * @return overviewitem|null
      */
     private function get_extra_type_overview(): ?overviewitem {
+        // Only resource activities shows the type overview
+        // because they are aggregated in one table.
+        $archetype = plugin_supports(
+            type: 'mod',
+            name: $this->cm->modname,
+            feature: FEATURE_MOD_ARCHETYPE,
+            default: MOD_ARCHETYPE_OTHER
+        );
+        if ($archetype != MOD_ARCHETYPE_RESOURCE) {
+            return null;
+        }
+
         return new overviewitem(
             name: get_string('resource_type'),
             value: $this->cm->modfullname,

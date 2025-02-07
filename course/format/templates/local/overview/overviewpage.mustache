@@ -59,23 +59,6 @@
                 </div>
                 {{/preloadedcontent}}
             {{/fragment}}
-            {{^fragment}}
-            <div class="d-flex flex-column justify-content-between">
-                {{#notification}}
-                    {{>core/notification_info}}
-                {{/notification}}
-                <div>
-                    <a
-                        class="btn btn-outline-secondary"
-                        href="{{overviewurl}}"
-                        role="button"
-                    >
-                        {{#str}} goto_overview, course, {{name}} {{/str}}
-                        <span class="ms-2">{{#pix}} i/arrow-right, core {{/pix}}</span>
-                    </a>
-                </div>
-            </div>
-            {{/fragment}}
         {{/sectioncontent}}
     {{/core/local/collapsable_section}}
     {{/elements}}

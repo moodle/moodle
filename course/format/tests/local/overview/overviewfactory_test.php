@@ -42,6 +42,7 @@ final class overviewfactory_test extends \advanced_testcase {
      */
     public function test_create_resource(
         string $resourcetype,
+        ?string $expected,
     ): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -54,7 +55,7 @@ final class overviewfactory_test extends \advanced_testcase {
 
         $overview = overviewfactory::create($cm);
 
-        $this->assertInstanceOf(resourceoverview::class, $overview);
+        $this->assertInstanceOf($expected, $overview);
     }
 
     /**
@@ -64,20 +65,87 @@ final class overviewfactory_test extends \advanced_testcase {
      */
     public static function create_resource_provider(): array {
         return [
+            // Resource activities.
             'book' => [
                 'resourcetype' => 'book',
+                'expected' => resourceoverview::class,
             ],
             'folder' => [
                 'resourcetype' => 'folder',
+                'expected' => resourceoverview::class,
             ],
             'page' => [
                 'resourcetype' => 'page',
+                'expected' => resourceoverview::class,
             ],
             'resource' => [
                 'resourcetype' => 'resource',
+                'expected' => resourceoverview::class,
             ],
             'url' => [
                 'resourcetype' => 'url',
+                'expected' => resourceoverview::class,
+            ],
+            // Fallbacks and integrations.
+            'assign' => [
+                'resourcetype' => 'assign',
+                'expected' => \mod_assign\courseformat\overview::class,
+            ],
+            'bigbluebuttonbn' => [
+                'resourcetype' => 'bigbluebuttonbn',
+                'expected' => resourceoverview::class,
+            ],
+            'choice' => [
+                'resourcetype' => 'choice',
+                'expected' => resourceoverview::class,
+            ],
+            'data' => [
+                'resourcetype' => 'data',
+                'expected' => resourceoverview::class,
+            ],
+            'feedback' => [
+                'resourcetype' => 'feedback',
+                'expected' => \mod_feedback\courseformat\overview::class,
+            ],
+            'forum' => [
+                'resourcetype' => 'forum',
+                'expected' => resourceoverview::class,
+            ],
+            'glossary' => [
+                'resourcetype' => 'glossary',
+                'expected' => resourceoverview::class,
+            ],
+            'h5pactivity' => [
+                'resourcetype' => 'h5pactivity',
+                'expected' => resourceoverview::class,
+            ],
+            'lesson' => [
+                'resourcetype' => 'lesson',
+                'expected' => resourceoverview::class,
+            ],
+            'lti' => [
+                'resourcetype' => 'lti',
+                'expected' => resourceoverview::class,
+            ],
+            'qbank' => [
+                'resourcetype' => 'qbank',
+                'expected' => resourceoverview::class,
+            ],
+            'quiz' => [
+                'resourcetype' => 'quiz',
+                'expected' => resourceoverview::class,
+            ],
+            'scorm' => [
+                'resourcetype' => 'scorm',
+                'expected' => resourceoverview::class,
+            ],
+            'wiki' => [
+                'resourcetype' => 'wiki',
+                'expected' => resourceoverview::class,
+            ],
+            'workshop' => [
+                'resourcetype' => 'workshop',
+                'expected' => resourceoverview::class,
             ],
         ];
     }
