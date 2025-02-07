@@ -17,6 +17,12 @@ resource "azurerm_storage_share" "storage_share" {
   quota                = var.StorageQuota
 }
 
+resource "azurerm_storage_share" "storage_share" {
+  name                 = "moodletheme"
+  storage_account_name = azurerm_storage_account.storage_account.name
+  quota                = var.StorageQuota
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.ClusterName
   location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
