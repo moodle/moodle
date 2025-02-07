@@ -260,6 +260,27 @@ final class manager_test extends \advanced_testcase {
         \core\session\manager::loginas($user2->id, $syscontext, false);
         $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setUser($user);
+
+        // Access logocompact via pluginfile.
+        $logourl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($logourl, false));
+
+        // Access logo via pluginfile.
+        $logourl = new \moodle_url('/pluginfile.php/1/core_admin/logo/');
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($logourl, false));
+
+        // Access favicon via pluginfile.
+        $logourl = new \moodle_url('/pluginfile.php/1/core_admin/favicon/');
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($logourl, false));
+
+        // Access guidance files.
+        $guideurl = new \moodle_url('/pluginfile.php/1/tool_mfa/guidance/0/capybara.png');
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($guideurl, false));
+
+        // Access private area.
+        $user3 = $this->getDataGenerator()->create_user();
+        $privateurl = new \moodle_url("/pluginfile.php/{$user3->id}/user/private/privatefile.png");
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($privateurl, false));
     }
 
     /**
