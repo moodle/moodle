@@ -3697,7 +3697,16 @@ final class courselib_test extends advanced_testcase {
                 $time + YEARSECS,
                 $time + WEEKSECS,
                 $time + YEARSECS
-            ]
+            ],
+            // Time shift is between exact times, not midnight(s) (MDL-65233).
+            [
+                $time + HOURSECS,
+                $time + DAYSECS,
+                $time + WEEKSECS + HOURSECS,
+                false,
+                $time + WEEKSECS + HOURSECS,
+                $time + WEEKSECS + DAYSECS,
+            ],
         ];
     }
 
