@@ -111,7 +111,7 @@ class repository_dropbox extends repository {
      */
     public function get_reference_details($reference, $filestatus = 0) {
         global $USER;
-        $ref  = unserialize($reference);
+        $ref  = unserialize_object($reference);
         $detailsprefix = $this->get_name();
         if (isset($ref->userid) && $ref->userid != $USER->id && isset($ref->username)) {
             $detailsprefix .= ' ('.$ref->username.')';
@@ -343,8 +343,8 @@ class repository_dropbox extends repository {
      * @return  string                  New serialized reference
      */
     protected function fix_old_style_reference($packed) {
-        $ref = unserialize($packed);
-        $ref = $this->dropbox->get_file_share_info($ref->path);
+        $ref = unserialize_object($packed);
+        $ref = $this->dropbox->get_file_share_info($ref->path ?? '');
         if (!$ref || empty($ref->url)) {
             // Some error occurred, do not fix reference for now.
             return $packed;
@@ -396,10 +396,10 @@ class repository_dropbox extends repository {
      * @return  object                  The unpacked reference
      */
     protected function unpack_reference($packed) {
-        $reference = unserialize($packed);
+        $reference = unserialize_object($packed);
         if (empty($reference->url)) {
             // The reference is missing some information. Attempt to update it.
-            return unserialize($this->fix_old_style_reference($packed));
+            return unserialize_object($this->fix_old_style_reference($packed));
         }
 
         return $reference;
