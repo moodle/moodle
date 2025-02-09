@@ -87,6 +87,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 // Handle any single operation actions.
 if ($action == 'requestanalysis') {
     if ($courseid != 0) {
+        require_sesskey();
         scheduler::request_course_analysis($courseid);
         if ($courseid == SITEID) {
             redirect(accessibility::get_plugin_url());
