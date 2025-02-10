@@ -1,0 +1,7 @@
+issueNumber: MDL-77107
+notes:
+  gradereport_grader:
+    - message: >-
+        The `behat_gradereport_grader::get_grade_item_id` step helper has been
+        removed, please use the equivalent `behat_grades` method instead
+      type: removed
