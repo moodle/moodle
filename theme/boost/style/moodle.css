@@ -38781,41 +38781,6 @@ div.editor_atto_toolbar button .icon {
 /**
  Deprecations
  */
-.path-course-view li.activity form.togglecompletion {
-  /* stylelint-disable declaration-no-important */
-  /* stylelint-enable */
-}
-body.behat-site .path-course-view li.activity form.togglecompletion,
-.path-course-view li.activity form.togglecompletion body.behat-site.path-course-view li.activity form.togglecompletion, body.themedesignermode .path-course-view li.activity form.togglecompletion,
-.path-course-view li.activity form.togglecompletion body.themedesignermode.path-course-view li.activity form.togglecompletion {
-  outline: 3px dotted #ca3120 !important;
-  background-color: #fceeed !important;
-}
-body.behat-site .path-course-view li.activity form.togglecompletion::before,
-.path-course-view li.activity form.togglecompletion body.behat-site.path-course-view li.activity form.togglecompletion::before, body.themedesignermode .path-course-view li.activity form.togglecompletion::before,
-.path-course-view li.activity form.togglecompletion body.themedesignermode.path-course-view li.activity form.togglecompletion::before {
-  content: "Deprecated style in use" !important;
-  color: #ca3120 !important;
-  font-size: smaller !important;
-}
-
-.path-course-view li.activity form.togglecompletion .ajaxworking {
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  right: 22px;
-  top: 3px;
-  background: url([[pix:i/ajaxloader]]) no-repeat;
-}
-
-.path-course-view li.activity form.togglecompletion .btn {
-  padding: 0;
-}
-
-.path-course-view li.activity form.togglecompletion img {
-  max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
-}
-
 .course-content .stateready .section .spinner {
   /* stylelint-disable declaration-no-important */
   /* stylelint-enable */

@@ -1,0 +1,5 @@
+issueNumber: MDL-80156
+notes:
+  theme_boost:
+    - message: Remove SCSS deprecated in 4.4
+      type: removed

@@ -38,30 +38,6 @@
 // }
 
 //
-// Deprecated since Moodle 4.4.
-//
-
-// The .togglecompletion usage was deprecated in 311 and finally removed in 403.
-// Replaced by core_renderer::activity_information() and proper use of templates.
-.path-course-view li.activity form.togglecompletion {
-    @include deprecated-styles();
-}
-.path-course-view li.activity form.togglecompletion .ajaxworking {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    right: 22px;
-    top: 3px;
-    background: url([[pix:i/ajaxloader]]) no-repeat;
-}
-.path-course-view li.activity form.togglecompletion .btn {
-    padding: 0;
-}
-.path-course-view li.activity form.togglecompletion img {
-    max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
-}
-
-//
 // Deprecated since Moodle 5.0.
 //
 
