@@ -965,3 +965,27 @@ function check_igbinary322_version(environment_results $result) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return null;
 }
+
+/**
+ * @deprecated since Moodle 4.3 MDL-79313
+ */
+#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79313', final: true)]
+function calendar_top_controls() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.3 MDL-79432
+ */
+#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
+function calendar_get_link_previous() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.3 MDL-79432
+ */
+#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
+function calendar_get_link_next() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
