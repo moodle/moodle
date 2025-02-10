@@ -236,30 +236,11 @@ class mod_wiki_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Print the wiki activity information and intro
-     *
-     * @return string
-     * @deprecated since 4.0. Now handled in PAGE's activity header
+     * @deprecated since Moodle 4.0 MDL-72413. Now handled in PAGE's activity header
      */
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72413', final: true)]
     public function wiki_info() {
-        global $USER;
-
-        debugging(
-            'wiki_info() is deprecated. Output is handled within the $PAGE->activityheader instead.',
-            DEBUG_DEVELOPER
-        );
-
-        // Display any activity information (eg completion requirements / dates).
-        $cminfo = cm_info::create($this->page->cm);
-        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-        $info = $this->output->activity_information($cminfo, $completiondetails, $activitydates);
-
-        // Add the rest of the wiki info.
-        $info .= $this->output->box(format_module_intro('wiki',
-                $this->page->activityrecord, $this->page->cm->id), 'generalbox', 'intro');
-
-        return $info;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     public function tabs($page, $tabitems, $options) {

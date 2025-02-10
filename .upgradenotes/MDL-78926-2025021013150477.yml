@@ -8,3 +8,6 @@ notes:
   core:
     - message: Final deprecation of core_renderer\activity_information()
       type: removed
+  mod_wiki:
+    - message: Final deprecation of mod_wiki_renderer\wiki_info()
+      type: removed
