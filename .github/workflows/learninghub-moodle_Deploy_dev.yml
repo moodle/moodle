@@ -154,8 +154,8 @@ jobs:
             --subnet aks-subnet \
             --private-connection-resource-id ${{ steps.get_storage_account_id.outputs.storage_account_id }} \
             --group-ids file \
-            --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}
-            --connection-name fileStorageConnection \
+            --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }} \
+            --connection-name fileStorageConnection 
 
 
   build_and_push_docker_image:
