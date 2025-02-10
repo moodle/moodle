@@ -179,17 +179,12 @@ class structure {
     }
 
     /**
-     * Check whether the question number is customised.
-     *
-     * @param int $slotid
-     * @return bool
-     * @todo MDL-76612 Final deprecation in Moodle 4.6
      * @deprecated since 4.2. $slot->displayednumber is no longer used. If you need this,
      *      use isset(...->displaynumber), but this method was not used.
      */
+    #[\core\attribute\deprecated('isset(...->displaynumber)()', since: '4.2', mdl: 'MDL-77656', final: true)]
     public function is_display_number_customised(int $slotid): bool {
-        $slotobj = $this->get_slot_by_id($slotid);
-        return isset($slotobj->displaynumber);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1657,13 +1652,6 @@ class structure {
         ])->trigger();
 
         $transaction->allow_commit();
-    }
-
-    /**
-     * @deprecated since Moodle 4.0 MDL-71573
-     */
-    public function get_slot_tags_for_slot_id() {
-        throw new \coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**

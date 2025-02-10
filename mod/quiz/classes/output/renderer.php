@@ -999,29 +999,11 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
-     * Generate a message saying that this quiz has no questions, with a button to
-     * go to the edit page, if the user has the right capability.
-     *
-     * @param bool $canedit can the current user edit the quiz?
-     * @param moodle_url $editurl URL of the edit quiz page.
-     * @return string HTML to output.
-     *
      * @deprecated since Moodle 4.0 MDL-71915 - please do not use this function any more.
      */
+    #[\core\attribute\deprecated('generate_no_questions_message()', since: '4.0', mdl: 'MDL-71915', final: true)]
     public function no_questions_message($canedit, $editurl) {
-        debugging('no_questions_message() is deprecated, please use generate_no_questions_message() instead.', DEBUG_DEVELOPER);
-
-        $output = html_writer::start_tag('div', ['class' => 'card text-center mb-3']);
-        $output .= html_writer::start_tag('div', ['class' => 'card-body']);
-
-        $output .= $this->notification(get_string('noquestions', 'quiz'), 'warning', false);
-        if ($canedit) {
-            $output .= $this->single_button($editurl, get_string('editquiz', 'quiz'), 'get');
-        }
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::end_tag('div');
-
-        return $output;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1479,38 +1461,26 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
-     * Deprecated version of render_links_to_other_attempts.
-     *
-     * @param links_to_other_attempts $links
-     * @return string HTML fragment.
      * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
-     * @todo MDL-76612 Final deprecation in Moodle 4.6
      */
+    #[\core\attribute\deprecated('render_links_to_other_attempts()', since: '4.2', mdl: 'MDL-76614', final: true)]
     protected function render_mod_quiz_links_to_other_attempts(links_to_other_attempts $links) {
-        return $this->render_links_to_other_attempts($links);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Deprecated version of render_navigation_question_button.
-     *
-     * @param navigation_question_button $button
-     * @return string HTML fragment.
-     * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
-     * @todo MDL-76612 Final deprecation in Moodle 4.6
+     * @deprecated since Moodle 4.2. Please use render_navigation_question_button instead.
      */
+    #[\core\attribute\deprecated('render_navigation_question_button()', since: '4.2', mdl: 'MDL-76614', final: true)]
     protected function render_quiz_nav_question_button(navigation_question_button $button) {
-        return $this->render_navigation_question_button($button);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Deprecated version of render_navigation_section_heading.
-     *
-     * @param navigation_section_heading $heading the heading.
-     * @return string HTML fragment.
-     * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
-     * @todo MDL-76612 Final deprecation in Moodle 4.6
+     * @deprecated since Moodle 4.2. Please use render_navigation_section_heading instead.
      */
+    #[\core\attribute\deprecated('render_navigation_section_heading()', since: '4.2', mdl: 'MDL-76614', final: true)]
     protected function render_quiz_nav_section_heading(navigation_section_heading $heading) {
-        return $this->render_navigation_section_heading($heading);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 }
