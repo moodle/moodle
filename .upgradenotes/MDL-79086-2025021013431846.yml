@@ -1,0 +1,5 @@
+issueNumber: MDL-79086
+notes:
+  core:
+    - message: 'Final removal of `share_activity()` in `core\moodlenet\activity_sender`, please use `share_resource()` instead.'
+      type: removed

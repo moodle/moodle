@@ -58,16 +58,11 @@ class activity_sender extends resource_sender {
     }
 
     /**
-     * Share an activity/resource to MoodleNet.
-     *
-     * @return array The HTTP response code from MoodleNet and the MoodleNet draft resource URL (URL empty string on fail).
-     *                Format: ['responsecode' => 201, 'drafturl' => 'https://draft.mnurl/here']
-     * @deprecated since Moodle 4.3
-     * @todo Final deprecation MDL-79086
+     * @deprecated since Moodle 4.3 MDL-75318
      */
-    public function share_activity(): array {
-        debugging('Method share_activity is deprecated, use share_resource instead.', DEBUG_DEVELOPER);
-        return $this->share_resource();
+    #[\core\attribute\deprecated('share_resource()', since: '4.3', mdl: 'MDL-75318', final: true)]
+    public function share_activity() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
