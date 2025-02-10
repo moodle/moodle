@@ -13,6 +13,7 @@ on:
         description: Additional options to apply to PHPUnit
         required: false
         default: ''
+  pull_request:
 
 env:
   php: 8.3
@@ -24,6 +25,9 @@ jobs:
     steps:
       - name: Checking out code
         uses: actions/checkout@v4
+# Do not run Grunt on submodules for now, until we are ready to fix these submodules
+#        with:
+#          submodules: true
 
       - name: Configuring node & npm
         uses: actions/setup-node@v4
@@ -65,10 +69,11 @@ jobs:
             php: 8.1
             extensions:
             db: mysqli
-          # PostgreSQL builds always run with the highest PHP supported version.
-          - os: ubuntu-22.04
-            php: 8.3
-            db: pgsql
+          # Disable testing with PostgreSQL for now since we are not using it.
+          # # PostgreSQL builds always run with the highest PHP supported version.
+          # - os: ubuntu-22.04
+          #   php: 8.3
+          #   db: pgsql
 
     steps:
       - name: Setting up DB mysql
@@ -84,14 +89,14 @@ jobs:
           tmpfs size: '1024M'
           extra conf: --skip-log-bin
 
-      - name: Setting up DB pgsql
-        if: ${{ matrix.db == 'pgsql' }}
-        uses: m4nu56/postgresql-action@v1
-        with:
-          postgresql version: 13
-          postgresql db: test
-          postgresql user: test
-          postgresql password: test
+      # - name: Setting up DB pgsql
+      #   if: ${{ matrix.db == 'pgsql' }}
+      #   uses: m4nu56/postgresql-action@v1
+      #   with:
+      #     postgresql version: 13
+      #     postgresql db: test
+      #     postgresql user: test
+      #     postgresql password: test
 
       - name: Configuring git vars
         uses: rlespinasse/github-slug-action@v4
@@ -106,6 +111,8 @@ jobs:
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setting up PHPUnit
         env:
