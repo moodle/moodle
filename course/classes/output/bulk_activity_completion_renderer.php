@@ -117,28 +117,11 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     }
 
     /**
-     * Renders the form for editing default completion
-     *
-     * @param moodleform $form
-     * @param array $modules
-     * @return string
      * @deprecated since Moodle 4.3 MDL-78528
-     * @todo MDL-78711 This will be deleted in Moodle 4.7
      */
-    public function edit_default_completion($form, $modules) {
-        debugging('edit_default_completion() is deprecated and will be removed.', DEBUG_DEVELOPER);
-
-        ob_start();
-        $form->display();
-        $formhtml = ob_get_contents();
-        ob_end_clean();
-
-        $data = (object)[
-            'form' => $formhtml,
-            'modules' => array_values($modules),
-            'modulescount' => count($modules),
-        ];
-        return parent::render_from_template('core_course/editdefaultcompletion', $data);
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78528', final: true)]
+    public function edit_default_completion() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

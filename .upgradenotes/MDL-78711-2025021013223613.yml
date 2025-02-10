@@ -1,0 +1,5 @@
+issueNumber: MDL-78711
+notes:
+  core_course:
+    - message: Final deprecation of edit_default_completion()
+      type: removed
