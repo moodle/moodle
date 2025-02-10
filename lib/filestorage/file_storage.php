@@ -1076,10 +1076,6 @@ class file_storage {
         $newrecord->id = $DB->insert_record('files', $newrecord);
 
         if ($newrecord->filename !== '.') {
-            if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-                return;
-            }
-
             // The $fileinstance is needed for the legacy callback.
             $fileinstance = $this->get_file_instance($newrecord);
             // Dispatch the new Hook implementation immediately after the legacy callback.
