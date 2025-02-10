@@ -145,6 +145,12 @@ jobs:
           storage_account_id=$(az storage account show --name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query id --output tsv)
           echo "storage_account_id=$storage_account_id" >> $GITHUB_OUTPUT
 
+      - name: Get Cluster VNET name
+        id: get_cluster_vnet_name
+        run: |
+          subnet_id=$(SUBNET_ID=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "networkProfile.networkPluginConfig.subnet" -o )
+          vnet_name=$(echo $subnet_id | awk -F/ '{print $9}')
+          echo "vnet_name=$vnet_name" >> $GITHUB_OUTPUT
 
       - name: Create private endpoint
         run: |
@@ -152,8 +158,9 @@ jobs:
             --name FileStoragePrivateEndpoint \
             --connection-name fileStorageConnection \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
+            --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} \
             --subnet aks-subnet \
-            --private-connection-resource-id steps.get_storage_account_id.outputs.storage_account_id \
+            --private-connection-resource-id ${{ steps.get_storage_account_id.outputs.storage_account_id }} \
             --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}
 
   build_and_push_docker_image:
