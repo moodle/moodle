@@ -86,7 +86,7 @@ class token_form extends \moodleform {
         $mform->addRule('user', get_string('required'), 'required', null, 'client');
 
         // Service selector.
-        $options = $DB->get_records_menu('external_services', null, '', 'id, name');
+        $options = $DB->get_records_menu('external_services', null, 'name ASC', 'id, name');
         $mform->addElement('select', 'service', get_string('service', 'webservice'), $options);
         $mform->addRule('service', get_string('required'), 'required', null, 'client');
         $mform->setType('service', PARAM_INT);

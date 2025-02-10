@@ -94,7 +94,7 @@ class token_filter extends moodleform {
         $mform->addElement('autocomplete', 'users', get_string('user'), [], $attributes);
 
         // Service selector.
-        $options = $DB->get_records_menu('external_services', null, '', 'id, name');
+        $options = $DB->get_records_menu('external_services', null, 'name ASC', 'id, name');
         $attributes = [
             'multiple' => true,
         ];
