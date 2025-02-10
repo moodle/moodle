@@ -1,0 +1,49 @@
+.auth_oidc_ucp_indicator h4 {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.auth_oidc_ucp_indicator h5 {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.auth_oidc_ucp_indicator h5 + span {
+    display: block;
+}
+
+.cert_textarea textarea {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.path-admin-auth-oidc .warning_header {
+    border: 1px solid #f00;
+    background-color: #ffe5e5;
+    padding: 10px;
+    margin: 10px 0;
+    color: #f00;
+    font-weight: bold;
+}
+
+.path-admin-auth-oidc .warning {
+    color: #f00;
+    font-weight: bold;
+}
+
+.path-admin-auth-oidc .existing_claims {
+    display: inline-block;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+}
+
+.path-admin-auth-oidc .not_support_user_sync {
+    color: #f00;
+}
+
+.path-admin-auth-oidc .code {
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+}
