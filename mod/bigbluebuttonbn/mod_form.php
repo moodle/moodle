@@ -94,7 +94,8 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_block_schedule($mform, $this->current);
         // Now add subplugins form elements.
         $this->add_subplugins_elements();
-
+        // Add standard grading elements.
+        $this->standard_grading_coursemodule_elements();
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
         // Add standard buttons, common to all modules.

@@ -58,7 +58,7 @@ final class lib_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->assertTrue(bigbluebuttonbn_supports(FEATURE_IDNUMBER));
         $this->assertTrue(bigbluebuttonbn_supports(FEATURE_MOD_INTRO));
-        $this->assertFalse(bigbluebuttonbn_supports(FEATURE_GRADE_HAS_GRADE));
+        $this->assertTrue(bigbluebuttonbn_supports(FEATURE_GRADE_HAS_GRADE));
     }
 
     /**
@@ -548,6 +548,61 @@ final class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Reset user data and make sure grades are reset.
+     *
+     * @covers ::bigbluebuttonbn_reset_userdata
+     */
+    public function test_bigbluebuttonbn_reset_userdata_with_grades(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance($this->course,
+            ['grade' => 100]);
+        $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
+        $this->setUser($user);
+
+        // Pass a user grade.
+        $grade = [];
+        $gradeitem = $DB->get_record('grade_items', [
+            'courseid' => $this->course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'bigbluebuttonbn',
+            'iteminstance' => $bbactivity->id,
+        ]);
+        $grade[$user->id] = [
+            'userid' => $user->id,
+            'rawgrade' => 75,
+        ];
+        grade_update(
+            source: 'mod/bigbluebuttonbn',
+            courseid: $this->course->id,
+            itemtype: 'mod',
+            itemmodule: 'bigbluebuttonbn',
+            iteminstance: $bbactivity->id,
+            itemnumber: 0,
+            grades: $grade
+        );
+        $params = [
+            'userid' => $user->id,
+            'itemid' => $gradeitem->id,
+            'rawgrade' => 75,
+        ];
+        $gradegrades = $DB->get_records('grade_grades', $params);
+        $this->assertCount(1, $gradegrades);
+
+        // Reset user data.
+        $data = new stdClass();
+        $data->courseid = $this->course->id;
+        $data->course = $bbactivity->course;
+        $data->reset_gradebook_grades = 1;
+        bigbluebuttonbn_reset_userdata($data);
+
+        // Check grades have been reset.
+        $gradegrades = $DB->get_records('grade_grades', $params);
+        $this->assertCount(0, $gradegrades);
+    }
+
+    /**
      * Check course module
      *
      * @covers ::bigbluebuttonbn_get_coursemodule_info
@@ -568,11 +623,27 @@ final class lib_test extends \advanced_testcase {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $result = bigbluebuttonbn_check_updates_since($bbactivitycm, 0);
-        $this->assertEquals(
-            '{"configuration":{"updated":false},"contentfiles":{"updated":false},"introfiles":' .
-            '{"updated":false},"completion":{"updated":false}}',
-            json_encode($result)
-        );
+        $expected = json_encode([
+            'configuration' => [
+                'updated' => false,
+            ],
+            'contentfiles' => [
+                'updated' => false,
+            ],
+            'introfiles' => [
+                'updated' => false,
+            ],
+            'completion' => [
+                'updated' => false,
+            ],
+            'gradeitems' => [
+                'updated' => false,
+            ],
+            'outcomes' => [
+                'updated' => false,
+            ],
+        ]);
+        $this->assertEquals($expected, json_encode($result));
     }
 
     /**
