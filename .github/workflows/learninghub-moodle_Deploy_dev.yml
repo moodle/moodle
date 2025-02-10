@@ -149,7 +149,7 @@ jobs:
         run: |
           az network private-endpoint create \
             --name FileStoragePrivateEndpoint \
-            --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
+            --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} \
             --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} \
             --subnet aks-subnet \
             --private-connection-resource-id ${{ steps.get_storage_account_id.outputs.storage_account_id }} \
