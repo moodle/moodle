@@ -3,3 +3,5 @@ notes:
   core_course:
     - message: Final removal of core_course\output\activity_information
       type: removed
+    - message: Final deprecation of core_course_renderer\render_activity_information()
+      type: removed

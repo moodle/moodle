@@ -1505,19 +1505,11 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the activity information.
-     *
-     * Defer to template.
-     *
      * @deprecated since Moodle 4.3 MDL-78744
-     * @todo MDL-78926 This method will be deleted in Moodle 4.7
-     * @param \core_course\output\activity_information $page
-     * @return string html for the page
      */
-    public function render_activity_information(\core_course\output\activity_information $page) {
-        debugging('render_activity_information method is deprecated.', DEBUG_DEVELOPER);
-        $data = $page->export_for_template($this->output);
-        return $this->output->render_from_template('core_course/activity_info', $data);
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78744', final: true)]
+    public function render_activity_information() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
