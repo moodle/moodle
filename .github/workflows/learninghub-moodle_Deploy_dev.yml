@@ -194,6 +194,9 @@ jobs:
       - name: Log in to Azure Container Registry
         run: az acr login --name ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
 
+      - name: Make /var/www/html/auth writable
+        run: sudo chmod ugo+rwx auth
+
       - name: Build and push Docker image
         run: |
           docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ vars.DOCKER_IMAGE_NAME }}:latest . 
