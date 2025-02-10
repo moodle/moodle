@@ -1,0 +1,5 @@
+issueNumber: MDL-78926
+notes:
+  core_course:
+    - message: Final removal of core_course\output\activity_information
+      type: removed
