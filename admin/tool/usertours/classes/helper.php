@@ -208,12 +208,11 @@ class helper {
      * @return  \moodle_url             The URL.
      */
     public static function get_duplicate_tour_link($tourid) {
-        $link = new \moodle_url('/admin/tool/usertours/configure.php', [
+        return new \moodle_url('/admin/tool/usertours/configure.php', [
             'action'    => manager::ACTION_DUPLICATETOUR,
             'id'        => $tourid,
+            'sesskey'   => sesskey(),
         ]);
-
-        return $link;
     }
 
     /**
