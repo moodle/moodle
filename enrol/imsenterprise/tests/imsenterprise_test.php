@@ -117,7 +117,7 @@ final class imsenterprise_test extends \advanced_testcase {
         $user2 = new \stdClass();
         $user2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $user2->username = 'u2';
-        $user2->auth = 'cas';
+        $user2->auth = 'db';
         $user2->email = 'u2@u2.org';
         $user2->firstname = 'U';
         $user2->lastname = '2';

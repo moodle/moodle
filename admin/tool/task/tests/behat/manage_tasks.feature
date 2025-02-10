@@ -67,7 +67,7 @@ Feature: Manage scheduled tasks
     And I should see "Log table cleanup" in the "tr.table-primary" "css_element"
 
   Scenario: Disabled plugin's tasks are labelled as disabled too
-    When "CAS users sync job \auth_cas\task\sync_task" row "Next run" column of "Scheduled tasks" table should contain "Plugin disabled"
-    Then "CAS users sync job \auth_cas\task\sync_task" row "Component" column of "Scheduled tasks" table should contain "Disabled"
-    And "Background processing for scheduled allocation \workshopallocation_scheduled\task\cron_task" row "Next run" column of "Scheduled tasks" table should not contain "Plugin disabled"
+    When "Synchronise users task \auth_db\task\sync_users" row "Next run" column of "Scheduled tasks" table should contain "Plugin disabled"
+    And "Synchronise users task \auth_db\task\sync_users" row "Component" column of "Scheduled tasks" table should contain "Disabled"
+    Then "Background processing for scheduled allocation \workshopallocation_scheduled\task\cron_task" row "Next run" column of "Scheduled tasks" table should not contain "Plugin disabled"
     And "Background processing for scheduled allocation \workshopallocation_scheduled\task\cron_task" row "Component" column of "Scheduled tasks" table should not contain "Disabled"

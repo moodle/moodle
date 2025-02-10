@@ -946,7 +946,7 @@ final class scheduled_task_test extends \advanced_testcase {
      */
     public static function is_component_enabled_provider(): array {
         return [
-            'Enabled component' => ['auth_cas', true],
+            'Enabled component' => ['auth_email', true],
             'Disabled component' => ['auth_ldap', false],
             'Invalid component' => ['auth_invalid', false],
         ];
@@ -964,7 +964,7 @@ final class scheduled_task_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // Set cas as the only enabled auth component.
-        set_config('auth', 'cas');
+        set_config('auth', 'email');
 
         $task = new scheduled_test_task();
         $task->set_component($component);

@@ -606,10 +606,10 @@ final class component_test extends \advanced_testcase {
     public function test_get_component_classes_in_namespace(): void {
         // Unexisting.
         $this->assertCount(0, component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
-        $this->assertCount(0, component::get_component_classes_in_namespace('auth_cas', 'something'));
+        $this->assertCount(0, component::get_component_classes_in_namespace('auth_db', 'something'));
 
         // Matches the last namespace level name not partials.
-        $this->assertCount(0, component::get_component_classes_in_namespace('auth_cas', 'tas'));
+        $this->assertCount(0, component::get_component_classes_in_namespace('auth_db', 'tas'));
         $this->assertCount(0, component::get_component_classes_in_namespace('core_user', 'course'));
         $this->assertCount(0, component::get_component_classes_in_namespace('mod_forum', 'output\\emaildigest'));
         $this->assertCount(0, component::get_component_classes_in_namespace('mod_forum', '\\output\\emaildigest'));
@@ -665,12 +665,12 @@ final class component_test extends \advanced_testcase {
             ],
             // Prefix with backslash if it doesn\'t come prefixed.
             [
-                ['auth_cas', 'task'],
-                'auth_cas\task\%s',
+                ['auth_db', 'task'],
+                'auth_db\task\%s',
             ],
             [
-                ['auth_cas', '\\task'],
-                'auth_cas\task\%s',
+                ['auth_db', '\\task'],
+                'auth_db\task\%s',
             ],
 
             // Core as a component works, the function can normalise the component name.

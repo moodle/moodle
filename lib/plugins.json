@@ -57,7 +57,6 @@
             "unorderedlist"
         ],
         "auth": [
-            "cas",
             "db",
             "email",
             "ldap",
@@ -577,6 +576,7 @@
             "uploadsingle"
         ],
         "auth": [
+            "cas",
             "fc",
             "imap",
             "nntp",
