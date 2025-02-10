@@ -150,6 +150,7 @@ jobs:
         run: |
           az network private-endpoint create \
             --name FileStoragePrivateEndpoint \
+            --connection-name fileStorageConnection \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
             --subnet aks-subnet \
             --private-connection-resource-id steps.get_storage_account_id.outputs.storage_account_id \
