@@ -18,6 +18,7 @@ Feature: Verify the breadcrumbs in webservice tokens site administration pages
     And "Manage tokens" "link" should exist in the ".breadcrumb" "css_element"
     And "Web services" "link" should exist in the ".breadcrumb" "css_element"
     And I set the field "User" to "John Doe"
+    And I set the field "Service" to "Moodle mobile web service"
     And I press "Save changes"
     When I press "Delete" action in the "John Doe" report row
     Then "Delete token" "text" should exist in the ".breadcrumb" "css_element"
