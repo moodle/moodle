@@ -222,8 +222,8 @@ class notification_helper {
 
         foreach ($users as $key => $user) {
             // Get the user.
-            $db_user = $DB->get_record('user', ['id' => $user->id]);
-            if (empty($db_user) || $db_user->suspended) {
+            $dbuser = $DB->get_record('user', ['id' => $user->id]);
+            if (empty($dbuser) || $dbuser->suspended) {
                 unset($users[$key]);
                 continue;
             }
@@ -484,8 +484,8 @@ class notification_helper {
         global $DB;
 
         // Get the user.
-        $db_user = $DB->get_record('user', ['id' => $userid]);
-        if (empty($db_user) || $db_user->suspended) {
+        $dbuser = $DB->get_record('user', ['id' => $userid]);
+        if (empty($dbuser) || $dbuser->suspended) {
             return;
         }
 
