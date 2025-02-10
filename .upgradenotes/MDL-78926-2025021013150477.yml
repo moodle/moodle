@@ -5,3 +5,6 @@ notes:
       type: removed
     - message: Final deprecation of core_course_renderer\render_activity_information()
       type: removed
+  core:
+    - message: Final deprecation of core_renderer\activity_information()
+      type: removed
