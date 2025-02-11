@@ -237,7 +237,7 @@ jobs:
         run: kubectl apply -f kubectl/deployment-dev.yml
 
       - name: Deploy the Horizontal Pod Autoscaler to the AKS cluster
-        run: kubectl apply -d kubectl/hpa-dev.yml
+        run: kubectl apply -f kubectl/hpa-dev.yml
 
       - name: Create the loadbalancer service
         run: kubectl apply -f kubectl/service-dev.yml
