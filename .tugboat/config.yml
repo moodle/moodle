@@ -1,0 +1,75 @@
+services:
+  webserver:
+    image: "tugboatqa/php:8.3-apache"
+    default: true
+    checkout_path: "/var/www/moodle"
+    depends_on:
+      - db
+    commands:
+      init:
+        - echo "****** initializing webserver *****"
+
+        - echo "****** installing required php extensions *****"
+        - sudo apt-get update
+        - sudo apt-get install libzip-dev
+        - sudo apt-get install -y unzip git
+        - docker-php-ext-install mysqli
+        - docker-php-ext-install zip
+        - docker-php-ext-install soap
+        - docker-php-ext-install intl
+        - docker-php-ext-install exif
+
+        - echo "****** initializing the submodules *****"
+        - git config submodule.admin/tool/ucsfsomapi.url https://${GITHUB_TOKEN_USER}:${GITHUB_TOKEN}@github.com/ucsf-education/tool_ucsfsomapi.git
+        - git submodule update --init
+
+        - echo "****** Setting php config variables ******"
+        - echo "max_input_vars = 5000" >> /usr/local/etc/php/conf.d/max_input_vars.ini
+               
+        # Link the document root to the expected path.
+        - ln -snf "$TUGBOAT_ROOT" "${DOCROOT}"
+        
+        #make required dirs and set permissions.
+        - mkdir /var/www/moodledata
+        - mkdir /var/www/phpunitdata
+        - mkdir /var/www/behatdata
+        - mkdir /var/www/behatfaildumps
+        - chmod 0777 /var/www/moodledata
+
+      update:
+        - echo "****** updating webserver *****"
+        - composer install --optimize-autoloader --ignore-platform-req=ext-zip --ignore-platform-req=ext-intl
+        - service apache2 start
+      
+      build:      
+      #  - npm install
+      #  - npx grunt
+        - echo "****** building webserver *****"
+        - chown www-data $DOCROOT
+        - |
+          sudo -u www-data php admin/cli/install.php \
+          --non-interactive --agree-license --lang=en \
+          --wwwroot=https://${TUGBOAT_DEFAULT_SERVICE_URL_HOST} \
+          --dataroot=/var/www/moodledata \
+          --dbtype=${MOODLE_DBTYPE} --dbhost=db --dbname=${MOODLE_DBNAME} --dbuser=${MOODLE_DBUSER} --dbpass=${MOODLE_DBPASS} --prefix=m_ \
+          --adminuser=${MOODLE_DBADMIN_NAME} --adminpass=${MOODLE_DBADMIN_PASS} \
+          --fullname=PREVIEW --shortname=PREVIEW --adminemail=${MOODLE_ADMIN_EMAIL}
+        - chown -R root $DOCROOT
+      
+      online:
+        - php admin/tool/generator/cli/maketestsite.php --size=S --bypasscheck
+        
+  db:
+    image: "tugboatqa/mariadb:10.11.8"
+    commands:
+      init:
+        - echo "*** intializing database ***"
+        - mysql -e "SET GLOBAL character_set_server=utf8mb4;"
+        - mysql -e "SET GLOBAL collation_server=utf8mb4_bin;"
+        - mysql -e "SET GLOBAL innodb_file_per_table=ON;"
+        - mysql -e "SET GLOBAL wait_timeout=28800;"
+        - export MYSQL_ROOT_PASSWORD=${MOODLE_DBPASS}
+        - export MYSQL_DATABASE=${MOODLE_DBNAME}
+        - export MYSQL_USER=${MOODLE_DBUSER}
+        - export MYSQL_PASSWORD=${MOODLE_DBPASS}
+        - mysql -e "CREATE DATABASE IF NOT EXISTS ${MOODLE_DBNAME}; GRANT ALL PRIVILEGES ON moodle.* TO '${MOODLE_DBNAME}'@'%' IDENTIFIED BY '${MOODLE_DBPASS}'; FLUSH PRIVILEGES;"
