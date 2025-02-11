@@ -706,11 +706,11 @@ final class events_test extends \advanced_testcase {
 
         try {
             api::user_competency_viewed_in_plan($uc, $plan->get('id'));
-            $this->fail('To log the user competency in completed plan '
-                    . 'use user_competency_plan_viewed method.');
+            $this->fail('To log the user competency in a completed plan '
+                    . 'use the user_competency_plan_viewed method.');
         } catch (\coding_exception $e) {
-            $this->assertMatchesRegularExpression('/To log the user competency in completed plan '
-                    . 'use user_competency_plan_viewed method./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/To log the user competency in a completed plan '
+                    . 'use the user_competency_plan_viewed method./', $e->getMessage());
         }
 
         api::reopen_plan($plan);

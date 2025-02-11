@@ -542,7 +542,7 @@ abstract class engine {
      * Executes the query on the engine.
      *
      * Implementations of this function should check user context array to limit the results to contexts where the
-     * user have access. They should also limit the owneruserid field to manger::NO_OWNER_ID or the current user's id.
+     * user has access. They should also limit the owneruserid field to manger::NO_OWNER_ID or the current user's id.
      * Engines must use area->check_access() to confirm user access.
      *
      * Engines should reasonably attempt to fill up to limit with valid results if they are available.

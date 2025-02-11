@@ -66,7 +66,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
 
         // The lesson table
         // This table contains all of the goodness for the lesson module, quite
-        // alot goes into it but nothing relational other than course when will
+        // a lot goes into it but nothing relational other than course when will
         // need to be corrected upon restore.
         $lesson = new backup_nested_element('lesson', array('id'), array(
             'course', 'name', 'intro', 'introformat', 'practice', 'modattempts',

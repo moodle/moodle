@@ -1598,7 +1598,7 @@ the groupid field.
   moodle/site:configview capability added.
 * Admin setting "Show My courses expanded on Dashboard" has been removed.
 * Some backwards and forwards compatibility has been added for different bootstrap versions.
-  This is to allow the same markup to work in "clean" and "boost" themes alot of the time. It is also to allow user text
+  This is to allow the same markup to work in "clean" and "boost" themes a lot of the time. It is also to allow user text
   with bootstrap classes to keep working in the new theme. See MDL-56004 for the list of supported classes.
 * MForms element 'submitlink' has been deprecated.
 * Searchable selector form element is now a wrapper for autocomplete. A "No selection" option is automatically
