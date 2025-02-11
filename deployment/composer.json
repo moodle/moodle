@@ -1,0 +1,59 @@
+{
+    "name": "moodle/moodle",
+    "license": "GPL-3.0-or-later",
+    "description": "Moodle - the world's open source learning platform",
+    "type": "project",
+    "homepage": "https://moodle.org",
+    "require-dev": {
+        "phpunit/phpunit": "^9.6.18",
+        "mikey179/vfsstream": "1.6.*",
+        "behat/mink": "^1.11.0",
+        "friends-of-behat/mink-extension": "^2.7.5",
+        "behat/mink-browserkit-driver": "^2.2.0",
+        "symfony/process": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/http-client": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/mime": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "behat/behat": "3.14.*",
+        "oleg-andreyev/mink-phpwebdriver": "1.3.*",
+        "filp/whoops": "^2.15"
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Moodle\\BehatExtension": "lib/behat/extension/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2.0",
+        "ext-iconv": "*",
+        "ext-mbstring": "*",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-ctype": "*",
+        "ext-zip": "*",
+        "ext-zlib": "*",
+        "ext-gd": "*",
+        "ext-simplexml": "*",
+        "ext-spl": "*",
+        "ext-pcre": "*",
+        "ext-dom": "*",
+        "ext-xml": "*",
+        "ext-xmlreader": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-hash": "*",
+        "ext-fileinfo": "*",
+        "ext-sodium": "*",
+        "behat/gherkin": "~4.9.0"
+    },
+    "suggest": {
+        "ext-mysqli": "Needed when Moodle uses MySQL or MariaDB database.",
+        "ext-pgsql": "Needed when Moodle uses PostgreSQL database.",
+        "ext-sqlsrv": "Needed when Moodle uses MS SQL Server database.",
+        "ext-oci8": "Needed when Moodle uses Oracle database.",
+        "ext-tokenizer": "Enabling Tokenizer PHP extension is recommended, it improves Moodle Networking functionality.",
+        "ext-soap": "Enabling SOAP PHP extension is useful for web services and some plugins.",
+        "ext-exif": "Enabling Exif PHP extension is recommended, it is used by Moodle to parse image meta data."
+    }
+}
