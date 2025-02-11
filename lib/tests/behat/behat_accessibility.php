@@ -36,7 +36,7 @@ class behat_accessibility extends behat_base {
      * There are standard tags to ensure WCAG 2.1 A, WCAG 2.1 AA, and Section 508 compliance.
      * It is also possible to specify any desired optional tags.
      *
-     * See {@link https://github.com/dequelabs/axe-core/blob/v4.10.0/doc/rule-descriptions.md} for the list of available tags
+     * See {@link https://github.com/dequelabs/axe-core/blob/v4.10.2/doc/rule-descriptions.md} for the list of available tags
      *
      * @Then the page should meet accessibility standards
      * @Then the page should meet accessibility standards with :extratags extra tests
@@ -55,8 +55,7 @@ class behat_accessibility extends behat_base {
     /**
      * Run the Axe tests.
      *
-     * See https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md for details of the supported
-     * tags.
+     * See {@see behat_accessibility::run_axe_validation_for_tags} for details of the supported tags.
      *
      * @param   array $standardtags The list of standard tags to run
      * @param   array $extratags The list of tags, in addition to the standard tags, to run
@@ -171,7 +170,7 @@ EOF;
     /**
      * Get the configuration to use with Axe.
      *
-     * See https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md for details of the rules.
+     * See {@see behat_accessibility::run_axe_validation_for_tags} for details of the rules.
      *
      * @param   array|null $standardtags The list of standard tags to run
      * @param   array|null $extratags The list of tags, in addition to the standard tags, to run
