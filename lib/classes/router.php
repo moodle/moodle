@@ -16,7 +16,6 @@
 
 namespace core;
 
-use core\output\routed_error_handler;
 use core\router\middleware\cors_middleware;
 use core\router\middleware\error_handling_middleware;
 use core\router\middleware\moodle_api_authentication_middleware;
@@ -33,8 +32,10 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Slim\Exception\HttpForbiddenException;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\RouteGroupInterface;
-use Slim\Interfaces\RouteInterface;
+use Slim\Middleware\ErrorMiddleware;
 
 /**
  * Moodle Router.
@@ -189,10 +190,36 @@ class router {
         // This must be done before the Routing Middleware to ensure that the route is matched correctly.
         $this->app->add(di::get(uri_normalisation_middleware::class));
 
+        // Add the Error Handling Middleware to the App.
+        $this->add_error_handler_middleware();
+    }
+
+    /**
+     * Add the Error Handling Middleware to the RouteGroup.
+     */
+    protected function add_error_handler_middleware(): void {
         // Add the Error Handling Middleware and configure it to show Moodle Errors for HTML pages.
-        $errormiddleware = $this->app->addErrorMiddleware(true, true, true);
-        $errorhandler = $errormiddleware->getDefaultErrorHandler();
-        $errorhandler->registerErrorRenderer('text/html', routed_error_handler::class);
+        $errormiddleware = new ErrorMiddleware(
+            $this->app->getCallableResolver(),
+            $this->app->getResponseFactory(),
+            displayErrorDetails: true,
+            logErrors: true,
+            logErrorDetails: true,
+        );
+
+        // Set a custom error handler for the HttpNotFoundException and HttpForbiddenException.
+        // We route these to a custom error handler to ensure that the error is displayed with a feedback form.
+        $errormiddleware->setErrorHandler(
+            [
+                HttpNotFoundException::class,
+                HttpForbiddenException::class,
+            ],
+            new router\error_handler($this->app),
+        );
+
+        $errormiddleware->getDefaultErrorHandler()->registerErrorRenderer('text/html', router\error_renderer::class);
+
+        $this->app->add($errormiddleware);
     }
 
     /**
