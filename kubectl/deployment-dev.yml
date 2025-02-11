@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: learninghubmoodledev
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: learninghubmoodledev
@@ -16,6 +16,11 @@ spec:
       - name: learninghubmoodleimage
         image: learninghubmoodlecrdev.azurecr.io/learninghubmoodleimage:latest
         imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "500m"
+          limits:
+            cpu: "1000m"
         ports:
         - containerPort: 80
         volumeMounts:
