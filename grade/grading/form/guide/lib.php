@@ -857,16 +857,19 @@ class gradingform_guide_instance extends gradingform_instance {
         parent::update($data);
 
         foreach ($data['criteria'] as $criterionid => $record) {
+            // Hardcoding/defaulting to html format for new/existing record
+            $record['remarkformat'] = FORMAT_HTML;
+
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array('instanceid' => $this->get_id(), 'criterionid' => $criterionid,
-                    'score' => $record['score'], 'remarkformat' => FORMAT_MOODLE);
+                    'score' => $record['score'], 'remarkformat' => $record['remarkformat']);
                 if (isset($record['remark'])) {
                     $newrecord['remark'] = $record['remark'];
                 }
                 $DB->insert_record('gradingform_guide_fillings', $newrecord);
             } else {
                 $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
-                foreach (array('score', 'remark'/*, 'remarkformat' TODO */) as $key) {
+                foreach (array('score', 'remark', 'remarkformat') as $key) {
                     if (isset($record[$key]) && $currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
                         $newrecord[$key] = $record[$key];
                     }
