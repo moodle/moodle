@@ -31677,10 +31677,6 @@ table.calendartable caption {
 #course-category-listings .detail-pair .pair-value select {
   max-width: 100%;
 }
-#course-category-listings .bulk-actions .detail-pair > * {
-  display: block;
-  width: 100%;
-}
 #course-category-listings .listing-pagination {
   text-align: center;
 }
