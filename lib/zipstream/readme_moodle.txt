@@ -2,7 +2,7 @@ Instructions to import ZipStream into Moodle:
 
 1/ Download from https://github.com/maennchen/ZipStream-PHP/releases/
 
-2/ Copy the LICENSE file and the src folder into the lib/zipstream folder
+2/ Copy the LICENSE & composer.json files, and the src/ folder into the lib/zipstream folder
 
 3/ Ensure any dependencies required are also imported, e.g.:
    - php-64bit

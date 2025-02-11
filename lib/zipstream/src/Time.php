@@ -26,20 +26,14 @@ abstract class Time
 
         $dateTime = DateTimeImmutable::createFromInterface($dateTime)->sub(new DateInterval('P1980Y'));
 
-        ['year' => $year,
-            'mon' => $month,
-            'mday' => $day,
-            'hours' => $hour,
-            'minutes' => $minute,
-            'seconds' => $second
-        ] = getdate($dateTime->getTimestamp());
+        [$year, $month, $day, $hour, $minute, $second] = explode(' ', $dateTime->format('Y n j G i s'));
 
         return
-            ($year << 25) |
-            ($month << 21) |
-            ($day << 16) |
-            ($hour << 11) |
-            ($minute << 5) |
-            ($second >> 1);
+            ((int) $year << 25) |
+            ((int) $month << 21) |
+            ((int) $day << 16) |
+            ((int) $hour << 11) |
+            ((int) $minute << 5) |
+            ((int) $second >> 1);
     }
 }
