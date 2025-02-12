@@ -38,6 +38,7 @@ $string['customwelcomemessage'] = 'Custom welcome message';
 $string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
 <ul>
 <li>Course name {$a->coursename}</li>
+<li>Link to course page {$a->courselink}</li>
 <li>Link to user\'s profile page {$a->profileurl}</li>
 <li>User email {$a->email}</li>
 <li>User fullname {$a->fullname}</li>

@@ -3656,6 +3656,7 @@ abstract class enrol_plugin {
         ?int $roleid = null,
     ): void {
         global $DB;
+
         $context = context_course::instance($instance->courseid);
         $user = core_user::get_user($userid);
         $course = get_course($instance->courseid);
@@ -3666,6 +3667,7 @@ abstract class enrol_plugin {
 
         $a = new stdClass();
         $a->coursename = format_string($course->fullname, true, ['context' => $context, 'escape' => false]);
+        $a->courselink = course_get_url($course)->out();
         $a->profileurl = (new moodle_url(
             url: '/user/view.php',
             params: [
@@ -3682,6 +3684,7 @@ abstract class enrol_plugin {
         if ($message && trim($message) !== '') {
             $placeholders = [
                 '{$a->coursename}',
+                '{$a->courselink}',
                 '{$a->profileurl}',
                 '{$a->fullname}',
                 '{$a->email}',
@@ -3691,6 +3694,7 @@ abstract class enrol_plugin {
             ];
             $values = [
                 $a->coursename,
+                $a->courselink,
                 $a->profileurl,
                 fullname($user),
                 $user->email,
