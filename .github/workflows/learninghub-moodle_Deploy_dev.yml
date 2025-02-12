@@ -239,6 +239,16 @@ jobs:
       - name: Deploy the Horizontal Pod Autoscaler to the AKS cluster
         run: kubectl apply -f kubectl/hpa-dev.yml
 
+      - name: Setup Node Pool Autoscaler
+        run: |
+          az aks nodepool update \
+          --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
+          --cluster-name ${{ vars.AZURE_CLUSTER_NAME }} \
+          --name defaults \
+          --enable-cluster-autoscaler \
+          --min-count 1 \
+          --max-count 10
+
       - name: Create the loadbalancer service
         run: kubectl apply -f kubectl/service-dev.yml
 
