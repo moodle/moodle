@@ -525,10 +525,6 @@ class assign {
             $nextpageparams['id'] = $this->get_course_module()->id;
         }
 
-        if (empty($action)) {
-            $PAGE->add_body_class('limitedwidth');
-        }
-
         // Handle form submissions first.
         if ($action == 'savesubmission') {
             $action = 'editsubmission';
