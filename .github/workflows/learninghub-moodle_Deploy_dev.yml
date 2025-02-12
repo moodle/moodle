@@ -139,25 +139,6 @@ jobs:
           az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
           az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
 
-      # - name: Get Storage Account ID
-      #   id: get_storage_account_id
-      #   run: |
-      #     storage_account_id=$(az storage account show --name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query id --output tsv)
-      #     echo "storage_account_id=$storage_account_id" >> $GITHUB_OUTPUT
-
-      # - name: Create private endpoint
-      #   run: |
-      #     az network private-endpoint create \
-      #       --name FileStoragePrivateEndpoint \
-      #       --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} \
-      #       --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} \
-      #       --subnet aks-subnet \
-      #       --private-connection-resource-id ${{ steps.get_storage_account_id.outputs.storage_account_id }} \
-      #       --group-ids file \
-      #       --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }} \
-      #       --connection-name fileStorageConnection 
-
-
   build_and_push_docker_image:
     needs: create_persistent_storage
     runs-on: ubuntu-latest

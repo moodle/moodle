@@ -16,6 +16,11 @@ spec:
       - name: learninghubmoodleimage
         image: learninghubmoodlecrprod.azurecr.io/learninghubmoodleimage:latest
         imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "500m"
+          limits:
+            cpu: "1000m"
         ports:
         - containerPort: 80
         volumeMounts:
