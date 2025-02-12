@@ -37298,10 +37298,6 @@ img.userpicture {
   vertical-align: top;
   border-top: var(--bs-border-width) solid var(--bs-border-color);
 }
-.generaltable th .form-check,
-.generaltable td .form-check {
-  padding: 0;
-}
 .generaltable thead th,
 .generaltable thead td {
   vertical-align: bottom;
@@ -37896,9 +37892,6 @@ p.arrow_button {
   display: flex;
   min-height: 30px;
   align-items: center;
-}
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div .form-check {
-  padding: 0;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category {
   height: 24px;
