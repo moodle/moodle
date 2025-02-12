@@ -235,6 +235,10 @@ class view {
         $this->cm = $cm;
         $this->extraparams = $extraparams;
 
+        // Add the default qperpage to extra params array so we can switch back and forth between it and "all".
+        $this->extraparams['defaultqperpage'] = $this->pagesize;
+        $this->extraparams['maxqperpage'] = MAXIMUM_QUESTIONS_PER_PAGE;
+
         // Default filter condition.
         if (!isset($params['filter']) && isset($params['cat'])) {
             $params['filter']  = [];
@@ -811,15 +815,18 @@ class view {
      */
     protected function load_page_questions(): \moodle_recordset {
         global $DB;
+
+        // Load the questions based on the page we are on.
         $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams,
-            (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], $this->pagevars['qperpage']);
+            (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], (int)$this->pagevars['qperpage']);
+
         if (!$questions->valid()) {
             $questions->close();
             // No questions on this page. Reset to the nearest page that contains questions.
             $this->pagevars['qpage'] = max(0,
-                ceil($this->totalcount / $this->pagevars['qperpage']) - 1);
+                ceil($this->totalcount / (int)$this->pagevars['qperpage']) - 1);
             $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams,
-                $this->pagevars['qpage'] * (int) $this->pagevars['qperpage'], $this->pagevars['qperpage']);
+                (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], (int)$this->pagevars['qperpage']);
         }
         return $questions;
     }
@@ -1155,6 +1162,7 @@ class view {
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
         // Note: We do not call this in the loop because quiz ob_ captures this function (see raise() PHP doc).
         \core_php_time_limit::raise(300);
+        raise_memory_limit(MEMORY_EXTRA);
 
         [$categoryid, $contextid] = category_condition::validate_category_param($this->pagevars['cat']);
         $catcontext = \context::instance_by_id($contextid);
