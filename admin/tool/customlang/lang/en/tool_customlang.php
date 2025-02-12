@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Language customisation admin tool
+ * Strings for component 'tool_customlang', language 'en'.
  *
  * @package    tool
  * @subpackage customlang
@@ -91,6 +91,3 @@ $string['pluginname'] = 'Language customisation';
 $string['savecheckin'] = 'Save changes to the language pack';
 $string['savecontinue'] = 'Apply changes and continue editing';
 $string['privacy:metadata'] = 'The Language customisation plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.2.
-$string['exportzipfilename'] = 'customlang-export-{$a->lang}.zip';

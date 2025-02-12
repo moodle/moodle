@@ -76,6 +76,3 @@ $string['tograde'] = 'To grade';
 $string['total'] = 'Total';
 $string['unknownquestion'] = 'Unknown question';
 $string['updategrade'] = 'update grades';
-
-// Deprecated since Moodle 4.4.
-$string['grade'] = 'grade';

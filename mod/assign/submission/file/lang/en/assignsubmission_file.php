@@ -45,6 +45,3 @@ $string['pluginname'] = 'File submissions';
 $string['privacy:metadata:filepurpose'] = 'The files loaded for this assignment submission';
 $string['siteuploadlimit'] = 'Site upload limit';
 $string['submissionfilearea'] = 'Uploaded submission files';
-
-// Deprecated since Moodle 4.3.
-$string['numfilesforlog'] = 'The number of file(s) : {$a} file(s).';

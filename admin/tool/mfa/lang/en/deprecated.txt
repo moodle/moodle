@@ -1,7 +1,2 @@
-created,tool_mfa
-createdfromip,tool_mfa
-lastverified,tool_mfa
-revoke,tool_mfa
-setup,tool_mfa
 inputrequired,tool_mfa
 setuprequired,tool_mfa

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'role', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'core_role', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   core_role
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -544,7 +544,3 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
-
-// Deprecated since Moodle 4.2.
-$string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
-$string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';

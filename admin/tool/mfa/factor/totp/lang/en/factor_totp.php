@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * Strings for component 'factor_totp', language 'en'.
  *
  * @package     factor_totp
  * @subpackage  tool_mfa
@@ -83,7 +83,3 @@ $string['summarycondition'] = 'using a TOTP app';
 $string['systimeformat'] = '%l:%M:%S %P %Z';
 $string['verificationcode'] = 'Enter your 6 digit verification code';
 $string['verificationcode_help'] = 'Open your authenticator app such as Google Authenticator and look for the 6 digit code which matches this site and username';
-
-// Deprecated since Moodle 4.4.
-$string['setupfactor:scanfail'] = 'Can\'t scan?';
-$string['setupfactor:scan'] = 'Scan QR code';

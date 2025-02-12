@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language file for 'badges' component
+ * Strings for component 'core_badges', language 'en'.
  *
  * @package    core_badges
  * @subpackage badges
@@ -580,10 +580,6 @@ $string['version'] = 'Version';
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
-
-// Deprecated since Moodle 4.3.
-$string['backpackemail'] = 'Email address';
-$string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
 
 // Deprecated since Moodle 4.5.
 $string['error:cannotact'] = 'Cannot activate the badge. ';

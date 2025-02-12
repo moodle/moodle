@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'glossary', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'mod_glossary', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package mod_glossary
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -337,9 +337,6 @@ $string['withauthor'] = 'Concepts with author';
 $string['withoutauthor'] = 'Concepts without author';
 $string['writtenby'] = 'by';
 $string['youarenottheauthor'] = 'You are not the author of this comment, so you are not allowed to edit it.';
-
-// Deprecated since 4.3.
-$string['completionentriesgroup'] = 'Require entries';
 
 // Deprecated since 4.5.
 $string['tagsdeleted'] = 'Glossary tags have been deleted';

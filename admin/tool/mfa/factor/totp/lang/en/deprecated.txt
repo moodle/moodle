@@ -1,2 +1,0 @@
-setupfactor:scanfail,factor_totp
-setupfactor:scan,factor_totp

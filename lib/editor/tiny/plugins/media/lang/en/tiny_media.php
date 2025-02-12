@@ -113,13 +113,5 @@ $string['videosourcelabel'] = 'Video source URL';
 $string['videowidth'] = 'Video width';
 $string['width'] = 'Width';
 
-// Deprecated since Moodle 4.4.
-$string['alignment'] = 'Alignment';
-$string['alignment_bottom'] = 'Bottom';
-$string['alignment_left'] = 'Left';
-$string['alignment_middle'] = 'Middle';
-$string['alignment_right'] = 'Right';
-$string['alignment_top'] = 'Top';
-
 // Deprecated since Moodle 4.5.
 $string['helplinktext'] = 'Media helper';

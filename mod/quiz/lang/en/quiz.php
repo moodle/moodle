@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'quiz', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'mod_quiz', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   mod_quiz
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -1128,13 +1128,6 @@ $string['questionversion'] = 'v{$a}';
 $string['questionversionlatest'] = 'v{$a} (latest)';
 $string['alwayslatest'] = 'Always latest';
 $string['gobacktoquiz'] = 'Go back';
-
-// Deprecated since Moodle 4.3.
-$string['completionminattemptsgroup'] = 'Require attempts';
-
-// Deprecated since Moodle 4.4.
-$string['grade'] = 'Grade';
-$string['timetaken'] = 'Time taken';
 
 // Deprecated since Moodle 4.5.
 $string['attemptsdeleted'] = 'Quiz attempts deleted';

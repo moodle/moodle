@@ -1,4 +1,0 @@
-customwelcomemessage,enrol_self
-customwelcomemessage_help,enrol_self
-welcometocourse,enrol_self
-welcometocoursetext,enrol_self

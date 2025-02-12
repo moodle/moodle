@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin strings are defined here.
+ * Strings for component 'mod_h5pactivity', language 'en'.
  *
  * @package     mod_h5pactivity
  * @category    string
@@ -149,6 +149,3 @@ $string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank
 $string['view'] = 'View';
 $string['viewattempts'] = 'View attempts ({$a})';
 $string['view_report'] = 'View report';
-
-// Deprecated since Moodle 4.4.
-$string['grade_h5p'] = 'Grade: {$a}';

@@ -120,6 +120,3 @@ $string['uuupdatetype'] = 'Existing user details';
 $string['uuusernametemplate'] = 'Username template';
 $string['privacy:metadata'] = 'The User upload plugin does not store any personal data.';
 $string['warningprefix'] = 'Warning:';
-
-// Deprecated since Moodle 4.4.
-$string['invaliduserdata'] = 'Invalid data detected for user {$a} and it has been automatically cleaned.';

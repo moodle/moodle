@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'webservice', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'core_webservice', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   core_webservice
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -235,7 +235,3 @@ $string['wsdocumentationintro'] = 'To create a client we advise you to read the 
 $string['wsdocumentationlogin'] = 'or enter your web service username and password:';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';
-
-// Deprecated since Moodle 4.2.
-$string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
-$string['cannotgetcoursecontents'] = 'Cannot get course contents';
