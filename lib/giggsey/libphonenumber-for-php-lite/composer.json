@@ -1,0 +1,104 @@
+{
+  "name": "giggsey/libphonenumber-for-php-lite",
+  "type": "library",
+  "description": "A lite version of giggsey/libphonenumber-for-php, which is a PHP Port of Google's libphonenumber",
+  "keywords": [
+    "phonenumber",
+    "libphonenumber",
+    "mobile",
+    "validation",
+    "geocoding",
+    "geolocation"
+  ],
+  "homepage": "https://github.com/giggsey/libphonenumber-for-php-lite",
+  "license": "Apache-2.0",
+  "support": {
+    "source": "https://github.com/giggsey/libphonenumber-for-php-lite",
+    "issues": "https://github.com/giggsey/libphonenumber-for-php-lite/issues"
+  },
+  "authors": [
+    {
+      "name": "Joshua Gigg",
+      "email": "giggsey@gmail.com",
+      "homepage": "https://giggsey.com/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "libphonenumber\\": "src/"
+    },
+    "exclude-from-classmap": [
+        "/src/data/",
+        "/src/carrier/data/",
+        "/src/geocoding/data/",
+        "/src/timezone/data/"
+    ]
+
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "libphonenumber\\buildtools\\": "build/",
+      "libphonenumber\\Tests\\": "tests/"
+    }
+  },
+  "archive": {
+    "exclude": [
+      "build/",
+      "docs/",
+      "tests/",
+      ".github/",
+      ".editorconfig",
+      ".gitattributes",
+      ".gitignore",
+      ".php-cs-fixer.dist.php",
+      "phpstan.neon.dist",
+      "build.xml",
+      "phpunit.xml.dist",
+      "infection.json.dist",
+      "src/CountryCodeToRegionCodeMapForTesting.php"
+    ]
+  },
+  "require": {
+    "php": "^8.1",
+    "symfony/polyfill-mbstring": "^1.17"
+  },
+  "require-dev": {
+    "ext-dom": "*",
+    "friendsofphp/php-cs-fixer": "^3.12",
+    "infection/infection": "^0.28",
+    "pear/pear-core-minimal": "^1.10.11",
+    "pear/pear_exception": "^1.0.2",
+    "pear/versioncontrol_git": "^0.7",
+    "phing/phing": "^2.17.4",
+    "phpstan/extension-installer": "^1.2",
+    "phpstan/phpstan": "^1.8",
+    "phpstan/phpstan-phpunit": "^1.2",
+    "phpunit/phpunit": "^10.5",
+    "symfony/console": "^6.0",
+    "symfony/var-exporter": "^6.0"
+  },
+  "conflict": {
+    "giggsey/libphonenumber-for-php": "*"
+  },
+  "suggest": {
+    "giggsey/libphonenumber-for-php": "Use libphonenumber-for-php for geocoding, carriers, timezones and matching"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "8.x-dev"
+    }
+  },
+  "scripts": {
+    "cs": "vendor/bin/php-cs-fixer fix",
+    "phpstan": "vendor/bin/phpstan",
+    "test": "vendor/bin/phpunit",
+    "metadata": "vendor/bin/phing compile"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "infection/extension-installer": true
+    }
+  }
+}

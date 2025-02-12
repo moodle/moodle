@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,103 +7,76 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '(?:[256]\\d|8)\\d{3}',
-    'PossibleLength' =>
-     [
-      0 => 4,
-      1 => 5,
+return [
+    'id' => 'SH',
+    'countryCode' => 290,
+    'generalDesc' => [
+        'pattern' => '(?:[256]\\d|8)\\d{3}',
+        'posLength' => [
+            4,
+            5,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '2(?:[0-57-9]\\d|6[4-9])\\d\\d',
-    'ExampleNumber' => '22158',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '[56]\\d{4}',
-    'ExampleNumber' => '51234',
-    'PossibleLength' =>
-     [
-      0 => 5,
+    'fixedLine' => [
+        'pattern' => '2(?:[0-57-9]\\d|6[4-9])\\d\\d',
+        'example' => '22158',
     ],
-  ],
-  'tollFree' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '[56]\\d{4}',
+        'example' => '51234',
+        'posLength' => [
+            5,
+        ],
     ],
-  ],
-  'premiumRate' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '262\\d\\d',
-    'ExampleNumber' => '26212',
-    'PossibleLength' =>
-     [
-      0 => 5,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'pattern' => '262\\d\\d',
+        'example' => '26212',
+        'posLength' => [
+            5,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'SH',
-  'countryCode' => 290,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-  ],
-  'mainCountryForCode' => true,
-  'leadingDigits' => '[256]',
-  'mobileNumberPortableRegion' => false,
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '00',
+    'numberFormat' => [],
+    'mainCountryForCode' => true,
+    'leadingDigits' => '[256]',
 ];

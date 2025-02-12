@@ -26,8 +26,6 @@ class Matcher
     private int $searchIndex = 0;
 
     /**
-     * @param string $pattern
-     * @param string $subject
      */
     public function __construct(string $pattern, string $subject)
     {
@@ -36,9 +34,6 @@ class Matcher
     }
 
     /**
-     * @param string $type
-     * @param int $offset
-     * @return bool
      */
     protected function doMatch(string $type = 'find', int $offset = 0): bool
     {

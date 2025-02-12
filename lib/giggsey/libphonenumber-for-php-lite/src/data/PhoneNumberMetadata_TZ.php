@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,134 +7,101 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '(?:[25-8]\\d|41|90)\\d{7}',
-    'PossibleLength' =>
-     [
-      0 => 9,
+return [
+    'id' => 'TZ',
+    'countryCode' => 255,
+    'generalDesc' => [
+        'pattern' => '(?:[25-8]\\d|41|90)\\d{7}',
+        'posLength' => [
+            9,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '2[2-8]\\d{7}',
-    'ExampleNumber' => '222345678',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '77[2-9]\\d{6}|(?:6[125-9]|7[13-689])\\d{7}',
-    'ExampleNumber' => '621234567',
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '80[08]\\d{6}',
-    'ExampleNumber' => '800123456',
-  ],
-  'premiumRate' =>
-   [
-    'NationalNumberPattern' => '90\\d{7}',
-    'ExampleNumber' => '900123456',
-  ],
-  'sharedCost' =>
-   [
-    'NationalNumberPattern' => '8(?:40|6[01])\\d{6}',
-    'ExampleNumber' => '840123456',
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '2[2-8]\\d{7}',
+        'example' => '222345678',
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '41\\d{7}',
-    'ExampleNumber' => '412345678',
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '(?:6[125-9]|7[13-9])\\d{7}',
+        'example' => '621234567',
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'pattern' => '80[08]\\d{6}',
+        'example' => '800123456',
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'pattern' => '90\\d{7}',
+        'example' => '900123456',
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'NationalNumberPattern' => '(?:8(?:[04]0|6[01])|90\\d)\\d{6}',
-  ],
-  'id' => 'TZ',
-  'countryCode' => 255,
-  'internationalPrefix' => '00[056]',
-  'nationalPrefix' => '0',
-  'nationalPrefixForParsing' => '0',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{3})(\\d{2})(\\d{4})',
-      'format' => '$1 $2 $3',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[89]',
-      ],
-      'nationalPrefixFormattingRule' => '0$1',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'sharedCost' => [
+        'pattern' => '8(?:40|6[01])\\d{6}',
+        'example' => '840123456',
     ],
-    1 =>
-     [
-      'pattern' => '(\\d{2})(\\d{3})(\\d{4})',
-      'format' => '$1 $2 $3',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[24]',
-      ],
-      'nationalPrefixFormattingRule' => '0$1',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-    2 =>
-     [
-      'pattern' => '(\\d{2})(\\d{7})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '5',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'voip' => [
+        'pattern' => '41\\d{7}',
+        'example' => '412345678',
     ],
-    3 =>
-     [
-      'pattern' => '(\\d{3})(\\d{3})(\\d{3})',
-      'format' => '$1 $2 $3',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[67]',
-      ],
-      'nationalPrefixFormattingRule' => '0$1',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'pattern' => '(?:8(?:[04]0|6[01])|90\\d)\\d{6}',
+    ],
+    'internationalPrefix' => '00[056]',
+    'nationalPrefix' => '0',
+    'nationalPrefixForParsing' => '0',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{3})(\\d{2})(\\d{4})',
+            'format' => '$1 $2 $3',
+            'leadingDigitsPatterns' => [
+                '[89]',
+            ],
+            'nationalPrefixFormattingRule' => '0$1',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{2})(\\d{3})(\\d{4})',
+            'format' => '$1 $2 $3',
+            'leadingDigitsPatterns' => [
+                '[24]',
+            ],
+            'nationalPrefixFormattingRule' => '0$1',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{2})(\\d{7})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '5',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{3})(\\d{3})(\\d{3})',
+            'format' => '$1 $2 $3',
+            'leadingDigitsPatterns' => [
+                '[67]',
+            ],
+            'nationalPrefixFormattingRule' => '0$1',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

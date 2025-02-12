@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,181 +7,135 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '(?:0549|[5-7]\\d)\\d{6}',
-    'PossibleLength' =>
-     [
-      0 => 8,
-      1 => 10,
+return [
+    'id' => 'SM',
+    'countryCode' => 378,
+    'generalDesc' => [
+        'pattern' => '(?:0549|[5-7]\\d)\\d{6}',
+        'posLength' => [
+            8,
+            10,
+        ],
+        'posLengthLocal' => [
+            6,
+        ],
     ],
-    'PossibleLengthLocalOnly' =>
-     [
-      0 => 6,
+    'fixedLine' => [
+        'pattern' => '0549(?:8[0157-9]|9\\d)\\d{4}',
+        'example' => '0549886377',
+        'posLength' => [
+            10,
+        ],
+        'posLengthLocal' => [
+            6,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '0549(?:8[0157-9]|9\\d)\\d{4}',
-    'ExampleNumber' => '0549886377',
-    'PossibleLength' =>
-     [
-      0 => 10,
+    'mobile' => [
+        'pattern' => '6[16]\\d{6}',
+        'example' => '66661212',
+        'posLength' => [
+            8,
+        ],
     ],
-    'PossibleLengthLocalOnly' =>
-     [
-      0 => 6,
+    'tollFree' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '6[16]\\d{6}',
-    'ExampleNumber' => '66661212',
-    'PossibleLength' =>
-     [
-      0 => 8,
+    'premiumRate' => [
+        'pattern' => '7[178]\\d{6}',
+        'example' => '71123456',
+        'posLength' => [
+            8,
+        ],
     ],
-  ],
-  'tollFree' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'premiumRate' =>
-   [
-    'NationalNumberPattern' => '7[178]\\d{6}',
-    'ExampleNumber' => '71123456',
-    'PossibleLength' =>
-     [
-      0 => 8,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'pattern' => '5[158]\\d{6}',
+        'example' => '58001110',
+        'posLength' => [
+            8,
+        ],
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '5[158]\\d{6}',
-    'ExampleNumber' => '58001110',
-    'PossibleLength' =>
-     [
-      0 => 8,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'internationalPrefix' => '00',
+    'nationalPrefixForParsing' => '([89]\\d{5})$',
+    'nationalPrefixTransformRule' => '0549$1',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{6})',
+            'format' => '$1',
+            'leadingDigitsPatterns' => [
+                '[89]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{2})',
+            'format' => '$1 $2 $3 $4',
+            'leadingDigitsPatterns' => [
+                '[5-7]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{4})(\\d{6})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '0',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'intlNumberFormat' => [
+        [
+            'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{2})',
+            'format' => '$1 $2 $3 $4',
+            'leadingDigitsPatterns' => [
+                '[5-7]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{4})(\\d{6})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '0',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
     ],
-  ],
-  'id' => 'SM',
-  'countryCode' => 378,
-  'internationalPrefix' => '00',
-  'nationalPrefixForParsing' => '([89]\\d{5})$',
-  'nationalPrefixTransformRule' => '0549$1',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{6})',
-      'format' => '$1',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[89]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-    1 =>
-     [
-      'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{2})',
-      'format' => '$1 $2 $3 $4',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[5-7]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-    2 =>
-     [
-      'pattern' => '(\\d{4})(\\d{6})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '0',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-  ],
-  'intlNumberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{2})',
-      'format' => '$1 $2 $3 $4',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[5-7]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-    1 =>
-     [
-      'pattern' => '(\\d{4})(\\d{6})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '0',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
 ];

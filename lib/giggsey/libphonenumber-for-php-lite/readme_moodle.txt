@@ -1,12 +1,23 @@
 # libphonenumber-for-php-lite
 
-## Installation
+## Installation / Update
 
-1. Visit https://github.com/giggsey/libphonenumber-for-php-lite/
-2. Download the latest release
-3. Unzip in this folder
-4. Update `thirdpartylibs.xml`
-5. Remove any unnecessary files, including:
- - Any tests
- - CHANGELOG.md
- - composer.json
+1. Run the following commands
+
+```
+installdir=$(mktemp -d)
+cd "$installdir" || exit
+composer require giggsey/libphonenumber-for-php-lite
+
+cd - || exit
+rm -rf lib/giggsey/libphonenumber-for-php-lite/src
+cp -rf "$installdir"/vendor/giggsey/libphonenumber-for-php-lite/src lib/giggsey/libphonenumber-for-php-lite/src
+cp -rf "$installdir"/vendor/giggsey/libphonenumber-for-php-lite/{composer.json,LICENSE.txt,README.md} lib/giggsey/libphonenumber-for-php-lite
+
+git add lib/giggsey/libphonenumber-for-php-lite
+
+rm -rf "$installdir"
+```
+
+2. Check for any new dependencies
+3. Update `thirdpartylibs.xml`

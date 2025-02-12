@@ -9,9 +9,8 @@ class PhoneNumber implements \Serializable, \Stringable
     /**
      * The country calling code for this number, as defined by the International Telecommunication Union
      * (ITU). For example, this would be 1 for NANPA countries, and 33 for France.
-
      */
-    protected ?int $countryCode = null;
+    protected int $countryCode = 0;
     /**
      * National (significant) Number is defined in International Telecommunication Union (ITU)
      * Recommendation E.164. It is a language/country-neutral representation of a phone number at a
@@ -77,6 +76,7 @@ class PhoneNumber implements \Serializable, \Stringable
      * The number of leading zeros of this phone number.
      */
     protected int $numberOfLeadingZeros = 1;
+    private bool $hasCountryCode = false;
 
     /**
      * Clears this phone number.
@@ -105,7 +105,8 @@ class PhoneNumber implements \Serializable, \Stringable
      */
     public function clearCountryCode(): PhoneNumber
     {
-        $this->countryCode = null;
+        $this->countryCode = 0;
+        $this->hasCountryCode = false;
         return $this;
     }
 
@@ -230,15 +231,10 @@ class PhoneNumber implements \Serializable, \Stringable
      */
     public function hasCountryCode(): bool
     {
-        return $this->countryCode !== null;
+        return $this->hasCountryCode;
     }
 
-    /**
-     * Returns the country code of this phone number.
-     *
-     * @return int|null The country code, or null if not set.
-     */
-    public function getCountryCode(): ?int
+    public function getCountryCode(): int
     {
         return $this->countryCode;
     }
@@ -252,6 +248,7 @@ class PhoneNumber implements \Serializable, \Stringable
      */
     public function setCountryCode(int $value): PhoneNumber
     {
+        $this->hasCountryCode = true;
         $this->countryCode = $value;
         return $this;
     }
@@ -322,8 +319,6 @@ class PhoneNumber implements \Serializable, \Stringable
 
     /**
      * Returns whether this phone number has the italian leading zero information set.
-     *
-     * @return bool
      */
     public function hasItalianLeadingZero(): bool
     {
@@ -506,7 +501,6 @@ class PhoneNumber implements \Serializable, \Stringable
 
     /**
      * Returns a string representation of this phone number.
-     * @return string
      */
     public function __toString(): string
     {
@@ -531,7 +525,7 @@ class PhoneNumber implements \Serializable, \Stringable
     }
 
     /**
-     * @inheritDoc
+     *
      */
     public function serialize(): ?string
     {
@@ -556,7 +550,7 @@ class PhoneNumber implements \Serializable, \Stringable
     }
 
     /**
-     * @inheritDoc
+     *
      */
     public function unserialize($data)
     {
