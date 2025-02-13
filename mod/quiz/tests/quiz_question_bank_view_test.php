@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @category   test
  * @copyright  2018 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_question\local\bank\view
+ * @covers \mod_quiz\question\bank\custom_view
  */
 final class quiz_question_bank_view_test extends \advanced_testcase {
 
@@ -80,6 +80,59 @@ final class quiz_question_bank_view_test extends \advanced_testcase {
 
         // Verify the question has not been loaded into the cache.
         $this->assertFalse($cache->has($questiondata->id));
+    }
+
+    public function test_viewing_question_bank_should_not_load_hidden_question(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        // Create a course and a quiz.
+        $course = $generator->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $context = \context_module::instance($quiz->cmid);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        // Create a question in the default category.
+        $contexts = new question_edit_contexts($context);
+        question_make_default_categories($contexts->all());
+        $cat = question_get_default_category($context->id);
+        $question = $questiongenerator->create_question('numerical', null,
+            ['name' => 'Example question', 'category' => $cat->id]);
+
+        // Create another version.
+        $newversion = $questiongenerator->update_question($question, null, ['name' => 'This is the latest version']);
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($newversion->id, $quiz);
+        // Generate the view.
+        $params = [
+            'qpage' => 0,
+            'qperpage' => 20,
+            'cat' => $cat->id . ',' . $context->id,
+            'recurse' => false,
+            'showhidden' => false,
+            'qbshowtext' => false,
+            'tabname' => 'editq',
+        ];
+        $extraparams = ['cmid' => $cm->id];
+        $view = new custom_view($contexts, new \moodle_url('/'), $course, $cm, $params, $extraparams);
+        ob_start();
+        $view->display();
+        $html = ob_get_clean();
+        // Verify the output should included the latest version.
+        $this->assertStringContainsString('This is the latest version', $html);
+        $this->assertStringNotContainsString('Example question', $html);
+        // Delete the latest version.
+        question_delete_question($newversion->id);
+        // Verify the output should display the old version with status ready.
+        ob_start();
+        $view->display();
+        $html = ob_get_clean();
+        $this->assertStringContainsString('Example question', $html);
+        $this->assertStringNotContainsString('This is the latest version', $html);
     }
 
     public function test_viewing_question_bank_when_paging_out_of_limit(): void {
