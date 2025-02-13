@@ -87,6 +87,7 @@ $string['moretags'] = 'more...';
 $string['name'] = 'Tag name';
 $string['namesalreadybeeingused'] = 'Tag names already being used';
 $string['nameuseddocombine'] = 'The tag name is already in use. Do you want to combine these tags?';
+$string['namewithbadge'] = 'Tag name with badge';
 $string['namewithlink'] = 'Tag name with link';
 $string['newcollnamefor'] = 'New name for tag collection {$a}';
 $string['newnamefor'] = 'New name for tag {$a}';
