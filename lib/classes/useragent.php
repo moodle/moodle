@@ -230,49 +230,31 @@ class core_useragent {
     }
 
     /**
-     * Returns the theme to use for the given device type.
-     *
-     * This used to be get_selected_theme_for_device_type.
-     * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
      * @deprecated since 4.3.
-     * @return bool
      */
+    #[\core\attribute\deprecated(
+        null,
+        since: '4.3',
+        reason: 'All functions associated with device specific themes are being removed',
+        mdl: 'MDL-77793',
+        final: true
+    )]
     public static function get_device_type_theme($devicetype = null) {
-        debugging(
-            __FUNCTION__ . '() is deprecated.' .
-                'All functions associated with device specific themes are being removed.',
-            DEBUG_DEVELOPER
-        );
-        global $CFG;
-        if ($devicetype === null) {
-            $devicetype = self::get_device_type();
-        }
-        $themevarname = self::get_device_type_cfg_var_name($devicetype);
-        if (empty($CFG->$themevarname)) {
-            return false;
-        }
-        return $CFG->$themevarname;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Returns the CFG var used to find the theme to use for the given device.
-     *
-     * Used to be get_device_cfg_var_name.
-     *
-     * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
      * @deprecated since 4.3.
-     * @return string
      */
+    #[\core\attribute\deprecated(
+        null,
+        since: '4.3',
+        reason: 'All functions associated with device specific themes are being removed',
+        mdl: 'MDL-77793',
+        final: true
+    )]
     public static function get_device_type_cfg_var_name($devicetype = null) {
-        debugging(
-            __FUNCTION__ . '() is deprecated.' .
-                'All functions associated with device specific themes are being removed.',
-            DEBUG_DEVELOPER
-        );
-        if ($devicetype == self::DEVICETYPE_DEFAULT || empty($devicetype)) {
-            return 'theme';
-        }
-        return 'theme' . $devicetype;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
