@@ -1,0 +1,7 @@
+issueNumber: MDL-83542
+notes:
+  core_completion:
+    - message: >-
+        Add hook after_cm_completion_updated triggered when an activity
+        completion is updated.
+      type: improved

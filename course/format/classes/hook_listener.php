@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use core_courseformat\hook\after_course_content_updated;
 use core_course\hook\before_course_viewed;
 use core_group\hook\after_group_membership_added;
 use core_group\hook\after_group_membership_removed;
@@ -68,6 +69,45 @@ class hook_listener {
                     redirect($externurl);
                 }
             }
+        }
+    }
+
+    /**
+     * Reset cache for the current user in a course when a course content is updated.
+     *
+     * @param after_course_content_updated $hook The course module created hook.
+     */
+    public static function course_content_updated(
+        after_course_content_updated $hook,
+    ): void {
+        base::session_cache_reset($hook->course);
+    }
+
+    /**
+     * Reset cache for the current user in a course when a role is switched.
+     *
+     * @param \core\hook\access\after_role_switched $hook The role switched hook.
+     */
+    public static function after_role_switched(
+        \core\hook\access\after_role_switched $hook,
+    ): void {
+        if ($coursecontext = $hook->context->get_course_context()) {
+            base::session_cache_reset(get_course($coursecontext->instanceid));
+        }
+    }
+
+    /**
+     * Reset cache for the current user when the course completion has been updated.
+     *
+     * @param \core_completion\hook\after_cm_completion_updated $hook The role switched hook.
+     */
+    public static function after_cm_completion_updated(
+        \core_completion\hook\after_cm_completion_updated $hook,
+    ): void {
+        // The activity completion alters the course state cache for this particular user.
+        $course = get_course($hook->cm->course);
+        if ($course) {
+            base::session_cache_reset($course);
         }
     }
 }
