@@ -322,7 +322,7 @@ class helper {
         $topwhere = $top ? '' : 'AND c.parent <> 0';
         $statuscondition = "AND (qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
             " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' )";
-
+        $substatuscondition = "AND v.status <> '"  . question_version_status::QUESTION_STATUS_HIDDEN . "' ";
         $sql = "SELECT c.*,
                     (SELECT COUNT(1)
                        FROM {question} q
@@ -335,7 +335,7 @@ class helper {
                                 OR (qv.version = (SELECT MAX(v.version)
                                                     FROM {question_versions} v
                                                     JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                                                   WHERE be.id = qbe.id)
+                                                   WHERE be.id = qbe.id $substatuscondition)
                                    )
                                 )
                             ) AS questioncount
