@@ -1,0 +1,17 @@
+issueNumber: MDL-41924
+notes:
+  core_question:
+    - message: >
+        The question backup API has been improved to only include questions that
+        are actually used or owned by backed up activities.
+
+        Any activities that use question references should be supported
+        automatically. Activities that use *question set references* (for
+        example, random quiz questions) need to add a call to
+        `backup_question_set_reference_trait::annotate_set_reference_bank_entries()`
+        alongside the call to
+        `backup_question_set_reference_trait::add_question_set_references()` in
+        their backup step. See
+        `backup_quiz_activity_structure_step::define_structure()` for an
+        example.
+      type: improved
