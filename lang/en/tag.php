@@ -147,6 +147,7 @@ $string['tagarea_post'] = 'Blog posts';
 $string['tagarea_user'] = 'User interests';
 $string['tagarea_course'] = 'Courses';
 $string['tagarea_course_modules'] = 'Activities and resources';
+$string['tagarea_tag'] = 'Related tags';
 $string['tagareaenabled'] = 'Enabled';
 $string['tagareaname'] = 'Name';
 $string['tagareas'] = 'Tag areas';
