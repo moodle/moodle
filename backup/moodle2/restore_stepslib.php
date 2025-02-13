@@ -5494,6 +5494,9 @@ class restore_move_module_questions_categories extends restore_execution_step {
                             'question',
                             $originalquestion->id,
                         );
+                        if (!$backupids) {
+                            continue; // This question was not included in the backup.
+                        }
                         // Restored question references will point to the restored copy of the question. Select question references
                         // that point to that restored copy, only if they are within the target course's context, so we can update
                         // them to point to the original question.
