@@ -78,6 +78,7 @@ final class notification_helper_test extends \advanced_testcase {
      * Test getting users within a quiz that are within our date range.
      */
     public function test_get_users_within_quiz(): void {
+        global $DB;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $helper = \core\di::get(notification_helper::class);
@@ -148,6 +149,32 @@ final class notification_helper_test extends \advanced_testcase {
 
         // User5 should not be in the returned users because they are a teacher.
         $this->assertArrayNotHasKey($user5->id, $users);
+
+        // Let's add some availability conditions.
+        $availability =
+        [
+            'op' => '&',
+            'showc' => [true],
+            'c' => [
+                [
+                    'type' => 'group',
+                    'id' => (int)$group->id,
+                ],
+            ],
+        ];
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
+        $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cm->id]);
+
+        // Rebuild course cache to apply changes.
+        rebuild_course_cache($course->id, true);
+
+        // Get the users after availability conditions of the given quiz.
+        $users = notification_helper::get_users_within_quiz($quiz->id);
+
+        // Returns only users matching availability conditions who are in the specified group.
+        $this->assertCount(2, $users);
+        ksort($users);
+        $this->assertEquals([$user2->id, $user3->id], array_keys($users));
     }
 
     /**
@@ -217,6 +244,27 @@ final class notification_helper_test extends \advanced_testcase {
 
         // There should be a new notification because the 'timeopen' has been updated.
         $this->assertCount(1, $sink->get_messages_by_component('mod_quiz'));
+        // Clear sink.
+        $sink->clear();
+
+        // Let's modify the 'timeopen' one more time and change the visibility.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
+        $DB->set_field('course_modules', 'visible', 0, ['id' => $cm->id]);
+
+        $updatedata = new \stdClass();
+        $updatedata->id = $quiz->id;
+        $updatedata->timeopen = $timeopen + DAYSECS;
+        $DB->update_record('quiz', $updatedata);
+
+        // Run the tasks again.
+        $this->run_notification_helper_tasks();
+
+        // There should not be a new notification because the quiz is not visible.
+        $this->assertCount(0, $sink->get_messages_by_component('mod_quiz'));
+
+        // Set back the visibility.
+        $DB->set_field('course_modules', 'visible', 1, ['id' => $cm->id]);
+
         // Clear sink.
         $sink->clear();
 
