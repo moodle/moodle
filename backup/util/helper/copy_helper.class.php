@@ -43,7 +43,7 @@ final class copy_helper {
             'fullname', // Fullname of the destination course.
             'shortname', // Shortname of the destination course.
             'category', // Category integer ID that contains the destination course.
-            'visible', // Integer to determine of the copied course will be visible.
+            'visible', // Integer to detrmine of the copied course will be visible.
             'startdate', // Integer timestamp of the start of the destination course.
             'enddate', // Integer timestamp of the end of the destination course.
             'idnumber', // ID of the destination course.

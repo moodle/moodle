@@ -270,6 +270,15 @@ abstract class base_task implements checksumable, executable, loggable {
         }
     }
 
+// Protected API starts here
+
+    /**
+     * This function is invoked on activity creation in order to add all the settings
+     * that are associated with one task. The function will, directly, inject the settings
+     * in the task.
+     */
+    abstract protected function define_settings();
+
     /**
      * Add a setting to the task.
      *
@@ -282,15 +291,6 @@ abstract class base_task implements checksumable, executable, loggable {
         }
         $this->settings[] = $setting;
     }
-
-// Protected API starts here
-
-    /**
-     * This function is invoked on activity creation in order to add all the settings
-     * that are associated with one task. The function will, directly, inject the settings
-     * in the task.
-     */
-    abstract protected function define_settings();
 }
 
 /*
