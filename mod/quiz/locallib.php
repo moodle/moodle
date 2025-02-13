@@ -499,13 +499,6 @@ function quiz_delete_attempt($attempt, $quiz) {
         $event->add_record_snapshot('quiz_attempts', $attempt);
         $event->trigger();
 
-        // This class callback is deprecated, and will be removed in Moodle 4.8 (MDL-80327).
-        // Use the attempt_state_changed hook instead.
-        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_attempt_deleted');
-        foreach ($callbackclasses as $callbackclass) {
-            component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
-        }
-
         di::get(hook\manager::class)->dispatch(new attempt_state_changed($attempt, null));
     }
 

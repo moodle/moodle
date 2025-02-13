@@ -585,19 +585,11 @@ final class manager implements
     }
 
     /**
-     * Is the plugin callback from lib.php deprecated by any hook?
-     *
-     * @param string $plugincallback short callback name without the component prefix
-     * @return bool
      * @deprecated in favour of get_hooks_deprecating_plugin_callback since Moodle 4.4.
-     * @todo Remove in Moodle 4.8 (MDL-80327).
      */
-    public function is_deprecated_plugin_callback(string $plugincallback): bool {
-        debugging(
-            'is_deprecated_plugin_callback method is deprecated, use get_hooks_deprecating_plugin_callback instead.',
-            DEBUG_DEVELOPER,
-        );
-        return (bool)$this->get_hooks_deprecating_plugin_callback($plugincallback);
+    #[\core\attribute\deprecated('get_hooks_deprecating_plugin_callback', since: '4.4', mdl: 'MDL-80099', final: true)]
+    public function is_deprecated_plugin_callback(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
