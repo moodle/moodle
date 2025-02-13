@@ -1,0 +1,5 @@
+issueNumber: MDL-78304
+notes:
+  core_mnet:
+    - message: 'Remove deprecated mnet_peer::get_public_key()'
+      type: removed
