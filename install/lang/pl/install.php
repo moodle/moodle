@@ -80,10 +80,11 @@ $string['phpversionhelp'] = '<p>Moodle wymaga wersji PHP co najmniej 5.6.5 lub 7
 <p>Aktualnie używasz wersji {$a}.</p>
 <p>Musisz zaktualizować PHP lub przenieść na host z nowszą wersją PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Widzisz tę stronę, ponieważ z powodzeniem zainstalowałeś i uruchomiłeś <strong>{$a->packname} {$a->packversion}</strong> na swoim komputerze.';
-$string['welcomep30'] = 'Ten instalator <strong>{$a->installername}</strong> zawiera aplikacje, by stworzyć środowisko, w którym będzie działać <strong>Moodle</strong>, czyli';
+$string['welcomep20'] = 'Widzisz tę stronę, ponieważ pomyślnie zainstalowałeś i uruchomiłeś pakiet <strong>{$a->packname} {$a->packversion</strong> na swoim komputerze. Gratulacje!';
+$string['welcomep30'] = 'Ta wersja <strong>{$a->installername}</strong> zawiera aplikacje służące do tworzenia środowiska, w którym będzie działać <strong>Moodle</strong>, a mianowicie:';
 $string['welcomep40'] = 'Pakiet zawiera <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Wszystkie aplikacje w tym pakiecie maja własne, oddzielne licencje. Kompletny pakiet <strong>{$a->installername}</strong> jest <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> i jest dystrybuowany na <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencji.';
-$string['welcomep60'] = 'Nastepujące strony przeprowadzą cię przez instalację <strong>Moodle</strong> na twoim komputerze. Możesz zaakceptować ustawienia domyślne, lub opcjonalnie, dostosować je do swoich potrzeb.';
+$string['welcomep50'] = 'Użycie wszystkich aplikacji w tym pakiecie podlega ich odpowiednim licencjom. Kompletny pakiet <strong>{$a->installername}</strong> jest <a href="https://www.opensource.org/docs/definition_plain.html">open source</a> i jest dystrybuowany na licencji <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep60'] = 'Na poniższych stronach znajdziesz kilka łatwych do wykonania kroków, aby skonfigurować i skonfigurować <strong>Moodle</strong> na swoim komputerze. Możesz zaakceptować domyślne
+ustawienia lub, opcjonalnie, zmienić je, aby odpowiadały Twoim potrzebom.';
 $string['welcomep70'] = 'Kliknij przycisk "Dalej" żeby kontynuować instalację <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adres w sieci';
