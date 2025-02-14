@@ -93,7 +93,7 @@ class date extends base {
      * @param int $columntype
      * @return string
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype): string {
+    public function format_value($value, array $values, array $callbacks, int $columntype): string {
         return format::userdate($value, (object) [], get_string('strftimedaydate', 'core_langconfig'));
     }
 }

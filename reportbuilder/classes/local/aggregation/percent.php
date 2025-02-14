@@ -82,7 +82,7 @@ class percent extends base {
      * @param int $columntype
      * @return string
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype): string {
+    public function format_value($value, array $values, array $callbacks, int $columntype): string {
         if (reset($values) === null) {
             return '';
         }

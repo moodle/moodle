@@ -31,6 +31,18 @@ use core_reportbuilder\local\report\column;
 abstract class base {
 
     /**
+     * Constructor
+     *
+     * @param array $options Aggregation type specific options
+     */
+    public function __construct(
+        /** @var array Aggregation type specific options */
+        protected readonly array $options = [],
+    ) {
+
+    }
+
+    /**
      * Return the class name of the aggregation type
      *
      * @return string
@@ -153,7 +165,7 @@ abstract class base {
      * @param int $columntype The original type of the column, to ensure it is preserved for callbacks
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype) {
+    public function format_value($value, array $values, array $callbacks, int $columntype) {
         foreach ($callbacks as $callback) {
             [$callable, $arguments] = $callback;
             $value = ($callable)($value, (object) $values, $arguments, static::get_class_name());

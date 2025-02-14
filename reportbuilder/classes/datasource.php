@@ -134,11 +134,13 @@ abstract class datasource extends base {
                         " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
                 }
 
+                $columnaggregation = $column->get('aggregation');
+
                 // We should clone the report column to ensure if it's added twice to a report, each operates independently.
                 $this->activecolumns['values'][] = clone $instance
                     ->set_index($index)
                     ->set_persistent($column)
-                    ->set_aggregation($column->get('aggregation'));
+                    ->set_aggregation($columnaggregation, $instance->get_aggregation_options($columnaggregation));
             }
         }
 

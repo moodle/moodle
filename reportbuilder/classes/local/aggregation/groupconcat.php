@@ -100,7 +100,7 @@ class groupconcat extends base {
      * @param int $columntype
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype) {
+    public function format_value($value, array $values, array $callbacks, int $columntype) {
         $firstvalue = reset($values);
         if ($firstvalue === null) {
             return '';
