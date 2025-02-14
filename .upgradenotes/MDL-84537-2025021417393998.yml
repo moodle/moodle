@@ -1,0 +1,8 @@
+issueNumber: MDL-84537
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `groupconcat[distinct]` aggregation types support optional
+        `'separator'` value to specify the text to display between aggregated
+        items
+      type: improved

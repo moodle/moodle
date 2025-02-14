@@ -82,6 +82,44 @@ final class groupconcatdistinct_test extends core_reportbuilder_testcase {
     }
 
     /**
+     * Test aggregation with custom separator option when applied to column
+     */
+    public function test_column_aggregation_separator_option(): void {
+        $this->resetAfterTest();
+
+        // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Apple']);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // Report columns, aggregated/sorted by user lastname.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:lastname',
+            'aggregation' => groupconcatdistinct::get_class_name(),
+            'sortenabled' => 1,
+            'sortdirection' => SORT_ASC,
+        ]);
+
+        // Set aggregation option for separator.
+        $instance = manager::get_report_from_persistent($report);
+        $instance->get_column('user:lastname')
+            ->set_aggregation_options(groupconcatdistinct::get_class_name(), ['separator' => '<br />']);
+
+        // Assert lastname column was aggregated, with defined separator between each item.
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['Bob', 'Apple<br />Banana'],
+            ['Admin', 'User'],
+        ], array_map('array_values', $content));
+    }
+
+    /**
      * Test aggregation when applied to column with multiple fields
      */
     public function test_column_aggregation_multiple_fields(): void {
@@ -145,14 +183,8 @@ final class groupconcatdistinct_test extends core_reportbuilder_testcase {
         // Assert confirmed column was aggregated, and sorted predictably with callback applied.
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_confirmed' => 'Yes (groupconcatdistinct)',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_confirmed' => 'No (groupconcatdistinct), Yes (groupconcatdistinct)',
-            ],
-        ], $content);
+            ['Admin', 'Yes (groupconcatdistinct)'],
+            ['Bob', 'No (groupconcatdistinct), Yes (groupconcatdistinct)'],
+        ], array_map('array_values', $content));
     }
 }

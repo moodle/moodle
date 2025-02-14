@@ -113,6 +113,8 @@ class tag extends base {
             ->add_joins($this->get_joins())
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.flag, {$tagalias}.isstandard")
             ->set_is_sortable(true)
+            ->set_aggregation_options('groupconcat', ['separator' => ' '])
+            ->set_aggregation_options('groupconcatdistinct', ['separator' => ' '])
             ->add_callback(static function($rawname, stdClass $tag): string {
                 if ($rawname === null) {
                     return '';
