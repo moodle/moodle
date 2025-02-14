@@ -33,6 +33,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
+- Add after_role_switched hook that is triggered when we switch role to a new role in a course.
+
+  For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
 - New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
@@ -178,6 +181,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Add hook after_cm_completion_updated triggered when an activity completion is updated.
+
+  For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
 - The method `count_modules_completed` now delegate the logic to count the completed modules to the DBMS improving the performance of the method.
 
   For more information see [MDL-83917](https://tracker.moodle.org/browse/MDL-83917)
@@ -212,6 +218,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
+- Add after_course_content_updated hook triggered when a course content is updated (module modified, ...) through edition.
+
+  For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
 
 #### Changed
 

@@ -13,6 +13,9 @@
 - Add core_courseformat\base::invalidate_all_session_caches to reset course editor cache for all users when course is changed. This method can be used as an alternative to core_courseformat\base::session_cache_reset for resetting the cache for the current user  in case the change in the course should be reflected for all users.
 
   For more information see [MDL-83185](https://tracker.moodle.org/browse/MDL-83185)
+- Add after_course_content_updated hook triggered when a course content is updated (module modified, ...) through edition.
+
+  For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
 
 ### Changed
 
