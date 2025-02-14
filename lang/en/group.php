@@ -163,7 +163,6 @@ $string['newpicture_help'] = 'Select an image in JPG or PNG format. The image wi
 $string['noallocation'] = 'No allocation';
 $string['nogrouping'] = 'No grouping';
 $string['nogroup'] = 'No group';
-$string['nogrouping'] = 'No grouping';
 $string['nogroups'] = 'There are no groups set up in this course yet';
 $string['nogroupsassigned'] = 'No groups assigned';
 $string['nopermissionforcreation'] = 'Can\'t create group "{$a}" as you don\'t have the required permissions';

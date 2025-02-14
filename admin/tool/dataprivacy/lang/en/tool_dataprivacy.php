@@ -127,7 +127,6 @@ $string['dporolemapping'] = 'Privacy officer role mapping';
 $string['dporolemapping_desc'] = 'The privacy officer can manage data requests. The capability tool/dataprivacy:managedatarequests must be allowed for a role to be listed as a privacy officer role mapping option.';
 $string['editcategories'] = 'Edit categories';
 $string['editcategory'] = 'Edit category';
-$string['editcategories'] = 'Edit categories';
 $string['editdefaults'] = 'Edit defaults: {$a}';
 $string['editmoduledefaults'] = 'Edit module defaults';
 $string['editpurpose'] = 'Edit purpose';
