@@ -9,7 +9,7 @@ spec:
       template:
         spec:
           containers:
-          - name: moodle-cron
+          - name: learninghubmoodleimage
             image: learninghubmoodlecrdev.azurecr.io/learninghubmoodleimage:latest
             args: ["php", "/var/www/html/admin/cli/cron.php"]
           restartPolicy: OnFailure
