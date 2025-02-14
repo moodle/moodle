@@ -235,3 +235,6 @@ jobs:
 
       - name: Restart the pods to reload the image
         run: kubectl rollout restart deployment/learninghubmoodledev
+
+      - name: Apply the CronJob
+        run: kubectl apply -f kubectl/cronjob-dev.yml

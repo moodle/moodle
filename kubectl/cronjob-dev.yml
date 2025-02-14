@@ -1,0 +1,15 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: moodle-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: moodle-cron
+            image: learninghubmoodlecrdev.azurecr.io/learninghubmoodleimage:latest
+            args: ["php", "/var/www/html/admin/cli/cron.php"]
+          restartPolicy: OnFailure
