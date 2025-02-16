@@ -305,9 +305,7 @@
             "php",
             "python"
         ],
-        "mnetservice": [
-            "enrol"
-        ],
+        "mnetservice": [],
         "mod": [
             "assign",
             "bigbluebuttonbn",
@@ -618,6 +616,9 @@
         ],
         "message": [
             "jabber"
+        ],
+        "mnetservice": [
+            "enrol"
         ],
         "mod": [
             "assignment",

@@ -39,9 +39,6 @@ if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') 
 $ADMIN->add('mnet', new admin_externalpage('ssoaccesscontrol', new lang_string('ssoaccesscontrol', 'mnet'),
                                            "$CFG->wwwroot/$CFG->admin/mnet/access_control.php",
                                            'moodle/site:config'));
-$ADMIN->add('mnet', new admin_externalpage('mnetenrol', new lang_string('clientname', 'mnetservice_enrol'),
-                                           "$CFG->wwwroot/mnet/service/enrol/index.php",
-                                           'moodle/site:config'));
 $ADMIN->add('mnet', new admin_externalpage('trustedhosts', new lang_string('trustedhosts', 'mnet'),
                                            "$CFG->wwwroot/$CFG->admin/mnet/trustedhosts.php",
                                            'moodle/site:config'));
