@@ -70,6 +70,18 @@ abstract class bulk_action_base extends view_component {
     }
 
     /**
+     * Get the classes of the bulk action menu entry.
+     *
+     * If a bulk action needs to have some classes to be added to the entry to show in the list,
+     * return them with this method.
+     *
+     * @return string For ex: 'text-danger'.
+     */
+    public function get_bulk_action_classes(): string {
+        return '';
+    }
+
+    /**
      * Override if you want to load your own javascript.
      *
      * @return void
