@@ -56,11 +56,15 @@ class core_shutdown_manager {
         // 'pcntl_async_signals'
         // 'pcntl_signal'
         // The 'pcntl' extension is optional and not available on Windows.
-        if (extension_loaded('pcntl') && function_exists('pcntl_async_signals')) {
-            // We capture and handle SIGINT (Ctrl+C) and SIGTERM (termination requested).
-            pcntl_async_signals(true);
-            pcntl_signal(SIGINT, ['core_shutdown_manager', 'signal_handler']);
-            pcntl_signal(SIGTERM, ['core_shutdown_manager', 'signal_handler']);
+        if (extension_loaded('pcntl')) {
+            if (function_exists('pcntl_async_signals')) {
+                // We capture and handle SIGINT (Ctrl+C) and SIGTERM (termination requested).
+                pcntl_async_signals(true);
+            }
+            if (function_exists('pcntl_signal')) {
+                pcntl_signal(SIGINT, ['core_shutdown_manager', 'signal_handler']);
+                pcntl_signal(SIGTERM, ['core_shutdown_manager', 'signal_handler']);
+            }
         }
     }
 
