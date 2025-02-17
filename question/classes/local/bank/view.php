@@ -597,8 +597,17 @@ class view {
     }
 
     /**
-     * Default sort for question data.
-     * @return int[]
+     * Get the default sort columns for this view of the question bank.
+     *
+     * The array keys in the return value need be the standard keys used
+     * to represent sorts. That is [plugin_frankenstyle]__[class_name] and then
+     * and optional bit like '-name' if the column supports muliple ways of sorting.
+     *
+     * The array values should be one of the constants SORT_ASC or SORT_DESC for the default order.
+     *
+     * Therefore, the default implementation below is a good example.
+     *
+     * @return int[] sort key => SORT_ASC or SORT_DESC.
      */
     protected function default_sort(): array {
         $defaultsort = [];
