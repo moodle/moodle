@@ -154,4 +154,22 @@ abstract class assign_submission_plugin extends assign_plugin {
     public function allow_image_conversion() {
         return false;
     }
+
+    /**
+     * Summarise a submission for inclusion in messages.
+     *
+     * Moodle messages can be sent as either HTML or plain text, so you need to
+     * produce two versions of the summary.
+     *
+     * If there is nothing in the submission from your plugin return an array of two empty strings.
+     *
+     * The plain text version should finish in a newline character.
+     * The HTML version should have block-level elements like headings or <p>s as the outer elements.
+     *
+     * @param stdClass $submission the assign_submission record for the submission the message is about.
+     * @return string[] with two elements, a plain text summary and an HTML summary.
+     */
+    public function submission_summary_for_messages(stdClass $submission): array {
+        return ['', ''];
+    }
 }

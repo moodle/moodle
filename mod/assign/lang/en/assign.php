@@ -571,8 +571,8 @@ $string['submissionactions'] = 'Submission actions';
 $string['submissionattachments'] = 'Only show files during submission';
 $string['submissionattachments_help'] = 'Tick the box to only show files on the submission page. Otherwise, files will be shown on both the assignment and submission pages.';
 $string['confirmstart'] = 'You have {$a} to complete this assignment. When you begin, the timer will start to count down and can\'t be paused.';
-$string['submissioncopiedtext'] = 'You have made a copy of your previous
-assignment submission for \'{$a->assignment}\'
+$string['submissioncontains'] = 'Your submission contains:';
+$string['submissioncopiedtext'] = 'You have made a copy of your previous assignment submission for \'{$a->assignment}\'
 
 You can see the status of your assignment submission:
 
@@ -591,9 +591,11 @@ $string['submissionnotopen'] = 'This assignment is not open for submissions';
 $string['submissionnotready'] = 'This assignment is not ready to submit:';
 $string['privacy:submissionpath'] = 'submission';
 $string['submissionplugins'] = 'Submission plugins';
-$string['submissionreceipts'] = 'Send submission receipts';
-$string['submissionreceiptothertext'] = 'Your assignment submission for
-\'{$a->assignment}\' has been submitted.
+$string['submissionreceiptcontains'] = 'Submitted content ({$a->total} items):';
+$string['submissionreceipthtml'] = '<p>Your assignment for <strong>{$a->assignment}</strong> has been successfully submitted.</p>
+<p>You can view your submission and check its status on the <a href="{$a->url}">assignment page</a>.</p>
+{$a->submissionsummaryhtml}';
+$string['submissionreceiptothertext'] = 'Your assignment submission for \'{$a->assignment}\' has been submitted.
 
 You can see the status of your assignment submission:
 
@@ -602,15 +604,15 @@ $string['submissionreceiptotherhtml'] = 'Your assignment submission for
 \'<i>{$a->assignment}</i>\' has been submitted.<br /><br />
 You can see the status of your <a href="{$a->url}">assignment submission</a>.';
 $string['submissionreceiptothersmall'] = 'Your assignment submission for {$a->assignment} has been submitted.';
-$string['submissionreceipttext'] = 'You have submitted an
-assignment submission for \'{$a->assignment}\'
+$string['submissionreceipts'] = 'Send submission receipts';
+$string['submissionreceiptsmall'] = 'Assignment Submission Confirmation - {$a->assignment}';
+$string['submissionreceipttext'] = 'You have submitted an assignment submission for \'{$a->assignment}\'.
 
 You can see the status of your assignment submission:
 
-    {$a->url}';
-$string['submissionreceipthtml'] = '<p>You have submitted an assignment submission for \'<i>{$a->assignment}</i>\'.</p>
-<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
-$string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
+    {$a->url}
+
+{$a->submissionsummarytext}';
 $string['submissions'] = 'Submissions';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
