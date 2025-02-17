@@ -32,5 +32,12 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ],
         'clonepermissionsfrom' => 'atto/h5p:addembed',
+    ],
+    'tiny/h5p:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+        ],
     ]
 ];

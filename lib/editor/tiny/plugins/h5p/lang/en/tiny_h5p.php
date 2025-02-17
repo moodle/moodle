@@ -32,6 +32,7 @@ $string['displayoptions'] = 'Display options';
 $string['downloadbutton'] = 'Allow download';
 $string['embedbutton'] = 'Embed button';
 $string['h5p:addembed'] = 'Add embedded H5P';
+$string['h5p:use'] = 'Use TinyMCE H5P';
 $string['h5pfile'] = 'H5P file upload';
 $string['h5pfileorurl'] = 'H5P URL or file upload';
 $string['h5poptions'] = 'H5P options';

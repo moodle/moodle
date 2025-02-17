@@ -50,12 +50,35 @@ Feature: Use the TinyMCE editor to upload an h5p package
     Then ".h5p-placeholder" "css_element" should exist
 
   @javascript
-  Scenario: When a user does not have any H5P capabilities, they cannot embed H5P content with TinyMCE
-    Given the following "permission overrides" exist:
-      | capability        | permission | role           | contextlevel | reference |
-      | tiny/h5p:addembed | Prohibit   | editingteacher | Course       | C1        |
-    When I am on the PageName1 "page activity editing" page logged in as teacher1
-    Then "Insert H5P content" "button" should not exist
+  Scenario: Permissions can be configured to control access to H5P
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "roles" exist:
+      | name           | shortname | description         | archetype      |
+      | Custom teacher | custom1   | Limited permissions | editingteacher |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | teacher2 | C1     | custom1 |
+    And the following "activity" exists:
+      | activity | assign          |
+      | course   | C1              |
+      | name     | Test assignment |
+    And the following "permission overrides" exist:
+      | capability   | permission | role    | contextlevel | reference |
+      | tiny/h5p:use | Prohibit   | custom1 | Course       | C1        |
+    # Check plugin access as a role with prohibited permissions.
+    And I log in as "teacher2"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    When I click on the "Insert" menu item for the "Activity instructions" TinyMCE editor
+    Then I should not see "Insert H5P content"
+    # Check plugin access as a role with allowed permissions.
+    And I log in as "teacher1"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    And I click on the "Insert" menu item for the "Activity instructions" TinyMCE editor
+    And I should see "Insert H5P content"
 
   @javascript
   Scenario: When a user does not have the Upload H5P capability, they can embed but not upload H5P content with TinyMCE
