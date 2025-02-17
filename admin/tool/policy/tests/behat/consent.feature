@@ -4,7 +4,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
   As a user
   I need to be able to accept site policy during sign up
 
-  Scenario: Accept policy on sign up, no site policy
+  Scenario: Accept policy on sign up manage by plugin, no site policy
     Given the following config values are set as admin:
       | registerauth    | email |
       | passwordpolicy  | 0     |
@@ -16,13 +16,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com     |
+      | Email (again) | user1@example.com     |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -50,13 +50,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -95,13 +95,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -154,13 +154,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -207,13 +207,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -519,13 +519,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     When I press "Create my new account"
     Then I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I follow "Log in"
     When I click on "Create new account" "link"
     # Confirm that the user can view and accept policies when attempting to create another account.
@@ -641,13 +641,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -710,13 +710,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
@@ -852,13 +852,13 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
-      | Email address | user1@address.invalid |
-      | Email (again) | user1@address.invalid |
+      | Email address | user1@example.com |
+      | Email (again) | user1@example.com |
       | First name    | User1                 |
       | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I should see "An email should have been sent to your address at user1@example.com"
     And I confirm email for "user1"
     And I should see "Thanks, User1 L1"
     And I should see "Your registration has been confirmed"
