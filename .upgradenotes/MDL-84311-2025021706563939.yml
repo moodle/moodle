@@ -1,0 +1,7 @@
+issueNumber: MDL-84311
+notes:
+  mnetservice:
+    - message: >-
+        The plugintype mnetservice was deprecated. MNet has been deprecated for
+        many years now and will be removed.
+      type: deprecated
