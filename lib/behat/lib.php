@@ -233,6 +233,12 @@ function behat_clean_init_config() {
             unset($CFG->{$key});
         }
     }
+
+    // Allow email catcher settings.
+    if (defined('TEST_EMAILCATCHER_MAIL_SERVER')) {
+        $CFG->noemailever = false;
+        $CFG->smtphosts = TEST_EMAILCATCHER_MAIL_SERVER;
+    }
 }
 
 /**
