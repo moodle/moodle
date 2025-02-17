@@ -938,6 +938,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 } catch (Exception $e) {
                     print_string('invaliduserexception', 'auth_ldap', print_r($user, true) .  $e->getMessage());
                     $errors++;
+                    $transaction->allow_commit();
                     continue;
                 }
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
