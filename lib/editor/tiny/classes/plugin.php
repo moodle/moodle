@@ -34,7 +34,7 @@ use context;
  */
 abstract class plugin {
     /**
-     * Whether the plugin is enabled
+     * Whether the plugin is enabled and accessible (e.g. capability checks).
      *
      * @param context $context The context that the editor is used within
      * @param array $options The options passed in when requesting the editor
@@ -48,7 +48,18 @@ abstract class plugin {
         array $fpoptions,
         ?editor $editor = null
     ): bool {
-        return true;
+        $plugin = $options['pluginname'];
+        $capability = "tiny/$plugin:use";
+        if (!get_capability_info($capability)) {
+            // Debug warning that the capability does not exist.
+            debugging(
+                'The tiny ' . $plugin . ' plugin does not define the standard capability ' . $capability ,
+                DEBUG_DEVELOPER
+            );
+            return true;
+        }
+
+        return has_capability($capability, $context);
     }
 
     /**
