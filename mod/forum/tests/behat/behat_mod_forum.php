@@ -154,7 +154,7 @@ class behat_mod_forum extends behat_base {
      */
     public function i_click_on_action_menu($discussion) {
         $this->execute('behat_general::i_click_on_in_the', [
-            "[data-container='discussion-tools'] [data-toggle='dropdown']", "css_element",
+            "[data-container='discussion-tools'] [data-bs-toggle='dropdown']", "css_element",
             "//tr[contains(concat(' ', normalize-space(@class), ' '), ' discussion ') and contains(.,'$discussion')]",
             "xpath_element"
         ]);

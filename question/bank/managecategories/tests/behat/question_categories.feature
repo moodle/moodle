@@ -69,7 +69,7 @@ Feature: A teacher can put questions in categories in the question bank
   Scenario: An empty question category can be deleted
     When I am on the "Qbank 1" "core_question > question categories" page
     And I should see "Subcategory & < > \" ' &amp;"
-    And the "title" attribute of "span.qbank_managecategories-newchild.dropready" "css_element" should contain "As new child of Subcategory & < > \" ' &amp;"
+    And the "data-bs-original-title" attribute of "span.qbank_managecategories-newchild.dropready" "css_element" should contain "As new child of Subcategory & < > \" ' &amp;"
     And I open the action menu in "Subcategory" "list_item"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"

@@ -42,8 +42,8 @@
     <div id="{{$region}}{{/region}}-toggle" class="card-header rounded-0" data-region="toggle">
         <button
             class="btn btn-link w-100 text-start p-1 p-sm-2 d-flex rounded-0 align-items-center overview-section-toggle {{^expanded}}collapsed{{/expanded}}"
-            data-toggle="collapse"
-            data-target="#{{$region}}{{/region}}-target-{{uniqid}}"
+            data-bs-toggle="collapse"
+            data-bs-target="#{{$region}}{{/region}}-target-{{uniqid}}"
             aria-expanded="{{#expanded}}true{{/expanded}}{{^expanded}}false{{/expanded}}"
             aria-controls="{{$region}}{{/region}}-target-{{uniqid}}"
         >
@@ -83,7 +83,7 @@
         {{$rootattributes}}
             id="{{$region}}{{/region}}-target-{{uniqid}}"
             aria-labelledby="{{$region}}{{/region}}-toggle"
-            data-parent="#message-drawer-view-overview-container-{{uniqid}}"
+            data-bs-parent="#message-drawer-view-overview-container-{{uniqid}}"
         {{/rootattributes}}
     {{/ core_message/message_drawer_lazy_load_list }}
 </div>

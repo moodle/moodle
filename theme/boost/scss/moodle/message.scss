@@ -364,13 +364,13 @@
 }
 
 $message-send-bg: $gray-300 !default;
-$message-send-color: color-yiq($message-send-bg) !default;
+$message-send-color: color-contrast($message-send-bg) !default;
 $message-send-time-color: mix($message-send-color, $message-send-bg, 100%) !default;
 $message-received-bg: $body-bg !default;
-$message-received-color: color-yiq($message-received-bg) !default;
+$message-received-color: color-contrast($message-received-bg) !default;
 $message-received-color-muted: mix($message-received-color, $message-received-bg, 70%) !default;
 $message-app-bg: mix($message-send-bg, $message-received-bg, 50%) !default;
-$message-day-color: color-yiq($message-app-bg) !default;
+$message-day-color: color-contrast($message-app-bg) !default;
 
 .drawer {
     .message-app {
@@ -656,7 +656,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
             }
         }
 
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             right: -1 * map-get($spacers, 2);
         }
     }

@@ -22,7 +22,7 @@
             position: relative;
         }
 
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             .cb-listitem {
                 flex-basis: 50%;
             }
@@ -114,7 +114,7 @@
             color: $text-muted;
         }
 
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             .cb-column {
                 flex: 0 0 50%;
                 max-width: 50%;
@@ -166,6 +166,6 @@
     overflow-y: auto;
 }
 .cb-navigation-container .singleselect,
-.cb-navigation-container .singleselect .custom-select {
+.cb-navigation-container .singleselect .form-select {
     width: 100%;
 }

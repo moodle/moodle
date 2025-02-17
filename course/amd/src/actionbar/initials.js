@@ -24,7 +24,7 @@
 import Pending from 'core/pending';
 import * as Url from 'core/url';
 import CustomEvents from "core/custom_interaction_events";
-import $ from 'jquery';
+import Dropdown from 'theme_boost/bootstrap/dropdown';
 
 /**
  * Whether the event listener has already been registered for this module.
@@ -67,7 +67,7 @@ export const init = (callingLink, firstInitialParam = 'sifirst',
     const pendingPromise = new Pending();
     registerListenerEvents(callingLink, firstInitialParam, lastInitialParam, additionalParams);
     // BS events always bubble so, we need to listen for the event higher up the chain.
-    $(selectors.parentDomNode).on('shown.bs.dropdown', () => {
+    document.querySelector(selectors.parentDomNode).addEventListener('shown.bs.dropdown', () => {
         document.querySelector(selectors.pageClickableItem).focus({preventScroll: true});
     });
     pendingPromise.resolve();
@@ -142,7 +142,7 @@ const registerListenerEvents = (callingLink, firstInitialParam = 'sifirst',
                     window.location = Url.relativeUrl(callingLink, params);
                 }
                 if (e.target.dataset.action === selectors.formItems.cancel) {
-                    $(`.${selectors.targetButton}`).dropdown('toggle');
+                    Dropdown.getOrCreateInstance(document.querySelector(`.${selectors.targetButton}`)).toggle();
                 }
             }
         });

@@ -1,5 +1,5 @@
 $courseindex-link-color: $list-group-action-color !default;
-$courseindex-link-color-selected: color-yiq($primary) !default;
+$courseindex-link-color-selected: color-contrast($primary) !default;
 $courseindex-link-dimmed-color: $gray-600 !default;
 $courseindex-link-hover-color: black !default;
 $courseindex-item-dragging-bg: shift-color($info, -90%) !default;

@@ -32,7 +32,7 @@
 }}
 {{#haschildren}}
     <li class="dropdown nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
-        <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" id="drop-down-{{moremenuid}}" role="menuitem" data-toggle="dropdown"
+        <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" id="drop-down-{{moremenuid}}" role="menuitem" data-bs-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}"
             {{#title}}title="{{.}}"{{/title}}
             {{#isactive}}aria-current="true"{{/isactive}}
@@ -73,7 +73,7 @@
     <li data-key="{{key}}" class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#istablist}}
             {{#is_action_link}}
-                <a role="tab" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" data-disableactive="true" tabindex="-1"
+                <a role="tab" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-bs-toggle="tab" data-text="{{{text}}}" data-disableactive="true" tabindex="-1"
                     {{#title}}title="{{.}}"{{/title}}
                 >
                     {{{text}}}
@@ -84,7 +84,7 @@
             {{/is_action_link}}
             {{^is_action_link}}
                 <a role="tab" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
-                    href="{{tab}}" data-toggle="tab" data-text="{{{text}}}"
+                    href="{{tab}}" data-bs-toggle="tab" data-text="{{{text}}}"
                     {{#title}}title="{{.}}"{{/title}}
                     {{#isactive}}aria-selected="true"{{/isactive}}
                     data-disableactive="true"

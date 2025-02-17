@@ -26,6 +26,7 @@ import * as View from 'block_timeline/view';
 import * as Notification from 'core/notification';
 import * as Utils from 'core/utils';
 import * as UserRepository from 'core_user/repository';
+import {getFirst} from 'core/normalise';
 
 const SELECTORS = {
     TIMELINE_DAY_FILTER: '[data-region="day-filter"]',
@@ -60,7 +61,7 @@ const registerTimelineDaySelector = function(root, timelineViewRoot) {
 
             var option = $(e.target).closest(SELECTORS.TIMELINE_DAY_FILTER_OPTION);
 
-            if (option.attr('aria-current') == 'true') {
+            if (option.attr('aria-selected') == 'true') {
                 // If it's already active then we don't need to do anything.
                 return;
             }
@@ -107,15 +108,16 @@ const registerViewSelector = function(root, timelineViewRoot) {
 
     // Listen for when the user changes tab so that we can show the first set of courses
     // and load their events when they request the sort by courses view for the first time.
-    viewSelector.on('shown shown.bs.tab', function(e) {
-        View.shown(timelineViewRoot);
-        $(e.target).removeClass('active');
+    getFirst(viewSelector).querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
+        tab.addEventListener('shown.bs.tab', () => {
+            View.shown(timelineViewRoot);
+        });
     });
 
 
     // Event selector for user_sort
     CustomEvents.define(viewSelector, [CustomEvents.events.activate]);
-    viewSelector.on(CustomEvents.events.activate, "[data-toggle='tab']", function(e) {
+    viewSelector.on(CustomEvents.events.activate, "[data-bs-toggle='tab']", function(e) {
         var filtername = $(e.currentTarget).data('filtername');
         var type = 'block_timeline_user_sort_preference';
         UserRepository.setUserPreference(type, filtername)

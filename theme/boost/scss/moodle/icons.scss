@@ -68,10 +68,6 @@ $iconwidthsizes: map-merge((
     filter: url($svg-url);
 }
 
-a i.icon {
-    color: $body-color;
-}
-
 .icon {
     max-width: map-get($iconwidthsizes, 4);
     max-height: map-get($iconsizes, 4);

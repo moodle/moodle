@@ -364,7 +364,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                                         '<div class="header popover-title">' +
                                         '<div role="button" class="btn-close" aria-label="' +
                                         M.util.get_string('closebuttontitle', 'moodle') + '">' +
-                                        '<span aria-hidden="true">&times;</span></div>' +
+                                        '</div>' +
                                         '<h3>'+M.util.get_string('assignroles', 'role')+'</h3>' +
                                         '</div><div class="content popover-content' +
                                         ' d-flex flex-wrap align-items-center mb-3"></div></div>');

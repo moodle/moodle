@@ -128,7 +128,7 @@ export default class SelectedCourses {
         let formData = this.modal.getRoot().find('form').serialize();
 
         if (formData.indexOf('coursecontextids') === -1) {
-            const customSelect = this.modal.getRoot().find('.custom-select');
+            const customSelect = this.modal.getRoot().find('.form-select');
             const invalidText = this.modal.getRoot().find('.invalid-feedback');
             customSelect.addClass('is-invalid');
             invalidText.attr('style', 'display: block');

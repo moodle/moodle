@@ -1,7 +1,7 @@
 {{< core_form/element-template }}
     {{$element}}
     {{^element.frozen}}
-        <select class="form-control custom-select {{#error}}is-invalid{{/error}}" name="{{element.name}}"
+        <select class="form-control form-select {{#error}}is-invalid{{/error}}" name="{{element.name}}"
             id="{{element.id}}"
             {{#element.multiple}}multiple{{/element.multiple}}
             {{#element.size}}size="{{element.size}}"{{/element.size}}

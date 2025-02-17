@@ -8,9 +8,9 @@
 
 // Button styles when a toggle button is active.
 .reportbuilder-wrapper {
-    .btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
-    .dropdown.show .btn-outline-secondary[data-toggle="dropdown"] {
-        color: color-yiq($gray-600);
+    .btn-outline-secondary[data-bs-toggle="collapse"]:not(.collapsed),
+    .dropdown.show .btn-outline-secondary[data-bs-toggle="dropdown"] {
+        color: color-contrast($gray-600);
         background-color: $gray-600;
         border-color: $gray-600;
     }
@@ -47,7 +47,7 @@ $rb-filters-footer-height: 4rem;
     padding: 0 0 $rb-filters-footer-height 0;
     z-index: $zindex-modal;
     overflow: hidden;
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         width: 100%;
     }
 }
@@ -97,7 +97,7 @@ $rb-filters-footer-height: 4rem;
             flex: 1;
             min-width: 0;
             span,
-            .custom-select {
+            .form-select {
                 width: 100%;
             }
         }
@@ -444,7 +444,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
 
 .reportbuilder-report[data-report-type="0"]:not([data-editing]) {
     // Report card view for small screens (if not forcing table).
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         &:not([data-force-table]) {
             @include table-cards;
         }

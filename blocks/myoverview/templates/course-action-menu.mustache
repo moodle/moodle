@@ -27,13 +27,13 @@
 <div class="ms-auto dropdown">
     <button class="btn btn-link btn-icon icon-size-3 coursemenubtn"
         type="button"
-        data-toggle="dropdown"
+        data-bs-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false">
         <i class="icon fa fa-ellipsis-v fa-fw m-0" title="{{#str}} aria:courseactions, block_myoverview {{/str}} {{{fullname}}}" aria-hidden="true"></i>
         <span class="visually-hidden">{{#str}} aria:courseactions, block_myoverview {{/str}} {{{fullname}}}</span>
     </button>
-    <div class="dropdown-menu dropdown-menu-right">
+    <div class="dropdown-menu dropdown-menu-end">
         <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#"
             data-action="add-favourite"
             data-course-id="{{id}}"

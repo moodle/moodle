@@ -69,8 +69,8 @@ Feature: Restore Moodle 2 course backups with different user data settings
     # "-" marks the user data field for the data activity
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings |  Include enrolled users | 1 |
-      | Schema | User data | 0 |
       | Schema | - | 0 |
+      | Schema | User data | 0 |
     Then I should see "Test database name"
     When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"

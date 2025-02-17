@@ -120,7 +120,7 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['searchdropdown'] = $userselector->export_for_template($output);
             // The collapsed column dialog is aligned to the edge of the screen, we need to place it such that it also aligns.
-            $collapsemenudirection = right_to_left() ? 'dropdown-menu-left' : 'dropdown-menu-right';
+            $collapsemenudirection = right_to_left() ? 'dropdown-menu-start' : 'dropdown-menu-end';
 
             $collapse = new comboboxsearch(
                 true,

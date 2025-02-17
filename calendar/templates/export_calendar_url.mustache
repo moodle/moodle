@@ -30,17 +30,15 @@
             <label for="calendarexporturl">{{#str}}calendarexporturl, calendar{{/str}}</label>
             <div class="input-group">
                 <input type="text" id="calendarexporturl" class="form-control" value="{{calendarexporturl}}" readonly />
-                <div class="input-group-append">
-                    <button id="copyexporturl" {{!
-                        }} data-action="copytoclipboard"{{!
-                        }} data-clipboard-target="#calendarexporturl"{{!
-                        }} data-clipboard-success-message="{{#str}}calendarurlcopiedtoclipboard, core_calendar{{/str}}"{{!
-                        }} class="btn btn-secondary"{{!
-                        }} aria-label="{{#str}}copycalendarurl, calendar{{/str}}"{{!
-                    }} disabled>
-                        {{#str}}copyurl, calendar{{/str}}
-                    </button>
-                </div>
+                <button id="copyexporturl" {{!
+                    }} data-action="copytoclipboard"{{!
+                    }} data-clipboard-target="#calendarexporturl"{{!
+                    }} data-clipboard-success-message="{{#str}}calendarurlcopiedtoclipboard, core_calendar{{/str}}"{{!
+                    }} class="btn btn-secondary"{{!
+                    }} aria-label="{{#str}}copycalendarurl, calendar{{/str}}"{{!
+                }} disabled>
+                    {{#str}}copyurl, calendar{{/str}}
+                </button>
             </div>
         </div>
     </div>

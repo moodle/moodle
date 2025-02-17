@@ -34,15 +34,15 @@
     }
 }}
 
-<div class="custom-control custom-switch {{$extraclasses}}{{extraclasses}}{{/extraclasses}}">
-    <input type="checkbox" class="custom-control-input" id="{{$id}}{{id}}{{/id}}"
+<div class="form-check form-switch {{$extraclasses}}{{extraclasses}}{{/extraclasses}}">
+    <input type="checkbox" class="form-check-input" id="{{$id}}{{id}}{{/id}}"
         {{$attributes}}
             {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}}
             {{#checked}}checked{{/checked}}
             {{#disabled}}disabled{{/disabled}}
         {{/attributes}}>
     {{$labelmarkup}}
-        <label class="custom-control-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-toggle="tooltip" data-placement="top" title="{{title}}"{{/title}}>
+        <label class="form-check-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"{{/title}}>
             <span class="{{$labelclasses}}{{labelclasses}}{{/labelclasses}}">{{$label}}{{label}}{{/label}}</span>
         </label>
     {{/labelmarkup}}

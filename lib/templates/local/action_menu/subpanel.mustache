@@ -36,7 +36,7 @@
     }
 }}
 <div
-    class="dropdown-subpanel position-relative dropright"
+    class="dropdown-subpanel position-relative dropend"
     id="{{id}}"
 >
     <a
@@ -57,7 +57,7 @@
         {{/itemicon}}
         <span class="menu-action-text" id="actionmenuactionsubpanel-{{instance}}">{{{text}}}</span>
     </a>
-    <div class="dropdown-menu dropdown-subpanel-content" role="menu">
+    <div class="dropdown-menu dropdown-subpanel-content" role="menu" data-bs-popper="static">
         {{{subpanelcontent}}}
     </div>
 </div>

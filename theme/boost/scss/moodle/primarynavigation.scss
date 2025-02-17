@@ -9,18 +9,13 @@
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .primary-navigation {
         display: none;
     }
     .editmode-switch-form label {
         @include visually-hidden();
     }
-}
-
-.editmode-switch-form .custom-control-input {
-    width: 100%;
-    z-index: 1;
 }
 
 .drawer-primary .drawercontent {

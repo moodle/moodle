@@ -51,10 +51,10 @@
         </a>
     </div>
     <h2 class="mt-2 text-center text-truncate">{{fullname}}</h2>
-    <div class="px-4 mt-4">
+    <div class="px-4 mt-4 d-grid gap-2">
         <button
             type="button"
-            class="btn btn-primary btn-block {{^isblocked}}hidden{{/isblocked}}"
+            class="btn btn-primary {{^isblocked}}hidden{{/isblocked}}"
             data-route="view-conversation"
             data-route-param-1=""
             data-route-param-2="unblock"
@@ -64,7 +64,7 @@
         </button>
         <button
             type="button"
-            class="btn btn-danger btn-block {{#isblocked}}hidden{{/isblocked}}"
+            class="btn btn-danger {{#isblocked}}hidden{{/isblocked}}"
             data-route="view-conversation"
             data-route-param-1=""
             data-route-param-2="block"
@@ -74,7 +74,7 @@
         </button>
         <button
             type="button"
-            class="btn btn-danger btn-block {{^iscontact}}hidden{{/iscontact}}"
+            class="btn btn-danger {{^iscontact}}hidden{{/iscontact}}"
             data-route="view-conversation"
             data-route-param-1=""
             data-route-param-2="remove-contact"
@@ -84,7 +84,7 @@
         </button>
         <button
             type="button"
-            class="btn btn-primary btn-block {{#iscontact}}hidden{{/iscontact}}"
+            class="btn btn-primary {{#iscontact}}hidden{{/iscontact}}"
             data-route="view-conversation"
             data-route-param-1=""
             data-route-param-2="add-contact"

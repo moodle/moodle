@@ -83,7 +83,7 @@ class data_field_menu extends data_field_base {
         }
         $str .= '</label>';
         $str .= html_writer::select($options, 'field_'.$this->field->id, $content, array('' => get_string('menuchoose', 'data')),
-                                    array('id' => 'field_'.$this->field->id, 'class' => 'mod-data-input custom-select'));
+                                    ['id' => 'field_'.$this->field->id, 'class' => 'mod-data-input form-select']);
 
         $str .= '</div>';
 
@@ -125,7 +125,7 @@ class data_field_menu extends data_field_base {
         $return = html_writer::label(get_string('fieldtypelabel', "datafield_" . $this->type),
             'menuf_' . $this->field->id, false, array('class' => 'accesshide'));
         $return .= html_writer::select($options, 'f_'.$this->field->id, $content, array('' => get_string('menuchoose', 'data')),
-                array('class' => 'custom-select'));
+                ['class' => 'form-select']);
         return $return;
     }
 

@@ -39,39 +39,37 @@
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
             {{/hiddenfields}}
             <div class="input-group">
+
+                <input type="text"
+                    id="searchinput-{{uniqid}}"
+                    class="form-control withclear"
+                    placeholder="{{{ searchstring }}}"
+                    aria-label="{{{ searchstring }}}"
+                    name="{{{ inputname }}}"
+                    data-region="input"
+                    autocomplete="off"
+                >
                 <label for="searchinput-{{uniqid}}">
                     <span class="visually-hidden">{{{ searchstring }}}</span>
                 </label>
-                    <input type="text"
-                       id="searchinput-{{uniqid}}"
-                       class="form-control withclear"
-                       placeholder="{{{ searchstring }}}"
-                       aria-label="{{{ searchstring }}}"
-                       name="{{{ inputname }}}"
-                       data-region="input"
-                       autocomplete="off"
-                    >
-                    <a class="btn btn-close"
-                        data-action="closesearch"
-                        data-toggle="collapse"
-                        href="#searchform-navbar"
-                        role="button"
-                    >
-                        {{#pix}} e/cancel, core {{/pix}}
-                        <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
-                    </a>
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-submit" data-action="submit">
-                        {{#pix}} a/search, core {{/pix}}
-                        <span class="visually-hidden">{{{ searchstring }}}</span>
-                    </button>
-                </div>
+                <a class="btn btn-close"
+                    data-action="closesearch"
+                    data-bs-toggle="collapse"
+                    href="#searchform-navbar"
+                    role="button"
+                >
+                    <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
+                </a>
+                <button type="submit" class="btn btn-submit" data-action="submit">
+                    {{#pix}} a/search, core {{/pix}}
+                    <span class="visually-hidden">{{{ searchstring }}}</span>
+                </button>
             </div>
         </form>
     </div>
     <a
         class="btn btn-open rounded-0 nav-link"
-        data-toggle="collapse"
+        data-bs-toggle="collapse"
         data-action="opensearch"
         href="#searchform-navbar"
         role="button"
@@ -92,25 +90,27 @@ require(
 function(
     $
 ) {
-    var uniqid = "{{uniqid}}";
-    var container = $('#searchinput-navbar-' + uniqid);
-    var opensearch = container.find('[data-action="opensearch"]');
-    var input = container.find('[data-region="input"]');
-    var submit = container.find('[data-action="submit"]');
+    const container = document.getElementById('searchform-navbar');
+    const opensearch = container.parentElement.querySelector('[data-action="opensearch"]');
+    const input = container.querySelector('[data-region="input"]');
+    const submit = container.querySelector('[data-action="submit"]');
 
-    submit.on('click', function(e) {
-        if (input.val() === '') {
+    submit.addEventListener('click', (e) => {
+        if (input.valUE === '') {
             e.preventDefault();
         }
     });
-    container.on('hidden.bs.collapse', function() {
-        opensearch.removeClass('d-none');
-        input.val('');
+
+    container.addEventListener('hidden.bs.collapse', () => {
+        opensearch.classList.remove('d-none');
+        input.value = '';
     });
-    container.on('show.bs.collapse', function() {
-        opensearch.addClass('d-none');
+
+    container.addEventListener('show.bs.collapse', () => {
+        opensearch.classList.add('d-none');
     });
-    container.on('shown.bs.collapse', function() {
+
+    container.addEventListener('shown.bs.collapse', () => {
         input.focus();
     });
 });

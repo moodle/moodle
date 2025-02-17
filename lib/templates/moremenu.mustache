@@ -56,10 +56,10 @@
             {{> core/moremenu_children}}
         {{/nodearray}}
         <li role="none" class="nav-item dropdown dropdownmoremenu d-none" data-region="morebutton">
-            <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="{{#istablist}}tab{{/istablist}}{{^istablist}}menuitem{{/istablist}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+            <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="{{#istablist}}tab{{/istablist}}{{^istablist}}menuitem{{/istablist}}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
                 {{#str}}moremenu, core{{/str}}
             </a>
-            <ul class="dropdown-menu dropdown-menu-left" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
+            <ul class="dropdown-menu dropdown-menu-start" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
             </ul>
         </li>
     </ul>

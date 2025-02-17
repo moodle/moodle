@@ -34,20 +34,18 @@
 }}
 <div id="region-sidebar-menu-{{uniqid}}" class="reportbuilder-sidebar-menu d-flex flex-column me-lg-3 mb-3 mb-lg-0" data-region="sidebar-menu">
     <div class="input-group mb-3">
+        <input id="reportbuilder-sidebar-search"
+            type="text"
+            class="form-control rounded-start border-end-0"
+            placeholder="{{#str}} search, core_search {{/str}}"
+            aria-label="{{#str}} search, core_search {{/str}}"
+            data-action="sidebar-search">
         <label for="reportbuilder-sidebar-search">
             <span class="visually-hidden">{{#str}} search, core_search {{/str}}</span>
         </label>
-        <input id="reportbuilder-sidebar-search"
-               type="text"
-               class="form-control rounded-start border-end-0"
-               placeholder="{{#str}} search, core_search {{/str}}"
-               aria-label="{{#str}} search, core_search {{/str}}"
-               data-action="sidebar-search">
-        <div class="input-group-append">
-            <span class="input-group-text ps-2 pe-0 bg-white">
-                {{#pix}} a/search, core {{/pix}}
-            </span>
-        </div>
+        <span class="input-group-text ps-2 pe-0 bg-white">
+            {{#pix}} a/search, core {{/pix}}
+        </span>
     </div>
     <div class="reportbuilder-sidebar-menu-cards">
         {{#sidebarmenucards}}

@@ -21,7 +21,7 @@
 {{- else -}}
   {{- safeHTML .Params.head -}}
   {{- $numberOfPages := (add (len .Pages) (len .Sections)) -}}
-<li class="{{ if .IsAncestor $currentNode }}parent{{ end }}{{ if and .File $currentNode.File }}{{ if eq .File.UniqueID $currentNode.File.UniqueID }} active{{ end }}{{ end }}{{ if .Params.alwaysopen }} parent{{ end }}"><a href="{{ if .IsPage }}{{ .Permalink }}{{ else}}#{{ end }}" data-toggle="collapse" data-target="#collapse{{ .File.UniqueID }}" aria-expanded="true" aria-controls="collapse{{ .File.UniqueID }}" class="dropdown-toggle"><div class="text-truncate">{{ safeHTML .Params.Pre }}{{ .Title }}{{ safeHTML .Params.Post }}</div></a>
+<li class="{{ if .IsAncestor $currentNode }}parent{{ end }}{{ if and .File $currentNode.File }}{{ if eq .File.UniqueID $currentNode.File.UniqueID }} active{{ end }}{{ end }}{{ if .Params.alwaysopen }} parent{{ end }}"><a href="{{ if .IsPage }}{{ .Permalink }}{{ else}}#{{ end }}" data-bs-toggle="collapse" data-bs-target="#collapse{{ .File.UniqueID }}" aria-expanded="true" aria-controls="collapse{{ .File.UniqueID }}" class="dropdown-toggle"><div class="text-truncate">{{ safeHTML .Params.Pre }}{{ .Title }}{{ safeHTML .Params.Post }}</div></a>
   {{ if ne $numberOfPages 0 }}
 <ul id="collapse{{ .File.UniqueID }}" class="sub-menu collapse {{ if .IsAncestor $currentNode }}show{{ end }}">
     {{- .Scratch.Set "pages" .Pages -}}

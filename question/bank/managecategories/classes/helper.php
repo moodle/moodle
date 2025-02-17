@@ -272,7 +272,7 @@ class helper {
         );
         $attrs = [
             'id' => 'id_movetocategory',
-            'class' => 'custom-select',
+            'class' => 'form-select',
             'data-action' => 'toggle',
             'data-togglegroup' => 'qbank',
             'data-toggle' => 'action',

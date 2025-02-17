@@ -86,7 +86,7 @@ class copy_form extends \moodleform {
         $mform->setConstant('returnurl', $returnurl);
 
         // Form heading.
-        $mform->addElement('html', \html_writer::div(get_string('copycoursedesc', 'backup'), 'form-description mb-6'));
+        $mform->addElement('html', \html_writer::div(get_string('copycoursedesc', 'backup'), 'form-text mb-6'));
 
         // Course fullname.
         $mform->addElement('text', 'fullname', get_string('fullnamecourse'),

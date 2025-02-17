@@ -70,7 +70,7 @@ const sidebarCardFilter = (event, sidebarMenu) => {
  * @param {Element} card
  */
 const expandCard = (card) => {
-    let cardButton = card.querySelector('[data-toggle="collapse"]');
+    let cardButton = card.querySelector('[data-bs-toggle="collapse"]');
     if (cardButton.classList.contains(CLASSES.COLLAPSED)) {
         cardButton.classList.remove(CLASSES.COLLAPSED);
         cardButton.setAttribute('aria-expanded', "true");

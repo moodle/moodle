@@ -30,15 +30,13 @@ In order for this to work you need to use the JavaScript syntax used in core Mus
 {{#js}}
 require(
 [
-    'jquery',
     'theme_boost/toast',
 ],
 function(
-    $,
     Toast
 ) {
-    var root = $('#toasttest');
-    root.toast('show');
+    const toastTrigger = document.getElementById('toasttest');
+    new Toast(toastTrigger).show();
 });
 {{/js}}
 {{< /example >}}

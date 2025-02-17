@@ -125,7 +125,7 @@
                     <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <select name="forumid" id="menuforumid" class="form-control custom-select">
+                    <select name="forumid" id="menuforumid" class="form-control form-select">
                         {{#forumoptions}}
                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                         {{/forumoptions}}
@@ -164,7 +164,7 @@
                         <label for="tags" class="mt-1">{{#str}}searchtags, forum{{/str}}</label>
                     </td>
                     <td class="c1">
-                        <select class="custom-select" name="tags[]"
+                        <select class="form-select" name="tags[]"
                                 id="tags" multiple>
                             {{#tagoptions}}
                                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>

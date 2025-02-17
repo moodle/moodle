@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import $ from 'jquery';
+import Tab from 'theme_boost/bootstrap/tab';
 import Pending from 'core/pending';
 import * as FocusLockManager from 'core/local/aria/focuslock';
 
@@ -135,7 +135,7 @@ const dropdownFix = () => {
 
         // We only want to set focus when users access the dropdown via keyboard as per
         // guidelines defined in w3 aria practices 1.1 menu-button.
-        if (e.target.matches('[data-toggle="dropdown"]')) {
+        if (e.target.matches('[data-bs-toggle="dropdown"]')) {
             handleMenuButton(e);
         }
 
@@ -194,7 +194,7 @@ const dropdownFix = () => {
     });
 
     // Trap focus if the dropdown is a dialog.
-    $(document).on('shown.bs.dropdown', e => {
+    document.addEventListener('shown.bs.dropdown', e => {
         const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
@@ -205,14 +205,14 @@ const dropdownFix = () => {
     });
 
     // Untrap focus when the dialog dropdown is closed.
-    $(document).on('hidden.bs.dropdown', e => {
+    document.addEventListener('hidden.bs.dropdown', e => {
         const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
         if (dialog) {
             FocusLockManager.untrapFocus();
         }
 
         // We need to focus on the menu trigger.
-        const trigger = e.target.querySelector('[data-toggle="dropdown"]');
+        const trigger = e.target.querySelector('[data-bs-toggle="dropdown"]');
         // If it's a click event, then no element is focused because the clicked element is inside a closed dropdown.
         const focused = e.clickEvent?.target || (document.activeElement !== document.body ? document.activeElement : null);
         if (trigger && focused && e.target.contains(focused)) {
@@ -227,13 +227,30 @@ const dropdownFix = () => {
             });
         }
     });
+
+    // Prevent closing the dropdown when the autocomplete suggestions are visible.
+    document.addEventListener('hide.bs.dropdown', (e) => {
+        const dropdown = e.target.closest('.dropdown');
+        if (!dropdown) {
+            return;
+        }
+        const autocompleteSuggestions = document.querySelector('.form-autocomplete-suggestions:not([aria-hidden="true"])');
+        if (autocompleteSuggestions) {
+            // Dropdown should not be hidden while the autocomplete suggestions are visible inside.
+            e.preventDefault();
+            // Return the focus to the autocomplete input.
+            const autocompleteElement = autocompleteSuggestions.closest('[data-fieldtype="autocomplete"]');
+            const autocompleteInput = autocompleteElement.querySelector('.form-autocomplete-input input');
+            setTimeout(()=> autocompleteInput.focus(), 1000);
+        }
+    });
 };
 
 /**
  * A lot of Bootstrap's out of the box features don't work if dropdown items are not focusable.
  */
 const comboboxFix = () => {
-    $(document).on('show.bs.dropdown', e => {
+    document.addEventListener('show.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
             const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
@@ -257,7 +274,7 @@ const comboboxFix = () => {
         }
     });
 
-    $(document).on('hidden.bs.dropdown', e => {
+    document.addEventListener('hidden.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
             const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
@@ -483,10 +500,10 @@ const tabElementFix = () => {
     });
 
     document.addEventListener('click', e => {
-        if (e.target.matches('[role="tablist"] [data-toggle="tab"], [role="tablist"] [data-toggle="pill"]')) {
-            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-toggle="tab"], [data-toggle="pill"]');
+        if (e.target.matches('[role="tablist"] [data-bs-toggle="tab"], [role="tablist"] [data-bs-toggle="pill"]')) {
+            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-bs-toggle="tab"], [data-bs-toggle="pill"]');
             e.preventDefault();
-            $(e.target).tab('show');
+            Tab.getOrCreateInstance(e.target).show();
             tabs.forEach(tab => {
                 tab.tabIndex = -1;
             });
@@ -502,7 +519,7 @@ const tabElementFix = () => {
  */
 const collapseFix = () => {
     document.addEventListener('keydown', e => {
-        if (e.target.matches('[data-toggle="collapse"]')) {
+        if (e.target.matches('[data-bs-toggle="collapse"]')) {
             // Pressing space should toggle expand/collapse.
             if (e.key === ' ') {
                 e.preventDefault();

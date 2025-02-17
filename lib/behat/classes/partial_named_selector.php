@@ -227,7 +227,7 @@ XPATH
         //div[@data-region='empty-message-container' and not(contains(@class, 'hidden')) and contains(., %locator%)]
 XPATH
     , 'group_message_tab' => <<<XPATH
-        .//*[@data-region='message-drawer']//button[@data-toggle='collapse' and contains(string(), %locator%)]
+        .//*[@data-region='message-drawer']//button[@data-bs-toggle='collapse' and contains(string(), %locator%)]
 XPATH
     , 'group_message_list_area' => <<<XPATH
         .//*[@data-region='message-drawer']//*[contains(@data-region, concat('view-overview-', %locator%))]

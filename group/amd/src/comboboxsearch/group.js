@@ -62,7 +62,7 @@ export default class GroupSearch extends search_combobox {
             searchValueElement.value = '';
         });
 
-        this.$component.on('hide.bs.dropdown', () => {
+        this.component.addEventListener('hide.bs.dropdown', () => {
             this.searchInput.removeAttribute('aria-activedescendant');
 
             const listbox = document.querySelector(`#${this.searchInput.getAttribute('aria-controls')}[role="listbox"]`);

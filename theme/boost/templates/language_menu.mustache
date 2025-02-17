@@ -43,14 +43,14 @@
 }}
 <div class="langmenu">
     <div class="dropdown show">
-        <a href="#" role="button" id="lang-menu-toggle" data-toggle="dropdown" aria-label="{{#str}}language{{/str}}" aria-haspopup="true" aria-controls="lang-action-menu" class="btn dropdown-toggle">
+        <a href="#" role="button" id="lang-menu-toggle" data-bs-toggle="dropdown" aria-label="{{#str}}language{{/str}}" aria-haspopup="true" aria-controls="lang-action-menu" class="btn dropdown-toggle">
             <i class="icon fa fa-language fa-fw me-1" aria-hidden="true"></i>
             <span class="langbutton">
                 {{title}}
             </span>
             <b class="caret"></b>
         </a>
-        <div role="menu" aria-labelledby="lang-menu-toggle" id="lang-action-menu" class="dropdown-menu dropdown-menu-right">
+        <div role="menu" aria-labelledby="lang-menu-toggle" id="lang-action-menu" class="dropdown-menu dropdown-menu-end">
             {{#items}}
                 {{#link}}
                     <a href="{{{url}}}" class="dropdown-item ps-5" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}

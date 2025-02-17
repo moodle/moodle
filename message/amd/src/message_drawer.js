@@ -412,17 +412,21 @@ function(
 
         // These are theme-specific to help us fix random behat fails.
         // These events target those events defined in BS3 and BS4 onwards.
-        root.on('hide.bs.collapse', '.collapse', function(e) {
-            var pendingPromise = new Pending();
-            $(e.target).one('hidden.bs.collapse', function() {
-                pendingPromise.resolve();
+        root[0].querySelectorAll('.collapse').forEach((collapse) => {
+            collapse.addEventListener('hide.bs.collapse', (e) => {
+                var pendingPromise = new Pending();
+                e.target.addEventListener('hidden.bs.collapse', function() {
+                    pendingPromise.resolve();
+                }, {once: true});
             });
         });
 
-        root.on('show.bs.collapse', '.collapse', function(e) {
-            var pendingPromise = new Pending();
-            $(e.target).one('shown.bs.collapse', function() {
-                pendingPromise.resolve();
+        root[0].querySelectorAll('.collapse').forEach((collapse) => {
+            collapse.addEventListener('show.bs.collapse', (e) => {
+                var pendingPromise = new Pending();
+                e.target.addEventListener('shown.bs.collapse', function() {
+                    pendingPromise.resolve();
+                }, {once: true});
             });
         });
 

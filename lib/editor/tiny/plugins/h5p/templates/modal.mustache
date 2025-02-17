@@ -79,10 +79,8 @@
                         }} size="32"{{!
                     }} />
                     {{#canUpload}}
-                        <span class="input-group-append">
-                            <button class="btn btn-secondary" type="button" data-target="filepicker">
-                            {{#str}} browserepositories, tiny_h5p{{/str}}</button>
-                        </span>
+                        <button class="btn btn-secondary" type="button" data-target="filepicker">
+                        {{#str}} browserepositories, tiny_h5p{{/str}}</button>
                     {{/canUpload}}
                 </div>
 
@@ -90,7 +88,7 @@
                     <fieldset class="mt-2 collapsible" id="{{elementid}}-{{uniqid}}-options">
                         <legend class="d-flex align-items-center px-1">
                             <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
-                                <a role="button" data-toggle="collapse"{{!
+                                <a role="button" data-bs-toggle="collapse"{{!
                                     }} href="#h5poptions"{{!
                                     }} aria-expanded="{{#showOptions}}true{{/showOptions}}{{^showOptions}}false{{/showOptions}}"{{!
                                     }} aria-controls="h5poptions"{{!

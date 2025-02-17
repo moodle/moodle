@@ -54,7 +54,7 @@
     }
 }}
 <div class="container-fluid" data-region="data-deletion">
-    <div class="row" data-region="top-nav">
+    <div class="d-flex gap-2" data-region="top-nav">
         <div class="alert alert-info">
             {{#str}}datadeletionpagehelp, tool_dataprivacy{{/str}}
         </div>
@@ -72,9 +72,9 @@
     <div class="row mt-1 mb-1" data-region="expired-contexts-table">
         {{{expiredcontexts}}}
     </div>
-    <div class="row" data-region="bottom-nav">
+    <div class="d-flex gap-2" data-region="bottom-nav">
         {{#existingcontexts}}
-            <div class="float-end">
+            <div class="ms-auto">
                 <button data-action="markfordeletion" class="btn btn-secondary">{{#str}}deleteselected, moodle{{/str}}</button>
             </div>
         {{/existingcontexts}}

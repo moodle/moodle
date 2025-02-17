@@ -34,7 +34,7 @@
         "throttlingwarningmsg": "You are approaching the posting threshold. You have posted 3 times in the last 1 week and the limit is 4 posts."
     }
 }}
-<div class="row" data-content="inpage-reply-content" style="display: none;">
+<div data-content="inpage-reply-content" style="display: none;">
     <div class="card card-body">
         {{#throttlingwarningmsg}}
             <div class="alert alert-danger alert-block fade in " role="alert">
@@ -42,7 +42,7 @@
             </div>
         {{/throttlingwarningmsg}}
         <form data-post-id="{{postid}}" id="inpage-reply-{{postid}}" data-content="inpage-reply-form" action="{{{reply_url}}}">
-            <div class="row pb-1">
+            <div class="pb-2">
                 <span>
                     <textarea rows="5" name="post" title="{{#str}} message, mod_forum {{/str}}" class="form-control" placeholder="{{#str}} replyplaceholder, forum {{/str}}"></textarea>
                     <input type="hidden" name="postformat" value="{{postformat}}"/>
@@ -51,7 +51,7 @@
                 <input type="hidden" name="reply" value="{{postid}}"/>
                 <input type="hidden" name="sesskey" value="{{sesskey}}"/>
             </div>
-            <div class="row">
+            <div class="d-flex flex-wrap align-items-center gap-1">
                 <button class="btn btn-primary" data-action="forum-inpage-submit">
                     <span data-region="submit-text">{{#str}} posttoforum, mod_forum {{/str}}</span>
                     <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
@@ -65,7 +65,7 @@
                     <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">{{#str}} privatereply, forum {{/str}}</label>
                 </div>
                 {{/canreplyprivately}}
-                <button data-action="forum-advanced-reply" class="btn btn-link float-end" type="submit">
+                <button data-action="forum-advanced-reply" class="btn btn-link ms-auto" type="submit">
                     {{#str}} advanced, core {{/str}}
                 </button>
             </div>

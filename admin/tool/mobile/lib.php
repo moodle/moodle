@@ -132,7 +132,7 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
                 $mobileqr = html_writer::tag('p', get_string('qrcodeformobileapploginabout', 'tool_mobile',
                     format_time($qrkeyttl)));
                 $mobileqr .= html_writer::link('#qrcode', get_string('viewqrcode', 'tool_mobile'),
-                    ['class' => 'btn btn-primary mt-2', 'data-toggle' => 'collapse',
+                    ['class' => 'btn btn-primary mt-2', 'data-bs-toggle' => 'collapse',
                     'role' => 'button', 'aria-expanded' => 'false']);
                 $mobileqr .= html_writer::div(html_writer::img($qrcodeimg, $qrcodeforappstr), 'collapse mt-4', ['id' => 'qrcode']);
             }

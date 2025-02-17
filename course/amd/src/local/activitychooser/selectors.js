@@ -81,8 +81,8 @@ export default {
         sectionmodchooser: 'button.section-modchooser-link',
         sitemenu: '.block_site_main_menu',
         sitetopic: 'div.sitetopic',
-        tab: 'a[data-toggle="tab"]',
-        activetab: 'a[data-toggle="tab"][aria-selected="true"]',
-        visibletabs: 'a[data-toggle="tab"]:not(.d-none)'
+        tab: 'a[data-bs-toggle="tab"]',
+        activetab: 'a[data-bs-toggle="tab"][aria-selected="true"]',
+        visibletabs: 'a[data-bs-toggle="tab"]:not(.d-none)'
     },
 };

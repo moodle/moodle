@@ -10,7 +10,7 @@ Feature: Expand single fieldset in Behat tests
     # This page was selected because it only has one fieldset.
     When I navigate to "Users > Accounts > Upload users" in site administration
     # Close the fieldset manually...
-    And I click on "//a[@data-toggle='collapse']" "xpath_element"
+    And I click on "//a[@data-bs-toggle='collapse']" "xpath_element"
     And I should not see "Example text file"
     # Expand using 'expand all' step.
     And I expand all fieldsets

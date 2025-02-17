@@ -612,7 +612,7 @@ function(
         var toggle = root.find(SELECTORS.TOGGLE);
         root.css('min-height', toggle.outerHeight());
 
-        root.on('show.bs.collapse', function() {
+        root[0].addEventListener('show.bs.collapse', function() {
             setExpanded(root);
             LazyLoadList.show(listRoot, loadCallback, function(contentContainer, conversations, userId) {
                 return render(conversations, userId)
@@ -624,7 +624,7 @@ function(
             });
         });
 
-        root.on('hidden.bs.collapse', function() {
+        root[0].addEventListener('hidden.bs.collapse', function() {
             setCollapsed(root);
         });
 

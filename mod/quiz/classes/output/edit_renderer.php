@@ -335,7 +335,7 @@ class edit_renderer extends \plugin_renderer_base {
         $hiddenurl->param('sesskey', sesskey());
 
         $select = html_writer::select($perpage, 'questionsperpage',
-                $structure->get_questions_per_page(), false, ['class' => 'custom-select']);
+                $structure->get_questions_per_page(), false, ['class' => 'form-select']);
 
         $buttonattributes = [
             'type' => 'submit',

@@ -51,7 +51,7 @@
                 <div class="defaultactivitycompletion-item d-flex"
                     id="activitycompletion-{{id}}"
                 >
-                    <a data-toggle="collapse"
+                    <a data-bs-toggle="collapse"
                         href="#activitycompletioncollapse-{{id}}"
                         class="icons-collapse-expand {{#modulecollapsed}}collapsed{{/modulecollapsed}}"
                         aria-expanded="{{^modulecollapsed}}true{{/modulecollapsed}}{{#modulecollapsed}}false{{/modulecollapsed}}"
@@ -77,11 +77,11 @@
                     aria-labelledby="activitycompletion-{{id}}" role="group"
                     data-region="activitycompletion-{{name}}"
                 >
-                    <hr class="row">
+                    <hr>
                     <div class="py-3">{{{formhtml}}}</div>
                 </div>
 
-                <hr class="row">
+                <hr>
             {{/canmanage}}
         {{/modules}}
     </div>

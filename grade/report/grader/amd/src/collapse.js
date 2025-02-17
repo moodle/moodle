@@ -24,7 +24,7 @@ import * as Repository from 'gradereport_grader/collapse/repository';
 import search_combobox from 'core/comboboxsearch/search_combobox';
 import {renderForPromise, replaceNodeContents, replaceNode} from 'core/templates';
 import {debounce} from 'core/utils';
-import $ from 'jquery';
+import Dropdown from 'theme_boost/bootstrap/dropdown';
 import {getStrings} from 'core/str';
 import CustomEvents from "core/custom_interaction_events";
 import storage from 'core/localstorage';
@@ -101,7 +101,7 @@ export default class ColumnSearch extends search_combobox {
             }, 10);
         }).then(() => pendingPromise.resolve()).catch(Notification.exception);
 
-        this.$component.on('hide.bs.dropdown', () => {
+        this.component.addEventListener('hide.bs.dropdown', () => {
             const searchResultContainer = this.component.querySelector(selectors.searchResultContainer);
             searchResultContainer.scrollTop = 0;
 
@@ -319,7 +319,7 @@ export default class ColumnSearch extends search_combobox {
         form.addEventListener('submit', async(e) => {
             e.preventDefault();
             if (e.submitter.dataset.action === selectors.formItems.cancel) {
-                $(this.component).dropdown('toggle');
+                Dropdown.getOrCreateInstance(this.component).toggle();
                 return;
             }
             // Get the users' checked columns to change.
@@ -508,7 +508,7 @@ export default class ColumnSearch extends search_combobox {
         this.registerInputEvents();
 
         // Add a small BS listener so that we can set the focus correctly on open.
-        this.$component.on('shown.bs.dropdown', () => {
+        this.component.addEventListener('shown.bs.dropdown', () => {
             this.searchInput.focus({preventScroll: true});
             this.selectallEnable();
         });

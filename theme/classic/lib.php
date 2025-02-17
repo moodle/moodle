@@ -75,6 +75,11 @@ function theme_classic_get_pre_scss($theme) {
         }, (array) $targets);
     }
 
+    // Add a new variable to indicate that we are running behat.
+    if (defined('BEHAT_SITE_RUNNING')) {
+        $scss .= "\$behatsite: true;\n";
+    }
+
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;

@@ -66,13 +66,13 @@
     {{/unauthenticateduser}}
     {{^unauthenticateduser}}
         <div class="dropdown show">
-            <a href="#" role="button" id="user-menu-toggle" data-toggle="dropdown" aria-label="{{#str}}usermenu{{/str}}"
+            <a href="#" role="button" id="user-menu-toggle" data-bs-toggle="dropdown" aria-label="{{#str}}usermenu{{/str}}"
                aria-haspopup="true" aria-controls="user-action-menu" class="btn dropdown-toggle">
                 <span class="userbutton">
                     {{> core/user_menu_metadata }}
                 </span>
             </a>
-            <div id="user-action-menu" class="dropdown-menu dropdown-menu-right">
+            <div id="user-action-menu" class="dropdown-menu dropdown-menu-end">
                 <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
                     <div class="carousel-inner">
                         <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">

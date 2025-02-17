@@ -315,7 +315,9 @@ body.path-question-type {
 }
 .que .outcome,
 .que .comment {
-    @include alert-variant(shift-color($warning, $alert-bg-scale), shift-color($warning, $alert-border-scale), shift-color($warning, $alert-color-scale - 9%)); /* stylelint-disable-line max-line-length */
+    color: shift-color($warning, $alert-color-scale - 9%);
+    border-color: shift-color($warning, $alert-border-scale);
+    @include gradient-bg(shift-color($warning, $alert-bg-scale));
     // Darken link colour inside comments for better colour contrast against regular text.
     a {
         color: darken($link-color, 30%);
@@ -323,7 +325,9 @@ body.path-question-type {
 }
 
 .que .formulation {
-    @include alert-variant(shift-color($info, $alert-bg-scale), shift-color($info, $alert-border-scale), shift-color($info, $alert-color-scale + 40%)); /* stylelint-disable-line max-line-length */
+    color: shift-color($info, $alert-color-scale + 40%);
+    border-color: shift-color($info, $alert-border-scale);
+    @include gradient-bg(shift-color($info, $alert-bg-scale));
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -354,7 +358,9 @@ body.path-question-type {
 }
 
 .que .comment {
-    @include alert-variant(shift-color($success, $alert-bg-scale), shift-color($success, $alert-border-scale), shift-color($success, $alert-color-scale)); /* stylelint-disable-line max-line-length */
+    color: shift-color($success, $alert-color-scale);
+    border-color: shift-color($success, $alert-border-scale);
+    @include gradient-bg(shift-color($success, $alert-bg-scale));
 }
 
 .que .ablock {
@@ -378,14 +384,17 @@ body.path-question-type {
 
 .que .correctness {
     &.correct {
-        @include badge-variant($success);
+        color: color-contrast($success);
+        background-color: $success;
     }
     &.partiallycorrect {
-        @include badge-variant($warning);
+        color: color-contrast($warning);
+        background-color: $warning;
     }
     &.notanswered,
     &.incorrect {
-        @include badge-variant($danger);
+        color: color-contrast($danger);
+        background-color: $danger;
     }
 }
 
@@ -662,7 +671,7 @@ body.path-question-type .mform fieldset.hidden {
     position: relative;
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .que .info {
         float: none;
         width: auto;

@@ -4,6 +4,9 @@
     color: $table-color;
     background-color: $table-bg; // Reset for nesting within parents with `background-color`.
 
+    $table-cell-padding: .75rem !default;
+    $table-cell-padding-sm: .3rem !default;
+
     th,
     td {
         padding: $table-cell-padding;
@@ -17,11 +20,11 @@
     thead th,
     thead td {
         vertical-align: bottom;
-        border-bottom: (2 * $table-border-width) solid $table-border-color;
+        border-bottom: calc(2 * #{$table-border-width}) solid $table-border-color;
     }
 
     tbody + tbody {
-        border-top: (2 * $table-border-width) solid $table-border-color;
+        border-top: calc(2 * #{$table-border-width}) solid $table-border-color;
     }
 
     tbody tr:nth-of-type(#{$table-striped-order}) {

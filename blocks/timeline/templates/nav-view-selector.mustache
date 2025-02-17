@@ -23,7 +23,7 @@
     {}
 }}
 <div data-region="view-selector" class="btn-group mb-1">
-    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             aria-label="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-controls="menusortby"
             title="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-describedby="timeline-view-selector-current-selection">
         <span id="timeline-view-selector-current-selection" data-active-item-text>
@@ -31,26 +31,28 @@
             {{#sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{/sorttimelinedates}}
         </span>
     </button>
-    <div id="menusortby" role="menu" class="dropdown-menu dropdown-menu-right list-group hidden" data-show-active-item data-skip-active-class="true">
+    <div id="menusortby" role="tablist" class="dropdown-menu dropdown-menu-end list-group hidden" data-show-active-item data-skip-active-class="true">
         <a
-            class="dropdown-item"
+            class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}"
             href="#view_dates_{{uniqid}}-{{timelineinstanceid}}"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             data-filtername="sortbydates"
-            {{#sorttimelinedates}}aria-current="true"{{/sorttimelinedates}}
+            {{#sorttimelinedates}}aria-selected="true"{{/sorttimelinedates}}
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
+            aria-controls="view_dates_{{uniqid}}-{{timelineinstanceid}}"
+            role="tab"
         >
             {{#str}} sortbydates, block_timeline {{/str}}
         </a>
         <a
-            class="dropdown-item"
+            class="dropdown-item {{#sorttimelinecourses}}active{{/sorttimelinecourses}}"
             href="#view_courses_{{uniqid}}-{{timelineinstanceid}}"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             data-filtername="sortbycourses"
-            {{#sorttimelinecourses}}aria-current="true"{{/sorttimelinecourses}}
+            {{#sorttimelinecourses}}aria-selected="true"{{/sorttimelinecourses}}
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
+            aria-controls="view_courses_{{uniqid}}-{{timelineinstanceid}}"
+            role="tab"
         >
             {{#str}} sortbycourses, block_timeline {{/str}}
         </a>

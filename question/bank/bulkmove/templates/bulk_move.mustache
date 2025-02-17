@@ -117,7 +117,7 @@
 
 <div class="search-banks">
     <h5>{{#str}}questionbank, question{{/str}}</h5>
-    <select class="custom-select bulk-move d-none" id="searchbanks">
+    <select class="form-select bulk-move d-none" id="searchbanks">
         {{#allsharedbanks}}
             <option value="{{contextid}}">{{{coursenamebankname}}}</option>
         {{/allsharedbanks}}
@@ -125,7 +125,7 @@
 </div>
 <div class="search-categories mt-3">
     <h5>{{#str}}questioncategories, question{{/str}}</h5>
-    <select class="custom-select bulk-move d-none" id="searchcategories">
+    <select class="form-select bulk-move d-none" id="searchcategories">
         {{#allcategories}}
             <option value="{{id}}" data-bank-contextid="{{contextid}}" data-enabled="{{enabled}}">{{{name}}}</option>
         {{/allcategories}}

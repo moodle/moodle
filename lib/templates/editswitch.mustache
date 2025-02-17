@@ -34,21 +34,21 @@
 <div class="divider border-start h-75 align-self-center ms-1 me-3"></div>
 <form action="{{{legacyseturl}}}" method="post" class="d-flex align-items-center editmode-switch-form">
     <div class="input-group">
-        <label class="me-2 mb-0 {{#checked}}text-primary{{/checked}}" for="{{uniqid}}-editingswitch">
+        <label class="me-2 mb-0 form-check-label {{#checked}}text-primary{{/checked}}" for="{{uniqid}}-editingswitch">
             {{#str}} editmode {{/str}}
         </label>
-        <div class="custom-control custom-switch">
+        <div class="form-check form-switch">
             <input type="checkbox"{{!
                 }} name="setmode"{{!
                 }}{{#checked}}{{!
                     }} checked{{!
                 }}{{/checked}}{{!
-                }} class="custom-control-input"{{!
+                }} class="form-check-input"{{!
                 }} id="{{uniqid}}-editingswitch"{{!
                 }} data-context="{{{pagecontextid}}}"{{!
                 }} data-pageurl="{{{pageurl}}}"{{!
             }}>
-            <span class="custom-control-label">&nbsp;</span>
+            <span class="form-check-label">&nbsp;</span>
         </div>
     </div>
     <input type="hidden" name="sesskey" value="{{{sesskey}}}">
