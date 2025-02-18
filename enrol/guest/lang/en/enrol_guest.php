@@ -31,6 +31,7 @@ $string['password_help'] = 'A password allows guest access to the course to be r
 $string['passwordinvalid'] = 'Incorrect access password, please try again';
 $string['passwordinvalidhint'] = 'That access password was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'{$a}\')';
+$string['passwordrequired'] = 'A password will be required';
 $string['pluginname'] = 'Guest access';
 $string['pluginname_desc'] = 'Guest access plugin is only granting temporary access to courses, it is not actually enrolling users.';
 $string['requirepassword'] = 'Require guest access password';

@@ -25,7 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use core\output\single_button;
+use core_enrol\output\enrol_page;
 
 /**
  * Class enrol_guest_plugin
@@ -148,14 +149,28 @@ class enrol_guest_plugin extends enrol_plugin {
     }
 
     /**
-     * Creates course enrol form, checks if form submitted
-     * and enrols user if necessary. It can also redirect.
+     * Enrol a user using the guest enrolment method
      *
      * @param stdClass $instance
-     * @return string html text, usually a form in a text box
+     * @param string $guestpassword
+     * @return void
      */
+    public function mark_user_as_enrolled(stdClass $instance, string $guestpassword): void {
+        global $USER, $CFG;
+
+        // Add guest role.
+        $context = \core\context\course::instance($instance->courseid);
+        $USER->enrol_guest_passwords[$instance->id] = $guestpassword;
+        if (isset($USER->enrol['tempguest'][$instance->courseid])) {
+            remove_temp_course_roles($context);
+        }
+        load_temp_course_role($context, $CFG->guestroleid);
+        $USER->enrol['tempguest'][$instance->courseid] = ENROL_MAX_TIMESTAMP;
+    }
+
+    #[\Override]
     public function enrol_page_hook(stdClass $instance) {
-        global $CFG, $OUTPUT, $SESSION, $USER;
+        global $CFG, $OUTPUT, $SESSION, $USER, $PAGE;
 
         if ($instance->password === '') {
             return null;
@@ -166,37 +181,27 @@ class enrol_guest_plugin extends enrol_plugin {
             return null;
         }
 
-        require_once("$CFG->dirroot/enrol/guest/locallib.php");
-        $form = new enrol_guest_enrol_form(NULL, $instance);
-        $instanceid = optional_param('instance', 0, PARAM_INT);
-
-        if ($instance->id == $instanceid) {
-            if ($data = $form->get_data()) {
-                // add guest role
-                $context = context_course::instance($instance->courseid);
-                $USER->enrol_guest_passwords[$instance->id] = $data->guestpassword; // this is a hack, ideally we should not add stuff to $USER...
-                if (isset($USER->enrol['tempguest'][$instance->courseid])) {
-                    remove_temp_course_roles($context);
-                }
-                load_temp_course_role($context, $CFG->guestroleid);
-                $USER->enrol['tempguest'][$instance->courseid] = ENROL_MAX_TIMESTAMP;
-
-                // go to the originally requested page
-                if (!empty($SESSION->wantsurl)) {
-                    $destination = $SESSION->wantsurl;
-                    unset($SESSION->wantsurl);
-                } else {
-                    $destination = "$CFG->wwwroot/course/view.php?id=$instance->courseid";
-                }
-                redirect($destination);
-            }
-        }
-
-        ob_start();
-        $form->display();
-        $output = ob_get_clean();
-
-        return $OUTPUT->box($output, 'generalbox');
+        $title = $this->get_instance_name($instance);
+        $notification = new \core\output\notification(get_string('passwordrequired', 'enrol_guest'), 'info', false);
+        $notification->set_extra_classes(['mb-0']);
+        $button = new single_button(
+            $PAGE->url,
+            get_string('loginguest', 'moodle'),
+            'get',
+            single_button::BUTTON_PRIMARY,
+            [
+                'data-id' => $instance->courseid,
+                'data-instance' => $instance->id,
+                'data-form' => enrol_guest\form\enrol_form::class,
+                'data-title' => $title,
+            ]);
+        $PAGE->requires->js_call_amd('enrol_guest/enrol_page', 'initEnrol', [$instance->id]);
+        $enrolpage = new enrol_page(
+            instance: $instance,
+            header: $title,
+            body: $OUTPUT->render($notification),
+            buttons: [$button]);
+        return $OUTPUT->render($enrolpage);
     }
 
     /**
