@@ -1856,6 +1856,7 @@ $string['resortsubcategoriesby'] = 'Sort subcategories by {$a} ascending';
 $string['resortsubcategoriesbyreverse'] = 'Sort subcategories by {$a} descending';
 $string['resortcourses'] = 'Sort courses';
 $string['resource'] = 'Resource';
+$string['resource_type'] = 'Resource type';
 $string['resourcedisplayauto'] = 'Automatic';
 $string['resourcedisplaydownload'] = 'Force download';
 $string['resourcedisplayembed'] = 'Embed';
