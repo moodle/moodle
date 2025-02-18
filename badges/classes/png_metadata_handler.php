@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Baking badges library.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
+namespace core_badges;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * Some other info on PNG that I used http://garethrees.org/2007/11/14/pngcrush/
  *
  * Example of use:
- * $png = new PNG_MetaDataHandler('file.png');
+ * $png = new png_metadata_handler('file.png');
  *
  * if ($png->check_chunks("tEXt", "openbadge")) {
  *     $newcontents = $png->add_chunks("tEXt", "openbadge", 'http://some.public.url/to.your.assertion.file');
@@ -40,14 +32,22 @@ defined('MOODLE_INTERNAL') || die();
  * file_put_contents('file.png', $newcontents);
  */
 
-class PNG_MetaDataHandler
+/**
+ * Baking badges library.
+ *
+ * @package    core_badges
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
+ */
+class png_metadata_handler
 {
     /** @var string File content as a string */
-    private $_contents;
+    private string $_contents;
     /** @var int Length of the image file */
-    private $_size;
+    private int $_size;
     /** @var array Variable for storing parsed chunks */
-    private $_chunks;
+    private array $_chunks;
 
     /**
      * Prepares file for handling metadata.
@@ -56,7 +56,7 @@ class PNG_MetaDataHandler
      *
      * @param string $contents File content as a string
      */
-    public function __construct($contents) {
+    public function __construct(string $contents) {
         $this->_contents = $contents;
         $png_signature = pack("C8", 137, 80, 78, 71, 13, 10, 26, 10);
 
@@ -91,7 +91,7 @@ class PNG_MetaDataHandler
      *
      * @return boolean (true|false) True if file is safe to write this keyword, false otherwise.
      */
-    public function check_chunks($type, $check) {
+    public function check_chunks(string $type, string $check): bool {
         if (array_key_exists($type, $this->_chunks)) {
             foreach (array_keys($this->_chunks[$type]) as $typekey) {
                 list($key, $data) = explode("\0", $this->_chunks[$type][$typekey]);
@@ -116,7 +116,7 @@ class PNG_MetaDataHandler
      * @return string $result File content with a new chunk as a string. Can be used in file_put_contents() to write to a file.
      * @throws \moodle_exception when unsupported chunk type is defined.
      */
-    public function add_chunks($type, $key, $value) {
+    public function add_chunks(string $type, string $key, string $value): string {
         if (strlen($key) > 79) {
             debugging('Key is too big');
         }
