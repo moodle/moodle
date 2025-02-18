@@ -36,7 +36,7 @@ Feature: Signing up for a course with a fee enrolment method
     When I log in as "student1"
     And I am on course index
     And I follow "Course 1"
-    Then I should see "This course requires a payment for entry."
+    Then I should see "This course requires a payment for entry"
     And I should see "123.45"
     And I press "Select payment type"
     And I should see "PayPal" in the "Select payment type" "dialogue"
@@ -46,7 +46,7 @@ Feature: Signing up for a course with a fee enrolment method
     When I log in as "guest"
     And I am on course index
     And I follow "Course 1"
-    Then I should see "This course requires a payment for entry."
+    Then I should see "This course requires a payment for entry"
     And I should see "123.45"
     And I should see "Log in to the site"
 
@@ -66,6 +66,6 @@ Feature: Signing up for a course with a fee enrolment method
     When I log in as "student1"
     And I am on course index
     And I follow "Course 1"
-    Then I should not see "This course requires a payment for entry."
+    Then I should not see "This course requires a payment for entry"
     Then I should see "Lifetime access"
     Then I should not see "Only for teachers"
