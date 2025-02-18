@@ -34,11 +34,13 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
+    And I should see "An enrolment key will be required"
+    And I press "Enrol me"
     And I should see "You should have received this enrolment key from:"
     And I should see "Manager 1"
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
-    And I press "Enrol me"
+    And I click on "Enrol me" "button" in the "Test student enrolment" "dialogue"
     Then I should see "New section"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"

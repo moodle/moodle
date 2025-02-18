@@ -1,0 +1,7 @@
+issueNumber: MDL-84142
+notes:
+  enrol_self:
+    - message: >-
+        Class enrol_self_enrol_form is deprecated, use
+        enrol_self\form\enrol_form instead
+      type: deprecated
