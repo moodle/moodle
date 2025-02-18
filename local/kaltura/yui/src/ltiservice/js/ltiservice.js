@@ -32,7 +32,8 @@ var LTISERVICE = function() {
 
 Y.extend(LTISERVICE, Y.Base, {
     /**
-     * Init function for triggering a custom event and setting attributes.  Also checks whether optional elements exist in the parent window.
+     * Init function for triggering a custom event and setting attributes.  Also checks whether optional elements exist in the
+     * parent window.
      * @property params
      * @type {Object}
      */
@@ -72,7 +73,7 @@ Y.extend(LTISERVICE, Y.Base, {
 
         // This element must exist.
         Y.one(documentElement.getElementById('source')).setAttribute('value', decodeURIComponent(params.iframeurl));
-        
+
         if (documentElement.getElementById('metadata')) {
             Y.one(documentElement.getElementById('metadata')).setAttribute('value', params.metadata);
         }
