@@ -7,3 +7,7 @@
 	path = repository/boxnet
 	url = https://github.com/moodlehq/moodle-repository_boxnet
 	branch = master
+[submodule "theme/ucsf"]
+	path = theme/ucsf
+	url = https://github.com/ucsf-education/moodle-theme-ucsf
+	branch = MOODLE_405_STABLE
