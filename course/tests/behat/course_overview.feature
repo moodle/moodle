@@ -10,8 +10,8 @@ Feature: Users can access the course activities overview page
       | teacher1           | Teacher             | 1        | teacher1@example.com           |
       | student1           | Student             | 1        | student1@example.com           |
     And the following "courses" exist:
-      | fullname | shortname | format | numsections | initsections |
-      | Course 1 | C1        | topics | 1           | 1            |
+      | fullname | shortname | format | numsections | initsections | enablecompletion |
+      | Course 1 | C1        | topics | 2           | 1            | 1                |
     And the following "course enrolments" exist:
       | user               | course | role           |
       | teacher1           | C1     | editingteacher |
@@ -24,19 +24,15 @@ Feature: Users can access the course activities overview page
     Given I am on the "C1" "Course" page logged in as "teacher1"
     When I follow "Activities"
     Then I should see "Activities"
-    And I should see "Go to Assignments overview"
-    And I follow "Go to Assignments overview"
-    And I should see "Test assignment name"
-    And I should see "Needs grading: 0"
+    And I should see "View all the activities in this course" in the "region-main" "region"
+    And I should see "Assignments" in the "region-main" "region"
 
   Scenario: Student can access the course overview page
     Given I am on the "C1" "Course" page logged in as "student1"
     When I follow "Activities"
     Then I should see "Activities"
-    And I should see "Go to Assignments overview"
-    And I follow "Go to Assignments overview"
-    And I should see "Test assignment name"
-    And I should see "No submission"
+    And I should see "View all the activities in this course" in the "region-main" "region"
+    And I should see "Assignments" in the "region-main" "region"
 
   Scenario: The activities overview shows only the type of activities present in the course
     Given the following "activities" exist:
@@ -128,3 +124,94 @@ Feature: Users can access the course activities overview page
     And I should see "Workshops" in the "workshop_overview_collapsible" "region"
     # All resources are grouped.
     And I should see "Resources" in the "resource_overview_collapsible" "region"
+
+  @javascript
+  Scenario: The resources overview is loaded at the moment the section is expanded via Ajax
+    Given the following "activities" exist:
+      | activity | course | name       | completion | completionview |
+      | book     | C1     | Activity 1 | 0          | 0              |
+      | folder   | C1     | Activity 2 | 0          | 0              |
+      | imscp    | C1     | Activity 3 | 0          | 0              |
+    And I am on the "Course 1" "course > activities" page logged in as "teacher1"
+    And "Activity 1" "link" should not exist in the "resource_overview_collapsible" "region"
+    And "Activity 2" "link" should not exist in the "resource_overview_collapsible" "region"
+    And "Activity 3" "link" should not exist in the "resource_overview_collapsible" "region"
+    When I click on "Expand" "link" in the "resource_overview_collapsible" "region"
+    Then "Activity 1" "link" should exist in the "resource_overview_collapsible" "region"
+    And "Activity 2" "link" should exist in the "resource_overview_collapsible" "region"
+    And "Activity 3" "link" should exist in the "resource_overview_collapsible" "region"
+
+  Scenario: Course overview shows a table with all resources
+    Given the following "activities" exist:
+      | activity        | course | name        |
+      | book            | C1     | Activity 1  |
+      | folder          | C1     | Activity 2  |
+      | imscp           | C1     | Activity 3  |
+      | page            | C1     | Activity 4  |
+      | resource        | C1     | Activity 5  |
+      | url             | C1     | Activity 6  |
+    When I am on the "Course 1" "course > activities > resource" page logged in as "teacher1"
+    Then I should see "Book" in the "Activity 1" "table_row"
+    And I should see "Folder" in the "Activity 2" "table_row"
+    And I should see "IMS content package" in the "Activity 3" "table_row"
+    And I should see "Page" in the "Activity 4" "table_row"
+    And I should see "File" in the "Activity 5" "table_row"
+    And I should see "URL" in the "Activity 6" "table_row"
+
+  @javascript
+  Scenario: Students should see completion status in the overview when some activity has completion
+    Given the following "activities" exist:
+      | activity        | course | name        | completion | completionview |
+      | book            | C1     | Activity 1  | 0          | 0              |
+      | folder          | C1     | Activity 2  | 1          | 1              |
+      | imscp           | C1     | Activity 3  | 1          | 1              |
+    And I am on the "Course 1" "course" page logged in as "student1"
+    And I toggle the manual completion state of "Activity 2"
+    When I am on the "Course 1" "course > activities > resource" page
+    Then I should see "-" in the "Activity 1" "table_row"
+    And I should see "Done" in the "Activity 2" "table_row"
+    And I should see "Mark as done" in the "Activity 3" "table_row"
+
+  Scenario: Students should not see completion status in the overview if no activity has completion
+    Given the following "activities" exist:
+      | activity        | course | name        | completion | completionview |
+      | book            | C1     | Activity 1  | 0          | 0              |
+      | folder          | C1     | Activity 2  | 0          | 0              |
+      | imscp           | C1     | Activity 3  | 0          | 0              |
+    When I am on the "Course 1" "course > activities > resource" page logged in as "student1"
+    Then I should not see "Completion status" in the "resource_overview_collapsible" "region"
+
+  Scenario: The course overview name column informs about the activity and section
+    Given the following "activities" exist:
+      | activity | course | section | name       | content                    |
+      | page     | C1     | 1       | Activity 1 | This is the page 1 content |
+      | page     | C1     | 2       | Activity 2 | This is the page 2 content |
+    And I am on the "Course 1" "course > activities > resource" page logged in as "teacher1"
+    When I click on "Expand" "link" in the "resource_overview_collapsible" "region"
+    Then I should see "Section 1" in the "Activity 1" "table_row"
+    And I should see "Section 2" in the "Activity 2" "table_row"
+    And I click on "Activity 1" "link" in the "Activity 1" "table_row"
+    And I should see "This is the page 1 content"
+
+  @javascript
+  Scenario: Students can manage manual completions from the course overview
+    Given the following "activities" exist:
+      | activity | course | name       | completion | completionview |
+      | folder   | C1     | Activity 1 | 1          | 1              |
+    And I am on the "Course 1" "course > activities > resource" page logged in as "student1"
+    And I should see "Mark as done" in the "Activity 1" "table_row"
+    When I click on "Mark as done" "button" in the "Activity 1" "table_row"
+    Then I should see "Done" in the "Activity 1" "table_row"
+    And I click on "Done" "button" in the "Activity 1" "table_row"
+    And I should see "Mark as done" in the "Activity 1" "table_row"
+
+  Scenario: Students can see the automatic completion criterias in the course overview
+    Given the following "activity" exists:
+      | activity | folder |
+      | name | Activity 1 |
+      | course         | C1              |
+      | completion     | 2               |
+      | completionview | 1               |
+    When I am on the "Course 1" "course > activities > resource" page logged in as "student1"
+    Then I should see "To do" in the "Activity 1" "table_row"
+    And I should see "View" in the "Activity 1" "table_row"

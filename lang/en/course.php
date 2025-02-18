@@ -120,6 +120,7 @@ $string['overview_info'] = 'View all the activities in this course, including ke
 $string['overview_missing_notice'] = 'Check the overview page for more details.';
 $string['overview_missing_title'] = 'Information not available here for {$a} activities';
 $string['overview_page_title'] = 'Course activities: {$a}';
+$string['overview_table_caption'] = 'Table listing all {$a} activities';
 $string['participants:perpage'] = 'Number of participants per page';
 $string['participants:perpage_help'] = 'The number of users shown per page on the participants page in each course.';
 $string['participantsnavigation'] = 'Participants tertiary navigation.';
