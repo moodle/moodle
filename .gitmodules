@@ -1,0 +1,5 @@
+[submodule "blocks/massaction"]
+	path = blocks/massaction
+	url = https://github.com/Syxton/moodle-block_massaction
+	branch = master
+	tag = 7.4.1
