@@ -283,12 +283,11 @@ echo '</div>';
 
 echo '<div id="statusjscontrolsection" class="mb-4">';
 echo "<h3>Status JS controls</h3>";
-echo '<div class="mb-2">
+echo '<div class="mb-2 d-flex gap-2">
     <button class="btn btn-secondary" id="setselected">Change selected value</button>
     <button class="btn btn-secondary" id="syncbutton">Enable sync</button>
     <button class="btn btn-secondary" id="updatestatus">Disable update</button>
-    <span id="statusvalue"></span>
-</div>';
+    <span id="statusvalue"></span>';
 $choice = new core\output\choicelist('Dialog content');
 $choice->add_option('option1', 'Option 1', [
     'description' => 'Option 1 description',
@@ -312,7 +311,7 @@ $dialog = new core\output\local\dropdown\status(
     ],
 );
 echo $OUTPUT->render($dialog);
-echo '</div>';
+echo '</div></div>';
 
 $inlinejs = <<<EOF
 require(
