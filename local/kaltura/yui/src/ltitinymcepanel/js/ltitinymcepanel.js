@@ -22,6 +22,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+/* eslint-disable max-len */
+
 /**
  * This method calls the base class constructor
  * @method LTITINYMCEPANEL
