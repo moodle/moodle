@@ -1,0 +1,9 @@
+issueNumber: MDL-84142
+notes:
+  core_enrol:
+    - message: >-
+        Plugins implementing enrol_page_hook() method are encouraged to use the
+        renderable \core_enrol\output\enrol_page to produce HTML for the
+        enrolment page. Forms should be displayed in a modal dialogue. See
+        enrol_self plugin as an example.
+      type: improved
