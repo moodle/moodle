@@ -1,0 +1,8 @@
+issueNumber: MDL-84208
+notes:
+  core:
+    - message: >-
+        Now lib/templates/select_menu.mustache has a new integer headinglevel
+        context value to specify the heading level to keep the header
+        accessibility when used as a tertiary navigation.
+      type: improved

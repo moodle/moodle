@@ -34,6 +34,7 @@
         "value": "opt2",
         "baseid": "select-menu56789",
         "label": "Select one option",
+        "headinglevel": "2",
         "labelattributes": [
             {
                 "name": "class",
@@ -100,7 +101,13 @@
         tabindex="0"
     >
         {{#inlinelabel}}
-            <div class="pr-3 text-truncate">
+            <div
+                class="pr-3 text-truncate"
+                {{#headinglevel}}
+                role="heading"
+                aria-level="{{headinglevel}}"
+                {{/headinglevel}}
+            >
                 {{#label}}
                     <label class="d-block m-0 small" id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
                 {{/label}}
@@ -110,7 +117,17 @@
             </div>
         {{/inlinelabel}}
         {{^inlinelabel}}
-            {{selectedoption}}
+            {{#headinglevel}}
+                <span
+                    role="heading"
+                    aria-level="{{headinglevel}}"
+                >
+                    {{selectedoption}}
+                </span>
+            {{/headinglevel}}
+            {{^headinglevel}}
+                {{selectedoption}}
+            {{/headinglevel}}
         {{/inlinelabel}}
     </div>
     <ul class="dropdown-menu" role="listbox" id="{{baseid}}-listbox" {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}>

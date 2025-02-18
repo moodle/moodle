@@ -70,6 +70,7 @@ class completion_action_bar implements templatable, renderable {
 
         return [
             'navigation' => $selectmenu->export_for_template($output),
+            'headinglevel' => 2,
         ];
     }
 }
