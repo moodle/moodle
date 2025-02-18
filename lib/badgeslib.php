@@ -131,6 +131,8 @@ define('BACKPACK_MOVE_DOWN', 1);
 // Global badge class has been moved to the component namespace.
 class_alias('\core_badges\badge', 'badge');
 
+use core_badges\png_metadata_handler;
+
 /**
  * Sends notifications to users about awarded badges.
  *
@@ -696,7 +698,6 @@ function print_badge_image(badge $badge, stdClass $context, $size = 'small') {
  */
 function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
     global $CFG, $USER;
-    require_once(__DIR__ . '/../badges/lib/bakerlib.php');
 
     $badge = new badge($badgeid);
     $badge_context = $badge->get_context();
@@ -708,7 +709,7 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
         if ($file = $fs->get_file($badge_context->id, 'badges', 'badgeimage', $badge->id, '/', 'f3.png')) {
             $contents = $file->get_content();
 
-            $filehandler = new PNG_MetaDataHandler($contents);
+            $filehandler = new png_metadata_handler($contents);
             // For now, the site backpack OB version will be used as default.
             $obversion = badges_open_badges_backpack_api();
             $assertion = new core_badges_assertion($hash, $obversion);

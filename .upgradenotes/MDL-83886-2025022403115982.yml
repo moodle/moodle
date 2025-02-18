@@ -1,0 +1,9 @@
+issueNumber: MDL-83886
+notes:
+  core_badges:
+    - message: >-
+        The class in badges/lib/bakerlib.php has been moved to
+        core_badges\png_metadata_handler. If you've extended or
+        directly used the old bakerlib.php, you'll need to update your code
+        to use the new namespaced class.
+      type: improved
