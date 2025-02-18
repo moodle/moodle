@@ -76,10 +76,10 @@ class behat_core_question_generator extends behat_generator_base {
     protected function process_updated_question(array $data): void {
         global $DB;
         $question = $DB->get_record('question', ['id' => $data['id']], '*', MUST_EXIST);
+        $overrides = [];
         foreach ($data as $key => $value) {
-            $question->{$key} = $value;
+            $overrides[$key] = $value;
         }
-
-        $this->datagenerator->get_plugin_generator('core_question')->update_question($question);
+        $this->datagenerator->get_plugin_generator('core_question')->update_question($question, null, $overrides);
     }
 }
