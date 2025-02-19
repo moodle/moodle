@@ -156,3 +156,10 @@ imageauthorname,core_badges
 imageauthorname_help,core_badges
 imageauthorurl,core_badges
 imageauthorurl_help,core_badges
+badgeimage_help,core_badges
+contact_help,core_badges
+expirydate_help,core_badges
+imagecaption_help,core_badges
+issuername_help,core_badges
+language_help,core_badges
+version_help,core_badges

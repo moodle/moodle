@@ -100,7 +100,7 @@ Feature: Display badges
     # Set expired date to badge (future date).
     Given I press "Edit" action in the "Testing system badge" report row
     And I expand all fieldsets
-    When I click on "Relative date" "radio"
+    When I click on "Relative date: this badge expires after a period of time:" "radio"
     And I set the field "expireperiod[number]" to "1"
     And I press "Save changes"
     And I should see "Changes saved"
@@ -124,7 +124,7 @@ Feature: Display badges
     # Set expired date to badge (relative date 1 seconds after the date of issue it).
     Given I press "Edit" action in the "Testing system badge" report row
     And I expand all fieldsets
-    When I click on "Relative date" "radio"
+    When I click on "Relative date: this badge expires after a period of time:" "radio"
     And I set the field "expireperiod[timeunit]" to "1"
     And I set the field "expireperiod[number]" to "1"
     And I press "Save changes"

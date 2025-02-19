@@ -197,7 +197,7 @@ final class users_test extends core_reportbuilder_testcase {
         $this->assertEquals('English', $language);
         $this->assertEquals(2, $version);
         $this->assertEquals('Available (criteria locked)', $status);
-        $this->assertEquals('Never', $expiry);
+        $this->assertEquals('Never: this badge does not expire.', $expiry);
         $this->assertEmpty($tag);
         $this->assertEmpty($expires);
         $this->assertEquals('Yes', $visible);
