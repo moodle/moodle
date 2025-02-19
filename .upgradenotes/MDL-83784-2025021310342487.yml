@@ -1,0 +1,8 @@
+issueNumber: MDL-83784
+notes:
+  core_question:
+    - message: >-
+        Question bank Condition classes can now implement a function called
+        "filter_invalid_values($filterconditions)" to remove anything from the
+        filterconditions array which is invalid or should not be there.
+      type: improved
