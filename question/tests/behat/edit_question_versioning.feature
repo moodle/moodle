@@ -31,18 +31,18 @@ Feature: Questions in the question bank have versions
   Scenario: Question version is displayed
     Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
-    Then I should see "Version 1"
+    Then I should see "v1 (latest)"
 
   @javascript
   Scenario: Question version change when question is altered
     Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
-    And I should see "Version 1"
+    And I should see "v1 (latest)"
     When I set the field "id_name" to "Renamed question v2"
     And I set the field "id_questiontext" to "edited question"
     And I press "id_submitbutton"
     Then I should not see "First question"
     And I should see "Renamed question v2"
     When I choose "Edit question" action for "Renamed question v2" in the question bank
-    Then I should see "Version 2"
-    And I should not see "Version 1"
+    Then I should see "v2 (latest)"
+    And I should not see "v1 (latest)"

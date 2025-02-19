@@ -22,16 +22,17 @@
         "addquestiondata": [
           {
                 "versionnumber": 1,
+                "historyurl": "www.example.com/question/bank/history/history.php",
                 "createdby": "Admin User on Wednesday, 20 October 2021, 5:33 AM"
           }
         ]
     }
 }}
 <div class="question-version-number">
-    <a><u>{{#str}} version, qbank_viewcreator, {{versionnumber}} {{/str}}</u></a>
+    <span> {{versionnumber}}. </span> <a href="{{{historyurl}}}"> {{#pix}} t/log, core {{/pix}} {{#str}}history, qbank_viewcreator{{/str}} </a>
 </div>
 {{#createdby}}
     <div class="question-creator-info">
-        <a>{{{createdby}}}</a>
+        <span>{{{createdby}}}</span>
     </div>
 {{/createdby}}
