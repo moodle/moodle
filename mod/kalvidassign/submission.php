@@ -25,7 +25,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad', 'error');
+    throw new \moodle_exception('confirmsesskeybad', 'error');
 }
 
 $entryid = required_param('entry_id', PARAM_TEXT);
@@ -40,15 +40,15 @@ global $USER, $OUTPUT, $DB, $PAGE;
 $source = local_kaltura_build_kaf_uri($source);
 
 if (! $cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 if (! $kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-    print_error('invalidid', 'kalvidassign');
+    throw new \moodle_exception('invalidid', 'kalvidassign');
 }
 
 require_course_login($course->id, true, $cm);
@@ -59,18 +59,18 @@ $PAGE->set_heading($course->fullname);
 
 
 if (kalvidassign_assignemnt_submission_expired($kalvidassignobj)) {
-    print_error('assignmentexpired', 'kalvidassign', 'course/view.php?id='.$course->id);
+    throw new \moodle_exception('assignmentexpired', 'kalvidassign', 'course/view.php?id='.$course->id);
 }
 
 echo $OUTPUT->header();
 
 if (empty($entryid)) {
-    print_error('emptyentryid', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
+    throw new \moodle_exception('emptyentryid', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
 }
 
 // If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
 if (empty($source)) {
-    print_error('activity_not_migrated', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
+    throw new \moodle_exception('activity_not_migrated', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
 }
 
 $param = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);

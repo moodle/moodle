@@ -39,7 +39,7 @@ list($cm, $course, $kalvidassignobj) = kalvidassign_validate_cmid($id);
 require_login($course->id, false, $cm);
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad', 'error');
+    throw new \moodle_exception('confirmsesskeybad', 'error');
 }
 
 global $CFG, $PAGE, $OUTPUT, $USER;

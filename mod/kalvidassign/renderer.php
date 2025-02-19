@@ -1098,7 +1098,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         // We need the teacher info
         if (!$teacher = $DB->get_record('user', array('id'=>$gradeby))) {
-            print_error('cannotfindteacher');
+            throw new \moodle_exception('cannotfindteacher');
         }
 
         // Print the feedback

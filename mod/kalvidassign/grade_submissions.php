@@ -38,7 +38,7 @@ $url->param('cmid', $id);
 
 if (!empty($mode)) {
     if (!confirm_sesskey()) {
-        print_error('confirmsesskeybad', 'error');
+        throw new \moodle_exception('confirmsesskeybad', 'error');
     }
 }
 
