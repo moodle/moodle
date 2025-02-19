@@ -1314,6 +1314,19 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 }
 
 /**
+ * Clear a draft area.
+ *
+ * @param int $draftitemid Id of the draft area to clear.
+ * @return boolean success
+ */
+function file_clear_draft_area(int $draftitemid): bool {
+    global $USER;
+    $fs = get_file_storage();
+    $usercontext = context_user::instance($USER->id);
+    return $fs->delete_area_files($usercontext->id, 'user', 'draft', $draftitemid);
+}
+
+/**
  * Convert the draft file area URLs in some content to @@PLUGINFILE@@ tokens
  * ready to be saved in the database. Normally, this is done automatically by
  * {@link file_save_draft_area_files()}.
