@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_kaltura;
+use core_filters\filter_object;
+
 /**
  * Kaltura filter script.
  *
@@ -23,7 +26,7 @@
  * @copyright  (C) 2014 Remote-Learner.net Inc (http://www.remote-learner.net)
  */
 
-class filter_kaltura extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     /** @var object $context The current page context. */
     public static $pagecontext = null;
 
@@ -48,6 +51,7 @@ class filter_kaltura extends moodle_text_filter {
      * @param object $page Moodle page object.
      * @param object $context Page context object.
      */
+    #[\Override]
     public function setup($page, $context) {
         global $CFG;
         require_once($CFG->dirroot.'/local/kaltura/locallib.php');
@@ -93,6 +97,7 @@ class filter_kaltura extends moodle_text_filter {
      * @param array $options An array of additional options.
      * @return string The same text or modified text is returned.
      */
+    #[\Override]
     public function filter($text, array $options = array()) {
         global $CFG;
 
