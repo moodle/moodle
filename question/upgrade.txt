@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.4.7 ===
+* Question bank Condition classes can now implement a function called
+  "filter_invalid_values($filterconditions)" to remove anything from the
+  filterconditions array which is invalid or should not be there.
+
 === 4.4 ===
 * The following previously deprecated methods have been removed and can no longer be used:
   - `submit_tags_form`
