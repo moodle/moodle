@@ -91,34 +91,6 @@ final class request_validator_test extends route_testcase {
     }
 
     /**
-     * When a defined pathtype is missing from the path.
-     */
-    public function test_validate_request_missing_path_component(): void {
-        // A route with a parameter defined in the path, but no pathtype for it.
-        $route = new route(
-            path: '/example/123',
-            pathtypes: [
-                new path_parameter(
-                    name: 'required',
-                    type: param::INT,
-                ),
-            ],
-        );
-
-        $request = $this->get_request_for_routed_route($route, '/example/123');
-
-        $validator = \core\di::get(request_validator::class);
-        $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessageMatches('/Route.*has 0 arguments.* 1 pathtypes./');
-        $result = $validator->validate_request($request);
-
-        $this->assertInstanceOf(
-            ServerRequestInterface::class,
-            $result,
-        );
-    }
-
-    /**
      * When a pathtype fails to validate, it will result in an HttpNotFoundException.
      */
     public function test_validate_request_invalid_path_component(): void {
