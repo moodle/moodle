@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_course\output\local\overview;
+namespace core_courseformat\output\local\overview;
 
 use core\context\course as context_course;
 use core\output\named_templatable;
@@ -40,10 +40,13 @@ class overviewpage implements renderable, named_templatable {
      * Constructor.
      *
      * @param stdClass $course the course object.
+     * @param string[] $expanded the sections to be expanded on load.
      */
     public function __construct(
         /** @var stdClass the course object  */
         protected stdClass $course,
+        /** @var string[] the sections to be expanded on load  */
+        protected array $expanded = [],
     ) {
         $this->context = context_course::instance($this->course->id);
     }
@@ -120,9 +123,17 @@ class overviewpage implements renderable, named_templatable {
         string $modname,
         string $modfullname
     ): stdClass {
-        // For now the activity overview is only a links to the activity index.php file.
-        // In the next issue (MDL-83872) activities can implement their own overview integration.
-        return $this->export_legacy_overview($output, $modname, $modfullname);
+        if (!$this->activity_has_overview_integration($modname)) {
+            return $this->export_legacy_overview($output, $modname, $modfullname);
+        }
+
+        return (object) [
+            'fragment' => $this->export_overview_fragment($modname),
+            'icon' => $this->get_activity_overview_icon($output, $modname),
+            'name' => $modfullname,
+            'shortname' => $modname,
+            'open' => in_array($modname, $this->expanded),
+        ];
     }
 
     /**
@@ -177,6 +188,50 @@ class overviewpage implements renderable, named_templatable {
             'name' => $modfullname,
             'shortname' => $modname,
             'notification' => $notification->export_for_template($output),
+            'open' => in_array($modname, $this->expanded),
+        ];
+    }
+
+    /**
+     * Checks if a given activity module has an overview integration.
+     *
+     * The method search for an integration class named `\mod_{modname}\courseformat\overview`.
+     *
+     * @param string $modname The name of the activity module.
+     * @return bool True if the activity module has an overview integration, false otherwise.
+     */
+    private function activity_has_overview_integration(string $modname): bool {
+        $classname = 'mod_' . $modname . '\courseformat\overview';
+        if ($modname === 'resource') {
+            $classname = 'core_courseformat\local\overview\resourceoverview';
+        }
+        return class_exists($classname);
+    }
+
+    /**
+     * Exports an overview fragment for a given module name.
+     *
+     * This function creates and returns an object containing details
+     * about the course overview fragment for the specified module.
+     *
+     * @param string $modname
+     * @return stdClass The exported overview fragment data.
+     */
+    private function export_overview_fragment(string $modname): stdClass {
+        // If the element is expanded, we don't need to load the fragment.
+        if (in_array($modname, $this->expanded)) {
+            return (object) [
+                'preloadedcontent' => course_output_fragment_course_overview([
+                    'courseid' => $this->course->id,
+                    'modname' => $modname,
+                ]),
+            ];
+        }
+        return (object) [
+            'component' => 'core_course',
+            'method' => 'overview_table',
+            'course' => $this->course,
+            'modname' => $modname,
         ];
     }
 
@@ -187,6 +242,6 @@ class overviewpage implements renderable, named_templatable {
      * @return string
      */
     public function get_template_name(\renderer_base $renderer): string {
-        return 'core_course/local/overview/overviewpage';
+        return 'core_courseformat/local/overview/overviewpage';
     }
 }

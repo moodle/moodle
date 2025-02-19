@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/local/overview/overviewpage
+    @template core_courseformat/local/overview/overviewpage
 
     Course activity overview page template.
 
@@ -46,6 +46,20 @@
         {{$elementid}}{{shortname}}_overview{{/elementid}}
         {{$extraclasses}}border border-1 rounded-3 p-3{{/extraclasses}}
         {{$sectioncontent}}
+            {{#fragment}}
+                {{#preloadedcontent}} {{{preloadedcontent}}} {{/preloadedcontent}}
+                {{^preloadedcontent}}
+                <div
+                    data-region="loading-icon-container"
+                    data-courseid="{{courseid}}"
+                    data-contextid="{{contextid}}"
+                    data-modname="{{shortname}}"
+                >
+                    {{> core/loading }}
+                </div>
+                {{/preloadedcontent}}
+            {{/fragment}}
+            {{^fragment}}
             <div class="d-flex flex-column justify-content-between">
                 {{#notification}}
                     {{>core/notification_info}}
@@ -61,7 +75,13 @@
                     </a>
                 </div>
             </div>
+            {{/fragment}}
         {{/sectioncontent}}
     {{/core/local/collapsable_section}}
     {{/elements}}
 </div>
+{{#js}}
+require(['core_course/local/overview/overviewpage'], function(overviewpage) {
+    overviewpage.init('#course-overview-page');
+});
+{{/js}}

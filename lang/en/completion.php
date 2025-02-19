@@ -87,6 +87,7 @@ $string['completion_help'] = 'If enabled, activity completion is tracked, either
 $string['completion_link'] = 'activity/completion';
 $string['completion_manual'] = 'Students must manually mark the activity as done';
 $string['completion_none'] = 'None';
+$string['completion_status'] = 'Completion status';
 $string['completionactivitydefault'] = 'Use activity default';
 $string['completionanygrade_desc'] = 'Any grade';
 $string['completiondisabled'] = 'Disabled, not shown in activity settings';

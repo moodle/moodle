@@ -183,6 +183,14 @@ class behat_course extends behat_base {
     protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
         $type = strtolower($type);
 
+        // Some selectors can have a sub selector divided by >.
+        $subtype = null;
+        $parts = explode('>', $type);
+        if (count($parts) > 1) {
+            $type = trim($parts[0]);
+            $subtype = trim($parts[1]);
+        }
+
         $sectionpage = 'section.php';
         switch ($type) {
             case 'section settings':
@@ -206,8 +214,11 @@ class behat_course extends behat_base {
                 }
                 return new moodle_url('/course/' . $sectionpage, ['id' => $section->id]);
             case 'activities':
-                $courseid = $this->get_course_id($identifier);
-                return new moodle_url('/course/overview.php', ['id' => $courseid]);
+                $params = ['id' => $this->get_course_id($identifier)];
+                if ($subtype !== null) {
+                    $params['expand[]'] = $subtype;
+                }
+                return new moodle_url('/course/overview.php', $params);
         }
         throw new Exception('Unrecognised core page type "' . $type . '."');
     }
