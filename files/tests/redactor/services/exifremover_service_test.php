@@ -68,6 +68,87 @@ final class exifremover_service_test extends \advanced_testcase {
     }
 
     /**
+     * Tests the `exifremover_service` functionality to flip orientation.
+     *
+     * @dataProvider exifremover_service_flip_orientation_provider
+     * @param string $sourcepath the path to the source image.
+     * @param string $expectedpath the path to the expected image.
+     * @param bool $expectedresult the expected result of the comparison.
+     */
+    public function test_exifremover_service_flip_orientation_with_gd(
+        string $sourcepath,
+        string $expectedpath,
+        bool $expectedresult
+    ): void {
+        $this->resetAfterTest(true);
+
+        // Ensure that the exif remover tool path is not set.
+        set_config('exifremovertoolpath', null, 'core_files');
+
+        // Flip the orientation.
+        $service = new exifremover_service();
+        $newfile = $service->redact_file_by_path('image/jpeg', $sourcepath);
+
+        // Compare the actual and expected images.
+        $this->assertEquals($expectedresult, $this->compare_images($newfile, $expectedpath));
+    }
+
+    /**
+     * Data provider for test_exifremover_service_flip_orientation().
+     *
+     * @return array
+     */
+    public static function exifremover_service_flip_orientation_provider(): array {
+        return [
+            'Flip right-top' => [
+                'sourcepath' => self::get_fixture_path('core_files', 'redactor/righttop.jpg'),
+                'expectedpath' => self::get_fixture_path('core_files', 'redactor/topleft.jpg'),
+                'expectedresult' => true,
+            ],
+            'The image will not be the same after the flip process' => [
+                'sourcepath' => self::get_fixture_path('core_files', 'redactor/righttop.jpg'),
+                'expectedpath' => self::get_fixture_path('core_files', 'redactor/righttop.jpg'),
+                'expectedresult' => false,
+            ],
+        ];
+    }
+
+    /**
+     * Compares two images pixel by pixel.
+     *
+     * @param string $image1path the path to the first image.
+     * @param string $image2path the path to the second image.
+     * @return bool True if the images are identical, false otherwise.
+     */
+    private function compare_images(string $image1path, string $image2path): bool {
+        $image1 = imagecreatefromjpeg($image1path);
+        $image2 = imagecreatefromjpeg($image2path);
+
+        if (!$image1 || !$image2) {
+            return false;
+        }
+
+        $width1 = imagesx($image1);
+        $height1 = imagesy($image1);
+        $width2 = imagesx($image2);
+        $height2 = imagesy($image2);
+
+        if ($width1 !== $width2 || $height1 !== $height2) {
+            return false;
+        }
+
+        for ($x = 0; $x < $width1; $x++) {
+            for ($y = 0; $y < $height1; $y++) {
+                if (imagecolorat($image1, $x, $y) !== imagecolorat($image2, $x, $y)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Tests the `exifremover_service` functionality using ExifTool.
      *
      * This test verifies the ability of the `exifremover_service` to remove specific

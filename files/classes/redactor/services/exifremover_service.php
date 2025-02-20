@@ -63,6 +63,30 @@ class exifremover_service extends service implements file_redactor_service_inter
     /** @var bool $useexiftool Flag indicating whether to use ExifTool. */
     private bool $useexiftool = false;
 
+    /** @var int Normal orientation (no rotation). */
+    private const TOP_LEFT = 1;
+
+    /** @var int Mirrored horizontally. */
+    private const TOP_RIGHT = 2;
+
+    /** @var int Rotated 180° (upside down). */
+    private const BOTTOM_RIGHT = 3;
+
+    /** @var int Mirrored vertically. */
+    private const BOTTOM_LEFT = 4;
+
+    /** @var int Mirrored horizontally and rotated 270° clockwise. */
+    private const LEFT_TOP = 5;
+
+    /** @var int Rotated 90° clockwise. */
+    private const RIGHT_TOP = 6;
+
+    /** @var int Mirrored horizontally and rotated 90° clockwise. */
+    private const RIGHT_BOTTOM = 7;
+
+    /** @var int Rotated 270° clockwise. */
+    private const LEFT_BOTTOM = 8;
+
     /**
      * Initialise the EXIF remover service.
      */
@@ -161,8 +185,12 @@ class exifremover_service extends service implements file_redactor_service_inter
      * @throws moodle_exception If the image data is not successfully recreated.
      */
     private function execute_gd(string $sourcefile): string {
+        // Read EXIF data from the temporary file.
+        $exifdata = @exif_read_data($sourcefile);
+        $orientation = isset($exifdata['Orientation']) ? $exifdata['Orientation'] : self::TOP_LEFT;
+
         $filecontent = file_get_contents($sourcefile);
-        $destinationfile = $this->recreate_image_gd($filecontent);
+        $destinationfile = $this->recreate_image_gd($filecontent, $orientation);
         if (!$destinationfile) {
             throw new moodle_exception(
                 errorcode: 'redactor:exifremover:failedprocessgd',
@@ -242,11 +270,13 @@ class exifremover_service extends service implements file_redactor_service_inter
     /**
      * Recreate the image using PHP GD library to strip all EXIF data.
      *
-     * @param string $content The source file content
+     * @param string $content The source file content.
+     * @param int $orientation The orientation value. The default is 1, which means no rotation.
      * @return null|string The path to the recreated image, or null on failure.
      */
     private function recreate_image_gd(
         string $content,
+        int $orientation = self::TOP_LEFT,
     ): ?string {
         // Fetch the image information for this image.
         $imageinfo = @getimagesizefromstring($content);
@@ -255,6 +285,8 @@ class exifremover_service extends service implements file_redactor_service_inter
         }
         // Create a new image from the file.
         $image = @imagecreatefromstring($content);
+
+        $this->flip_gd($image, $orientation);
 
         $destinationfile = make_request_directory() . '/output';
 
@@ -272,6 +304,44 @@ class exifremover_service extends service implements file_redactor_service_inter
         }
 
         return null;
+    }
+
+    /**
+     * Flips the given GD image resource based on the specified orientation.
+     *
+     * @param \GDImage $image The GD image resource to be flipped.
+     * @param int $orientation The orientation value indicating how the image should be flipped.
+     *
+     * @return void
+     */
+    private function flip_gd(\GDImage &$image, int $orientation): void {
+        switch ($orientation) {
+            case self::TOP_LEFT:
+                break;
+            case self::TOP_RIGHT:
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case self::BOTTOM_RIGHT:
+                $image = imagerotate($image, 180, 0);
+                break;
+            case self::BOTTOM_LEFT:
+                imageflip($image, IMG_FLIP_VERTICAL);
+                break;
+            case self::LEFT_TOP:
+                $image = imagerotate($image, -90, 0);
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case self::RIGHT_TOP:
+                $image = imagerotate($image, -90, 0);
+                break;
+            case self::RIGHT_BOTTOM:
+                $image = imagerotate($image, 90, 0);
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case self::LEFT_BOTTOM:
+                $image = imagerotate($image, 90, 0);
+                break;
+        }
     }
 
     /**
