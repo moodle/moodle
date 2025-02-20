@@ -90,3 +90,37 @@ p.arrow_button {
         @include button-focus($value, $gray-800);
     }
 }
+
+// Small buttons should have the same border-radius as the normal buttons.
+.btn-sm,
+.btn-group-sm > .btn {
+    --bs-btn-border-radius: var(--#{$prefix}border-radius);
+}
+
+//
+// Subtle buttons.
+//
+
+@each $color, $value in $theme-colors {
+    .btn-subtle-#{$color} {
+        --#{$prefix}btn-font-weight: #{$font-weight-bold};
+        --#{$prefix}btn-color: var(--#{$prefix}#{$color}-text-emphasis);
+        --#{$prefix}btn-bg: var(--#{$prefix}#{$color}-bg-subtle);
+        --#{$prefix}btn-active-color: var(--#{$prefix}#{$color}-text-emphasis);
+        --#{$prefix}btn-active-bg: var(--#{$prefix}#{$color}-bg-subtle);
+        --#{$prefix}btn-hover-color: #{color-contrast($value)};
+        --#{$prefix}btn-hover-bg: var(--#{$prefix}#{$color});
+        --#{$prefix}btn-focus-shadow-rgb: #{to-rgb($value)};
+        @include button-focus($value, $white);
+    }
+}
+.btn-subtle-body {
+    --#{$prefix}btn-font-weight: #{$font-weight-bold};
+    --#{$prefix}btn-color: var(--#{$prefix}body-color);
+    --#{$prefix}btn-bg: transparent;
+    --#{$prefix}btn-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-hover-color: #{color-contrast($gray-600)};
+    --#{$prefix}btn-hover-bg: var(--#{$prefix}gray-600);
+    --#{$prefix}btn-focus-shadow-rgb: #{to-rgb($gray-600)};
+    @include button-focus($gray-600, $white);
+}

@@ -30697,7 +30697,7 @@ table.calendartable caption {
 }
 .course-section .action-menu .btn.btn-icon {
   height: 32px;
-  width: 40px;
+  width: 32px;
   border-radius: 0.375rem;
 }
 .course-section .action-menu.section-actions .btn.btn-icon {
@@ -30844,205 +30844,9 @@ table.calendartable caption {
   grid-area: completion;
   justify-self: end;
 }
-.activity-item .activity-completion button.btn,
-.activity-item .activity-completion a[role=button].btn {
-  --bs-btn-color: #6a737b;
-  --bs-btn-bg: #fff;
-  --bs-btn-border-color: #ced4da;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: white;
-  --bs-btn-hover-border-color: #d3d8de;
-  --bs-btn-focus-shadow-rgb: 191, 197, 204;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: white;
-  --bs-btn-active-border-color: #d3d8de;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #fff;
-  --bs-btn-disabled-border-color: #ced4da;
+.activity-item .activity-completion button,
+.activity-item .activity-completion a[role=button] {
   min-height: 32px;
-  font-weight: bold;
-  border-radius: 0.375rem;
-}
-.activity-item .activity-completion button.btn .icon,
-.activity-item .activity-completion a[role=button].btn .icon {
-  font-size: inherit;
-}
-.activity-item .activity-completion button.btn-primary,
-.activity-item .activity-completion a[role=button].btn-primary {
-  --bs-btn-color: #0f6cbf;
-  --bs-btn-bg: #cfe2f2;
-  --bs-btn-border-color: #cfe2f2;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #d6e6f4;
-  --bs-btn-hover-border-color: #d4e5f3;
-  --bs-btn-focus-shadow-rgb: 178, 208, 234;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #d9e8f5;
-  --bs-btn-active-border-color: #d4e5f3;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #cfe2f2;
-  --bs-btn-disabled-border-color: #cfe2f2;
-  color: #094173;
-}
-.activity-item .activity-completion button.btn-primary:hover,
-.activity-item .activity-completion a[role=button].btn-primary:hover {
-  color: #fff;
-}
-.activity-item .activity-completion button.btn-secondary,
-.activity-item .activity-completion a[role=button].btn-secondary {
-  --bs-btn-color: #ced4da;
-  --bs-btn-bg: #f5f6f8;
-  --bs-btn-border-color: #f5f6f8;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #f7f7f9;
-  --bs-btn-hover-border-color: #f6f7f9;
-  --bs-btn-focus-shadow-rgb: 239, 241, 244;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #f7f8f9;
-  --bs-btn-active-border-color: #f6f7f9;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #f5f6f8;
-  --bs-btn-disabled-border-color: #f5f6f8;
-  color: #7c7f83;
-}
-.activity-item .activity-completion button.btn-secondary:hover,
-.activity-item .activity-completion a[role=button].btn-secondary:hover {
-  color: #000;
-}
-.activity-item .activity-completion button.btn-success,
-.activity-item .activity-completion a[role=button].btn-success {
-  --bs-btn-color: #357a32;
-  --bs-btn-bg: #d7e4d6;
-  --bs-btn-border-color: #d7e4d6;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #dde8dc;
-  --bs-btn-hover-border-color: #dbe7da;
-  --bs-btn-focus-shadow-rgb: 191, 212, 189;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #dfe9de;
-  --bs-btn-active-border-color: #dbe7da;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #d7e4d6;
-  --bs-btn-disabled-border-color: #d7e4d6;
-  color: #20491e;
-}
-.activity-item .activity-completion button.btn-success:hover,
-.activity-item .activity-completion a[role=button].btn-success:hover {
-  color: #fff;
-}
-.activity-item .activity-completion button.btn-info,
-.activity-item .activity-completion a[role=button].btn-info {
-  --bs-btn-color: #008196;
-  --bs-btn-bg: #cce6ea;
-  --bs-btn-border-color: #cce6ea;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #d4eaed;
-  --bs-btn-hover-border-color: #d1e9ec;
-  --bs-btn-focus-shadow-rgb: 173, 215, 221;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #d6ebee;
-  --bs-btn-active-border-color: #d1e9ec;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #cce6ea;
-  --bs-btn-disabled-border-color: #cce6ea;
-  color: #004d5a;
-}
-.activity-item .activity-completion button.btn-info:hover,
-.activity-item .activity-completion a[role=button].btn-info:hover {
-  color: #fff;
-}
-.activity-item .activity-completion button.btn-warning,
-.activity-item .activity-completion a[role=button].btn-warning {
-  --bs-btn-color: #f0ad4e;
-  --bs-btn-bg: #fcefdc;
-  --bs-btn-border-color: #fcefdc;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #fcf1e1;
-  --bs-btn-hover-border-color: #fcf1e0;
-  --bs-btn-focus-shadow-rgb: 250, 229, 199;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #fdf2e3;
-  --bs-btn-active-border-color: #fcf1e0;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #fcefdc;
-  --bs-btn-disabled-border-color: #fcefdc;
-  color: #90682f;
-}
-.activity-item .activity-completion button.btn-warning:hover,
-.activity-item .activity-completion a[role=button].btn-warning:hover {
-  color: #000;
-}
-.activity-item .activity-completion button.btn-danger,
-.activity-item .activity-completion a[role=button].btn-danger {
-  --bs-btn-color: #ca3120;
-  --bs-btn-bg: #f4d6d2;
-  --bs-btn-border-color: #f4d6d2;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #f6dcd9;
-  --bs-btn-hover-border-color: #f5dad7;
-  --bs-btn-focus-shadow-rgb: 238, 189, 183;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #f6dedb;
-  --bs-btn-active-border-color: #f5dad7;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #f4d6d2;
-  --bs-btn-disabled-border-color: #f4d6d2;
-  color: #791d13;
-}
-.activity-item .activity-completion button.btn-danger:hover,
-.activity-item .activity-completion a[role=button].btn-danger:hover {
-  color: #fff;
-}
-.activity-item .activity-completion button.btn-light,
-.activity-item .activity-completion a[role=button].btn-light {
-  --bs-btn-color: #f8f9fa;
-  --bs-btn-bg: #fefefe;
-  --bs-btn-border-color: #fefefe;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #fefefe;
-  --bs-btn-hover-border-color: #fefefe;
-  --bs-btn-focus-shadow-rgb: 253, 253, 253;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #fefefe;
-  --bs-btn-active-border-color: #fefefe;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #fefefe;
-  --bs-btn-disabled-border-color: #fefefe;
-  color: #959596;
-}
-.activity-item .activity-completion button.btn-light:hover,
-.activity-item .activity-completion a[role=button].btn-light:hover {
-  color: #000;
-}
-.activity-item .activity-completion button.btn-dark,
-.activity-item .activity-completion a[role=button].btn-dark {
-  --bs-btn-color: #1d2125;
-  --bs-btn-bg: #d2d3d3;
-  --bs-btn-border-color: #d2d3d3;
-  --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #d9dada;
-  --bs-btn-hover-border-color: #d7d7d7;
-  --bs-btn-focus-shadow-rgb: 183, 184, 185;
-  --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #dbdcdc;
-  --bs-btn-active-border-color: #d7d7d7;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #d2d3d3;
-  --bs-btn-disabled-border-color: #d2d3d3;
-  color: #111416;
-}
-.activity-item .activity-completion button.btn-dark:hover,
-.activity-item .activity-completion a[role=button].btn-dark:hover {
-  color: #fff;
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-completion {
@@ -31079,8 +30883,12 @@ table.calendartable caption {
 }
 .activity-item .activity-groupmode-info .groupmode-information {
   height: 32px;
-  width: 40px;
+  width: 32px;
   border-radius: 0.375rem;
+}
+.activity-item .activity-groupmode-info .groupmode-information .icon {
+  width: 16px;
+  height: 16px;
 }
 .activity-item .activity-groupmode-info .groupmode-icon-info {
   display: none;
@@ -31378,7 +31186,7 @@ table.calendartable caption {
 }
 .activity.subsection .section .icons-collapse-expand:has(+ h4, + .h4) {
   height: 24px;
-  width: 30px;
+  width: 24px;
   font-size: 0.8203125rem;
 }
 .activity.subsection .section h4, .activity.subsection .section .h4 {
@@ -37547,6 +37355,145 @@ p.arrow_button {
 .btn-outline-dark:focus, .btn-outline-dark.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-sm,
+.btn-group-sm > .btn {
+  --bs-btn-border-radius: var(--bs-border-radius);
+}
+
+.btn-subtle-primary {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-primary-text-emphasis);
+  --bs-btn-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-active-color: var(--bs-primary-text-emphasis);
+  --bs-btn-active-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-focus-shadow-rgb: 15, 108, 191;
+}
+.btn-subtle-primary:focus, .btn-subtle-primary.focus {
+  outline: 0.25rem solid #000102;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-secondary {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-secondary-text-emphasis);
+  --bs-btn-bg: var(--bs-secondary-bg-subtle);
+  --bs-btn-active-color: var(--bs-secondary-text-emphasis);
+  --bs-btn-active-bg: var(--bs-secondary-bg-subtle);
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-focus-shadow-rgb: 206, 212, 218;
+}
+.btn-subtle-secondary:focus, .btn-subtle-secondary.focus {
+  outline: 0.25rem solid #5f6e7d;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-success {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-success-text-emphasis);
+  --bs-btn-bg: var(--bs-success-bg-subtle);
+  --bs-btn-active-color: var(--bs-success-text-emphasis);
+  --bs-btn-active-bg: var(--bs-success-bg-subtle);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-success);
+  --bs-btn-focus-shadow-rgb: 53, 122, 50;
+}
+.btn-subtle-success:focus, .btn-subtle-success.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-info {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-info-text-emphasis);
+  --bs-btn-bg: var(--bs-info-bg-subtle);
+  --bs-btn-active-color: var(--bs-info-text-emphasis);
+  --bs-btn-active-bg: var(--bs-info-bg-subtle);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-info);
+  --bs-btn-focus-shadow-rgb: 0, 129, 150;
+}
+.btn-subtle-info:focus, .btn-subtle-info.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-warning {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-warning-text-emphasis);
+  --bs-btn-bg: var(--bs-warning-bg-subtle);
+  --bs-btn-active-color: var(--bs-warning-text-emphasis);
+  --bs-btn-active-bg: var(--bs-warning-bg-subtle);
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: var(--bs-warning);
+  --bs-btn-focus-shadow-rgb: 240, 173, 78;
+}
+.btn-subtle-warning:focus, .btn-subtle-warning.focus {
+  outline: 0.25rem solid #694109;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-danger {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-danger-text-emphasis);
+  --bs-btn-bg: var(--bs-danger-bg-subtle);
+  --bs-btn-active-color: var(--bs-danger-text-emphasis);
+  --bs-btn-active-bg: var(--bs-danger-bg-subtle);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-danger);
+  --bs-btn-focus-shadow-rgb: 202, 49, 32;
+}
+.btn-subtle-danger:focus, .btn-subtle-danger.focus {
+  outline: 0.25rem solid #1a0604;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-light {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-light-text-emphasis);
+  --bs-btn-bg: var(--bs-light-bg-subtle);
+  --bs-btn-active-color: var(--bs-light-text-emphasis);
+  --bs-btn-active-bg: var(--bs-light-bg-subtle);
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: var(--bs-light);
+  --bs-btn-focus-shadow-rgb: 248, 249, 250;
+}
+.btn-subtle-light:focus, .btn-subtle-light.focus {
+  outline: 0.25rem solid #8193a5;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-dark {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-dark-text-emphasis);
+  --bs-btn-bg: var(--bs-dark-bg-subtle);
+  --bs-btn-active-color: var(--bs-dark-text-emphasis);
+  --bs-btn-active-bg: var(--bs-dark-bg-subtle);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-dark);
+  --bs-btn-focus-shadow-rgb: 29, 33, 37;
+}
+.btn-subtle-dark:focus, .btn-subtle-dark.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-subtle-body {
+  --bs-btn-font-weight: 700;
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-gray-600);
+  --bs-btn-focus-shadow-rgb: 106, 115, 123;
+}
+.btn-subtle-body:focus, .btn-subtle-body.focus {
+  outline: 0.25rem solid #0c0d0d;
+  box-shadow: inset 0 0 0 2px #fff;
 }
 
 .gradetreebox {
