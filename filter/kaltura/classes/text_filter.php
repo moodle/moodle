@@ -185,7 +185,7 @@ class text_filter extends \core_filters\text_filter {
         $uri = str_replace(array('.', '/', 'https'), array('\.', '\/', 'https?'), $uri);
 
         $oldsearch = '/<a\s[^>]*href="('.$uri.')\/index\.php\/kwidget\/wid\/_([0-9]+)\/uiconf_id\/([0-9]+)\/entry_id\/([\d]+_([a-z0-9]+))\/v\/flash"[^>]*>([^>]*)<\/a>/is';
-        $newtext = preg_replace_callback($oldsearch, 'filter_kaltura_callback', $newtext);
+        $newtext = preg_replace_callback($oldsearch, [$this, 'filter_kaltura_callback'], $newtext);
 
         // Search for newer versoin of Kaltura embedded anchor tag format.
         $kafuri = self::$kafuri;
@@ -216,7 +216,7 @@ class text_filter extends \core_filters\text_filter {
             $search .= '))\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
         }
 
-        $newtext = preg_replace_callback($search, 'filter_kaltura_callback', $newtext);
+        $newtext = preg_replace_callback($search, [$this, 'filter_kaltura_callback'], $newtext);
 
         if (empty($newtext) || $newtext === $text) {
             // Error or not filtered.
