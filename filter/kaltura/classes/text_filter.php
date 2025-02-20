@@ -17,6 +17,7 @@
 namespace filter_kaltura;
 use context_system;
 use moodle_url;
+use html_writer;
 
 /**
  * Kaltura filter script.
