@@ -1,0 +1,10 @@
+issueNumber: MDL-78489
+notes:
+  core_courseformat:
+    - message: >-
+        Protected function
+        `core_courseformat\output\local\content\section\availability::availability_info()`
+        has been fully removed. Use
+        `core_courseformat\output\local\content\section\availability::get_availability_data()`
+        instead.
+      type: removed
