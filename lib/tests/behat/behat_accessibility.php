@@ -181,9 +181,13 @@ EOF;
         if (empty($standardtags)) {
             $standardtags = [
                 // Meet WCAG 2.2 Level A success criteria.
+                'wcag2a',
+                'wcag21a',
                 'wcag22a',
 
                 // Meet WCAG 2.2 Level AA success criteria.
+                'wcag2aa',
+                'wcag21aa',
                 'wcag22aa',
 
                 // Meet Section 508 requirements.
