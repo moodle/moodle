@@ -157,12 +157,15 @@ EOF;
             }
 
             $violationdata .= sprintf(
-                "  %.03d violations of '%s' (severity: %s)\n%s\n",
+                "  %.03d violations of rule '%s' found (severity: %s)\n",
                 count($violation->nodes),
-                $violation->description,
+                $violation->id,
                 $violation->impact,
-                $nodedata
             );
+            $violationdata .= "  {$violation->help}\n";
+            $violationdata .= "  {$violation->description}\n";
+            $violationdata .= "  {$violation->helpUrl}\n";
+            $violationdata .= $nodedata;
         }
 
         throw new ExpectationException($violationdata, $this->getSession());
