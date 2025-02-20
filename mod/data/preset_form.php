@@ -46,42 +46,6 @@ class data_existing_preset_form extends moodleform {
     }
 }
 
-/**
- * Import preset class
- *
- *
- * @package   mod_data
- * @deprecated since 4.1 This is deprecated since MDL-75188, please use the dynamic_form
- *             form (\mod_data\form\import_presets)
- * @todo MDL-75189 This will be deleted in Moodle 4.5.
- */
-class data_import_preset_zip_form extends moodleform {
-    /**
-     * Form definition
-     *
-     * @return void
-     * @throws coding_exception
-     */
-    public function definition() {
-        $this->_form->addElement('header', 'uploadpreset', get_string('fromfile', 'data'));
-        $this->_form->addHelpButton('uploadpreset', 'fromfile', 'data');
-
-        $this->_form->addElement('hidden', 'd');
-        $this->_form->setType('d', PARAM_INT);
-        $this->_form->addElement('hidden', 'mode', 'import');
-        $this->_form->setType('mode', PARAM_ALPHANUM);
-        $this->_form->addElement('hidden', 'action', 'importzip');
-        $this->_form->setType('action', PARAM_ALPHANUM);
-        $this->_form->addElement('filepicker', 'importfile', get_string('chooseorupload', 'data'));
-        $this->_form->addRule('importfile', null, 'required');
-        $buttons = [
-            $this->_form->createElement('submit', 'submitbutton', get_string('save')),
-            $this->_form->createElement('cancel'),
-        ];
-        $this->_form->addGroup($buttons, 'buttonar', '', [' '], false);
-    }
-}
-
 class data_export_form extends moodleform {
     public function definition() {
         $this->_form->addElement('header', 'exportheading', get_string('exportaszip', 'data'));

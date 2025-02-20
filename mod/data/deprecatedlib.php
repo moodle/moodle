@@ -31,6 +31,99 @@ function data_get_completion_state() {
 }
 
 /**
+ * @deprecated since Moodle 4.1 MDL-75146 - please do not use this function any more.
+ */
+#[\core\attribute\deprecated(
+    'mod_data\manager::get_template and mod_data\template::parse_entries',
+    since: '4.1',
+    mdl: 'MDL-75146',
+    final: true,
+)]
+function data_print_template(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::get_name_from_plugin() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::get_name_from_plugin()', since: '4.1', mdl: 'MDL-75148', final: true)]
+function data_preset_name(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_presets() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\manager::get_available_presets()', since: '4.1', mdl: 'MDL-75148', final: true)]
+function data_get_available_presets(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_saved_presets() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\manager::get_available_saved_presets()', since: '4.1', mdl: 'MDL-75148', final: true)]
+function data_get_available_site_presets(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::delete() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::delete()', since: '4.1', mdl: 'MDL-75187', final: true)]
+function data_delete_site_preset(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::save() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::save()', since: '4.1', mdl: 'MDL-75142', final: true)]
+function data_presets_save(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the protected preset::generate_preset_xml() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::generate_preset_xml()', since: '4.1', mdl: 'MDL-75142', final: true)]
+function data_presets_generate_xml(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::export() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::export()', since: '4.1', mdl: 'MDL-75142', final: true)]
+function data_presets_export(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::can_manage() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::can_manage()', since: '4.1', mdl: 'MDL-75187', final: true)]
+function data_user_can_delete_preset(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75146 - please do not use this function any more.
+ */
+#[\core\attribute\deprecated('mod_data\manager::set_module_viewed', since: '4.1', mdl: 'MDL-75146', final: true)]
+function data_view(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::is_directory_a_preset() function instead.
+ */
+#[\core\attribute\deprecated('mod_data\preset::is_directory_a_preset()', since: '4.1', mdl: 'MDL-75148', final: true)]
+function is_directory_a_preset(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
  * @deprecated since Moodle 4.3.
  * @global object
  * @param array $export
