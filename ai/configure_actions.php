@@ -32,7 +32,7 @@ $provider = required_param('provider', PARAM_PLUGIN);
 $action = required_param('action', PARAM_TEXT);
 $id = required_param('providerid', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
-$data = ['providerid' => $id];
+$customdata = ['providerid' => $id];
 
 // Handle return URL.
 if (empty($returnurl)) {
@@ -43,7 +43,7 @@ if (empty($returnurl)) {
 } else {
     $returnurl = new moodle_url($returnurl);
 }
-$data['returnurl'] = $returnurl;
+$customdata['returnurl'] = $returnurl;
 
 $manager = \core\di::get(\core_ai\manager::class);
 $providerrecord = $manager->get_provider_records(['id' => $id]);
@@ -52,7 +52,8 @@ $providerrecord = reset($providerrecord);
 $actionconfig = json_decode($providerrecord->actionconfig, true, 512, JSON_THROW_ON_ERROR);
 $actionconfig = $actionconfig[$action];
 
-$data['actionconfig'] = $actionconfig;
+$customdata['actionconfig'] = $actionconfig;
+$customdata['providername'] = $provider;
 
 $urlparams = [
     'provider' => $provider,
@@ -69,7 +70,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 $providerclass = "\\$provider\\provider";
-$mform = $providerclass::get_action_settings($action, $data);
+$mform = $providerclass::get_action_settings($action, $customdata);
 
 if ($mform->is_cancelled()) {
     $data = $mform->get_data();

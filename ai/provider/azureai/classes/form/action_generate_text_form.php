@@ -86,8 +86,6 @@ class action_generate_text_form extends action_settings_form {
         $mform->addElement('hidden', 'providerid', $providerid);
         $mform->setType('providerid', PARAM_INT);
 
-        $this->add_action_buttons();
-
         $this->set_data($actionconfig);
     }
 }

@@ -14,24 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace aiprovider_openai\aimodel;
+
 /**
- * Hook listener callbacks for the Open AI provider.
+ * OpenAI base AI model interface.
  *
  * @package    aiprovider_openai
- * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
+ * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+interface openai_base {
 
-defined('MOODLE_INTERNAL') || die();
+    /** @var int MODEL_TYPE_TEXT Text model type. */
+    public const MODEL_TYPE_TEXT = 1;
+    /** @var int MODEL_TYPE_IMAGE Image model type. */
+    public const MODEL_TYPE_IMAGE = 2;
 
-$callbacks = [
-    [
-        'hook' => \core_ai\hook\after_ai_provider_form_hook::class,
-        'callback' => \aiprovider_openai\hook_listener::class . '::set_form_definition_for_aiprovider_openai',
-    ],
-
-    [
-        'hook' => \core_ai\hook\after_ai_action_settings_form_hook::class,
-        'callback' => \aiprovider_openai\hook_listener::class . '::set_model_form_definition_for_aiprovider_openai',
-    ],
-];
+    /**
+     * Get model type.
+     *
+     * @return int Model type.
+     */
+    public function model_type(): int;
+}

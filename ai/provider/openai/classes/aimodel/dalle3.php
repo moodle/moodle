@@ -14,24 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace aiprovider_openai\aimodel;
+
+use core_ai\aimodel\base;
+
 /**
- * Hook listener callbacks for the Open AI provider.
+ * DALL-e-3 AI model.
  *
  * @package    aiprovider_openai
- * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
+ * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class dalle3 extends base implements openai_base {
 
-defined('MOODLE_INTERNAL') || die();
+    #[\Override]
+    public function get_model_name(): string {
+        return 'dall-e-3';
+    }
 
-$callbacks = [
-    [
-        'hook' => \core_ai\hook\after_ai_provider_form_hook::class,
-        'callback' => \aiprovider_openai\hook_listener::class . '::set_form_definition_for_aiprovider_openai',
-    ],
+    #[\Override]
+    public function get_model_display_name(): string {
+        return 'DALL-e-3';
+    }
 
-    [
-        'hook' => \core_ai\hook\after_ai_action_settings_form_hook::class,
-        'callback' => \aiprovider_openai\hook_listener::class . '::set_model_form_definition_for_aiprovider_openai',
-    ],
-];
+    #[\Override]
+    public function has_model_settings(): bool {
+        return false;
+    }
+
+    #[\Override]
+    public function model_type(): int {
+        return self::MODEL_TYPE_IMAGE;
+    }
+}

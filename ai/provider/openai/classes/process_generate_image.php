@@ -75,22 +75,28 @@ class process_generate_image extends abstract_processor {
 
     #[\Override]
     protected function create_request_object(string $userid): RequestInterface {
+        // Create the request object.
+        $requestobj = new \stdClass();
+        $requestobj->model = $this->get_model();
+        $requestobj->user = $userid;
+        $requestobj->prompt = $this->action->get_configuration('prompttext');
+        $requestobj->n = $this->numberimages;
+        $requestobj->quality = $this->action->get_configuration('quality');
+        $requestobj->response_format = $this->responseformat;
+        $requestobj->size = $this->calculate_size($this->action->get_configuration('aspectratio'));
+        $requestobj->style = $this->action->get_configuration('style');
+        // Append the extra model settings.
+        $modelsettings = $this->get_model_settings();
+        foreach ($modelsettings as $setting => $value) {
+            $requestobj->$setting = $value;
+        }
         return new Request(
             method: 'POST',
-                uri: '',
-                headers: [
-                    'Content-Type' => 'application/json',
-                ],
-                body: json_encode((object) [
-                    'prompt' => $this->action->get_configuration('prompttext'),
-                    'model' => $this->get_model(),
-                    'n' => $this->numberimages,
-                    'quality' => $this->action->get_configuration('quality'),
-                    'response_format' => $this->responseformat,
-                    'size' => $this->calculate_size($this->action->get_configuration('aspectratio')),
-                    'style' => $this->action->get_configuration('style'),
-                    'user' => $userid,
-                ]),
+            uri: '',
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+            body: json_encode($requestobj),
         );
     }
 

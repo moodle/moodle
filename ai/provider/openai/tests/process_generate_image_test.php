@@ -16,6 +16,7 @@
 
 namespace aiprovider_openai;
 
+use aiprovider_openai\test\testcase_helper_trait;
 use core_ai\aiactions\base;
 use core_ai\provider;
 use GuzzleHttp\Psr7\Response;
@@ -31,6 +32,9 @@ use GuzzleHttp\Psr7\Response;
  * @covers     \aiprovider_openai\abstract_processor
  */
 final class process_generate_image_test extends \advanced_testcase {
+
+    use testcase_helper_trait;
+
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
 
@@ -51,27 +55,14 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Load a response body from a file.
         $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_openai', 'image_request_success.json'));
-        $this->create_provider();
-        $this->create_action();
-    }
-
-    /**
-     * Create the provider object.
-     */
-    private function create_provider(): void {
         $this->manager = \core\di::get(\core_ai\manager::class);
-        $config = [
-            'apikey' => '123',
-            'enableuserratelimit' => true,
-            'userratelimit' => 1,
-            'enableglobalratelimit' => true,
-            'globalratelimit' => 1,
-        ];
-        $this->provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
-            name: 'dummy',
-            config: $config,
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'dall-e-3',
+            ],
         );
+        $this->create_action();
     }
 
     /**
@@ -130,6 +121,50 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertEquals('hd', $requestdata->quality);
         $this->assertEquals('url', $requestdata->response_format);
         $this->assertEquals('1024x1024', $requestdata->size);
+    }
+
+    /**
+     * Test create_request_object with extra model settings.
+     */
+    public function test_create_request_object_with_model_settings(): void {
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'dall-e-3',
+                'temperature' => '0.5',
+                'max_tokens' => '100',
+            ],
+        );
+        $processor = new process_generate_image($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('dall-e-3', $body->model);
+        $this->assertEquals('0.5', $body->temperature);
+        $this->assertEquals('100', $body->max_tokens);
+
+        $this->provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'my-custom-gpt',
+                'modelextraparams' => '{"temperature": 0.5,"max_tokens": 100}',
+            ],
+        );
+        $processor = new process_generate_image($this->provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $body = (object) json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('my-custom-gpt', $body->model);
+        $this->assertEquals('0.5', $body->temperature);
+        $this->assertEquals('100', $body->max_tokens);
     }
 
     /**
@@ -397,6 +432,14 @@ final class process_generate_image_test extends \advanced_testcase {
             classname: '\aiprovider_openai\provider',
             name: 'dummy',
             config: $config,
+            actionconfig: [
+                \core_ai\aiactions\generate_image::class => [
+                    'settings' => [
+                        'model' => 'dall-e-3',
+                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                    ],
+                ],
+            ],
         );
 
         // Mock the http client to return a successful response.
@@ -538,6 +581,14 @@ final class process_generate_image_test extends \advanced_testcase {
             classname: '\aiprovider_openai\provider',
             name: 'dummy',
             config: $config,
+            actionconfig: [
+                \core_ai\aiactions\generate_image::class => [
+                    'settings' => [
+                        'model' => 'dall-e-3',
+                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                    ],
+                ],
+            ],
         );
 
         // Mock the http client to return a successful response.
@@ -592,7 +643,7 @@ final class process_generate_image_test extends \advanced_testcase {
             ['Content-Type' => 'image/jpeg'],
             \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
-        $this->create_provider();
+        $this->provider = $this->create_provider(\core_ai\aiactions\generate_image::class);
         $this->create_action($user1->id);
         $processor = new process_generate_image($provider, $this->action);
         $result = $processor->process();
@@ -603,7 +654,7 @@ final class process_generate_image_test extends \advanced_testcase {
         // Case 3: Global rate limit has been reached for a different user too.
         // Log in user2.
         $this->setUser($user2);
-        $this->create_provider();
+        $this->provider = $this->create_provider(\core_ai\aiactions\generate_image::class);
         $this->create_action($user2->id);
         // The response from OpenAI.
         $mock->append(new Response(
@@ -653,7 +704,7 @@ final class process_generate_image_test extends \advanced_testcase {
             ['Content-Type' => 'image/jpeg'],
             \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
-        $this->create_provider();
+        $this->provider = $this->create_provider(\core_ai\aiactions\generate_image::class);
         $this->create_action($user1->id);
         $processor = new process_generate_image($provider, $this->action);
         $result = $processor->process();

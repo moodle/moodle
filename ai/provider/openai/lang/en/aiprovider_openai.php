@@ -37,6 +37,16 @@ $string['action:summarise_text:systeminstruction'] = 'System instruction';
 $string['action:summarise_text:systeminstruction_help'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['apikey'] = 'OpenAI API key';
 $string['apikey_help'] = 'Get a key from your <a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI API keys</a>.';
+$string['custom_model_name'] = 'Custom model name';
+$string['extraparams'] = 'Extra parameters';
+$string['extraparams_help'] = 'Extra parameters can be configured here. We support JSON format. For example:
+<pre>
+{
+    "temperature": 0.5,
+    "max_tokens": 100
+}
+</pre>';
+$string['invalidjson'] = 'Invalid JSON string';
 $string['orgid'] = 'OpenAI organization ID';
 $string['orgid_help'] = 'Get your OpenAI organization ID from your <a href="https://platform.openai.com/account/org-settings" target="_blank">OpenAI account</a>.';
 $string['pluginname'] = 'OpenAI API provider';
@@ -46,6 +56,16 @@ $string['privacy:metadata:aiprovider_openai:model'] = 'The model used to generat
 $string['privacy:metadata:aiprovider_openai:numberimages'] = 'When generating images the number of images used in the response.';
 $string['privacy:metadata:aiprovider_openai:prompttext'] = 'The user entered text prompt used to generate the response.';
 $string['privacy:metadata:aiprovider_openai:responseformat'] = 'The format of the response. When generating images.';
+$string['settings'] = 'Settings';
+$string['settings_frequency_penalty'] = 'frequency_penalty';
+$string['settings_frequency_penalty_help'] = 'Penalizes new tokens based on their frequency in the text so far';
+$string['settings_help'] = 'You can adjust the settings below to customize how requests are sent to OpenAI. Update the values as needed, ensuring they align with your requirements.<br><br>';
+$string['settings_max_tokens'] = 'max_tokens';
+$string['settings_max_tokens_help'] = 'The maximum number of tokens to generate in the response';
+$string['settings_presence_penalty'] = 'presence_penalty';
+$string['settings_presence_penalty_help'] = 'Penalizes new tokens based on whether they appear in the text so far';
+$string['settings_top_p'] = 'top_p';
+$string['settings_top_p_help'] = 'Controls nucleus sampling';
 
 // Deprecated since Moodle 5.0.
 $string['action:generate_image:model_desc'] = 'The model used to generate images from user prompts.';
