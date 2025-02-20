@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace filter_kaltura;
-use core_filters\filter_object;
+use context_system;
 
 /**
  * Kaltura filter script.
