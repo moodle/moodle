@@ -834,4 +834,79 @@ class behat_forms extends behat_base {
             );
         }
     }
+
+    /**
+     * Check that the validationMessage property on a form field element includes the given text.
+     *
+     * @Then the :field field validation message should contain :text
+     * @param string $field The css selector for the input field
+     * @param string $text The text which should be found in the validation message
+     */
+    public function the_field_validation_message_should_contain(string $field, string $text): void {
+
+        // We can't use this assertion if javascript is not running.
+        $this->require_javascript();
+
+        // Check that the element exists.
+        // This is fail and go no further, if the element does not exist.
+        $node = $this->get_selected_node('field', $field);
+
+        // Get the validity result.
+        $wdelement = $this->get_webdriver_element_from_node_element($node);
+        $webdriver = $this->getSession()->getDriver()->getWebDriver();
+        $message = $webdriver->executeScript("return arguments[0].validationMessage;", [$wdelement]);
+        if (strpos($message, $text) === false) {
+            throw new ExpectationException(
+                '"' . $field . '" validation message does not contain "' . $text . '"', $this->getSession()
+            );
+        }
+
+    }
+
+    /**
+     * Check that the result of calling the checkValidity API on a form field element matches the expected result.
+     *
+     * @Then the :field field validity check should return :result
+     * @param string $field The css selector for the input field
+     * @param string $expected "true" or "false"
+     */
+    public function the_field_validity_check_should_return(string $field, string $expected): void {
+
+        // We can't use this assertion if javascript is not running.
+        $this->require_javascript();
+
+        // Expected value can only be 'true' or 'false'.
+        $expected = strtolower($expected);
+        if (!in_array($expected, ['true', 'false'])) {
+            throw new ExpectationException(
+                'Invalid value for expected value "' . $expected . '". Should be "true" or "false".',
+                $this->getSession());
+        }
+
+        // Convert the expected result from a string to bool.
+        $expected = ($expected === "true");
+
+        // Check that the element exists.
+        // This is fail and go no further, if the element does not exist.
+        $node = $this->get_selected_node('field', $field);
+
+        // Get the validity result.
+        $wdelement = $this->get_webdriver_element_from_node_element($node);
+        $webdriver = $this->getSession()->getDriver()->getWebDriver();
+        $result = $webdriver->executeScript("return arguments[0].checkValidity();", [$wdelement]);
+        if ($result !== $expected) {
+
+            // Convert booleans to strings for the exception message.
+            $result = ($result) ? "true" : "false";
+            $expected = ($expected) ? "true" : "false";
+
+            throw new ExpectationException(
+                '"' . $field . '" validation check was "' . $result . '". Expected: "' .
+                $expected . '"', $this->getSession()
+            );
+
+        }
+
+    }
+
 }

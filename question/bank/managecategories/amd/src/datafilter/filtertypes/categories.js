@@ -25,11 +25,16 @@
 import GenericFilter from 'core/datafilter/filtertype';
 import Templates from 'core/templates';
 import {getUserPreference, setUserPreference} from 'core_user/repository';
+import Notification from 'core/notification';
+import {get_strings as getStrings} from 'core/str';
 
 export default class extends GenericFilter {
 
     SELECTORS = {
         includeSubcategories: 'input[name=category-subcategories]',
+        selectInput: 'select#filter-value-category',
+        selectInputOption: 'select#filter-value-category option',
+        validationInput: 'div[data-filter-type="category"] div.form-autocomplete-input input',
     };
 
     /**
@@ -73,4 +78,43 @@ export default class extends GenericFilter {
             filteroptions: this.filterOptions,
         };
     }
+
+    validate() {
+
+        // Get the possible option values and filter out empty ones.
+        const nodelist = this.filterRoot.querySelectorAll(this.SELECTORS.selectInputOption);
+
+        // This gets all the values from the autocomplete's hidden select menu and filters out
+        // any which are not positive integers.
+        const validoptions = Array.from(nodelist).map(
+            option => (parseInt(option.value) > 0) ? parseInt(option.value) : false
+        ).filter(Boolean);
+
+        // Get the value supplied.
+        const value = parseInt(this.filterRoot.querySelector(this.SELECTORS.selectInput).value);
+
+        // Reset validation.
+        const node = this.filterRoot.querySelector(this.SELECTORS.validationInput);
+        node.setCustomValidity('');
+
+        // Make sure the value supplied is valid.
+        if (!validoptions.includes(value)) {
+            getStrings([
+                {
+                    key: 'error:category',
+                    component: 'qbank_managecategories',
+                },
+            ]).then((strings) => {
+                node.setCustomValidity(strings[0]);
+                node.reportValidity();
+                return strings;
+            }).catch(Notification.exception);
+
+            return false;
+        }
+
+        return true;
+
+    }
+
 }
