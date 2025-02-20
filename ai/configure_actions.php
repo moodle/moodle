@@ -46,8 +46,7 @@ if (empty($returnurl)) {
 $customdata['returnurl'] = $returnurl;
 
 $manager = \core\di::get(\core_ai\manager::class);
-$providerrecord = $manager->get_provider_records(['id' => $id]);
-$providerrecord = reset($providerrecord);
+$providerrecord = $manager->get_provider_record(['id' => $id], MUST_EXIST);
 
 $actionconfig = json_decode($providerrecord->actionconfig, true, 512, JSON_THROW_ON_ERROR);
 $actionconfig = $actionconfig[$action];

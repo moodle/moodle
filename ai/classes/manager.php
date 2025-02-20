@@ -392,11 +392,25 @@ class manager {
     }
 
     /**
+     * Get single provider record according to the filter
+     *
+     * @param array $filter The filterable elements to get the record from
+     * @param int $strictness
+     * @return \stdClass|false
+     */
+    public function get_provider_record(array $filter = [], int $strictness = IGNORE_MISSING): \stdClass|false {
+        return $this->db->get_record(
+            table: 'ai_providers',
+            conditions: $filter,
+            strictness: $strictness,
+        );
+    }
+
+    /**
      * Get the provider records according to the filter.
      *
      * @param array|null $filter The filterable elements to get the records from.
-     * @return array
-     * @throws \dml_exception
+     * @return \stdClass[]
      */
     public function get_provider_records(?array $filter = null): array {
         return $this->db->get_records(
