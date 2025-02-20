@@ -36,46 +36,16 @@ require_sesskey();
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 // User must be logged in.
-
-$systemcontext = context_system::instance();
-$coursecontext = context_course::instance($course->id);
-
 require_login();
 
-if (has_capability('moodle/user:loginas', $systemcontext)) {
-    if (is_siteadmin($userid)) {
-        throw new \moodle_exception('nologinas');
-    }
-    $context = $systemcontext;
-    $PAGE->set_context($context);
-} else {
-    require_login($course);
-    require_capability('moodle/user:loginas', $coursecontext);
-    if (is_siteadmin($userid)) {
-        throw new \moodle_exception('nologinas');
-    }
-    if (!is_enrolled($coursecontext, $userid)) {
-        throw new \moodle_exception('usernotincourse');
-    }
-    $context = $coursecontext;
+$user = $DB->get_record('user', ['id' => $userid]);
 
-    // Check if course has SEPARATEGROUPS and user is part of that group.
-    if (groups_get_course_groupmode($course) == SEPARATEGROUPS &&
-            !has_capability('moodle/site:accessallgroups', $context)) {
-        $samegroup = false;
-        if ($groups = groups_get_all_groups($course->id, $USER->id)) {
-            foreach ($groups as $group) {
-                if (groups_is_member($group->id, $userid)) {
-                    $samegroup = true;
-                    break;
-                }
-            }
-        }
-        if (!$samegroup) {
-            throw new \moodle_exception('nologinas');
-        }
-    }
+$context = \core\session\loginas_helper::get_context_user_can_login_as($USER, $user, $course);
+if (empty($context)) {
+    throw new moodle_exception('nologinas');
 }
+
+$PAGE->set_context($context);
 
 // Login as this user and return to course home page.
 \core\session\manager::loginas($userid, $context);
