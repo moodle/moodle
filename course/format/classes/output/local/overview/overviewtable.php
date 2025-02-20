@@ -103,12 +103,20 @@ class overviewtable implements renderable, named_templatable {
                 }
                 /** @var overviewitem $item */
                 $item = $activity['overviews'][$header->key];
-                $items[] = (object) [
+                $itemsdata = (object) [
                     'content' => $item->get_rendered_content($output),
                     'overview' => $header->key,
                     'value' => $item->get_value(),
                     'textalign' => $item->get_text_align()->classes(),
                 ];
+
+                $alertcount = $item->get_alert_count();
+                if ($alertcount > 0) {
+                    $itemsdata->alertcount = $alertcount;
+                    $itemsdata->alertlabel = $item->get_alert_label();
+                }
+
+                $items[] = $itemsdata;
             }
             $result[] = [
                 'cmid' => $activity['cmid'],

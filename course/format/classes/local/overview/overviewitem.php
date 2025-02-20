@@ -35,6 +35,8 @@ class overviewitem {
      * @param int|string|bool|null $value The section name.
      * @param string|renderable|null $content The item content.
      * @param text_align $textalign The preferred text alignment.
+     * @param int $alertcount an optional numeric indicator for alerts (zero means no alerts).
+     * @param string $alertlabel the meaning to show with the alert count.
      */
     public function __construct(
         /** @var string the name of the activity */
@@ -45,6 +47,10 @@ class overviewitem {
         protected string|renderable|null $content = null,
         /** @var text_align the preferred text alignment. */
         protected text_align $textalign = text_align::START,
+        /** @var int an optional numeric indicator for alerts (zero means no alerts). */
+        protected int $alertcount = 0,
+        /** @var string the badge label an optional label for the badge. */
+        protected string $alertlabel = '',
     ) {
     }
 
@@ -107,6 +113,27 @@ class overviewitem {
     }
 
     /**
+     * Gets the alert count for the item.
+     *
+     * Alert count is an optional numeric indicator for alerts used for filtering,
+     * highlighting, or the mobile APP badge display.
+     *
+     * @return int The alert count.
+     */
+    public function get_alert_count(): int {
+        return $this->alertcount;
+    }
+
+    /**
+     * Gets the alert label for the item.
+     *
+     * @return string The alert label.
+     */
+    public function get_alert_label(): string {
+        return $this->alertlabel;
+    }
+
+    /**
      * Sets the content for this item.
      *
      * Items can utilize either a renderable object or a pre-rendered string as their content.
@@ -142,5 +169,16 @@ class overviewitem {
      */
     public function set_name(string $name): void {
         $this->name = $name;
+    }
+
+    /**
+     * Sets the alert count and alert label for the item.
+     *
+     * @param int $alertcount
+     * @param string $alertlabel
+     */
+    public function set_alert(int $alertcount, string $alertlabel): void {
+        $this->alertcount = $alertcount;
+        $this->alertlabel = $alertlabel;
     }
 }
