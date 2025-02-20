@@ -12,7 +12,13 @@
 	path = repository/boxnet
 	url = https://github.com/moodlehq/moodle-repository_boxnet
 	branch = master
+[submodule "question/type/wordselect"]
+	path = question/type/wordselect
+	url = https://github.com/marcusgreen/moodle-qtype_wordselect
+	branch = master
+	tag = v2.53
 [submodule "theme/ucsf"]
 	path = theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
+
