@@ -1,0 +1,7 @@
+issueNumber: MDL-84593
+notes:
+  core:
+    - message: >
+        Final deprecation and removal of
+        \core\event\course_module_instances_list_viewed
+      type: removed
