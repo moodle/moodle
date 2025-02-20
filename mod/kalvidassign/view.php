@@ -29,7 +29,7 @@ $id = optional_param('id', 0, PARAM_INT);
 
 // Retrieve module instance.
 if (empty($id)) {
-    print_error('invalidid', 'kalvidassign');
+    throw new \moodle_exception('invalidid', 'kalvidassign');
 }
 
 if (!empty($id)) {

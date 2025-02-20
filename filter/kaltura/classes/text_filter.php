@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace filter_kaltura;
+use context_system;
+use moodle_url;
+use html_writer;
+
 /**
  * Kaltura filter script.
  *
@@ -23,7 +28,7 @@
  * @copyright  (C) 2014 Remote-Learner.net Inc (http://www.remote-learner.net)
  */
 
-class filter_kaltura extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
     /** @var object $context The current page context. */
     public static $pagecontext = null;
 
@@ -48,6 +53,7 @@ class filter_kaltura extends moodle_text_filter {
      * @param object $page Moodle page object.
      * @param object $context Page context object.
      */
+    #[\Override]
     public function setup($page, $context) {
         global $CFG;
         require_once($CFG->dirroot.'/local/kaltura/locallib.php');
@@ -86,6 +92,66 @@ class filter_kaltura extends moodle_text_filter {
     }
 
     /**
+     * Change links to Kaltura into embedded Kaltura videos.
+     * @param  array $link An array of elements matching the regular expression from class filter_kaltura - filter().
+     * @return string Kaltura embed video markup.
+     */
+    function filter_kaltura_callback($link) {
+        $width = self::$defaultwidth;
+        $height = self::$defaultheight;
+        $source = '';
+
+        // Convert KAF URI anchor tags into iframe markup.
+        $count = count($link);
+        if ($count > 7) {
+            // Get the height and width of the iframe.
+            $properties = explode('||', $link[$count - 1]);
+
+            $width = $properties[2];
+            $height = $properties[3];
+
+            if (4 != count($properties)) {
+                return $link[0];
+            }
+
+            $source = self::$kafuri . '/browseandembed/index/media/entryid/' . $link[$count - 4] . $link[$count - 3];
+        }
+
+        // Convert v3 anchor tags into iframe markup.
+        if (7 == count($link) && $link[1] == self::$apiurl) {
+            $source = self::$kafuri.'/browseandembed/index/media/entryid/'.$link[4].'/playerSize/';
+            $source .= self::$defaultwidth.'x'.self::$defaultheight.'/playerSkin/'.$link[3];
+        }
+
+        $params = array(
+            'courseid' => self::$pagecontext->instanceid,
+            'height' => $height,
+            'width' => $width,
+            'withblocks' => 0,
+            'source' => $source
+
+        );
+
+        $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
+
+        $iframe = html_writer::tag('iframe', '', array(
+            'width' => $width,
+            'height' => $height,
+            'class' => 'kaltura-player-iframe',
+            'allowfullscreen' => 'true',
+            'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
+            'src' => $url->out(false),
+            'frameborder' => '0'
+        ));
+
+        $iframeContainer = html_writer::tag('div', $iframe, array(
+            'class' => 'kaltura-player-container'
+        ));
+
+        return $iframeContainer;
+    }
+
+    /**
      * This function does the work of converting text that matches a regular expression into
      * Kaltura video markup, so that links to Kaltura videos are displayed in the Kaltura
      * video player.
@@ -93,6 +159,7 @@ class filter_kaltura extends moodle_text_filter {
      * @param array $options An array of additional options.
      * @return string The same text or modified text is returned.
      */
+    #[\Override]
     public function filter($text, array $options = array()) {
         global $CFG;
 
@@ -120,7 +187,7 @@ class filter_kaltura extends moodle_text_filter {
         $uri = str_replace(array('.', '/', 'https'), array('\.', '\/', 'https?'), $uri);
 
         $oldsearch = '/<a\s[^>]*href="('.$uri.')\/index\.php\/kwidget\/wid\/_([0-9]+)\/uiconf_id\/([0-9]+)\/entry_id\/([\d]+_([a-z0-9]+))\/v\/flash"[^>]*>([^>]*)<\/a>/is';
-        $newtext = preg_replace_callback($oldsearch, 'filter_kaltura_callback', $newtext);
+        $newtext = preg_replace_callback($oldsearch, [$this, 'filter_kaltura_callback'], $newtext);
 
         // Search for newer versoin of Kaltura embedded anchor tag format.
         $kafuri = self::$kafuri;
@@ -151,7 +218,7 @@ class filter_kaltura extends moodle_text_filter {
             $search .= '))\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
         }
 
-        $newtext = preg_replace_callback($search, 'filter_kaltura_callback', $newtext);
+        $newtext = preg_replace_callback($search, [$this, 'filter_kaltura_callback'], $newtext);
 
         if (empty($newtext) || $newtext === $text) {
             // Error or not filtered.
@@ -161,64 +228,4 @@ class filter_kaltura extends moodle_text_filter {
 
         return $newtext;
     }
-}
-
-/**
- * Change links to Kaltura into embedded Kaltura videos.
- * @param  array $link An array of elements matching the regular expression from class filter_kaltura - filter().
- * @return string Kaltura embed video markup.
- */
-function filter_kaltura_callback($link) {
-    $width = filter_kaltura::$defaultwidth;
-    $height = filter_kaltura::$defaultheight;
-    $source = '';
-
-    // Convert KAF URI anchor tags into iframe markup.
-    $count = count($link);
-    if ($count > 7) {
-        // Get the height and width of the iframe.
-        $properties = explode('||', $link[$count - 1]);
-
-        $width = $properties[2];
-        $height = $properties[3];
-
-        if (4 != count($properties)) {
-            return $link[0];
-        }
-
-        $source = filter_kaltura::$kafuri . '/browseandembed/index/media/entryid/' . $link[$count - 4] . $link[$count - 3];
-    }
-
-    // Convert v3 anchor tags into iframe markup.
-    if (7 == count($link) && $link[1] == filter_kaltura::$apiurl) {
-        $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[4].'/playerSize/';
-        $source .= filter_kaltura::$defaultwidth.'x'.filter_kaltura::$defaultheight.'/playerSkin/'.$link[3];
-    }
-
-    $params = array(
-        'courseid' => filter_kaltura::$pagecontext->instanceid,
-        'height' => $height,
-        'width' => $width,
-        'withblocks' => 0,
-        'source' => $source
-
-    );
-
-    $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
-
-    $iframe = html_writer::tag('iframe', '', array(
-        'width' => $width,
-        'height' => $height,
-        'class' => 'kaltura-player-iframe',
-        'allowfullscreen' => 'true',
-        'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
-        'src' => $url->out(false),
-        'frameborder' => '0'
-    ));
-
-    $iframeContainer = html_writer::tag('div', $iframe, array(
-        'class' => 'kaltura-player-container'
-    ));
-
-    return $iframeContainer;
 }

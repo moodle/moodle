@@ -54,11 +54,11 @@ $launch['custom_publishdata'] = '';
 $source = $source = local_kaltura_add_kaf_uri_token($source);
 
 if (!$cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (!$kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-    print_error('invalidid', 'kalvidassign');
+    throw new \moodle_exception('invalidid', 'kalvidassign');
 }
 
 $submissionParams = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);
