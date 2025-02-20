@@ -8,31 +8,27 @@ Feature: Admin can create learning plans from template
     Given the following "users" exist:
       | username | firstname | lastname | email              |
       | student1 | Student   | One      | student1@email.com |
-    # Create competency frameworks.
     And the following "core_competency > frameworks" exist:
       | shortname | idnumber |
       | CF1       | CF1      |
       | CF2       | CF2      |
-    # Add competency to each competency frameworks.
     And the following "core_competency > competencies" exist:
       | shortname        | competencyframework | idnumber |
       | CF1 Competency 1 | CF1                 | CF1C1    |
       | CF2 Competency 1 | CF2                 | CF2C1    |
-    # Create a learning plan template.
     And the following "core_competency > templates" exist:
       | shortname | description       |
       | LPT1      | LPT 1 description |
-    And I log in as "admin"
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | CF1C1      |
 
   @javascript
   Scenario: Admin can assign competencies from different frameworks to a learning plan
-    Given I navigate to "Competencies > Learning plan templates" in site administration
-    And I click on "LPT1" "link"
-    # Add a competency in learning plan template.
+    Given I log in as "admin"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I follow "LPT1"
     When I press "Add competencies to learning plan template"
-    And I select "CF1 Competency 1" of the competency tree
-    And I click on "Add" "button" in the "Competency picker" "dialogue"
-    And I press "Add competencies to learning plan template"
     # Add another competency from a different framework in the learning plan template.
     And I set the field with xpath "//select[@data-action='chooseframework']" to "CF2 CF2"
     And I select "CF2 Competency 1" of the competency tree
@@ -45,12 +41,7 @@ Feature: Admin can create learning plans from template
 
   @javascript
   Scenario: Admin can link and unlink learning plans created from template
-    Given I navigate to "Competencies > Learning plan templates" in site administration
-    And I click on "LPT1" "link"
-    # Add a competency in learning plan template.
-    And I press "Add competencies to learning plan template"
-    And I select "CF1 Competency 1" of the competency tree
-    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    Given I log in as "admin"
     And I navigate to "Competencies > Learning plan templates" in site administration
     # Initially, the number of learning plans is 0.
     And the following should exist in the "generaltable" table:
@@ -72,7 +63,7 @@ Feature: Admin can create learning plans from template
     # Unlink the template.
     And I click on "Unlink from learning plan template" "link"
     And I press "Unlink from learning plan template"
-    # Learning plan stil exists but Template name and Unlink from learning plan template link no longer exist.
+    # Learning plan still exists but Template name and Unlink from learning plan template link no longer exist.
     And "LPT1" "text" should exist
     And "Learning plan template" "text" should not exist
     And "Unlink from learning plan template" "link" should not exist
