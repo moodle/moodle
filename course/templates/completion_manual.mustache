@@ -30,7 +30,7 @@
 {{#istrackeduser}}
     {{#overallcomplete}}
         <button
-            class="btn btn-success  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+            class="btn btn-subtle-success  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
             data-action="toggle-manual-completion"
             data-toggletype="manual:undo"
             data-cmid="{{cmid}}"
@@ -50,7 +50,7 @@
     {{/overallcomplete}}
     {{#overallincomplete}}
         <button
-            class="btn btn-outline-secondary  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+            class="btn btn-subtle-body  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
             data-action="toggle-manual-completion"
             data-toggletype="manual:mark-done"
             data-cmid="{{cmid}}"
@@ -71,7 +71,7 @@
 {{/istrackeduser}}
 {{^istrackeduser}}
     <button
-        class="btn btn-outline-secondary  {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
+        class="btn btn-subtle-body {{^normalbutton}}btn-sm{{/normalbutton}} text-nowrap"
         disabled
     >
         {{#str}} completion_manual:markdone, core_course {{/str}}
