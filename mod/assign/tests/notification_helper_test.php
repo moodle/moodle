@@ -167,6 +167,14 @@ final class notification_helper_test extends \advanced_testcase {
         $user1 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
 
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
@@ -431,6 +439,14 @@ final class notification_helper_test extends \advanced_testcase {
         $course = $generator->create_course();
         $user1 = $generator->create_and_enrol($course, 'student');
 
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
@@ -652,6 +668,14 @@ final class notification_helper_test extends \advanced_testcase {
         $course = $generator->create_course();
         $user1 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
+
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
 
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
