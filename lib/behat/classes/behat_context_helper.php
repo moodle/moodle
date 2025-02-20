@@ -166,7 +166,7 @@ class behat_context_helper {
             $themeconfig = theme_config::load($suitename);
         } catch (Exception $e) {
             // This theme has no theme config.
-            return [];
+            return null;
         }
 
         // The theme will use all core contexts, except the one overridden by theme or its parent.
