@@ -148,6 +148,23 @@ class behat_context_helper {
             return $overrideclassname;
         }
 
+        try {
+            $themeconfig = theme_config::load($suitename);
+        } catch (Exception $e) {
+            // This theme has no theme config.
+            return null;
+        }
+
+        // The theme will use all core contexts, except the one overridden by theme or its parent.
+        if (isset($themeconfig->parents)) {
+            foreach ($themeconfig->parents as $parent) {
+                $overrideclassname = "behat_theme_{$parent}_{$classname}";
+                if (self::$environment->hasContextClass($overrideclassname)) {
+                    return $overrideclassname;
+                }
+            }
+        }
+
         if (self::$environment->hasContextClass($classname)) {
             return $classname;
         }
