@@ -31,6 +31,9 @@
 - New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
+- Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
+
+  For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
 
 ### Changed
 

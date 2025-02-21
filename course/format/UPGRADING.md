@@ -43,6 +43,9 @@
 
 ### Removed
 
+- Protected function `core_courseformat\output\local\content\section\availability::availability_info()` has been fully removed. Use `core_courseformat\output\local\content\section\availability::get_availability_data()` instead.
+
+  For more information see [MDL-78489](https://tracker.moodle.org/browse/MDL-78489)
 - The old UI for moving activities and sections without javascript is not avaiable anymore from the actions dropdown. From now, on the only UI to move activities and sections is using the move action in the course editor. Format plugins can still use the old links to make the "move here" elements appear, but they will show deprecated messages. All the non-ajax moving will be removed in Moodle 6.0.
 
   For more information see [MDL-83562](https://tracker.moodle.org/browse/MDL-83562)

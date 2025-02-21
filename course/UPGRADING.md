@@ -2,6 +2,12 @@
 
 ## 5.0dev
 
+### Added
+
+- Now the core_courseformat\local\content\cm\completion output is more reusable. All the HTML has been moved to its own mustache file, and the output class has a new set_smallbutton method to decide wether to rendered it as a small button (like in the course page) or as a normal one (for other types of pages).
+
+  For more information see [MDL-83872](https://tracker.moodle.org/browse/MDL-83872)
+
 ### Deprecated
 
 - The core_course_edit_module and core_course_edit_section external functions are now deprecated. Use core_courseformat_update_course instead
