@@ -7,6 +7,8 @@ WORKDIR /var/www/html
 # Copy the current directory contents into the container
 COPY . /var/www/html
 
+COPY php.ini /usr/local/etc/php/php.ini
+
 # Expose port 80 to the outside world
 EXPOSE 80
 
