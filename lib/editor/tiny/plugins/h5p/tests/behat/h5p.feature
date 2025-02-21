@@ -162,7 +162,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
     And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "H5P options" "link"
-    And "input[aria-label=\"Embed button\"]:not([checked=checked])" "css_element" should exist
+    And the field "Embed button" matches value "1"
 
   @javascript
   Scenario: Enable/disable display options
