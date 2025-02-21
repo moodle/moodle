@@ -153,6 +153,13 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Add Microsoft SQL Server Ubuntu repository
+        run: |
+          sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/keys/microsoft.asc)"
+          sudo wget -qO- https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/msprod.list
+          sudo apt-get update
+
+
       - name: Install sqlcmd
         run: |
           sudo apt install mssql-tools
