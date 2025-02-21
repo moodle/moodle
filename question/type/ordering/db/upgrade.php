@@ -319,8 +319,9 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // Currently, a 'qtype_ordering_selectcount' user preference is set (or updated, if it already exists) each time
         // a new ordering question is created. If there are user preferences that store the removed "0" (all) option, they
         // need to be updated. In this case, replace it with "2" (minimum number of items required to create a subset).
-        $DB->set_field('user_preferences', 'value', 2,
-            ['name' => 'qtype_ordering_selectcount', 'value' => 0]);
+        $wheresql = 'name = ? AND ' . $DB->sql_compare_text('value') . ' = ?';
+        $params = ['qtype_ordering_selectcount', '0'];
+        $DB->set_field_select('user_preferences', 'value', 2, $wheresql, $params);
 
         upgrade_plugin_savepoint(true, 2023092911, 'qtype', 'ordering');
     }
@@ -359,8 +360,9 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // Currently, a 'qtype_ordering_selectcount' user preference is set (or updated, if it already exists) each time
         // a new ordering question is created. If there are user preferences that store the removed "0" (all) option, they
         // need to be updated. In this case, replace it with "2" (minimum number of items required to create a subset).
-        $DB->set_field('user_preferences', 'value', 2,
-            ['name' => 'qtype_ordering_selectcount', 'value' => 0]);
+        $wheresql = 'name = ? AND ' . $DB->sql_compare_text('value') . ' = ?';
+        $params = ['qtype_ordering_selectcount', '0'];
+        $DB->set_field_select('user_preferences', 'value', 2, $wheresql, $params);
 
         upgrade_plugin_savepoint(true, 2024040401, 'qtype', 'ordering');
     }
