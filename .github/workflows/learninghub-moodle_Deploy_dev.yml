@@ -155,7 +155,7 @@ jobs:
 
       - name: Install sqlcmd
         run: |
-          apt install mssql-tools
+          sudo apt install mssql-tools
           echo 'export PATH="$PATH:/opt/microsoft/msftools/bin"' >> ~/.bashrc
           source ~/.bashrc
 
@@ -164,7 +164,7 @@ jobs:
 
 
   build_and_push_docker_image:
-    needs: create_persistent_storage
+    needs: Terraform
     runs-on: ubuntu-latest
     environment: dev
     name: 'Build and push learninghub moodle docker image'
