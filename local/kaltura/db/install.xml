@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/kaltura/db" VERSION="20140130" COMMENT="XMLDB file for Moodle local/kaltura"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+<TABLES>
+  <TABLE NAME="local_kaltura_log" COMMENT="Log requests and response to and from the Kaltura server.">
+    <FIELDS>
+      <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+      <FIELD NAME="module" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="The module the request or response originated from."/>
+      <FIELD NAME="type" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="REQ if it was a request to Kaltura. RES if it was s response to Kaltura."/>
+      <FIELD NAME="endpoint" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The URL the request or response went to."/>
+      <FIELD NAME="data" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The data contained in the request or response. Contains a serialized array of data."/>
+      <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A Unix timestamp for when the request or response was logged."/>
+    </FIELDS>
+    <KEYS>
+      <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+    </KEYS>
+    <INDEXES>
+      <INDEX NAME="module_idx" UNIQUE="false" FIELDS="module"/>
+      <INDEX NAME="timecreated_idx" UNIQUE="false" FIELDS="timecreated"/>
+    </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
