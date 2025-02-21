@@ -140,23 +140,6 @@ jobs:
           az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
           az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
 
-  enable_read_committed_snapshot:
-    needs: Terraform
-    runs-on: ubuntu-latest
-    environment: test
-    name: Enable read committed snapshot
-
-    steps:
-      - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Enable READ_COMMITTED_SNAPSHOT
-        run: sqlcmd -S learninghub-moodle-sql-mi-test.database.windows.net -U  ${{ vars.SQL_ADMINISTRATOR_LOGIN }} -P ${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }} -d LearningHubMoodle -Q "ALTER DATABASE LearningHubMoodle SET READ_COMMITTED_SNAPSHOT ON;"
-
   build_and_push_docker_image:
     needs: create_persistent_storage
     runs-on: ubuntu-latest
