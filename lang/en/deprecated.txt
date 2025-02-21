@@ -160,4 +160,6 @@ siteevent,core_calendar
 categoryevent,core_calendar
 courseevent,core_calendar
 groupevent,core_calendar
+tt_deleteevent,core_calendar
+tt_editevent,core_calendar
 userevent,core_calendar
