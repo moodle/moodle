@@ -1,5 +1,13 @@
 # core_question (subsystem) Upgrade notes
 
+## 4.5.2+
+
+### Added
+
+- Question bank Condition classes can now implement a function called "filter_invalid_values($filterconditions)" to remove anything from the filterconditions array which is invalid or should not be there.
+
+  For more information see [MDL-83784](https://tracker.moodle.org/browse/MDL-83784)
+
 ## 4.5.2
 
 ### Added
