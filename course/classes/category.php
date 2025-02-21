@@ -272,7 +272,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if (!$coursecat) {
             // Course category not found.
             if ($strictness == MUST_EXIST) {
-                throw new moodle_exception('unknowncategory');
+                throw new moodle_exception('unknowncategory', a: $id);
             }
             $coursecat = null;
         } else if (!$alwaysreturnhidden && !$coursecat->is_uservisible($user)) {

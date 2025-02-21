@@ -2178,7 +2178,7 @@ class moodle_page {
         global $DB;
         $category = $DB->get_record('course_categories', array('id' => $categoryid));
         if (!$category) {
-            throw new moodle_exception('unknowncategory');
+            throw new moodle_exception('unknowncategory', a: $categoryid);
         }
         $this->_categories[$category->id] = $category;
         $parentcategoryids = explode('/', trim($category->path, '/'));
