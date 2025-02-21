@@ -24,6 +24,8 @@ YUI.add('moodle-local_kaltura-lticontainer', function (Y, NAME) {
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+/* eslint-disable max-len */
+
 /**
  * This method calls the base class constructor
  * @method LTICONTAINER
@@ -137,9 +139,11 @@ Y.extend(LTICONTAINER, Y.Base, {
     resize : function() {
         if (this.lastheight !== Math.min(this.documentheight, this.viewportheight)) {
             var newheight = this.viewportheight - this.ltiframe.getY() - this.padding;
+            //Get the original height which is 600px, but we're getting it as 600px and need to remove the last two characters
             var originalheight = this.ltiframe._node.height.slice(0,this.ltiframe._node.height.length-2);
-            if (newheight < originalheight)
+            if (newheight < originalheight) {
                 return;
+            }
             this.ltiframe.setStyle('height', newheight+'px');
             this.lastheight = Math.min(this.documentheight, this.viewportheight);
         }
