@@ -164,7 +164,7 @@ jobs:
 
 
   build_and_push_docker_image:
-    needs: Terraform
+    needs: create_persistent_storage
     runs-on: ubuntu-latest
     environment: dev
     name: 'Build and push learninghub moodle docker image'
