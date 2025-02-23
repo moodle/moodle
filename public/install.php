@@ -37,7 +37,7 @@ if (isset($_REQUEST['admin'])) {
 }
 
 // If config.php exists we just created config.php and need to redirect to continue installation
-$configfile = '../config.php';
+$configfile = dirname(__DIR__) . '/config.php';
 if (file_exists($configfile)) {
     header("Location: $admin/index.php?lang=$lang");
     die;
@@ -163,6 +163,7 @@ global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
 $CFG->dirroot              = __DIR__;
+$CFG->root                 = dirname(__DIR__);
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
