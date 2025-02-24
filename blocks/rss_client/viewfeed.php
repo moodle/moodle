@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script to let a user edit the properties of a particular RSS feed.
+ * Script to let a user view the output of a particular RSS feed.
  *
  * @package   block_rss_client
  * @copyright 2009 Tim Hunt
@@ -26,9 +26,6 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir .'/simplepie/moodle_simplepie.php');
 
 require_login();
-if (isguestuser()) {
-    throw new \moodle_exception('guestsarenotallowed');
-}
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -46,6 +43,11 @@ if ($courseid) {
     $PAGE->set_context($context);
 }
 
+$managesharedfeeds = has_capability('block/rss_client:manageanyfeeds', $context);
+if (!$managesharedfeeds) {
+    require_capability('block/rss_client:manageownfeeds', $context);
+}
+
 $urlparams = array('rssid' => $rssid);
 if ($courseid) {
     $urlparams['courseid'] = $courseid;
@@ -56,10 +58,18 @@ if ($returnurl) {
 $PAGE->set_url('/blocks/rss_client/viewfeed.php', $urlparams);
 $PAGE->set_pagelayout('popup');
 
-$rssrecord = $DB->get_record('block_rss_client', array('id' => $rssid), '*', MUST_EXIST);
+if ($managesharedfeeds) {
+    $select = 'id = :id AND (userid = :userid OR shared = 1)';
+} else {
+    $select = 'id = :id AND userid = :userid';
+}
+
+$rssrecord = $DB->get_record_select('block_rss_client', $select, [
+    'id' => $rssid,
+    'userid' => $USER->id,
+], '*', MUST_EXIST);
 
 $rss = new moodle_simplepie($rssrecord->url);
-
 if ($rss->error()) {
     debugging($rss->error());
     throw new \moodle_exception('errorfetchingrssfeed');
