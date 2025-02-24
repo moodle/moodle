@@ -280,15 +280,13 @@ resource "azurerm_redis_cache" "moodle_cache" {
 resource "azurerm_communication_service" "CommunicationService" {
   name                = "CommunicationServiceDev"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
-  data_location       = "United Kingdom"
+  data_location       = "UK"
 }
 
 resource "azurerm_email_communication_service" "EmailCommunicationService" {
   name                     = "EmailCommunicationServiceDev"
   resource_group_name      = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  location                 = azurerm_resource_group.learningHubMoodleResourceGroup.location
-  communication_service_id = azurerm_communication_service.CommunicationService.id
+  data_location            = "UK"
 }
 
 resource "azurerm_email_communication_service_domain" "EmailCommunicationServiceDomain" {
