@@ -290,7 +290,7 @@ resource "azurerm_email_communication_service" "EmailCommunicationService" {
 }
 
 resource "azurerm_email_communication_service_domain" "EmailCommunicationServiceDomain" {
-  name                = "EmailCommunicationServiceDomainDev"
+  name                = "moodle-dev.test-learninghub.org.uk"
   email_service_id    = azurerm_email_communication_service.EmailCommunicationService.id
   domain_management   = "CustomerManaged"
 }
