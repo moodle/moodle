@@ -291,8 +291,6 @@ resource "azurerm_email_communication_service" "EmailCommunicationService" {
 
 resource "azurerm_email_communication_service_domain" "EmailCommunicationServiceDomain" {
   name                = "EmailCommunicationServiceDomainDev"
-  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
   email_service_id    = azurerm_email_communication_service.EmailCommunicationService.id
-  domain_name         = "moodle-dev.test-learninghub.org.uk"
+  domain_management   = "CustomerManaged"
 }
