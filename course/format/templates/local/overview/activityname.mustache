@@ -32,15 +32,23 @@
     <div class="fw-bold">
         <a href="{{activityurl}}" class="activityname">{{activityname}}</a>
     </div>
+    {{#sectiontitle}}
     <div>
         {{sectiontitle}}
     </div>
+    {{/sectiontitle}}
     <div class="ml-2">
         {{#hidden}}
-        <span class="badge badge-success">{{#str}}hiddenfromstudents{{/str}}</span>
+        <span class="badge rounded-pill text-bg-secondary fw-normal">
+            {{#pix}}i/show, core{{/pix}}
+            {{#str}}hiddenfromstudents{{/str}}
+        </span>
         {{/hidden}}
         {{#stealth}}
-        <span class="badge badge-warning">{{#str}}hiddenoncoursepage{{/str}}</span>
+        <span class="badge rounded-pill text-bg-secondary fw-normal">
+            {{#pix}}t/stealth, core{{/pix}}
+            {{#str}}hiddenoncoursepage{{/str}}
+        </span>
         {{/stealth}}
     </div>
 </div>
