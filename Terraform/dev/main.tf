@@ -278,7 +278,7 @@ resource "azurerm_redis_cache" "moodle_cache" {
 }
 
 resource "azurerm_communication_service" "CommunicationService" {
-  name                = "CommunicationServiceDev"
+  name                = "CommunicationServiceDev-7312A316-1CCB-4823-B0FB-9146628802E3"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   data_location       = "UK"
 }
@@ -293,4 +293,10 @@ resource "azurerm_email_communication_service_domain" "EmailCommunicationService
   name                = "EmailCommunicationServiceDomainDev"
   email_service_id    = azurerm_email_communication_service.EmailCommunicationService.id
   domain_management   = "CustomerManaged"
+  domain {
+    name = "moodle-dev.test-learninghub.org.uk"
+    ttl = 3600
+    type = CNAME
+	value = "devag02.test-learninghub.org.uk"
+  }
 }
