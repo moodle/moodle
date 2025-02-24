@@ -266,7 +266,7 @@ define([
         templates.render('mod_assign/popout_button', {}).done(function(html) {
             var parents = region.find('[data-fieldtype="filemanager"],[data-fieldtype="editor"],[data-fieldtype="grading"]')
                     .closest('.fitem');
-            parents.addClass('has-popout').find('label').parent().append(html);
+            parents.addClass('has-popout').find('label:first').parent().append(html);
 
             region.on('click', '[data-region="popout-button"]', this._togglePopout.bind(this));
         }.bind(this)).fail(notification.exception);
