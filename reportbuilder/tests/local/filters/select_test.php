@@ -43,8 +43,12 @@ final class select_test extends advanced_testcase {
             [select::ANY_VALUE, null, true],
             [select::EQUAL_TO, 'starwars', true],
             [select::EQUAL_TO, 'mandalorian', false],
+            [select::EQUAL_TO, '', false],
+            [select::EQUAL_TO, 'invalid', true],
             [select::NOT_EQUAL_TO, 'starwars', false],
             [select::NOT_EQUAL_TO, 'mandalorian', true],
+            [select::NOT_EQUAL_TO, '', true],
+            [select::NOT_EQUAL_TO, 'invalid', true],
         ];
     }
 
@@ -64,11 +68,11 @@ final class select_test extends advanced_testcase {
 
         $course1 = $this->getDataGenerator()->create_course([
             'fullname' => "May the course be with you",
-            'shortname' => 'starwars',
+            'idnumber' => 'starwars',
         ]);
         $course2 = $this->getDataGenerator()->create_course([
             'fullname' => "This is the course",
-            'shortname' => 'mandalorian',
+            'idnumber' => '',
         ]);
 
         $filter = (new filter(
@@ -76,10 +80,11 @@ final class select_test extends advanced_testcase {
             'test',
             new lang_string('course'),
             'testentity',
-            'shortname'
+            'idnumber'
         ))->set_options([
-            $course1->shortname => $course1->fullname,
-            $course2->shortname => $course2->fullname,
+            $course1->idnumber => $course1->fullname,
+            $course2->idnumber => $course2->fullname,
+            'mandalorian' => 'This is not the course you are looking for',
         ]);
 
         // Create instance of our filter, passing given operator.

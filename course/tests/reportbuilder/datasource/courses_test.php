@@ -82,6 +82,7 @@ final class courses_test extends core_reportbuilder_testcase {
             'category' => $category->id,
             'fullname' => 'Cats',
             'summary' => 'Course description',
+            'lang' => 'en',
             'theme' => 'boost',
             'tags' => ['Horses'],
         ]);
@@ -161,8 +162,8 @@ final class courses_test extends core_reportbuilder_testcase {
         $this->assertEquals('Yes', $coursevisible);
         $this->assertEquals('No groups', $coursegroupmode);
         $this->assertEquals('No', $coursegroupmodeforce);
-        $this->assertEmpty($courselang);
-        $this->assertEmpty($coursecalendar);
+        $this->assertEquals('English ‎(en)‎', $courselang);
+        $this->assertEquals('Do not force', $coursecalendar);
         $this->assertEquals('Boost', $coursetheme);
         $this->assertEquals('No', $coursecompletion);
         $this->assertEmpty($coursedownload);
@@ -273,7 +274,7 @@ final class courses_test extends core_reportbuilder_testcase {
             ], true],
             'Filter course format (no match)' => ['course:format', [
                 'course:format_operator' => select::EQUAL_TO,
-                'course:format_value' => 'weekly',
+                'course:format_value' => 'weeks',
             ], false],
             'Filter course startdate' => ['course:startdate', [
                 'course:startdate_operator' => date::DATE_RANGE,
@@ -315,7 +316,7 @@ final class courses_test extends core_reportbuilder_testcase {
             ], true],
             'Filter course lang (no match)' => ['course:lang', [
                 'course:lang_operator' => select::EQUAL_TO,
-                'course:lang_value' => 'de',
+                'course:lang_value' => '',
             ], false],
             'Filter course calendartype' => ['course:calendartype', [
                 'course:calendartype_operator' => select::EQUAL_TO,
@@ -323,7 +324,7 @@ final class courses_test extends core_reportbuilder_testcase {
             ], true],
             'Filter course calendartype (no match)' => ['course:calendartype', [
                 'course:calendartype_operator' => select::EQUAL_TO,
-                'course:calendartype_value' => 'hijri',
+                'course:calendartype_value' => '',
             ], false],
             'Filter course theme' => ['course:theme', [
                 'course:theme_operator' => select::EQUAL_TO,

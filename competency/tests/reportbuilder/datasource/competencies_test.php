@@ -187,8 +187,8 @@ final class competencies_test extends core_reportbuilder_testcase {
                 'framework:scale_value' => '<SCALEID>',
             ], true],
             'Framework scale (no match)' => ['framework:scale', [
-                'framework:scale_operator' => select::EQUAL_TO,
-                'framework:scale_value' => -1,
+                'framework:scale_operator' => select::NOT_EQUAL_TO,
+                'framework:scale_value' => '<SCALEID>',
             ], false],
             'Framework visible' => ['framework:visible', [
                 'framework:visible_operator' => boolean_select::CHECKED,

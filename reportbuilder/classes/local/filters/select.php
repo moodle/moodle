@@ -44,6 +44,9 @@ class select extends base {
     /** @var int Not equal to */
     public const NOT_EQUAL_TO = 2;
 
+    /** @var int Value to indicate "Any value" for the simplified filter options  */
+    private const OPTION_ANY_VALUE = -124567;
+
     /**
      * Returns an array of comparison operators
      *
@@ -65,7 +68,13 @@ class select extends base {
      * @return array
      */
     protected function get_select_options(): array {
-        return (array) $this->filter->get_options();
+        static $options = [];
+
+        if (!array_key_exists($this->name, $options)) {
+            $options[$this->name] = (array) $this->filter->get_options();
+        }
+
+        return $options[$this->name];
     }
 
     /**
@@ -91,7 +100,7 @@ class select extends base {
                 $element,
                 "{$this->name}_value",
                 get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()),
-                ['' => $operators[self::ANY_VALUE]] + $options,
+                [self::OPTION_ANY_VALUE => $operators[self::ANY_VALUE]] + $options,
             )->setHiddenLabel(true);
         } else {
             $elements = [];
@@ -129,13 +138,19 @@ class select extends base {
         $name = database::generate_param_name();
 
         $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
-        $value = $values["{$this->name}_value"] ?? '';
+        $value = (string) ($values["{$this->name}_value"] ?? self::OPTION_ANY_VALUE);
 
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
 
+        // Get available options, if multidimensional then flatten the array.
+        $options = $this->get_select_options();
+        if (count($options) !== count($options, COUNT_RECURSIVE)) {
+            $options = array_merge(...array_values($options));
+        }
+
         // Validate filter form values.
-        if ($value === '') {
+        if ($operator === self::ANY_VALUE || !array_key_exists($value, $options)) {
             return ['', []];
         }
 

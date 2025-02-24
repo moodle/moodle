@@ -409,7 +409,7 @@ class course extends base {
      * @return array
      */
     public static function get_options_for_theme(): array {
-        return array_map(
+        return ['' => get_string('forceno')] + array_map(
             fn(theme_config $theme) => $theme->get_theme_name(),
             get_list_of_themes(),
         );
@@ -421,7 +421,7 @@ class course extends base {
      * @return array
      */
     public static function get_options_for_lang(): array {
-        return get_string_manager()->get_list_of_translations();
+        return ['' => get_string('forceno')] + get_string_manager()->get_list_of_translations();
     }
 
     /**
@@ -430,7 +430,7 @@ class course extends base {
      * @return array
      */
     public static function get_options_for_calendartype(): array {
-        return \core_calendar\type_factory::get_list_of_calendar_types();
+        return ['' => get_string('forceno')] + \core_calendar\type_factory::get_list_of_calendar_types();
     }
 
     /**
@@ -452,7 +452,7 @@ class course extends base {
 
         // If the column has corresponding filter, determine the value from its options.
         $options = $this->get_options_for($fieldname);
-        if ($options !== null && array_key_exists($value, $options)) {
+        if ($options !== null && $value !== null && array_key_exists($value, $options)) {
             return $options[$value];
         }
 

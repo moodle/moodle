@@ -149,9 +149,9 @@ final class cohorts_test extends core_reportbuilder_testcase {
                 'cohort:context_operator' => select::EQUAL_TO,
                 'cohort:context_value' => system::instance()->id,
             ], true],
-            'Filter content (no match)' => ['cohort:context', [
-                'cohort:context_operator' => select::EQUAL_TO,
-                'cohort:context_value' => -1,
+            'Filter context (no match)' => ['cohort:context', [
+                'cohort:context_operator' => select::NOT_EQUAL_TO,
+                'cohort:context_value' => system::instance()->id,
             ], false],
             'Filter name' => ['cohort:name', [
                 'cohort:name_operator' => text::IS_EQUAL_TO,

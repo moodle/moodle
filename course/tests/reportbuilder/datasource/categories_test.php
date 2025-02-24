@@ -194,7 +194,7 @@ final class categories_test extends core_reportbuilder_testcase {
             ], true],
             'Filter role (no match)' => ['role:name', [
                 'role:name_operator' => select::EQUAL_TO,
-                'role:name_value' => -1,
+                'role:name_value' => $DB->get_field('role', 'id', ['shortname' => 'teacher']),
             ], false],
 
             // User.

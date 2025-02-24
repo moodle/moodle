@@ -70,7 +70,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
 
         $generator->create_field(
             ['categoryid' => $category->get('id'), 'type' => 'select', 'name' => 'Select', 'shortname' => 'select',
-                'configdata' => ['options' => "Cat\nDog", 'defaultvalue' => 'Cat']]);
+                'configdata' => ['options' => "Cat\nDog\nFish", 'defaultvalue' => 'Cat']]);
 
         $generator->create_field(
             ['categoryid' => $category->get('id'), 'type' => 'number', 'name' => 'Number', 'shortname' => 'number',
