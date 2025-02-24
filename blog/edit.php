@@ -62,13 +62,6 @@ if ($id) {
 
 $sitecontext = context_system::instance();
 $usercontext = context_user::instance($userid);
-if ($modid) {
-    $PAGE->set_context($sitecontext);
-} else {
-    $PAGE->set_context($usercontext);
-    $blognode = $PAGE->settingsnav->find('blogadd', null);
-    $blognode->make_active();
-}
 
 require_login($courseid);
 
@@ -80,8 +73,15 @@ if (isguestuser()) {
     throw new \moodle_exception('noguest');
 }
 
-$returnurl = new moodle_url('/blog/index.php');
+if ($modid) {
+    $PAGE->set_context($sitecontext);
+} else {
+    $PAGE->set_context($usercontext);
+    $blognode = $PAGE->settingsnav->find('blogadd', null);
+    $blognode->make_active();
+}
 
+$returnurl = new moodle_url('/blog/index.php');
 if (!empty($courseid) && empty($modid)) {
     $returnurl->param('courseid', $courseid);
 }
