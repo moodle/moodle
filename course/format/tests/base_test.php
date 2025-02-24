@@ -567,6 +567,45 @@ final class base_test extends advanced_testcase {
     }
 
     /**
+     * Test duplicate_section() with delegated section
+     * @covers     ::duplicate_section
+     */
+    public function test_duplicate_section_with_delegated_sections(): void {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        // Add subsection.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        $subsection1 = $this->getDataGenerator()->create_module(
+            'subsection', ['course' => $course, 'section' => 1, 'name' => 'subsection1']);
+        $subsection2 = $this->getDataGenerator()->create_module(
+            'subsection', ['course' => $course, 'section' => 1, 'name' => 'subsection2']);
+        $format = course_get_format($course);
+
+        $modinfo = get_fast_modinfo($course);
+        $sectioninfo = $modinfo->get_section_info(1, MUST_EXIST);
+        $originalsectioncount = $DB->count_records('course_sections', ['course' => $course->id]);
+        $this->assertEquals(4, $originalsectioncount);
+
+        $originalsection = $DB->get_record('course_sections',
+            ['course' => $course->id, 'section' => 0],
+            '*',
+            MUST_EXIST);
+        $newsection = $format->duplicate_section($sectioninfo);
+        foreach ($originalsection as $prop => $value) {
+            if ($prop == 'id' || $prop == 'sequence' || $prop == 'section' || $prop == 'timemodified') {
+                continue;
+            }
+            $this->assertEquals($value, $newsection->$prop);
+        }
+        $sectioncount = $DB->count_records('course_sections', ['course' => $course->id]);
+        $this->assertEquals(7, $sectioncount);
+    }
+
+    /**
      * Test for the default delete format data behaviour.
      *
      * @covers ::get_format_string
