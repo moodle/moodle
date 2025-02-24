@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+      <location>amd/src/lame.all.js</location>
+      <name>lamejs</name>
+      <version>1.2.1</version>
+      <license>LGPL</license>
+      <repository>https://github.com/zhuker/lamejs</repository>
+  </library>
+</libraries>
