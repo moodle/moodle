@@ -276,3 +276,21 @@ resource "azurerm_redis_cache" "moodle_cache" {
   non_ssl_port_enabled = true
   minimum_tls_version = "1.2"
 }
+
+resource "azurerm_communication_service" "CommunicationService" {
+  name                = "CommunicationServiceProd-7312A316-1CCB-4823-B0FB-9146628802E3"
+  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  data_location       = "UK"
+}
+
+resource "azurerm_email_communication_service" "EmailCommunicationService" {
+  name                     = "EmailCommunicationServiceProd"
+  resource_group_name      = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  data_location            = "UK"
+}
+
+resource "azurerm_email_communication_service_domain" "EmailCommunicationServiceDomain" {
+  name                = "moodle.learninghub.nhs.uk"
+  email_service_id    = azurerm_email_communication_service.EmailCommunicationService.id
+  domain_management   = "CustomerManaged"
+}
