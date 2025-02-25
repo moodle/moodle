@@ -34,6 +34,7 @@ class manager {
      */
     public static function get_plugins(): array {
         return [
+            'a11ychecker',
             'advtable',
             'typography',
             'casechange',

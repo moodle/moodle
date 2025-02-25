@@ -67,6 +67,14 @@ switch ($action) {
                 get_string('plugin_enabled', 'core_admin', $pluginname),
                 \core\notification::SUCCESS
             );
+
+            // Special notification for the Accessibility Checker plugin.
+            if ($plugin === 'a11ychecker') {
+                \core\notification::add(
+                    get_string('accessibilitycheckerinfo', 'tiny_premium'),
+                    \core\notification::INFO
+                );
+            }
         }
         break;
 }
