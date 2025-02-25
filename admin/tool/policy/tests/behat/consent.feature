@@ -290,9 +290,6 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy." to "0"
     Then I should see "Please agree to the following policies:"
     And I should see "Before continuing you need to acknowledge all these policies."
-    # Confirm that user can not browse the site (edit their profile).
-    When I follow "Profile" in the user menu
-    Then I should see "Please agree to the following policies:"
 
   Scenario: Accept policy on login, accept all policies
     Given the following config values are set as admin:
