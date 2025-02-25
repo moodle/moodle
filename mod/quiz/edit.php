@@ -139,7 +139,18 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     $categoryid = required_param('categoryid', PARAM_INT);
     $randomcount = required_param('randomcount', PARAM_INT);
-    quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
+
+    $filtercondition = [
+        'filter' => [
+            'category' => [
+                'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                'values' => [$categoryid],
+                'filteroptions' => ['includesubcategories' => $recurse],
+            ],
+        ],
+    ];
+
+    $structure->add_random_questions($addonpage, $randomcount, $filtercondition);
 
     quiz_delete_previews($quiz);
     $gradecalculator->recompute_quiz_sumgrades();

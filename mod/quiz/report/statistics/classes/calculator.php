@@ -122,13 +122,6 @@ class calculator {
     }
 
     /**
-     * @var int previously, the time after which statistics are automatically recomputed.
-     * @deprecated since Moodle 4.3. Use of pre-computed stats is no longer time-limited.
-     * @todo MDL-78091 Final deprecation in Moodle 4.7
-     */
-    const TIME_TO_CACHE = 900; // 15 minutes.
-
-    /**
      * Load cached statistics from the database.
      *
      * @param \qubaid_condition $qubaids

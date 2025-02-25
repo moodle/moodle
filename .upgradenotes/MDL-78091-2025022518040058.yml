@@ -1,0 +1,11 @@
+issueNumber: MDL-78091
+notes:
+  mod_quiz:
+    - message: >-
+        Final deprecation of:
+          - mod_quiz\form\add_random_form::class
+          - mod_quiz\local\structure\slot_random::set_tags()
+          - mod_quiz\local\structure\slot_random::set_tags_by_id()
+          - const quiz_statistics\calculator::TIME_TO_CACHE
+          - quiz_add_random_questions()
+      type: removed

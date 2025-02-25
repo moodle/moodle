@@ -37,6 +37,7 @@ require_once($CFG->libdir . '/questionlib.php');
 
 use core\di;
 use core\hook;
+use core\exception\coding_exception;
 use core_question\local\bank\condition;
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
@@ -1758,7 +1759,8 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
     $questiontype = $DB->get_field('question', 'qtype', ['id' => $questionid]);
     if ($questiontype == 'random') {
         throw new coding_exception(
-                'Adding "random" questions via quiz_add_quiz_question() is deprecated. Please use quiz_add_random_questions().'
+                'Adding "random" questions via quiz_add_quiz_question() is deprecated. '.
+                'Please use mod_quiz\structure::add_random_questions().'
         );
     }
 
@@ -1925,34 +1927,6 @@ function quiz_update_section_firstslots($quizid, $direction, $afterslot, $before
     $firstslotschanges = $DB->get_records_select_menu('quiz_sections',
             $where, $params, '', 'firstslot, firstslot + ?');
     update_field_with_unique_index('quiz_sections', 'firstslot', $firstslotschanges, ['quizid' => $quizid]);
-}
-
-/**
- * Add a random question to the quiz at a given point.
- * @param stdClass $quiz the quiz settings.
- * @param int $addonpage the page on which to add the question.
- * @param int $categoryid the question category to add the question from.
- * @param int $number the number of random questions to add.
- * @deprecated Since Moodle 4.3 MDL-72321
- * @todo Final deprecation in Moodle 4.7 MDL-78091
- */
-function quiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
-    debugging(
-        'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
-        DEBUG_DEVELOPER
-    );
-
-    $settings = quiz_settings::create($quiz->id);
-    $structure = structure::create_for_quiz($settings);
-    $structure->add_random_questions($addonpage, $number, [
-        'filter' => [
-            'category' => [
-                'jointype' => condition::JOINTYPE_DEFAULT,
-                'values' => [$categoryid],
-                'filteroptions' => ['includesubcategories' => false],
-            ],
-        ],
-    ]);
 }
 
 /**
