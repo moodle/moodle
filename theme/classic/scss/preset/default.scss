@@ -2,6 +2,9 @@
 // Bootstrap variables
 //
 
+// Prefix for all CSS variables
+$prefix: bs- !default;
+
 // Colors
 $white:    #fff !default;
 $gray-100: #f8f9fa !default;
@@ -49,12 +52,12 @@ $theme-colors: map-merge((
 ), $theme-colors);
 // stylelint-enable
 
-// Tables
-$table-accent-bg: rgba($black, .03) !default;
-
 // Fonts
 $font-size-base: 0.9375rem !default;
 $headings-font-weight:   300 !default;
+
+// Links
+$link-decoration: none !default;
 
 // Navbar
 $navbar-dark-hover-color:           rgba($white, 1) !default;
@@ -71,6 +74,7 @@ $card-group-margin: .25rem;
 // Inputs
 $focus-ring-opacity: .75 !default;
 $input-border-color: $gray-500 !default;
+$form-check-input-border: var(--#{$prefix}border-width) solid var(--#{$prefix}gray-500) !default;
 
 // Dropdowns
 $dropdown-link-hover-color: $white;
