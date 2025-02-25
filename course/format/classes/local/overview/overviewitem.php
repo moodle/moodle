@@ -139,36 +139,44 @@ class overviewitem {
      * Items can utilize either a renderable object or a pre-rendered string as their content.
      *
      * @param string|renderable|null $content
+     * @return $this
      */
-    public function set_content(string|renderable|null $content): void {
+    public function set_content(string|renderable|null $content): static {
         $this->content = $content;
+        return $this;
     }
 
     /**
      * Sets the preferred text alignment of the item.
      *
      * @param text_align $textalign
+     * @return $this
      */
-    public function set_text_align(text_align $textalign): void {
+    public function set_text_align(text_align $textalign): static {
         $this->textalign = $textalign;
+        return $this;
     }
 
     /**
      * Sets the value of the overview item.
      *
      * @param int|string|bool|null $value
+     * @return $this
      */
-    public function set_value(int|string|bool|null $value): void {
+    public function set_value(int|string|bool|null $value): static {
         $this->value = $value;
+        return $this;
     }
 
     /**
      * Sets the name of the overview item.
      *
      * @param string $name
+     * @return $this
      */
-    public function set_name(string $name): void {
+    public function set_name(string $name): static {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -176,9 +184,11 @@ class overviewitem {
      *
      * @param int $alertcount
      * @param string $alertlabel
+     * @return $this
      */
-    public function set_alert(int $alertcount, string $alertlabel): void {
+    public function set_alert(int $alertcount, string $alertlabel): static {
         $this->alertcount = $alertcount;
         $this->alertlabel = $alertlabel;
+        return $this;
     }
 }
