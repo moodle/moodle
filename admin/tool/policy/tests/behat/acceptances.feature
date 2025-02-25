@@ -304,3 +304,12 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I log out
     When I log in as "user1"
     Then I should see "Calendar"
+
+  Scenario: Policy acceptance is prioritised when MFA is enabled
+    Given the following config values are set as admin:
+      | enabled | 1 | tool_mfa |
+    And I log in as "user1"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    When I press "Next"
+    Then I should see "2-step verification"
