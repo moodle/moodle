@@ -82,7 +82,7 @@ class file extends handler {
             }
         }
 
-        return true;
+        return parent::destroy_all();
     }
 
     #[\Override]
@@ -96,6 +96,6 @@ class file extends handler {
             @unlink($sessionfile);
         }
 
-        return true;
+        return parent::destroy($id);
     }
 }
