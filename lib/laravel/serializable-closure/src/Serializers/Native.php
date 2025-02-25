@@ -12,6 +12,7 @@ use Laravel\SerializableClosure\Support\ReflectionClosure;
 use Laravel\SerializableClosure\Support\SelfReference;
 use Laravel\SerializableClosure\UnsignedSerializableClosure;
 use ReflectionObject;
+use ReflectionProperty;
 use UnitEnum;
 
 class Native implements Serializable
@@ -490,7 +491,7 @@ class Native implements Serializable
                 }
 
                 foreach ($reflection->getProperties() as $property) {
-                    if ($property->isStatic() || ! $property->getDeclaringClass()->isUserDefined()) {
+                    if ($property->isStatic() || ! $property->getDeclaringClass()->isUserDefined() || $this->isVirtualProperty($property)) {
                         continue;
                     }
 
@@ -510,5 +511,16 @@ class Native implements Serializable
                 }
             } while ($reflection = $reflection->getParentClass());
         }
+    }
+
+    /**
+     * Determine is virtual property.
+     *
+     * @param  \ReflectionProperty  $property
+     * @return bool
+     */
+    protected function isVirtualProperty(ReflectionProperty $property): bool
+    {
+        return method_exists($property, 'isVirtual') && $property->isVirtual();
     }
 }
