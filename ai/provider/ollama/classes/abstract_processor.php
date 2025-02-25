@@ -119,11 +119,7 @@ abstract class abstract_processor extends process_base {
             ]);
         } catch (RequestException $e) {
             // Handle any exceptions.
-            return [
-                'success' => false,
-                'errorcode' => $e->getCode(),
-                'errormessage' => $e->getMessage(),
-            ];
+            return \core_ai\error\factory::create($e->getCode(), $e->getMessage())->get_error_details();
         }
 
         // Double-check the response codes, in case of a non 200 that didn't throw an error.
@@ -142,19 +138,14 @@ abstract class abstract_processor extends process_base {
      * @return array The error response.
      */
     protected function handle_api_error(ResponseInterface $response): array {
-        $responsearr = [
-            'success' => false,
-            'errorcode' => $response->getStatusCode(),
-        ];
-
         $status = $response->getStatusCode();
         if ($status >= 500 && $status < 600) {
-            $responsearr['errormessage'] = $response->getReasonPhrase();
+            $errormessage = $response->getReasonPhrase();
         } else {
             $bodyobj = json_decode($response->getBody()->getContents());
-            $responsearr['errormessage'] = $bodyobj->error->message;
+            $errormessage = $bodyobj->error->message;
         }
 
-        return $responsearr;
+        return \core_ai\error\factory::create($status, $errormessage)->get_error_details();
     }
 }

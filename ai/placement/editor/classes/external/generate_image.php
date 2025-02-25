@@ -155,7 +155,8 @@ class generate_image extends external_api {
             'revisedprompt' => $response->get_response_data()['revisedprompt'] ?? '',
             'drafturl' => $drafturl,
             'errorcode' => $response->get_errorcode(),
-            'error' => $response->get_errormessage(),
+            'error' => $response->get_error(),
+            'errormessage' => $response->get_errormessage(),
         ];
     }
 
@@ -191,6 +192,12 @@ class generate_image extends external_api {
                 0,
             ),
             'error' => new external_value(
+                PARAM_TEXT,
+                'Error name if any',
+                VALUE_DEFAULT,
+                '',
+            ),
+            'errormessage' => new external_value(
                 PARAM_TEXT,
                 'Error message if any',
                 VALUE_DEFAULT,

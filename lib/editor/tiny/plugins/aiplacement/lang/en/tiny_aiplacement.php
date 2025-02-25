@@ -34,7 +34,6 @@ $string['definitionhigh'] = 'High';
 $string['definitionstandard'] = 'Standard';
 $string['errorgeneral'] = 'Try again later';
 $string['generate'] = 'Generate';
-$string['generatefailtitle'] = 'Something went wrong';
 $string['generateimage'] = 'Generate image';
 $string['generatetext'] = 'Generate text';
 $string['generating'] = 'Generating';
@@ -57,3 +56,6 @@ $string['textmodaltitle'] = 'Generate text using AI';
 $string['textprompt_label'] = 'Describe the text you want AI to create. You can include details like topic, length, audience, or tone.';
 $string['textresponse_label'] = 'AI-generated text';
 $string['textresponse_placeholder'] = 'Generated text will appear here, and can be edited before inserting into the editor.';
+
+// Deprecated since Moodle 5.0.
+$string['generatefailtitle'] = 'Something went wrong';

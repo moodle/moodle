@@ -39,4 +39,7 @@ $string['privacy:metadata'] = 'The Course assistance placement plugin does not s
 $string['regenerate'] = 'Regenerate';
 $string['summarise'] = 'Summarise';
 $string['summarise_tooltips'] = 'Create an AI-generated summary of the page content';
+
+// Deprecated since Moodle 5.0.
+$string['generatefailtitle'] = 'Something went wrong';
 $string['tryagain'] = 'Try again';

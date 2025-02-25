@@ -36,7 +36,8 @@ abstract class response_base {
      * @param bool $success The success status of the action.
      * @param string $actionname The name of the action that was processed.
      * @param int $errorcode Error code. Must exist if success is false.
-     * @param string $errormessage Error message. Must exist if success is false
+     * @param string $error Error name. Must exist if success is false.
+     * @param string $errormessage Error message.
      * @param string $model The model used to generate the response.
      */
     public function __construct(
@@ -46,15 +47,16 @@ abstract class response_base {
         private string $actionname,
         /** @var int  Error code. Must exist if status is error. */
         private int $errorcode = 0,
-        /** @var string Error message. Must exist if status is error */
+        /** @var string Error name. Must exist if status is error */
+        private string $error = '',
+        /** @var string Error message. */
         private string $errormessage = '',
         /** @var string The model used to generate the response (if available). */
         protected ?string $model = null,
-
     ) {
         $this->timecreated = \core\di::get(\core\clock::class)->time();
-        if (!$success && ($errorcode == 0 || empty($errormessage))) {
-            throw new coding_exception('Error code and message must exist in an error response.');
+        if (!$success && ($errorcode == 0 || empty($error))) {
+            throw new coding_exception('Error code and name must exist in an error response.');
         }
     }
 
@@ -106,6 +108,14 @@ abstract class response_base {
      */
     public function get_errorcode(): int {
         return $this->errorcode;
+    }
+    /**
+     * Get the error name.
+     *
+     * @return string
+     */
+    public function get_error(): string {
+        return $this->error;
     }
 
     /**

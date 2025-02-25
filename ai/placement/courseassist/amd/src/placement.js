@@ -416,7 +416,7 @@ const AICourseAssist = class {
             try {
                 const responseObj = await Ajax.call([request])[0];
                 if (responseObj.error) {
-                    this.displayError();
+                    this.displayError(responseObj.error, responseObj.errormessage);
                     return;
                 } else {
                     if (!this.isRequestCancelled()) {
@@ -492,9 +492,17 @@ const AICourseAssist = class {
 
     /**
      * Display the error.
+     *
+     * @param {String} error The error name to display.
+     * @param {String} errorMessage The error message to display.
      */
-    displayError() {
-        Templates.render('aiplacement_courseassist/error', {}).then((html) => {
+    async displayError(error = '', errorMessage = '') {
+        if (!error) {
+            // Get the default error message.
+            error = await getString('error:defaultname', 'core_ai');
+            errorMessage = await getString('error:defaultmessage', 'core_ai');
+        }
+        Templates.render('aiplacement_courseassist/error', {'error': error, 'errorMessage': errorMessage}).then((html) => {
             this.addResponseToStack('error', html);
             const responses = this.getResponseStack();
             this.aiDrawerBodyElement.innerHTML = responses;

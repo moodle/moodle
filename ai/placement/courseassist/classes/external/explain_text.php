@@ -98,7 +98,8 @@ class explain_text extends external_api {
             'generatedcontent' => $response->get_response_data()['generatedcontent'] ?? '',
             'finishreason' => $response->get_response_data()['finishreason'] ?? '',
             'errorcode' => $response->get_errorcode(),
-            'error' => $response->get_errormessage(),
+            'error' => $response->get_error(),
+            'errormessage' => $response->get_errormessage(),
             'timecreated' => $response->get_timecreated(),
             'prompttext' => $prompttext,
         ];
@@ -138,13 +139,13 @@ class explain_text extends external_api {
                 VALUE_DEFAULT,
                 'stop',
             ),
-            'errorcode' => new external_value(
-                PARAM_INT,
-                'Error code if any',
-                VALUE_DEFAULT,
-                0,
-            ),
             'error' => new external_value(
+                PARAM_TEXT,
+                'Error name if any',
+                VALUE_DEFAULT,
+                '',
+            ),
+            'errormessage' => new external_value(
                 PARAM_TEXT,
                 'Error message if any',
                 VALUE_DEFAULT,

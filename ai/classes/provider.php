@@ -154,11 +154,8 @@ abstract class provider {
                 ratelimit: $this->config['userratelimit'],
                 userid: $action->get_configuration('userid')
             )) {
-                return [
-                    'success' => false,
-                    'errorcode' => 429,
-                    'errormessage' => 'User rate limit exceeded',
-                ];
+                $errorhandler = new \core_ai\error\ratelimit(get_string('error:429:internaluser', 'core_ai'));
+                return $errorhandler->get_error_details();
             }
         }
 
@@ -168,11 +165,8 @@ abstract class provider {
                 component: $component,
                 ratelimit: $this->config['globalratelimit']
             )) {
-                return [
-                    'success' => false,
-                    'errorcode' => 429,
-                    'errormessage' => 'Global rate limit exceeded',
-                ];
+                $errorhandler = new \core_ai\error\ratelimit(get_string('error:429:internalsitewide', 'core_ai'));
+                return $errorhandler->get_error_details();
             }
         }
 
