@@ -47,7 +47,7 @@ $numpolicy = optional_param('numpolicy', null, PARAM_INT);
 $totalpolicies = optional_param('totalpolicies', null, PARAM_INT);
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('secure');
 
 $viewpage = new page_viewdoc($policyid, $versionid, $returnurl, $behalfid, $manage, $numpolicy, $totalpolicies);
 
