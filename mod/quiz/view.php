@@ -138,7 +138,7 @@ $gradeitem = grade_item::fetch([
 ]);
 
 if ($gradeitem) {
-    if ($gradeitem->refresh_grades($USER->id)) {
+    if ($CFG->recovergradesdefault && $gradeitem->refresh_grades($USER->id)) {
         $grade = $gradeitem->get_grade($USER->id, false);
         if ($grade->overridden) {
             if ($gradeitem->needsupdate) {
