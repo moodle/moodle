@@ -28,6 +28,7 @@ $string['insert'] = 'Insert H5P content';
 $string['pluginname'] = 'Insert H5P';
 $string['browserepositories'] = 'Browse repositories...';
 $string['copyrightbutton'] = 'Copyright button';
+$string['displayoptions'] = 'Display options';
 $string['downloadbutton'] = 'Allow download';
 $string['embedbutton'] = 'Embed button';
 $string['h5p:addembed'] = 'Add embedded H5P';
@@ -37,6 +38,7 @@ $string['h5poptions'] = 'H5P options';
 $string['h5purl'] = 'H5P URL';
 $string['invalidh5purl'] = 'Invalid URL';
 $string['instructions'] = 'You can insert H5P content by <strong>either</strong> entering a URL <strong>or</strong> by uploading an H5P file.';
+$string['mobileappautoplay'] = 'Auto-play in the mobile app';
 $string['noh5pcontent'] = 'No H5P content added';
 $string['privacy:metadata'] = 'The H5P plugin for TinyMCE does not store any personal data.';
 

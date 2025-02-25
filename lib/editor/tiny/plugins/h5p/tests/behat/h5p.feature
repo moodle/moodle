@@ -162,7 +162,39 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
     And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "H5P options" "link"
-    And "input[aria-label=\"Embed button\"]:not([checked=checked])" "css_element" should exist
+    And the field "Embed button" matches value "1"
+
+  @javascript
+  Scenario: Enable/disable display options
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    When I am on the "PageName1" "page activity editing" page logged in as "admin"
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
+    Then "Auto-play in the mobile app" "field" should exist
+    And the field "Auto-play in the mobile app" matches value "0"
+    And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "guess-the-answer.h5p" "link"
+    And I click on "Select this file" "button"
+    And I click on "Display options" "link"
+    And I click on "Auto-play in the mobile app" "checkbox"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
+    And I click on "Save and display" "button"
+    And ".h5p-placeholder[data-mobileapp-autoplay=true]" "css_element" should exist
+    And I navigate to "Settings" in current page administration
+    And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
+    And the field "Auto-play in the mobile app" matches value "1"
+    And I click on "Auto-play in the mobile app" "checkbox"
+    And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
+    And I wait "1" seconds
+    And I click on "Save and display" "button"
+    And ".h5p-placeholder:not([data-mobileapp-autoplay=true])" "css_element" should exist
+    And I navigate to "Settings" in current page administration
+    And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
+    And the field "Auto-play in the mobile app" matches value "0"
 
   @javascript
   Scenario: Private H5P files are shown to students

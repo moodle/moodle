@@ -120,7 +120,6 @@
                                     }} name="download"{{!
                                     }} {{# download }}checked{{/ download }}{{!
                                     }} class="form-check-input"{{!
-                                    }} aria-label="{{#str}} downloadbutton, tiny_h5p{{/str}}"{{!
                                     }} id="{{elementid}}-{{uniqid}}_h5p-option-allow-download"{{!
                                     }} />
                                 <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-allow-download">
@@ -132,7 +131,6 @@
                                     }} name="embed"{{!
                                     }} {{# embed }}checked{{/ embed }}{{!
                                     }} class="form-check-input"{{!
-                                    }} aria-label="{{#str}} embedbutton, tiny_h5p{{/str}}"{{!
                                     }} id="{{elementid}}-{{uniqid}}_h5p-option-embed-button"{{!
                                     }} />
                                 <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-embed-button">
@@ -144,7 +142,6 @@
                                     }} name="copyright"{{!
                                     }} {{# copyright }}checked{{/ copyright }}{{!
                                     }} class="form-check-input"{{!
-                                    }} aria-label="{{#str}} copyrightbutton, tiny_h5p{{/str}}"{{!
                                     }} id="{{elementid}}-{{uniqid}}_h5p-option-copyright-button" {{!
                                 }}/>
                                 <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-copyright-button">
@@ -154,6 +151,48 @@
                         </div>
                     </fieldset>
                 {{/canUpload}}
+
+                <fieldset class="mt-2 collapsible" id="{{elementid}}-{{uniqid}}-display-options">
+                    <legend class="position-relative d-flex ftoggler align-items-center px-1">
+                        <a role="button" data-bs-toggle="collapse"{{!
+                            }} href="#displayoptions"{{!
+                            }} aria-expanded="{{#showDisplayOptions}}true{{/showDisplayOptions}}{{^showDisplayOptions}}false{{/showDisplayOptions}}"{{!
+                            }} aria-controls="displayoptions"{{!
+                            }} class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader {{^showDisplayOptions}}collapsed{{/showDisplayOptions}}"{{!
+                        }}>
+                            <span class="expanded-icon icon-no-margin p-2"
+                                title="{{#str}} collapse, moodle {{/str}}">
+                                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                            </span>
+                            <span class="collapsed-icon icon-no-margin p-2"
+                                title="{{#str}} expand, moodle {{/str}}">
+                                <span class="dir-rtl-hide">
+                                    <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                                </span>
+                                <span class="dir-ltr-hide">
+                                    <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                                </span>
+                            </span>
+                            <span class="visually-hidden">{{#str}} displayoptions, tiny_h5p {{/str}}</span>
+                        </a>
+                        <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+                            {{#str}} displayoptions, tiny_h5p {{/str}}
+                        </h3>
+                    </legend>
+                    <div id="displayoptions" class="fcontainer collapseable collapse px-1 {{#showDisplayOptions}}show{{/showDisplayOptions}}">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" {{!
+                                }} name="mobileappautoplay"{{!
+                                }} {{# mobileAppAutoPlay }}checked{{/ mobileAppAutoPlay }}{{!
+                                }} class="form-check-input"{{!
+                                }} id="{{elementid}}-{{uniqid}}_display-option-mobileapp-autoplay"{{!
+                                }} />
+                            <label class="form-check-label" for="{{elementid}}-{{uniqid}}_display-option-mobileapp-autoplay">
+                            {{#str}} mobileappautoplay, tiny_h5p{{/str}}
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
         </form>
     {{/body}}
