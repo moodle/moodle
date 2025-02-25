@@ -15,3 +15,7 @@ notes:
           - question_finder::get_questions_from_categories_with_usage_counts()
           - question_finder::get_questions_from_categories_and_tags_with_usage_counts()
       type: removed
+    - message: >-
+        Intial deprecation of core_question_bank_renderer::render_question_pagination() and the associated template file.
+        Rendering the question pagination is now done via ajax based pagination.
+      type: deprecated
