@@ -1733,13 +1733,13 @@ class core_admin_renderer extends plugin_renderer_base {
             $this->page->url,
             get_string('overviewall', 'core_plugin'),
             ['title' => get_string('filterall', 'core_plugin'), 'data-filterby' => 'all', 'class' => 'active']
-        ).' '.html_writer::span($numtotal, 'badge number number-all');
+        ).' '.html_writer::span($numtotal, 'badge text-dark number number-all');
 
         $infoext = html_writer::link(
             new moodle_url($this->page->url, [], 'additional'),
             get_string('overviewext', 'core_plugin'),
             ['title' => get_string('filtercontribonly', 'core_plugin'), 'data-filterby' => 'additional']
-        ).' '.html_writer::span($numextension, 'badge number number-additional');
+        ).' '.html_writer::span($numextension, 'badge text-dark number number-additional');
 
         if ($numupdatable) {
             $infoupdatable = html_writer::link(
