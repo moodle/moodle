@@ -446,7 +446,8 @@
             "solr"
         ],
         "smsgateway": [
-            "aws"
+            "aws",
+            "modica"
         ],
         "theme": [
             "boost",
