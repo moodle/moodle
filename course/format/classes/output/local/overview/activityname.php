@@ -53,13 +53,17 @@ class activityname implements renderable, named_templatable {
         $section = $this->cm->get_section_info();
         $course = $this->cm->get_course();
         $format = course_format::instance($course);
-        return (object) [
+
+        $result = (object) [
             'activityname' => \core_external\util::format_string($cm->name, $cm->context, true),
             'activityurl' => $cm->url,
-            'sectiontitle' => $format->get_section_name($section),
             'hidden' => empty($cm->visible),
             'stealth' => $cm->is_stealth(),
         ];
+        if ($format->uses_sections()) {
+            $result->sectiontitle = $format->get_section_name($section);
+        }
+        return $result;
     }
 
     /**

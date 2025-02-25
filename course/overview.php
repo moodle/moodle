@@ -40,6 +40,11 @@ $context = context_course::instance($course->id, MUST_EXIST);
 require_login($course);
 require_capability('moodle/course:viewoverview', $context);
 
+// Trigger event, course information viewed.
+$event = \core\event\course_overview_viewed::create(['context' => $context]);
+$event->add_record_snapshot('course', $course);
+$event->trigger();
+
 $format = course_get_format($course);
 $renderer = $format->get_renderer($PAGE);
 $overviewpageclass = $format->get_output_classname('overview\\overviewpage');

@@ -51,6 +51,21 @@ class overviewpage implements renderable, named_templatable {
         $this->context = context_course::instance($this->course->id);
     }
 
+    /**
+     * Gets the URL to the course overview page for a given course and module name.
+     *
+     * @param int $courseid
+     * @param string $modname
+     * @return url
+     */
+    public static function get_modname_url(int $courseid, string $modname): url {
+        return new url(
+            url: '/course/overview.php',
+            params: ['id' => $courseid, 'expand[]' => $modname],
+            anchor: "{$modname}_overview_collapsible",
+        );
+    }
+
     #[\Override]
     public function export_for_template(\renderer_base $output): stdClass {
         $modfullnames = $this->get_course_activities_overview_list();

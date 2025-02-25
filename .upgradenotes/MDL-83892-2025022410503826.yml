@@ -1,0 +1,9 @@
+issueNumber: MDL-83892
+notes:
+  core:
+    - message: >-
+        A new method get_instance_record has been added to cm_info object so
+        core can get the activity table record without using the $DB object
+        every time. Also, the method caches de result so getting more than once
+        per execution is much faster.
+      type: improved

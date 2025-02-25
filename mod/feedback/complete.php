@@ -134,7 +134,11 @@ if ($feedbackcompletion->is_empty()) {
     }
 } else {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    echo $OUTPUT->notification(get_string('this_feedback_is_already_submitted', 'feedback'));
+    echo $OUTPUT->notification(
+        get_string('this_feedback_is_already_submitted', 'feedback'),
+        \core\output\notification::NOTIFY_INFO,
+        closebutton: false,
+    );
     echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     echo $OUTPUT->box_end();
 }

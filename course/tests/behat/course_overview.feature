@@ -215,3 +215,38 @@ Feature: Users can access the course activities overview page
     When I am on the "Course 1" "course > activities > resource" page logged in as "student1"
     Then I should see "To do" in the "Activity 1" "table_row"
     And I should see "View" in the "Activity 1" "table_row"
+
+  Scenario: The course overview page should log a page event and a reource list event
+    Given the following "activity" exists:
+      | activity       | folder     |
+      | name           | Activity 1 |
+      | course         | C1         |
+    And I am on the "Course 1" "course > activities" page logged in as "teacher1"
+    And I am on the "Course 1" "course > activities > resource" page logged in as "student1"
+    When I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Reports" in current page administration
+    And I click on "Logs" "link"
+    Then I set the field "Select a user" to "Teacher 1"
+    And I click on "Get these logs" "button"
+    And I should see "Course activities overview page viewed"
+    And I should not see "viewed the list of resources"
+    And I set the field "Select a user" to "Student 1"
+    And I click on "Get these logs" "button"
+    And I should see "Course activities overview page viewed"
+    And I should see "viewed the list of resources"
+
+  @javascript
+  Scenario: The course overview page should log reource list event when loading the overview table
+    Given the following "activity" exists:
+      | activity | folder     |
+      | name     | Activity 1 |
+      | course   | C1         |
+    And I am on the "Course 1" "course > activities" page logged in as "teacher1"
+    And I click on "Expand" "link" in the "resource_overview_collapsible" "region"
+    When I am on the "Course 1" "course" page logged in as "teacher1"
+    And I navigate to "Reports" in current page administration
+    And I click on "Logs" "link"
+    And I set the field "Select a user" to "Teacher 1"
+    And I click on "Get these logs" "button"
+    Then I should see "Course activities overview page viewed"
+    And I should see "viewed the list of resources"
