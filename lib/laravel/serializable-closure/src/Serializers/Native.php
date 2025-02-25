@@ -274,7 +274,7 @@ class Native implements Serializable
 
                     $property->setAccessible(true);
 
-                    if (PHP_VERSION >= 7.4 && ! $property->isInitialized($instance)) {
+                    if (! $property->isInitialized($instance)) {
                         continue;
                     }
 
@@ -374,7 +374,7 @@ class Native implements Serializable
 
                     $property->setAccessible(true);
 
-                    if (PHP_VERSION >= 7.4 && ! $property->isInitialized($data)) {
+                    if (! $property->isInitialized($data) || $property->isReadOnly()) {
                         continue;
                     }
 
@@ -496,7 +496,7 @@ class Native implements Serializable
 
                     $property->setAccessible(true);
 
-                    if (PHP_VERSION >= 7.4 && ! $property->isInitialized($instance)) {
+                    if (! $property->isInitialized($instance) || ($property->isReadOnly() && $property->class !== $reflection->name)) {
                         continue;
                     }
 

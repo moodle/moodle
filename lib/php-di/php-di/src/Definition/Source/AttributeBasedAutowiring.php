@@ -31,7 +31,7 @@ class AttributeBasedAutowiring implements DefinitionSource, Autowiring
     /**
      * @throws InvalidAttribute
      */
-    public function autowire(string $name, ObjectDefinition $definition = null) : ObjectDefinition|null
+    public function autowire(string $name, ?ObjectDefinition $definition = null) : ObjectDefinition|null
     {
         $className = $definition ? $definition->getClassName() : $name;
 
@@ -92,7 +92,7 @@ class AttributeBasedAutowiring implements DefinitionSource, Autowiring
     /**
      * @throws InvalidAttribute
      */
-    private function readProperty(ReflectionProperty $property, ObjectDefinition $definition, string $classname = null) : void
+    private function readProperty(ReflectionProperty $property, ObjectDefinition $definition, ?string $classname = null) : void
     {
         if ($property->isStatic() || $property->isPromoted()) {
             return;

@@ -23,5 +23,10 @@
         "phpunit/phpunit": "^9.0",
         "athletic/athletic": "~0.1.8",
         "mnapoli/hard-mode": "~0.3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

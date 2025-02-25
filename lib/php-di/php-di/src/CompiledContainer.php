@@ -46,7 +46,8 @@ abstract class CompiledContainer extends Container
         if ($method !== null) {
             // Check if we are already getting this entry -> circular dependency
             if (isset($this->entriesBeingResolved[$id])) {
-                throw new DependencyException("Circular dependency detected while trying to resolve entry '$id'");
+                $idList = implode(" -> ", [...array_keys($this->entriesBeingResolved), $id]);
+                throw new DependencyException("Circular dependency detected while trying to resolve entry '$id': Dependencies: " . $idList);
             }
             $this->entriesBeingResolved[$id] = true;
 

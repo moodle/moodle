@@ -64,7 +64,7 @@ class SourceCache implements DefinitionSource, MutableDefinitionSource
         throw new \LogicException('You cannot set a definition at runtime on a container that has caching enabled. Doing so would risk caching the definition for the next execution, where it might be different. You can either put your definitions in a file, remove the cache or ->set() a raw value directly (PHP object, string, int, ...) instead of a PHP-DI definition.');
     }
 
-    private function shouldBeCached(Definition $definition = null) : bool
+    private function shouldBeCached(?Definition $definition = null) : bool
     {
         return
             // Cache missing definitions

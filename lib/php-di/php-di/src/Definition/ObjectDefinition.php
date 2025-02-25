@@ -52,7 +52,7 @@ class ObjectDefinition implements Definition
     /**
      * @param string $name Entry name
      */
-    public function __construct(string $name, string $className = null)
+    public function __construct(string $name, ?string $className = null)
     {
         $this->name = $name;
         $this->setClassName($className);
@@ -159,7 +159,7 @@ class ObjectDefinition implements Definition
         }
     }
 
-    public function setLazy(bool $lazy = null) : void
+    public function setLazy(?bool $lazy = null) : void
     {
         $this->lazy = $lazy;
     }

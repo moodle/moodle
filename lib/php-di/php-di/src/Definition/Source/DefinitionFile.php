@@ -20,7 +20,7 @@ class DefinitionFile extends DefinitionArray
      */
     public function __construct(
         private string $file,
-        Autowiring $autowiring = null,
+        ?Autowiring $autowiring = null,
     ) {
         // Lazy-loading to improve performances
         parent::__construct([], $autowiring);
