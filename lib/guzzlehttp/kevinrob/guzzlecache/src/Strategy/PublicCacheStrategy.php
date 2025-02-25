@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class PublicCacheStrategy extends PrivateCacheStrategy
 {
-    public function __construct(CacheStorageInterface $cache = null)
+    public function __construct(?CacheStorageInterface $cache = null)
     {
         parent::__construct($cache);
 

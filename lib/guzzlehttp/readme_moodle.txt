@@ -1,21 +1,25 @@
 Instructions to import/update guzzle library into Moodle:
 
-Update guzzle promises library
-1. Download the latest guzzle promises library from https://github.com/guzzle/promises
-2. Copy the src directory to lib/guzzlehttp/promises folder
-3. Copy the associated files LICENCE, README.md etc. to promises directory
+Update Guzzle and associated libraries.
 
-Update guzzle http library
-1. Download the latest guzzlehttp library from https://github.com/guzzle/guzzle
-2. Copy the src directory to lib/guzzlehttp/guzzle folder
-3. Copy the associated files LICENCE, README.md etc. to guzzle directory
+```
+installdir=`mktemp -d`
+cd "$installdir"
+composer require guzzlehttp/guzzle kevinrob/guzzle-cache-middleware
 
-Update guzzle psr-7 message implementation library
-1. Download the latest psr-7 library from https://github.com/guzzle/psr7
-2. Copy the src directory to lib/guzzlehttp/psr-7 folder
-3. Copy the associated files LICENCE, README.md etc. to psr-7 directory
+cd -
+rm -rf lib/guzzlehttp/guzzle lib/guzzlehttp/psr7 lib/guzzlehttp/promises lib/guzzlehttp/kevinrob/guzzlecache
+cp -rf "$installdir"/vendor/guzzlehttp/guzzle lib/guzzlehttp/guzzle
+cp -rf "$installdir"/vendor/guzzlehttp/psr7 lib/guzzlehttp/psr7
+cp -rf "$installdir"/vendor/guzzlehttp/promises lib/guzzlehttp/promises
+cp -rf "$installdir"/vendor/kevinrob/guzzle-cache-middleware lib/guzzlehttp/kevinrob/guzzlecache
+rm -rf lib/guzzlehttp/kevinrob/guzzlecache/*.png
 
-Update guzzle cache implementation library
-1. Download the latest Guzzle cache middleware library from https://github.com/Kevinrob/guzzle-cache-middleware
-2. Copy the src directory to guzzlehttp/kevinrob/guzzlecache folder
-3. Copy the associated files LICENCE, README.md etc. to guzzlecache directory
+echo "See instructions in lib/guzzlehttp/readme_moodle.md" > lib/guzzlehttp/guzzle/readme_moodle.txt
+echo "See instructions in lib/guzzlehttp/readme_moodle.md" > lib/guzzlehttp/promises/readme_moodle.txt
+echo "See instructions in lib/guzzlehttp/readme_moodle.md" > lib/guzzlehttp/psr7/readme_moodle.txt
+echo "See instructions in lib/guzzlehttp/readme_moodle.md" > lib/guzzlehttp/kevinrob/guzzlecache/readme_moodle.txt
+git add lib/guzzlehttp/guzzle lib/guzzlehttp/psr7 lib/guzzlehttp/promises
+```
+
+Now update `lib/thirdpartylibs.xml`

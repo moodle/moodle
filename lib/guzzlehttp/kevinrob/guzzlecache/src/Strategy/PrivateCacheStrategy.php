@@ -51,7 +51,7 @@ class PrivateCacheStrategy implements CacheStrategyInterface
         'max-age',
     ];
 
-    public function __construct(CacheStorageInterface $cache = null)
+    public function __construct(?CacheStorageInterface $cache = null)
     {
         $this->storage = $cache !== null ? $cache : new VolatileRuntimeStorage();
     }
@@ -120,7 +120,7 @@ class PrivateCacheStrategy implements CacheStrategyInterface
      *
      * @return string
      */
-    protected function getCacheKey(RequestInterface $request, KeyValueHttpHeader $varyHeaders = null)
+    protected function getCacheKey(RequestInterface $request, ?KeyValueHttpHeader $varyHeaders = null)
     {
         if (!$varyHeaders) {
             return hash('sha256', $request->getMethod().$request->getUri());

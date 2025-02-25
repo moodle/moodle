@@ -22,7 +22,7 @@ class DelegatingCacheStrategy implements CacheStrategyInterface
     /**
      * DelegatingCacheStrategy constructor.
      */
-    public function __construct(CacheStrategyInterface $defaultCacheStrategy = null)
+    public function __construct(?CacheStrategyInterface $defaultCacheStrategy = null)
     {
         $this->defaultCacheStrategy = $defaultCacheStrategy ?: new NullCacheStrategy();
     }
