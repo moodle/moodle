@@ -95,7 +95,7 @@ class fetch_addable_blocks extends external_api {
         }
 
         // Firstly, we need to load all currently existing page blocks to later determine which blocks are addable.
-        $page->blocks->load_blocks(false);
+        $page->blocks->load_blocks(true);
         $page->blocks->create_all_block_instances();
 
         $addableblocks = $page->blocks->get_addable_blocks();
