@@ -1464,5 +1464,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025022100.02);
     }
 
+    if ($oldversion < 2025030400.01) {
+        $providers = $DB->get_records('ai_providers', ['enabled' => 1]);
+        // Formatting the value.
+        $value = ','. implode(',', array_column($providers, 'id'));
+        // Create the order config setting.
+        set_config('provider_order', $value, 'core_ai');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030400.01);
+    }
+
     return true;
 }

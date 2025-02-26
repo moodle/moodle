@@ -280,7 +280,7 @@ final class manager_test extends \advanced_testcase {
         );
 
         $config['apiendpoint'] = 'https://example.com';
-        $manager->create_provider_instance(
+        $provider2 = $manager->create_provider_instance(
             classname: '\aiprovider_azureai\provider',
             name: 'dummy2',
             enabled: true,
@@ -312,6 +312,31 @@ final class manager_test extends \advanced_testcase {
         // Assert that there is no provider for the generate text action.
         $this->assertCount(1, $providers[generate_text::class]);
         $this->assertCount(2, $providers[summarise_text::class]);
+
+        // Ordering the provider instances.
+        // Re-enable the generate text action for the Openai provider.
+        $manager->set_action_state(
+            plugin: $provider1->provider,
+            actionbasename: generate_text::class::get_basename(),
+            enabled: 1,
+            instanceid: $provider1->id,
+        );
+
+        // Move the $provider2 to the first provider for the generate text action.
+        $manager->change_provider_order($provider2->id, \core\plugininfo\aiprovider::MOVE_UP);
+        // Get the new providers for the actions.
+        $providers = $manager->get_providers_for_actions($actions);
+        // Assert whether provider2 is the first provider and provider1 is the last provider for the generate text action.
+        $this->assertEquals($providers[generate_text::class][0], $provider2);
+        $this->assertEquals($providers[generate_text::class][1], $provider1);
+
+        // Move the $provider2 to the last provider for the generate text action.
+        $manager->change_provider_order($provider2->id, \core\plugininfo\aiprovider::MOVE_DOWN);
+        // Get the new providers for the actions.
+        $providers = $manager->get_providers_for_actions($actions);
+        // Assert whether provider1 is the first provider and provider2 is the last provider for the generate text action.
+        $this->assertEquals($providers[generate_text::class][0], $provider1);
+        $this->assertEquals($providers[generate_text::class][1], $provider2);
     }
 
     /**
