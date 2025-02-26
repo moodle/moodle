@@ -51,13 +51,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_addon_profile" "aks_policy" {
-  name                  = azurerm_kubernetes_cluster.aks.name
-  resource_group_name   = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  addon_name            = "azure-policy"
-  enable = true
-}
-
 resource "azurerm_container_registry" "containerRegistry" {
   name                = var.ContainerRegistryName
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
