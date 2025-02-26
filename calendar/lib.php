@@ -1627,18 +1627,6 @@ function calendar_add_month($month, $year) {
 }
 
 /**
- * Get the previous month.
- *
- * @param int $month the number of the month.
- * @param int $year the number of the year.
- * @return array previous month
- */
-function calendar_sub_month($month, $year) {
-    $calendartype = \core_calendar\type_factory::get_calendar_instance();
-    return $calendartype->get_prev_month($year, $month);
-}
-
-/**
  * Returns the courses to load events for.
  *
  * @param array $courseeventsfrom An array of courses to load calendar events for

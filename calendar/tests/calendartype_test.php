@@ -208,7 +208,11 @@ final class calendartype_test extends \advanced_testcase {
         $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), calendar_days_in_month('9', '1986'));
         $this->assertEquals($calendar->get_next_month('1986', '9'), calendar_add_month('9', '1986'));
         $this->assertEquals($calendar->get_prev_month('1986', '9'), calendar_sub_month('9', '1986'));
-
+        $this->assertDebuggingCalled(
+            'Deprecation: calendar_sub_month has been deprecated since 5.0. ' .
+            'Use \core_calendar\type_factory::get_calendar_instance()->get_prev_month() instead. ' .
+            'See MDL-79434 for more information.'
+        );
         // Test the lib/moodle.php functions.
         $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), days_in_month('9', '1986'));
         $this->assertEquals($calendar->get_weekday('1986', '9', '16'), dayofweek('16', '9', '1986'));

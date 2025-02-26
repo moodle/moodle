@@ -989,3 +989,24 @@ function calendar_get_link_previous() {
 function calendar_get_link_next() {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
+
+/**
+ * Get the previous month.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array previous month
+ *
+ * @deprecated since 5.0 MDL-79434 Use \core_calendar\type_factory::get_calendar_instance()->get_prev_month() instead,
+ *  but pay regard to the order of arguments!
+ * @todo MDL-84655 Remove this function in Moodle 6.0
+ */
+#[\core\attribute\deprecated(
+    '\core_calendar\type_factory::get_calendar_instance()->get_prev_month()',
+    since: '5.0',
+    mdl: 'MDL-79434'
+)]
+function calendar_sub_month($month, $year) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core_calendar\type_factory::get_calendar_instance()->get_prev_month($year, $month);
+}

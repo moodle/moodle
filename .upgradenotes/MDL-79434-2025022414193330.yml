@@ -1,0 +1,7 @@
+issueNumber: MDL-79434
+notes:
+  core_calendar:
+    - message: >-
+        Initial deprecation of calendar_sub_month.
+        Use \core_calendar\type_factory::get_calendar_instance()->get_prev_month() instead.
+      type: deprecated
