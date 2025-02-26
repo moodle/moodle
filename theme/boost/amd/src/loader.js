@@ -74,10 +74,10 @@ const enablePopovers = () => {
     document.addEventListener('keydown', e => {
         const popoverTrigger = e.target.closest('[data-bs-toggle="popover"]');
         if (e.key === 'Escape' && popoverTrigger) {
-            Bootstrap.Popover.getInstance(popoverTrigger).hide();
+            Bootstrap.Popover.getOrCreateInstance(popoverTrigger).hide();
         }
         if (e.key === 'Enter' && popoverTrigger) {
-            Bootstrap.Popover.getInstance(popoverTrigger).show();
+            Bootstrap.Popover.getOrCreateInstance(popoverTrigger).show();
         }
     });
     document.addEventListener('click', e => {
@@ -85,7 +85,7 @@ const enablePopovers = () => {
         if (!popoverTrigger) {
             return;
         }
-        const popover = Bootstrap.Popover.getInstance(popoverTrigger);
+        const popover = Bootstrap.Popover.getOrCreateInstance(popoverTrigger);
         if (!popover._isShown()) {
             popover.show();
         }
