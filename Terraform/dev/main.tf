@@ -43,17 +43,19 @@ resource "azurerm_kubernetes_cluster" "aks" {
   identity {
     type = "SystemAssigned"
   }
-  addon_profile {
-    azure_policy {
-      enabled = true
-    }
-  }
   network_profile {
     network_plugin = "azure"
   }
   tags = {
     environment = var.Environment
   }
+}
+
+resource "azurerm_kubernetes_cluster_addon_profile" "aks_policy" {
+  name                  = azurerm_kubernetes_cluster.aks.name
+  resource_group_name   = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  addon_name            = "azure-policy"
+  enable = true
 }
 
 resource "azurerm_container_registry" "containerRegistry" {
