@@ -270,7 +270,6 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
 resource "azurerm_mssql_managed_instance_security_alert_policy" "sqlmi_security_alert_policy" {
   resource_group_name    = azurerm_resource_group.learningHubMoodleResourceGroup.name
   managed_instance_name  = azurerm_mssql_managed_instance.sqlmi.name
-  state                  = "Enabled"
 }
 
 resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_vulnerability_assessment" {
