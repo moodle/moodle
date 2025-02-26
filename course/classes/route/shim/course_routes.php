@@ -64,4 +64,42 @@ final class course_routes {
             excludeparams: ['courseid'],
         );
     }
+
+    /**
+     * Shim /course/tags.php to the course tag management controller.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    #[route(
+        path: '/tags.php',
+        queryparams: [
+            new query_parameter(
+                name: 'id',
+                type: param::INT,
+                description: 'The course ID',
+                required: true,
+            ),
+            new query_parameter(
+                name: 'returnurl',
+                type: param::LOCALURL,
+                description: 'The return URL',
+                required: false,
+            ),
+        ],
+    )]
+    public function administer_tags(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): ResponseInterface {
+        $params = $request->getQueryParams();
+        return self::redirect_to_callable(
+            $request,
+            $response,
+            [\core_course\route\controller\tags_controller::class, 'administer_tags'],
+            pathparams: $params + ['course' => $params['id']],
+            excludeparams: ['id'],
+        );
+    }
 }

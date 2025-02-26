@@ -14,40 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Edit course tags form
- *
- * @package    core_course
- * @copyright  2015 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_course\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Edit course tags form
+ * Edit course tags form.
  *
  * @package    core_course
- * @copyright  2015 Marina Glancy
+ * @copyright  Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class coursetags_form extends moodleform {
+class tags_form extends \moodleform {
+    #[\Override]
+    public function definition(): void {
+        $mform = $this->_form;
 
-    /**
-     * Form definition
-     */
-    public function definition() {
-        $mform    = $this->_form;
-
-        $mform->addElement('tags', 'tags', get_string('tags'),
-                    array('itemtype' => 'course', 'component' => 'core'));
+        $mform->addElement(
+            'tags',
+            'tags',
+            get_string('tags'),
+            [
+                'itemtype' => 'course',
+                'component' => 'core',
+            ],
+        );
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons();
-
     }
 }
