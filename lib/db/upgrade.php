@@ -1466,5 +1466,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024100701.02);
     }
 
+    if ($oldversion < 2024100702.03) {
+        // Due to a code restriction on the upgrade, invoking any core functions is not permitted.
+        // Thus, to acquire the list of provider plugins,
+        // we should extract them from the `config_plugins` database table.
+        $condition = $DB->sql_like('plugin', ':pattern');
+        $params = ['pattern' => 'aiprovider_%', 'name' => 'version'];
+        $sql = "SELECT plugin FROM {config_plugins} WHERE {$condition} AND name = :name";
+        $providers = $DB->get_fieldset_sql($sql, $params);
+        foreach ($providers as $provider) {
+            // Replace the provider's language string with the provider component's name.
+            if (get_string_manager()->string_exists('pluginname', $provider)) {
+                $providername = get_string('pluginname', $provider);
+                $sql = 'UPDATE {ai_action_register}
+                        SET provider = :provider
+                        WHERE LOWER(provider) = :providername';
+                $DB->execute($sql, ['provider' => $provider, 'providername' => strtolower($providername)]);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024100702.03);
+    }
+
     return true;
 }
