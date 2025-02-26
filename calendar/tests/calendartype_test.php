@@ -207,6 +207,11 @@ final class calendartype_test extends \advanced_testcase {
         $this->assertEquals($calendar->get_starting_weekday(), calendar_get_starting_weekday());
         $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), calendar_days_in_month('9', '1986'));
         $this->assertEquals($calendar->get_next_month('1986', '9'), calendar_add_month('9', '1986'));
+        $this->assertDebuggingCalled(
+             'Deprecation: calendar_add_month has been deprecated since 5.0. ' .
+             'Use \core_calendar\type_factory::get_calendar_instance()->get_next_month() instead. ' .
+             'See MDL-84657 for more information.'
+        );
         $this->assertEquals($calendar->get_prev_month('1986', '9'), calendar_sub_month('9', '1986'));
 
         // Test the lib/moodle.php functions.

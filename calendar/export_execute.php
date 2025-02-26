@@ -135,7 +135,7 @@ if(!empty($what) && !empty($time)) {
                 $startmonth = $now['mon'];
                 $startyear = $now['year'];
                 if ($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
-                    list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
+                    [$startmonth, $startyear] = $calendartype->get_next_month($startyear, $startmonth);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
@@ -146,7 +146,7 @@ if(!empty($what) && !empty($time)) {
                 $endmonth = $startmonth;
                 $endyear = $startyear;
                 if ($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
-                    list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
+                    [$endmonth, $endyear] = $calendartype->get_next_month($endyear, $endmonth);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
@@ -159,7 +159,7 @@ if(!empty($what) && !empty($time)) {
                 $startmonth = $now['mon'];
                 $startyear = $now['year'];
                 if ($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
-                    list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
+                    [$startmonth, $startyear] = $calendartype->get_next_month($startyear, $startmonth);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
@@ -170,7 +170,7 @@ if(!empty($what) && !empty($time)) {
                 $endmonth = $startmonth;
                 $endyear = $startyear;
                 if ($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
-                    list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
+                    [$endmonth, $endyear] = $calendartype->get_next_month($endyear, $endmonth);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
@@ -187,7 +187,7 @@ if(!empty($what) && !empty($time)) {
             break;
             case 'monthnext':
                 // Get the next month for this calendar.
-                list($nextmonth, $nextyear) = calendar_add_month($now['mon'], $now['year']);
+                [$nextmonth, $nextyear] = $calendartype->get_next_month($now['year'], $now['mon']);
 
                 // Convert to gregorian.
                 $gregoriandate = $calendartype->convert_to_gregorian($nextyear, $nextmonth, 1);

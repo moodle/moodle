@@ -965,3 +965,24 @@ function check_igbinary322_version(environment_results $result) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return null;
 }
+
+/**
+ * Get the next following month.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array the following month
+ *
+ * @deprecated since 5.0 MDL-84657 Use \core_calendar\type_factory::get_calendar_instance()->get_prev_month() instead,
+ *  but pay regard to the order of arguments!
+ * @todo MDL-84655 Remove this function in Moodle 6.0
+ */
+#[\core\attribute\deprecated(
+    '\core_calendar\type_factory::get_calendar_instance()->get_next_month()',
+    since: '5.0',
+    mdl: 'MDL-84657'
+)]
+function calendar_add_month($month, $year) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core_calendar\type_factory::get_calendar_instance()->get_next_month($year, $month);
+}

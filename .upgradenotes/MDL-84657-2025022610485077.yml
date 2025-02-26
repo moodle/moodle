@@ -1,0 +1,8 @@
+issueNumber: MDL-84657
+notes:
+  core_calendar:
+    - message: >-
+        Initial deprecation of calendar_add_month(). Use
+        \core_calendar\type_factory::get_calendar_instance()->get_next_month()
+        instead.
+      type: deprecated
