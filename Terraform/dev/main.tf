@@ -23,6 +23,12 @@ resource "azurerm_storage_share" "storage_share_theme" {
   quota                = var.StorageQuota
 }
 
+resource "azurerm_storage_container" "assessment_container" {
+  name                  = "assessment_storage_container"
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.ClusterName
   location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
@@ -258,6 +264,23 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   vcores = var.SQLVcores
   tags = {
     environment = var.Environment
+  }
+}
+
+resource "azurerm_mssql_server_security_alert_policy" "sqlmi_security_alert_policy" {
+  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  server_name         = azurerm_mssql_managed_instance.sqlmi.name
+  state               = "Enabled"
+}
+
+resource "azurerm_mssql_server_vulnerability_assessment" "sqlmi_vulerability_assessment" {
+  server_security_alert_policy_id = azurerm_mssql_server_security_alert_policy.sqlmi_security_alert_policy.id
+  storage_container_path          = "${azurerm_storage_account.storage_account.primary_blob_endpoint}${azurerm_storage_container.assessment_container.name}/"
+  storage_account_access_key      = azurerm_storage_account.storage_account.primary_access_key
+  recurring_scans {
+    enabled                   = true
+    email_subscription_admins = true
+    emails                    = ["colin.beeby1@nhs.net"]
   }
 }
 
