@@ -57,6 +57,11 @@
             }
         }
     }
+    // Allow table cells to inherit text color and background color from table rows.
+    tbody td {
+        color: inherit;
+        background-color: inherit;
+    }
 }
 
 table {
