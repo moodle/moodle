@@ -267,16 +267,16 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   }
 }
 
-resource "azurerm_mssql_server_security_alert_policy" "sqlmi_security_alert_policy" {
-  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  server_name         = "learninghub-moodle-sql-mi"
-  state               = "Enabled"
+resource "azurerm_mssql_managed_instance_security_alert_policy" "sqlmi_security_alert_policy" {
+  resource_group_name    = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  managed_instance_name  = azurerm_mssql_managed_instance.sqlmi.name
+  state                  = "Enabled"
 }
 
-resource "azurerm_mssql_server_vulnerability_assessment" "sqlmi_vulnerability_assessment" {
-  server_security_alert_policy_id = azurerm_mssql_server_security_alert_policy.sqlmi_security_alert_policy.id
-  storage_container_path          = "${azurerm_storage_account.storage_account.primary_blob_endpoint}${azurerm_storage_container.assessment_container.name}/"
-  storage_account_access_key      = azurerm_storage_account.storage_account.primary_access_key
+resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_vulnerability_assessment" {
+  managed_instance_id         = azurerm_mssql_managed_instance.sqlmi.id
+  storage_container_path      = "${azurerm_storage_account.storage_account.primary_blob_endpoint}${azurerm_storage_container.assessment_container.name}/"
+  storage_account_access_key  = azurerm_storage_account.storage_account.primary_access_key
   recurring_scans {
     enabled                   = true
     email_subscription_admins = true
