@@ -38,4 +38,31 @@ export default class AIHelper {
         // Add opening and closing <p> tags to wrap the entire content
         return `<p>${textWithBreaks}</p>`;
     }
+
+    /**
+     * Replace markdown formatting.
+     * Even when asked not to, AI models will sometimes return markdown.
+     *
+     * @param {String} text The text to replace.
+     * @returns {String}
+     */
+    static replaceMarkdown(text) {
+        // Replace markdown bold formatting HTML equivalent.
+        const textWithMarkdown = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        return textWithMarkdown;
+    }
+
+    /**
+     * Format the response provided by the AI model.
+     *
+     * @param {String} text The text to format.
+     * @returns {String}
+     */
+    static formatResponse(text) {
+        let formattedText = this.replaceLineBreaks(text) ;
+        formattedText = this.replaceMarkdown(formattedText);
+
+        return formattedText;
+    }
 }

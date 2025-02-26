@@ -362,8 +362,8 @@ const AICourseAssist = class {
                     return;
                 } else {
                     if (!this.isRequestCancelled()) {
-                        // Replace double line breaks with <br> and with </p><p> for paragraphs.
-                        const generatedContent = AIHelper.replaceLineBreaks(responseObj.generatedcontent);
+                        // Perform replacements on the generated context to ensure it is formatted correctly.
+                        const generatedContent = AIHelper.formatResponse(responseObj.generatedcontent);
                         this.displayResponse(generatedContent, action);
                         return;
                     } else {
