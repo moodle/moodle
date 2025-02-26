@@ -28,7 +28,7 @@ Feature: Generate image using AI
       | capability                         | permission | role    | contextlevel | reference |
       | aiplacement/editor:generate_text  | Prohibit   | user    | System       |           |
       | aiplacement/editor:generate_image | Prohibit   | custom2 | Course       | C1        |
-    And the following "ai providers" exist:
+    And the following "core_ai > ai providers" exist:
       |provider          | name   | enabled | apikey | orgid |
       |aiprovider_openai | openai | 1       | 123    | abc   |
     And I enable "editor" "aiplacement" plugin
