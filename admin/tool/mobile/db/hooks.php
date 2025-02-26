@@ -44,8 +44,4 @@ $callbacks = [
         'callback' => 'tool_mobile\local\hooks\user\after_user_passed_mfa::callback',
         'priority' => 500,
     ],
-    [
-        'hook' => \core\hook\output\before_http_headers::class,
-        'callback' => [\tool_mobile\local\hooks\output\before_http_headers::class, 'callback'],
-    ],
 ];

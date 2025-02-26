@@ -75,14 +75,6 @@ if (empty($SESSION->justloggedin) &&
     throw new moodle_exception('pluginnotenabledorconfigured', 'tool_mobile');
 }
 
-// If the user is using the inapp (embedded) browser, we need to set the Secure and Partitioned attributes to the session cookie.
-if (\core_useragent::is_moodle_app()) {
-    \core\session\utility\cookie_helper::add_attributes_to_cookie_response_header(
-        cookiename: "MoodleSession{$CFG->sessioncookie}",
-        attributes: ['Secure', 'Partitioned'],
-    );
-}
-
 require_login(0, false);
 
 // Require an active user: not guest, not suspended.
