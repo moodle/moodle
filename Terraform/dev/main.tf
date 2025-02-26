@@ -24,7 +24,7 @@ resource "azurerm_storage_share" "storage_share_theme" {
 }
 
 resource "azurerm_storage_container" "assessment_container" {
-  name                  = "assessment_storage_container"
+  name                  = "assessmentstoragecontainer"
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
 }
@@ -273,7 +273,7 @@ resource "azurerm_mssql_server_security_alert_policy" "sqlmi_security_alert_poli
   state               = "Enabled"
 }
 
-resource "azurerm_mssql_server_vulnerability_assessment" "sqlmi_vulerability_assessment" {
+resource "azurerm_mssql_server_vulnerability_assessment" "sqlmi_vulnerability_assessment" {
   server_security_alert_policy_id = azurerm_mssql_server_security_alert_policy.sqlmi_security_alert_policy.id
   storage_container_path          = "${azurerm_storage_account.storage_account.primary_blob_endpoint}${azurerm_storage_container.assessment_container.name}/"
   storage_account_access_key      = azurerm_storage_account.storage_account.primary_access_key
