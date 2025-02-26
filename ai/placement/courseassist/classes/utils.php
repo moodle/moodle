@@ -16,6 +16,7 @@
 
 namespace aiplacement_courseassist;
 
+use core_ai\aiactions\explain_text;
 use core_ai\aiactions\summarise_text;
 use core_ai\manager;
 
@@ -40,16 +41,53 @@ class utils {
             return false;
         }
 
-        $aimanager = \core\di::get(manager::class);
-        $providers = $aimanager->get_providers_for_actions([summarise_text::class], true);
-        if (!has_capability('aiplacement/courseassist:summarise_text', $context)
-            || !$aimanager->is_action_available(summarise_text::class)
-            || !$aimanager->is_action_enabled('aiplacement_courseassist', summarise_text::class)
-            || empty($providers[summarise_text::class])
-        ) {
+        if (empty(self::get_actions_available($context))) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Get all the actions available and return action data for template.
+     *
+     * @param \context $context The context.
+     * @return array Return the actions available with data.
+     */
+    public static function get_actions_available(\context $context): array {
+        $actions = [];
+        $actionclasses = [
+            summarise_text::class,
+            explain_text::class,
+        ];
+        $manager = \core\di::get(manager::class);
+        $providers = $manager->get_providers_for_actions($actionclasses, true);
+
+        // Summarise text.
+        if (has_capability('aiplacement/courseassist:summarise_text', $context)
+            && $manager->is_action_available(summarise_text::class)
+            && $manager->is_action_enabled('aiplacement_courseassist', summarise_text::class)
+            && !empty($providers[summarise_text::class])
+        ) {
+            $actions[] = [
+                'action' => 'summarise',
+                'buttontext' => get_string('summarise', 'aiplacement_courseassist'),
+                'title' => get_string('summarise_tooltips', 'aiplacement_courseassist'),
+            ];
+        }
+        // Explain text.
+        if (has_capability('aiplacement/courseassist:explain_text', $context)
+            && $manager->is_action_available(explain_text::class)
+            && $manager->is_action_enabled('aiplacement_courseassist', explain_text::class)
+            && !empty($providers[explain_text::class])
+        ) {
+            $actions[] = [
+                'action' => 'explain',
+                'buttontext' => get_string('explain', 'aiplacement_courseassist'),
+                'title' => get_string('explain_tooltips', 'aiplacement_courseassist'),
+            ];
+        }
+
+        return $actions;
     }
 }

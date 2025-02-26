@@ -37,11 +37,11 @@ class hook_callbacks {
     }
 
     /**
-     * Bootstrap the summarise button.
+     * Bootstrap the action buttons.
      *
      * @param after_http_headers $hook
      */
     public static function after_http_headers(after_http_headers $hook): void {
-        \aiplacement_courseassist\output\assist_ui::load_summarise_button($hook);
+        \aiplacement_courseassist\output\assist_ui::action_buttons_handler($hook);
     }
 }

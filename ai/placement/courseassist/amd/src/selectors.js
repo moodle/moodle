@@ -26,13 +26,16 @@ export default {
         AIDRAWER_BODY: '#ai-drawer .ai-drawer-body',
         PAGE: '#page',
         MAIN_REGION: '[role="main"]',
+        AIDRAWER_CLOSE: '#ai-drawer-close',
+        RESPONSE: '.course-assist-response',
     },
     ACTIONS: {
-        SUMMARY: '[data-action="course-summarise"]',
-        RETRY: '[data-action="course-summarise-retry"]',
+        SUMMARY: '.course-assist-controls [data-action="summarise"]',
+        EXPLAIN: '.course-assist-controls [data-action="explain"]',
+        RETRY: '.course-assist-controls [data-action="retry"]',
         DECLINE: '.ai-policy-block [data-action="decline"]',
         ACCEPT: '.ai-policy-block [data-action="accept"]',
-        REGENERATE: '[data-action="course-summarise-regenerate"]',
-        CANCEL: '[data-action="course-summarise-cancel"]',
+        REGENERATE: '.course-assist-controls [data-action="regenerate"]',
+        CANCEL: '.course-assist-controls [data-action="cancel"]',
     }
 };

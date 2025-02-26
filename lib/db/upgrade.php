@@ -1412,5 +1412,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025013100.01);
     }
 
+    if ($oldversion < 2025022100.00) {
+        // Define table ai_action_explain_text to be created.
+        $table = new xmldb_table('ai_action_explain_text');
+
+        // Adding fields to table ai_action_explain_text.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('prompt', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('responseid', XMLDB_TYPE_CHAR, '128', null, null, null, null);
+        $table->add_field('fingerprint', XMLDB_TYPE_CHAR, '128', null, null, null, null);
+        $table->add_field('generatedcontent', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('finishreason', XMLDB_TYPE_CHAR, '128', null, null, null, null);
+        $table->add_field('prompttokens', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('completiontoken', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table ai_action_explain_text.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for ai_action_explain_text.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Add explain action config to the AI providers.
+        upgrade_add_explain_action_to_ai_providers();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025022100.00);
+    }
+
     return true;
 }

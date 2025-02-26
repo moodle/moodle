@@ -15,29 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template aiplacement_courseassist/loading
+    @template aiplacement_courseassist/sparkles_icon
 
-    Template to display loading message when AI placement is in progress.
-
-    Context variables required for this template:
-    * none
+    Template to display sparkles icon.
 
     Example context (json):
     {
     }
 }}
-<section class="card mb-3">
-    <div class="card-body p-3">
-        <h3 class="h6 card-title d-inline">
-            {{#pix}} i/loading, core {{/pix}}
-            {{#str}} generating, aiplacement_courseassist {{/str}}
-        </h3>
-        <div class="card-text content mt-3">
-            <div class="d-block pt-3 course-assist-controls">
-                <button class="btn btn-sm btn-outline-secondary" data-action="cancel">
-                    {{#str}} cancel, core {{/str}}
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
+<span class="ai-course-assist-sparkles-icon">
+    {{#pix}} sparkles, aiplacement_courseassist {{/pix}}
+</span>
+<span class="ai-course-assist-sparkles-icon white">
+    {{#pix}} sparkles-white, aiplacement_courseassist {{/pix}}
+</span>
