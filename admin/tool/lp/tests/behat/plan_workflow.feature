@@ -31,19 +31,19 @@ Feature: Manage plan workflow
       | user1 | usermanageowndraftplan | System |  |
       | user2 | usermanageownplan | System |  |
       | manager1 | manageplan | System |  |
-    And the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
-    And the following lp "plans" exist:
-      | name | user | description |
-      | Test-Plan1 | user1 | Description of plan for user 1 |
-      | Test-Plan2 | user2 | Description of plan for user 2 |
-    And the following lp "plancompetencies" exist:
-      | plan | competency |
+    And the following "core_competency > frameworks" exist:
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework | idnumber   |
+      | Test-Comp1 | ID-FW1              | Test-Comp1 |
+      | Test-Comp2 | ID-FW1              | Test-Comp2 |
+    And the following "core_competency > plans" exist:
+      | name       | user  | description                    | reviewer | status |
+      | Test-Plan1 | user1 | Description of plan for user 1 | user1    | draft  |
+      | Test-Plan2 | user2 | Description of plan for user 2 | user2    | draft  |
+    And the following "core_competency > plan_competency" exist:
+      | plan       | competency |
       | Test-Plan1 | Test-Comp1 |
       | Test-Plan1 | Test-Comp2 |
       | Test-Plan2 | Test-Comp1 |
@@ -89,18 +89,18 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager can see learning plan with status waiting for review
-    Given  the following lp "plans" exist:
-      | name | user | description | status |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status             |
       | Test-Plan3 | user2 | Description of plan 3 for user 1 | waiting for review |
-      | Test-Plan4 | user1 | Description of plan 3 for user 1 | draft |
+      | Test-Plan4 | user1 | Description of plan 3 for user 1 | draft              |
     When I log in as "manager1"
     Then I should see "Test-Plan3"
     And I should not see "Test-Plan4"
     And I log out
 
   Scenario: Manager can start review of learning plan with status waiting for review
-    Given  the following lp "plans" exist:
-      | name | user | description | status |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status             |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | waiting for review |
     And I log in as "manager1"
     And I follow "Test-Plan3"
@@ -111,8 +111,8 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager can reject a learning plan with status in review
-    Given  the following lp "plans" exist:
-      | name | user | description | status | reviewer |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status    | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | in review | manager1 |
     And I log in as "manager1"
     And I follow "Test-Plan3"
@@ -124,8 +124,8 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager can accept a learning plan with status in review
-    Given  the following lp "plans" exist:
-      | name | user | description | status | reviewer |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status    | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | in review | manager1 |
     And I log in as "manager1"
     And I follow "Test-Plan3"
@@ -137,8 +137,8 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager send back to draft an active learning plan
-    Given  the following lp "plans" exist:
-      | name | user | description | status | reviewer |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | active | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | active | manager1 |
     And I am on the "user1" "user > profile" page logged in as "manager1"
@@ -153,8 +153,8 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager change an active learning plan to completed
-    Given  the following lp "plans" exist:
-      | name | user | description | status | reviewer |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | active | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | active | manager1 |
     And I am on the "user1" "user > profile" page logged in as "manager1"
@@ -172,8 +172,8 @@ Feature: Manage plan workflow
     And I log out
 
   Scenario: Manager reopen a complete learning plan
-    Given  the following lp "plans" exist:
-      | name | user | description | status | reviewer |
+    Given the following "core_competency > plans" exist:
+      | name       | user  | description                      | status   | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | complete | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | complete | manager1 |
     And I am on the "user1" "user > profile" page logged in as "manager1"
