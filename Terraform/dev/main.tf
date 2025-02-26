@@ -269,7 +269,7 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
 
 resource "azurerm_mssql_server_security_alert_policy" "sqlmi_security_alert_policy" {
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  server_name         = azurerm_mssql_managed_instance.sqlmi.name
+  server_name         = "learninghub-moodle-sql-mi"
   state               = "Enabled"
 }
 
