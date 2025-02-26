@@ -1441,7 +1441,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025022100.01);
     }
 
-    if ($oldversion < 2025022100.01) {
+    if ($oldversion < 2025022100.02) {
         // Due to a code restriction on the upgrade, invoking any core functions is not permitted.
         // Thus, to acquire the list of provider plugins,
         // we should extract them from the `config_plugins` database table.
@@ -1461,7 +1461,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025022100.01);
+        upgrade_main_savepoint(true, 2025022100.02);
     }
 
     return true;
