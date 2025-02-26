@@ -283,6 +283,11 @@ resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_vulner
   }
 }
 
+resource "azurerm_security_center_subscription_pricing" "example" {
+  tier          = "Standard"
+  resource_type = "SqlManagedInstances"
+}
+
 resource "azurerm_mssql_managed_database" "sqldb" {
   name = "LearningHubMoodle"
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
