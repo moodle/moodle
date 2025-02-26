@@ -39978,6 +39978,7 @@ div.editor_atto_toolbar button .icon {
 
 .reportbuilder-editor-table-container {
   overflow-x: auto;
+  padding: 1px;
 }
 
 .reportbuilder-table th button[data-action=report-remove-column] .icon,
