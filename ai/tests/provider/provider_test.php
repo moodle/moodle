@@ -1544,7 +1544,7 @@ final class provider_test extends \advanced_testcase {
      * Test get_name.
      */
     public function test_get_name(): void {
-        $this->assertEquals(get_string('pluginname', 'aiprovider_openai'), $this->provider->get_name());
+        $this->assertEquals('aiprovider_openai', $this->provider->get_name());
     }
 
     /**
