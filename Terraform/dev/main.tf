@@ -43,6 +43,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   identity {
     type = "SystemAssigned"
   }
+  addon_profile {
+    azure_policy {
+      enabled = true
+    }
+  }
   network_profile {
     network_plugin = "azure"
   }
@@ -267,27 +272,6 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   }
 }
 
-resource "azurerm_mssql_managed_instance_security_alert_policy" "sqlmi_security_alert_policy" {
-  resource_group_name    = azurerm_resource_group.learningHubMoodleResourceGroup.name
-  managed_instance_name  = azurerm_mssql_managed_instance.sqlmi.name
-}
-
-resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_vulnerability_assessment" {
-  managed_instance_id         = azurerm_mssql_managed_instance.sqlmi.id
-  storage_container_path      = "${azurerm_storage_account.storage_account.primary_blob_endpoint}${azurerm_storage_container.assessment_container.name}/"
-  storage_account_access_key  = azurerm_storage_account.storage_account.primary_access_key
-  recurring_scans {
-    enabled                   = true
-    email_subscription_admins = true
-    emails                    = ["colin.beeby1@nhs.net"]
-  }
-}
-
-resource "azurerm_security_center_subscription_pricing" "example" {
-  tier          = "Standard"
-  resource_type = "SqlManagedInstances"
-}
-
 resource "azurerm_mssql_managed_database" "sqldb" {
   name = "LearningHubMoodle"
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
@@ -300,7 +284,7 @@ resource "azurerm_redis_cache" "moodle_cache" {
   capacity            = 2
   family              = "C"
   sku_name            = "Standard"
-  non_ssl_port_enabled = true
+  non_ssl_port_enabled = false
   minimum_tls_version = "1.2"
 }
 
