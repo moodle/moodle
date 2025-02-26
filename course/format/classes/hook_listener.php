@@ -59,10 +59,14 @@ class hook_listener {
      * Redirect to external course url using the before_course_viewed hook.
      *
      * @param before_course_viewed $hook The hook object containing course data.
+     * @deprecated since 5.0
+     * @todo MDL-83839 This method will be removed in Moodle 6.0.
      */
+    #[\core\attribute\deprecated('core_courseformat\hook\hook_listener::before_course_viewed', since: '5.0', mdl: 'MDL-83764')]
     public static function before_course_viewed(before_course_viewed $hook): void {
         global $CFG;
         if (file_exists($CFG->dirroot . '/course/externservercourse.php')) {
+            \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
             include($CFG->dirroot . '/course/externservercourse.php');
             if (function_exists('extern_server_course')) {
                 if ($externurl = extern_server_course($hook->course)) {
