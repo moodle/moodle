@@ -11,29 +11,6 @@ $divider-color: $gray-300 !default;
 $divider-width: 2px !default;
 $divider-hover-color: $primary !default;
 
-// Mixins.
-@mixin completion-button() {
-    &.btn {
-        @include button-variant($white, $gray-400, $gray-600);
-        min-height: map-get($iconsizes, 5);
-        font-weight: bold;
-        @include border-radius();
-        .icon {
-            font-size: inherit;
-        }
-    }
-    @each $color, $value in $theme-colors {
-        &.btn-#{$color} {
-            $bg-color: shift-color($value, $alert-bg-scale);
-            @include button-variant($bg-color, $bg-color, $value);
-            color: shift-color($value, $alert-color-scale);
-            &:hover {
-                color: color-contrast($value);
-            }
-        }
-    }
-}
-
 /* Course content */
 
 .course-content ul.section-list {
@@ -197,7 +174,7 @@ $divider-hover-color: $primary !default;
     .action-menu {
         .btn.btn-icon {
             height: map-get($iconsizes, 5);
-            width: map-get($iconwidthsizes, 5);
+            width: map-get($iconsizes, 5);
             @include border-radius();
         }
         &.section-actions .btn.btn-icon {
@@ -394,10 +371,9 @@ $divider-hover-color: $primary !default;
     .activity-completion {
         grid-area: completion;
         justify-self: end;
-        // Re-style completion buttons (mark as done & dropdown).
         button,
         a[role="button"] {
-            @include completion-button();
+            min-height: map-get($iconsizes, 5);
         }
         @include media-breakpoint-down(sm) {
             width: 100%;
@@ -433,8 +409,12 @@ $divider-hover-color: $primary !default;
         justify-self: end;
         .groupmode-information {
             height: map-get($iconsizes, 5);
-            width: map-get($iconwidthsizes, 5);
+            width: map-get($iconsizes, 5);
             @include border-radius();
+            .icon {
+                width: map-get($iconsizes, 3);
+                height: map-get($iconsizes, 3);
+            }
         }
         .groupmode-icon-info {
             display: none;
@@ -790,7 +770,7 @@ $divider-hover-color: $primary !default;
         }
         .icons-collapse-expand:has(+ h4) {
             height: map-get($iconsizes, 4);
-            width: map-get($iconwidthsizes, 4);
+            width: map-get($iconsizes, 4);
             font-size: $font-size-sm;
         }
         h4 {

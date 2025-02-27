@@ -122,13 +122,12 @@ class completion implements named_templatable, renderable {
         $dialogcontent = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
 
         $buttoncontent = get_string('completionmenuitem', 'completion');
-        $buttonclass = '';
+        $buttonclass = 'btn-subtle-body';
         if ($completioninfo->istrackeduser) {
-            $buttonclass = 'btn-outline-secondary';
             $buttoncontent = get_string('todo', 'completion');
             if ($completioninfo->overallcomplete) {
                 $buttoncontent = $output->pix_icon('i/checked', '') . " " . get_string('completion_manual:done', 'core_course');
-                $buttonclass = 'btn-success';
+                $buttonclass = 'btn-subtle-success';
             }
         }
 
