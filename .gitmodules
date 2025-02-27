@@ -21,8 +21,11 @@
 	path = theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
-
 [submodule "mod/oublog"]
 	path = mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
 	branch = MOODLE_404_STABLE
+[submodule "mod/turnitintooltwo"]
+	path = mod/turnitintooltwo
+	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
+	branch = UCSFCLE_404_STABLE
