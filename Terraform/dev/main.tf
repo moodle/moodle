@@ -39,6 +39,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count = var.ClusterNodeCount
     vm_size    = var.ClusterNodeSize
     temporary_name_for_rotation = "tmpnodepool1"
+    mode = "User"
   }
   identity {
     type = "SystemAssigned"
