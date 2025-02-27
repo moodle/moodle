@@ -36,10 +36,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = var.ClusterName
   default_node_pool {
     name       = "default"
-    node_count = var.ClusterNodeCount
-    vm_size    = var.ClusterNodeSize
+    node_count = 2
+    vm_size    = "Standard_D4_v3"
     temporary_name_for_rotation = "tmpnodepool1"
-    mode = "User"
   }
   identity {
     type = "SystemAssigned"
@@ -52,16 +51,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "system_node_pool" {
-  name                  = "systempool"
+resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
+  name                  = "userpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_D4_v3"
-  node_count            = 2
-  node_taints           = ["CriticalAddonsOnly=true:NoSchedule"]
-  mode                  = "System"
-
+  vm_size               = var.ClusterNodeSize
+  node_count            = var.ClusterNodeCount
+  mode                  = "User"
   tags = {
-    Environment = "Production"
+    Environment = var.Environment
   }
 }
 
