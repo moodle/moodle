@@ -51,6 +51,19 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+resource "azurerm_kubernetes_cluster_node_pool" "system_node_pool" {
+  name                  = "systempool"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_DS4_v3"
+  node_count            = 2
+  node_taints           = ["CriticalAddonsOnly=true:NoSchedule"]
+  mode                  = "System"
+
+  tags = {
+    Environment = "Production"
+  }
+}
+
 resource "azurerm_container_registry" "containerRegistry" {
   name                = var.ContainerRegistryName
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
