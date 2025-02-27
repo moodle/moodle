@@ -2677,25 +2677,6 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Function repository::reset_caches() is deprecated, cache is handled by MUC now.
-     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
-     */
-    public static function reset_caches() {
-        throw new coding_exception('Function repository::reset_caches() can not be used any more, cache is handled by MUC now.');
-    }
-
-    /**
-     * Function repository::sync_external_file() is deprecated. Use repository::sync_reference instead
-     *
-     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
-     * @see repository::sync_reference()
-     */
-    public static function sync_external_file($file, $resetsynchistory = false) {
-        throw new coding_exception('Function repository::sync_external_file() can not be used any more. ' .
-            'Use repository::sync_reference instead.');
-    }
-
-    /**
      * Performs synchronisation of an external file if the previous one has expired.
      *
      * This function must be implemented for external repositories supporting

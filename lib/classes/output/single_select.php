@@ -156,15 +156,6 @@ class single_select implements renderable, templatable {
     /**
      * Adds help icon.
      *
-     * @deprecated since Moodle 2.0
-     */
-    public function set_old_help_icon($helppage, $title, $component = 'moodle') {
-        throw new coding_exception('set_old_help_icon() can not be used any more, please see set_help_icon().');
-    }
-
-    /**
-     * Adds help icon.
-     *
      * @param string $identifier The keyword that defines a help page
      * @param string $component
      */

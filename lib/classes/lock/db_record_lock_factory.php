@@ -81,13 +81,6 @@ class db_record_lock_factory implements lock_factory {
     }
 
     /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function supports_recursion() {
-        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
-    }
-
-    /**
      * This function generates a unique token for the lock to use.
      * It is important that this token is not solely based on time as this could lead
      * to duplicates in a clustered environment (especially on VMs due to poor time precision).
@@ -173,13 +166,6 @@ class db_record_lock_factory implements lock_factory {
             unset($this->openlocks[$lock->get_key()]);
         }
         return $result;
-    }
-
-    /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function extend_lock() {
-        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
     }
 
     /**

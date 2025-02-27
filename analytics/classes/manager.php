@@ -305,15 +305,6 @@ class manager {
     }
 
     /**
-     * @deprecated since Moodle 3.7 use get_time_splitting_methods_for_evaluation instead
-     */
-    public static function get_enabled_time_splitting_methods() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed. You can use self::get_time_splitting_methods_for_evaluation if ' .
-            'you want to get the default time splitting methods for evaluation, or you can use self::get_all_time_splittings if ' .
-            'you want to get all the time splitting methods available on this site.');
-    }
-
-    /**
      * Returns the time-splitting methods for model evaluation.
      *
      * @param  bool $all Return all the time-splitting methods that can potentially be used for evaluation or the default ones.

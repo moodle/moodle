@@ -536,13 +536,6 @@ abstract class assign_plugin {
     }
 
     /**
-     * @deprecated since 2.7
-     */
-    public function format_for_log() {
-        throw new coding_exception(__FUNCTION__ . ' has been deprecated, please do not use it any more');
-    }
-
-    /**
      * The assignment has been deleted - remove the plugin specific data
      *
      * @return bool

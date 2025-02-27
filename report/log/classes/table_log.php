@@ -97,15 +97,6 @@ class report_log_table_log extends table_sql {
     }
 
     /**
-     * Generate the course column.
-     *
-     * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
-     */
-    public function col_course($event) {
-        throw new coding_exception('col_course() can not be used any more, there is no such column.');
-    }
-
-    /**
      * Gets the user full name.
      *
      * This function is useful because, in the unlikely case that the user is
@@ -530,17 +521,5 @@ class report_log_table_log extends table_sql {
         if ($useinitialsbar && !$this->is_downloading()) {
             $this->initialbars($total > $pagesize);
         }
-    }
-
-    /**
-     * Helper function to create list of course shortname and user fullname shown in log report.
-     *
-     * This will update $this->userfullnames and $this->courseshortnames array with userfullname and courseshortname (with link),
-     * which will be used to render logs in table.
-     *
-     * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
-     */
-    public function update_users_and_courses_used() {
-        throw new coding_exception('update_users_and_courses_used() can not be used any more.');
     }
 }

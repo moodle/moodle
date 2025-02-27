@@ -49,8 +49,6 @@ define('GLOSSARY_CONTINUOUS', 'continuous');
 define('GLOSSARY_DICTIONARY', 'dictionary');
 define('GLOSSARY_FULLWITHOUTAUTHOR', 'fullwithoutauthor');
 
-require_once(__DIR__ . '/deprecatedlib.php');
-
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 /**
  * @global object
@@ -860,14 +858,6 @@ function glossary_grade_item_delete($glossary) {
     require_once($CFG->libdir.'/gradelib.php');
 
     return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, array('deleted'=>1));
-}
-
-/**
- * @deprecated since Moodle 3.8
- */
-function glossary_scale_used() {
-    throw new coding_exception('glossary_scale_used() can not be used anymore. Plugins can implement ' .
-        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**

@@ -276,13 +276,6 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
     }
 
     /**
-     * @deprecated since Moodle 2.0
-     */
-    function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
-        throw new coding_exception('setHelpButton() can not be used any more, please see MoodleQuickForm::addHelpButton().');
-    }
-
-    /**
      * Returns html for help button.
      *
      * @return string html for help button

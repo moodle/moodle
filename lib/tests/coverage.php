@@ -97,7 +97,6 @@ return new class extends phpunit_coverage_info {
         'statslib.php',
         'tablelib.php',
         'upgradelib.php',
-        'uploadlib.php',
         'webdavlib.php',
         'weblib.php',
         'xsendfilelib.php',

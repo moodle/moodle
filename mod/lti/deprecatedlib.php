@@ -23,15 +23,6 @@
  */
 
 /**
- * @deprecated since 3.9
- **/
-function lti_get_shortcuts() {
-    throw new coding_exception(
-        'The callback get_shortcuts() is now removed. Please use get_course_content_items and get_all_content_items instead.'
-    );
-}
-
-/**
  * @deprecated since Moodle 4.3
  */
 #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.3', mdl: 'MDL-76953', final: true)]

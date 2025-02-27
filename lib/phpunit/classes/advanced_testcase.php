@@ -134,34 +134,6 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
-     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     */
-    protected function createXMLDataSet() {
-        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     */
-    protected function createCsvDataSet() {
-        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     */
-    protected function createArrayDataSet() {
-        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     */
-    protected function loadDataSet() {
-        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.');
-    }
-
-    /**
      * Creates a new dataset from CVS/XML files.
      *
      * This method accepts an array of full paths to CSV or XML files to be loaded

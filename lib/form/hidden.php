@@ -62,14 +62,6 @@ class MoodleQuickForm_hidden extends HTML_QuickForm_hidden{
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         return self::__construct($elementName, $value, $attributes);
     }
-
-    /**
-     * @deprecated since Moodle 2.0
-     */
-    function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        throw new coding_exception('setHelpButton() can not be used any more, please see MoodleQuickForm::addHelpButton().');
-    }
-
     /**
      * get html for help button
      *

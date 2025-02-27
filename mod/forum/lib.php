@@ -528,13 +528,6 @@ function forum_user_complete($course, $user, $mod, $forum) {
 }
 
 /**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function forum_filter_user_groups_discussions() {
-    throw new coding_exception('forum_filter_user_groups_discussions() can not be used any more and is obsolete.');
-}
-
-/**
  * Returns whether the discussion group is visible by the current user or not.
  *
  * @since Moodle 2.8, 2.7.1, 2.6.4
@@ -558,13 +551,6 @@ function forum_is_user_group_discussion(cm_info $cm, $discussiongroupid) {
     }
 
     return false;
-}
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function forum_print_overview() {
-    throw new coding_exception('forum_print_overview() can not be used any more and is obsolete.');
 }
 
 /**

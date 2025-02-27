@@ -139,13 +139,6 @@ final class core_media_manager {
     }
 
     /**
-     * @deprecated since Moodle 3.3. The setup is now done in ::instance() so there is no need to call this.
-     */
-    public function setup() {
-        throw new coding_exception('core_media_manager::setup() can not be used any more because it is done in ::instance()');
-    }
-
-    /**
      * Resets cached singleton instance. To be used after $CFG->media_plugins_sortorder is modified
      */
     public static function reset_caches() {

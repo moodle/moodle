@@ -295,13 +295,6 @@ class manager {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    public static function get_available_completion_tabs() {
-        throw new \coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Returns an array with the available completion options (url => name) for the current course and user.
      *
      * @param int $courseid The course id.

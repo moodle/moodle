@@ -71,13 +71,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since 3.2
-     */
-    protected function add_modchoosertoggle() {
-        throw new coding_exception('core_course_renderer::add_modchoosertoggle() can not be used anymore.');
-    }
-
-    /**
      * Renders course info box.
      *
      * @param stdClass $course
@@ -169,13 +162,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since 3.9
-     */
-    public function course_modchooser() {
-        throw new coding_exception('course_modchooser() can not be used anymore, please use course_activitychooser() instead.');
-    }
-
-    /**
      * Build the HTML for the module chooser javascript popup.
      *
      * @param int $courseid The course id to fetch modules for.
@@ -233,17 +219,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function course_section_cm_edit_actions($actions, ?cm_info $mod = null, $displayoptions = array()) {
-
-        throw new coding_exception(
-            'course_section_cm_edit_actions can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\content\\cm\\controlmenu instead.'
-        );
-    }
-
-    /**
      * Renders HTML for the menus to add activities and resources to the current course
      *
      * Renders the ajax control (the link which when clicked produces the activity chooser modal). No noscript fallback.
@@ -298,108 +273,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 3.11
-     */
-    public function course_section_cm_completion() {
-        throw new coding_exception(__FUNCTION__ . ' is deprecated. Use the activity_completion output component instead.');
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function is_cm_conditionally_hidden(cm_info $mod) {
-
-        throw new coding_exception(
-            'is_cm_conditionally_hidden can not be used any more. Please, use ' .
-            '\core_availability\info_module::is_available_for_all instead'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
-
-        throw new coding_exception(
-            'course_section_cm_name can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\content\\cm\\cmname class instead.'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    protected function course_section_cm_classes(cm_info $mod) {
-
-        throw new coding_exception(
-            'course_section_cm_classes can not be used any more. Now it is part of core_courseformat\\output\\local\\content\\cm'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function course_section_cm_name_title(cm_info $mod, $displayoptions = array()) {
-
-        throw new coding_exception(
-            'course_section_cm_name_title can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\cm\\title class instead'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function course_section_cm_text(cm_info $mod, $displayoptions = array()) {
-
-        throw new coding_exception(
-            'course_section_cm_text can not be used any more. Now it is part of core_courseformat\\output\\local\\content\\cm'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function availability_info($text, $additionalclasses = '') {
-
-        throw new coding_exception(
-            'availability_info can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\content\\section\\availability instead'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - please do not use this function any more.
-     */
-    public function course_section_cm_availability(cm_info $mod, $displayoptions = array()) {
-
-        throw new coding_exception(
-            'course_section_cm_availability can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\content\\cm\\availability instead'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - use core_course output components or course_format::course_section_updated_cm_item instead.
-     */
-    public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
-
-        throw new coding_exception(
-            'course_section_cm_list_item can not be used any more. Please, use renderer course_section_updated_cm_item instead'
-        );
-    }
-
-    /**
-     * @deprecated since 4.0 - use core_course output components instead.
-     */
-    public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
-
-        throw new coding_exception(
-            'course_section_cm can not be used any more. Please, use core_courseformat\\output\\content\\cm output class instead'
-        );
-    }
-
-    /**
      * Message displayed to the user when they try to access unavailable activity following URL
      *
      * This method is a very simplified version of {@link course_section_cm()} to be part of the error
@@ -425,17 +298,6 @@ class core_course_renderer extends plugin_renderer_base {
         $formattedinfo = \core_availability\info::format_info($cm->availableinfo, $cm->get_course());
         return html_writer::div($name, 'activityinstance-error') .
         html_writer::div($formattedinfo, 'availabilityinfo-error');
-    }
-
-    /**
-     * @deprecated since 4.0 - use core_course output components instead.
-     */
-    public function course_section_cm_list($course, $section, $sectionreturn = null, $displayoptions = []) {
-
-        throw new coding_exception(
-            'course_section_cm_list can not be used any more. Please, use ' .
-            'core_courseformat\\output\\local\\content\\section\\cmlist class instead'
-        );
     }
 
     /**

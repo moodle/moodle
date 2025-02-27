@@ -1292,15 +1292,6 @@ abstract class moodle_database {
     }
 
     /**
-     * Enable/disable detailed sql logging
-     *
-     * @deprecated since Moodle 2.9
-     */
-    public function set_logging($state) {
-        throw new coding_exception('set_logging() can not be used any more.');
-    }
-
-    /**
      * Do NOT use in code, this is for use by database_manager only!
      * @param string|array $sql query or array of queries
      * @param array|null $tablenames an array of xmldb table names affected by this request.

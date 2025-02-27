@@ -265,17 +265,6 @@ class stored_file {
     }
 
     /**
-     * Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()
-     *
-     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
-     * @see stored_file::replace_file_with()
-     */
-    public function replace_content_with(stored_file $storedfile) {
-        throw new coding_exception('Function stored_file::replace_content_with() can not be used any more . ' .
-            'Please use stored_file::replace_file_with()');
-    }
-
-    /**
      * Replaces the fields that might have changed when file was overriden in filepicker:
      * reference, contenthash, filesize, userid
      *
@@ -749,17 +738,6 @@ class stored_file {
     }
 
      /**
-     * Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with
-     *
-     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
-     * @see stored_file::replace_file_with()
-     */
-    public function set_filesize($filesize) {
-        throw new coding_exception('Function stored_file::set_filesize() can not be used any more. ' .
-            'Please use stored_file::replace_file_with()');
-    }
-
-    /**
      * Returns mime type of file.
      *
      * @return string
@@ -973,18 +951,6 @@ class stored_file {
         return $this->file_record->referencelastsync;
     }
 
-    /**
-     * Function stored_file::get_referencelifetime() is deprecated as reference
-     * life time is no longer stored in DB or returned by repository. Each
-     * repository should decide by itself when to synchronise the references.
-     *
-     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
-     * @see repository::sync_reference()
-     */
-    public function get_referencelifetime() {
-        throw new coding_exception('Function stored_file::get_referencelifetime() can not be used any more. ' .
-            'See repository::sync_reference().');
-    }
     /**
      * Returns file reference
      *

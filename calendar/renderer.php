@@ -50,13 +50,6 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since 4.0 MDL-72810.
-     */
-    public function fake_block_threemonths() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Adds a pretent calendar block
      *
      * @param block_contents $bc

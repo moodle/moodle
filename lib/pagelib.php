@@ -1670,20 +1670,6 @@ class moodle_page {
     }
 
     /**
-     * @deprecated since Moodle 3.4
-     */
-    public function https_required() {
-        throw new coding_exception('https_required() cannot be used anymore.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.4
-     */
-    public function verify_https_required() {
-        throw new coding_exception('verify_https_required() cannot be used anymore.');
-    }
-
-    /**
      * Allows to 'serialize' the edited page information and store it in the session cache
      *
      * Due to Moodle architectural decision and non-SPA approach, a lot of page setup is

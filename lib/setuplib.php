@@ -390,15 +390,6 @@ function get_exception_info($ex): stdClass {
 }
 
 /**
- * @deprecated since Moodle 3.8 MDL-61038 - please do not use this function any more.
- * @see \core\uuid::generate()
- */
-function generate_uuid() {
-    throw new coding_exception('generate_uuid() cannot be used anymore. Please use ' .
-        '\core\uuid::generate() instead.');
-}
-
-/**
  * Returns the Moodle Docs URL in the users language for a given 'More help' link.
  *
  * There are three cases:

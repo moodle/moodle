@@ -23,14 +23,6 @@
  */
 
 /**
- * @deprecated since Moodle 3.11
- */
-function feedback_get_completion_state() {
-    $completionclass = \mod_feedback\completion\custom_completion::class;
-    throw new coding_exception(__FUNCTION__ . "() has been removed, please use the '{$completionclass}' class instead");
-}
-
-/**
  * Returns true if the current role is faked by switching role feature
  *
  * @return bool

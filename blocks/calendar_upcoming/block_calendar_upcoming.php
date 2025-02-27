@@ -69,11 +69,4 @@ class block_calendar_upcoming extends block_base {
 
         return $this->content;
     }
-
-    /**
-     * @deprecated since 3.4
-     */
-    public static function get_upcoming_content() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
 }
