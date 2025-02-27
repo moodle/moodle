@@ -226,7 +226,7 @@ jobs:
           az aks nodepool update \
           --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
           --cluster-name ${{ vars.AZURE_CLUSTER_NAME }} \
-          --name default \
+          --name userpool \
           --enable-cluster-autoscaler \
           --min-count 1 \
           --max-count 2
