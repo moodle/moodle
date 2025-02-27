@@ -161,7 +161,7 @@ class reports_list extends system_report {
         );
 
         // Tags column.
-        $this->add_column_from_entity('tag:name')
+        $this->add_column_from_entity('tag:namewithbadge')
             ->set_title(new lang_string('tags'))
             ->set_aggregation('groupconcat')
             ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true);

@@ -84,6 +84,7 @@ final class tags_test extends core_reportbuilder_testcase {
 
         // Tag.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithbadge']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:description']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagged']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagcount']);
@@ -109,6 +110,7 @@ final class tags_test extends core_reportbuilder_testcase {
             $collectionsearchable,
             $collectioncustomurl,
             $tagname,
+            $tagnamewithbadge,
             $tagdescription,
             $tagflagged,
             $tagflagcount,
@@ -130,6 +132,8 @@ final class tags_test extends core_reportbuilder_testcase {
 
         // Tag.
         $this->assertEquals('Horses', $tagname);
+        $this->assertEquals('<span class="badge bg-info text-white"><span class="flagged-tag">Horses</span></span>',
+            $tagnamewithbadge);
         $this->assertEquals('<div class="text_to_html">Neigh</div>', $tagdescription);
         $this->assertEquals('Yes', $tagflagged);
         $this->assertEquals(2, $tagflagcount);

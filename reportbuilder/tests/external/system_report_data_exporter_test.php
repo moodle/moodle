@@ -71,7 +71,7 @@ final class system_report_data_exporter_test extends advanced_testcase {
 
         $this->assertStringContainsString('My second report', $name);
         $this->assertEquals(users::get_name(), $source);
-        $this->assertEquals('cat, dog', $tags);
+        $this->assertMatchesRegularExpression('/cat.*, .*dog/', $tags);
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
         $this->assertEquals('Admin User', $modifiedby);
