@@ -238,7 +238,7 @@ jobs:
         run: kubectl rollout restart deployment/learninghubmoodledev
 
   fix_recommendations:
-    needs: create_persistent_storage
+    needs: deploy_learninghubmoodle_to_cluster
     runs-on: ubuntu-latest
     environment: dev
     name: 'Ensure Azure recommendations are fixed'
