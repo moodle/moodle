@@ -30,6 +30,15 @@
             "value": "1"
         }],
         "table": "table",
+        "button": {
+            "tag": "button",
+            "title": "Click me",
+            "attributes": [{
+                "name": "class",
+                "value": "btn btn-primary"
+            }]
+        },
+        "infocontainer": "Here's some information",
         "filterspresent": true,
         "filtersform": "form"
     }
@@ -41,15 +50,19 @@
         data-parameter="{{parameters}}"
         {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
             <div class="reportbuilder-wrapper">
-                {{#filterspresent}}
-                    <div class="dropdown d-flex justify-content-end">
+                {{! Action buttons }}
+                <div class="dropdown d-flex justify-content-end mb-3">
+                    {{#button}}
+                        <{{{tag}}} {{#attributes}}{{name}}="{{value}}" {{/attributes}}>{{title}}</{{{tag}}}>
+                    {{/button}}
+                    {{#filterspresent}}
                         {{>core_reportbuilder/local/filters/area}}
-                    </div>
-                {{/filterspresent}}
-                {{! Table }}
-                <div class="mt-2">
-                    {{{table}}}
+                    {{/filterspresent}}
                 </div>
+                {{! Info container }}
+                {{#infocontainer}}<div class="mt-2">{{{.}}}</div>{{/infocontainer}}
+                {{! Table }}
+                <div class="mt-2">{{{table}}}</div>
             </div>
 </div>
 

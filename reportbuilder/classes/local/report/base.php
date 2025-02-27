@@ -23,9 +23,9 @@ use context;
 use lang_string;
 use core_reportbuilder\local\entities\base as entity_base;
 use core_reportbuilder\local\filters\base as filter_base;
-use core_reportbuilder\local\helpers\database;
-use core_reportbuilder\local\helpers\user_filter_manager;
+use core_reportbuilder\local\helpers\{database, user_filter_manager};
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\output\report_action;
 
 /**
  * Base class for all reports
@@ -86,6 +86,12 @@ abstract class base {
 
     /** @var int Default paging size */
     private $defaultperpage = self::DEFAULT_PAGESIZE;
+
+    /** @var report_action $reportaction */
+    private report_action|null $reportaction = null;
+
+    /** @var string $reportinfocontainer */
+    private string $reportinfocontainer = '';
 
     /** @var array $attributes */
     private $attributes = [];
@@ -880,6 +886,42 @@ abstract class base {
      */
     public function get_default_per_page(): int {
         return $this->defaultperpage;
+    }
+
+    /**
+     * Sets the report action to be rendered above the table
+     *
+     * @param report_action $reportaction
+     */
+    final public function set_report_action(report_action $reportaction): void {
+        $this->reportaction = $reportaction;
+    }
+
+    /**
+     * Gets the report action to be rendered abover the table
+     *
+     * @return report_action|null
+     */
+    final public function get_report_action(): ?report_action {
+        return $this->reportaction;
+    }
+
+    /**
+     * Sets the report info container content to be rendered between action buttons and table
+     *
+     * @param string $reportinfocontainer
+     */
+    final public function set_report_info_container(string $reportinfocontainer): void {
+        $this->reportinfocontainer = $reportinfocontainer;
+    }
+
+    /**
+     * Gets the report info container content to be rendered between action buttons and table
+     *
+     * @return string
+     */
+    final public function get_report_info_container(): string {
+        return $this->reportinfocontainer;
     }
 
     /**

@@ -1,0 +1,20 @@
+issueNumber: MDL-82936
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `render_new_report_button` method of the `core_reportbuilder`
+        renderer has been deprecated. Instead, refer to the report instance
+        `set_report_action` method
+      type: deprecated
+    - message: >-
+        The base report class, used by both `\core_reportbuilder\system_report`
+        and `\core_reportbuilder\datasource`, contains new methods for enhancing
+        report rendering
+
+
+        * `set_report_action` allows for an action button to belong to your
+        report, and be rendered alongside the filters button;
+
+        * `set_report_info_container` allows for content to be rendered by your
+        report, between the action buttons and the table content
+      type: improved

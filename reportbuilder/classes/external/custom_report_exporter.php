@@ -90,6 +90,11 @@ class custom_report_exporter extends persistent_exporter {
     protected static function define_other_properties(): array {
         return [
             'table' => ['type' => PARAM_RAW],
+            'button' => [
+                'type' => report_action_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'infocontainer' => ['type' => PARAM_RAW],
             'filtersapplied' => ['type' => PARAM_INT],
             'filterspresent' => ['type' => PARAM_BOOL],
             'filtersform' => ['type' => PARAM_RAW],
@@ -136,6 +141,7 @@ class custom_report_exporter extends persistent_exporter {
         /** @var datasource $report */
         $report = manager::get_report_from_persistent($this->persistent);
 
+        $optionalvalues = [];
         $filterspresent = false;
         $filtersform = '';
         $attributes = [];
@@ -150,6 +156,11 @@ class custom_report_exporter extends persistent_exporter {
 
             $table = custom_report_table_view::create($this->persistent->get('id'), $this->download);
             $table->set_filterset($filterset);
+
+            // Export global report action.
+            if ($reportaction = $report->get_report_action()) {
+                $optionalvalues['button'] = $reportaction->export_for_template($output);
+            }
 
             // Generate filters form if report contains any filters.
             $filterspresent = !empty($report->get_active_filters());
@@ -169,26 +180,26 @@ class custom_report_exporter extends persistent_exporter {
         }
 
         // If we are editing we need all this information for the template.
-        $editordata = [];
         if ($this->editmode) {
             $menucardsexporter = new custom_report_column_cards_exporter(null, ['report' => $report]);
-            $editordata['sidebarmenucards'] = (array) $menucardsexporter->export($output);
+            $optionalvalues['sidebarmenucards'] = (array) $menucardsexporter->export($output);
 
             $conditionsexporter = new custom_report_conditions_exporter(null, ['report' => $report]);
-            $editordata['conditions'] = (array) $conditionsexporter->export($output);
+            $optionalvalues['conditions'] = (array) $conditionsexporter->export($output);
 
             $filtersexporter = new custom_report_filters_exporter(null, ['report' => $report]);
-            $editordata['filters'] = (array) $filtersexporter->export($output);
+            $optionalvalues['filters'] = (array) $filtersexporter->export($output);
 
             $sortingexporter = new custom_report_columns_sorting_exporter(null, ['report' => $report]);
-            $editordata['sorting'] = (array) $sortingexporter->export($output);
+            $optionalvalues['sorting'] = (array) $sortingexporter->export($output);
 
             $cardviewexporter = new custom_report_card_view_exporter(null, ['report' => $report]);
-            $editordata['cardview'] = (array) $cardviewexporter->export($output);
+            $optionalvalues['cardview'] = (array) $cardviewexporter->export($output);
         }
 
         return [
             'table' => $output->render($table),
+            'infocontainer' => $report->get_report_info_container(),
             'filtersapplied' => $report->get_applied_filter_count(),
             'filterspresent' => $filterspresent,
             'filtersform' => $filtersform,
@@ -196,7 +207,7 @@ class custom_report_exporter extends persistent_exporter {
             'classes' => $classes ?? '',
             'editmode' => $this->editmode,
             'javascript' => '',
-        ] + $editordata;
+        ] + $optionalvalues;
     }
 
     /**
