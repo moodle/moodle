@@ -1,7 +1,7 @@
 <svg xml:space="preserve" width="24" height="24"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns="http://www.w3.org/2000/svg"
-	viewBox="-20 -20 310 310">
+	viewBox="-20 -20 310 310" preserveAspectRatio="xMinYMid meet">
 	<defs>
 		<linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(117.89574 -168.37253 -168.37253 -117.89572 48.802 192.187)" spreadMethod="pad" id="a">
 			<stop style="stop-opacity:1;stop-color:#283174" offset="0"/>
