@@ -1,0 +1,8 @@
+issueNumber: MDL-84450
+notes:
+  theme_boost:
+    - message: >-
+        New `theme_boost/bs4-compat` JS module added (directly deprecated) to
+        allow third-party-plugins to directly convert old Bootstrap 4 data
+        attribute syntax to the new Bootstrap 5
+      type: deprecated
