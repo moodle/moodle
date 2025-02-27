@@ -243,7 +243,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
-        $html .= html_writer::start_div('form-check custom-checkbox me-1 ');
+        $html .= html_writer::start_div('form-check me-1 ');
         $html .= html_writer::empty_tag('input', $bcatinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
@@ -624,7 +624,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
 
         $html .= html_writer::start_div('float-start ' . $checkboxclass);
-        $html .= html_writer::start_div('form-check custom-checkbox me-1 ');
+        $html .= html_writer::start_div('form-check me-1 ');
         $html .= html_writer::empty_tag('input', $bulkcourseinput);
         $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
         $html .= html_writer::tag('label', $labeltext, array(
@@ -1203,7 +1203,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-start');
         if ($bulkcourseinput) {
-            $html .= html_writer::start_div('form-check custom-checkbox me-1');
+            $html .= html_writer::start_div('form-check me-1');
             $html .= html_writer::empty_tag('input', $bulkcourseinput);
             $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'visually-hidden');
             $html .= html_writer::tag('label', $labeltext, array(
