@@ -39,6 +39,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
+- A new method get_instance_record has been added to cm_info object so core can get the activity table record without using the $DB object every time. Also, the method caches de result so getting more than once per execution is much faster.
+
+  For more information see [MDL-83892](https://tracker.moodle.org/browse/MDL-83892)
 - Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
 
   For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
@@ -130,6 +133,10 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- - Remove php-enum library. - It was a dependency of zipstream, but is no longer required as this
+    functionality has been replaced by native PHP functionality.
+
+  For more information see [MDL-82825](https://tracker.moodle.org/browse/MDL-82825)
 - Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
 
   For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
@@ -139,6 +146,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
 
   For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
+- Final deprecation and removal of \core\event\course_module_instances_list_viewed
+
+  For more information see [MDL-84593](https://tracker.moodle.org/browse/MDL-84593)
 
 ### core_adminpresets
 
@@ -196,6 +206,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83909](https://tracker.moodle.org/browse/MDL-83909)
 
+### core_calendar
+
+#### Deprecated
+
+- calendar_day_representation(), calendar_time_representation() and calendar_format_event_time() functions have been deprecated and can't be used anymore. Use humandate and humantimeperiod classes instead.
+
+  For more information see [MDL-83873](https://tracker.moodle.org/browse/MDL-83873)
+
 ### core_completion
 
 #### Added
@@ -229,6 +247,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - course_get_cm_edit_actions is now deprecated. Formats should extend core_courseformat\output\local\content\cm\controlmenu instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
+
+#### Removed
+
+- Final deprecation of edit_default_completion()
+
+  For more information see [MDL-78711](https://tracker.moodle.org/browse/MDL-78711)
 
 ### core_courseformat
 
@@ -270,6 +294,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
+- The externservercourse.php feature used to override the course view page has been deprecated in favor of using hooks. The following hooks are available to do  something similar: \core_course\hook\before_course_viewed.
+
+  For more information see [MDL-83764](https://tracker.moodle.org/browse/MDL-83764)
 
 #### Removed
 
@@ -379,9 +406,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
 
   For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+- When the `select` filter contains upto two options only then the operator field is removed, switching to a simpler value selection field only (this may affect your Behat scenarios)
+
+  For more information see [MDL-82913](https://tracker.moodle.org/browse/MDL-82913)
 - Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, or by calling the helper method `report::get_report_row_count`
 
   For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
+- The `select` filter type is now stricter in it's filtering, in that it will now discard values that aren't present in available filter options
+
+  For more information see [MDL-84213](https://tracker.moodle.org/browse/MDL-84213)
 
 #### Deprecated
 
@@ -416,6 +449,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core_tag\taglist` class now includes a new property called `displaylink`, which has a default value of `true`. When `displaylink` is set to `true`, the tag name will be displayed as a clickable hyperlink. If `displaylink` is set to `false`, the tag name will be rendered as plain text instead.
 
   For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
+
+### aiplacement_courseassist
+
+#### Added
+
+- The `aiplacement_courseassist` templates and CSS have been modified. These changes allow for multiple actions to be nested in a dropdown menu.
+
+  For more information see [MDL-82942](https://tracker.moodle.org/browse/MDL-82942)
 
 ### block_site_main_menu
 
@@ -567,6 +608,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - From now on, themes can customise the activity icon colours using simple CSS variables. The new variables are $activity-icon-administration-bg, $activity-icon-assessment-bg, $activity-icon-collaboration-bg, $activity-icon-communication-bg, $activity-icon-content-bg, $activity-icon-interactivecontent-bg. All previous `$activity-icon-*-filter` elements can be removed, as they are no longer in use.
 
   For more information see [MDL-83725](https://tracker.moodle.org/browse/MDL-83725)
+
+#### Deprecated
+
+- Added new bs4-compat SCSS file (initially deprecated) to help third-party plugins the migration process from BS4 to BS5
+
+  For more information see [MDL-80519](https://tracker.moodle.org/browse/MDL-80519)
+- New `theme_boost/bs4-compat` JS module added (directly deprecated) to allow third-party-plugins to directly convert old Bootstrap 4 data attribute syntax to the new Bootstrap 5
+
+  For more information see [MDL-84450](https://tracker.moodle.org/browse/MDL-84450)
 
 #### Removed
 

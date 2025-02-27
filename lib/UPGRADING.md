@@ -31,6 +31,9 @@
 - New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
+- A new method get_instance_record has been added to cm_info object so core can get the activity table record without using the $DB object every time. Also, the method caches de result so getting more than once per execution is much faster.
+
+  For more information see [MDL-83892](https://tracker.moodle.org/browse/MDL-83892)
 - Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
 
   For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
@@ -122,6 +125,10 @@
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
+- - Remove php-enum library. - It was a dependency of zipstream, but is no longer required as this
+    functionality has been replaced by native PHP functionality.
+
+  For more information see [MDL-82825](https://tracker.moodle.org/browse/MDL-82825)
 - Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
 
   For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
@@ -131,6 +138,9 @@
 - set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
 
   For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
+- Final deprecation and removal of \core\event\course_module_instances_list_viewed
+
+  For more information see [MDL-84593](https://tracker.moodle.org/browse/MDL-84593)
 
 ## 4.5
 

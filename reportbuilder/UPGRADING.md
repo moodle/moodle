@@ -28,9 +28,15 @@
 - The `get_active_conditions` method of the base report class has a new `$checkavailable` parameter to determine whether to check the returned conditions availability
 
   For more information see [MDL-82809](https://tracker.moodle.org/browse/MDL-82809)
+- When the `select` filter contains upto two options only then the operator field is removed, switching to a simpler value selection field only (this may affect your Behat scenarios)
+
+  For more information see [MDL-82913](https://tracker.moodle.org/browse/MDL-82913)
 - Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, or by calling the helper method `report::get_report_row_count`
 
   For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
+- The `select` filter type is now stricter in it's filtering, in that it will now discard values that aren't present in available filter options
+
+  For more information see [MDL-84213](https://tracker.moodle.org/browse/MDL-84213)
 
 ### Deprecated
 

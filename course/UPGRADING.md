@@ -23,6 +23,12 @@
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
 
+### Removed
+
+- Final deprecation of edit_default_completion()
+
+  For more information see [MDL-78711](https://tracker.moodle.org/browse/MDL-78711)
+
 ## 4.5
 
 ### Added

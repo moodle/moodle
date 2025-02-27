@@ -8,6 +8,15 @@
 
   For more information see [MDL-83725](https://tracker.moodle.org/browse/MDL-83725)
 
+### Deprecated
+
+- Added new bs4-compat SCSS file (initially deprecated) to help third-party plugins the migration process from BS4 to BS5
+
+  For more information see [MDL-80519](https://tracker.moodle.org/browse/MDL-80519)
+- New `theme_boost/bs4-compat` JS module added (directly deprecated) to allow third-party-plugins to directly convert old Bootstrap 4 data attribute syntax to the new Bootstrap 5
+
+  For more information see [MDL-84450](https://tracker.moodle.org/browse/MDL-84450)
+
 ### Removed
 
 - Remove SCSS deprecated in 4.4
