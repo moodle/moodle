@@ -219,11 +219,12 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $gradestatus = '';
 
-        $canviewhidden = $grade->is_hidden() &&
-            !has_capability('moodle/grade:viewhidden', context_course::instance($this->courseid));
+        // Show hidden icon if the grade is hidden and the user has permission to view hidden grades.
+        $showhiddenicon = $grade->is_hidden() &&
+            has_capability('moodle/grade:viewhidden', context_course::instance($this->courseid));
 
         $context = [
-            'hidden' => $canviewhidden,
+            'hidden' => $showhiddenicon,
             'locked' => $grade->is_locked(),
         ];
 
