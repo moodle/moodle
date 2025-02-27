@@ -54,7 +54,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 resource "azurerm_kubernetes_cluster_node_pool" "system_node_pool" {
   name                  = "systempool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_DS4_v3"
+  vm_size               = "Standard_D4_v3"
   node_count            = 2
   node_taints           = ["CriticalAddonsOnly=true:NoSchedule"]
   mode                  = "System"
@@ -277,6 +277,12 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   vcores = var.SQLVcores
   tags = {
     environment = var.Environment
+  }
+  identity {
+    type = "SystemAssigned"
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
