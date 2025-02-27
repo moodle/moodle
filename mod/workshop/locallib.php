@@ -774,6 +774,37 @@ class workshop {
         return $DB->count_records_sql($sql, $params);
     }
 
+    /**
+     * Returns the total number of assessments in the workshop.
+     *
+     * @param bool $onlygraded If true, count only graded assessments
+     * @param int|null $groupid If not null, return only assessments by reviewers in the specified group
+     * @return int Number of assessments
+     */
+    public function count_assessments(bool $onlygraded = false, ?int $groupid = null): int {
+        global $DB;
+
+        $params = ['workshopid' => $this->id];
+        $sql = "SELECT COUNT(s.id)
+                  FROM {workshop_assessments} s
+                  JOIN {workshop_submissions} ws ON (s.submissionid = ws.id)
+                  JOIN {user} u ON (ws.authorid = u.id)
+                  JOIN {workshop} w ON (ws.workshopid = w.id)";
+
+        if ($groupid) {
+            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+
+        if ($onlygraded) {
+            $sql .= " WHERE s.grade IS NOT NULL AND w.id = :workshopid";
+        } else {
+            $sql .= " WHERE w.id = :workshopid";
+        }
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
 
     /**
      * Returns submissions from this workshop

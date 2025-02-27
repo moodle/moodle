@@ -84,7 +84,7 @@ final class missingoverviewnotice_test extends \advanced_testcase {
             'scorm' => ['modname' => 'scorm', 'expectempty' => false],
             'url' => ['modname' => 'url', 'expectempty' => false],
             'wiki' => ['modname' => 'wiki', 'expectempty' => false],
-            'workshop' => ['modname' => 'workshop', 'expectempty' => false],
+            'workshop' => ['modname' => 'workshop', 'expectempty' => true],
         ];
     }
 }
