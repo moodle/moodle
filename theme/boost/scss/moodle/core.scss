@@ -2647,8 +2647,11 @@ $picker-emojis-per-row: 7 !default;
             }
         }
     }
+    // Navs and Tabs in small screens.
     .nav-tabs:not(.more-nav),
     .nav-pills {
+        --#{$prefix}nav-tabs-link-active-color: #{$nav-pills-link-active-color};
+        --#{$prefix}nav-tabs-link-active-bg: #{$nav-pills-link-active-bg};
         margin: 0;
         border: 0;
         padding: $spacer * 0.125;
@@ -2658,11 +2661,10 @@ $picker-emojis-per-row: 7 !default;
             text-align: center;
         }
         .nav-link {
-            background: $white;
             border: 0;
             margin: $spacer * 0.125;
-            &.active {
-                @include button-outline-variant($blue, $active-border: $gray-600);
+            &:not(.active) {
+                background-color: var(--#{$prefix}body-bg);
             }
         }
     }
