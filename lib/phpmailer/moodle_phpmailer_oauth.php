@@ -23,8 +23,33 @@
  */
 class moodle_phpmailer_oauth extends \PHPMailer\PHPMailer\OAuth {
 
+    #[\Override]
     protected function getToken() {
         return $this->provider->get_accesstoken()->token;
     }
 
+    #[\Override]
+    public function getOauth64() {
+        // Get a new token if it's not available.
+        if ($this->oauthToken === null) {
+            $this->oauthToken = $this->getToken();
+        }
+
+        $accesstoken = $this->provider->get_accesstoken();
+        // Renew the token if it's expired.
+        if (isset($accesstoken->expires) && time() >= $accesstoken->expires) {
+            if (isset($accesstoken->refreshtoken)) {
+                $this->provider->upgrade_token($accesstoken->refreshtoken, 'refresh_token');
+            }
+            $this->oauthToken = $this->getToken();
+        }
+
+        return base64_encode(
+            'user=' .
+            $this->oauthUserEmail .
+            "\001auth=Bearer " .
+            $this->oauthToken .
+            "\001\001"
+        );
+    }
 }
