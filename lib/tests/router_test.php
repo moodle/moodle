@@ -88,13 +88,26 @@ final class router_test extends route_testcase {
         $this->assertEquals('/example', $router->basepath);
     }
 
-    public function test_basepath_guessed(): void {
+    /**
+     * @dataProvider basepath_provider
+     */
+    public function test_basepath(
+        string $wwwroot,
+        string $expected,
+    ): void {
         global $CFG;
 
-        $wwwroot = new \moodle_url($CFG->wwwroot);
+        $this->resetAfterTest();
+        $CFG->wwwroot = $wwwroot;
+
         $router = di::get(router::class);
 
-        $this->assertEquals($wwwroot->get_path(), $router->basepath);
+        $this->assertEquals($expected, $router->basepath);
+    }
+
+    public static function basepath_provider(): \Iterator {
+        yield 'Domain' => ['http://example.com', ''];
+        yield 'Subdirectory' => ['http://example.com/moodle', '/moodle'];
     }
 
     public function test_basepath_guessed_rphp(): void {
