@@ -139,9 +139,6 @@ jobs:
           az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
           az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
 
-      - name: Add Azure Policy add-on for AKS
-        run: az aks enable-addons --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --addons azure-policy
-
 
   build_and_push_docker_image:
     needs: create_persistent_storage
@@ -239,3 +236,35 @@ jobs:
 
       - name: Restart the pods to reload the image
         run: kubectl rollout restart deployment/learninghubmoodledev
+
+  fix_recommendations:
+    needs: create_persistent_storage
+    runs-on: ubuntu-latest
+    environment: dev
+    name: 'Ensure Azure recommendations are fixed'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Add Azure Policy add-on for AKS
+        run: az aks enable-addons --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --addons azure-policy
+
+      - name: Enable Defender for AKS cluster
+        run: az aks update --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --enable-defender
+
+      - name: Disable automounting API credentials
+        run: |
+          kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}"
+          kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}"
