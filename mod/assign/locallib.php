@@ -2346,6 +2346,9 @@ class assign {
                 }
             }
 
+            // Exclude suspended users from the list of participants.
+            $additionalfilters .= " AND u.suspended = 0 AND u.auth <> 'nologin'";
+
             $sql = "SELECT $fields
                       FROM {user} u
                       JOIN ($esql UNION $ssql) je ON je.id = u.id
