@@ -23,6 +23,7 @@
  */
 
 use core_question\local\bank\question_version_status;
+use core\exception\coding_exception;
 
 /**
  * Class core_question_generator for generating question data.
@@ -272,5 +273,52 @@ class core_question_generator extends component_generator_base {
         }
 
         return $postdata;
+    }
+
+    /**
+     * Given a context and a structure of categories and questions, generate that structure.
+     *
+     * The $structure parameter takes a multi-dimensional array of categories and questions, like this:
+     * [
+     *    'categoryname' => [
+     *        'question1name' => 'questiontype',
+     *        'question2name' => 'questiontype',
+     *        'subcategoryname' => [
+     *            'subquestion1name' => 'questiontype',
+     *        ],
+     *    ],
+     * ]
+     * Arrays are treated as categories, strings are treated as questions. The key in each case is used for the name of the category
+     * or question. For subcategories, the method is called recursively to create all descendants.
+     * The 'questiontype' string is the type of question to be generated, and will be passed to create_question.
+     *
+     * @param context $context The context to create the structure in.
+     * @param array $structure The array of categories and questions, see above.
+     * @param ?int $parentid The category to create the category or question within.
+     * @return array The input structure, with the generated questions in place of the question types.
+     */
+    public function create_categories_and_questions(context $context, array $structure, ?int $parentid = null) {
+        $createdcategories = [];
+        foreach ($structure as $name => $item) {
+            if (is_array($item)) {
+                $categorydata = [
+                    'name' => $name,
+                    'contextid' => $context->id,
+                ];
+                if ($parentid) {
+                    $categorydata['parent'] = $parentid;
+                }
+                $category = $this->create_question_category($categorydata);
+                $createdcategories[$name] = $this->create_categories_and_questions($context, $item, $category->id);
+            } else if (is_string($item)) {
+                if (!$parentid) {
+                    throw new coding_exception('You cannot create questions in a top-level category.');
+                }
+                $createdcategories[$name] = $this->create_question($item, null, ['name' => $name, 'category' => $parentid]);
+            } else {
+                throw new coding_exception('Structure items must be arrays or strings, ' . gettype($item) . ' found.');
+            }
+        }
+        return $createdcategories;
     }
 }
