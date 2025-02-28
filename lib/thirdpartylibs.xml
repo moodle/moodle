@@ -65,10 +65,26 @@
     <location>phpspreadsheet/phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
     <description>Library to read, write and create spreadsheet documents in PHP.</description>
-    <version>1.29.0</version>
+    <version>4.1.0</version>
     <license>MIT</license>
     <repository>https://github.com/PHPOffice/PhpSpreadsheet</repository>
     <customised/>
+  </library>
+  <library>
+    <location>phpspreadsheet/markbaker/complex</location>
+    <name>PHPComplex</name>
+    <description>PHP Class Library for working with Complex numbers.</description>
+    <version>3.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/MarkBaker/PHPComplex</repository>
+  </library>
+  <library>
+    <location>phpspreadsheet/markbaker/matrix</location>
+    <name>PHPMatrix</name>
+    <description>PHP Class for handling Matrices.</description>
+    <version>3.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/MarkBaker/PHPMarix</repository>
   </library>
   <library>
     <location>google</location>

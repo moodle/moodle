@@ -11,7 +11,6 @@ use PhpOffice\PhpSpreadsheet\Reader\Gnumeric\Styles;
 use PhpOffice\PhpSpreadsheet\Reader\Security\XmlScanner;
 use PhpOffice\PhpSpreadsheet\ReferenceHelper;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -34,25 +33,22 @@ class Gnumeric extends BaseReader
 
     const NAMESPACE_OOO = 'http://openoffice.org/2004/office';
 
+    const GNM_SHEET_VISIBILITY_VISIBLE = 'GNM_SHEET_VISIBILITY_VISIBLE';
+    const GNM_SHEET_VISIBILITY_HIDDEN = 'GNM_SHEET_VISIBILITY_HIDDEN';
+
     /**
      * Shared Expressions.
-     *
-     * @var array
      */
-    private $expressions = [];
+    private array $expressions = [];
 
     /**
      * Spreadsheet shared across all functions.
-     *
-     * @var Spreadsheet
      */
-    private $spreadsheet;
+    private Spreadsheet $spreadsheet;
 
-    /** @var ReferenceHelper */
-    private $referenceHelper;
+    private ReferenceHelper $referenceHelper;
 
-    /** @var array */
-    public static $mappings = [
+    public static array $mappings = [
         'dataType' => [
             '10' => DataType::TYPE_NULL,
             '20' => DataType::TYPE_BOOL,
@@ -83,7 +79,7 @@ class Gnumeric extends BaseReader
         $data = null;
         if (File::testFileNoThrow($filename)) {
             $data = $this->gzfileGetContents($filename);
-            if (strpos($data, self::NAMESPACE_GNM) === false) {
+            if (!str_contains($data, self::NAMESPACE_GNM)) {
                 $data = '';
             }
         }
@@ -100,12 +96,8 @@ class Gnumeric extends BaseReader
 
     /**
      * Reads names of the worksheets from a file, without parsing the whole file to a Spreadsheet object.
-     *
-     * @param string $filename
-     *
-     * @return array
      */
-    public function listWorksheetNames($filename)
+    public function listWorksheetNames(string $filename): array
     {
         File::assertFile($filename);
         if (!$this->canRead($filename)) {
@@ -114,7 +106,7 @@ class Gnumeric extends BaseReader
 
         $xml = new XMLReader();
         $contents = $this->gzfileGetContents($filename);
-        $xml->xml($contents, null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($contents);
         $xml->setParserProperty(2, true);
 
         $worksheetNames = [];
@@ -133,12 +125,8 @@ class Gnumeric extends BaseReader
 
     /**
      * Return worksheet info (Name, Last Column Letter, Last Column Index, Total Rows, Total Columns).
-     *
-     * @param string $filename
-     *
-     * @return array
      */
-    public function listWorksheetInfo($filename)
+    public function listWorksheetInfo(string $filename): array
     {
         File::assertFile($filename);
         if (!$this->canRead($filename)) {
@@ -147,7 +135,7 @@ class Gnumeric extends BaseReader
 
         $xml = new XMLReader();
         $contents = $this->gzfileGetContents($filename);
-        $xml->xml($contents, null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($contents);
         $xml->setParserProperty(2, true);
 
         $worksheetInfo = [];
@@ -159,7 +147,12 @@ class Gnumeric extends BaseReader
                     'lastColumnIndex' => 0,
                     'totalRows' => 0,
                     'totalColumns' => 0,
+                    'sheetState' => Worksheet::SHEETSTATE_VISIBLE,
                 ];
+                $visibility = $xml->getAttribute('Visibility');
+                if ((string) $visibility === self::GNM_SHEET_VISIBILITY_HIDDEN) {
+                    $tmpInfo['sheetState'] = Worksheet::SHEETSTATE_HIDDEN;
+                }
 
                 while ($xml->read()) {
                     if (self::matchXml($xml, 'Name')) {
@@ -184,17 +177,12 @@ class Gnumeric extends BaseReader
         return $worksheetInfo;
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return string
-     */
-    private function gzfileGetContents($filename)
+    private function gzfileGetContents(string $filename): string
     {
         $data = '';
         $contents = @file_get_contents($filename);
         if ($contents !== false) {
-            if (substr($contents, 0, 2) === "\x1f\x8b") {
+            if (str_starts_with($contents, "\x1f\x8b")) {
                 // Check if gzlib functions are available
                 if (function_exists('gzdecode')) {
                     $contents = @gzdecode($contents);
@@ -233,10 +221,7 @@ class Gnumeric extends BaseReader
         }
     }
 
-    /**
-     * @param mixed $value
-     */
-    private static function testSimpleXml($value): SimpleXMLElement
+    private static function testSimpleXml(mixed $value): SimpleXMLElement
     {
         return ($value instanceof SimpleXMLElement) ? $value : new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root></root>');
     }
@@ -248,6 +233,7 @@ class Gnumeric extends BaseReader
     {
         // Create new Spreadsheet
         $spreadsheet = new Spreadsheet();
+        $spreadsheet->setValueBinder($this->valueBinder);
         $spreadsheet->removeSheetByIndex(0);
 
         // Load into this instance
@@ -267,7 +253,9 @@ class Gnumeric extends BaseReader
 
         $gFileData = $this->gzfileGetContents($filename);
 
-        $xml2 = simplexml_load_string($gFileData, 'SimpleXMLElement', Settings::getLibXmlLoaderOptions());
+        /** @var XmlScanner */
+        $securityScanner = $this->securityScanner;
+        $xml2 = simplexml_load_string($securityScanner->scan($gFileData));
         $xml = self::testSimpleXml($xml2);
 
         $gnmXML = $xml->children(self::NAMESPACE_GNM);
@@ -291,8 +279,8 @@ class Gnumeric extends BaseReader
             //        name in line with the formula, not the reverse
             $this->spreadsheet->getActiveSheet()->setTitle($worksheetName, false, false);
 
-            $visibility = $sheet->attributes()['Visibility'] ?? 'GNM_SHEET_VISIBILITY_VISIBLE';
-            if ((string) $visibility !== 'GNM_SHEET_VISIBILITY_VISIBLE') {
+            $visibility = $sheet->attributes()['Visibility'] ?? self::GNM_SHEET_VISIBILITY_VISIBLE;
+            if ((string) $visibility !== self::GNM_SHEET_VISIBILITY_VISIBLE) {
                 $this->spreadsheet->getActiveSheet()->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
             }
 
@@ -314,10 +302,8 @@ class Gnumeric extends BaseReader
                 $column = Coordinate::stringFromColumnIndex($column + 1);
 
                 // Read cell?
-                if ($this->getReadFilter() !== null) {
-                    if (!$this->getReadFilter()->readCell($column, $row, $worksheetName)) {
-                        continue;
-                    }
+                if (!$this->getReadFilter()->readCell($column, $row, $worksheetName)) {
+                    continue;
                 }
 
                 $this->loadCell($cell, $worksheetName, $cellAttributes, $column, $row);
@@ -381,7 +367,7 @@ class Gnumeric extends BaseReader
         //    Handle Merged Cells in this worksheet
         if ($sheet !== null && isset($sheet->MergedRegions)) {
             foreach ($sheet->MergedRegions->Merge as $mergeCells) {
-                if (strpos((string) $mergeCells, ':') !== false) {
+                if (str_contains((string) $mergeCells, ':')) {
                     $this->spreadsheet->getActiveSheet()->mergeCells($mergeCells, Worksheet::MERGE_CELL_CONTENT_HIDE);
                 }
             }
@@ -392,11 +378,9 @@ class Gnumeric extends BaseReader
     {
         if ($sheet !== null && isset($sheet->Filters)) {
             foreach ($sheet->Filters->Filter as $autofilter) {
-                if ($autofilter !== null) {
-                    $attributes = $autofilter->attributes();
-                    if (isset($attributes['Area'])) {
-                        $this->spreadsheet->getActiveSheet()->setAutoFilter((string) $attributes['Area']);
-                    }
+                $attributes = $autofilter->attributes();
+                if (isset($attributes['Area'])) {
+                    $this->spreadsheet->getActiveSheet()->setAutoFilter((string) $attributes['Area']);
                 }
             }
         }
@@ -404,20 +388,20 @@ class Gnumeric extends BaseReader
 
     private function setColumnWidth(int $whichColumn, float $defaultWidth): void
     {
-        $columnDimension = $this->spreadsheet->getActiveSheet()
-            ->getColumnDimension(Coordinate::stringFromColumnIndex($whichColumn + 1));
-        if ($columnDimension !== null) {
-            $columnDimension->setWidth($defaultWidth);
-        }
+        $this->spreadsheet->getActiveSheet()
+            ->getColumnDimension(
+                Coordinate::stringFromColumnIndex($whichColumn + 1)
+            )
+            ->setWidth($defaultWidth);
     }
 
     private function setColumnInvisible(int $whichColumn): void
     {
-        $columnDimension = $this->spreadsheet->getActiveSheet()
-            ->getColumnDimension(Coordinate::stringFromColumnIndex($whichColumn + 1));
-        if ($columnDimension !== null) {
-            $columnDimension->setVisible(false);
-        }
+        $this->spreadsheet->getActiveSheet()
+            ->getColumnDimension(
+                Coordinate::stringFromColumnIndex($whichColumn + 1)
+            )
+            ->setVisible(false);
     }
 
     private function processColumnLoop(int $whichColumn, int $maxCol, ?SimpleXMLElement $columnOverride, float $defaultWidth): int
@@ -465,18 +449,18 @@ class Gnumeric extends BaseReader
 
     private function setRowHeight(int $whichRow, float $defaultHeight): void
     {
-        $rowDimension = $this->spreadsheet->getActiveSheet()->getRowDimension($whichRow);
-        if ($rowDimension !== null) {
-            $rowDimension->setRowHeight($defaultHeight);
-        }
+        $this->spreadsheet
+            ->getActiveSheet()
+            ->getRowDimension($whichRow)
+            ->setRowHeight($defaultHeight);
     }
 
     private function setRowInvisible(int $whichRow): void
     {
-        $rowDimension = $this->spreadsheet->getActiveSheet()->getRowDimension($whichRow);
-        if ($rowDimension !== null) {
-            $rowDimension->setVisible(false);
-        }
+        $this->spreadsheet
+            ->getActiveSheet()
+            ->getRowDimension($whichRow)
+            ->setVisible(false);
     }
 
     private function processRowLoop(int $whichRow, int $maxRow, ?SimpleXMLElement $rowOverride, float $defaultHeight): int
@@ -533,12 +517,12 @@ class Gnumeric extends BaseReader
             foreach ($gnmXML->Names->Name as $definedName) {
                 $name = (string) $definedName->name;
                 $value = (string) $definedName->value;
-                if (stripos($value, '#REF!') !== false) {
+                if (stripos($value, '#REF!') !== false || empty($value)) {
                     continue;
                 }
 
-                [$worksheetName] = Worksheet::extractSheetTitle($value, true);
-                $worksheetName = trim($worksheetName, "'");
+                $value = str_replace("\\'", "''", $value);
+                [$worksheetName] = Worksheet::extractSheetTitle($value, true, true);
                 $worksheet = $this->spreadsheet->getSheetByName($worksheetName);
                 // Worksheet might still be null if we're only loading selected sheets rather than the full spreadsheet
                 if ($worksheet !== null) {
@@ -565,15 +549,21 @@ class Gnumeric extends BaseReader
     ): void {
         $ValueType = $cellAttributes->ValueType;
         $ExprID = (string) $cellAttributes->ExprID;
+        $rows = (int) ($cellAttributes->Rows ?? 0);
+        $cols = (int) ($cellAttributes->Cols ?? 0);
         $type = DataType::TYPE_FORMULA;
+        $isArrayFormula = ($rows > 0 && $cols > 0);
+        $arrayFormulaRange = $isArrayFormula ? $this->getArrayFormulaRange($column, $row, $cols, $rows) : null;
         if ($ExprID > '') {
             if (((string) $cell) > '') {
+                // Formula
                 $this->expressions[$ExprID] = [
                     'column' => $cellAttributes->Col,
                     'row' => $cellAttributes->Row,
                     'formula' => (string) $cell,
                 ];
             } else {
+                // Shared Formula
                 $expression = $this->expressions[$ExprID];
 
                 $cell = $this->referenceHelper->updateFormulaReferences(
@@ -585,21 +575,39 @@ class Gnumeric extends BaseReader
                 );
             }
             $type = DataType::TYPE_FORMULA;
-        } else {
+        } elseif ($isArrayFormula === false) {
             $vtype = (string) $ValueType;
             if (array_key_exists($vtype, self::$mappings['dataType'])) {
                 $type = self::$mappings['dataType'][$vtype];
             }
-            if ($vtype === '20') {        //    Boolean
+            if ($vtype === '20') { //    Boolean
                 $cell = $cell == 'TRUE';
             }
         }
 
         $this->spreadsheet->getActiveSheet()->getCell($column . $row)->setValueExplicit((string) $cell, $type);
+        if ($arrayFormulaRange === null) {
+            $this->spreadsheet->getActiveSheet()->getCell($column . $row)->setFormulaAttributes(null);
+        } else {
+            $this->spreadsheet->getActiveSheet()->getCell($column . $row)->setFormulaAttributes(['t' => 'array', 'ref' => $arrayFormulaRange]);
+        }
         if (isset($cellAttributes->ValueFormat)) {
             $this->spreadsheet->getActiveSheet()->getCell($column . $row)
                 ->getStyle()->getNumberFormat()
                 ->setFormatCode((string) $cellAttributes->ValueFormat);
         }
+    }
+
+    private function getArrayFormulaRange(string $column, int $row, int $cols, int $rows): string
+    {
+        $arrayFormulaRange = $column . $row;
+        $arrayFormulaRange .= ':'
+            . Coordinate::stringFromColumnIndex(
+                Coordinate::columnIndexFromString($column)
+                + $cols - 1
+            )
+            . (string) ($row + $rows - 1);
+
+        return $arrayFormulaRange;
     }
 }

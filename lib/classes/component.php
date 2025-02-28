@@ -116,7 +116,7 @@ class component {
     protected static $psr4namespaces = [
         \Aws::class => 'lib/aws-sdk/src',
         \CFPropertyList::class => 'lib/plist/src/CFPropertyList',
-        \Complex::class => 'lib/phpspreadsheet/markbaker/classes/src',
+        \Complex::class => 'lib/phpspreadsheet/markbaker/complex/classes/src',
         \Composer\Pcre::class => 'lib/composer/pcre/src',
         \DI::class => 'lib/php-di/php-di/src',
         \GeoIp2::class => 'lib/maxmind/GeoIp2/src',
@@ -133,7 +133,7 @@ class component {
         \Laravel\SerializableClosure::class => 'lib/laravel/serializable-closure/src',
         \lbuchs\WebAuthn::class => 'lib/webauthn/src',
         \libphonenumber::class => 'lib/giggsey/libphonenumber-for-php-lite/src',
-        \Matrix::class => 'lib/phpspreadsheet/markbaker/classes/src',
+        \Matrix::class => 'lib/phpspreadsheet/markbaker/matrix/classes/src',
         \MatthiasMullie\Minify::class => 'lib/minify/matthiasmullie-minify/src',
         \MatthiasMullie\PathConverter::class => 'lib/minify/matthiasmullie-pathconverter/src',
         \MaxMind\Db::class => 'lib/maxmind/MaxMind/src/MaxMind/Db',

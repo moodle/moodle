@@ -8,17 +8,16 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class PageBreak
 {
-    /** @var int */
-    private $breakType;
+    private int $breakType;
 
-    /** @var string */
-    private $coordinate;
+    private string $coordinate;
 
-    /** @var int */
-    private $maxColOrRow;
+    private int $maxColOrRow;
 
-    /** @param array|CellAddress|string $coordinate */
-    public function __construct(int $breakType, $coordinate, int $maxColOrRow = -1)
+    /**
+     * @param array{0: int, 1: int}|CellAddress|string $coordinate
+     */
+    public function __construct(int $breakType, CellAddress|string|array $coordinate, int $maxColOrRow = -1)
     {
         $coordinate = Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate));
         $this->breakType = $breakType;

@@ -8,10 +8,8 @@ class PlotArea
 {
     /**
      * No fill in plot area (show Excel gridlines through chart).
-     *
-     * @var bool
      */
-    private $noFill = false;
+    private bool $noFill = false;
 
     /**
      * PlotArea Gradient Stop list.
@@ -21,28 +19,24 @@ class PlotArea
      *
      * @var array[]
      */
-    private $gradientFillStops = [];
+    private array $gradientFillStops = [];
 
     /**
      * PlotArea Gradient Angle.
-     *
-     * @var ?float
      */
-    private $gradientFillAngle;
+    private ?float $gradientFillAngle = null;
 
     /**
      * PlotArea Layout.
-     *
-     * @var ?Layout
      */
-    private $layout;
+    private ?Layout $layout;
 
     /**
      * Plot Series.
      *
      * @var DataSeries[]
      */
-    private $plotSeries = [];
+    private array $plotSeries;
 
     /**
      * Create a new PlotArea.
@@ -70,10 +64,8 @@ class PlotArea
 
     /**
      * Get Number of Plot Series.
-     *
-     * @return int
      */
-    public function getPlotSeriesCount()
+    public function getPlotSeriesCount(): int|float
     {
         $seriesCount = 0;
         foreach ($this->plotSeries as $plot) {
@@ -88,19 +80,15 @@ class PlotArea
      *
      * @return DataSeries[]
      */
-    public function getPlotGroup()
+    public function getPlotGroup(): array
     {
         return $this->plotSeries;
     }
 
     /**
      * Get Plot Series by Index.
-     *
-     * @param mixed $index
-     *
-     * @return DataSeries
      */
-    public function getPlotGroupByIndex($index)
+    public function getPlotGroupByIndex(int $index): DataSeries
     {
         return $this->plotSeries[$index];
     }
@@ -112,7 +100,7 @@ class PlotArea
      *
      * @return $this
      */
-    public function setPlotSeries(array $plotSeries)
+    public function setPlotSeries(array $plotSeries): static
     {
         $this->plotSeries = $plotSeries;
 
@@ -156,22 +144,17 @@ class PlotArea
 
     /**
      * Get gradientFillStops.
-     *
-     * @return array
      */
-    public function getGradientFillStops()
+    public function getGradientFillStops(): array
     {
         return $this->gradientFillStops;
     }
 
-    /** @var ?int */
-    private $gapWidth;
+    private ?int $gapWidth = null;
 
-    /** @var bool */
-    private $useUpBars = false;
+    private bool $useUpBars = false;
 
-    /** @var bool */
-    private $useDownBars = false;
+    private bool $useDownBars = false;
 
     public function getGapWidth(): ?int
     {
@@ -207,5 +190,18 @@ class PlotArea
         $this->useDownBars = $useDownBars;
 
         return $this;
+    }
+
+    /**
+     * Implement PHP __clone to create a deep clone, not just a shallow copy.
+     */
+    public function __clone()
+    {
+        $this->layout = ($this->layout === null) ? null : clone $this->layout;
+        $plotSeries = $this->plotSeries;
+        $this->plotSeries = [];
+        foreach ($plotSeries as $series) {
+            $this->plotSeries[] = clone $series;
+        }
     }
 }

@@ -27,7 +27,7 @@ This library currently provides the following operations:
     - division by
     - division into
 
-together with functions for
+together with functions for 
 
  - adjoint
  - antidiagonal
@@ -42,7 +42,7 @@ together with functions for
  - solve
 
    Given Matrices A and B, calculate X for A.X = B
-
+   
 and classes for
 
  - Decomposition
@@ -58,7 +58,7 @@ and classes for
  - power() function
  - Decomposition
    - Cholesky Decomposition
-   - EigenValue Decomposition
+   - EigenValue Decomposition 
      - EigenValues
      - EigenVectors
 
@@ -161,7 +161,7 @@ $matrix = new Matrix\Matrix($grid);
 
 echo $matrix->trace();
 ```
-or you can call the static method, passing the Matrix object or array as an argument
+or you can call the static method, passing the Matrix object or array as an argument 
 ```php
 $grid = [
     [16,  3,  2, 13],

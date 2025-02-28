@@ -1,86 +1,52 @@
 Description of PhpSpreadsheet import into Moodle
 
-Last release package can be found in https://github.com/PHPOffice/PhpSpreadsheet/releases
+```sh
+mv lib/phpspreadsheet/readme_moodle.txt ./
+mv lib/phpspreadsheet/moodle.diff ./
+rm -rf lib/phpspreadsheet/*
+tempdir=`mktemp -d`
+cd "${tempdir}"
+composer init --require phpoffice/phpspreadsheet:^4 -n
+cat composer.json | jq '.replace."composer/pcre"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+cat composer.json | jq '.replace."maennchen/zipstream-php"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+cat composer.json | jq '.replace."psr/http-client"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+cat composer.json | jq '.replace."psr/http-factory"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+cat composer.json | jq '.replace."psr/http-message"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+cat composer.json | jq '.replace."psr/simple-cache"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
+composer install
+rm -rf vendor/composer
+rm vendor/autoload.php
+# Delete all hidden files and phpstan.neon
+find vendor -name '.*' | xargs rm -rf {} \;
+find vendor -name 'phpstan*' | xargs rm -rf {} \;
+# Delete legacy Xls (Excel5) files.
+find vendor -name 'Xls.php' | xargs rm -rf {} \;
+find vendor -name 'Xls' | xargs rm -rf {} \;
+# Delete legacy OLE files.
+find vendor -name 'OLE' | xargs rm -rf {} \;
+find vendor -name 'OLERead.php' | xargs rm -rf {} \;
+find vendor -name 'OLE.php' | xargs rm -rf {} \;
+find vendor -name '*.dist' | xargs rm -rf {} \;
+# Remove examples.
+find vendor -name 'examples' | xargs rm -rf {} \;
+cd -
+cp -rf "${tempdir}/vendor/"* lib/phpspreadsheet/
+mv readme_moodle.txt lib/phpspreadsheet/
+mv moodle.diff ./lib/phpspreadsheet/
+mv lib/phpspreadsheet/phpoffice/phpspreadsheet lib/phpspreadsheet
+rm -rf $tempdir
+git add .
+```
 
-NOTICE:
- * Before running composer command, make sure you have the composer version updated.
- * Composer version 2.5.5 2023-03-21 11:50:05
+Now update the lib/thirpartylibs.xml with the upgrades, and commit the changes.
+Now apply the local Moodle customisations diff:
 
-STEPS:
- * Create a temporary folder outside your moodle installation
- * Create a composer.json file with the following content (you will need to replace X.YY to the proper version to be upgraded):
-{
-    "require": {
-        "phpoffice/phpspreadsheet": "^X.YY"
-    },
-    "replace": {
-        "ezyang/htmlpurifier": "*",
-        "maennchen/zipstream-php": "*",
-        "myclabs/php-enum": "*",
-        "symfony/polyfill-mbstring": "*"
-    }
-}
- * Execute `composer require phpoffice/phpspreadsheet`
- * Check to make sure the following directories haven't been created
-   - /vendor/ezyang/htmlpurifier
-   - /vendor/maennchen/*
-   - /vendor/myclabs/*
-   - /vendor/symfony/polyfill-mbstring
- * If it has pulled these through, remove them from the required packages and run composer again.
- * Check any new libraries that have been added and make sure they do not exist in Moodle already.
- * If the following exist, remove the following folders (and their content):
-   - vendor/phpoffice/phpspreadsheet/bin
-   - vendor/phpoffice/phpspreadsheet/docs
-   - vendor/phpoffice/phpspreadsheet/samples
- * Remove all the hidden folders and files in vendor/phpoffice/phpspreadsheet/ (find . -name ".*"):
-   - .DS_Store
-   - .gitattributes
-   - .gitignore
-   - .php_cs.dist
-   - .sami.php
-   - .scrutinizer.yml
-   - .travis.yml
-   - .phpcs.xml.dist
-   - .php-cs-fixer.dist.php
-   - vendor/psr/simple-cache/.editorconfig
-   - vendor/psr/http-factory/.gitignore
-   - vendor/psr/http-factory/.pullapprove.yml
-   - vendor/markbaker/matrix/.github
-   - vendor/markbaker/complex/.github
- * Remove the next files in related to external testing/analysis that we don't need matrix/:
-   - vendor/markbaker/matrix/infection.json.dist (PHP mutation testing framework configuration file)
-   - vendor/markbaker/matrix/phpstan.neon (PHP static analyzer configuration file)
-   - vendor/phpoffice/phpspreadsheet/phpstan-baseline.neon
-   - vendor/phpoffice/phpspreadsheet/phpstan-conditional.php
-   - vendor/phpoffice/phpspreadsheet/phpstan.neon.dist
- * Shared/OLE has been removed because OLE is not DFSG compliant and is not being used in core code.
-   Remove the files/folders (placed in vendor/phpoffice/phpspreadsheet/src/):
-   - PhpSpreadsheet/Shared/OLE.php
-   - PhpSpreadsheet/Shared/OLERead.php
-   - PhpSpreadsheet/Shared/OLE/*
- * Xsl files have been removed. These files are for Excel version 5 (created in 1993) and are not used in core code.
-   Remove the files/folders (placed in vendor/phpoffice/phpspreadsheet/src/):
-   - PhpSpreadsheet/Reader/Xls.php
-   - PhpSpreadsheet/Reader/Xls/*
-   - PhpSpreadsheet/Shared/Xls.php
-   - PhpSpreadsheet/Writer/Xls.php
-   - PhpSpreadsheet/Writer/Xls/*
- * Remove the old 'vendor' directory in lib/phpspreadsheet/
- * Copy contents of 'vendor' directory
- * Create a commit with only the library changes
- * Update lib/thirdpartylibs.xml
- * Apply the modifications described in the CHANGES section
- * Create another commit with the previous two steps of changes
- * Go to http://<your moodle root>/lib/tests/other/spreadsheettestpage.php and test the generated files
+```sh
+git apply lib/phpspreadsheet/moodle.diff
+git add .
+git commit
+```
 
+Now verify the changes:
 
-CHANGES:
-
- * Add the next Moodle hack at the beginning of the function sysGetTempDir()
-located in lib/phpspreadsheet/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
-    // Moodle hack!
-     if (function_exists('make_temp_directory')) {
-         $temp = make_temp_directory('phpspreadsheet');
-         return realpath(dirname($temp));
-     }
-  This hack is needed because it can not be guaranteed that sysGetTempDir() works everywhere.
+Go to http://<your moodle root>/lib/tests/other/spreadsheettestpage.php and test the generated files
