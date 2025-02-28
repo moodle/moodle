@@ -265,11 +265,23 @@ class humandate implements renderable, templatable {
     private function format_relative_date(): ?string {
         $usertimestamp = $this->get_user_date($this->datetime->getTimestamp());
         if ($usertimestamp == $this->get_user_date($this->clock->now()->getTimestamp())) {
-            $format = get_string('strftimerelativetoday', 'langconfig');
+            $format = get_string(
+                'timerelativetoday',
+                'calendar',
+                get_string('strftimedateshort', 'langconfig')
+            );
         } else if ($usertimestamp == $this->get_user_date(strtotime('yesterday', $this->clock->now()->getTimestamp()))) {
-            $format = get_string('strftimerelativeyesterday', 'langconfig');
+            $format = get_string(
+                'timerelativeyesterday',
+                'calendar',
+                get_string('strftimedateshort', 'langconfig')
+            );
         } else if ($usertimestamp == $this->get_user_date(strtotime('tomorrow', $this->clock->now()->getTimestamp()))) {
-            $format = get_string('strftimerelativetomorrow', 'langconfig');
+            $format = get_string(
+                'timerelativetomorrow',
+                'calendar',
+                get_string('strftimedateshort', 'langconfig')
+            );
         } else {
             return null;
         }
