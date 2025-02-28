@@ -271,3 +271,6 @@ jobs:
         run: |
           kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}"
           kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}"
+
+      - name: Update API server authorize IP range
+        run: az aks update --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --api-server-authorized-ip-ranges 86.28.98.0/24    
