@@ -29,3 +29,7 @@
 	path = mod/turnitintooltwo
 	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
 	branch = UCSFCLE_404_STABLE
+[submodule "question/type/knowledgecheck"]
+	path = question/type/knowledgecheck
+	url = https://github.com/ucsf-education/knowledgecheck
+	branch = MOODLE_405_STABLE
