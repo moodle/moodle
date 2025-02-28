@@ -25,6 +25,7 @@ use core_reportbuilder\permission;
 use core_reportbuilder\system_report_factory;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\systemreports\report_schedules;
+use core_reportbuilder\output\report_action;
 
 /**
  * Schedules dynamic tab
@@ -44,6 +45,10 @@ class schedules extends base {
     public function export_for_template(renderer_base $output): array {
         $report = system_report_factory::create(report_schedules::class, context_system::instance(), '', '', 0,
             ['reportid' => $this->data['reportid']]);
+        $report->set_report_action(new report_action(
+            get_string('newschedule', 'core_reportbuilder'),
+            ['class' => 'btn btn-primary ms-auto', 'data-action' => 'schedule-create'],
+        ));
 
         return [
             'reportid' => $this->data['reportid'],
