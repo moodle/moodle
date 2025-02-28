@@ -58,7 +58,7 @@ class badge extends moodleform {
         // When downloading badge, it will be necessary to clean the name as PARAM_FILE.
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
 
         $mform->addElement('text', 'version', get_string('version', 'badges'), ['size' => '70']);
         $mform->setType('version', PARAM_TEXT);
@@ -97,6 +97,7 @@ class badge extends moodleform {
         $mform->addElement('text', 'issuername', get_string('issuername', 'badges'), ['size' => '70']);
         $mform->setType('issuername', PARAM_NOTAGS);
         $mform->addRule('issuername', null, 'required');
+        $mform->addRule('issuername', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
         $site = get_site();
         $issuername = $CFG->badges_defaultissuername ?: $site->fullname;
         $mform->setDefault('issuername', $issuername);
