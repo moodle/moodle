@@ -117,6 +117,7 @@ class component {
         \Aws::class => 'lib/aws-sdk/src',
         \CFPropertyList::class => 'lib/plist/src/CFPropertyList',
         \Complex::class => 'lib/phpspreadsheet/markbaker/classes/src',
+        \Composer\Pcre::class => 'lib/composer/pcre/src',
         \DI::class => 'lib/php-di/php-di/src',
         \GeoIp2::class => 'lib/maxmind/GeoIp2/src',
         \FastRoute::class => 'lib/nikic/fast-route/src',

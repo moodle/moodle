@@ -26,6 +26,17 @@
     </copyrights>
   </library>
   <library>
+    <location>composer/pcre</location>
+    <name>composer/pcre</name>
+    <description>PCRE wrapping library that offers type-safe preg_* replacements.</description>
+    <version>3.3.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/composer/pcre</repository>
+    <copyrights>
+      <copyright>Composer</copyright>
+    </copyrights>
+  </library>
+  <library>
     <location>bennu</location>
     <name>Bennu</name>
     <description>Bennu is an object-oriented library written in PHP that implements the iCalendar standard (RFC 2445).</description>
