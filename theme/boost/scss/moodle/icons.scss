@@ -157,6 +157,8 @@ img.icon {
         .icon {
             height: $length !important; /* stylelint-disable-line declaration-no-important */
             width: map-get($iconwidthsizes, $size) !important; /* stylelint-disable-line declaration-no-important */
+            max-height: $length !important; /* stylelint-disable-line declaration-no-important */
+            max-width: map-get($iconwidthsizes, $size) !important; /* stylelint-disable-line declaration-no-important */
             font-size: $length !important; /* stylelint-disable-line declaration-no-important */
         }
     }

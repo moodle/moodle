@@ -261,7 +261,7 @@ class system_report_table extends base_report_table {
         $menu = new action_menu();
         $menu->set_menu_trigger(
             $OUTPUT->pix_icon('i/menu', get_string('actions', 'core_reportbuilder')),
-            'btn btn-icon d-flex align-items-center justify-content-center no-caret',
+            'btn btn-icon d-flex no-caret',
         );
 
         $actions = array_filter($this->report->get_actions(), function($action) use ($row) {

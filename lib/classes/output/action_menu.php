@@ -197,7 +197,7 @@ class action_menu implements renderable, templatable {
     /**
      * Classes for the trigger menu
      */
-    const DEFAULT_KEBAB_TRIGGER_CLASSES = 'btn btn-icon d-flex align-items-center justify-content-center no-caret';
+    const DEFAULT_KEBAB_TRIGGER_CLASSES = 'btn btn-icon d-flex no-caret';
 
     /**
      * Setup trigger as in the kebab menu.

@@ -42,7 +42,7 @@
         </a>
         <div class="optionactions d-flex justify-content-center" role="group" data-region="chooser-option-actions-container">
             {{^legacyitem}}
-                <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}"
+                <button class="btn btn-icon m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}"
                         data-action="manage-module-favourite"
                         data-favourited="{{favourite}}"
                         data-id="{{id}}"
@@ -65,7 +65,7 @@
                     {{/favourite}}
                 </button>
             {{/legacyitem}}
-            <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction" data-action="show-option-summary" tabindex="-1">
+            <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1">
                 <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
                 <span class="visually-hidden">{{#str}} informationformodule, core_course, {{title}} {{/str}}</span>
             </button>

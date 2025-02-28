@@ -32,6 +32,8 @@ $box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;
 
 $moremenu-height: 60px !default;
 
+$btn-icon-border-radius: $btn-border-radius !default;
+
 $primary-light-background: shift-color($primary, -90%) !default;
 $primary-light-border: shift-color($primary, -20%) !default;
 $primary-light-color: $body-color;

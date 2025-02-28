@@ -176,7 +176,7 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-filename text-truncate"></div>
     </div>
     </a>
-    <a class="fp-contextmenu btn btn-icon btn-light border icon-no-margin icon-size-3" href="#">
+    <a class="fp-contextmenu btn btn-icon btn-light border" href="#">
         <span>'.$this->pix_icon('i/menu', '▶').'</span></a>
 </div>';
         return $rv;

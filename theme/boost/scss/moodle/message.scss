@@ -498,21 +498,6 @@ $message-day-color: color-contrast($message-app-bg) !default;
         }
     }
 
-    .btn.btn-link.btn-icon {
-        height: $icon-height;
-        width: $icon-width;
-        padding: 0;
-        border-radius: 50%;
-        flex-shrink: 0;
-
-        @each $size, $length in $iconsizes {
-            &.icon-size-#{$size} {
-                height: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
-                width: (map-get($iconwidthsizes, $size) + 20px) !important; /* stylelint-disable-line declaration-no-important */
-            }
-        }
-    }
-
     .view-overview-body {
         .section {
             display: block;

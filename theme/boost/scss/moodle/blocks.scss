@@ -148,12 +148,6 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
     .multiline {
         white-space: normal;
     }
-    .btn.btn-link.btn-icon {
-        height: 36px;
-        width: 36px;
-        padding: 0;
-        border-radius: 50%;
-    }
 }
 .card-grid {
     display: flex;
