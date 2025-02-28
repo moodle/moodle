@@ -646,7 +646,7 @@ final class sectionactions_test extends \advanced_testcase {
             ],
             'Long names throws and exception' => [
                 'fieldname' => 'name',
-                'value' => str_repeat('a', 256),
+                'value' => str_repeat('a', 1334),
                 'expected' => '=',
                 'expectexception' => true,
             ],

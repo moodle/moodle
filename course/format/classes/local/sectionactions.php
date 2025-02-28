@@ -353,8 +353,8 @@ class sectionactions extends baseactions {
 
         // Some fields can not be updated using this method.
         $fields = array_diff_key((array) $fields, array_flip(['id', 'course', 'section', 'sequence']));
-        if (array_key_exists('name', $fields) && \core_text::strlen($fields['name']) > 255) {
-            throw new \moodle_exception('maximumchars', 'moodle', '', 255);
+        if (array_key_exists('name', $fields) && \core_text::strlen($fields['name']) > 1333) {
+            throw new \moodle_exception('maximumchars', 'moodle', '', 1333);
         }
 
         // If the section is delegated to a component, it may control some section values.
