@@ -49,6 +49,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin = "azure"
   }
+  api_server_authorized_ip_ranges = [
+    "86.28.98.0/24"
+  ]
   tags = {
     environment = var.Environment
   }
