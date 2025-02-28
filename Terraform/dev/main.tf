@@ -36,9 +36,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = var.ClusterName
   default_node_pool {
     name       = "default"
-    node_count = 2
     vm_size    = "Standard_B4ms"
     temporary_name_for_rotation = "tmpnodepool1"
+	auto_scaling_enabled = true
+    min_count = 2
+    max_count = 3
   }
   identity {
     type = "SystemAssigned"
