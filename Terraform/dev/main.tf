@@ -49,11 +49,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin = "azure"
   }
-  security_profile {
-    defender {
-      enabled = true
-    }
-  }
   tags = {
     environment = var.Environment
   }
