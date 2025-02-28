@@ -37122,6 +37122,10 @@ img.userpicture {
 .generaltable tbody tr:hover td.sticky-column {
   background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
 }
+.generaltable tbody td {
+  color: inherit;
+  background-color: inherit;
+}
 
 table caption {
   font-size: 24px;
