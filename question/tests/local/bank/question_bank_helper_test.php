@@ -379,12 +379,28 @@ final class question_bank_helper_test extends \advanced_testcase {
         self::setAdminUser();
 
         $course = self::getDataGenerator()->create_course();
+        // Create module other than a qbank.
+        $wiki = self::getDataGenerator()->create_module('wiki', [
+            'course' => $course->id,
+        ]);
         $modinfo = get_fast_modinfo($course);
         $qbanks = $modinfo->get_instances_of('qbank');
         $this->assertCount(0, $qbanks);
         $qbank = question_bank_helper::get_default_open_instance_system_type($course);
         $this->assertNull($qbank);
         $qbank = question_bank_helper::get_default_open_instance_system_type($course, true);
+        $this->assertEquals(get_string('systembank', 'question'), $qbank->get_name());
+        $modrecord = $DB->get_record('qbank', ['id' => $qbank->instance]);
+        $this->assertEquals(question_bank_helper::TYPE_SYSTEM, $modrecord->type);
+        // Swap the qbank instance record for one with the same ID as the wiki instance.
+        $newqbank = clone($modrecord);
+        $newqbank->id = $wiki->id;
+        $DB->insert_record_raw('qbank', $newqbank, customsequence: true);
+        $DB->delete_records('qbank', ['id' => $qbank->id]);
+        $DB->set_field('course_modules', 'instance', $newqbank->id, ['instance' => $qbank->instance]);
+        // Retry the above again.
+        \course_modinfo::purge_course_caches([$course->id]);
+        $qbank = question_bank_helper::get_default_open_instance_system_type($course);
         $this->assertEquals(get_string('systembank', 'question'), $qbank->get_name());
         $modrecord = $DB->get_record('qbank', ['id' => $qbank->instance]);
         $this->assertEquals(question_bank_helper::TYPE_SYSTEM, $modrecord->type);

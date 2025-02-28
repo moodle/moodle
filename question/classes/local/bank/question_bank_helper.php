@@ -525,13 +525,16 @@ class question_bank_helper {
         $defaultyactivityname = self::get_default_question_bank_activity_name();
         $qbanks = $modinfo->get_instances_of($defaultyactivityname);
 
+        $whereclause = "AND m.name = '" . $defaultyactivityname . "'";
+
         if (!empty($qbanks)) {
             $sql = "SELECT cm.id
                       FROM {course_modules} cm
                       JOIN {modules} m ON m.id = cm.module
-                      JOIN {{$defaultyactivityname}} q ON q.id = cm.instance AND cm.module = m.id
+                      JOIN {{$defaultyactivityname}} q ON q.id = cm.instance
                      WHERE cm.course = :course
-                       AND q.type = :type";
+                       AND q.type = :type " .
+            $whereclause;
 
             return $DB->get_fieldset_sql($sql, ['type' => $subtype, 'course' => $course->id]);
         }
