@@ -72,15 +72,27 @@ class restore_data_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     public static function define_decode_rules() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_decode_rule('DATAVIEWBYID', '/mod/data/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('DATAVIEWBYIDURLENCODED', '/mod/data/view.php?id=$1', 'course_module', true);
         $rules[] = new restore_decode_rule('DATAVIEWBYD', '/mod/data/view.php?d=$1', 'data');
+        $rules[] = new restore_decode_rule('DATAVIEWBYDURLENCODED', '/mod/data/view.php?d=$1', 'data', true);
         $rules[] = new restore_decode_rule('DATAINDEX', '/mod/data/index.php?id=$1', 'course');
-        $rules[] = new restore_decode_rule('DATAVIEWRECORD', '/mod/data/view.php?d=$1&amp;rid=$2', array('data', 'data_record'));
+        $rules[] = new restore_decode_rule('DATAINDEXURLENCODED', '/mod/data/index.php?id=$1', 'course', true);
+        $rules[] = new restore_decode_rule('DATAVIEWRECORD', '/mod/data/view.php?d=$1&amp;rid=$2', ['data', 'data_record']);
+        $rules[] = new restore_decode_rule(
+            'DATAVIEWRECORDURLENCODED',
+            '/mod/data/view.php?d=$1&rid=$2',
+            ['data', 'data_record'],
+            true
+        );
+        $rules[] = new restore_decode_rule('DATAEDITBYID', '/mod/data/edit.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('DATAEDITBYIDURLENCODED', '/mod/data/edit.php?id=$1', 'course_module', true);
+        $rules[] = new restore_decode_rule('DATAEDITBYD', '/mod/data/edit.php?d=$1', 'data');
+        $rules[] = new restore_decode_rule('DATAEDITBYDURLENCODED', '/mod/data/edit.php?d=$1', 'data', true);
 
         return $rules;
-
     }
 
     /**

@@ -56,22 +56,55 @@ class backup_data_activity_task extends backup_activity_task {
         global $CFG;
 
         $base = preg_quote($CFG->wwwroot,"/");
+        $baseunquoted = $CFG->wwwroot;
 
-        // Link to the list of datas
-        $search="/(".$base."\/mod\/data\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@DATAINDEX*$2@$', $content);
+        // Link to the list of datas.
+        $search = '/(' . $base . '\/mod\/data\/index.php\?id\=)([0-9]+)/';
+        $content = preg_replace($search, '$@DATAINDEX*$2@$', $content);
 
-        // Link to data view by moduleid
-        $search="/(".$base."\/mod\/data\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@DATAVIEWBYID*$2@$', $content);
+        // Link to the list of datas, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/index.php?id=') . ')([0-9]+)/';
+        $content = preg_replace($search, '$@DATAINDEXURLENCODED*$2@$', $content);
 
-        /// Link to database view by databaseid
-        $search="/(".$base."\/mod\/data\/view.php\?d\=)([0-9]+)/";
-        $content= preg_replace($search,'$@DATAVIEWBYD*$2@$', $content);
+        // Link to data view by moduleid.
+        $search = '/(' . $base . '\/mod\/data\/view.php\?id\=)([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWBYID*$2@$', $content);
 
-        /// Link to one "record" of the database
-        $search="/(".$base."\/mod\/data\/view.php\?d\=)([0-9]+)\&(amp;)rid\=([0-9]+)/";
-        $content= preg_replace($search,'$@DATAVIEWRECORD*$2*$4@$', $content);
+        // Link to data view by moduleid, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/view.php?id=') . ')([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWBYIDURLENCODED*$2@$', $content);
+
+        // Link to one "record" of the database.
+        $search = '/(' . $base . '\/mod\/data\/view.php\?d\=)([0-9]+)\&(amp;)rid\=([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWRECORD*$2*$4@$', $content);
+
+        // Link to one "record" of the database, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/view.php?d=') . ')([0-9]+)%26rid%3D([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWRECORDURLENCODED*$2*$3@$', $content);
+
+        // Link to database view by databaseid.
+        $search = '/(' . $base . '\/mod\/data\/view.php\?d\=)([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWBYD*$2@$', $content);
+
+        // Link to database view by databaseid, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/view.php?d=') . ')([0-9]+)/';
+        $content = preg_replace($search, '$@DATAVIEWBYDURLENCODED*$2@$', $content);
+
+        // Link to the edit page.
+        $search = '/(' . $base . '\/mod\/data\/edit.php\?id\=)([0-9]+)/';
+        $content = preg_replace($search, '$@DATAEDITBYID*$2@$', $content);
+
+        // Link to the edit page, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/edit.php?id=') . ')([0-9]+)/';
+        $content = preg_replace($search, '$@DATAEDITBYIDURLENCODED*$2@$', $content);
+
+        // Link to the edit page by databaseid.
+        $search = '/(' . $base . '\/mod\/data\/edit.php\?d\=)([0-9]+)/';
+        $content = preg_replace($search, '$@DATAEDITBYD*$2@$', $content);
+
+        // Link to the edit page by databaseid, urlencoded.
+        $search = '/(' . urlencode($baseunquoted . '/mod/data/edit.php?d=') . ')([0-9]+)/';
+        $content = preg_replace($search, '$@DATAEDITBYDURLENCODED*$2@$', $content);
 
         return $content;
     }
