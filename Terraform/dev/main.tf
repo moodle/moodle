@@ -35,12 +35,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   dns_prefix          = var.ClusterName
   default_node_pool {
-    name       = "default"
-    vm_size    = "Standard_B4ms"
+    name                        = "default"
+    vm_size                     = "Standard_B4ms"
     temporary_name_for_rotation = "tmpnodepool1"
-	auto_scaling_enabled = true
-    min_count = 2
-    max_count = 3
+	auto_scaling_enabled        = true
+    min_count                   = 2
+    max_count                   = 3
+    node_taints                 = ["CriticalAddonsOnly=true:NoSchedule"]
   }
   identity {
     type = "SystemAssigned"
