@@ -529,11 +529,13 @@ class question_bank_helper {
             $sql = "SELECT cm.id
                       FROM {course_modules} cm
                       JOIN {modules} m ON m.id = cm.module
-                      JOIN {{$defaultyactivityname}} q ON q.id = cm.instance AND cm.module = m.id
+                      JOIN {{$defaultyactivityname}} q ON q.id = cm.instance
                      WHERE cm.course = :course
-                       AND q.type = :type";
+                       AND q.type = :type
+                       AND m.name = :modulename";
 
-            return $DB->get_fieldset_sql($sql, ['type' => $subtype, 'course' => $course->id]);
+            return $DB->get_fieldset_sql($sql, ['type' => $subtype, 'course' => $course->id,
+                'modulename' => $defaultyactivityname]);
         }
 
         return [];
