@@ -157,6 +157,15 @@ if ($hassiteconfig) {
         ],
     ));
 
+
+    // Forgot password ReCaptcha.
+    $temp->add(new admin_setting_configcheckbox(
+        'enableforgotpasswordrecaptcha',
+        new lang_string('auth_forgotpasswordrecaptcha', 'auth'),
+        new lang_string('auth_forgotpasswordrecaptcha_desc', 'auth'),
+        0,
+    ));
+
     $setting = new admin_setting_configtext('recaptchapublickey', new lang_string('recaptchapublickey', 'admin'), new lang_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
     $temp->add($setting);
