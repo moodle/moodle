@@ -31641,16 +31641,6 @@ table.calendartable caption {
   border-radius: 0.375rem;
 }
 
-.subcategories .coursebox > .info > .coursename a,
-#frontpage-category-names .coursebox > .info > .coursename a,
-#frontpage-category-combo .coursebox > .info > .coursename a {
-  display: block;
-  background-image: url([[pix:moodle|i/course]]);
-  background-size: 20px 16px;
-  background-repeat: no-repeat;
-  padding-left: 21px;
-}
-
 .coursebox > .info > .coursename {
   font-size: 0.9375rem;
   font-weight: normal;
