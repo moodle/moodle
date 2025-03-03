@@ -3,6 +3,23 @@
 	url = https://github.com/Syxton/moodle-block_massaction
 	branch = master
 	tag = 7.4.1
+[submodule "mod/oublog"]
+	path = mod/oublog
+	url = https://github.com/moodleou/moodle-mod_oublog
+	branch = MOODLE_404_STABLE
+[submodule "mod/turnitintooltwo"]
+	path = mod/turnitintooltwo
+	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
+	branch = UCSFCLE_404_STABLE
+[submodule "question/type/knowledgecheck"]
+	path = question/type/knowledgecheck
+	url = https://github.com/ucsf-education/knowledgecheck
+	branch = MOODLE_405_STABLE
+[submodule "question/type/wordselect"]
+	path = question/type/wordselect
+	url = https://github.com/marcusgreen/moodle-qtype_wordselect
+	branch = master
+	tag = v2.53
 [submodule "report/benchmark"]
 	path = report/benchmark
 	url = https://github.com/mikasmart/moodle-report_benchmark
@@ -12,20 +29,7 @@
 	path = repository/boxnet
 	url = https://github.com/moodlehq/moodle-repository_boxnet
 	branch = master
-[submodule "question/type/wordselect"]
-	path = question/type/wordselect
-	url = https://github.com/marcusgreen/moodle-qtype_wordselect
-	branch = master
-	tag = v2.53
 [submodule "theme/ucsf"]
 	path = theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
-[submodule "mod/oublog"]
-	path = mod/oublog
-	url = https://github.com/moodleou/moodle-mod_oublog
-	branch = MOODLE_404_STABLE
-[submodule "mod/turnitintooltwo"]
-	path = mod/turnitintooltwo
-	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
-	branch = UCSFCLE_404_STABLE
