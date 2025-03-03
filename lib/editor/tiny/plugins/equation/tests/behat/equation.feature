@@ -18,7 +18,9 @@ Feature: Equation editor
     And I click on "Save equation" "button"
     And I click on "Update profile" "button"
     And I follow "Profile" in the user menu
-    Then "\infty" "text" should exist
+    # MathJax 3.2.2 renders matemathical equation using css classes, so it will not work against the pre-rendered code like "\infty".
+    # That said, we can instead check the rendered text using the rendered equation or symbol "∞".
+    Then "∞" "text" should exist
 
   @javascript
   Scenario: Edit an equation using TinyMCE

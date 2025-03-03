@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $item = new admin_setting_configtext('filter_mathjaxloader/httpsurl',
                                          new lang_string('httpsurl', 'filter_mathjaxloader'),
                                          new lang_string('httpsurl_help', 'filter_mathjaxloader'),
-                                         'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+                                         'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js',
                                          PARAM_RAW);
     $settings->add($item);
 
@@ -43,19 +43,10 @@ if ($ADMIN->fulltree) {
                                              0);
     $settings->add($item);
 
-    $default = '
-MathJax.Hub.Config({
-    config: ["Accessible.js", "Safe.js"],
-    errorSettings: { message: ["!"] },
-    skipStartupTypeset: true,
-    messageStyle: "none"
-});
-';
-
     $item = new admin_setting_configtextarea('filter_mathjaxloader/mathjaxconfig',
                                              new lang_string('mathjaxsettings','filter_mathjaxloader'),
                                              new lang_string('mathjaxsettings_desc', 'filter_mathjaxloader'),
-                                             $default);
+                                             '');
 
     $settings->add($item);
 

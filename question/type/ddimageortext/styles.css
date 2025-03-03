@@ -90,7 +90,7 @@ form.mform fieldset#id_previewareaheader .droppreview {
  * So we remove the default margin of Mathjax.
  */
 .que.ddimageortext .MathJax_Display,
-.que.ddimageortext .MathJax_SVG_Display {
+.que.ddimageortext .MathJax_SVG {
     margin: 0;
 }
 
