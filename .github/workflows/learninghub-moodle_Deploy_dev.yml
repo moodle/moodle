@@ -279,4 +279,4 @@ jobs:
         run: az aks enable-addons --addon azure-policy --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
 
       - name: Enable Container insights
-        run: az aks enable-addons --addon monitoring --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+        run: az aks enable-addons --addon monitoring --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
