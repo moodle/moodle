@@ -58,7 +58,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
   name                  = "userpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   vm_size               = var.ClusterNodeSize
-  node_count            = var.ClusterNodeCount
+  auto_scaling_enabled  = true
+  min_count             = 2
+  max_count             = 5
+  node_count            = 2
   mode                  = "User"
   tags = {
     Environment = var.Environment
