@@ -262,7 +262,7 @@ jobs:
         run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
 
       - name: Add Azure Policy add-on for AKS
-        run: az aks enable-addons --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --addons azure-policy
+        run: az aks enable-addons --addon azure-policy --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
 
       - name: Enable Defender for AKS cluster
         run: az aks update --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --enable-defender
@@ -271,3 +271,12 @@ jobs:
         run: |
           kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}"
           kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}"
+
+      - name: Get node resource group
+        id: get_node_resource_group
+        run: |
+          node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
+          echo "node_resource_group=$node_resource_group" >> $GITHUB_OUTPUT
+
+      - name: Enable Container insights
+        run: az aks enable-addons --addon monitoring --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
