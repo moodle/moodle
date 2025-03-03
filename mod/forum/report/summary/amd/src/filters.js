@@ -131,8 +131,7 @@ export const init = (root) => {
     // Submit report via filter
     const submitWithFilter = (containerelement) => {
         // Disable the dates filter mform checker to prevent any changes triggering a warning to the user.
-        FormChangeChecker.unWatchForm(document.forms.filtersform);
-
+        FormChangeChecker.unWatchForm(document.querySelector(containerelement).querySelector('form'));
         // Close the container (eg popover).
         $(containerelement).addClass('hidden');
 
