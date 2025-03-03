@@ -606,18 +606,6 @@ span.editinstructions {
     }
 }
 
-.subcategories,
-#frontpage-category-names,
-#frontpage-category-combo {
-    .coursebox > .info > .coursename a {
-        display: block;
-        background-image: url([[pix:moodle|i/course]]);
-        background-size: $icon-width $icon-height;
-        background-repeat: no-repeat;
-        padding-left: 21px;
-    }
-}
-
 .coursebox > .info > .coursename {
     font-size: $font-size-base;
     font-weight: normal;
