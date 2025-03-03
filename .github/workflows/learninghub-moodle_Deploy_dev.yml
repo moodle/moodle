@@ -96,7 +96,10 @@ jobs:
         run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
 
       - name: Create PersistentVolume
-        run: kubectl apply -f kubectl/pv-definition-dev.yml
+        run: |
+          kubectl delete pvc moodledataclaim
+          kubectl delete pv moodledata
+          kubectl apply -f kubectl/pv-definition-dev.yml
 
       - name: Create PersistentVolume for theme
         run: kubectl apply -f kubectl/pv-definition-theme-dev.yml
