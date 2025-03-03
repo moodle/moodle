@@ -18,8 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\entities;
 
-use context_course;
-use context_helper;
+use core\{context, context_helper};
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\course_selector;
 use core_reportbuilder\local\filters\date;
@@ -215,33 +214,30 @@ class course extends base {
             'courseidnumberewithlink' => 'idnumber',
         ];
         foreach ($fields as $key => $field) {
-            $column = (new column(
+            $columns[] = (new column(
                 $key,
                 new lang_string($key, 'core_reportbuilder'),
                 $this->get_entity_name()
             ))
                 ->add_joins($this->get_joins())
+                ->add_join($this->get_context_join())
                 ->set_type(column::TYPE_TEXT)
-                ->add_fields("{$tablealias}.{$field} as $key, {$tablealias}.id")
+                ->add_field("{$tablealias}.{$field}")
+                ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias))
                 ->set_is_sortable(true)
-                ->add_callback(static function(?string $value, stdClass $row): string {
-                    if ($value === null) {
+                ->add_callback(static function(?string $value, stdClass $course): string {
+                    if ($value === null || $course->ctxid === null) {
                         return '';
                     }
 
-                    context_helper::preload_from_record($row);
+                    context_helper::preload_from_record(clone $course);
+                    $context = context::instance_by_id($course->ctxid);
 
-                    return html_writer::link(course_get_url($row->id),
-                        format_string($value, true, ['context' => context_course::instance($row->id)]));
+                    return html_writer::link(
+                        course_get_url($context->instanceid),
+                        format_string($value, true, ['context' => $context],
+                    ));
                 });
-
-            // Join on the context table so that we can use it for formatting these columns later.
-            if ($key === 'coursefullnamewithlink') {
-                $column->add_join($this->get_context_join())
-                    ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
-            }
-
-            $columns[] = $column;
         }
 
         foreach ($coursefields as $coursefield => $coursefieldlang) {
@@ -261,8 +257,11 @@ class course extends base {
             // Join on the context table so that we can use it for formatting these columns later.
             if ($coursefield === 'summary' || $coursefield === 'shortname' || $coursefield === 'fullname') {
                 $column->add_join($this->get_context_join())
-                    ->add_field("{$tablealias}.id", 'courseid')
                     ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
+            }
+
+            if ($coursefield === 'summary') {
+                $column->add_field("{$tablealias}.summaryformat");
             }
 
             $columns[] = $column;
@@ -428,22 +427,26 @@ class course extends base {
         }
 
         if (in_array($fieldname, ['fullname', 'shortname'])) {
-            if (!$row->courseid) {
+            if ($value === null || $row->ctxid === null) {
                 return '';
             }
-            context_helper::preload_from_record($row);
-            $context = context_course::instance($row->courseid);
-            return format_string($value, true, ['context' => $context->id, 'escape' => false]);
+
+            context_helper::preload_from_record(clone $row);
+            $context = context::instance_by_id($row->ctxid);
+
+            return format_string($value, true, ['context' => $context, 'escape' => false]);
         }
 
         if (in_array($fieldname, ['summary'])) {
-            if (!$row->courseid) {
+            if ($value === null || $row->ctxid === null) {
                 return '';
             }
-            context_helper::preload_from_record($row);
-            $context = context_course::instance($row->courseid);
-            $summary = file_rewrite_pluginfile_urls($row->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
-            return format_text($summary);
+
+            context_helper::preload_from_record(clone $row);
+            $context = context::instance_by_id($row->ctxid);
+
+            $summary = file_rewrite_pluginfile_urls($value, 'pluginfile.php', $context->id, 'course', 'summary', null);
+            return format_text($summary, $row->summaryformat, ['context' => $context]);
         }
 
         return s($value);

@@ -19,11 +19,11 @@ declare(strict_types=1);
 namespace core\reportbuilder\local\entities;
 
 use core\context_helper;
+use core\lang_string;
+use core\output\html_writer;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{select, text};
 use core_reportbuilder\local\report\{column, filter};
-use html_writer;
-use lang_string;
 use stdClass;
 
 /**
@@ -94,17 +94,18 @@ class context extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $context): string {
-                if ($contextid === null) {
+                if ($context->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($context);
-                return context_helper::instance_by_id($contextid)->get_context_name();
+                context_helper::preload_from_record(clone $context);
+                $context = context_helper::instance_by_id($context->ctxid);
+
+                return $context->get_context_name();
             });
 
         // Link.
@@ -114,17 +115,16 @@ class context extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $context): string {
-                if ($contextid === null) {
+                if ($context->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($context);
-                $context = context_helper::instance_by_id($contextid);
+                context_helper::preload_from_record(clone $context);
+                $context = context_helper::instance_by_id($context->ctxid);
 
                 return html_writer::link($context->get_url(), $context->get_context_name());
             });
@@ -153,7 +153,6 @@ class context extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_field("{$contextalias}.path")
             ->set_is_sortable(true);
 
@@ -164,7 +163,6 @@ class context extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             // The "path" column looks like "/1/2/3", for context ID 3. In order to select/group by the parent context, we
             // concatenate a trailing slash (to prevent partial matches, e.g. "/1/2/31"), then replace "/3/" with empty string.
             ->add_field("

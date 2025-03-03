@@ -93,7 +93,7 @@ class role extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_fields("{$rolealias}.name, {$rolealias}.shortname, {$rolealias}.id, {$contextalias}.id AS contextid")
+            ->add_fields("{$rolealias}.name, {$rolealias}.shortname, {$rolealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // The sorting is on name, unless empty then we use shortname.
             ->set_is_sortable(true, [
@@ -103,12 +103,12 @@ class role extends base {
                  END",
             ])
             ->add_callback(static function(?string $name, stdClass $role): string {
-                if ($name === null) {
+                if ($name === null || $role->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($role);
-                $context = context::instance_by_id($role->contextid);
+                context_helper::preload_from_record(clone $role);
+                $context = context::instance_by_id($role->ctxid);
 
                 return role_get_name($role, $context, ROLENAME_BOTH);
             });

@@ -112,10 +112,10 @@ class cohorts extends system_report {
         if ($this->get_context() instanceof context_system && $this->get_parameter('showall', false, PARAM_BOOL)) {
             $this->add_column_from_entity('cohort:context')
                 ->add_callback(static function(string $value, stdClass $cohort): string {
-                    $context = context::instance_by_id($cohort->contextid);
+                    $context = context::instance_by_id($cohort->ctxid);
                     if ($context instanceof context_coursecat) {
                         return html_writer::link(new moodle_url('/cohort/index.php',
-                            ['contextid' => $cohort->contextid]), $value);
+                            ['contextid' => $context->id]), $value);
                     }
 
                     return $value;
