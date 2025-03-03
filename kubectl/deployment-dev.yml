@@ -29,8 +29,6 @@ spec:
           readOnly: false
         - name: moodletheme
           mountPath: /var/www/html/theme
-        securityContext:
-          readOnlyRootFilesystem: true
       volumes:
       - name: moodledata
         persistentVolumeClaim:
