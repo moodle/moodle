@@ -16,6 +16,7 @@ spec:
     volumeHandle: "moodleCluster#learninghubmoodledev#moodledata"  # make sure this volumeid is unique for every identical share in the cluster
     volumeAttributes:
       shareName: moodledata
+      server: learninghubmoodledev.privatelink.file.core.windows.net
     nodeStageSecretRef:
       name: azure-secret
       namespace: default
