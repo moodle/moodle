@@ -1,0 +1,8 @@
+issueNumber: MDL-83718
+notes:
+  core_reportbuilder:
+    - message: >-
+        For columns implementing custom sorting via their `set_is_sortable`
+        method, the specified sort fields must also be part of the columns
+        initially selected fields
+      type: changed

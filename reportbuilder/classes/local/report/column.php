@@ -563,7 +563,7 @@ final class column {
      * Sets the column as sortable
      *
      * @param bool $issortable
-     * @param array $sortfields Define the fields that should be used when the column is sorted, typically a subset of the fields
+     * @param array $sortfields Define the fields that should be used when the column is sorted. Must be a subset of the fields
      *      selected for the column, via {@see add_field}. If omitted then the first selected field is used
      * @return self
      */
