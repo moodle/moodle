@@ -280,6 +280,7 @@ jobs:
 
       - name: Enable Container insights
         run: az aks enable-addons --addon monitoring --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+        continue-on-error: true
 
       - name: Get cluster id
         id: get_cluster_id
