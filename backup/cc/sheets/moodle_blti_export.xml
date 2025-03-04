@@ -848,18 +848,6 @@
           <MODIFIERID>0</MODIFIERID>
         </CAPABILITY>
         <CAPABILITY>
-          <NAME>mod/data:managecomments</NAME>
-          <PERMISSION>1</PERMISSION>
-          <TIMEMODIFIED>1311692131</TIMEMODIFIED>
-          <MODIFIERID>0</MODIFIERID>
-        </CAPABILITY>
-        <CAPABILITY>
-          <NAME>mod/data:comment</NAME>
-          <PERMISSION>1</PERMISSION>
-          <TIMEMODIFIED>1311692131</TIMEMODIFIED>
-          <MODIFIERID>0</MODIFIERID>
-        </CAPABILITY>
-        <CAPABILITY>
           <NAME>mod/data:approve</NAME>
           <PERMISSION>1</PERMISSION>
           <TIMEMODIFIED>1311692131</TIMEMODIFIED>
@@ -1240,12 +1228,6 @@
         </CAPABILITY>
         <CAPABILITY>
           <NAME>mod/data:viewentry</NAME>
-          <PERMISSION>1</PERMISSION>
-          <TIMEMODIFIED>1311692130</TIMEMODIFIED>
-          <MODIFIERID>0</MODIFIERID>
-        </CAPABILITY>
-        <CAPABILITY>
-          <NAME>mod/data:comment</NAME>
           <PERMISSION>1</PERMISSION>
           <TIMEMODIFIED>1311692130</TIMEMODIFIED>
           <MODIFIERID>0</MODIFIERID>

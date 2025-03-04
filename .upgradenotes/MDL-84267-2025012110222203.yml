@@ -1,0 +1,9 @@
+issueNumber: MDL-84267
+notes:
+  mod_data:
+    - message: |-
+        The following unused capabilities have been deprecated:
+
+        * `mod/data:comment`
+        * `mod/data:managecomments`
+      type: deprecated
