@@ -244,6 +244,8 @@ class manager {
     public static function queue_adhoc_task(adhoc_task $task, $checkforexisting = false) {
         global $DB;
 
+        $clock = \core\di::get(\core\clock::class);
+
         if ($userid = $task->get_userid()) {
             // User found. Check that they are suitable.
             \core_user::require_active_user(\core_user::get_user($userid, '*', MUST_EXIST), true, true);
@@ -252,13 +254,13 @@ class manager {
         $record = self::record_from_adhoc_task($task);
         // Schedule it immediately if nextruntime not explicitly set.
         if (!$task->get_next_run_time()) {
-            $record->nextruntime = time() - 1;
+            $record->nextruntime = $clock->time() - 1;
         }
 
         // Check if the task is allowed to be retried or not.
         $record->attemptsavailable = $task->retry_until_success() ? $record->attemptsavailable : 1;
         // Set the time the task was created.
-        $record->timecreated = time();
+        $record->timecreated = $clock->time();
 
         // Check if the same task is already scheduled.
         if ($checkforexisting && self::task_is_scheduled($task)) {
@@ -543,7 +545,9 @@ class manager {
     public static function get_adhoc_tasks_summary(): array {
         global $DB;
 
-        $now = time();
+        $clock = \core\di::get(\core\clock::class);
+
+        $now = $clock->time();
         $records = $DB->get_records('task_adhoc');
         $summary = [];
         foreach ($records as $r) {
@@ -1081,6 +1085,9 @@ class manager {
      */
     public static function adhoc_task_failed(adhoc_task $task) {
         global $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         // Finalise the log output.
         logmanager::finalise_log(true);
 
@@ -1108,7 +1115,7 @@ class manager {
         $task->set_timestarted();
         $task->set_hostname();
         $task->set_pid();
-        $task->set_next_run_time(time() + $delay);
+        $task->set_next_run_time($clock->time() + $delay);
         $task->set_fail_delay($delay);
         if ($task->get_attempts_available() > 0) {
             $task->set_attempts_available($task->get_attempts_available() - 1);
@@ -1136,7 +1143,8 @@ class manager {
         $hostname = (string)gethostname();
 
         if (empty($time)) {
-            $time = time();
+            $clock = \core\di::get(\core\clock::class);
+            $time = $clock->time();
         }
 
         $task->set_timestarted($time);
@@ -1187,6 +1195,9 @@ class manager {
      */
     public static function scheduled_task_failed(scheduled_task $task) {
         global $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         // Finalise the log output.
         logmanager::finalise_log(true);
 
@@ -1217,7 +1228,7 @@ class manager {
         $classname = self::get_canonical_class_name($task);
 
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
-        $record->nextruntime = time() + $delay;
+        $record->nextruntime = $clock->time() + $delay;
         $record->faildelay = $delay;
         $record->timestarted = null;
         $record->hostname = null;
@@ -1255,11 +1266,14 @@ class manager {
      */
     public static function scheduled_task_starting(scheduled_task $task, int $time = 0) {
         global $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         $pid = (int)getmypid();
         $hostname = (string)gethostname();
 
         if (!$time) {
-            $time = time();
+            $time = $clock->time();
         }
 
         $task->set_timestarted($time);
@@ -1284,6 +1298,8 @@ class manager {
     public static function scheduled_task_complete(scheduled_task $task) {
         global $DB;
 
+        $clock = \core\di::get(\core\clock::class);
+
         // Finalise the log output.
         logmanager::finalise_log();
         $task->set_timestarted();
@@ -1293,7 +1309,7 @@ class manager {
         $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
         if ($record) {
-            $record->lastruntime = time();
+            $record->lastruntime = $clock->time();
             $record->faildelay = 0;
             $record->nextruntime = $task->get_next_scheduled_time();
             $record->timestarted = null;
@@ -1318,10 +1334,13 @@ class manager {
      */
     public static function get_running_tasks($sort = ''): array {
         global $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         if (empty($sort)) {
             $sort = 'timestarted ASC, classname ASC';
         }
-        $params = ['now1' => time(), 'now2' => time()];
+        $params = ['now1' => $clock->time(), 'now2' => $clock->time()];
 
         $sql = "SELECT subquery.*
                   FROM (SELECT " . $DB->sql_concat("'s'", 'ts.id') . " as uniqueid,
@@ -1356,11 +1375,13 @@ class manager {
     public static function cleanup_metadata() {
         global $DB;
 
+        $clock = \core\di::get(\core\clock::class);
+
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
         $runningtasks = self::get_running_tasks();
 
         foreach ($runningtasks as $runningtask) {
-            if ($runningtask->timestarted > time() - HOURSECS) {
+            if ($runningtask->timestarted > $clock->time() - HOURSECS) {
                 continue;
             }
 
@@ -1422,15 +1443,18 @@ class manager {
      */
     public static function clear_static_caches() {
         global $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         // Do not use get/set config here because the caches cannot be relied on.
         $record = $DB->get_record('config', array('name'=>'scheduledtaskreset'));
         if ($record) {
-            $record->value = time();
+            $record->value = $clock->time();
             $DB->update_record('config', $record);
         } else {
             $record = new \stdClass();
             $record->name = 'scheduledtaskreset';
-            $record->value = time();
+            $record->value = $clock->time();
             $DB->insert_record('config', $record);
         }
     }
@@ -1730,12 +1754,15 @@ class manager {
      */
     public static function clean_failed_adhoc_tasks(): void {
         global $CFG, $DB;
+
+        $clock = \core\di::get(\core\clock::class);
+
         $difftime = !empty($CFG->task_adhoc_failed_retention) ?
             $CFG->task_adhoc_failed_retention : static::ADHOC_TASK_FAILED_RETENTION;
         $DB->delete_records_select(
             table: 'task_adhoc',
             select: 'attemptsavailable = 0 AND firststartingtime < :time',
-            params: ['time' => time() - $difftime],
+            params: ['time' => $clock->time() - $difftime],
         );
     }
 }
