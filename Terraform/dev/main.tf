@@ -54,6 +54,20 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+}
+
+resource "kubernetes_namespace" "custom_namespace" {
+  metadata {
+    name = "LearningHubMoodle"
+  }
+}
+
+
 resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
   name                  = "userpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
