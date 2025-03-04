@@ -14,25 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Behat steps definitions for drag and drop onto image.
- *
- * @package   gradereport_grader
- * @category  test
- * @copyright 2015 Oakland University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-
 /**
- * Steps definitions related with the drag and drop onto image question type.
+ * Behat step definitions for the grader report
  *
+ * @package   gradereport_grader
+ * @category  test
  * @copyright 2015 Oakland University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,41 +46,11 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
-     * Gets the grade item id from its name.
-     *
      * @deprecated since 4.2
-     * @todo MDL-77107 This will be deleted in Moodle 4.6.
-     * @throws Exception
-     * @param string $itemname
-     * @return int
      */
-    protected function get_grade_item_id($itemname) {
-
-        global $DB;
-
-        debugging('behat_gradereport_grader::get_grade_item_id() is deprecated, please use' .
-            ' behat_grades::get_grade_item_id() instead.', DEBUG_DEVELOPER);
-
-        if ($id = $DB->get_field('grade_items', 'id', array('itemname' => $itemname))) {
-            return $id;
-        }
-
-        // The course total is a special case.
-        if ($itemname === "Course total") {
-            if (!$id = $DB->get_field('grade_items', 'id', array('itemtype' => 'course'))) {
-                throw new Exception('The specified grade_item with name "' . $itemname . '" does not exist');
-            }
-            return $id;
-        }
-
-        // Find a category with the name.
-        if ($catid = $DB->get_field('grade_categories', 'id', array('fullname' => $itemname))) {
-            if ($id = $DB->get_field('grade_items', 'id', array('iteminstance' => $catid))) {
-                return $id;
-            }
-        }
-
-        throw new Exception('The specified grade_item with name "' . $itemname . '" does not exist');
+    #[\core\attribute\deprecated('behat_grades::get_grade_item_id', since: '4.2', mdl: 'MDL-77033', final: true)]
+    protected function get_grade_item_id() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
