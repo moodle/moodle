@@ -209,6 +209,13 @@ class rcube_message_header
     public $flags = [];
 
     /**
+     * Message annotations (RFC 5257)
+     *
+     * @var ?array
+     */
+    public $annotations;
+
+    /**
      * Extra flags (for the messages list)
      *
      * @var array
