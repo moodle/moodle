@@ -2,6 +2,9 @@
 // Bootstrap variables
 //
 
+// Prefix for all CSS variables
+$prefix: bs- !default;
+
 // Colors
 $white:    #fff !default;
 $gray-100: #f8f9fa !default;
@@ -71,7 +74,8 @@ $card-group-margin: .25rem;
 
 // Inputs
 $focus-ring-opacity: .75 !default;
-$input-border-color: $gray-500 !default;
+$input-border-color: var(--#{$prefix}gray-500) !default;
+$form-check-input-border: var(--#{$prefix}border-width) solid var(--#{$prefix}gray-500) !default;
 
 // Dropdowns
 $dropdown-link-hover-color: $white;
