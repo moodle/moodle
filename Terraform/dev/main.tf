@@ -349,12 +349,10 @@ data "azurerm_resource_group" "aks_node_rg" {
 }
 
 data "azurerm_virtual_network" "aks_vnet" {
-  name                = "aks-vnet" # Optional: Adjust this if you know the VNet name
   resource_group_name = data.azurerm_resource_group.aks_node_rg.name
 }
 
 data "azurerm_subnet" "aks_subnet" {
-  name                 = "aks-subnet" # Replace with the actual subnet name if needed
   virtual_network_name = data.azurerm_virtual_network.aks_vnet.name
   resource_group_name  = data.azurerm_virtual_network.aks_vnet.resource_group_name
 }
