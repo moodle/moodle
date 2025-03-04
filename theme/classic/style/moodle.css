@@ -29806,6 +29806,9 @@ span.editinstructions .alert-link {
   border-top: 1px solid #dee2e6;
   font-size: 0.875em;
 }
+.activity-item .activity-altcontent.activity-description ul:not(.activity-description ul ul) {
+  margin-bottom: 1rem;
+}
 .activity-item .activity-altcontent img {
   border-radius: 1rem;
 }
