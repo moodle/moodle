@@ -343,3 +343,33 @@ resource "azurerm_email_communication_service_domain" "EmailCommunicationService
   email_service_id    = azurerm_email_communication_service.EmailCommunicationService.id
   domain_management   = "CustomerManaged"
 }
+
+data "azurerm_resource_group" "aks_node_rg" {
+  name = azurerm_kubernetes_cluster.aks.node_resource_group
+}
+
+data "azurerm_virtual_network" "aks_vnet" {
+  name                = "aks-vnet" # Optional: Adjust this if you know the VNet name
+  resource_group_name = data.azurerm_resource_group.aks_node_rg.name
+}
+
+data "azurerm_subnet" "aks_subnet" {
+  name                 = "aks-subnet" # Replace with the actual subnet name if needed
+  virtual_network_name = data.azurerm_virtual_network.aks_vnet.name
+  resource_group_name  = data.azurerm_virtual_network.aks_vnet.resource_group_name
+}
+
+
+resource "azurerm_private_endpoint" "StoragePrivateEndpoint" {
+  name                = "StoragePrivateEndpoint"
+  location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
+  resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
+  subnet_id           = azurerm_subnet.aks_subnet.id
+
+  private_service_connection {
+    name                           = "storage-privateserviceconnection"
+    private_connection_resource_id = azurerm_storage_account.storage_account.id
+    subresource_names              = ["file"]
+    is_manual_connection           = false
+  }
+}
