@@ -64,6 +64,11 @@ class Location implements \JsonSerializable
      */
     public readonly ?string $timeZone;
 
+    /**
+     * @ignore
+     *
+     * @param array<string, mixed> $record
+     */
     public function __construct(array $record)
     {
         $this->averageIncome = $record['average_income'] ?? null;
@@ -75,6 +80,9 @@ class Location implements \JsonSerializable
         $this->timeZone = $record['time_zone'] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = [];

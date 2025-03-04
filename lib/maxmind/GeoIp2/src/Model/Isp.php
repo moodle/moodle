@@ -65,6 +65,8 @@ class Isp implements \JsonSerializable
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $raw
      */
     public function __construct(array $raw)
     {
@@ -81,6 +83,9 @@ class Isp implements \JsonSerializable
         $this->network = Util::cidr($ipAddress, $raw['prefix_len']);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function jsonSerialize(): ?array
     {
         $js = [];

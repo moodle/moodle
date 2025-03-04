@@ -14,14 +14,17 @@ abstract class AbstractNamedRecord implements \JsonSerializable
     public readonly ?string $name;
 
     /**
-     * @var array An array map where the keys are locale codes
-     *            and the values are names. This attribute is returned by all location
-     *            services and databases.
+     * @var array<string, string> An array map where the keys are locale codes
+     *                            and the values are names. This attribute is returned by all location
+     *                            services and databases.
      */
     public readonly array $names;
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $record
+     * @param list<string>         $locales
      */
     public function __construct(array $record, array $locales = ['en'])
     {
@@ -37,6 +40,9 @@ abstract class AbstractNamedRecord implements \JsonSerializable
         $this->name = null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = [];

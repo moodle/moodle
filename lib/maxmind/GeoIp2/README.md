@@ -266,11 +266,6 @@ You can keep your databases up to date with our
 [Learn more about GeoIP Update on our developer
 portal.](https://dev.maxmind.com/geoip/updating-databases?lang=en)
 
-There is also a third-party tool for updating databases using PHP and
-Composer. MaxMind does not offer support for this tool or maintain it.
-[Learn more about the Geoip2 Update tool for PHP and Composer on its
-GitHub page.](https://github.com/tronovav/geoip2-update)
-
 ## Web Service Client ##
 
 ### Usage ###
@@ -448,6 +443,6 @@ The GeoIP2 PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2013-2023 by MaxMind, Inc.
+This software is Copyright (c) 2013-2024 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

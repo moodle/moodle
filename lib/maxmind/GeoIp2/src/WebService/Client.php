@@ -14,6 +14,9 @@ use GeoIp2\Model\City;
 use GeoIp2\Model\Country;
 use GeoIp2\Model\Insights;
 use GeoIp2\ProviderInterface;
+use MaxMind\Exception\InsufficientFundsException;
+use MaxMind\Exception\IpAddressNotFoundException;
+use MaxMind\Exception\WebServiceException;
 use MaxMind\WebService\Client as WsClient;
 
 /**
@@ -55,30 +58,30 @@ class Client implements ProviderInterface
     private WsClient $client;
     private static string $basePath = '/geoip/v2.1';
 
-    public const VERSION = 'v3.0.0';
+    public const VERSION = 'v3.1.0';
 
     /**
      * Constructor.
      *
-     * @param int    $accountId  your MaxMind account ID
-     * @param string $licenseKey your MaxMind license key
-     * @param array  $locales    list of locale codes to use in name property
-     *                           from most preferred to least preferred
-     * @param array  $options    array of options. Valid options include:
-     *                           * `host` - The host to use when querying the web
-     *                           service. To query the GeoLite2 web service
-     *                           instead of the GeoIP2 web service, set the
-     *                           host to `geolite.info`. To query the Sandbox
-     *                           GeoIP2 web service instead of the production
-     *                           GeoIP2 web service, set the host to
-     *                           `sandbox.maxmind.com`. The sandbox allows you to
-     *                           experiment with the API without affecting your
-     *                           production data.
-     *                           * `timeout` - Timeout in seconds.
-     *                           * `connectTimeout` - Initial connection timeout in seconds.
-     *                           * `proxy` - The HTTP proxy to use. May include a schema, port,
-     *                           username, and password, e.g.,
-     *                           `http://username:password@127.0.0.1:10`.
+     * @param int                  $accountId  your MaxMind account ID
+     * @param string               $licenseKey your MaxMind license key
+     * @param list<string>         $locales    list of locale codes to use in name property
+     *                                         from most preferred to least preferred
+     * @param array<string, mixed> $options    array of options. Valid options include:
+     *                                         * `host` - The host to use when querying the web
+     *                                         service. To query the GeoLite2 web service
+     *                                         instead of the GeoIP2 web service, set the
+     *                                         host to `geolite.info`. To query the Sandbox
+     *                                         GeoIP2 web service instead of the production
+     *                                         GeoIP2 web service, set the host to
+     *                                         `sandbox.maxmind.com`. The sandbox allows you to
+     *                                         experiment with the API without affecting your
+     *                                         production data.
+     *                                         * `timeout` - Timeout in seconds.
+     *                                         * `connectTimeout` - Initial connection timeout in seconds.
+     *                                         * `proxy` - The HTTP proxy to use. May include a schema, port,
+     *                                         username, and password, e.g.,
+     *                                         `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
         int $accountId,
@@ -116,24 +119,23 @@ class Client implements ProviderInterface
      *                          address is provided, the address that the web service is called
      *                          from will be used.
      *
-     * @throws \GeoIp2\Exception\AddressNotFoundException if the address you
-     *                                                    provided is not in our database (e.g., a private address).
-     * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the account ID or license key that you provided
-     * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out
-     *                                                    of queries
-     * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
-     *                                                    invalid for some other reason.  This may indicate an issue
-     *                                                    with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error code or message was returned.
-     *                                           This could indicate a problem with the connection between
-     *                                           your server and the web service or that the web service
-     *                                           returned an invalid document or 500 error code
-     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
-     *                                           class to the above exceptions. It will be thrown directly
-     *                                           if a 200 status code is returned but the body is invalid.
-     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
-     *                                           passed to the method
+     * @throws AddressNotFoundException  if the address you provided is not in our database (e.g.,
+     *                                   a private address).
+     * @throws AuthenticationException   if there is a problem with the account ID or license key
+     *                                   that you provided
+     * @throws OutOfQueriesException     if your account is out of queries
+     * @throws InvalidRequestException   if your request was received by the web service but is
+     *                                   invalid for some other reason.  This may indicate an issue
+     *                                   with this API. Please report the error to MaxMind.
+     * @throws HttpException             if an unexpected HTTP error code or message was returned.
+     *                                   This could indicate a problem with the connection between
+     *                                   your server and the web service or that the web service
+     *                                   returned an invalid document or 500 error code
+     * @throws GeoIp2Exception           This serves as the parent
+     *                                   class to the above exceptions. It will be thrown directly
+     *                                   if a 200 status code is returned but the body is invalid.
+     * @throws \InvalidArgumentException if something other than a single IP address or "me" is
+     *                                   passed to the method
      */
     public function city(string $ipAddress = 'me'): City
     {
@@ -148,24 +150,23 @@ class Client implements ProviderInterface
      *                          address is provided, the address that the web service is called
      *                          from will be used.
      *
-     * @throws \GeoIp2\Exception\AddressNotFoundException if the address you provided is not in our database (e.g.,
-     *                                                    a private address).
-     * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the account ID or license key that you provided
-     * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out of queries
-     * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
-     *                                                    invalid for some other reason.  This may indicate an
-     *                                                    issue with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error
-     *                                           code or message was returned. This could indicate a problem
-     *                                           with the connection between your server and the web service
-     *                                           or that the web service returned an invalid document or 500
-     *                                           error code.
-     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent class to the above exceptions. It
-     *                                           will be thrown directly if a 200 status code is returned but
-     *                                           the body is invalid.
-     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
-     *                                           passed to the method
+     * @throws AddressNotFoundException  if the address you provided is not in our database (e.g.,
+     *                                   a private address).
+     * @throws AuthenticationException   if there is a problem with the account ID or license key that you provided
+     * @throws OutOfQueriesException     if your account is out of queries
+     * @throws InvalidRequestException   if your request was received by the web service but is
+     *                                   invalid for some other reason.  This may indicate an
+     *                                   issue with this API. Please report the error to MaxMind.
+     * @throws HttpException             if an unexpected HTTP error
+     *                                   code or message was returned. This could indicate a problem
+     *                                   with the connection between your server and the web service
+     *                                   or that the web service returned an invalid document or 500
+     *                                   error code.
+     * @throws GeoIp2Exception           This serves as the parent class to the above exceptions. It
+     *                                   will be thrown directly if a 200 status code is returned but
+     *                                   the body is invalid.
+     * @throws \InvalidArgumentException if something other than a single IP address or "me" is
+     *                                   passed to the method
      */
     public function country(string $ipAddress = 'me'): Country
     {
@@ -180,24 +181,23 @@ class Client implements ProviderInterface
      *                          address is provided, the address that the web service is called
      *                          from will be used.
      *
-     * @throws \GeoIp2\Exception\AddressNotFoundException if the address you
-     *                                                    provided is not in our database (e.g., a private address).
-     * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the account ID or license key that you provided
-     * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out
-     *                                                    of queries
-     * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
-     *                                                    invalid for some other reason.  This may indicate an
-     *                                                    issue with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error code or message was returned.
-     *                                           This could indicate a problem with the connection between
-     *                                           your server and the web service or that the web service
-     *                                           returned an invalid document or 500 error code
-     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
-     *                                           class to the above exceptions. It will be thrown directly
-     *                                           if a 200 status code is returned but the body is invalid.
-     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
-     *                                           passed to the method
+     * @throws AddressNotFoundException  if the address you provided is not in our database (e.g.,
+     *                                   a private address).
+     * @throws AuthenticationException   if there is a problem with the account ID or license key
+     *                                   that you provided
+     * @throws OutOfQueriesException     if your account is out of queries
+     * @throws InvalidRequestException   if your request was received by the web service but is
+     *                                   invalid for some other reason.  This may indicate an
+     *                                   issue with this API. Please report the error to MaxMind.
+     * @throws HttpException             if an unexpected HTTP error code or message was returned.
+     *                                   This could indicate a problem with the connection between
+     *                                   your server and the web service or that the web service
+     *                                   returned an invalid document or 500 error code
+     * @throws GeoIp2Exception           This serves as the parent
+     *                                   class to the above exceptions. It will be thrown directly
+     *                                   if a 200 status code is returned but the body is invalid.
+     * @throws \InvalidArgumentException if something other than a single IP address or "me" is
+     *                                   passed to the method
      */
     public function insights(string $ipAddress = 'me'): Insights
     {
@@ -217,7 +217,7 @@ class Client implements ProviderInterface
         try {
             $service = (new \ReflectionClass($class))->getShortName();
             $body = $this->client->get('GeoIP2 ' . $service, $path);
-        } catch (\MaxMind\Exception\IpAddressNotFoundException $ex) {
+        } catch (IpAddressNotFoundException $ex) {
             throw new AddressNotFoundException(
                 $ex->getMessage(),
                 $ex->getStatusCode(),
@@ -229,7 +229,7 @@ class Client implements ProviderInterface
                 $ex->getStatusCode(),
                 $ex
             );
-        } catch (\MaxMind\Exception\InsufficientFundsException $ex) {
+        } catch (InsufficientFundsException $ex) {
             throw new OutOfQueriesException(
                 $ex->getMessage(),
                 $ex->getStatusCode(),
@@ -250,7 +250,7 @@ class Client implements ProviderInterface
                 $ex->getUri(),
                 $ex
             );
-        } catch (\MaxMind\Exception\WebServiceException $ex) {
+        } catch (WebServiceException $ex) {
             throw new GeoIp2Exception(
                 $ex->getMessage(),
                 $ex->getCode(),
