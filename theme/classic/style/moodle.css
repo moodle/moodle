@@ -13388,7 +13388,7 @@ readers do not read off random characters that represent icons */
   --bs-heading-color: inherit;
   --bs-link-color: #0f6cbf;
   --bs-link-color-rgb: 15, 108, 191;
-  --bs-link-decoration: underline;
+  --bs-link-decoration: none;
   --bs-link-hover-color: #0c5699;
   --bs-link-hover-color-rgb: 12, 86, 153;
   --bs-code-color: #db1a74;
@@ -13641,7 +13641,7 @@ sup {
 
 a {
   color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
-  text-decoration: underline;
+  text-decoration: none;
 }
 a:hover {
   --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
@@ -15199,7 +15199,7 @@ progress {
   --bs-table-color: var(--bs-emphasis-color);
   --bs-table-bg: var(--bs-body-bg);
   --bs-table-border-color: var(--bs-border-color);
-  --bs-table-accent-bg: rgba(0, 0, 0, 0.03);
+  --bs-table-accent-bg: transparent;
   --bs-table-striped-color: var(--bs-emphasis-color);
   --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.05);
   --bs-table-active-color: var(--bs-emphasis-color);
@@ -15693,7 +15693,7 @@ textarea.form-control-lg {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  border: var(--bs-border-width) solid var(--bs-gray-500);
   print-color-adjust: exact;
 }
 .form-check-input[type=checkbox] {
@@ -16254,7 +16254,6 @@ textarea.form-control-lg {
   line-height: var(--bs-btn-line-height);
   color: var(--bs-btn-color);
   text-align: center;
-  text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
@@ -16594,7 +16593,7 @@ textarea.form-control-lg {
   --bs-btn-disabled-border-color: transparent;
   --bs-btn-box-shadow: 0 0 0 #000;
   --bs-btn-focus-shadow-rgb: 51, 130, 201;
-  text-decoration: underline;
+  text-decoration: none;
 }
 .btn-link:focus-visible {
   color: var(--bs-btn-color);
@@ -16916,7 +16915,6 @@ textarea.form-control-lg {
   font-weight: 400;
   color: var(--bs-dropdown-link-color);
   text-align: inherit;
-  text-decoration: none;
   white-space: nowrap;
   background-color: transparent;
   border: 0;
@@ -17091,7 +17089,6 @@ textarea.form-control-lg {
   font-size: var(--bs-nav-link-font-size);
   font-weight: var(--bs-nav-link-font-weight);
   color: var(--bs-nav-link-color);
-  text-decoration: none;
   background: none;
   border: 0;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
@@ -17252,7 +17249,6 @@ textarea.form-control-lg {
   margin-right: var(--bs-navbar-brand-margin-end);
   font-size: var(--bs-navbar-brand-font-size);
   color: var(--bs-navbar-brand-color);
-  text-decoration: none;
   white-space: nowrap;
 }
 .navbar-brand:hover, .navbar-brand:focus {
@@ -18022,7 +18018,6 @@ textarea.form-control-lg {
   padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
   font-size: var(--bs-pagination-font-size);
   color: var(--bs-pagination-color);
-  text-decoration: none;
   background-color: var(--bs-pagination-bg);
   border: var(--bs-pagination-border-width) solid var(--bs-pagination-border-color);
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -18323,7 +18318,6 @@ textarea.form-control-lg {
   display: block;
   padding: var(--bs-list-group-item-padding-y) var(--bs-list-group-item-padding-x);
   color: var(--bs-list-group-color);
-  text-decoration: none;
   background-color: var(--bs-list-group-bg);
   border: var(--bs-list-group-border-width) solid var(--bs-list-group-border-color);
 }
@@ -30000,7 +29994,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   display: inline-block;
 }
 .maincalendar .calendarmonth ul li > a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .maincalendar .calendarmonth ul li a[data-action=view-day-link] {
   overflow: hidden;
@@ -30082,7 +30076,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 .maincalendar .calendar_event_group a:has(> .icon):hover,
 .maincalendar .calendar_event_user a:has(> .icon):hover {
   color: #07345a;
-  text-decoration: underline;
+  text-decoration: none;
 }
 .maincalendar .calendar_event_category {
   border-color: #e0cbe0;
@@ -30247,7 +30241,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   margin: 0 0.1rem 0 0.4rem;
 }
 .block .calendar_filters li > a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .block .content h3.eventskey, .block .content .eventskey.h3 {
   margin-top: 0.5em;
@@ -33880,7 +33874,7 @@ table.question-bank-table th {
   text-align: left;
 }
 table.question-bank-table > tbody > tr.r1 {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: transparent;
 }
 table.question-bank-table > tbody > tr.highlight {
   border: 1px solid #008196;
@@ -36932,7 +36926,7 @@ img.userpicture {
 }
 .path-backup .mform .root_setting:nth-of-type(odd),
 .path-backup .mform .grouped_settings:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: transparent;
 }
 .path-backup .mform .root_setting:nth-of-type(even),
 .path-backup .mform .grouped_settings:nth-of-type(even) {
@@ -37105,14 +37099,14 @@ img.userpicture {
   border-top: calc(2 * var(--bs-border-width)) solid var(--bs-border-color);
 }
 .generaltable tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: transparent;
 }
 .generaltable thead .sticky-column,
 .generaltable tbody tr:nth-of-type(even) {
   background-color: #fff;
 }
 .generaltable tbody tr:nth-of-type(odd) .sticky-column {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: transparent;
 }
 .generaltable.table-sm th,
 .generaltable.table-sm td {
@@ -37940,7 +37934,7 @@ p.arrow_button {
   border: none;
 }
 .path-grade-report-user .user-grade.generaltable .levelodd {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: transparent;
 }
 .path-grade-report-user .user-grade.generaltable .leveleven {
   background-color: var(--bs-body-bg);
