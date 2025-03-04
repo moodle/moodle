@@ -19,7 +19,7 @@ spec:
       server: learninghubmoodledev.privatelink.file.core.windows.net
     nodeStageSecretRef:
       name: azure-secret
-      namespace: default
+      namespace: learninghubmoodle
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
