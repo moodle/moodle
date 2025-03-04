@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 5.0dev
+## 5.0dev+
 
 ### core
 
@@ -493,6 +493,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-78890](https://tracker.moodle.org/browse/MDL-78890)
 
+#### Removed
+
+- The `behat_gradereport_grader::get_grade_item_id` step helper has been removed, please use the equivalent `behat_grades` method instead
+
+  For more information see [MDL-77107](https://tracker.moodle.org/browse/MDL-77107)
+
 ### mod
 
 #### Removed
@@ -519,6 +525,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-81520](https://tracker.moodle.org/browse/MDL-81520)
 
 ### mod_data
+
+#### Deprecated
+
+- The following unused capabilities have been deprecated:
+
+  * `mod/data:comment`
+  * `mod/data:managecomments`
+
+  For more information see [MDL-84267](https://tracker.moodle.org/browse/MDL-84267)
 
 #### Removed
 

@@ -1,6 +1,15 @@
 # mod_data Upgrade notes
 
-## 5.0dev
+## 5.0dev+
+
+### Deprecated
+
+- The following unused capabilities have been deprecated:
+
+  * `mod/data:comment`
+  * `mod/data:managecomments`
+
+  For more information see [MDL-84267](https://tracker.moodle.org/browse/MDL-84267)
 
 ### Removed
 
