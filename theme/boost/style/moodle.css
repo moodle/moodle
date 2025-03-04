@@ -46906,7 +46906,7 @@ body.behat-site .custom-switch::before,
   color: var(--bs-body-color);
   vertical-align: middle;
   background: var(--bs-body-bg) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right 0.75rem center/8px 10px no-repeat;
-  border: var(--bs-border-width) solid #8f959e;
+  border: var(--bs-border-width) solid var(--bs-gray-500);
   border-radius: 0.5rem;
   appearance: none;
 }
@@ -47024,7 +47024,7 @@ body.behat-site .custom-file::before,
   line-height: 1.5;
   color: var(--bs-body-color);
   background-color: var(--bs-body-bg);
-  border: var(--bs-border-width) solid #8f959e;
+  border: var(--bs-border-width) solid var(--bs-gray-500);
   border-radius: var(--bs-border-radius);
 }
 .custom-file-label::after {
