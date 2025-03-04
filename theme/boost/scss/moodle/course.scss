@@ -830,7 +830,7 @@ $divider-hover-color: $primary !default;
         }
 
         &:after {
-            @extend .fa-solid;
+            font: var(--fa-font-solid);
             position: absolute;
             font-size: 20px;
             color: $gray-600;

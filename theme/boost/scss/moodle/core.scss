@@ -2926,7 +2926,7 @@ body.dragging {
 }
 
 .dropdown-toggle::after {
-    @extend .fa-solid;
+    font: var(--fa-font-solid);
     content: fa-content($fa-var-chevron-down);
     margin-right: 0;
     margin-left: 4px;
@@ -2944,7 +2944,7 @@ body.dragging {
 // TODO: Check if these are still needed.
 .dropleft .dropdown-toggle::before {
     border: 0;
-    @extend .fa-solid;
+    font: var(--fa-font-solid);
     content: fa-content($fa-var-chevron-left);
     font-size: 9px;
     margin-left: 0;
@@ -2958,7 +2958,7 @@ body.dragging {
 
 .dropright .dropdown-toggle::after {
     border: 0;
-    @extend .fa-solid;
+    font: var(--fa-font-solid);
     content: fa-content($fa-var-chevron-right);
 }
 
@@ -2969,7 +2969,7 @@ body.dragging {
 
 .dropup .dropdown-toggle::after {
     border: 0;
-    @extend .fa-solid;
+    font: var(--fa-font-solid);
     content: fa-content($fa-var-chevron-up);
 }
 
