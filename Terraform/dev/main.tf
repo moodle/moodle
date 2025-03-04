@@ -63,7 +63,7 @@ provider "kubernetes" {
 
 resource "kubernetes_namespace" "custom_namespace" {
   metadata {
-    name = "LearningHubMoodle"
+    name = "learninghubmoodle"
   }
 }
 
