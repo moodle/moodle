@@ -803,6 +803,8 @@ final class lib_test extends \advanced_testcase {
             'fullname' => 'Course 1 & 2',
             'shortname' => 'C1',
         ]);
+        $courseurl = course_get_url($course)->out();
+
         // Create users.
         $student = $this->getDataGenerator()->create_user();
         $teacher1 = $this->getDataGenerator()->create_user();
@@ -888,7 +890,7 @@ final class lib_test extends \advanced_testcase {
             instance: $maninstance,
             userid: $student->id,
             sendoption: ENROL_SEND_EMAIL_FROM_NOREPLY,
-            message: 'Your email address: {$a->email}, your first name: {$a->firstname}, your last name: {$a->lastname}',
+            message: 'Welcome to <a href="{$a->courselink}">{$a->coursename}</a>',
         );
         $messages = $messagesink->get_messages_by_component_and_type(
             'moodle',
@@ -901,9 +903,8 @@ final class lib_test extends \advanced_testcase {
         $this->assertEquals($noreplyuser->id, $message->useridfrom);
         $this->assertStringContainsString($course->fullname, $message->subject);
         $this->assertEquals(
-            'Your email address: ' . $student->email . ', your first name: ' . $student->firstname . ', your last name: ' .
-            $student->lastname,
-            $message->fullmessage,
+            "Welcome to <a href=\"{$courseurl}\">" . htmlentities($course->fullname) . "</a>",
+            $message->fullmessagehtml,
         );
         // Clear sink.
         $messagesink->clear();
