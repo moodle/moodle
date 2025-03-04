@@ -28,7 +28,7 @@
     ],
     "homepage": "https://github.com/openspout/openspout",
     "require": {
-        "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
         "ext-dom": "*",
         "ext-fileinfo": "*",
         "ext-filter": "*",
@@ -38,13 +38,13 @@
     },
     "require-dev": {
         "ext-zlib": "*",
-        "friendsofphp/php-cs-fixer": "^3.46.0",
-        "infection/infection": "^0.27.9",
-        "phpbench/phpbench": "^1.2.15",
-        "phpstan/phpstan": "^1.10.55",
-        "phpstan/phpstan-phpunit": "^1.3.15",
-        "phpstan/phpstan-strict-rules": "^1.5.2",
-        "phpunit/phpunit": "^10.5.5"
+        "friendsofphp/php-cs-fixer": "^3.68.3",
+        "infection/infection": "^0.29.10",
+        "phpbench/phpbench": "^1.4.0",
+        "phpstan/phpstan": "^2.1.2",
+        "phpstan/phpstan-phpunit": "^2.0.4",
+        "phpstan/phpstan-strict-rules": "^2",
+        "phpunit/phpunit": "^11.5.4"
     },
     "suggest": {
         "ext-iconv": "To handle non UTF-8 CSV files (if \"php-mbstring\" is not already installed or is too limited)",

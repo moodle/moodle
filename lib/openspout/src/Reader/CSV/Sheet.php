@@ -9,10 +9,10 @@ use OpenSpout\Reader\SheetInterface;
 /**
  * @implements SheetInterface<RowIterator>
  */
-final class Sheet implements SheetInterface
+final readonly class Sheet implements SheetInterface
 {
     /** @var RowIterator To iterate over the CSV's rows */
-    private readonly RowIterator $rowIterator;
+    private RowIterator $rowIterator;
 
     /**
      * @param RowIterator $rowIterator Corresponding row iterator

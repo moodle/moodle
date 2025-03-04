@@ -79,7 +79,7 @@ final class SharedStringsManager
 
         // Adding 1 to take into account the space between the last xml attribute and "count"
         fseek($this->sharedStringsFilePointer, $firstPartHeaderLength + 1);
-        fwrite($this->sharedStringsFilePointer, sprintf("%-{$defaultStringsCountPartLength}s", 'count="'.$this->numSharedStrings.'" uniqueCount="'.$this->numSharedStrings.'"'));
+        fwrite($this->sharedStringsFilePointer, \sprintf("%-{$defaultStringsCountPartLength}s", 'count="'.$this->numSharedStrings.'" uniqueCount="'.$this->numSharedStrings.'"'));
 
         fclose($this->sharedStringsFilePointer);
     }

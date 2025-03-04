@@ -365,7 +365,7 @@ All rights reserved.</copyright>
     <location>openspout</location>
     <name>OpenSpout</name>
     <description>Library to read and write spreadsheet files (CSV, XLSX and ODS).</description>
-    <version>4.23.0</version>
+    <version>4.28.5</version>
     <license>MIT</license>
     <repository>https://github.com/openspout/openspout</repository>
     <copyrights>

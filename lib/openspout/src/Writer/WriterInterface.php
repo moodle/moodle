@@ -41,6 +41,13 @@ interface WriterInterface
     public function addRow(Row $row): void;
 
     /**
+     * Set document creator.
+     *
+     * @param string $creator document creator
+     */
+    public function setCreator(string $creator): void;
+
+    /**
      * Appends the rows to the end of the stream.
      *
      * @param Row[] $rows The rows to be appended to the stream
@@ -50,13 +57,6 @@ interface WriterInterface
      * @throws IOException                        If unable to write data
      */
     public function addRows(array $rows): void;
-
-    /**
-     * Set document creator.
-     *
-     * @param string $creator document creator
-     */
-    public function setCreator(string $creator): void;
 
     /**
      * @return 0|positive-int

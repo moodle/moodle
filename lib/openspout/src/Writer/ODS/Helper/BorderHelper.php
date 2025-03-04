@@ -47,14 +47,14 @@ final class BorderHelper
         $definition = 'fo:border-%s="%s"';
 
         if (Border::STYLE_NONE === $borderPart->getStyle()) {
-            $borderPartDefinition = sprintf($definition, $borderPart->getName(), 'none');
+            $borderPartDefinition = \sprintf($definition, $borderPart->getName(), 'none');
         } else {
             $attributes = [
                 self::widthMap[$borderPart->getWidth()],
                 self::styleMap[$borderPart->getStyle()],
                 '#'.$borderPart->getColor(),
             ];
-            $borderPartDefinition = sprintf($definition, $borderPart->getName(), implode(' ', $attributes));
+            $borderPartDefinition = \sprintf($definition, $borderPart->getName(), implode(' ', $attributes));
         }
 
         return $borderPartDefinition;

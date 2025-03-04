@@ -49,6 +49,19 @@ final class Row
     }
 
     /**
+     * @param array<array-key, null|bool|DateInterval|DateTimeInterface|float|int|string> $cellValues
+     * @param array<array-key, Style>                                                     $columnStyles
+     */
+    public static function fromValuesWithStyles(array $cellValues = [], ?Style $rowStyle = null, array $columnStyles = []): self
+    {
+        $cells = array_map(static function (null|bool|DateInterval|DateTimeInterface|float|int|string $cellValue, int|string $key) use ($columnStyles): Cell {
+            return Cell::fromValue($cellValue, $columnStyles[$key] ?? null);
+        }, $cellValues, array_keys($cellValues));
+
+        return new self($cells, $rowStyle);
+    }
+
+    /**
      * @return Cell[] $cells
      */
     public function getCells(): array

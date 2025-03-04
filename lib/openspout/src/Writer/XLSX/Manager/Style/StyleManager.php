@@ -7,6 +7,7 @@ namespace OpenSpout\Writer\XLSX\Manager\Style;
 use OpenSpout\Common\Entity\Style\BorderPart;
 use OpenSpout\Common\Entity\Style\Color;
 use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Common\Helper\Escaper\XLSX as XLSXEscaper;
 use OpenSpout\Writer\Common\Manager\Style\AbstractStyleManager as CommonStyleManager;
 use OpenSpout\Writer\XLSX\Helper\BorderHelper;
 
@@ -17,9 +18,13 @@ use OpenSpout\Writer\XLSX\Helper\BorderHelper;
  */
 final class StyleManager extends CommonStyleManager
 {
-    public function __construct(StyleRegistry $styleRegistry)
+    /** @var XLSXEscaper Strings escaper */
+    private readonly XLSXEscaper $stringsEscaper;
+
+    public function __construct(StyleRegistry $styleRegistry, XLSXEscaper $stringsEscaper)
     {
         parent::__construct($styleRegistry);
+        $this->stringsEscaper = $stringsEscaper;
     }
 
     /**
@@ -91,7 +96,7 @@ final class StyleManager extends CommonStyleManager
             /** @var Style $style */
             $style = $this->styleRegistry->getStyleFromStyleId($styleId);
             $format = $style->getFormat();
-            $tags[] = '<numFmt numFmtId="'.$numFmtId.'" formatCode="'.$format.'"/>';
+            $tags[] = '<numFmt numFmtId="'.$numFmtId.'" formatCode="'.$this->stringsEscaper->escape($format).'"/>';
         }
         $content = '<numFmts count="'.\count($tags).'">';
         $content .= implode('', $tags);
@@ -147,7 +152,7 @@ final class StyleManager extends CommonStyleManager
 
         // Excel reserves two default fills
         $fillsCount = \count($registeredFills) + 2;
-        $content = sprintf('<fills count="%d">', $fillsCount);
+        $content = \sprintf('<fills count="%d">', $fillsCount);
 
         $content .= '<fill><patternFill patternType="none"/></fill>';
         $content .= '<fill><patternFill patternType="gray125"/></fill>';
@@ -158,7 +163,7 @@ final class StyleManager extends CommonStyleManager
             $style = $this->styleRegistry->getStyleFromStyleId($styleId);
 
             $backgroundColor = $style->getBackgroundColor();
-            $content .= sprintf(
+            $content .= \sprintf(
                 '<fill><patternFill patternType="solid"><fgColor rgb="%s"/></patternFill></fill>',
                 $backgroundColor
             );
@@ -236,22 +241,25 @@ final class StyleManager extends CommonStyleManager
                 $content .= ' applyFont="1"';
             }
 
-            $content .= sprintf(' applyBorder="%d"', (bool) $style->getBorder());
+            $content .= \sprintf(' applyBorder="%d"', (bool) $style->getBorder());
 
-            if ($style->shouldApplyCellAlignment() || $style->shouldApplyCellVerticalAlignment() || $style->hasSetWrapText() || $style->shouldShrinkToFit()) {
+            if ($style->shouldApplyCellAlignment() || $style->shouldApplyCellVerticalAlignment() || $style->hasSetWrapText() || $style->shouldShrinkToFit() || $style->hasSetTextRotation()) {
                 $content .= ' applyAlignment="1">';
                 $content .= '<alignment';
                 if ($style->shouldApplyCellAlignment()) {
-                    $content .= sprintf(' horizontal="%s"', $style->getCellAlignment());
+                    $content .= \sprintf(' horizontal="%s"', $style->getCellAlignment());
                 }
                 if ($style->shouldApplyCellVerticalAlignment()) {
-                    $content .= sprintf(' vertical="%s"', $style->getCellVerticalAlignment());
+                    $content .= \sprintf(' vertical="%s"', $style->getCellVerticalAlignment());
                 }
                 if ($style->hasSetWrapText()) {
                     $content .= ' wrapText="'.($style->shouldWrapText() ? '1' : '0').'"';
                 }
                 if ($style->shouldShrinkToFit()) {
                     $content .= ' shrinkToFit="true"';
+                }
+                if ($style->hasSetTextRotation()) {
+                    $content .= \sprintf(' textRotation="%s"', $style->textRotation());
                 }
 
                 $content .= '/>';

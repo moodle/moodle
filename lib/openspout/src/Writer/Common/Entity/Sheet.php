@@ -9,6 +9,7 @@ use OpenSpout\Writer\Common\ColumnWidth;
 use OpenSpout\Writer\Common\Manager\SheetManager;
 use OpenSpout\Writer\Exception\InvalidSheetNameException;
 use OpenSpout\Writer\XLSX\Entity\SheetView;
+use OpenSpout\Writer\XLSX\Options\SheetProtection;
 
 /**
  * External representation of a worksheet.
@@ -44,6 +45,8 @@ final class Sheet
 
     /** @var string rows to repeat at top */
     private ?string $printTitleRows = null;
+
+    private ?SheetProtection $sheetProtection = null;
 
     /**
      * @param 0|positive-int $sheetIndex           Index of the sheet, based on order in the workbook (zero-based)
@@ -218,5 +221,20 @@ final class Sheet
     public function setPrintTitleRows(string $printTitleRows): void
     {
         $this->printTitleRows = $printTitleRows;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSheetProtection(SheetProtection $sheetProtection): self
+    {
+        $this->sheetProtection = $sheetProtection;
+
+        return $this;
+    }
+
+    public function getSheetProtection(): ?SheetProtection
+    {
+        return $this->sheetProtection;
     }
 }

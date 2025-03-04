@@ -7,7 +7,7 @@ namespace OpenSpout\Reader\XLSX\Manager\SharedStringsCaching;
 /**
  * @internal
  */
-final class CachingStrategyFactory implements CachingStrategyFactoryInterface
+final readonly class CachingStrategyFactory implements CachingStrategyFactoryInterface
 {
     /**
      * The memory amount needed to store a string was obtained empirically from this data:.
@@ -50,7 +50,7 @@ final class CachingStrategyFactory implements CachingStrategyFactoryInterface
      */
     public const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
 
-    private readonly MemoryLimit $memoryLimit;
+    private MemoryLimit $memoryLimit;
 
     public function __construct(MemoryLimit $memoryLimit)
     {

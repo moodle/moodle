@@ -336,7 +336,7 @@ final class StyleManager extends CommonStyleManager
             return '';
         }
 
-        return sprintf(
+        return \sprintf(
             ' fo:text-align="%s" ',
             $this->transformCellAlignment($style->getCellAlignment())
         );
@@ -351,7 +351,7 @@ final class StyleManager extends CommonStyleManager
             return '';
         }
 
-        return sprintf(
+        return \sprintf(
             ' fo:vertical-align="%s" ',
             $this->transformCellVerticalAlignment($style->getCellVerticalAlignment())
         );
@@ -423,7 +423,7 @@ final class StyleManager extends CommonStyleManager
             return BorderHelper::serializeBorderPart($borderPart);
         }, $border->getParts());
 
-        return sprintf(' %s ', implode(' ', $borders));
+        return \sprintf(' %s ', implode(' ', $borders));
     }
 
     /**
@@ -431,6 +431,6 @@ final class StyleManager extends CommonStyleManager
      */
     private function getBackgroundColorXMLContent(string $bgColor): string
     {
-        return sprintf(' fo:background-color="#%s" ', $bgColor);
+        return \sprintf(' fo:background-color="#%s" ', $bgColor);
     }
 }
