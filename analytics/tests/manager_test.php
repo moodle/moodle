@@ -16,7 +16,7 @@
 
 namespace core_analytics;
 
-use core_analytics\tests\mlbackend_configuration_trait;
+use core_analytics\tests\mlbackend_helper_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +34,7 @@ require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
  * @covers    \core_analytics\manager
  */
 final class manager_test extends \advanced_testcase {
-    use mlbackend_configuration_trait;
+    use mlbackend_helper_trait;
 
     /**
      * test_deleted_context
@@ -50,6 +50,10 @@ final class manager_test extends \advanced_testcase {
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
+        // Create some courses.
+        $this->generate_courses(2, ['visible' => 0]);
+        $this->generate_courses(2, ['visible' => 1]);
+
         $target = \core_analytics\manager::get_target('test_target_course_level_shortname');
         $indicators = ['test_indicator_max', 'test_indicator_min', 'test_indicator_fullname'];
         foreach ($indicators as $key => $indicator) {
@@ -58,11 +62,6 @@ final class manager_test extends \advanced_testcase {
 
         $model = \core_analytics\model::create($target, $indicators);
         $modelobj = $model->get_model_obj();
-
-        $coursepredict1 = $this->getDataGenerator()->create_course(['visible' => 0]);
-        $coursepredict2 = $this->getDataGenerator()->create_course(['visible' => 0]);
-        $coursetrain1 = $this->getDataGenerator()->create_course(['visible' => 1]);
-        $coursetrain2 = $this->getDataGenerator()->create_course(['visible' => 1]);
 
         $model->enable('\core\analytics\time_splitting\no_splitting');
 

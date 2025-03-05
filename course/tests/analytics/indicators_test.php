@@ -16,7 +16,7 @@
 
 namespace core_course\analytics;
 
-use core_analytics\tests\mlbackend_configuration_trait;
+use core_analytics\tests\mlbackend_helper_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../../analytics/tests/fixtures/test_target_course_us
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class indicators_test extends \advanced_testcase {
-    use mlbackend_configuration_trait;
+    use mlbackend_helper_trait;
 
     /**
      * test_no_teacher
