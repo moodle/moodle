@@ -37117,6 +37117,10 @@ table .sticky-column {
   font-size: 3rem;
 }
 
+/**
+ * File buttons.scss.
+ * Contains styles for buttons.
+ */
 .singlebutton {
   display: inline-block;
 }
@@ -37152,163 +37156,184 @@ p.arrow_button {
   margin: 0 0 10px 5px;
 }
 
-.btn-icon {
-  --bs-btn-hover-bg: var(--bs-secondary-bg);
-  --bs-btn-border-radius: var(--bs-border-radius);
-  --bs-btn-padding-x: 0;
-  --bs-btn-padding-y: 0;
-  --bs-btn-font-size: 16px;
-  height: calc(16px + 1rem);
-  width: calc(16px + 1rem);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.btn-icon .icon {
-  margin: 0;
-}
-.btn-icon.icon-size-0 {
-  height: calc(0 + 1rem);
-  width: calc(0 + 1rem);
-  --bs-btn-font-size: 0;
-  --bs-btn-line-height: 0;
-}
-.btn-icon.icon-size-1 {
-  height: calc(4px + 1rem);
-  width: calc(4px + 1rem);
-  --bs-btn-font-size: 4px;
-  --bs-btn-line-height: 4px;
-}
-.btn-icon.icon-size-2 {
-  height: calc(8px + 1rem);
-  width: calc(8px + 1rem);
-  --bs-btn-font-size: 8px;
-  --bs-btn-line-height: 8px;
-}
-.btn-icon.icon-size-3 {
-  height: calc(16px + 1rem);
-  width: calc(16px + 1rem);
-  --bs-btn-font-size: 16px;
-  --bs-btn-line-height: 16px;
-}
-.btn-icon.icon-size-4 {
-  height: calc(24px + 1rem);
-  width: calc(24px + 1rem);
-  --bs-btn-font-size: 24px;
-  --bs-btn-line-height: 24px;
-}
-.btn-icon.icon-size-5 {
-  height: calc(32px + 1rem);
-  width: calc(32px + 1rem);
-  --bs-btn-font-size: 32px;
-  --bs-btn-line-height: 32px;
-}
-.btn-icon.icon-size-6 {
-  height: calc(40px + 1rem);
-  width: calc(40px + 1rem);
-  --bs-btn-font-size: 40px;
-  --bs-btn-line-height: 40px;
-}
-.btn-icon.icon-size-7 {
-  height: calc(48px + 1rem);
-  width: calc(48px + 1rem);
-  --bs-btn-font-size: 48px;
-  --bs-btn-line-height: 48px;
-}
-
-.btn-icon.icons-collapse-expand {
-  color: #0f6cbf;
-  background-color: #e7f0f9;
-}
-.btn-icon.icons-collapse-expand:hover {
-  outline: 2px solid #0f6cbf;
-}
-
-.btn-primary:focus, .btn-primary.focus {
-  outline: 0.25rem solid #000102;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-secondary:focus, .btn-secondary.focus {
-  outline: 0.25rem solid #5f6e7d;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-success:focus, .btn-success.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-info:focus, .btn-info.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-warning:focus, .btn-warning.focus {
-  outline: 0.25rem solid #694109;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-danger:focus, .btn-danger.focus {
-  outline: 0.25rem solid #1a0604;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-light:focus, .btn-light.focus {
-  outline: 0.25rem solid #8193a5;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-dark:focus, .btn-dark.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #fff;
-}
-
-.btn-outline-primary:focus, .btn-outline-primary.focus {
-  outline: 0.25rem solid #000102;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-secondary:focus, .btn-outline-secondary.focus {
-  outline: 0.25rem solid #5f6e7d;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-success:focus, .btn-outline-success.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-info:focus, .btn-outline-info.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-warning:focus, .btn-outline-warning.focus {
-  outline: 0.25rem solid #694109;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-danger:focus, .btn-outline-danger.focus {
-  outline: 0.25rem solid #1a0604;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-light:focus, .btn-outline-light.focus {
-  outline: 0.25rem solid #8193a5;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
-.btn-outline-dark:focus, .btn-outline-dark.focus {
-  outline: 0.25rem solid black;
-  box-shadow: inset 0 0 0 2px #343a40;
-}
-
+/* Small buttons should have the same border-radius as the normal buttons. */
 .btn-sm,
 .btn-group-sm > .btn {
   --bs-btn-border-radius: var(--bs-border-radius);
 }
 
+/**
+ * Focus styles to improve Bootstrap default contrast.
+ */
+.btn:focus-visible, .btn.focus {
+  outline: 0.25rem solid #5f6e7d;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-primary:focus-visible, .btn-primary.focus {
+  outline: 0.25rem solid #000102;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-secondary:focus-visible, .btn-secondary.focus {
+  outline: 0.25rem solid #5f6e7d;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-success:focus-visible, .btn-success.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-info:focus-visible, .btn-info.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-warning:focus-visible, .btn-warning.focus {
+  outline: 0.25rem solid #694109;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-danger:focus-visible, .btn-danger.focus {
+  outline: 0.25rem solid #1a0604;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-light:focus-visible, .btn-light.focus {
+  outline: 0.25rem solid #8193a5;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-dark:focus-visible, .btn-dark.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-outline-primary:focus-visible, .btn-outline-primary.focus {
+  outline: 0.25rem solid #000102;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-secondary:focus-visible, .btn-outline-secondary.focus {
+  outline: 0.25rem solid #5f6e7d;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-success:focus-visible, .btn-outline-success.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-info:focus-visible, .btn-outline-info.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-warning:focus-visible, .btn-outline-warning.focus {
+  outline: 0.25rem solid #694109;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-danger:focus-visible, .btn-outline-danger.focus {
+  outline: 0.25rem solid #1a0604;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-light:focus-visible, .btn-outline-light.focus {
+  outline: 0.25rem solid #8193a5;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+.btn-outline-dark:focus-visible, .btn-outline-dark.focus {
+  outline: 0.25rem solid black;
+  box-shadow: inset 0 0 0 2px #343a40;
+}
+
+/**
+ * Icon buttons.
+ */
+.btn.btn-icon {
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.btn.btn-icon:hover, .btn.btn-icon:focus {
+  background-color: #e9ecef;
+}
+.btn.btn-icon:focus-visible, .btn.btn-icon.focus {
+  outline: 0.25rem solid #5f6e7d;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+.btn.btn-icon.icon-size-0 {
+  height: 20px !important; /* stylelint-disable-line declaration-no-important */
+  width: 20px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 0 !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-1 {
+  height: 24px !important; /* stylelint-disable-line declaration-no-important */
+  width: 25px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 4px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-2 {
+  height: 28px !important; /* stylelint-disable-line declaration-no-important */
+  width: 30px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 8px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-3 {
+  height: 36px !important; /* stylelint-disable-line declaration-no-important */
+  width: 40px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 16px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-4 {
+  height: 44px !important; /* stylelint-disable-line declaration-no-important */
+  width: 50px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 24px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-5 {
+  height: 52px !important; /* stylelint-disable-line declaration-no-important */
+  width: 60px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 32px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-6 {
+  height: 60px !important; /* stylelint-disable-line declaration-no-important */
+  width: 70px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 40px !important; /* stylelint-disable-line declaration-no-important */
+}
+.btn.btn-icon.icon-size-7 {
+  height: 68px !important; /* stylelint-disable-line declaration-no-important */
+  width: 80px !important; /* stylelint-disable-line declaration-no-important */
+  font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
+  line-height: 48px !important; /* stylelint-disable-line declaration-no-important */
+}
+
+/* Specific styles for the collapse/expand buttons. */
+.btn.btn-icon.icons-collapse-expand {
+  color: #0f6cbf;
+  background-color: #e7f0f9;
+}
+.btn.btn-icon.icons-collapse-expand:hover {
+  outline: 2px solid #0f6cbf;
+}
+.btn.btn-icon.icons-collapse-expand:focus-visible, .btn.btn-icon.icons-collapse-expand.focus {
+  outline: 0.25rem solid #3481c1;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+/**
+ * Subtle buttons.
+ */
 .btn-subtle-primary {
   --bs-btn-font-weight: 700;
   --bs-btn-color: var(--bs-primary-text-emphasis);
@@ -37319,7 +37344,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-primary);
   --bs-btn-focus-shadow-rgb: 15, 108, 191;
 }
-.btn-subtle-primary:focus, .btn-subtle-primary.focus {
+.btn-subtle-primary:focus-visible, .btn-subtle-primary.focus {
   outline: 0.25rem solid #000102;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37334,7 +37359,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-secondary);
   --bs-btn-focus-shadow-rgb: 206, 212, 218;
 }
-.btn-subtle-secondary:focus, .btn-subtle-secondary.focus {
+.btn-subtle-secondary:focus-visible, .btn-subtle-secondary.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37349,7 +37374,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-success);
   --bs-btn-focus-shadow-rgb: 53, 122, 50;
 }
-.btn-subtle-success:focus, .btn-subtle-success.focus {
+.btn-subtle-success:focus-visible, .btn-subtle-success.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37364,7 +37389,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-info);
   --bs-btn-focus-shadow-rgb: 0, 129, 150;
 }
-.btn-subtle-info:focus, .btn-subtle-info.focus {
+.btn-subtle-info:focus-visible, .btn-subtle-info.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37379,7 +37404,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-warning);
   --bs-btn-focus-shadow-rgb: 240, 173, 78;
 }
-.btn-subtle-warning:focus, .btn-subtle-warning.focus {
+.btn-subtle-warning:focus-visible, .btn-subtle-warning.focus {
   outline: 0.25rem solid #694109;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37394,7 +37419,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-danger);
   --bs-btn-focus-shadow-rgb: 202, 49, 32;
 }
-.btn-subtle-danger:focus, .btn-subtle-danger.focus {
+.btn-subtle-danger:focus-visible, .btn-subtle-danger.focus {
   outline: 0.25rem solid #1a0604;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37409,7 +37434,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-light);
   --bs-btn-focus-shadow-rgb: 248, 249, 250;
 }
-.btn-subtle-light:focus, .btn-subtle-light.focus {
+.btn-subtle-light:focus-visible, .btn-subtle-light.focus {
   outline: 0.25rem solid #8193a5;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37424,7 +37449,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-dark);
   --bs-btn-focus-shadow-rgb: 29, 33, 37;
 }
-.btn-subtle-dark:focus, .btn-subtle-dark.focus {
+.btn-subtle-dark:focus-visible, .btn-subtle-dark.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37438,7 +37463,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-gray-600);
   --bs-btn-focus-shadow-rgb: 106, 115, 123;
 }
-.btn-subtle-body:focus, .btn-subtle-body.focus {
+.btn-subtle-body:focus-visible, .btn-subtle-body.focus {
   outline: 0.25rem solid #0c0d0d;
   box-shadow: inset 0 0 0 2px #fff;
 }
