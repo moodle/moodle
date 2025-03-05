@@ -1,0 +1,7 @@
+issueNumber: MDL-78778
+notes:
+  core_auth:
+    - message: >-
+        Cas authentication is removed from core and added to the following git repository:
+        https://github.com/moodlehq/moodle-auth_cas
+      type: removed

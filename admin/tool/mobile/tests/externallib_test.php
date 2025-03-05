@@ -124,17 +124,14 @@ final class externallib_test extends externallib_advanced_testcase {
         set_config('supportemail', 'test@test.com');
         set_config('supportavailability', CONTACT_SUPPORT_ANYONE);
 
-        // Enable couple of issuers.
+        // Enable an issuer.
         $issuer = \core\oauth2\api::create_standard_issuer('google');
         $irecord = $issuer->to_record();
         $irecord->clientid = 'mock';
         $irecord->clientsecret = 'mock';
         \core\oauth2\api::update_issuer($irecord);
 
-        set_config('hostname', 'localhost', 'auth_cas');
-        set_config('auth_logo', 'http://invalidurl.com//invalid/', 'auth_cas');
-        set_config('auth_name', 'CAS', 'auth_cas');
-        set_config('auth', 'oauth2,cas');
+        set_config('auth', 'oauth2');
 
         list($authinstructions, $notusedformat) = \core_external\util::format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
@@ -159,26 +156,15 @@ final class externallib_test extends externallib_advanced_testcase {
 
         $result = external::get_public_config();
         $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
-        // First check providers.
-        $identityproviders = $result['identityproviders'];
+
+        // First check the provider.
+        $identityprovider = $result['identityproviders'];
         unset($result['identityproviders']);
 
-        $this->assertEquals('Google', $identityproviders[0]['name']);
-        $this->assertEquals($irecord->image, $identityproviders[0]['iconurl']);
-        $this->assertStringContainsString($CFG->wwwroot, $identityproviders[0]['url']);
-
-        $this->assertEquals('CAS', $identityproviders[1]['name']);
-        $this->assertEmpty($identityproviders[1]['iconurl']);
-        $this->assertStringContainsString($CFG->wwwroot, $identityproviders[1]['url']);
-
+        $this->assertEquals('Google', $identityprovider[0]['name']);
+        $this->assertEquals($irecord->image, $identityprovider[0]['iconurl']);
+        $this->assertStringContainsString($CFG->wwwroot, $identityprovider[0]['url']);
         $this->assertEquals($expected, $result);
-
-        // Change providers img.
-        $newurl = 'validimage.png';
-        set_config('auth_logo', $newurl, 'auth_cas');
-        $result = external::get_public_config();
-        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
-        $this->assertStringContainsString($newurl, $result['identityproviders'][1]['iconurl']);
     }
 
     /**

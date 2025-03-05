@@ -1464,5 +1464,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025022100.02);
     }
 
+    // Uninstall auth_cas and remove dependencies.
+    if ($oldversion < 2025030500.00) {
+        if (!file_exists($CFG->dirroot . "/auth/cas/version.php")) {
+            uninstall_plugin('auth', 'cas');
+
+            // Remove the sensiblesettings config for auth_cas.
+            $sensiblesettingsraw = explode(',', get_config('adminpresets', 'sensiblesettings'));
+            $sensiblesettings = array_map('trim', $sensiblesettingsraw);
+
+            if (($key = array_search('bind_pw@@auth_cas', $sensiblesettings)) !== false) {
+                unset($sensiblesettings[$key]);
+            }
+            $sensiblesettings = implode(', ', $sensiblesettings);
+            set_config('sensiblesettings', $sensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030500.00);
+    }
+
     return true;
 }

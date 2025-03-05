@@ -2955,7 +2955,7 @@ EOF;
      */
     public static function update_internal_user_password_no_cache_provider(): array {
         return [
-            'Password is not empty' => ['cas', 'wonkawonka'],
+            'Password is not empty' => ['db', 'wonkawonka'],
             'Password is an empty string' => ['oauth2', ''],
             'Password is null' => ['oauth2', null],
         ];
@@ -2970,7 +2970,7 @@ EOF;
 
         $user = $this->getDataGenerator()->create_user(array('password' => 'test'));
         $this->assertNotEquals(AUTH_PASSWORD_NOT_CACHED, $user->password);
-        $user->auth = 'cas'; // Change to a auth that does not store passwords.
+        $user->auth = 'db'; // Change to a auth that does not store passwords.
 
         $sink = $this->redirectEvents();
         update_internal_user_password($user, 'wonkawonka');
