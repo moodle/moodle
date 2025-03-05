@@ -26,6 +26,7 @@ $string['buttontitle'] = 'No auto-link';
 $string['infoaddsuccess'] = 'Auto-link prevention added.';
 $string['infoemptyselection'] = 'Select text and try again.';
 $string['inforemovesuccess'] = 'Auto-link prevention removed.';
+$string['noautolink:use'] = 'Use TinyMCE no auto-link';
 $string['pluginname'] = 'No auto-link';
 $string['privacy:metadata'] = 'The tiny_noautolink plugin does not store any personal data.';
 

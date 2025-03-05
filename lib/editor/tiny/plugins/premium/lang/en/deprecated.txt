@@ -1,1 +1,2 @@
 helplinktext,tiny_premium
+premium:accesspremium,tiny_premium

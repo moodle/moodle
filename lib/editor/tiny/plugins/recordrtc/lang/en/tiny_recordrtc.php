@@ -78,6 +78,7 @@ $string['recordinguploaded'] = 'Recording uploaded';
 $string['recordrtc:recordaudio'] = 'Record audio in the text editor';
 $string['recordrtc:recordscreen'] = 'Record screen in the text editor';
 $string['recordrtc:recordvideo'] = 'Record video in the text editor';
+$string['recordrtc:use'] = 'Use TinyMCE RecordRTC';
 $string['resume'] = 'Resume';
 $string['screenbitrate'] = 'Screen bitrate';
 $string['screenbitrate_desc'] = 'Quality of screen recording (a larger number means higher quality).';

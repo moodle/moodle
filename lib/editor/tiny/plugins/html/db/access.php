@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny media plugin version details.
+ * Capabilities for the tiny_html plugin.
  *
- * @package    tiny_recordrtc
- * @copyright  2022 Stevani Andolo <stevani@hotmail.com.au>
+ * @package    tiny_html
+ * @copyright  2025 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025021700;
-$plugin->requires  = 2024100100;
-$plugin->component = 'tiny_recordrtc';
+$capabilities = [
+    'tiny/html:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

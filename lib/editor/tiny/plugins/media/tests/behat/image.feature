@@ -84,3 +84,39 @@ Feature: Use the TinyMCE editor to upload an image
     Then I should see "750" in the "#currentcount" "css_element"
     And I set the field "How would you describe this image to someone who can't see it?" to "Lorem ipsum dolor sit amet."
     And I should see "27" in the "#currentcount" "css_element"
+
+  @javascript
+  Scenario: Permissions can be configured to control access to media
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | format |
+      | Course 1 | C1        | topics |
+    And the following "roles" exist:
+      | name           | shortname | description         | archetype      |
+      | Custom teacher | custom1   | Limited permissions | editingteacher |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | teacher2 | C1     | custom1        |
+    And the following "activity" exists:
+      | activity | assign          |
+      | course   | C1              |
+      | name     | Test assignment |
+    And the following "permission overrides" exist:
+      | capability     | permission | role    | contextlevel | reference |
+      | tiny/media:use | Prohibit   | custom1 | Course       | C1        |
+    # Check plugin access as a role with prohibited permissions.
+    And I log in as "teacher2"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    When I click on the "Insert" menu item for the "Activity instructions" TinyMCE editor
+    Then I should not see "Multimedia"
+    # Check plugin access as a role with allowed permissions.
+    And I log in as "teacher1"
+    And I am on the "Test assignment" Activity page
+    And I navigate to "Settings" in current page administration
+    And I click on the "Insert" menu item for the "Activity instructions" TinyMCE editor
+    And I should see "Multimedia"
