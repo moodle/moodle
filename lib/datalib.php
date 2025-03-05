@@ -382,12 +382,10 @@ function users_order_by_sql(string $usertablealias = '', ?string $search = null,
     }
 
     $exactconditions = array();
-    $paramkey = 'usersortexact1';
 
     $exactconditions[] = $DB->sql_fullname($tableprefix . 'firstname', $tableprefix  . 'lastname') .
-            ' = :' . $paramkey;
-    $params[$paramkey] = $search;
-    $paramkey++;
+            ' = :usersortexact';
+    $params['usersortexact'] = $search;
 
     if ($customfieldmappings) {
         $fieldstocheck = array_merge([$tableprefix . 'firstname', $tableprefix . 'lastname'], array_values($customfieldmappings));
@@ -399,9 +397,8 @@ function users_order_by_sql(string $usertablealias = '', ?string $search = null,
     }
 
     foreach ($fieldstocheck as $key => $field) {
-        $exactconditions[] = 'LOWER(' . $field . ') = LOWER(:' . $paramkey . ')';
-        $params[$paramkey] = $search;
-        $paramkey++;
+        $exactconditions[] = 'LOWER(' . $field . ') = LOWER(:usersortfield' . $key . ')';
+        $params['usersortfield' . $key] = $search;
     }
 
     $sort = 'CASE WHEN ' . implode(' OR ', $exactconditions) .
