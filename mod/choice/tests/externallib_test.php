@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @category   external
  * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mod_choice_external
  */
 final class externallib_test extends externallib_advanced_testcase {
 
@@ -142,6 +143,176 @@ final class externallib_test extends externallib_advanced_testcase {
         }
         // But we can see totals and percentages.
         $this->assertEquals(1, $resultsarr[$myanswer]['numberofuser']);
+    }
+
+    /**
+     * Test get_choice_results using groups.
+     */
+    public function test_get_choice_results_with_groups(): void {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
+
+        // Create 3 choices: one with separate groups, one with visible groups and one with no groups.
+        $commonparams = [
+            'course' => $course->id,
+            'option' => ['fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza'],
+            'name' => 'Separate groups choice',
+            'showresults' => CHOICE_SHOWRESULTS_ALWAYS,
+            'publish' => 1,
+        ];
+
+        $nogroupschoice = $choicegenerator->create_instance(array_merge($commonparams, ['groupmode' => NOGROUPS]));
+        $separatechoice = $choicegenerator->create_instance(array_merge($commonparams, ['groupmode' => SEPARATEGROUPS]));
+        $visiblechoice = $choicegenerator->create_instance(array_merge($commonparams, ['groupmode' => VISIBLEGROUPS]));
+        $nogroupsoptions = array_keys(choice_get_choice($nogroupschoice->id)->option);
+        $separateoptions = array_keys(choice_get_choice($separatechoice->id)->option);
+        $visibleoptions = array_keys(choice_get_choice($visiblechoice->id)->option);
+        $nogroupscm = get_coursemodule_from_id('choice', $nogroupschoice->cmid);
+        $separatecm = get_coursemodule_from_id('choice', $separatechoice->cmid);
+        $visiblecm = get_coursemodule_from_id('choice', $visiblechoice->cmid);
+
+        // Enrol 3 students in the course. One student will have no group, the others will belong one to each group.
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+        $studentnogroup = $this->getDataGenerator()->create_user();
+
+        self::getDataGenerator()->enrol_user($student1->id,  $course->id, 'student');
+        self::getDataGenerator()->enrol_user($student2->id,  $course->id, 'student');
+        self::getDataGenerator()->enrol_user($studentnogroup->id,  $course->id, 'student');
+
+        groups_add_member($group1, $student1);
+        groups_add_member($group2, $student2);
+
+        // Add answers for both users in all choices.
+        $this->setUser($student1);
+        choice_user_submit_response($nogroupsoptions[0], $nogroupschoice, $student1->id, $course, $nogroupscm);
+        choice_user_submit_response($separateoptions[0], $separatechoice, $student1->id, $course, $separatecm);
+        choice_user_submit_response($visibleoptions[0], $visiblechoice, $student1->id, $course, $visiblecm);
+
+        $this->setUser($student2);
+        choice_user_submit_response($nogroupsoptions[1], $nogroupschoice, $student2->id, $course, $nogroupscm);
+        choice_user_submit_response($separateoptions[1], $separatechoice, $student2->id, $course, $separatecm);
+        choice_user_submit_response($visibleoptions[1], $visiblechoice, $student2->id, $course, $visiblecm);
+
+        // No groups: check that the groupid parameter is ignored.
+        $results = mod_choice_external::get_choice_results($nogroupschoice->id, $group1->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$nogroupsoptions[0]][0]['userid'], $student1->id);
+        $this->assertEquals($resultsarr[$nogroupsoptions[1]][0]['userid'], $student2->id);
+
+        $results = mod_choice_external::get_choice_results($nogroupschoice->id, $group2->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$nogroupsoptions[0]][0]['userid'], $student1->id);
+        $this->assertEquals($resultsarr[$nogroupsoptions[1]][0]['userid'], $student2->id);
+
+        // Separate groups: check that students can only see results of the group they belong.
+        $this->setUser($student1);
+        $results = mod_choice_external::get_choice_results($separatechoice->id, $group1->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$separateoptions[0]][0]['userid'], $student1->id);
+        $this->assertCount(0, $resultsarr[$separateoptions[1]]); // The answer for the group 2 is not returned.
+
+        try {
+            mod_choice_external::get_choice_results($separatechoice->id, $group2->id);
+            $this->fail('Exception expected due to not visible group.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('notingroup', $e->errorcode);
+        }
+
+        try {
+            mod_choice_external::get_choice_results($separatechoice->id, 0); // All participants also throws error.
+            $this->fail('Exception expected due to not visible group.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('notingroup', $e->errorcode);
+        }
+
+        $this->setUser($student2);
+        $results = mod_choice_external::get_choice_results($separatechoice->id, $group2->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$separateoptions[1]][0]['userid'], $student2->id);
+        $this->assertCount(0, $resultsarr[$separateoptions[0]]); // The answer for the group 1 is not returned.
+
+        try {
+            mod_choice_external::get_choice_results($separatechoice->id, $group1->id);
+            $this->fail('Exception expected due to not visible group.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('notingroup', $e->errorcode);
+        }
+
+        // Visible groups: check that students can see results of all groups, including 'All participants'.
+        $this->setUser($student1);
+        $results = mod_choice_external::get_choice_results($visiblechoice->id, $group1->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$visibleoptions[0]][0]['userid'], $student1->id);
+        $this->assertCount(0, $resultsarr[$visibleoptions[1]]); // The answer for the other group is not returned.
+
+        $results = mod_choice_external::get_choice_results($visiblechoice->id, $group2->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$visibleoptions[1]][0]['userid'], $student2->id);
+        $this->assertCount(0, $resultsarr[$visibleoptions[0]]); // The answer for the other group is not returned.
+
+        $results = mod_choice_external::get_choice_results($visiblechoice->id, 0);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$visibleoptions[0]][0]['userid'], $student1->id);
+        $this->assertEquals($resultsarr[$visibleoptions[1]][0]['userid'], $student2->id);
+
+        // User with no groups can view results for the visible groups choice, but not for separate groups.
+        $this->setUser($studentnogroup);
+        $results = mod_choice_external::get_choice_results($visiblechoice->id, 0);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        $resultsarr = [];
+        foreach ($results['options'] as $option) {
+            $resultsarr[$option['id']] = $option['userresponses'];
+        }
+        $this->assertEquals($resultsarr[$visibleoptions[0]][0]['userid'], $student1->id);
+        $this->assertEquals($resultsarr[$visibleoptions[1]][0]['userid'], $student2->id);
+
+        try {
+            mod_choice_external::get_choice_results($separatechoice->id, 0);
+            $this->fail('Exception expected due to not visible group.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('notingroup', $e->errorcode);
+        }
     }
 
     /**
