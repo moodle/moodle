@@ -88,16 +88,6 @@ class usage extends system_report {
             'user:fullnamewithlink',
         ]);
 
-        $this->get_column('ai_action_register:provider')
-            ->add_callback(static function(string $output): string {
-                if (get_string_manager()->string_exists('pluginname', $output)) {
-                    return get_string('pluginname', $output);
-                } else {
-                    // Return as is if the lang string does not exist.
-                    return $output;
-                }
-            });
-
         // It's possible to set a default initial sort direction for one column.
         $this->set_initial_sort_column('ai_action_register:timecreated', SORT_DESC);
     }
