@@ -1,0 +1,9 @@
+issueNumber: MDL-79162
+notes:
+  core_badges:
+    - message: |-
+        The following previously deprecated renderer methods have been removed:
+
+        * `print_badge_table_actions`
+        * `render_badge_management`
+      type: removed
