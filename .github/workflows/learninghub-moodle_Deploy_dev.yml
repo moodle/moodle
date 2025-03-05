@@ -139,16 +139,6 @@ jobs:
           az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
           az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
 
-      - name: Get storage account id
-        id: get_storage_account_id
-        run: |
-          STORAGE_ACCOUNT_ID=$(az storage account show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query id -o tsv)
-          echo "storage_account_id=$STORAGE_ACCOUNT_ID" >> $GITHUB_OUTPUT
-
-      - name: Create storage private endpoint
-        run: |
-          az network private-endpoint create --name StoragePrivateEndpoint2 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ${{ steps.get_node_id.outputs.node_id }} --subnet aks-subnet --private-connection-resource-id ${{ steps.get_storage_account_id.outputs.storage_account_id }} --group-id file --connection-name StoragePrivateConnection
-
   build_and_push_docker_image:
     needs: create_persistent_storage
     runs-on: ubuntu-latest
@@ -307,3 +297,7 @@ jobs:
       - name: Create diagnostic settings
         run: |
           az monitor diagnostic-settings create --name "AKS-Diagnostic-Logs" --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --resource ${{ steps.get_cluster_id.outputs.cluster_id }} --workspace ${{ steps.create_analytics_workspace.outputs.workspace_id }} --logs "[{\"category\": \"kube-apiserver\", \"enabled\": true}, {\"category\": \"kube-controller-manager\", \"enabled\": true}, {\"category\": \"kube-scheduler\", \"enabled\": true}, {\"category\": \"cluster-autoscaler\", \"enabled\": true}]"
+
+      - name: Define trusted container registries
+        run: |
+          az policy assignment create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name "EnforceTrustedRegistries" --policy "febd0533-8e55-448f-b837-bd0e06f16469" --params "{\"allowedContainerImagesRegex\":{\"value\":\"learninghubmoodlecrdev.azurecr.io\"}}"
