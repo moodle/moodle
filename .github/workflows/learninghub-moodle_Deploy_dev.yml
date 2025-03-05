@@ -300,4 +300,4 @@ jobs:
 
       - name: Define trusted container registries
         run: |
-          az policy assignment create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name "EnforceTrustedRegistries" --policy "febd0533-8e55-448f-b837-bd0e06f16469" --params "{\"allowedContainerImagesRegex\":{\"value\":\"learninghubmoodlecrdev.azurecr.io\"}}"
+          az policy assignment create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name "EnforceTrustedRegistries" --policy "febd0533-8e55-448f-b837-bd0e06f16469" --params "{\"allowedContainerImagesRegex\":{\"value\":\"learninghubmoodlecrdev.azurecr.io\"}}" --location uksouth
