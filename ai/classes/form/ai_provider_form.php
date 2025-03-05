@@ -167,4 +167,19 @@ class ai_provider_form extends moodleform {
 
         $this->set_data($providerconfigs);
     }
+
+    #[\Override]
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Ensure both global/user rate limits (if enabled) contain positive values.
+        if (!empty($data['enableglobalratelimit']) && $data['globalratelimit'] <= 0) {
+            $errors['globalratelimit'] = get_string('err_positiveint', 'core_form');
+        }
+        if (!empty($data['enableuserratelimit']) && $data['userratelimit'] <= 0) {
+            $errors['userratelimit'] = get_string('err_positiveint', 'core_form');
+        }
+
+        return $errors;
+    }
 }
