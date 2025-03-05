@@ -1,0 +1,6 @@
+issueNumber: MDL-81155
+notes:
+  report_log:
+    - message: >-
+        Support for the $grouplist public member in the report_log_renderable class has been removed.
+      type: removed
