@@ -167,6 +167,16 @@ class badgeclass_exporter extends exporter {
                 'description' => 'Identifier of the open badge for this assertion',
                 'optional' => true,
             ],
+            'courseid' => [
+                'type' => PARAM_INT,
+                'description' => 'Id of the course',
+                'optional' => true,
+            ],
+            'coursefullname' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Full name of the course',
+                'optional' => true,
+            ],
         ];
     }
 

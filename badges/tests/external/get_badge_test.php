@@ -60,18 +60,16 @@ final class get_badge_test extends externallib_advanced_testcase {
     public function test_get_badge(): void {
         $data = $this->prepare_test_data();
 
-        // Test with an existing badge.
+        // Test with an existing site badge.
         $result = get_badge::execute($data['sitebadge']['id']);
         $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
-        $this->assertEquals('BadgeClass', $result['badge']['type']);
-        $badgeurl = new \moodle_url('/badges/badgeclass.php', ['id' => $data['sitebadge']['id']]);
-        $this->assertEquals($badgeurl->out(false), $result['badge']['id']);
-        $this->assertEquals($data['sitebadge']['issuername'], $result['badge']['issuer']);
-        $this->assertEquals($data['sitebadge']['name'], $result['badge']['name']);
-        $this->assertEquals($data['sitebadge']['badgeurl'], $result['badge']['image']);
-        $this->assertEquals($data['sitebadge']['description'], $result['badge']['description']);
-        $this->assertEquals($data['sitebadge']['issuerurl'], $result['badge']['hostedUrl']);
-        $this->assertEquals($data['sitebadge']['alignment'], $result['badge']['alignment']);
+        $this->assert_badge_class($data['sitebadge'], $result['badge'], true);
+        $this->assertEmpty($result['warnings']);
+
+        // Test with an existing course badge.
+        $result = get_badge::execute($data['coursebadge']['id']);
+        $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
+        $this->assert_badge_class($data['coursebadge'], $result['badge'], true);
         $this->assertEmpty($result['warnings']);
     }
 
@@ -81,24 +79,18 @@ final class get_badge_test extends externallib_advanced_testcase {
      */
     public function test_get_badge_with_unprivileged_user(): void {
         $data = $this->prepare_test_data();
-        foreach ($data['sitebadge']['alignment'] as &$alignment) {
-            unset($alignment['targetDescription']);
-            unset($alignment['targetFramework']);
-            unset($alignment['targetCode']);
-        }
         $this->setUser($this->getDataGenerator()->create_user());
 
+        // Site badge.
         $result = get_badge::execute($data['sitebadge']['id']);
         $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
-        $this->assertEquals('BadgeClass', $result['badge']['type']);
-        $badgeurl = new \moodle_url('/badges/badgeclass.php', ['id' => $data['sitebadge']['id']]);
-        $this->assertEquals($badgeurl->out(false), $result['badge']['id']);
-        $this->assertEquals($data['sitebadge']['issuername'], $result['badge']['issuer']);
-        $this->assertEquals($data['sitebadge']['name'], $result['badge']['name']);
-        $this->assertEquals($data['sitebadge']['badgeurl'], $result['badge']['image']);
-        $this->assertEquals($data['sitebadge']['description'], $result['badge']['description']);
-        $this->assertEquals($data['sitebadge']['issuerurl'], $result['badge']['hostedUrl']);
-        $this->assertEquals($data['sitebadge']['alignment'], $result['badge']['alignment']);
+        $this->assert_badge_class($data['sitebadge'], $result['badge'], false);
+        $this->assertEmpty($result['warnings']);
+
+        // Course badge.
+        $result = get_badge::execute($data['coursebadge']['id']);
+        $result = \core_external\external_api::clean_returnvalue(get_badge::execute_returns(), $result);
+        $this->assert_badge_class($data['coursebadge'], $result['badge'], false);
         $this->assertEmpty($result['warnings']);
     }
 

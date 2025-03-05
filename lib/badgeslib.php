@@ -448,6 +448,12 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
         ];
     }
 
+    // Course.
+    if ($badge->type == BADGE_TYPE_COURSE) {
+        $course = get_course($context->instanceid);
+        $badge->coursefullname = \core_external\util::format_string($course->fullname, $context);
+    }
+
     // Recipient (the badge was awarded to this person).
     $badge->recipientid = $user->id;
     if ($user->deleted) {
@@ -510,6 +516,7 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
 function badges_prepare_badgeclass_for_external(core_badges\output\badgeclass $badgeclass): stdClass {
     global $PAGE;
     $context = $badgeclass->context;
+    $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
 
     $badgeurl = new \moodle_url('/badges/badgeclass.php', [
         'id' => $badgeclass->badge->id,
@@ -534,11 +541,20 @@ function badges_prepare_badgeclass_for_external(core_badges\output\badgeclass $b
         'hostedUrl'     => $badgeclass->badge->issuerurl,
         'image'         => $image,
     ];
+
+    // Course.
+    if ($badgeclass->badge->type == BADGE_TYPE_COURSE) {
+        $course = get_course($badgeclass->badge->courseid);
+        $badge->coursefullname = \core_external\util::format_string($course->fullname, $context);
+        if ($canconfiguredetails) {
+            $badge->courseid = $course->id;
+        }
+    }
+
     // Create a badge instance to be able to get the endorsement and other info.
     $badgeinstance = new badge($badgeclass->badge->id);
     $endorsement   = $badgeinstance->get_endorsement();
     $relatedbadges = $badgeinstance->get_related_badges();
-    $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
     $alignments = [];
     foreach ($badgeinstance->get_alignments() as $alignment) {
         $alignmentobj = (object) [
