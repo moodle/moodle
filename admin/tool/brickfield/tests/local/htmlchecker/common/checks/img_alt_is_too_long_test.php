@@ -24,6 +24,8 @@
 
 namespace tool_brickfield\local\htmlchecker\common\checks;
 
+use tool_brickfield\local\htmlchecker\brickfield_accessibility;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once('all_checks.php');
@@ -98,5 +100,16 @@ EOD;
         } else {
             $this->assertEquals('img', $results[0]->element->tagName);
         }
+    }
+
+    /**
+     * Test the severity of the {@see img_alt_is_too_long} check.
+     *
+     * @return void
+     */
+    public function test_severity(): void {
+        $html = $this->get_test_html('Some alt text');
+        $checker = new brickfield_accessibility($html, 'brickfield', 'string');
+        $this->assertEquals(brickfield_accessibility::BA_TEST_SUGGESTION, $checker->get_test_severity(img_alt_is_too_long::class));
     }
 }
