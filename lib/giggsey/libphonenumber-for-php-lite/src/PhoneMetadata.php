@@ -10,7 +10,7 @@ namespace libphonenumber;
  * @internal Used internally, and can change at any time
  * @phpstan-import-type PhoneNumberDescArray from PhoneNumberDesc
  * @phpstan-import-type NumberFormatArray from NumberFormat
- * @phpstan-type PhoneMetadataArray array{generalDesc?:PhoneNumberDescArray,fixedLine?:PhoneNumberDescArray,mobile?:PhoneNumberDescArray,tollFree?:PhoneNumberDescArray,premiumRate?:PhoneNumberDescArray,sharedCost?:PhoneNumberDescArray,personalNumber?:PhoneNumberDescArray,voip?:PhoneNumberDescArray,pager?:PhoneNumberDescArray,uan?:PhoneNumberDescArray,emergency?:PhoneNumberDescArray,voicemail?:PhoneNumberDescArray,shortCode?:PhoneNumberDescArray,standardRate?:PhoneNumberDescArray,carrierSpecific?:PhoneNumberDescArray,smsServices?:PhoneNumberDescArray,noInternationalDialling?:PhoneNumberDescArray,id:string|null,countryCode?:int,internationalPrefix?:string,preferredInternationalPrefix?:string,nationalPrefix?:string,preferredExtnPrefix?:string,nationalPrefixForParsing?:string,nationalPrefixTransformRule?:string,sameMobileAndFixedLinePattern?:bool,numberFormat:NumberFormatArray[],intlNumberFormat?:NumberFormatArray[],mainCountryForCode:bool,leadingDigits?:string,mobileNumberPortableRegion?:bool}
+ * @phpstan-type PhoneMetadataArray array{generalDesc?:PhoneNumberDescArray,fixedLine?:PhoneNumberDescArray,mobile?:PhoneNumberDescArray,tollFree?:PhoneNumberDescArray,premiumRate?:PhoneNumberDescArray,sharedCost?:PhoneNumberDescArray,personalNumber?:PhoneNumberDescArray,voip?:PhoneNumberDescArray,pager?:PhoneNumberDescArray,uan?:PhoneNumberDescArray,emergency?:PhoneNumberDescArray,voicemail?:PhoneNumberDescArray,shortCode?:PhoneNumberDescArray,standardRate?:PhoneNumberDescArray,carrierSpecific?:PhoneNumberDescArray,smsServices?:PhoneNumberDescArray,noInternationalDialling?:PhoneNumberDescArray,id:string|null,countryCode?:int,internationalPrefix?:string,preferredInternationalPrefix?:string,nationalPrefix?:string,preferredExtnPrefix?:string,nationalPrefixForParsing?:string,nationalPrefixTransformRule?:string,sameMobileAndFixedLinePattern?:bool,numberFormat:NumberFormatArray[],intlNumberFormat?:NumberFormatArray[],mainCountryForCode?:bool,leadingDigits?:string,mobileNumberPortableRegion?:bool}
  */
 class PhoneMetadata
 {
@@ -90,8 +90,6 @@ class PhoneMetadata
     }
 
     /**
-     * @param int $index
-     * @return NumberFormat
      */
     public function getNumberFormat(int $index): NumberFormat
     {
@@ -115,11 +113,18 @@ class PhoneMetadata
     }
 
     /**
+     * @internal
      * @return PhoneMetadataArray
      */
     public function toArray(): array
     {
         $output = [];
+
+        $output['id'] = $this->getId();
+
+        if ($this->hasCountryCode()) {
+            $output['countryCode'] = $this->getCountryCode();
+        }
 
         if ($this->hasGeneralDesc()) {
             $output['generalDesc'] = $this->getGeneralDesc()->toArray();
@@ -189,11 +194,6 @@ class PhoneMetadata
             $output['noInternationalDialling'] = $this->getNoInternationalDialling()->toArray();
         }
 
-        $output['id'] = $this->getId();
-        if ($this->hasCountryCode()) {
-            $output['countryCode'] = $this->getCountryCode();
-        }
-
         if ($this->hasInternationalPrefix()) {
             $output['internationalPrefix'] = $this->getInternationalPrefix();
         }
@@ -218,7 +218,7 @@ class PhoneMetadata
             $output['nationalPrefixTransformRule'] = $this->getNationalPrefixTransformRule();
         }
 
-        if ($this->hasSameMobileAndFixedLinePattern()) {
+        if ($this->hasSameMobileAndFixedLinePattern() && $this->getSameMobileAndFixedLinePattern() !== false) {
             $output['sameMobileAndFixedLinePattern'] = $this->getSameMobileAndFixedLinePattern();
         }
 
@@ -234,13 +234,15 @@ class PhoneMetadata
             }
         }
 
-        $output['mainCountryForCode'] = $this->getMainCountryForCode();
+        if ($this->getMainCountryForCode() !== false) {
+            $output['mainCountryForCode'] = $this->getMainCountryForCode();
+        }
 
         if ($this->hasLeadingDigits()) {
             $output['leadingDigits'] = $this->getLeadingDigits();
         }
 
-        if ($this->hasMobileNumberPortableRegion()) {
+        if ($this->hasMobileNumberPortableRegion() && $this->isMobileNumberPortableRegion() !== false) {
             $output['mobileNumberPortableRegion'] = $this->isMobileNumberPortableRegion();
         }
 
@@ -749,6 +751,7 @@ class PhoneMetadata
     }
 
     /**
+     * @interal
      * @param PhoneMetadataArray $input
      */
     public function fromArray(array $input): PhoneMetadata
@@ -880,7 +883,9 @@ class PhoneMetadata
             $this->addIntlNumberFormat($numberFormat);
         }
 
-        $this->setMainCountryForCode($input['mainCountryForCode']);
+        if (isset($input['mainCountryForCode'])) {
+            $this->setMainCountryForCode($input['mainCountryForCode']);
+        }
 
         if (isset($input['leadingDigits'])) {
             $this->setLeadingDigits($input['leadingDigits']);

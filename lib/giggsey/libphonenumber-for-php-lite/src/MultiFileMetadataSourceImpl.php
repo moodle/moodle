@@ -40,7 +40,7 @@ class MultiFileMetadataSourceImpl implements MetadataSourceInterface
     }
 
     /**
-     * @inheritdoc
+     *
      */
     public function getMetadataForRegion(string $regionCode): PhoneMetadata
     {
@@ -56,7 +56,7 @@ class MultiFileMetadataSourceImpl implements MetadataSourceInterface
     }
 
     /**
-     * @inheritdoc
+     *
      */
     public function getMetadataForNonGeographicalRegion(int $countryCallingCode): PhoneMetadata
     {
@@ -68,10 +68,6 @@ class MultiFileMetadataSourceImpl implements MetadataSourceInterface
     }
 
     /**
-     * @param string $filePrefix
-     * @param string $regionCode
-     * @param int $countryCallingCode
-     * @param MetadataLoaderInterface $metadataLoader
      */
     public function loadMetadataFromFile(string $filePrefix, string $regionCode, int $countryCallingCode, MetadataLoaderInterface $metadataLoader): void
     {

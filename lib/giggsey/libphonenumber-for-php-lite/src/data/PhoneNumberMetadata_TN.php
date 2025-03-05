@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,101 +7,75 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '[2-57-9]\\d{7}',
-    'PossibleLength' =>
-     [
-      0 => 8,
+return [
+    'id' => 'TN',
+    'countryCode' => 216,
+    'generalDesc' => [
+        'pattern' => '[2-57-9]\\d{7}',
+        'posLength' => [
+            8,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '81200\\d{3}|(?:3[0-2]|7\\d)\\d{6}',
-    'ExampleNumber' => '30010123',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '3(?:001|[12]40)\\d{4}|(?:(?:[259]\\d|4[0-8])\\d|3(?:1[1-35]|6[0-4]|91))\\d{5}',
-    'ExampleNumber' => '20123456',
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '8010\\d{4}',
-    'ExampleNumber' => '80101234',
-  ],
-  'premiumRate' =>
-   [
-    'NationalNumberPattern' => '88\\d{6}',
-    'ExampleNumber' => '88123456',
-  ],
-  'sharedCost' =>
-   [
-    'NationalNumberPattern' => '8[12]10\\d{4}',
-    'ExampleNumber' => '81101234',
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '81200\\d{3}|(?:3[0-2]|7\\d)\\d{6}',
+        'example' => '30010123',
     ],
-  ],
-  'voip' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '3(?:001|[12]40)\\d{4}|(?:(?:[259]\\d|4[0-8])\\d|3(?:1[1-35]|6[0-4]|91))\\d{5}',
+        'example' => '20123456',
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'pattern' => '8010\\d{4}',
+        'example' => '80101234',
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'pattern' => '88\\d{6}',
+        'example' => '88123456',
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'pattern' => '8[12]10\\d{4}',
+        'example' => '81101234',
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'TN',
-  'countryCode' => 216,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{2})(\\d{3})(\\d{3})',
-      'format' => '$1 $2 $3',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[2-57-9]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'voip' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '00',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{2})(\\d{3})(\\d{3})',
+            'format' => '$1 $2 $3',
+            'leadingDigitsPatterns' => [
+                '[2-57-9]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

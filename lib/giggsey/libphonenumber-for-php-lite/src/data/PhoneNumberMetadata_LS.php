@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,105 +7,77 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '(?:[256]\\d\\d|800)\\d{5}',
-    'PossibleLength' =>
-     [
-      0 => 8,
+return [
+    'id' => 'LS',
+    'countryCode' => 266,
+    'generalDesc' => [
+        'pattern' => '(?:[256]\\d\\d|800)\\d{5}',
+        'posLength' => [
+            8,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '2\\d{7}',
-    'ExampleNumber' => '22123456',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '[56]\\d{7}',
-    'ExampleNumber' => '50123456',
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '800[1256]\\d{4}',
-    'ExampleNumber' => '80021234',
-  ],
-  'premiumRate' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '2\\d{7}',
+        'example' => '22123456',
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '[56]\\d{7}',
+        'example' => '50123456',
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'pattern' => '800[1256]\\d{4}',
+        'example' => '80021234',
     ],
-  ],
-  'voip' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'LS',
-  'countryCode' => 266,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{4})(\\d{4})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[2568]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '00',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{4})(\\d{4})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '[2568]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,103 +7,76 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '(?:19|[2-689]\\d|70)\\d{4}',
-    'PossibleLength' =>
-     [
-      0 => 6,
+return [
+    'id' => 'GL',
+    'countryCode' => 299,
+    'generalDesc' => [
+        'pattern' => '(?:19|[2-689]\\d|70)\\d{4}',
+        'posLength' => [
+            6,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '(?:19|3[1-7]|[68][1-9]|70|9\\d)\\d{4}',
-    'ExampleNumber' => '321000',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '[245]\\d{5}',
-    'ExampleNumber' => '221234',
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '80\\d{4}',
-    'ExampleNumber' => '801234',
-  ],
-  'premiumRate' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '(?:19|3[1-7]|[68][1-9]|70|9\\d)\\d{4}',
+        'example' => '321000',
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '[245]\\d{5}',
+        'example' => '221234',
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'pattern' => '80\\d{4}',
+        'example' => '801234',
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '3[89]\\d{4}',
-    'ExampleNumber' => '381234',
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'pattern' => '3[89]\\d{4}',
+        'example' => '381234',
     ],
-  ],
-  'id' => 'GL',
-  'countryCode' => 299,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{2})(\\d{2})(\\d{2})',
-      'format' => '$1 $2 $3',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '19|[2-9]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '00',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{2})(\\d{2})(\\d{2})',
+            'format' => '$1 $2 $3',
+            'leadingDigitsPatterns' => [
+                '19|[2-9]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

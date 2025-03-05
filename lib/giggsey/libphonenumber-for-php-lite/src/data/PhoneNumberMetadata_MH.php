@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,107 +7,79 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '329\\d{4}|(?:[256]\\d|45)\\d{5}',
-    'PossibleLength' =>
-     [
-      0 => 7,
+return [
+    'id' => 'MH',
+    'countryCode' => 692,
+    'generalDesc' => [
+        'pattern' => '329\\d{4}|(?:[256]\\d|45)\\d{5}',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '(?:247|528|625)\\d{4}',
-    'ExampleNumber' => '2471234',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '(?:(?:23|54)5|329|45[35-8])\\d{4}',
-    'ExampleNumber' => '2351234',
-  ],
-  'tollFree' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '(?:247|528|625)\\d{4}',
+        'example' => '2471234',
     ],
-  ],
-  'premiumRate' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '(?:(?:23|54)5|329|45[35-8])\\d{4}',
+        'example' => '2351234',
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '635\\d{4}',
-    'ExampleNumber' => '6351234',
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'pattern' => '635\\d{4}',
+        'example' => '6351234',
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'MH',
-  'countryCode' => 692,
-  'internationalPrefix' => '011',
-  'nationalPrefix' => '1',
-  'nationalPrefixForParsing' => '1',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{3})(\\d{4})',
-      'format' => '$1-$2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[2-6]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '011',
+    'nationalPrefix' => '1',
+    'nationalPrefixForParsing' => '1',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{3})(\\d{4})',
+            'format' => '$1-$2',
+            'leadingDigitsPatterns' => [
+                '[2-6]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,118 +7,88 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '[57-9]\\d{6}|(?:[238]\\d|48)\\d{3}',
-    'PossibleLength' =>
-     [
-      0 => 5,
-      1 => 7,
+return [
+    'id' => 'VU',
+    'countryCode' => 678,
+    'generalDesc' => [
+        'pattern' => '[57-9]\\d{6}|(?:[238]\\d|48)\\d{3}',
+        'posLength' => [
+            5,
+            7,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '(?:38[0-8]|48[4-9])\\d\\d|(?:2[02-9]|3[4-7]|88)\\d{3}',
-    'ExampleNumber' => '22123',
-    'PossibleLength' =>
-     [
-      0 => 5,
+    'fixedLine' => [
+        'pattern' => '(?:38[0-8]|48[4-9])\\d\\d|(?:2[02-9]|3[4-7]|88)\\d{3}',
+        'example' => '22123',
+        'posLength' => [
+            5,
+        ],
     ],
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '(?:[58]\\d|7[013-7])\\d{5}',
-    'ExampleNumber' => '5912345',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'mobile' => [
+        'pattern' => '(?:[58]\\d|7[013-7])\\d{5}',
+        'example' => '5912345',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '81[18]\\d\\d',
-    'ExampleNumber' => '81123',
-    'PossibleLength' =>
-     [
-      0 => 5,
+    'tollFree' => [
+        'pattern' => '81[18]\\d\\d',
+        'example' => '81123',
+        'posLength' => [
+            5,
+        ],
     ],
-  ],
-  'premiumRate' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '9(?:0[1-9]|1[01])\\d{4}',
-    'ExampleNumber' => '9010123',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'voip' => [
+        'pattern' => '9(?:0[1-9]|1[01])\\d{4}',
+        'example' => '9010123',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'NationalNumberPattern' => '(?:3[03]|900\\d)\\d{3}',
-    'ExampleNumber' => '30123',
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'uan' => [
+        'pattern' => '(?:3[03]|900\\d)\\d{3}',
+        'example' => '30123',
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'VU',
-  'countryCode' => 678,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{3})(\\d{4})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[57-9]',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
+    'internationalPrefix' => '00',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{3})(\\d{4})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '[57-9]',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+    ],
 ];

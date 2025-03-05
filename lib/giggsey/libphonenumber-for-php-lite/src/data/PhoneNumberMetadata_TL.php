@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,134 +7,100 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}',
-    'PossibleLength' =>
-     [
-      0 => 7,
-      1 => 8,
+return [
+    'id' => 'TL',
+    'countryCode' => 670,
+    'generalDesc' => [
+        'pattern' => '7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}',
+        'posLength' => [
+            7,
+            8,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '(?:2[1-5]|3[1-9]|4[1-4])\\d{5}',
-    'ExampleNumber' => '2112345',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'fixedLine' => [
+        'pattern' => '(?:2[1-5]|3[1-9]|4[1-4])\\d{5}',
+        'example' => '2112345',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '7[2-8]\\d{6}',
-    'ExampleNumber' => '77212345',
-    'PossibleLength' =>
-     [
-      0 => 8,
+    'mobile' => [
+        'pattern' => '7[2-8]\\d{6}',
+        'example' => '77212345',
+        'posLength' => [
+            8,
+        ],
     ],
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '80\\d{5}',
-    'ExampleNumber' => '8012345',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'tollFree' => [
+        'pattern' => '80\\d{5}',
+        'example' => '8012345',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'premiumRate' =>
-   [
-    'NationalNumberPattern' => '90\\d{5}',
-    'ExampleNumber' => '9012345',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'premiumRate' => [
+        'pattern' => '90\\d{5}',
+        'example' => '9012345',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'personalNumber' =>
-   [
-    'NationalNumberPattern' => '70\\d{5}',
-    'ExampleNumber' => '7012345',
-    'PossibleLength' =>
-     [
-      0 => 7,
+    'personalNumber' => [
+        'pattern' => '70\\d{5}',
+        'example' => '7012345',
+        'posLength' => [
+            7,
+        ],
     ],
-  ],
-  'voip' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voip' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'TL',
-  'countryCode' => 670,
-  'internationalPrefix' => '00',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-    0 =>
-     [
-      'pattern' => '(\\d{3})(\\d{4})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '[2-489]|70',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
+    'internationalPrefix' => '00',
+    'numberFormat' => [
+        [
+            'pattern' => '(\\d{3})(\\d{4})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '[2-489]|70',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
+        [
+            'pattern' => '(\\d{4})(\\d{4})',
+            'format' => '$1 $2',
+            'leadingDigitsPatterns' => [
+                '7',
+            ],
+            'nationalPrefixFormattingRule' => '',
+            'domesticCarrierCodeFormattingRule' => '',
+        ],
     ],
-    1 =>
-     [
-      'pattern' => '(\\d{4})(\\d{4})',
-      'format' => '$1 $2',
-      'leadingDigitsPatterns' =>
-       [
-        0 => '7',
-      ],
-      'nationalPrefixFormattingRule' => '',
-      'domesticCarrierCodeFormattingRule' => '',
-      'nationalPrefixOptionalWhenFormatting' => false,
-    ],
-  ],
-  'mainCountryForCode' => false,
-  'mobileNumberPortableRegion' => false,
 ];

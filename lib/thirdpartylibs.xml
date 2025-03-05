@@ -807,7 +807,7 @@ All rights reserved.</copyright>
   <library>
       <location>giggsey/libphonenumber-for-php-lite</location>
       <name>libphonenumber for PHP (Lite)</name>
-      <version>8.13.31</version>
+      <version>8.13.55</version>
       <license>Apache 2.0</license>
       <repository>https://github.com/giggsey/libphonenumber-for-php-lite</repository>
   </library>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * libphonenumber-for-php-lite data file
  * This file has been @generated from libphonenumber data
@@ -6,92 +7,68 @@
  * @internal
  */
 
-return  [
-  'generalDesc' =>
-   [
-    'NationalNumberPattern' => '[5-8]\\d{8}',
-    'PossibleLength' =>
-     [
-      0 => 9,
+return [
+    'id' => 'EH',
+    'countryCode' => 212,
+    'generalDesc' => [
+        'pattern' => '[5-8]\\d{8}',
+        'posLength' => [
+            9,
+        ],
     ],
-  ],
-  'fixedLine' =>
-   [
-    'NationalNumberPattern' => '528[89]\\d{5}',
-    'ExampleNumber' => '528812345',
-  ],
-  'mobile' =>
-   [
-    'NationalNumberPattern' => '(?:6(?:[0-79]\\d|8[0-247-9])|7(?:[0167]\\d|2[0-4]|5[01]|8[0-3]))\\d{6}',
-    'ExampleNumber' => '650123456',
-  ],
-  'tollFree' =>
-   [
-    'NationalNumberPattern' => '80[0-7]\\d{6}',
-    'ExampleNumber' => '801234567',
-  ],
-  'premiumRate' =>
-   [
-    'NationalNumberPattern' => '89\\d{7}',
-    'ExampleNumber' => '891234567',
-  ],
-  'sharedCost' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'fixedLine' => [
+        'pattern' => '528[89]\\d{5}',
+        'example' => '528812345',
     ],
-  ],
-  'personalNumber' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'mobile' => [
+        'pattern' => '(?:6(?:[0-79]\\d|8[0-247-9])|7(?:[0167]\\d|2[0-467]|5[0-3]|8[0-5]))\\d{6}',
+        'example' => '650123456',
     ],
-  ],
-  'voip' =>
-   [
-    'NationalNumberPattern' => '(?:592(?:4[0-2]|93)|80[89]\\d\\d)\\d{4}',
-    'ExampleNumber' => '592401234',
-  ],
-  'pager' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'tollFree' => [
+        'pattern' => '80[0-7]\\d{6}',
+        'example' => '801234567',
     ],
-  ],
-  'uan' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'premiumRate' => [
+        'pattern' => '89\\d{7}',
+        'example' => '891234567',
     ],
-  ],
-  'voicemail' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'sharedCost' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'noInternationalDialling' =>
-   [
-    'PossibleLength' =>
-     [
-      0 => -1,
+    'personalNumber' => [
+        'posLength' => [
+            -1,
+        ],
     ],
-  ],
-  'id' => 'EH',
-  'countryCode' => 212,
-  'internationalPrefix' => '00',
-  'nationalPrefix' => '0',
-  'nationalPrefixForParsing' => '0',
-  'sameMobileAndFixedLinePattern' => false,
-  'numberFormat' =>
-   [
-  ],
-  'mainCountryForCode' => false,
-  'leadingDigits' => '528[89]',
-  'mobileNumberPortableRegion' => false,
+    'voip' => [
+        'pattern' => '(?:592(?:4[0-2]|93)|80[89]\\d\\d)\\d{4}',
+        'example' => '592401234',
+    ],
+    'pager' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'uan' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'voicemail' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'noInternationalDialling' => [
+        'posLength' => [
+            -1,
+        ],
+    ],
+    'internationalPrefix' => '00',
+    'nationalPrefix' => '0',
+    'nationalPrefixForParsing' => '0',
+    'numberFormat' => [],
+    'leadingDigits' => '528[89]',
 ];
