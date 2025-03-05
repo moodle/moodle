@@ -45,7 +45,7 @@ class Server
     /**
      * @var string
      * Defines how functions in $dmap will be invoked: either using an xml-rpc Request object or plain php values.
-     * Valid strings are 'xmlrpcvals', 'phpvals' or 'epivals' (only for use by polyfill-xmlrpc).
+     * Valid strings are 'xmlrpcvals', 'phpvals' or 'epivals' (the latter only for use by polyfill-xmlrpc).
      *
      * @todo create class constants for these
      */
@@ -163,7 +163,7 @@ class Server
      *                             - docstring (optional)
      *                             - signature (array, optional)
      *                             - signature_docs (array, optional)
-     *                             - parameters_type (string, optional)
+     *                             - parameters_type (string, optional). Valid values: 'phpvals', 'xmlrpcvals'
      *                             - exception_handling (int, optional)
      * @param boolean $serviceNow set to false in order to prevent the server from running upon construction
      */
@@ -654,7 +654,8 @@ class Server
 
         // 'guestimate' request encoding
         /// @todo check if mbstring is enabled and automagic input conversion is on: it might mingle with this check???
-        $reqEncoding = XMLParser::guessEncoding(isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '',
+        $parser = $this->getParser();
+        $reqEncoding = $parser->guessEncoding(isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '',
             $data);
 
         return null;
@@ -709,6 +710,9 @@ class Server
 
         $xmlRpcParser = $this->getParser();
         try {
+            // NB: during parsing, the actual type of php values built will be automatically switched from
+            // $this->functions_parameters_type to the one defined in the method signature, if defined there. This
+            // happens via the parser making a call to $this->methodNameCallback as soon as it finds the desired method
             $_xh = $xmlRpcParser->parse($data, $this->functions_parameters_type, XMLParser::ACCEPT_REQUEST, $options);
             // BC
             if (!is_array($_xh)) {
@@ -846,11 +850,11 @@ class Server
             $exception_handling = $this->exception_handling;
         }
 
-        // If debug level is 3, we should catch all errors generated during processing of user function, and log them
-        // as part of response
-        if ($this->debug > 2) {
-            self::$_xmlrpcs_prev_ehandler = set_error_handler(array('\PhpXmlRpc\Server', '_xmlrpcs_errorHandler'));
-        }
+        // We always catch all errors generated during processing of user function, and log them as part of response;
+        // if debug level is 3 or above, we also serialize them in the response as comments
+        self::$_xmlrpcs_prev_ehandler = set_error_handler(array('\PhpXmlRpc\Server', '_xmlrpcs_errorHandler'));
+
+        /// @todo what about using output-buffering as well, in case user code echoes anything to screen?
 
         try {
             // Allow mixed-convention servers
@@ -909,12 +913,11 @@ class Server
             // proper error-response
             switch ($exception_handling) {
                 case 2:
-                    if ($this->debug > 2) {
-                        if (self::$_xmlrpcs_prev_ehandler) {
-                            set_error_handler(self::$_xmlrpcs_prev_ehandler);
-                        } else {
-                            restore_error_handler();
-                        }
+                    if (self::$_xmlrpcs_prev_ehandler) {
+                        set_error_handler(self::$_xmlrpcs_prev_ehandler);
+                        self::$_xmlrpcs_prev_ehandler = null;
+                    } else {
+                        restore_error_handler();
                     }
                     throw $e;
                 case 1:
@@ -932,12 +935,11 @@ class Server
             // proper error-response
             switch ($exception_handling) {
                 case 2:
-                    if ($this->debug > 2) {
-                        if (self::$_xmlrpcs_prev_ehandler) {
-                            set_error_handler(self::$_xmlrpcs_prev_ehandler);
-                        } else {
-                            restore_error_handler();
-                        }
+                    if (self::$_xmlrpcs_prev_ehandler) {
+                        set_error_handler(self::$_xmlrpcs_prev_ehandler);
+                        self::$_xmlrpcs_prev_ehandler = null;
+                    } else {
+                        restore_error_handler();
                     }
                     throw $e;
                 case 1:
@@ -952,14 +954,13 @@ class Server
             }
         }
 
-        if ($this->debug > 2) {
-            // note: restore the error handler we found before calling the user func, even if it has been changed
-            // inside the func itself
-            if (self::$_xmlrpcs_prev_ehandler) {
-                set_error_handler(self::$_xmlrpcs_prev_ehandler);
-            } else {
-                restore_error_handler();
-            }
+        // note: restore the error handler we found before calling the user func, even if it has been changed
+        // inside the func itself
+        if (self::$_xmlrpcs_prev_ehandler) {
+            set_error_handler(self::$_xmlrpcs_prev_ehandler);
+            self::$_xmlrpcs_prev_ehandler = null;
+        } else {
+            restore_error_handler();
         }
 
         return $r;
@@ -973,7 +974,7 @@ class Server
      * @internal
      * @param $methodName
      * @param XMLParser $xmlParser
-     * @param resource $parser
+     * @param null|resource $parser
      * @return void
      * @throws NoSuchMethodException
      *
@@ -981,7 +982,7 @@ class Server
      *       dirtying a lot the logic, as we would have back to both parseRequest() and execute() methods the info
      *       about the matched method handler, in order to avoid doing the work twice...
      */
-    public function methodNameCallback($methodName, $xmlParser, $parser)
+    public function methodNameCallback($methodName, $xmlParser, $parser = null)
     {
         $sysCall = $this->isSyscall($methodName);
         $dmap = $sysCall ? $this->getSystemDispatchMap() : $this->dmap;
@@ -997,15 +998,15 @@ class Server
             /// @todo this should be done by a method of the XMLParser
             switch ($dmap[$methodName]['parameters_type']) {
                 case XMLParser::RETURN_PHP:
-                    xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee_fast');
+                    xml_set_element_handler($parser, array($xmlParser, 'xmlrpc_se'), array($xmlParser, 'xmlrpc_ee_fast'));
                     break;
                 case XMLParser::RETURN_EPIVALS:
-                    xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee_epi');
+                    xml_set_element_handler($parser, array($xmlParser, 'xmlrpc_se'), array($xmlParser, 'xmlrpc_ee_epi'));
                     break;
                 /// @todo log a warning on unsupported return type
                 case XMLParser::RETURN_XMLRPCVALS:
                 default:
-                    xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee');
+                    xml_set_element_handler($parser, array($xmlParser, 'xmlrpc_se'), array($xmlParser, 'xmlrpc_ee'));
             }
         }
     }
@@ -1415,9 +1416,13 @@ class Server
             return;
         }
 
-        //if ($errCode != E_NOTICE && $errCode != E_WARNING && $errCode != E_USER_NOTICE && $errCode != E_USER_WARNING)
-        if ($errCode != E_STRICT) {
+        // From PHP 8.4 the E_STRICT constant has been deprecated and will emit deprecation notices.
+        // PHP core and core extensions since PHP 8.0 and later do not emit E_STRICT notices at all.
+        // On PHP 7 series before PHP 7.4, some functions conditionally emit E_STRICT notices.
+        if (PHP_VERSION_ID >= 70400) {
             static::error_occurred($errString);
+        } elseif ($errCode != E_STRICT) {
+                static::error_occurred($errString);
         }
 
         // Try to avoid as much as possible disruption to the previous error handling mechanism in place

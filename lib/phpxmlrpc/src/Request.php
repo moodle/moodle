@@ -247,7 +247,7 @@ class Request
             } catch (HttpException $e) {
                 // failed processing of HTTP response headers
                 // save into response obj the full payload received, for debugging
-                return new Response(0, $e->getCode(), $e->getMessage(), '', array('raw_data' => $data, 'status_code', $e->statusCode()));
+                return new Response(0, $e->getCode(), $e->getMessage(), '', array('raw_data' => $data, 'status_code' => $e->statusCode()));
             } catch(\Exception $e) {
                 return new Response(0, $e->getCode(), $e->getMessage(), '', array('raw_data' => $data));
             }
@@ -356,8 +356,9 @@ class Request
             //}
         }
         // third error check: parsing of the response has somehow gone boink.
-        /// @todo shall we omit this check, since we trust the parsing code?
-        elseif ($_xh['isf'] > 3 || $returnType == XMLParser::RETURN_XMLRPCVALS && !is_object($_xh['value'])) {
+        /// @todo shall we omit the 2nd part of this check, since we trust the parsing code?
+        ///       Either that, or check the fault results too...
+        elseif ($_xh['isf'] > 3 || ($returnType == XMLParser::RETURN_XMLRPCVALS && !$_xh['isf'] && !is_object($_xh['value']))) {
             // something odd has happened and it's time to generate a client side error indicating something odd went on
             $r = new Response(0, PhpXmlRpc::$xmlrpcerr['xml_parsing_error'], PhpXmlRpc::$xmlrpcstr['xml_parsing_error'],
                 '', $httpResponse

@@ -11,7 +11,7 @@ class Http
     use LoggerAware;
 
     /**
-     * Decode a string that is encoded with "chunked" transfer encoding as defined in rfc2068 par. 19.4.6.
+     * Decode a string that is encoded with "chunked" transfer encoding as defined in RFC 2068 par. 19.4.6.
      * Code shamelessly stolen from nusoap library by Dietrich Ayala.
      * @internal this function will become protected in the future
      *
@@ -72,8 +72,8 @@ class Http
      * @return array with keys 'headers', 'cookies', 'raw_data' and 'status_code'
      * @throws HttpException
      *
-     * @todo if $debug is < 0, we could avoid populating 'raw_data' and 'headers' in the returned value - but that would
-     *       be a weird API...
+     * @todo if $debug is < 0, we could avoid populating 'raw_data' in the returned value - but that would
+     *       be a weird API... (note that we still need to always have headers parsed for content charset)
      */
     public function parseResponseHeaders(&$data, $headersProcessed = false, $debug = 0)
     {

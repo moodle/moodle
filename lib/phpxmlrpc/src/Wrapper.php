@@ -66,7 +66,7 @@ class Wrapper
             case 'true':
                 return Value::$xmlrpcBoolean;
             case Value::$xmlrpcArray: // 'array':
-            case 'array[]';
+            case 'array[]':
                 return Value::$xmlrpcArray;
             case 'object':
             case Value::$xmlrpcStruct: // 'struct'
