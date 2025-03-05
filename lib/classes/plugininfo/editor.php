@@ -31,23 +31,23 @@ use part_of_admin_tree;
  * Class for HTML editors
  */
 class editor extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $CFG;
 
         if (empty($CFG->texteditors)) {
-            return array('atto'=>'atto', 'tinymce'=>'tinymce', 'textarea'=>'textarea');
+            return [
+                'tiny' => 'tiny',
+                'textarea' => 'textarea',
+            ];
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach (explode(',', $CFG->texteditors) as $editor) {
             $enabled[$editor] = $editor;
         }
@@ -55,6 +55,7 @@ class editor extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
 
@@ -91,10 +92,12 @@ class editor extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'editorsettings' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
@@ -120,9 +123,7 @@ class editor extends base {
         }
     }
 
-    /**
-     * Basic textarea editor can not be uninstalled.
-     */
+    #[\Override]
     public function is_uninstall_allowed() {
         if ($this->name === 'textarea') {
             return false;
@@ -131,18 +132,32 @@ class editor extends base {
         }
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return moodle_url
-     */
+    #[\Override]
+    public function uninstall_cleanup(): void {
+        global $DB;
+
+        self::enable_plugin($this->name, 0);
+        $DB->delete_records_select(
+            'user_preferences',
+            "name = :name AND " . $DB->sql_compare_text('value') . " = " . $DB->sql_compare_text(':value'),
+            [
+                'name' => 'htmleditor',
+                'value' => $this->name,
+            ],
+        );
+    }
+
+    #[\Override]
     public static function get_manage_url() {
         return new moodle_url('/admin/settings.php', array('section'=>'manageeditors'));
     }
 
+    #[\Override]
     public static function plugintype_supports_ordering(): bool {
         return true;
     }
 
+    #[\Override]
     public static function get_sorted_plugins(bool $enabledonly = false): ?array {
         global $CFG;
 
@@ -175,6 +190,7 @@ class editor extends base {
         );
     }
 
+    #[\Override]
     public static function change_plugin_order(string $pluginname, int $direction): bool {
         $activeeditors = array_keys(self::get_sorted_plugins(true));
         $key = array_search($pluginname, $activeeditors);

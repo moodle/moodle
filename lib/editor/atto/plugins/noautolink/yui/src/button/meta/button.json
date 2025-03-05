@@ -1,7 +1,0 @@
-{
-    "moodle-atto_noautolink-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}

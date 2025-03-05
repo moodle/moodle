@@ -1,7 +1,0 @@
-{
-    "moodle-atto_image-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}

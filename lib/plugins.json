@@ -22,40 +22,6 @@
             "file",
             "onlinetext"
         ],
-        "atto": [
-            "accessibilitychecker",
-            "accessibilityhelper",
-            "align",
-            "backcolor",
-            "bold",
-            "charmap",
-            "clear",
-            "collapse",
-            "emojipicker",
-            "emoticon",
-            "equation",
-            "fontcolor",
-            "h5p",
-            "html",
-            "image",
-            "indent",
-            "italic",
-            "link",
-            "managefiles",
-            "media",
-            "noautolink",
-            "orderedlist",
-            "recordrtc",
-            "rtl",
-            "strike",
-            "subscript",
-            "superscript",
-            "table",
-            "title",
-            "underline",
-            "undo",
-            "unorderedlist"
-        ],
         "auth": [
             "db",
             "email",
@@ -185,7 +151,6 @@
             "resources"
         ],
         "editor": [
-            "atto",
             "textarea",
             "tiny"
         ],
@@ -575,6 +540,40 @@
             "upload",
             "uploadsingle"
         ],
+        "atto": [
+            "accessibilitychecker",
+            "accessibilityhelper",
+            "align",
+            "backcolor",
+            "bold",
+            "charmap",
+            "clear",
+            "collapse",
+            "emojipicker",
+            "emoticon",
+            "equation",
+            "fontcolor",
+            "h5p",
+            "html",
+            "image",
+            "indent",
+            "italic",
+            "link",
+            "managefiles",
+            "media",
+            "noautolink",
+            "orderedlist",
+            "recordrtc",
+            "rtl",
+            "strike",
+            "subscript",
+            "superscript",
+            "table",
+            "title",
+            "underline",
+            "undo",
+            "unorderedlist"
+        ],
         "auth": [
             "cas",
             "fc",
@@ -597,6 +596,7 @@
             "mongodb"
         ],
         "editor": [
+            "atto",
             "tinymce"
         ],
         "enrol": [

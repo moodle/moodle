@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor manage files plugin form.
+ * TinyMCE Media plugin form.
  *
  * @package   tiny_media
  * @copyright 2022, Stevani Andolo <stevani@hotmail.com.au>

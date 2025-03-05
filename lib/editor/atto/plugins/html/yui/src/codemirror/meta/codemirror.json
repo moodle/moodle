@@ -1,7 +1,0 @@
-{
-    "moodle-atto_html-codemirror": {
-        "requires": [
-            "moodle-atto_html-codemirror-skin"
-        ]
-    }
-}

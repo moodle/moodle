@@ -1,7 +1,0 @@
-{
-    "moodle-atto_undo-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}

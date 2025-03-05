@@ -991,7 +991,7 @@ EXPECTED;
 
         $html = "<p>This is a test.</p><p><img src=\"{$url1}\" alt=\"\"></p>
                 <br>Test content.<p></p><p><img src=\"{$url2}\" alt=\"\" width=\"2048\" height=\"1536\"
-                class=\"img-fluid atto_image_button_text-bottom\"><br></p>";
+                class=\"img-fluid \"><br></p>";
         $draftareas = array(
             array(
                 'urlbase' => 'draftfile.php',

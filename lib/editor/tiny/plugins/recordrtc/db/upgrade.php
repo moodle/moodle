@@ -24,7 +24,7 @@
 
 /**
  * Run all Tiny recordrtc upgrade steps between the current DB version and the current version on disk.
- * @param int $oldversion The old version of atto equation in the DB.
+ * @param int $oldversion The old version of the plugin in the DB.
  * @return bool
  */
 function xmldb_tiny_recordrtc_upgrade($oldversion) {

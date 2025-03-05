@@ -1678,7 +1678,7 @@ EOF;
      *    // Note: phpDoc beforeStep attribution not shown.
      *    public function before_step(StepScope $scope) {
      *        $callback = function (string $tag): bool {
-     *            return $tag === 'editor_atto' || substr($tag, 0, 5) === 'atto_';
+     *            return $tag === 'editor_tiny' || substr($tag, 0, 5) === 'tiny_';
      *        };
      *
      *        if (!self::scope_tags_match($scope, $callback)) {

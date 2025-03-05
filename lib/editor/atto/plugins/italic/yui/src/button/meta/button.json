@@ -1,7 +1,0 @@
-{
-    "moodle-atto_italic-button": {
-        "requires": [
-            "moodle-editor_atto-plugin"
-        ]
-    }
-}
