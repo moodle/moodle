@@ -1587,7 +1587,7 @@ class grade_structure {
         if ($menuitems) {
             $menu = new action_menu($menuitems);
             $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-            $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center no-caret';
+            $extraclasses = 'btn btn-link btn-icon d-flex no-caret';
             $menu->set_menu_trigger($icon, $extraclasses);
             $menu->set_menu_left();
 

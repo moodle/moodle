@@ -68,6 +68,27 @@ Outline buttons are used for buttons that controll part of the user interface, l
 
 The subtle class is designed to create buttons that offer a balance between the visual prominence of standard buttons and the minimalism of outline buttons. This class aims to provide a softer, more understated appearance compared to regular buttons while still maintaining more visual presence than outline buttons.
 
+### Icon buttons
+
+{{< example >}}
+<button type="button" class="btn btn-icon">
+    <i class="icon fa fa-ellipsis-vertical fa-fw" title="Edit" role="img"></i>
+</button>
+<button type="button" class="btn btn-icon text-bg-danger">
+    <i class="icon fa fa-trash-can fa-fw" title="Delete" role="img"></i>
+</button>
+<button type="button" class="btn btn-icon icon-size-4">
+    <i class="icon fa fa-user fa-fw" title="User" role="img"></i>
+</button>
+<button type="button" class="btn btn-icon icon-size-5">
+    <i class="icon fa fa-user fa-fw" title="User" role="img"></i>
+</button>
+{{< /example >}}
+
+The `.btn-icon` class styles buttons that contain only an icon, providing a visually appealing and compact design for icon-only buttons. This class is ideal for creating minimalistic, icon-based interactions within your UI.
+
+The `.btn-icon` class standardizes icon button styles using the `$btn-icon-border-radius` variable in variables.scss. While this ensures consistency, the `.rounded-circle` Bootstrap class can still be used for legacy support, though it's discouraged for new designs.
+
 ## Adding buttons to a page
 
 ### Using the single_select renderer

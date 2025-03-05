@@ -170,14 +170,9 @@ $divider-hover-color: $primary !default;
         }
     }
 
-    // Override '.btn.btn-icon' styles from buttons.scss to make action menu buttons smaller.
-    .action-menu {
-        .btn.btn-icon {
-            height: map-get($iconsizes, 5);
-            width: map-get($iconsizes, 5);
-            @include border-radius();
-        }
-        &.section-actions .btn.btn-icon {
+    // Override '.btn-icon' styles from buttons.scss to make section action menu icons bigger.
+    .section_action_menu > .action-menu {
+        .btn-icon {
             font-size: $font-size-lg;
         }
     }
@@ -776,7 +771,7 @@ $divider-hover-color: $primary !default;
         h4 {
             font-size: $h5-font-size;
         }
-        .section-actions .btn.btn-icon {
+        .section_action_menu > .action-menu .btn-icon {
             font-size: inherit;
         }
     }

@@ -28753,48 +28753,64 @@ img.icon {
 .icon-size-0 .icon {
   height: 0 !important; /* stylelint-disable-line declaration-no-important */
   width: 0 !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 0 !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 0 !important; /* stylelint-disable-line declaration-no-important */
   font-size: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-1 .icon {
   height: 4px !important; /* stylelint-disable-line declaration-no-important */
   width: 5px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 4px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 5px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-2 .icon {
   height: 8px !important; /* stylelint-disable-line declaration-no-important */
   width: 10px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 8px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 10px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-3 .icon {
   height: 16px !important; /* stylelint-disable-line declaration-no-important */
   width: 20px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 16px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 20px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-4 .icon {
   height: 24px !important; /* stylelint-disable-line declaration-no-important */
   width: 30px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 24px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 30px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-5 .icon {
   height: 32px !important; /* stylelint-disable-line declaration-no-important */
   width: 40px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 32px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 40px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-6 .icon {
   height: 40px !important; /* stylelint-disable-line declaration-no-important */
   width: 50px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 40px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 50px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .icon-size-7 .icon {
   height: 48px !important; /* stylelint-disable-line declaration-no-important */
   width: 60px !important; /* stylelint-disable-line declaration-no-important */
+  max-height: 48px !important; /* stylelint-disable-line declaration-no-important */
+  max-width: 60px !important; /* stylelint-disable-line declaration-no-important */
   font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
 }
 
@@ -29658,12 +29674,6 @@ img.icon {
 }
 .block .block-cards .multiline {
   white-space: normal;
-}
-.block .block-cards .btn.btn-link.btn-icon {
-  height: 36px;
-  width: 36px;
-  padding: 0;
-  border-radius: 50%;
 }
 
 .card-grid {
@@ -30677,12 +30687,7 @@ table.calendartable caption {
   font-size: inherit;
   margin-right: 0.25rem;
 }
-.course-section .action-menu .btn.btn-icon {
-  height: 32px;
-  width: 32px;
-  border-radius: 0.375rem;
-}
-.course-section .action-menu.section-actions .btn.btn-icon {
+.course-section .section_action_menu > .action-menu .btn-icon {
   font-size: 1.171875rem;
 }
 .course-section .section-summary-activities .icon {
@@ -31174,7 +31179,7 @@ table.calendartable caption {
 .activity.subsection .section h4, .activity.subsection .section .h4 {
   font-size: 1.171875rem;
 }
-.activity.subsection .section .section-actions .btn.btn-icon {
+.activity.subsection .section .section_action_menu > .action-menu .btn-icon {
   font-size: inherit;
 }
 .activity.subsection + .activity {
@@ -33542,45 +33547,6 @@ a.ygtvspacer:hover {
 }
 .message-app .overview-section-toggle.collapsed .expanded-icon-container {
   display: none;
-}
-.message-app .btn.btn-link.btn-icon {
-  height: 16px;
-  width: 20px;
-  padding: 0;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.message-app .btn.btn-link.btn-icon.icon-size-0 {
-  height: 20px !important; /* stylelint-disable-line declaration-no-important */
-  width: 20px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-1 {
-  height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 25px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-2 {
-  height: 28px !important; /* stylelint-disable-line declaration-no-important */
-  width: 30px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-3 {
-  height: 36px !important; /* stylelint-disable-line declaration-no-important */
-  width: 40px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-4 {
-  height: 44px !important; /* stylelint-disable-line declaration-no-important */
-  width: 50px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-5 {
-  height: 52px !important; /* stylelint-disable-line declaration-no-important */
-  width: 60px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-6 {
-  height: 60px !important; /* stylelint-disable-line declaration-no-important */
-  width: 70px !important; /* stylelint-disable-line declaration-no-important */
-}
-.message-app .btn.btn-link.btn-icon.icon-size-7 {
-  height: 68px !important; /* stylelint-disable-line declaration-no-important */
-  width: 80px !important; /* stylelint-disable-line declaration-no-important */
 }
 .message-app .view-overview-body .section {
   display: block;
@@ -37186,72 +37152,75 @@ p.arrow_button {
   margin: 0 0 10px 5px;
 }
 
-.btn.btn-icon {
-  height: 36px;
-  width: 36px;
-  font-size: 16px;
-  line-height: 16px;
-  padding: 0;
-  border-radius: 50%;
-  flex-shrink: 0;
+.btn-icon {
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-border-radius: var(--bs-border-radius);
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  --bs-btn-font-size: 16px;
+  height: calc(16px + 1rem);
+  width: calc(16px + 1rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn.btn-icon:hover, .btn.btn-icon:focus {
-  background-color: #e9ecef;
+.btn-icon .icon {
+  margin: 0;
 }
-.btn.btn-icon.icon-size-0 {
-  height: 20px !important; /* stylelint-disable-line declaration-no-important */
-  width: 20px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 0 !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 0 !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-0 {
+  height: calc(0 + 1rem);
+  width: calc(0 + 1rem);
+  --bs-btn-font-size: 0;
+  --bs-btn-line-height: 0;
 }
-.btn.btn-icon.icon-size-1 {
-  height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 25px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 4px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-1 {
+  height: calc(4px + 1rem);
+  width: calc(4px + 1rem);
+  --bs-btn-font-size: 4px;
+  --bs-btn-line-height: 4px;
 }
-.btn.btn-icon.icon-size-2 {
-  height: 28px !important; /* stylelint-disable-line declaration-no-important */
-  width: 30px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 8px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-2 {
+  height: calc(8px + 1rem);
+  width: calc(8px + 1rem);
+  --bs-btn-font-size: 8px;
+  --bs-btn-line-height: 8px;
 }
-.btn.btn-icon.icon-size-3 {
-  height: 36px !important; /* stylelint-disable-line declaration-no-important */
-  width: 40px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 16px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-3 {
+  height: calc(16px + 1rem);
+  width: calc(16px + 1rem);
+  --bs-btn-font-size: 16px;
+  --bs-btn-line-height: 16px;
 }
-.btn.btn-icon.icon-size-4 {
-  height: 44px !important; /* stylelint-disable-line declaration-no-important */
-  width: 50px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 24px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-4 {
+  height: calc(24px + 1rem);
+  width: calc(24px + 1rem);
+  --bs-btn-font-size: 24px;
+  --bs-btn-line-height: 24px;
 }
-.btn.btn-icon.icon-size-5 {
-  height: 52px !important; /* stylelint-disable-line declaration-no-important */
-  width: 60px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 32px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-5 {
+  height: calc(32px + 1rem);
+  width: calc(32px + 1rem);
+  --bs-btn-font-size: 32px;
+  --bs-btn-line-height: 32px;
 }
-.btn.btn-icon.icon-size-6 {
-  height: 60px !important; /* stylelint-disable-line declaration-no-important */
-  width: 70px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 40px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-6 {
+  height: calc(40px + 1rem);
+  width: calc(40px + 1rem);
+  --bs-btn-font-size: 40px;
+  --bs-btn-line-height: 40px;
 }
-.btn.btn-icon.icon-size-7 {
-  height: 68px !important; /* stylelint-disable-line declaration-no-important */
-  width: 80px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 48px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-7 {
+  height: calc(48px + 1rem);
+  width: calc(48px + 1rem);
+  --bs-btn-font-size: 48px;
+  --bs-btn-line-height: 48px;
 }
 
-.btn.btn-icon.icons-collapse-expand {
+.btn-icon.icons-collapse-expand {
   color: #0f6cbf;
   background-color: #e7f0f9;
 }
-.btn.btn-icon.icons-collapse-expand:hover {
+.btn-icon.icons-collapse-expand:hover {
   outline: 2px solid #0f6cbf;
 }
 
@@ -39745,11 +39714,6 @@ div.editor_atto_toolbar button .icon {
 
 .reportbuilder-table .action-menu .menubar {
   justify-content: end;
-}
-.reportbuilder-table .action-menu .menubar .btn.btn-icon {
-  height: 32px;
-  width: 40px;
-  border-radius: 0.375rem;
 }
 
 .reportbuilder-wrapper .filters-dropdown {

@@ -26,11 +26,6 @@
     }
     .action-menu .menubar {
         justify-content: end;
-        .btn.btn-icon {
-            height: $icon-medium-height;
-            width: $icon-medium-width;
-            @include border-radius();
-        }
     }
 }
 
