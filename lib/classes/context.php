@@ -431,12 +431,7 @@ abstract class context extends stdClass implements IteratorAggregate {
                             FROM {context_temp} temp
                            WHERE temp.id={context}.id";
         } else {
-            // Sqlite and others.
-            $updatesql = "UPDATE {context}
-                             SET path = (SELECT path FROM {context_temp} WHERE id = {context}.id),
-                                 depth = (SELECT depth FROM {context_temp} WHERE id = {context}.id),
-                                 locked = (SELECT locked FROM {context_temp} WHERE id = {context}.id)
-                             WHERE id IN (SELECT id FROM {context_temp})";
+            throw new \core\exception\coding_exception("Unsupported database family: {$dbfamily}");
         }
 
         $DB->execute($updatesql);

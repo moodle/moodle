@@ -5001,7 +5001,7 @@ EOD;
         $this->assertCount(1, $records);
         $this->assertEquals(5, reset($records)->course);
 
-        // We have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
+        // We have sql like this in moodle.
         $sql = "SELECT a.id AS id, a.course AS course
                   FROM {{$tablename}} a
                   JOIN (SELECT * FROM {{$tablename}}) b ON a.id = b.id

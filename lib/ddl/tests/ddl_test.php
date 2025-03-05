@@ -2294,7 +2294,6 @@ final class ddl_test extends \database_driver_testcase {
                     break;
                 case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
                 case 'postgres':
-                case 'sqlite':
                 default:
                     $this->assertSame('"' . $columnname . '"', $gen->getEncQuoted($columnname));
                     break;
@@ -2344,10 +2343,6 @@ final class ddl_test extends \database_driver_testcase {
                         $gen->getRenameFieldSQL($table, $field, $newcolumnname)
                     );
                     break;
-                case 'sqlite':
-                    // Skip it, since the DB is not supported yet.
-                    // BTW renaming a column name is already covered by the integration test 'testRenameField'.
-                    break;
                 case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
                     $this->assertSame(
                         [ "sp_rename '{$prefix}$tablename.[$oldcolumnname]', '$newcolumnname', 'COLUMN'" ],
@@ -2371,10 +2366,6 @@ final class ddl_test extends \database_driver_testcase {
                         $gen->getRenameFieldSQL($table, $field, $newcolumnname)
                     );
                     break;
-                case 'sqlite':
-                    // Skip it, since the DB is not supported yet.
-                    // BTW renaming a column name is already covered by the integration test 'testRenameField'.
-                break;
                 case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
                     $this->assertSame(
                         [ "sp_rename '{$prefix}$tablename.[$oldcolumnname]', '$newcolumnname', 'COLUMN'" ],

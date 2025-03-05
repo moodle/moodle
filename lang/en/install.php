@@ -214,7 +214,6 @@ $string['sessionautostarterror'] = 'This should be off';
 $string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
-$string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
 $string['upgradingqtypeplugin'] = 'Upgrading question/type plugin';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and
@@ -229,3 +228,6 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
 $string['welcomep70'] = 'Click the "Next" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
+
+// Deprecated since Moodle 5.0.
+$string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
