@@ -1,0 +1,12 @@
+issueNumber: MDL-80116
+notes:
+  core_courseformat:
+    - message: >-
+        The state actions section_move and all related functions are final
+        deprecated and cannot be used anymore. Use the newer section_move_after
+        from now on.
+      type: deprecated
+    - message: >-
+        The core_courseformat::base get_section_number and set_section_number
+        are now final deprecated. Use get_sectionum and set_sectionnum instead.
+      type: deprecated
