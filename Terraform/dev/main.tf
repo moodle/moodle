@@ -53,7 +53,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     environment = var.Environment
   }
 }
-
+/*
 provider "kubernetes" {
   host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
   client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
@@ -66,7 +66,7 @@ resource "kubernetes_namespace" "custom_namespace" {
     name = "learninghubmoodle"
   }
 }
-
+*/
 
 resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
   name                  = "userpool"
