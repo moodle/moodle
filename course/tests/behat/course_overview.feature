@@ -79,13 +79,13 @@ Feature: Users can access the course activities overview page
     And I am on the "Course 1" "course > activities" page logged in as "teacher1"
     And I should see "Assignments" in the "assign_overview_collapsible" "region"
     And I should see "Forums" in the "forum_overview_collapsible" "region"
-    And I should not see "Go to Assignments overview" in the "assign_overview_collapsible" "region"
+    And I should not see "Test assignment name" in the "assign_overview_collapsible" "region"
     And I should not see "Go to Forums overview" in the "forum_overview_collapsible" "region"
     When I click on "Expand" "link" in the "assign_overview_collapsible" "region"
-    Then I should see "Go to Assignments overview" in the "assign_overview_collapsible" "region"
+    Then I should see "Test assignment name" in the "assign_overview_collapsible" "region"
     And I should not see "Go to Forums overview" in the "forum_overview_collapsible" "region"
     And I click on "Collapse" "link" in the "assign_overview_collapsible" "region"
-    And I should not see "Go to Assignments overview" in the "assign_overview_collapsible" "region"
+    And I should not see "Test assignment name" in the "assign_overview_collapsible" "region"
     And I should not see "Go to Forums overview" in the "forum_overview_collapsible" "region"
 
   Scenario: Course overview shows the course present activity types

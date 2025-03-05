@@ -622,6 +622,10 @@ class assign_grading_summary implements renderable {
 
 /**
  * Renderable course index summary
+ *
+ * @deprecated since Moodle 5.0 (MDL-83888).
+ * @todo MDL-84429 Final deprecation in Moodle 6.0.
+ *
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -637,10 +641,18 @@ class assign_course_index_summary implements renderable {
     /**
      * constructor
      *
+     * @deprecated since Moodle 5.0 (MDL-83888).
+     * @todo MDL-84429 Final deprecation in Moodle 6.0.
      * @param boolean $usesections - True if this course format uses sections
      * @param string $courseformatname - The id of this course format
      */
+    #[\core\attribute\deprecated(
+        since: '5.0',
+        mdl: 'MDL-83888',
+        reason: 'The assign_course_index_summary class is not used anymore.',
+    )]
     public function __construct($usesections, $courseformatname) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->usesections = $usesections;
         $this->courseformatname = $courseformatname;
     }
@@ -648,6 +660,8 @@ class assign_course_index_summary implements renderable {
     /**
      * Add a row of data to display on the course index page
      *
+     * @deprecated since Moodle 5.0 (MDL-83888).
+     * @todo MDL-84429 Final deprecation in Moodle 6.0.
      * @param int $cmid - The course module id for generating a link
      * @param string $cmname - The course module name for generating a link
      * @param string $sectionname - The name of the course section (only if $usesections is true)
@@ -657,7 +671,13 @@ class assign_course_index_summary implements renderable {
      * @param string $gradeinfo - The current users grade if they have been graded and it is not hidden.
      * @param bool cangrade - Does this user have grade capability?
      */
+    #[\core\attribute\deprecated(
+        since: '5.0',
+        mdl: 'MDL-83888',
+        reason: 'The assign_course_index_summary class is not used anymore.',
+    )]
     public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo, $cangrade = false) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->assignments[] = ['cmid' => $cmid,
                                'cmname' => $cmname,
                                'sectionname' => $sectionname,

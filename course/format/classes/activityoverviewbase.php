@@ -23,6 +23,8 @@ use core_courseformat\local\overview\overviewitem;
 use core_courseformat\output\local\overview\activityname;
 use core_courseformat\output\local\overview\overviewpage;
 use core_courseformat\base as courseformat;
+use grade_item;
+use grade_grade;
 
 /**
  * Base class for activity overview.
@@ -169,5 +171,88 @@ abstract class activityoverviewbase {
             value: $status,
             content: $completion,
         );
+    }
+
+    /**
+     * Retrieves the grades overview items for the activity.
+     *
+     * Most activities will have none or one grade. However, some activities
+     * may have multiple grades, such as workshop or quiz.
+     *
+     * It is not recommended to override this method unless the plugin
+     * has specific requirements. Instead, plugins should override
+     * get_grade_item_names to provide the grade item names.
+     *
+     * @return overviewitem[] Array of overview items representing the grades.
+     */
+    public function get_grades_overviews(): array {
+        global $CFG, $USER;
+        // This overview is to see the own grades, users with full gradebook
+        // access will see all grades in the gradebook.
+        if (has_capability('moodle/grade:viewall', $this->context)) {
+            return [];
+        }
+        if (!plugin_supports('mod', $this->cm->modname, FEATURE_GRADE_HAS_GRADE, false)) {
+            return [];
+        }
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $items = grade_item::fetch_all([
+                'itemtype' => 'mod',
+                'itemmodule' => $this->cm->modname,
+                'iteminstance' => $this->cm->instance,
+                'courseid' => $this->course->id,
+        ]);
+        if (empty($items)) {
+            return [];
+        }
+
+        $itemnames = $this->get_grade_item_names($items);
+        $result = [];
+        foreach ($items as $item) {
+            // Plugins may decide to hide a specific grade item by not setting a name.
+            if (empty($itemnames[$item->id])) {
+                continue;
+            }
+
+            $gradegrade = grade_grade::fetch(['itemid' => $item->id, 'userid' => $USER->id]);
+
+            if (
+                !$gradegrade
+                || ($gradegrade->is_hidden() && !has_capability('moodle/grade:viewhidden', $this->context))
+            ) {
+                $result[] = new overviewitem(
+                    name: $itemnames[$item->id],
+                    value: '-',
+                    content: '-',
+                );
+                continue;
+            }
+
+            $result[] = new overviewitem(
+                name: $itemnames[$item->id],
+                value: $gradegrade->finalgrade,
+                content: grade_format_gradevalue($gradegrade->finalgrade, $item),
+            );
+        }
+        return $result;
+    }
+
+    /**
+     * Retrieves the grade item names for the activity.
+     *
+     * By default, the overview will display the grade if the activities
+     * has only one grade item. The name of the grade item will be 'Grade'.
+     * For plugins with multiple grade items, the plugin must override this method
+     * and provide names for each grade item that want to be displayed.
+     *
+     * @param grade_item[] $items
+     * @return array<integer, string> the grade item names indexed by item id.
+     */
+    protected function get_grade_item_names(array $items): array {
+        if (count($items) == 1) {
+            return [reset($items)->id => get_string('gradenoun')];
+        }
+        return [];
     }
 }

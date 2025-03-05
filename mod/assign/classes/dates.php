@@ -36,6 +36,9 @@ use core\activity_dates;
  */
 class dates extends activity_dates {
 
+    /** @var int|null $timedue the activity due date */
+    private ?int $timedue;
+
     /**
      * Returns a list of important dates in mod_assign
      *
@@ -45,6 +48,8 @@ class dates extends activity_dates {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+        $this->timedue = null;
 
         $course = get_course($this->cm->course);
         $context = \context_module::instance($this->cm->id);
@@ -83,10 +88,11 @@ class dates extends activity_dates {
         }
 
         if ($timedue) {
+            $this->timedue = (int) $timedue;
             $date = [
                 'dataid' => 'duedate',
                 'label' => get_string('activitydate:submissionsdue', 'mod_assign'),
-                'timestamp' => (int) $timedue,
+                'timestamp' => $this->timedue,
             ];
             if ($course->relativedatesmode && $assign->can_view_grades()) {
                 $date['relativeto'] = $course->startdate;
@@ -95,5 +101,16 @@ class dates extends activity_dates {
         }
 
         return $dates;
+    }
+
+    /**
+     * Returns the dues date data, if any.
+     * @return int|null the due date timestamp or null if not set.
+     */
+    public function get_due_date(): ?int {
+        if (!isset($this->timedue)) {
+            $this->get_dates();
+        }
+        return $this->timedue;
     }
 }
