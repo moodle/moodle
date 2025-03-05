@@ -265,8 +265,8 @@ jobs:
 
       - name: Disable automounting API credentials
         run: |
-          kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}"
-          kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}"
+          kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}" -n learninghubmoodle
+          kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}" -n learninghubmoodle
 
       - name: Get node resource group
         id: get_node_resource_group
