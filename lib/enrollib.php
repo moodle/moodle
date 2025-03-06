@@ -3655,7 +3655,8 @@ abstract class enrol_plugin {
         ?string $message = '',
         ?int $roleid = null,
     ): void {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $context = context_course::instance($instance->courseid);
         $user = core_user::get_user($userid);
