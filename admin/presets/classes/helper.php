@@ -290,7 +290,7 @@ class helper {
         static::add_item($presetid, 'enablenotes', '1');
         static::add_item($presetid, 'enableblogs', '1');
         static::add_item($presetid, 'enablebadges', '1');
-        static::add_item($presetid, 'enableanalytics', '1');
+        static::add_item($presetid, 'enableanalytics', '0');
         static::add_item($presetid, 'enabled', '1', 'core_competency');
         static::add_item($presetid, 'pushcourseratingstouserplans', '1', 'core_competency');
         static::add_item($presetid, 'showdataretentionsummary', '1', 'tool_dataprivacy');

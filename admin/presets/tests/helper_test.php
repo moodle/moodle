@@ -283,6 +283,10 @@ final class helper_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        // We need to change some of the default values; otherwise, the full preset won't be applied, because all the settings
+        // and plugins are the same.
+        set_config('enableanalytics', '1');
+
         $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $generator->create_preset(['name' => 'Preset 1']);
 
