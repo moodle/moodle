@@ -1922,15 +1922,15 @@ class core_admin_renderer extends plugin_renderer_base {
                     $source = '';
                 } else {
                     $row->attributes['class'] .= ' additional';
-                    $source = html_writer::div(get_string('sourceext', 'core_plugin'), 'source badge mr-1 bg-info text-white');
+                    $source = html_writer::div(get_string('sourceext', 'core_plugin'), 'source badge me-1 text-bg-info');
                 }
 
                 if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
                     $row->attributes['class'] .= ' missing';
-                    $msg = html_writer::div(get_string('status_missing', 'core_plugin'), 'statusmsg badge bg-danger text-white');
+                    $msg = html_writer::div(get_string('status_missing', 'core_plugin'), 'statusmsg badge text-bg-danger');
                 } else if ($status === core_plugin_manager::PLUGIN_STATUS_NEW) {
                     $row->attributes['class'] .= ' newplugin';
-                    $msg = html_writer::div(get_string('status_new', 'core_plugin'), 'statusmsg badge bg-success text-white');
+                    $msg = html_writer::div(get_string('status_new', 'core_plugin'), 'statusmsg badge text-bg-success');
                 } else {
                     $msg = '';
                 }
