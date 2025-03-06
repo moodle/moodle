@@ -30,6 +30,8 @@ class Postal implements \JsonSerializable
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $record
      */
     public function __construct(array $record)
     {
@@ -37,6 +39,9 @@ class Postal implements \JsonSerializable
         $this->confidence = $record['confidence'] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = [];

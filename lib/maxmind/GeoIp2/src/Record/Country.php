@@ -27,6 +27,9 @@ class Country extends AbstractPlaceRecord
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $record
+     * @param list<string>         $locales
      */
     public function __construct(array $record, array $locales = ['en'])
     {
@@ -36,6 +39,9 @@ class Country extends AbstractPlaceRecord
         $this->isoCode = $record['iso_code'] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = parent::jsonSerialize();

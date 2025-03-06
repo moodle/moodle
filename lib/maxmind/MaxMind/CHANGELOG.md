@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.12.0 (2024-11-14)
+-------------------
+
+* Improve the error handling when the user tries to open a directory
+  with the pure PHP reader.
+* Improve the typehints on arrays in the PHPDocs.
+
 1.11.1 (2023-12-01)
 -------------------
 

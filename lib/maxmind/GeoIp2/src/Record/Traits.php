@@ -196,6 +196,11 @@ class Traits implements \JsonSerializable
      */
     public readonly ?string $userType;
 
+    /**
+     * @ignore
+     *
+     * @param array<string, mixed> $record
+     */
     public function __construct(array $record)
     {
         $this->autonomousSystemNumber = $record['autonomous_system_number'] ?? null;
@@ -226,6 +231,9 @@ class Traits implements \JsonSerializable
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = [];

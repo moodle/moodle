@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+3.1.0 (2024-11-15)
+------------------
+
+* This library no longer uses implicitly nullable parameter types. This
+  will fix deprecation warning in PHP 8.4. Reported by Steven Lewis.
+  GitHub #230.
+* The PHPDoc type hints have been improved for use with PHPStan.
+
 3.0.0 (2023-12-04)
 ------------------
 

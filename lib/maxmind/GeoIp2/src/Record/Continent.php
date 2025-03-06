@@ -26,6 +26,9 @@ class Continent extends AbstractNamedRecord
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $record
+     * @param list<string>         $locales
      */
     public function __construct(array $record, array $locales = ['en'])
     {
@@ -35,6 +38,9 @@ class Continent extends AbstractNamedRecord
         $this->geonameId = $record['geoname_id'] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = parent::jsonSerialize();

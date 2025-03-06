@@ -64,6 +64,8 @@ class AnonymousIp implements \JsonSerializable
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $raw
      */
     public function __construct(array $raw)
     {
@@ -78,27 +80,18 @@ class AnonymousIp implements \JsonSerializable
         $this->network = Util::cidr($ipAddress, $raw['prefix_len']);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function jsonSerialize(): ?array
     {
         $js = [];
-        if ($this->isAnonymous !== null) {
-            $js['is_anonymous'] = $this->isAnonymous;
-        }
-        if ($this->isAnonymousVpn !== null) {
-            $js['is_anonymous_vpn'] = $this->isAnonymousVpn;
-        }
-        if ($this->isHostingProvider !== null) {
-            $js['is_hosting_provider'] = $this->isHostingProvider;
-        }
-        if ($this->isPublicProxy !== null) {
-            $js['is_public_proxy'] = $this->isPublicProxy;
-        }
-        if ($this->isResidentialProxy !== null) {
-            $js['is_residential_proxy'] = $this->isResidentialProxy;
-        }
-        if ($this->isTorExitNode !== null) {
-            $js['is_tor_exit_node'] = $this->isTorExitNode;
-        }
+        $js['is_anonymous'] = $this->isAnonymous;
+        $js['is_anonymous_vpn'] = $this->isAnonymousVpn;
+        $js['is_hosting_provider'] = $this->isHostingProvider;
+        $js['is_public_proxy'] = $this->isPublicProxy;
+        $js['is_residential_proxy'] = $this->isResidentialProxy;
+        $js['is_tor_exit_node'] = $this->isTorExitNode;
         $js['ip_address'] = $this->ipAddress;
         $js['network'] = $this->network;
 

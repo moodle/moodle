@@ -17,11 +17,19 @@ class MaxMind implements \JsonSerializable
      */
     public readonly ?int $queriesRemaining;
 
+    /**
+     * @ignore
+     *
+     * @param array<string, mixed> $record
+     */
     public function __construct(array $record)
     {
         $this->queriesRemaining = $record['queries_remaining'] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         $js = [];
