@@ -4352,21 +4352,27 @@ class core_course_external extends external_api {
      * @param int $groupid Group id from which the users will be obtained
      * @param bool $onlyactive Whether to return only the active enrolled users or all enrolled users in the course.
      * @return array List of users
-     * @throws invalid_parameter_exception
      */
     public static function get_enrolled_users_by_cmid(int $cmid, int $groupid = 0, bool $onlyactive = false) {
-    global $PAGE;
+        global $PAGE;
+
         $warnings = [];
 
-        self::validate_parameters(self::get_enrolled_users_by_cmid_parameters(), [
-                'cmid' => $cmid,
-                'groupid' => $groupid,
-                'onlyactive' => $onlyactive,
+        [
+            'cmid' => $cmid,
+            'groupid' => $groupid,
+            'onlyactive' => $onlyactive,
+        ] = self::validate_parameters(self::get_enrolled_users_by_cmid_parameters(), [
+            'cmid' => $cmid,
+            'groupid' => $groupid,
+            'onlyactive' => $onlyactive,
         ]);
 
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
         $coursecontext = context_course::instance($course->id);
         self::validate_context($coursecontext);
+
+        course_require_view_participants($coursecontext);
 
         $enrolledusers = get_enrolled_users($coursecontext, '', $groupid, 'u.*', null, 0, 0, $onlyactive);
 
