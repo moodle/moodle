@@ -304,9 +304,9 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   }
 }
 
-resource "azurerm_sql_managed_instance_advanced_threat_protection" "atp" {
+resource "azurerm_advanced_threat_protection" "atp" {
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
-  state               = "Enabled"
+  enabled = true
 }
 
 resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_va" {
