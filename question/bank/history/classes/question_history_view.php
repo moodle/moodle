@@ -103,7 +103,7 @@ class question_history_view extends view {
 
     #[\Override]
     protected function default_sort(): array {
-        return ['qbank_history__version_number_column' => 1];
+        return ['qbank_history__version_number_column' => SORT_ASC];
     }
 
     protected function build_query(): void {
