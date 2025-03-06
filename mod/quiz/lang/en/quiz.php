@@ -972,6 +972,7 @@ $string['saveandedit'] = 'Save changes and edit questions';
 $string['saveattemptfailed'] = 'Failed to save the current quiz attempt.';
 $string['savedfromdeletedcourse'] = 'Saved from deleted course "{$a}"';
 $string['savegrades'] = 'Save grades';
+$string['savemanualgradingfailed'] = 'Modification not saved. Please check the message below and try again.';
 $string['savemyanswers'] = 'Save my answers';
 $string['savenosubmit'] = 'Save without submitting';
 $string['saveoverrideandstay'] = 'Save and enter another override';
