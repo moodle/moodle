@@ -16,12 +16,10 @@ Feature: Marking guide can handle maximum grade mismatches
       | teacher1 | C1     | editingteacher |
 
   Scenario Outline: Marking guide maximum grade handling
-    # Set the maximum total grade for assignment to 100.
     Given the following "activities" exist:
-      | activity | course | name     | advancedgradingmethod_submissions | grade[modgrade_point] |
-      | assign   | C1     | Assign 1 | guide                             | 100                   |
+      | activity | course | name     | advancedgradingmethod_submissions |
+      | assign   | C1     | Assign 1 | guide                             |
     And I am on the "Course 1" course page logged in as teacher1
-    # Create marking guide.
     And I go to "Assign 1" advanced grading definition page
     And I set the following fields to these values:
       | Name        | Assign 1 marking guide    |
@@ -31,11 +29,9 @@ Feature: Marking guide can handle maximum grade mismatches
       | Grade Criteria 1  | Grade 1 description for students | Grade 1 description for markers | <maxscore>    |
       | Grade Criteria 2  | Grade 2 description for students | Grade 2 description for markers | 30            |
     When I press "Save marking guide and make it ready"
-    # Confirm that marking guide is successfully set as ready.
     Then I should see "Assign 1 marking guide Ready for use"
-    # The corresponding warning message that grades will be scaled is displayed.
-    And I should see "WARNING: Your marking guide has a maximum grade of <totalmaxscore> points"
-    And I should see "but the maximum grade set in your activity is 100  The maximum score set in your marking guide will be scaled to the maximum grade in the module."
+    # Please note: We need to add the no-break space unicode character to the warning message otherwise it will fail.
+    And I should see "WARNING: Your marking guide has a maximum grade of <totalmaxscore> points but the maximum grade set in your activity is 100  The maximum score set in your marking guide will be scaled to the maximum grade in the module."
     And I should see "Intermediate scores will be converted respectively and rounded to the nearest available grade."
 
     Examples:
