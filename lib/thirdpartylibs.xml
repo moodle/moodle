@@ -224,7 +224,7 @@
     <location>jquery</location>
     <name>jQuery UI</name>
     <description>jQuery UI is a set of user interface interactions, effects, widgets, and themes built on top of the jQuery library.</description>
-    <version>1.13.2</version>
+    <version>1.14.1</version>
     <license>MIT</license>
     <repository>https://github.com/jquery/jquery-ui</repository>
     <copyrights>
