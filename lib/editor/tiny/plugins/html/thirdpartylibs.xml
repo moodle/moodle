@@ -76,7 +76,7 @@
     <location>amd/src/codemirror-lazy.js</location>
     <name>codemirror/search</name>
     <description>Search functionality for the CodeMirror code editor.</description>
-    <version>6.5.9</version>
+    <version>6.5.10</version>
     <license>MIT</license>
     <repository>https://github.com/codemirror/search</repository>
   </library>
@@ -92,7 +92,7 @@
     <location>amd/src/codemirror-lazy.js</location>
     <name>codemirror/view</name>
     <description>DOM view component for the CodeMirror code editor.</description>
-    <version>6.36.2</version>
+    <version>6.36.4</version>
     <license>MIT</license>
     <repository>https://github.com/codemirror/view</repository>
   </library>
