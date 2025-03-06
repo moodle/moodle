@@ -22,18 +22,19 @@
     }
   ],
   "require": {
-    "php-64bit": "^8.1",
+    "php-64bit": "^8.2",
     "ext-mbstring": "*",
     "ext-zlib": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.0",
+    "phpunit/phpunit": "^11.0",
     "guzzlehttp/guzzle": "^7.5",
     "ext-zip": "*",
     "mikey179/vfsstream": "^1.6",
     "php-coveralls/php-coveralls": "^2.5",
     "friendsofphp/php-cs-fixer": "^3.16",
-    "vimeo/psalm": "^5.0"
+    "vimeo/psalm": "^6.0",
+    "brianium/paratest": "^7.7"
   },
   "suggest": {
     "psr/http-message": "^2.0",
@@ -46,13 +47,17 @@
       "@test:formatted",
       "@test:lint"
     ],
-    "test:unit": "phpunit --coverage-clover=coverage.clover.xml --coverage-html cov",
+    "test:unit:setup-cov": "@putenv XDEBUG_MODE=coverage",
+    "test:unit": "paratest --functional",
+    "test:unit:cov": ["@test:unit:setup-cov", "@test:unit --coverage-clover=coverage.clover.xml --coverage-html cov"],
     "test:unit:slow": "@test:unit --group slow",
+    "test:unit:slow:cov": ["@test:unit:setup-cov", "@test:unit --coverage-clover=coverage.clover.xml --coverage-html cov --group slow"],
     "test:unit:fast": "@test:unit --exclude-group slow",
+    "test:unit:fast:cov": ["@test:unit:setup-cov", "@test:unit --coverage-clover=coverage.clover.xml --coverage-html cov --exclude-group slow"],
     "test:formatted": "@format --dry-run --stop-on-violation --using-cache=no",
     "test:lint": "psalm --stats --show-info=true --find-unused-psalm-suppress",
     "coverage:report": "php-coveralls --coverage_clover=coverage.clover.xml --json_path=coveralls-upload.json --insecure",
-    "install:tools": "phive install --trust-gpg-keys 0x67F861C3D889C656",
+    "install:tools": "phive install --trust-gpg-keys 0x67F861C3D889C656 --trust-gpg-keys 0x8AC0BAA79732DD42",
     "docs:generate": "tools/phpdocumentor --sourcecode"
   },
   "autoload": {
