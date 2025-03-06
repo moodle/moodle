@@ -102,7 +102,7 @@
             }
         }
         &:before {
-            @extend .fa-solid;
+            font: var(--fa-font-solid);
             content: fa-content($fa-var-check);
         }
     }

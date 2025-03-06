@@ -40,7 +40,7 @@
     .dropdown-subpanel .dropdown-item {
         &::after {
             border: 0;
-            @extend .fa-solid;
+            font: var(--fa-font-solid);
             content: fa-content($fa-var-chevron-right);
         }
 
@@ -66,7 +66,7 @@
     .dropdown-subpanel .dropdown-item {
         &::after {
             border: 0;
-            @extend .fa-solid;
+            font: var(--fa-font-solid);
             content: fa-content($fa-var-chevron-left);
         }
 
@@ -101,7 +101,7 @@
         align-items: center;
 
         &:before {
-            @extend .fa-solid;
+            font: var(--fa-font-solid);
             content: fa-content($fa-var-check);
             position: absolute;
             left: 0.4rem;
