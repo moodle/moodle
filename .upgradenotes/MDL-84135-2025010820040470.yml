@@ -1,0 +1,7 @@
+issueNumber: MDL-84135
+notes:
+  core_reportbuilder:
+    - message: >-
+        Use of the `course_completion` table is deprecated in the `completion`
+        entity, please use `course_completions` instead
+      type: deprecated
