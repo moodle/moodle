@@ -4067,6 +4067,12 @@ final class externallib_test extends externallib_advanced_testcase {
 
         $this->assertEquals(2, count($users['users']));
         $this->assertEquals($expectedusers, $users);
+
+        // Prohibit the capability for viewing course participants.
+        $this->unassignUserCapability('moodle/course:viewparticipants', null, null, $course1->id);
+        $this->expectException(required_capability_exception::class);
+        $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (View participants)');
+        core_course_external::get_enrolled_users_by_cmid($forum1->cmid);
     }
 
     /**
