@@ -305,7 +305,7 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
 }
 
 resource "azurerm_advanced_threat_protection" "atp" {
-  managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
+  target_resource_id = azurerm_mssql_managed_instance.sqlmi.id
   enabled = true
 }
 
