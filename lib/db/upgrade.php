@@ -1464,7 +1464,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025022100.02);
     }
 
-    if ($oldversion < 2025020600.01) {
+    if ($oldversion < 2025030400.01) {
         // If mlbackend_php is no longer present, remove it.
         if (!file_exists($CFG->dirroot . '/lib/mlbackend/php/version.php')) {
             // Clean config.
@@ -1490,7 +1490,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025020600.01);
+        upgrade_main_savepoint(true, 2025030400.01);
     }
 
     return true;
