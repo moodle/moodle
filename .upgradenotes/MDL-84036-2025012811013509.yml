@@ -1,0 +1,7 @@
+issueNumber: MDL-84036
+notes:
+  core_grades:
+    - message: >-
+        The external function core_grades_get_groups_for_search_widget has been
+        fully removed.
+      type: removed

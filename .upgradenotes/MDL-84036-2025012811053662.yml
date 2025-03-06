@@ -1,0 +1,7 @@
+issueNumber: MDL-84036
+notes:
+  core:
+    - message: >-
+        The `core_output_load_fontawesome_icon_map` web service has been
+        fully removed and replaced by `core_output_load_fontawesome_icon_system_map`
+      type: removed

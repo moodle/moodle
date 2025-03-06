@@ -25,25 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
-
-    'report_insights_set_notuseful_prediction' => array(
-        'classname'   => 'report_insights\external',
-        'methodname'  => 'set_notuseful_prediction',
-        'description' => 'Flags the prediction as not useful.',
-        'type'        => 'write',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-
-    'report_insights_set_fixed_prediction' => array(
-        'classname'   => 'report_insights\external',
-        'methodname'  => 'set_fixed_prediction',
-        'description' => 'Flags a prediction as fixed.',
-        'type'        => 'write',
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-        'ajax'          => true,
-    ),
-
     'report_insights_action_executed' => array(
         'classname'   => 'report_insights\external',
         'methodname'  => 'action_executed',
