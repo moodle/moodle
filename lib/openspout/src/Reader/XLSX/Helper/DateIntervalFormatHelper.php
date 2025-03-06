@@ -61,13 +61,16 @@ final class DateIntervalFormatHelper
         return 1 === preg_match('/^(\[hh?](:mm(:ss)?)?|\[mm?](:ss)?|\[ss?])$/', $excelFormat);
     }
 
-    public static function toPHPDateIntervalFormat(string $excelDateFormat, ?string &$startUnit = null): string
+    public static function toPHPDateIntervalFormat(string $excelDateFormat, string &$startUnit): string
     {
-        $startUnit = null;
+        $startUnitStarted = false;
         $phpFormatParts = [];
         $formatParts = explode(':', str_replace(['[', ']'], '', $excelDateFormat));
         foreach ($formatParts as $formatPart) {
-            $startUnit ??= $formatPart;
+            if (false === $startUnitStarted) {
+                $startUnit = $formatPart;
+                $startUnitStarted = true;
+            }
             $phpFormatParts[] = self::dateIntervalFormats[$formatPart];
         }
 
@@ -77,6 +80,7 @@ final class DateIntervalFormatHelper
 
     public static function formatDateInterval(DateInterval $dateInterval, string $excelDateFormat): string
     {
+        $startUnit = '';
         $phpFormat = self::toPHPDateIntervalFormat($excelDateFormat, $startUnit);
 
         // We have to move the hours to minutes or hours+minutes to seconds if the format in Excel did the same:

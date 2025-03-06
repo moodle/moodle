@@ -22,7 +22,7 @@ final class Border
     public const WIDTH_THICK = 'thick';
 
     /** @var array<string, BorderPart> */
-    private array $parts;
+    private array $parts = [];
 
     public function __construct(BorderPart ...$borderParts)
     {

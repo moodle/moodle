@@ -19,6 +19,9 @@ final class Writer extends AbstractWriterMultiSheets
 {
     /** @var string Content-Type value for the header */
     protected static string $headerContentType = 'application/vnd.oasis.opendocument.spreadsheet';
+
+    /** @var string document creator */
+    protected string $creator = 'OpenSpout';
     private readonly Options $options;
 
     public function __construct(?Options $options = null)
@@ -29,6 +32,11 @@ final class Writer extends AbstractWriterMultiSheets
     public function getOptions(): Options
     {
         return $this->options;
+    }
+
+    public function setCreator(string $creator): void
+    {
+        $this->creator = $creator;
     }
 
     protected function createWorkbookManager(): WorkbookManager

@@ -16,7 +16,7 @@ use OpenSpout\Reader\Exception\InvalidValueException;
 /**
  * @internal
  */
-final class CellValueFormatter
+final readonly class CellValueFormatter
 {
     /**
      * Definition of all possible cell types.
@@ -61,10 +61,10 @@ final class CellValueFormatter
     ];
 
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    private readonly bool $shouldFormatDates;
+    private bool $shouldFormatDates;
 
     /** @var ODS Used to unescape XML data */
-    private readonly ODS $escaper;
+    private ODS $escaper;
 
     /**
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings

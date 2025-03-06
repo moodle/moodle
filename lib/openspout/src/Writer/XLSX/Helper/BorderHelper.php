@@ -48,8 +48,8 @@ final class BorderHelper
 
         $borderStyle = self::getBorderStyle($borderPart);
 
-        $colorEl = sprintf('<color rgb="%s"/>', $borderPart->getColor());
-        $partEl = sprintf(
+        $colorEl = \sprintf('<color rgb="%s"/>', $borderPart->getColor());
+        $partEl = \sprintf(
             '<%s style="%s">%s</%s>',
             $borderPart->getName(),
             $borderStyle,

@@ -75,7 +75,7 @@ final class WorkbookManager extends AbstractWorkbookManager
             ->createContentFiles($this->options, $worksheets)
             ->deleteWorksheetTempFolder()
             ->createContentTypesFile($worksheets)
-            ->createWorkbookFile($worksheets)
+            ->createWorkbookFile($this->options, $worksheets)
             ->createWorkbookRelsFile($worksheets)
             ->createWorksheetRelsFiles($worksheets)
             ->createStylesFile($this->styleManager)

@@ -42,7 +42,10 @@ final class FileBasedStrategy implements CachingStrategyInterface
      *
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
      */
-    private string $inMemoryTempFilePath = '';
+    private string $readMemoryTempFilePath = '';
+
+    /** @var string Path of the temporary file whose contents is currently being written to */
+    private string $writeMemoryTempFilePath = '';
 
     /**
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
@@ -73,13 +76,14 @@ final class FileBasedStrategy implements CachingStrategyInterface
     {
         $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
 
-        if (!file_exists($tempFilePath)) {
+        if ($this->writeMemoryTempFilePath !== $tempFilePath) {
             if (null !== $this->tempFilePointer) {
                 fclose($this->tempFilePointer);
             }
             $resource = fopen($tempFilePath, 'w');
             \assert(false !== $resource);
             $this->tempFilePointer = $resource;
+            $this->writeMemoryTempFilePath = $tempFilePath;
         }
 
         // The shared string retrieval logic expects each cell data to be on one line only
@@ -97,6 +101,7 @@ final class FileBasedStrategy implements CachingStrategyInterface
     {
         // close pointer to the last temp file that was written
         if (null !== $this->tempFilePointer) {
+            $this->writeMemoryTempFilePath = '';
             fclose($this->tempFilePointer);
         }
     }
@@ -115,17 +120,13 @@ final class FileBasedStrategy implements CachingStrategyInterface
         $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
         $indexInFile = $sharedStringIndex % $this->maxNumStringsPerTempFile;
 
-        if (!file_exists($tempFilePath)) {
-            throw new SharedStringNotFoundException("Shared string temp file not found: {$tempFilePath} ; for index: {$sharedStringIndex}");
-        }
-
-        if ($this->inMemoryTempFilePath !== $tempFilePath) {
-            $tempFilePath = realpath($tempFilePath);
-            \assert(false !== $tempFilePath);
-            $contents = file_get_contents($tempFilePath);
-            \assert(false !== $contents);
+        if ($this->readMemoryTempFilePath !== $tempFilePath) {
+            $contents = @file_get_contents($tempFilePath);
+            if (false === $contents) {
+                throw new SharedStringNotFoundException("Shared string temp file could not be read: {$tempFilePath} ; for index: {$sharedStringIndex}");
+            }
             $this->inMemoryTempFileContents = explode(PHP_EOL, $contents);
-            $this->inMemoryTempFilePath = $tempFilePath;
+            $this->readMemoryTempFilePath = $tempFilePath;
         }
 
         $sharedString = null;

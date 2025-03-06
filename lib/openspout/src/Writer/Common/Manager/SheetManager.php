@@ -60,7 +60,7 @@ final class SheetManager
             }
 
             if ($this->doesContainInvalidCharacters($name)) {
-                $failedRequirements[] = 'It should not contain these characters: \\ / ? * : [ or ]';
+                $failedRequirements[] = 'It should not contain these characters: \ / ? * : [ or ]';
             }
 
             if ($this->doesStartOrEndWithSingleQuote($name)) {

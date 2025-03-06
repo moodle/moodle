@@ -24,7 +24,7 @@ use OpenSpout\Writer\XLSX\Options;
 /**
  * @internal
  */
-final class WorksheetManager implements WorksheetManagerInterface
+final readonly class WorksheetManager implements WorksheetManagerInterface
 {
     /**
      * Maximum number of characters a cell can contain.
@@ -36,24 +36,24 @@ final class WorksheetManager implements WorksheetManagerInterface
     public const MAX_CHARACTERS_PER_CELL = 32767;
 
     /** @var CommentsManager Manages comments */
-    private readonly CommentsManager $commentsManager;
+    private CommentsManager $commentsManager;
 
-    private readonly Options $options;
+    private Options $options;
 
     /** @var StyleManager Manages styles */
-    private readonly StyleManager $styleManager;
+    private StyleManager $styleManager;
 
     /** @var StyleMerger Helper to merge styles together */
-    private readonly StyleMerger $styleMerger;
+    private StyleMerger $styleMerger;
 
     /** @var SharedStringsManager Helper to write shared strings */
-    private readonly SharedStringsManager $sharedStringsManager;
+    private SharedStringsManager $sharedStringsManager;
 
     /** @var XLSXEscaper Strings escaper */
-    private readonly XLSXEscaper $stringsEscaper;
+    private XLSXEscaper $stringsEscaper;
 
     /** @var StringHelper String helper */
-    private readonly StringHelper $stringHelper;
+    private StringHelper $stringHelper;
 
     /**
      * WorksheetManager constructor.
@@ -198,14 +198,14 @@ final class WorksheetManager implements WorksheetManagerInterface
         } elseif ($cell instanceof Cell\NumericCell) {
             $cellXML .= '><v>'.$cell->getValue().'</v></c>';
         } elseif ($cell instanceof Cell\FormulaCell) {
-            $cellXML .= '><f>'.substr($cell->getValue(), 1).'</f></c>';
+            $cellXML .= '><f>'.$this->stringsEscaper->escape(substr($cell->getValue(), 1)).'</f></c>';
         } elseif ($cell instanceof Cell\DateTimeCell) {
             $cellXML .= '><v>'.DateHelper::toExcel($cell->getValue()).'</v></c>';
         } elseif ($cell instanceof Cell\DateIntervalCell) {
             $cellXML .= '><v>'.DateIntervalHelper::toExcel($cell->getValue()).'</v></c>';
         } elseif ($cell instanceof Cell\ErrorCell) {
             // only writes the error value if it's a string
-            $cellXML .= ' t="e"><v>'.$cell->getRawValue().'</v></c>';
+            $cellXML .= ' t="e"><v>'.$this->stringsEscaper->escape($cell->getRawValue()).'</v></c>';
         } elseif ($cell instanceof Cell\EmptyCell) {
             if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';

@@ -75,6 +75,9 @@ final class StyleMerger
         if (!$style->hasSetWrapText() && $baseStyle->hasSetWrapText()) {
             $styleToUpdate->setShouldWrapText($baseStyle->shouldWrapText());
         }
+        if (!$style->hasSetTextRotation() && $baseStyle->hasSetTextRotation()) {
+            $styleToUpdate->setTextRotation($baseStyle->textRotation());
+        }
         if (!$style->hasSetShrinkToFit() && $baseStyle->shouldShrinkToFit()) {
             $styleToUpdate->setShouldShrinkToFit();
         }

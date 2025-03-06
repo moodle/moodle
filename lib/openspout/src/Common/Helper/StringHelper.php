@@ -7,10 +7,10 @@ namespace OpenSpout\Common\Helper;
 /**
  * @internal
  */
-final class StringHelper
+final readonly class StringHelper
 {
     /** @var bool Whether the mbstring extension is loaded */
-    private readonly bool $hasMbstringSupport;
+    private bool $hasMbstringSupport;
 
     public function __construct(bool $hasMbstringSupport)
     {

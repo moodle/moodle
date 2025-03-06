@@ -28,11 +28,11 @@ final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
     public const MIMETYPE_FILE_NAME = 'mimetype';
     public const STYLES_XML_FILE_NAME = 'styles.xml';
 
-    private readonly string $baseFolderRealPath;
+    private string $baseFolderRealPath;
 
     /** @var string document creator */
-    private readonly string $creator;
-    private readonly CommonFileSystemHelper $baseFileSystemHelper;
+    private string $creator;
+    private CommonFileSystemHelper $baseFileSystemHelper;
 
     /** @var string Path to the root folder inside the temp folder where the files to create the ODS will be stored */
     private string $rootFolder;

@@ -90,6 +90,12 @@ final class Style
     /** @var bool Whether the wrap text property was set */
     private bool $hasSetWrapText = false;
 
+    /** @var int Text rotation */
+    private int $textRotation = 0;
+
+    /** @var bool Whether the text rotation property was set */
+    private bool $hasSetTextRotation = false;
+
     /** @var bool Whether the cell should shrink to fit to content */
     private bool $shouldShrinkToFit = false;
 
@@ -381,6 +387,28 @@ final class Style
     public function hasSetWrapText(): bool
     {
         return $this->hasSetWrapText;
+    }
+
+    public function textRotation(): int
+    {
+        return $this->textRotation;
+    }
+
+    /**
+     * @param int $rotation Rotate text
+     */
+    public function setTextRotation(int $rotation): self
+    {
+        $this->textRotation = $rotation;
+        $this->hasSetTextRotation = true;
+        $this->isEmpty = false;
+
+        return $this;
+    }
+
+    public function hasSetTextRotation(): bool
+    {
+        return $this->hasSetTextRotation;
     }
 
     /**

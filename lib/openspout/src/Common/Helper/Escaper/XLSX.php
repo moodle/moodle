@@ -107,7 +107,7 @@ final class XLSX implements EscaperInterface
             $character = \chr($charValue);
             if (1 === preg_match("/{$this->escapableControlCharactersPattern}/", $character)) {
                 $charHexValue = dechex($charValue);
-                $escapedChar = '_x'.sprintf('%04s', strtoupper($charHexValue)).'_';
+                $escapedChar = '_x'.\sprintf('%04s', strtoupper($charHexValue)).'_';
                 $controlCharactersEscapingMap[$escapedChar] = $character;
             }
         }
