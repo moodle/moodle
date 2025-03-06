@@ -304,6 +304,11 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   }
 }
 
+resource "azurerm_sql_managed_instance_advanced_threat_protection" "atp" {
+  managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
+  state               = "Enabled"
+}
+
 resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_va" {
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
   storage_container_path = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.assessment_container.name}"
