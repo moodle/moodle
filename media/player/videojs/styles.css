@@ -700,7 +700,7 @@ body.vjs-pip-window .video-js {
   transition: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+       appearance: none;
 }
 
 .video-js.vjs-spatial-navigation-enabled .vjs-button:focus {
@@ -1034,7 +1034,8 @@ body.vjs-pip-window .video-js {
   margin: 0 10px;
 }
 
-.video-js .vjs-progress-control:hover .vjs-progress-holder {
+.video-js .vjs-progress-control:hover .vjs-progress-holder,
+.video-js.vjs-scrubbing.vjs-touch-enabled .vjs-progress-control .vjs-progress-holder {
   font-size: 1.6666666667em;
 }
 
@@ -1108,7 +1109,8 @@ body.vjs-pip-window .video-js {
 }
 
 .video-js .vjs-progress-control:hover .vjs-time-tooltip,
-.video-js .vjs-progress-control:hover .vjs-progress-holder:focus .vjs-time-tooltip {
+.video-js .vjs-progress-control:hover .vjs-progress-holder:focus .vjs-time-tooltip,
+.video-js.vjs-scrubbing.vjs-touch-enabled .vjs-progress-control .vjs-time-tooltip {
   display: block;
   font-size: 0.6em;
   visibility: visible;
@@ -1128,6 +1130,10 @@ body.vjs-pip-window .video-js {
 }
 
 .video-js .vjs-progress-control:hover .vjs-mouse-display {
+  display: block;
+}
+
+.video-js.vjs-scrubbing.vjs-touch-enabled .vjs-progress-control .vjs-mouse-display {
   display: block;
 }
 
@@ -1154,7 +1160,7 @@ body.vjs-pip-window .video-js {
   -webkit-user-select: none;
   /* Non-prefixed version, currently supported by Chrome and Opera */
   -moz-user-select: none;
-  user-select: none;
+       user-select: none;
   background-color: #73859f;
   background-color: rgba(115, 133, 159, 0.5);
 }
@@ -1501,6 +1507,10 @@ body.vjs-pip-window .video-js {
   line-height: 3em;
 }
 
+.vjs-normalise-time-controls:not(.vjs-live) .vjs-time-control {
+  display: flex;
+}
+
 .video-js .vjs-play-control {
   cursor: pointer;
 }
@@ -1559,6 +1569,14 @@ video::-webkit-media-text-track-display {
   width: 80% !important;
 }
 
+@supports not (inset: 10px) {
+  .video-js .vjs-text-track-display > div {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
 .video-js .vjs-picture-in-picture-control {
   cursor: pointer;
   flex: none;

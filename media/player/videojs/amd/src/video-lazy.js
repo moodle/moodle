@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 8.17.3 <http://videojs.com/>
+ * Video.js 8.21.1 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/main/LICENSE>
@@ -16,7 +16,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.videojs = factory());
 })(this, (function () { 'use strict';
 
-  var version$5 = "8.17.3";
+  var version$5 = "8.21.1";
 
   /**
    * An Object that contains lifecycle hooks as keys which point to an array
@@ -1169,7 +1169,7 @@
   /**
    * The callback definition for toggleClass.
    *
-   * @callback module:dom~PredicateCallback
+   * @callback PredicateCallback
    * @param    {Element} element
    *           The DOM element of the Component.
    *
@@ -1178,8 +1178,9 @@
    *
    * @return   {boolean|undefined}
    *           If `true` is returned, the `classToToggle` will be added to the
-   *           `element`. If `false`, the `classToToggle` will be removed from
-   *           the `element`. If `undefined`, the callback will be ignored.
+   *           `element`, but not removed. If `false`, the `classToToggle` will be removed from
+   *           the `element`, but not added. If `undefined`, the callback will be ignored.
+   *
    */
 
   /**
@@ -1192,7 +1193,7 @@
    * @param  {string} classToToggle
    *         The class that should be toggled.
    *
-   * @param  {boolean|module:dom~PredicateCallback} [predicate]
+   * @param  {boolean|PredicateCallback} [predicate]
    *         See the return value for {@link module:dom~PredicateCallback}
    *
    * @return {Element}
@@ -2575,7 +2576,7 @@
    * @return   {Function}
    *           A debounced function.
    */
-  const debounce = function (func, wait, immediate, context = window) {
+  const debounce$1 = function (func, wait, immediate, context = window) {
     let timeout;
     const cancel = () => {
       context.clearTimeout(timeout);
@@ -2610,7 +2611,7 @@
     UPDATE_REFRESH_INTERVAL: UPDATE_REFRESH_INTERVAL,
     bind_: bind_,
     throttle: throttle,
-    debounce: debounce
+    debounce: debounce$1
   });
 
   /**
@@ -3618,7 +3619,6 @@
      * @param {Function} fn
      *        The function to call with `EventTarget`s
      */
-    on(type, fn) {}
 
     /**
      * Removes an `event listener` for a specific event from an instance of `EventTarget`.
@@ -3631,7 +3631,6 @@
      * @param {Function} [fn]
      *        The function to remove. If not specified, all listeners managed by Video.js will be removed.
      */
-    off(type, fn) {}
 
     /**
      * This function will add an `event listener` that gets triggered only once. After the
@@ -3644,7 +3643,6 @@
      * @param {Function} fn
      *        The function to be called once for each event name.
      */
-    one(type, fn) {}
 
     /**
      * This function will add an `event listener` that gets triggered only once and is
@@ -3658,7 +3656,6 @@
      * @param {Function} fn
      *        The function to be called once for each event name.
      */
-    any(type, fn) {}
 
     /**
      * This function causes an event to happen. This will then cause any `event listeners`
@@ -3679,7 +3676,6 @@
      * @param {Object} [hash]
      *        Optionally extra argument to pass through to an event listener
      */
-    trigger(event, hash) {}
 
     /**
      * Dispose of the `Component` and all child components.
@@ -4391,10 +4387,10 @@
      * - `classToToggle` gets removed when {@link Component#hasClass} would return true.
      *
      * @param  {string} classToToggle
-     *         The class to add or remove based on (@link Component#hasClass}
+     *         The class to add or remove. Passed to DOMTokenList's toggle()
      *
-     * @param  {boolean|Dom~predicate} [predicate]
-     *         An {@link Dom~predicate} function or a boolean
+     * @param  {boolean|Dom.PredicateCallback} [predicate]
+     *         A boolean or function that returns a boolean. Passed to DOMTokenList's toggle().
      */
     toggleClass(classToToggle, predicate) {
       toggleClass(this.el_, classToToggle, predicate);
@@ -5101,7 +5097,7 @@
      */
     requestNamedAnimationFrame(name, fn) {
       if (this.namedRafs_.has(name)) {
-        return;
+        this.cancelNamedAnimationFrame(name);
       }
       this.clearTimersOnDispose_();
       fn = bind_(this, fn);
@@ -5904,18 +5900,6 @@
    * @default 5
    */
   MediaError.prototype.MEDIA_ERR_ENCRYPTED = 5;
-
-  var tuple = SafeParseTuple;
-  function SafeParseTuple(obj, reviver) {
-    var json;
-    var error = null;
-    try {
-      json = JSON.parse(obj, reviver);
-    } catch (err) {
-      error = err;
-    }
-    return [error, json];
-  }
 
   /**
    * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -12411,24 +12395,26 @@
       this.player_.on('focusin', this.handlePlayerFocus_.bind(this));
       this.player_.on('focusout', this.handlePlayerBlur_.bind(this));
       this.isListening_ = true;
-      this.player_.errorDisplay.on('aftermodalfill', () => {
-        this.updateFocusableComponents();
-        if (this.focusableComponents.length) {
-          // The modal has focusable components:
+      if (this.player_.errorDisplay) {
+        this.player_.errorDisplay.on('aftermodalfill', () => {
+          this.updateFocusableComponents();
+          if (this.focusableComponents.length) {
+            // The modal has focusable components:
 
-          if (this.focusableComponents.length > 1) {
-            // The modal has close button + some additional buttons.
-            // Focusing first additional button:
+            if (this.focusableComponents.length > 1) {
+              // The modal has close button + some additional buttons.
+              // Focusing first additional button:
 
-            this.focusableComponents[1].focus();
-          } else {
-            // The modal has only close button,
-            // Focusing it:
+              this.focusableComponents[1].focus();
+            } else {
+              // The modal has only close button,
+              // Focusing it:
 
-            this.focusableComponents[0].focus();
+              this.focusableComponents[0].focus();
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     /**
@@ -12465,7 +12451,7 @@
         actualEvent.preventDefault();
         const action = SpatialNavKeyCodes.getEventName(actualEvent);
         this.performMediaAction_(action);
-      } else if (SpatialNavKeyCodes.isEventKey(actualEvent, 'Back') && event.target && event.target.closeable()) {
+      } else if (SpatialNavKeyCodes.isEventKey(actualEvent, 'Back') && event.target && typeof event.target.closeable === 'function' && event.target.closeable()) {
         actualEvent.preventDefault();
         event.target.close();
       }
@@ -13731,6 +13717,45 @@
           this.setAttribute('aria-live', 'assertive');
         }
         this.updateForTrack(descriptionsTrack);
+      }
+      if (!window.CSS.supports('inset', '10px')) {
+        const textTrackDisplay = this.el_;
+        const vjsTextTrackCues = textTrackDisplay.querySelectorAll('.vjs-text-track-cue');
+        const controlBarHeight = this.player_.controlBar.el_.getBoundingClientRect().height;
+        const playerHeight = this.player_.el_.getBoundingClientRect().height;
+
+        // Clear inline style before getting actual height of textTrackDisplay
+        textTrackDisplay.style = '';
+
+        // textrack style updates, this styles are required to be inline
+        tryUpdateStyle(textTrackDisplay, 'position', 'relative');
+        tryUpdateStyle(textTrackDisplay, 'height', playerHeight - controlBarHeight + 'px');
+        tryUpdateStyle(textTrackDisplay, 'top', 'unset');
+        if (IS_SMART_TV) {
+          tryUpdateStyle(textTrackDisplay, 'bottom', playerHeight + 'px');
+        } else {
+          tryUpdateStyle(textTrackDisplay, 'bottom', '0px');
+        }
+
+        // vjsTextTrackCue style updates
+        if (vjsTextTrackCues.length > 0) {
+          vjsTextTrackCues.forEach(vjsTextTrackCue => {
+            // verify if inset styles are inline
+            if (vjsTextTrackCue.style.inset) {
+              const insetStyles = vjsTextTrackCue.style.inset.split(' ');
+
+              // expected value is always 3
+              if (insetStyles.length === 3) {
+                Object.assign(vjsTextTrackCue.style, {
+                  top: insetStyles[0],
+                  right: insetStyles[1],
+                  bottom: insetStyles[2],
+                  left: 'unset'
+                });
+              }
+            }
+          });
+        }
       }
     }
 
@@ -15788,7 +15813,19 @@
      *        The key/value store of player options.
      */
     constructor(player, options) {
+      options = merge$2(SeekBar.prototype.options_, options);
+
+      // Avoid mutating the prototype's `children` array by creating a copy
+      options.children = [...options.children];
+      const shouldDisableSeekWhileScrubbingOnMobile = player.options_.disableSeekWhileScrubbingOnMobile && (IS_IOS || IS_ANDROID);
+
+      // Add the TimeTooltip as a child if we are on desktop, or on mobile with `disableSeekWhileScrubbingOnMobile: true`
+      if (!IS_IOS && !IS_ANDROID || shouldDisableSeekWhileScrubbingOnMobile) {
+        options.children.splice(1, 0, 'mouseTimeDisplay');
+      }
       super(player, options);
+      this.shouldDisableSeekWhileScrubbingOnMobile_ = shouldDisableSeekWhileScrubbingOnMobile;
+      this.pendingSeekTime_ = null;
       this.setEventHandlers_();
     }
 
@@ -15944,6 +15981,11 @@
      *         The percentage of media played so far (0 to 1).
      */
     getPercent() {
+      // If we have a pending seek time, we are scrubbing on mobile and should set the slider percent
+      // to reflect the current scrub location.
+      if (this.pendingSeekTime_) {
+        return this.pendingSeekTime_ / this.player_.duration();
+      }
       const currentTime = this.getCurrentTime_();
       let percent;
       const liveTracker = this.player_.liveTracker;
@@ -15976,7 +16018,12 @@
       // Stop event propagation to prevent double fire in progress-control.js
       event.stopPropagation();
       this.videoWasPlaying = !this.player_.paused();
-      this.player_.pause();
+
+      // Don't pause if we are on mobile and `disableSeekWhileScrubbingOnMobile: true`.
+      // In that case, playback should continue while the player scrubs to a new location.
+      if (!this.shouldDisableSeekWhileScrubbingOnMobile_) {
+        this.player_.pause();
+      }
       super.handleMouseDown(event);
     }
 
@@ -16034,8 +16081,12 @@
         }
       }
 
-      // Set new time (tell player to seek to new time)
-      this.userSeek_(newTime);
+      // if on mobile and `disableSeekWhileScrubbingOnMobile: true`, keep track of the desired seek point but we won't initiate the seek until 'touchend'
+      if (this.shouldDisableSeekWhileScrubbingOnMobile_) {
+        this.pendingSeekTime_ = newTime;
+      } else {
+        this.userSeek_(newTime);
+      }
       if (this.player_.options_.enableSmoothSeeking) {
         this.update();
       }
@@ -16073,6 +16124,12 @@
         event.stopPropagation();
       }
       this.player_.scrubbing(false);
+
+      // If we have a pending seek time, then we have finished scrubbing on mobile and should initiate a seek.
+      if (this.pendingSeekTime_) {
+        this.userSeek_(this.pendingSeekTime_);
+        this.pendingSeekTime_ = null;
+      }
 
       /**
        * Trigger timeupdate because we're done seeking and the time has changed.
@@ -16210,11 +16267,6 @@
     children: ['loadProgressBar', 'playProgressBar'],
     barName: 'playProgressBar'
   };
-
-  // MouseTimeDisplay tooltips should not be added to a player on mobile devices
-  if (!IS_IOS && !IS_ANDROID) {
-    SeekBar.prototype.options_.children.splice(1, 0, 'mouseTimeDisplay');
-  }
   Component$1.registerComponent('SeekBar', SeekBar);
 
   /**
@@ -16339,7 +16391,7 @@
         return;
       }
       this.off(['mousedown', 'touchstart'], this.handleMouseDownHandler_);
-      this.off(this.el_, 'mousemove', this.handleMouseMove);
+      this.off(this.el_, ['mousemove', 'touchmove'], this.handleMouseMove);
       this.removeListenersAddedOnMousedownAndTouchstart();
       this.addClass('disabled');
       this.enabled_ = false;
@@ -16363,7 +16415,7 @@
         return;
       }
       this.on(['mousedown', 'touchstart'], this.handleMouseDownHandler_);
-      this.on(this.el_, 'mousemove', this.handleMouseMove);
+      this.on(this.el_, ['mousemove', 'touchmove'], this.handleMouseMove);
       this.removeClass('disabled');
       this.enabled_ = true;
     }
@@ -18243,7 +18295,7 @@
      */
     handleKeyDown(event) {
       // Escape or Tab unpress the 'button'
-      if (event.key === 'Esc' || event.key === 'Tab') {
+      if (event.key === 'Escape' || event.key === 'Tab') {
         if (this.buttonPressed_) {
           this.unpressButton();
         }
@@ -18274,7 +18326,7 @@
      */
     handleMenuKeyUp(event) {
       // Escape hides popup menu
-      if (event.key === 'Esc' || event.key === 'Tab') {
+      if (event.key === 'Escape' || event.key === 'Tab') {
         this.removeClass('vjs-hover');
       }
     }
@@ -18302,7 +18354,7 @@
      */
     handleSubmenuKeyDown(event) {
       // Escape or Tab unpress the 'button'
-      if (event.key === 'Esc' || event.key === 'Tab') {
+      if (event.key === 'Escape' || event.key === 'Tab') {
         if (this.buttonPressed_) {
           this.unpressButton();
         }
@@ -20190,7 +20242,7 @@
         const option = createEl('option', {
           id: optionId,
           value: this.localize(optionText[0]),
-          textContent: optionText[1]
+          textContent: this.localize(optionText[1])
         });
         option.setAttribute('aria-labelledby', `${this.selectLabelledbyIds} ${optionId}`);
         return option;
@@ -20280,7 +20332,7 @@
           const label = createEl('label', {
             id,
             className: 'vjs-label',
-            textContent: selectConfig.label
+            textContent: this.localize(selectConfig.label)
           });
           label.setAttribute('for', guid);
           span.appendChild(label);
@@ -20932,7 +20984,7 @@
       this.ResizeObserver = options.ResizeObserver || window.ResizeObserver;
       this.loadListener_ = null;
       this.resizeObserver_ = null;
-      this.debouncedHandler_ = debounce(() => {
+      this.debouncedHandler_ = debounce$1(() => {
         this.resizeHandler();
       }, 100, false, this);
       if (RESIZE_OBSERVER_AVAILABLE) {
@@ -22575,6 +22627,59 @@
 
       // Setting src through `src` instead of `setSrc` will be deprecated
       this.setSrc(src);
+    }
+
+    /**
+     * Add a <source> element to the <video> element.
+     *
+     * @param {string} srcUrl
+     *        The URL of the video source.
+     *
+     * @param {string} [mimeType]
+     *        The MIME type of the video source. Optional but recommended.
+     *
+     * @return {boolean}
+     *         Returns true if the source element was successfully added, false otherwise.
+     */
+    addSourceElement(srcUrl, mimeType) {
+      if (!srcUrl) {
+        log$1.error('Invalid source URL.');
+        return false;
+      }
+      const sourceAttributes = {
+        src: srcUrl
+      };
+      if (mimeType) {
+        sourceAttributes.type = mimeType;
+      }
+      const sourceElement = createEl('source', {}, sourceAttributes);
+      this.el_.appendChild(sourceElement);
+      return true;
+    }
+
+    /**
+     * Remove a <source> element from the <video> element by its URL.
+     *
+     * @param {string} srcUrl
+     *        The URL of the source to remove.
+     *
+     * @return {boolean}
+     *         Returns true if the source element was successfully removed, false otherwise.
+     */
+    removeSourceElement(srcUrl) {
+      if (!srcUrl) {
+        log$1.error('Source URL is required to remove the source element.');
+        return false;
+      }
+      const sourceElements = this.el_.querySelectorAll('source');
+      for (const sourceElement of sourceElements) {
+        if (sourceElement.src === srcUrl) {
+          this.el_.removeChild(sourceElement);
+          return true;
+        }
+      }
+      log$1.warn(`No matching source element found with src: ${srcUrl}`);
+      return false;
     }
 
     /**
@@ -25601,7 +25706,8 @@
     }
 
     /**
-     * Handle a double-click on the media element to enter/exit fullscreen
+     * Handle a double-click on the media element to enter/exit fullscreen,
+     * or exit documentPictureInPicture mode
      *
      * @param {Event} event
      *        the event that caused this function to trigger
@@ -25628,6 +25734,12 @@
         if (this.options_ === undefined || this.options_.userActions === undefined || this.options_.userActions.doubleClick === undefined || this.options_.userActions.doubleClick !== false) {
           if (this.options_ !== undefined && this.options_.userActions !== undefined && typeof this.options_.userActions.doubleClick === 'function') {
             this.options_.userActions.doubleClick.call(this, event);
+          } else if (this.isInPictureInPicture() && !document.pictureInPictureElement) {
+            // Checking the presence of `window.documentPictureInPicture.window` complicates
+            // tests, checking `document.pictureInPictureElement` also works. It wouldn't
+            // be null in regular picture in picture.
+            // Exit picture in picture mode. This gesture can't trigger pip on the main window.
+            this.exitPictureInPicture();
           } else if (this.isFullscreen()) {
             this.exitFullscreen();
           } else {
@@ -27201,6 +27313,41 @@
     }
 
     /**
+     * Add a <source> element to the <video> element.
+     *
+     * @param {string} srcUrl
+     *        The URL of the video source.
+     *
+     * @param {string} [mimeType]
+     *        The MIME type of the video source. Optional but recommended.
+     *
+     * @return {boolean}
+     *         Returns true if the source element was successfully added, false otherwise.
+     */
+    addSourceElement(srcUrl, mimeType) {
+      if (!this.tech_) {
+        return false;
+      }
+      return this.tech_.addSourceElement(srcUrl, mimeType);
+    }
+
+    /**
+     * Remove a <source> element from the <video> element by its URL.
+     *
+     * @param {string} srcUrl
+     *        The URL of the source to remove.
+     *
+     * @return {boolean}
+     *         Returns true if the source element was successfully removed, false otherwise.
+     */
+    removeSourceElement(srcUrl) {
+      if (!this.tech_) {
+        return false;
+      }
+      return this.tech_.removeSourceElement(srcUrl);
+    }
+
+    /**
      * Begin loading the src data.
      */
     load() {
@@ -28622,12 +28769,12 @@
       // Check if data-setup attr exists.
       if (dataSetup !== null) {
         // Parse options JSON
-        // If empty string, make it a parsable json object.
-        const [err, data] = tuple(dataSetup || '{}');
-        if (err) {
-          log$1.error(err);
+        try {
+          // If empty string, make it a parsable json object.
+          Object.assign(tagOptions, JSON.parse(dataSetup || '{}'));
+        } catch (e) {
+          log$1.error('data-setup', e);
         }
-        Object.assign(tagOptions, data);
       }
       Object.assign(baseOptions, tagOptions);
 
@@ -28709,6 +28856,34 @@
       */
       this.trigger('playbackrateschange');
     }
+
+    /**
+     * Reports whether or not a player has a plugin available.
+     *
+     * This does not report whether or not the plugin has ever been initialized
+     * on this player. For that, [usingPlugin]{@link Player#usingPlugin}.
+     *
+     * @method hasPlugin
+     * @param  {string}  name
+     *         The name of a plugin.
+     *
+     * @return {boolean}
+     *         Whether or not this player has the requested plugin available.
+     */
+
+    /**
+     * Reports whether or not a player is using a plugin by name.
+     *
+     * For basic plugins, this only reports whether the plugin has _ever_ been
+     * initialized on this player.
+     *
+     * @method Player#usingPlugin
+     * @param  {string} name
+     *         The name of a plugin.
+     *
+     * @return {boolean}
+     *         Whether or not this player is using the requested plugin.
+     */
   }
 
   /**
@@ -28847,7 +29022,8 @@
       horizontalSeek: false
     },
     // Default smooth seeking to false
-    enableSmoothSeeking: false
+    enableSmoothSeeking: false,
+    disableSeekWhileScrubbingOnMobile: false
   };
   TECH_EVENTS_RETRIGGER.forEach(function (event) {
     Player.prototype[`handleTech${toTitleCase$1(event)}_`] = function () {
@@ -28883,34 +29059,6 @@
    *
    * @event Player#volumechange
    * @type {Event}
-   */
-
-  /**
-   * Reports whether or not a player has a plugin available.
-   *
-   * This does not report whether or not the plugin has ever been initialized
-   * on this player. For that, [usingPlugin]{@link Player#usingPlugin}.
-   *
-   * @method Player#hasPlugin
-   * @param  {string}  name
-   *         The name of a plugin.
-   *
-   * @return {boolean}
-   *         Whether or not this player has the requested plugin available.
-   */
-
-  /**
-   * Reports whether or not a player is using a plugin by name.
-   *
-   * For basic plugins, this only reports whether the plugin has _ever_ been
-   * initialized on this player.
-   *
-   * @method Player#usingPlugin
-   * @param  {string} name
-   *         The name of a plugin.
-   *
-   * @return {boolean}
-   *         Whether or not this player is using the requested plugin.
    */
 
   Component$1.registerComponent('Player', Player);
@@ -30307,159 +30455,7 @@
     });
   });
 
-  var urlToolkit = createCommonjsModule(function (module, exports) {
-    // see https://tools.ietf.org/html/rfc1808
-
-    (function (root) {
-      var URL_REGEX = /^(?=((?:[a-zA-Z0-9+\-.]+:)?))\1(?=((?:\/\/[^\/?#]*)?))\2(?=((?:(?:[^?#\/]*\/)*[^;?#\/]*)?))\3((?:;[^?#]*)?)(\?[^#]*)?(#[^]*)?$/;
-      var FIRST_SEGMENT_REGEX = /^(?=([^\/?#]*))\1([^]*)$/;
-      var SLASH_DOT_REGEX = /(?:\/|^)\.(?=\/)/g;
-      var SLASH_DOT_DOT_REGEX = /(?:\/|^)\.\.\/(?!\.\.\/)[^\/]*(?=\/)/g;
-      var URLToolkit = {
-        // If opts.alwaysNormalize is true then the path will always be normalized even when it starts with / or //
-        // E.g
-        // With opts.alwaysNormalize = false (default, spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/f/../g
-        // With opts.alwaysNormalize = true (not spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/g
-        buildAbsoluteURL: function (baseURL, relativeURL, opts) {
-          opts = opts || {};
-          // remove any remaining space and CRLF
-          baseURL = baseURL.trim();
-          relativeURL = relativeURL.trim();
-          if (!relativeURL) {
-            // 2a) If the embedded URL is entirely empty, it inherits the
-            // entire base URL (i.e., is set equal to the base URL)
-            // and we are done.
-            if (!opts.alwaysNormalize) {
-              return baseURL;
-            }
-            var basePartsForNormalise = URLToolkit.parseURL(baseURL);
-            if (!basePartsForNormalise) {
-              throw new Error('Error trying to parse base URL.');
-            }
-            basePartsForNormalise.path = URLToolkit.normalizePath(basePartsForNormalise.path);
-            return URLToolkit.buildURLFromParts(basePartsForNormalise);
-          }
-          var relativeParts = URLToolkit.parseURL(relativeURL);
-          if (!relativeParts) {
-            throw new Error('Error trying to parse relative URL.');
-          }
-          if (relativeParts.scheme) {
-            // 2b) If the embedded URL starts with a scheme name, it is
-            // interpreted as an absolute URL and we are done.
-            if (!opts.alwaysNormalize) {
-              return relativeURL;
-            }
-            relativeParts.path = URLToolkit.normalizePath(relativeParts.path);
-            return URLToolkit.buildURLFromParts(relativeParts);
-          }
-          var baseParts = URLToolkit.parseURL(baseURL);
-          if (!baseParts) {
-            throw new Error('Error trying to parse base URL.');
-          }
-          if (!baseParts.netLoc && baseParts.path && baseParts.path[0] !== '/') {
-            // If netLoc missing and path doesn't start with '/', assume everthing before the first '/' is the netLoc
-            // This causes 'example.com/a' to be handled as '//example.com/a' instead of '/example.com/a'
-            var pathParts = FIRST_SEGMENT_REGEX.exec(baseParts.path);
-            baseParts.netLoc = pathParts[1];
-            baseParts.path = pathParts[2];
-          }
-          if (baseParts.netLoc && !baseParts.path) {
-            baseParts.path = '/';
-          }
-          var builtParts = {
-            // 2c) Otherwise, the embedded URL inherits the scheme of
-            // the base URL.
-            scheme: baseParts.scheme,
-            netLoc: relativeParts.netLoc,
-            path: null,
-            params: relativeParts.params,
-            query: relativeParts.query,
-            fragment: relativeParts.fragment
-          };
-          if (!relativeParts.netLoc) {
-            // 3) If the embedded URL's <net_loc> is non-empty, we skip to
-            // Step 7.  Otherwise, the embedded URL inherits the <net_loc>
-            // (if any) of the base URL.
-            builtParts.netLoc = baseParts.netLoc;
-            // 4) If the embedded URL path is preceded by a slash "/", the
-            // path is not relative and we skip to Step 7.
-            if (relativeParts.path[0] !== '/') {
-              if (!relativeParts.path) {
-                // 5) If the embedded URL path is empty (and not preceded by a
-                // slash), then the embedded URL inherits the base URL path
-                builtParts.path = baseParts.path;
-                // 5a) if the embedded URL's <params> is non-empty, we skip to
-                // step 7; otherwise, it inherits the <params> of the base
-                // URL (if any) and
-                if (!relativeParts.params) {
-                  builtParts.params = baseParts.params;
-                  // 5b) if the embedded URL's <query> is non-empty, we skip to
-                  // step 7; otherwise, it inherits the <query> of the base
-                  // URL (if any) and we skip to step 7.
-                  if (!relativeParts.query) {
-                    builtParts.query = baseParts.query;
-                  }
-                }
-              } else {
-                // 6) The last segment of the base URL's path (anything
-                // following the rightmost slash "/", or the entire path if no
-                // slash is present) is removed and the embedded URL's path is
-                // appended in its place.
-                var baseURLPath = baseParts.path;
-                var newPath = baseURLPath.substring(0, baseURLPath.lastIndexOf('/') + 1) + relativeParts.path;
-                builtParts.path = URLToolkit.normalizePath(newPath);
-              }
-            }
-          }
-          if (builtParts.path === null) {
-            builtParts.path = opts.alwaysNormalize ? URLToolkit.normalizePath(relativeParts.path) : relativeParts.path;
-          }
-          return URLToolkit.buildURLFromParts(builtParts);
-        },
-        parseURL: function (url) {
-          var parts = URL_REGEX.exec(url);
-          if (!parts) {
-            return null;
-          }
-          return {
-            scheme: parts[1] || '',
-            netLoc: parts[2] || '',
-            path: parts[3] || '',
-            params: parts[4] || '',
-            query: parts[5] || '',
-            fragment: parts[6] || ''
-          };
-        },
-        normalizePath: function (path) {
-          // The following operations are
-          // then applied, in order, to the new path:
-          // 6a) All occurrences of "./", where "." is a complete path
-          // segment, are removed.
-          // 6b) If the path ends with "." as a complete path segment,
-          // that "." is removed.
-          path = path.split('').reverse().join('').replace(SLASH_DOT_REGEX, '');
-          // 6c) All occurrences of "<segment>/../", where <segment> is a
-          // complete path segment not equal to "..", are removed.
-          // Removal of these path segments is performed iteratively,
-          // removing the leftmost matching pattern on each iteration,
-          // until no matching pattern remains.
-          // 6d) If the path ends with "<segment>/..", where <segment> is a
-          // complete path segment not equal to "..", that
-          // "<segment>/.." is removed.
-          while (path.length !== (path = path.replace(SLASH_DOT_DOT_REGEX, '')).length) {}
-          return path.split('').reverse().join('');
-        },
-        buildURLFromParts: function (parts) {
-          return parts.scheme + parts.netLoc + parts.path + parts.params + parts.query + parts.fragment;
-        }
-      };
-      module.exports = URLToolkit;
-    })();
-  });
-
-  var DEFAULT_LOCATION = 'http://example.com';
+  var DEFAULT_LOCATION = 'https://example.com';
   var resolveUrl$1 = function resolveUrl(baseUrl, relativeUrl) {
     // return early if we don't need to resolve
     if (/^[a-z]+:/i.test(relativeUrl)) {
@@ -30468,33 +30464,23 @@
 
     if (/^data:/.test(baseUrl)) {
       baseUrl = window.location && window.location.href || '';
-    } // IE11 supports URL but not the URL constructor
-    // feature detect the behavior we want
-
-    var nativeURL = typeof window.URL === 'function';
+    }
     var protocolLess = /^\/\//.test(baseUrl); // remove location if window.location isn't available (i.e. we're in node)
     // and if baseUrl isn't an absolute url
 
     var removeLocation = !window.location && !/\/\//i.test(baseUrl); // if the base URL is relative then combine with the current location
 
-    if (nativeURL) {
-      baseUrl = new window.URL(baseUrl, window.location || DEFAULT_LOCATION);
-    } else if (!/\/\//i.test(baseUrl)) {
-      baseUrl = urlToolkit.buildAbsoluteURL(window.location && window.location.href || '', baseUrl);
-    }
-    if (nativeURL) {
-      var newUrl = new URL(relativeUrl, baseUrl); // if we're a protocol-less url, remove the protocol
-      // and if we're location-less, remove the location
-      // otherwise, return the url unmodified
+    baseUrl = new window.URL(baseUrl, window.location || DEFAULT_LOCATION);
+    var newUrl = new URL(relativeUrl, baseUrl); // if we're a protocol-less url, remove the protocol
+    // and if we're location-less, remove the location
+    // otherwise, return the url unmodified
 
-      if (removeLocation) {
-        return newUrl.href.slice(DEFAULT_LOCATION.length);
-      } else if (protocolLess) {
-        return newUrl.href.slice(newUrl.protocol.length);
-      }
-      return newUrl.href;
+    if (removeLocation) {
+      return newUrl.href.slice(DEFAULT_LOCATION.length);
+    } else if (protocolLess) {
+      return newUrl.href.slice(newUrl.protocol.length);
     }
-    return urlToolkit.buildAbsoluteURL(baseUrl, relativeUrl);
+    return newUrl.href;
   };
 
   /**
@@ -30600,11 +30586,11 @@
     return Stream;
   }();
 
-  var atob$1 = function atob(s) {
+  var atob = function atob(s) {
     return window.atob ? window.atob(s) : Buffer.from(s, 'base64').toString('binary');
   };
-  function decodeB64ToUint8Array$1(b64Text) {
-    var decodedString = atob$1(b64Text);
+  function decodeB64ToUint8Array(b64Text) {
+    var decodedString = atob(b64Text);
     var array = new Uint8Array(decodedString.length);
     for (var i = 0; i < decodedString.length; i++) {
       array[i] = decodedString.charCodeAt(i);
@@ -30612,7 +30598,7 @@
     return array;
   }
 
-  /*! @name m3u8-parser @version 7.1.0 @license Apache-2.0 */
+  /*! @name m3u8-parser @version 7.2.0 @license Apache-2.0 */
 
   /**
    * @file m3u8/line-stream.js
@@ -30701,6 +30687,26 @@
       attr[1] = attr[1].replace(/^\s+|\s+$/g, '');
       attr[1] = attr[1].replace(/^['"](.*)['"]$/g, '$1');
       result[attr[0]] = attr[1];
+    }
+    return result;
+  };
+  /**
+   * Converts a string into a resolution object
+   *
+   * @param {string} resolution a string such as 3840x2160
+   *
+   * @return {Object} An object representing the resolution
+   *
+   */
+
+  const parseResolution = resolution => {
+    const split = resolution.split('x');
+    const result = {};
+    if (split[0]) {
+      result.width = parseInt(split[0], 10);
+    }
+    if (split[1]) {
+      result.height = parseInt(split[1], 10);
     }
     return result;
   };
@@ -30916,15 +30922,7 @@
           if (match[1]) {
             event.attributes = parseAttributes$1(match[1]);
             if (event.attributes.RESOLUTION) {
-              const split = event.attributes.RESOLUTION.split('x');
-              const resolution = {};
-              if (split[0]) {
-                resolution.width = parseInt(split[0], 10);
-              }
-              if (split[1]) {
-                resolution.height = parseInt(split[1], 10);
-              }
-              event.attributes.RESOLUTION = resolution;
+              event.attributes.RESOLUTION = parseResolution(event.attributes.RESOLUTION);
             }
             if (event.attributes.BANDWIDTH) {
               event.attributes.BANDWIDTH = parseInt(event.attributes.BANDWIDTH, 10);
@@ -31046,7 +31044,7 @@
           this.trigger('data', event);
           return;
         }
-        match = /^#EXT-X-CUE-IN:(.*)?$/.exec(newLine);
+        match = /^#EXT-X-CUE-IN:?(.*)?$/.exec(newLine);
         if (match) {
           event = {
             type: 'tag',
@@ -31221,11 +31219,54 @@
           });
           return;
         }
+        match = /^#EXT-X-I-FRAMES-ONLY/.exec(newLine);
+        if (match) {
+          this.trigger('data', {
+            type: 'tag',
+            tagType: 'i-frames-only'
+          });
+          return;
+        }
         match = /^#EXT-X-CONTENT-STEERING:(.*)$/.exec(newLine);
         if (match) {
           event = {
             type: 'tag',
             tagType: 'content-steering'
+          };
+          event.attributes = parseAttributes$1(match[1]);
+          this.trigger('data', event);
+          return;
+        }
+        match = /^#EXT-X-I-FRAME-STREAM-INF:(.*)$/.exec(newLine);
+        if (match) {
+          event = {
+            type: 'tag',
+            tagType: 'i-frame-playlist'
+          };
+          event.attributes = parseAttributes$1(match[1]);
+          if (event.attributes.URI) {
+            event.uri = event.attributes.URI;
+          }
+          if (event.attributes.BANDWIDTH) {
+            event.attributes.BANDWIDTH = parseInt(event.attributes.BANDWIDTH, 10);
+          }
+          if (event.attributes.RESOLUTION) {
+            event.attributes.RESOLUTION = parseResolution(event.attributes.RESOLUTION);
+          }
+          if (event.attributes['AVERAGE-BANDWIDTH']) {
+            event.attributes['AVERAGE-BANDWIDTH'] = parseInt(event.attributes['AVERAGE-BANDWIDTH'], 10);
+          }
+          if (event.attributes['FRAME-RATE']) {
+            event.attributes['FRAME-RATE'] = parseFloat(event.attributes['FRAME-RATE']);
+          }
+          this.trigger('data', event);
+          return;
+        }
+        match = /^#EXT-X-DEFINE:(.*)$/.exec(newLine);
+        if (match) {
+          event = {
+            type: 'tag',
+            tagType: 'define'
           };
           event.attributes = parseAttributes$1(match[1]);
           this.trigger('data', event);
@@ -31363,15 +31404,20 @@
    * requires some property of the manifest object to be defaulted.
    *
    * @class Parser
+   * @param {Object} [opts] Options for the constructor, needed for substitutions
+   * @param {string} [opts.uri] URL to check for query params
+   * @param {Object} [opts.mainDefinitions] Definitions on main playlist that can be imported
    * @extends Stream
    */
 
   class Parser extends Stream {
-    constructor() {
+    constructor(opts = {}) {
       super();
       this.lineStream = new LineStream();
       this.parseStream = new ParseStream();
       this.lineStream.pipe(this.parseStream);
+      this.mainDefinitions = opts.mainDefinitions || {};
+      this.params = new URL(opts.uri, 'https://a.com').searchParams;
       this.lastProgramDateTime = null;
       /* eslint-disable consistent-this */
 
@@ -31402,6 +31448,7 @@
         allowCache: true,
         discontinuityStarts: [],
         dateRanges: [],
+        iFramePlaylists: [],
         segments: []
       }; // keep track of the last seen segment's byte range end, as segments are not required
       // to provide the offset, in which case it defaults to the next byte after the
@@ -31431,7 +31478,22 @@
 
       this.parseStream.on('data', function (entry) {
         let mediaGroup;
-        let rendition;
+        let rendition; // Replace variables in uris and attributes as defined in #EXT-X-DEFINE tags
+
+        if (self.manifest.definitions) {
+          for (const def in self.manifest.definitions) {
+            if (entry.uri) {
+              entry.uri = entry.uri.replace(`{$${def}}`, self.manifest.definitions[def]);
+            }
+            if (entry.attributes) {
+              for (const attr in entry.attributes) {
+                if (typeof entry.attributes[attr] === 'string') {
+                  entry.attributes[attr] = entry.attributes[attr].replace(`{$${def}}`, self.manifest.definitions[def]);
+                }
+              }
+            }
+          }
+        }
         ({
           tag() {
             // switch based on the tag type
@@ -31576,7 +31638,7 @@
                       keyId: entry.attributes.KEYID.substring(2)
                     },
                     // decode the base64-encoded PSSH box
-                    pssh: decodeB64ToUint8Array$1(entry.attributes.URI.split(',')[1])
+                    pssh: decodeB64ToUint8Array(entry.attributes.URI.split(',')[1])
                   };
                   return;
                 }
@@ -31906,9 +31968,106 @@
               'independent-segments'() {
                 this.manifest.independentSegments = true;
               },
+              'i-frames-only'() {
+                this.manifest.iFramesOnly = true;
+                this.requiredCompatibilityversion(this.manifest.version, 4);
+              },
               'content-steering'() {
                 this.manifest.contentSteering = camelCaseKeys(entry.attributes);
                 this.warnOnMissingAttributes_('#EXT-X-CONTENT-STEERING', entry.attributes, ['SERVER-URI']);
+              },
+              /** @this {Parser} */
+              define() {
+                this.manifest.definitions = this.manifest.definitions || {};
+                const addDef = (n, v) => {
+                  if (n in this.manifest.definitions) {
+                    // An EXT-X-DEFINE tag MUST NOT specify the same Variable Name as any other
+                    // EXT-X-DEFINE tag in the same Playlist.  Parsers that encounter duplicate
+                    // Variable Name declarations MUST fail to parse the Playlist.
+                    this.trigger('error', {
+                      message: `EXT-X-DEFINE: Duplicate name ${n}`
+                    });
+                    return;
+                  }
+                  this.manifest.definitions[n] = v;
+                };
+                if ('QUERYPARAM' in entry.attributes) {
+                  if ('NAME' in entry.attributes || 'IMPORT' in entry.attributes) {
+                    // An EXT-X-DEFINE tag MUST contain either a NAME, an IMPORT, or a
+                    // QUERYPARAM attribute, but only one of the three.  Otherwise, the
+                    // client MUST fail to parse the Playlist.
+                    this.trigger('error', {
+                      message: 'EXT-X-DEFINE: Invalid attributes'
+                    });
+                    return;
+                  }
+                  const val = this.params.get(entry.attributes.QUERYPARAM);
+                  if (!val) {
+                    // If the QUERYPARAM attribute value does not match any query parameter in
+                    // the URI or the matching parameter has no associated value, the parser
+                    // MUST fail to parse the Playlist.  If more than one parameter matches,
+                    // any of the associated values MAY be used.
+                    this.trigger('error', {
+                      message: `EXT-X-DEFINE: No query param ${entry.attributes.QUERYPARAM}`
+                    });
+                    return;
+                  }
+                  addDef(entry.attributes.QUERYPARAM, decodeURIComponent(val));
+                  return;
+                }
+                if ('NAME' in entry.attributes) {
+                  if ('IMPORT' in entry.attributes) {
+                    // An EXT-X-DEFINE tag MUST contain either a NAME, an IMPORT, or a
+                    // QUERYPARAM attribute, but only one of the three.  Otherwise, the
+                    // client MUST fail to parse the Playlist.
+                    this.trigger('error', {
+                      message: 'EXT-X-DEFINE: Invalid attributes'
+                    });
+                    return;
+                  }
+                  if (!('VALUE' in entry.attributes) || typeof entry.attributes.VALUE !== 'string') {
+                    // This attribute is REQUIRED if the EXT-X-DEFINE tag has a NAME attribute.
+                    // The quoted-string MAY be empty.
+                    this.trigger('error', {
+                      message: `EXT-X-DEFINE: No value for ${entry.attributes.NAME}`
+                    });
+                    return;
+                  }
+                  addDef(entry.attributes.NAME, entry.attributes.VALUE);
+                  return;
+                }
+                if ('IMPORT' in entry.attributes) {
+                  if (!this.mainDefinitions[entry.attributes.IMPORT]) {
+                    // Covers two conditions, as mainDefinitions will always be empty on main
+                    //
+                    // EXT-X-DEFINE tags containing the IMPORT attribute MUST NOT occur in
+                    // Multivariant Playlists; they are only allowed in Media Playlists.
+                    //
+                    // If the IMPORT attribute value does not match any Variable Name in the
+                    // Multivariant Playlist, or if the Media Playlist loaded from a
+                    // Multivariant Playlist, the parser MUST fail the Playlist.
+                    this.trigger('error', {
+                      message: `EXT-X-DEFINE: No value ${entry.attributes.IMPORT} to import, or IMPORT used on main playlist`
+                    });
+                    return;
+                  }
+                  addDef(entry.attributes.IMPORT, this.mainDefinitions[entry.attributes.IMPORT]);
+                  return;
+                } // An EXT-X-DEFINE tag MUST contain either a NAME, an IMPORT, or a QUERYPARAM
+                // attribute, but only one of the three.  Otherwise, the client MUST fail to
+                // parse the Playlist.
+
+                this.trigger('error', {
+                  message: 'EXT-X-DEFINE: No attribute'
+                });
+              },
+              'i-frame-playlist'() {
+                this.manifest.iFramePlaylists.push({
+                  attributes: entry.attributes,
+                  uri: entry.uri,
+                  timeline: currentTimeline
+                });
+                this.warnOnMissingAttributes_('#EXT-X-I-FRAME-STREAM-INF', entry.attributes, ['BANDWIDTH', 'URI']);
               }
             })[entry.tagType] || noop).call(self);
           },
@@ -31955,6 +32114,13 @@
           }
         })[entry.type].call(self);
       });
+    }
+    requiredCompatibilityversion(currentVersion, targetVersion) {
+      if (currentVersion < targetVersion || !currentVersion) {
+        this.trigger('warn', {
+          message: `manifest must be at least version ${targetVersion}`
+        });
+      }
     }
     warnOnMissingAttributes_(identifier, attributes, required) {
       const missing = [];
@@ -32193,11 +32359,25 @@
     }
     return type + "/" + container + ";codecs=\"" + codecString + "\"";
   };
-  var browserSupportsCodec = function browserSupportsCodec(codecString) {
+  /**
+   * Tests whether the codec is supported by MediaSource. Optionally also tests ManagedMediaSource.
+   *
+   * @param {string} codecString
+   *        Codec to test
+   * @param {boolean} [withMMS]
+   *        Whether to check if ManagedMediaSource supports it
+   * @return {boolean}
+   *          Codec is supported
+   */
+
+  var browserSupportsCodec = function browserSupportsCodec(codecString, withMMS) {
     if (codecString === void 0) {
       codecString = '';
     }
-    return window.MediaSource && window.MediaSource.isTypeSupported && window.MediaSource.isTypeSupported(getMimeForCodec(codecString)) || false;
+    if (withMMS === void 0) {
+      withMMS = false;
+    }
+    return window.MediaSource && window.MediaSource.isTypeSupported && window.MediaSource.isTypeSupported(getMimeForCodec(codecString)) || withMMS && window.ManagedMediaSource && window.ManagedMediaSource.isTypeSupported && window.ManagedMediaSource.isTypeSupported(getMimeForCodec(codecString)) || false;
   };
   var muxerSupportsCodec = function muxerSupportsCodec(codecString) {
     if (codecString === void 0) {
@@ -32451,18 +32631,6 @@
       }
     });
   };
-
-  var atob = function atob(s) {
-    return window.atob ? window.atob(s) : Buffer.from(s, 'base64').toString('binary');
-  };
-  function decodeB64ToUint8Array(b64Text) {
-    var decodedString = atob(b64Text);
-    var array = new Uint8Array(decodedString.length);
-    for (var i = 0; i < decodedString.length; i++) {
-      array[i] = decodedString.charCodeAt(i);
-    }
-    return array;
-  }
 
   /**
    * Ponyfill for `Array.prototype.find` which is only available in ES6 runtimes.
@@ -37587,7 +37755,7 @@
 
   var DOMParser = domParser.DOMParser;
 
-  /*! @name mpd-parser @version 1.3.0 @license Apache-2.0 */
+  /*! @name mpd-parser @version 1.3.1 @license Apache-2.0 */
   const isObject = obj => {
     return !!obj && typeof obj === 'object';
   };
@@ -38468,9 +38636,10 @@
   const organizeVttPlaylists = (playlists, sidxMapping = {}) => {
     return playlists.reduce((a, playlist) => {
       const label = playlist.attributes.label || playlist.attributes.lang || 'text';
+      const language = playlist.attributes.lang || 'und';
       if (!a[label]) {
         a[label] = {
-          language: label,
+          language,
           default: false,
           autoselect: false,
           playlists: [],
@@ -40754,7 +40923,7 @@
   };
   var clock_1 = clock.ONE_SECOND_IN_TS;
 
-  /*! @name @videojs/http-streaming @version 3.13.2 @license Apache-2.0 */
+  /*! @name @videojs/http-streaming @version 3.16.2 @license Apache-2.0 */
 
   /**
    * @file resolve-url.js - Handling how URLs are resolved and manipulated
@@ -44189,7 +44358,7 @@
 
   const removeOldMediaGroupLabels = (update, newMain) => {
     forEachMediaGroup(update, (properties, type, group, label) => {
-      if (!(label in newMain.mediaGroups[type][group])) {
+      if (!newMain.mediaGroups[type][group] || !(label in newMain.mediaGroups[type][group])) {
         delete update.mediaGroups[type][group][label];
       }
     });
@@ -44312,6 +44481,7 @@
     // (since there aren't external URLs to media playlists with DASH)
     constructor(srcUrlOrPlaylist, vhs, options = {}, mainPlaylistLoader) {
       super();
+      this.isPaused_ = true;
       this.mainPlaylistLoader_ = mainPlaylistLoader || this;
       if (!mainPlaylistLoader) {
         this.isMain_ = true;
@@ -44346,6 +44516,9 @@
       } else {
         this.childPlaylist_ = srcUrlOrPlaylist;
       }
+    }
+    get isPaused() {
+      return this.isPaused_;
     }
     requestErrored_(err, request, startingState) {
       // disposed
@@ -44382,6 +44555,7 @@
 
       if (!playlist.sidx || !sidxKey || this.mainPlaylistLoader_.sidxMapping_[sidxKey]) {
         // keep this function async
+        window.clearTimeout(this.mediaRequest_);
         this.mediaRequest_ = window.setTimeout(() => cb(false), 0);
         return;
       } // resolve the segment URL relative to the playlist
@@ -44459,6 +44633,7 @@
       }, REQUEST_TYPE);
     }
     dispose() {
+      this.isPaused_ = true;
       this.trigger('dispose');
       this.stopRequest();
       this.loadedPlaylists_ = {};
@@ -44536,6 +44711,7 @@
     }) {
       this.state = 'HAVE_METADATA';
       this.loadedPlaylists_[playlist.id] = playlist;
+      window.clearTimeout(this.mediaRequest_);
       this.mediaRequest_ = null; // This will trigger loadedplaylist
 
       this.refreshMedia_(playlist.id); // fire loadedmetadata the first time a media playlist is loaded
@@ -44549,6 +44725,7 @@
       }
     }
     pause() {
+      this.isPaused_ = true;
       if (this.mainPlaylistLoader_.createMupOnMedia_) {
         this.off('loadedmetadata', this.mainPlaylistLoader_.createMupOnMedia_);
         this.mainPlaylistLoader_.createMupOnMedia_ = null;
@@ -44567,6 +44744,7 @@
       }
     }
     load(isFinalRendition) {
+      this.isPaused_ = false;
       window.clearTimeout(this.mediaUpdateTimeout);
       this.mediaUpdateTimeout = null;
       const media = this.media();
@@ -44601,6 +44779,7 @@
       // Call this asynchronously to match the xhr request behavior below
 
       if (!this.isMain_) {
+        window.clearTimeout(this.mediaRequest_);
         this.mediaRequest_ = window.setTimeout(() => this.haveMain_(), 0);
         return;
       }
@@ -44739,6 +44918,7 @@
     }
     handleMain_() {
       // clear media request
+      window.clearTimeout(this.mediaRequest_);
       this.mediaRequest_ = null;
       const oldMain = this.mainPlaylistLoader_.main;
       const metadata = {
@@ -45159,7 +45339,7 @@
     };
     var stream = Stream$8;
     var MAX_UINT32$1 = Math.pow(2, 32);
-    var getUint64$3 = function (uint8) {
+    var getUint64$5 = function (uint8) {
       var dv = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
       var value;
       if (dv.getBigUint64) {
@@ -45172,7 +45352,7 @@
       return dv.getUint32(0) * MAX_UINT32$1 + dv.getUint32(4);
     };
     var numbers = {
-      getUint64: getUint64$3,
+      getUint64: getUint64$5,
       MAX_UINT32: MAX_UINT32$1
     };
     /**
@@ -48549,7 +48729,7 @@
         Utf8: 0x03 // UTF-8 encoded Unicode, terminated with \0
       },
       // return a percent-encoded representation of the specified byte range
-      // @see http://en.wikipedia.org/wiki/Percent-encoding 
+      // @see http://en.wikipedia.org/wiki/Percent-encoding
       percentEncode$1 = function (bytes, start, end) {
         var i,
           result = '';
@@ -48678,7 +48858,7 @@
         frameHeader,
         frameStart = 10,
         tagSize = 0,
-        frames = []; // If we don't have enough data for a header, 10 bytes, 
+        frames = []; // If we don't have enough data for a header, 10 bytes,
       // or 'ID3' in the first 3 bytes this is not a valid ID3 tag.
 
       if (data.length < 10 || data[0] !== 'I'.charCodeAt(0) || data[1] !== 'D'.charCodeAt(0) || data[2] !== '3'.charCodeAt(0)) {
@@ -50226,7 +50406,7 @@
         highTwo = header[byteIndex + 3] & 0x3 << 11;
       return highTwo | middle | lowThree;
     };
-    var parseType$4 = function (header, byteIndex) {
+    var parseType$5 = function (header, byteIndex) {
       if (header[byteIndex] === 'I'.charCodeAt(0) && header[byteIndex + 1] === 'D'.charCodeAt(0) && header[byteIndex + 2] === '3'.charCodeAt(0)) {
         return 'timed-metadata';
       } else if (header[byteIndex] & 0xff === 0xff && (header[byteIndex + 1] & 0xf0) === 0xf0) {
@@ -50292,7 +50472,7 @@
       isLikelyAacData: isLikelyAacData$1,
       parseId3TagSize: parseId3TagSize,
       parseAdtsSize: parseAdtsSize,
-      parseType: parseType$4,
+      parseType: parseType$5,
       parseSampleRate: parseSampleRate,
       parseAacTimestamp: parseAacTimestamp
     };
@@ -51406,7 +51586,7 @@
       toUnsigned: toUnsigned$3,
       toHexString: toHexString$1
     };
-    var parseType$3 = function (buffer) {
+    var parseType$4 = function (buffer) {
       var result = '';
       result += String.fromCharCode(buffer[0]);
       result += String.fromCharCode(buffer[1]);
@@ -51414,10 +51594,10 @@
       result += String.fromCharCode(buffer[3]);
       return result;
     };
-    var parseType_1 = parseType$3;
+    var parseType_1 = parseType$4;
     var toUnsigned$2 = bin.toUnsigned;
-    var parseType$2 = parseType_1;
-    var findBox$2 = function (data, path) {
+    var parseType$3 = parseType_1;
+    var findBox$5 = function (data, path) {
       var results = [],
         i,
         size,
@@ -51430,7 +51610,7 @@
       }
       for (i = 0; i < data.byteLength;) {
         size = toUnsigned$2(data[i] << 24 | data[i + 1] << 16 | data[i + 2] << 8 | data[i + 3]);
-        type = parseType$2(data.subarray(i + 4, i + 8));
+        type = parseType$3(data.subarray(i + 4, i + 8));
         end = size > 1 ? i + size : data.byteLength;
         if (type === path[0]) {
           if (path.length === 1) {
@@ -51439,7 +51619,7 @@
             results.push(data.subarray(i + 8, end));
           } else {
             // recursively search for the next box along the path
-            subresults = findBox$2(data.subarray(i + 8, end), path.slice(1));
+            subresults = findBox$5(data.subarray(i + 8, end), path.slice(1));
             if (subresults.length) {
               results = results.concat(subresults);
             }
@@ -51450,22 +51630,108 @@
 
       return results;
     };
-    var findBox_1 = findBox$2;
+    var findBox_1 = findBox$5;
     var toUnsigned$1 = bin.toUnsigned;
-    var getUint64$2 = numbers.getUint64;
+    var getUint64$4 = numbers.getUint64;
     var tfdt = function (data) {
       var result = {
         version: data[0],
         flags: new Uint8Array(data.subarray(1, 4))
       };
       if (result.version === 1) {
-        result.baseMediaDecodeTime = getUint64$2(data.subarray(4));
+        result.baseMediaDecodeTime = getUint64$4(data.subarray(4));
       } else {
         result.baseMediaDecodeTime = toUnsigned$1(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]);
       }
       return result;
     };
-    var parseTfdt$2 = tfdt;
+    var parseTfdt$3 = tfdt;
+    var tfhd = function (data) {
+      var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+        result = {
+          version: data[0],
+          flags: new Uint8Array(data.subarray(1, 4)),
+          trackId: view.getUint32(4)
+        },
+        baseDataOffsetPresent = result.flags[2] & 0x01,
+        sampleDescriptionIndexPresent = result.flags[2] & 0x02,
+        defaultSampleDurationPresent = result.flags[2] & 0x08,
+        defaultSampleSizePresent = result.flags[2] & 0x10,
+        defaultSampleFlagsPresent = result.flags[2] & 0x20,
+        durationIsEmpty = result.flags[0] & 0x010000,
+        defaultBaseIsMoof = result.flags[0] & 0x020000,
+        i;
+      i = 8;
+      if (baseDataOffsetPresent) {
+        i += 4; // truncate top 4 bytes
+        // FIXME: should we read the full 64 bits?
+
+        result.baseDataOffset = view.getUint32(12);
+        i += 4;
+      }
+      if (sampleDescriptionIndexPresent) {
+        result.sampleDescriptionIndex = view.getUint32(i);
+        i += 4;
+      }
+      if (defaultSampleDurationPresent) {
+        result.defaultSampleDuration = view.getUint32(i);
+        i += 4;
+      }
+      if (defaultSampleSizePresent) {
+        result.defaultSampleSize = view.getUint32(i);
+        i += 4;
+      }
+      if (defaultSampleFlagsPresent) {
+        result.defaultSampleFlags = view.getUint32(i);
+      }
+      if (durationIsEmpty) {
+        result.durationIsEmpty = true;
+      }
+      if (!baseDataOffsetPresent && defaultBaseIsMoof) {
+        result.baseDataOffsetIsMoof = true;
+      }
+      return result;
+    };
+    var parseTfhd$2 = tfhd;
+    var getUint64$3 = numbers.getUint64;
+    var parseSidx = function (data) {
+      var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+        result = {
+          version: data[0],
+          flags: new Uint8Array(data.subarray(1, 4)),
+          references: [],
+          referenceId: view.getUint32(4),
+          timescale: view.getUint32(8)
+        },
+        i = 12;
+      if (result.version === 0) {
+        result.earliestPresentationTime = view.getUint32(i);
+        result.firstOffset = view.getUint32(i + 4);
+        i += 8;
+      } else {
+        // read 64 bits
+        result.earliestPresentationTime = getUint64$3(data.subarray(i));
+        result.firstOffset = getUint64$3(data.subarray(i + 8));
+        i += 16;
+      }
+      i += 2; // reserved
+
+      var referenceCount = view.getUint16(i);
+      i += 2; // start of references
+
+      for (; referenceCount > 0; i += 12, referenceCount--) {
+        result.references.push({
+          referenceType: (data[i] & 0x80) >>> 7,
+          referencedSize: view.getUint32(i) & 0x7FFFFFFF,
+          subsegmentDuration: view.getUint32(i + 4),
+          startsWithSap: !!(data[i + 8] & 0x80),
+          sapType: (data[i + 8] & 0x70) >>> 4,
+          sapDeltaTime: view.getUint32(i + 8) & 0x0FFFFFFF
+        });
+      }
+      return result;
+    };
+    var parseSidx_1 = parseSidx;
     var parseSampleFlags$1 = function (flags) {
       return {
         isLeading: (flags[0] & 0x0c) >>> 2,
@@ -51560,53 +51826,824 @@
       return result;
     };
     var parseTrun$2 = trun;
-    var tfhd = function (data) {
-      var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
-        result = {
-          version: data[0],
-          flags: new Uint8Array(data.subarray(1, 4)),
-          trackId: view.getUint32(4)
-        },
-        baseDataOffsetPresent = result.flags[2] & 0x01,
-        sampleDescriptionIndexPresent = result.flags[2] & 0x02,
-        defaultSampleDurationPresent = result.flags[2] & 0x08,
-        defaultSampleSizePresent = result.flags[2] & 0x10,
-        defaultSampleFlagsPresent = result.flags[2] & 0x20,
-        durationIsEmpty = result.flags[0] & 0x010000,
-        defaultBaseIsMoof = result.flags[0] & 0x020000,
-        i;
-      i = 8;
-      if (baseDataOffsetPresent) {
-        i += 4; // truncate top 4 bytes
-        // FIXME: should we read the full 64 bits?
+    /**
+     * mux.js
+     *
+     * Copyright (c) Brightcove
+     * Licensed Apache-2.0 https://github.com/videojs/mux.js/blob/master/LICENSE
+     *
+     * Parse the internal MP4 structure into an equivalent javascript
+     * object.
+     */
 
-        result.baseDataOffset = view.getUint32(12);
-        i += 4;
+    var numberHelpers = numbers;
+    var getUint64$2 = numberHelpers.getUint64;
+    var inspectMp4,
+      textifyMp4,
+      parseMp4Date = function (seconds) {
+        return new Date(seconds * 1000 - 2082844800000);
+      },
+      parseType$2 = parseType_1,
+      findBox$4 = findBox_1,
+      nalParse = function (avcStream) {
+        var avcView = new DataView(avcStream.buffer, avcStream.byteOffset, avcStream.byteLength),
+          result = [],
+          i,
+          length;
+        for (i = 0; i + 4 < avcStream.length; i += length) {
+          length = avcView.getUint32(i);
+          i += 4; // bail if this doesn't appear to be an H264 stream
+
+          if (length <= 0) {
+            result.push('<span style=\'color:red;\'>MALFORMED DATA</span>');
+            continue;
+          }
+          switch (avcStream[i] & 0x1F) {
+            case 0x01:
+              result.push('slice_layer_without_partitioning_rbsp');
+              break;
+            case 0x05:
+              result.push('slice_layer_without_partitioning_rbsp_idr');
+              break;
+            case 0x06:
+              result.push('sei_rbsp');
+              break;
+            case 0x07:
+              result.push('seq_parameter_set_rbsp');
+              break;
+            case 0x08:
+              result.push('pic_parameter_set_rbsp');
+              break;
+            case 0x09:
+              result.push('access_unit_delimiter_rbsp');
+              break;
+            default:
+              result.push('UNKNOWN NAL - ' + avcStream[i] & 0x1F);
+              break;
+          }
+        }
+        return result;
+      },
+      // registry of handlers for individual mp4 box types
+      parse = {
+        // codingname, not a first-class box type. stsd entries share the
+        // same format as real boxes so the parsing infrastructure can be
+        // shared
+        avc1: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+          return {
+            dataReferenceIndex: view.getUint16(6),
+            width: view.getUint16(24),
+            height: view.getUint16(26),
+            horizresolution: view.getUint16(28) + view.getUint16(30) / 16,
+            vertresolution: view.getUint16(32) + view.getUint16(34) / 16,
+            frameCount: view.getUint16(40),
+            depth: view.getUint16(74),
+            config: inspectMp4(data.subarray(78, data.byteLength))
+          };
+        },
+        avcC: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              configurationVersion: data[0],
+              avcProfileIndication: data[1],
+              profileCompatibility: data[2],
+              avcLevelIndication: data[3],
+              lengthSizeMinusOne: data[4] & 0x03,
+              sps: [],
+              pps: []
+            },
+            numOfSequenceParameterSets = data[5] & 0x1f,
+            numOfPictureParameterSets,
+            nalSize,
+            offset,
+            i; // iterate past any SPSs
+
+          offset = 6;
+          for (i = 0; i < numOfSequenceParameterSets; i++) {
+            nalSize = view.getUint16(offset);
+            offset += 2;
+            result.sps.push(new Uint8Array(data.subarray(offset, offset + nalSize)));
+            offset += nalSize;
+          } // iterate past any PPSs
+
+          numOfPictureParameterSets = data[offset];
+          offset++;
+          for (i = 0; i < numOfPictureParameterSets; i++) {
+            nalSize = view.getUint16(offset);
+            offset += 2;
+            result.pps.push(new Uint8Array(data.subarray(offset, offset + nalSize)));
+            offset += nalSize;
+          }
+          return result;
+        },
+        btrt: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+          return {
+            bufferSizeDB: view.getUint32(0),
+            maxBitrate: view.getUint32(4),
+            avgBitrate: view.getUint32(8)
+          };
+        },
+        edts: function edts(data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        elst: function elst(data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4)),
+              edits: []
+            },
+            entryCount = view.getUint32(4),
+            i;
+          for (i = 8; entryCount; entryCount--) {
+            if (result.version === 0) {
+              result.edits.push({
+                segmentDuration: view.getUint32(i),
+                mediaTime: view.getInt32(i + 4),
+                mediaRate: view.getUint16(i + 8) + view.getUint16(i + 10) / (256 * 256)
+              });
+              i += 12;
+            } else {
+              result.edits.push({
+                segmentDuration: getUint64$2(data.subarray(i)),
+                mediaTime: getUint64$2(data.subarray(i + 8)),
+                mediaRate: view.getUint16(i + 16) + view.getUint16(i + 18) / (256 * 256)
+              });
+              i += 20;
+            }
+          }
+          return result;
+        },
+        esds: function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            esId: data[6] << 8 | data[7],
+            streamPriority: data[8] & 0x1f,
+            decoderConfig: {
+              objectProfileIndication: data[11],
+              streamType: data[12] >>> 2 & 0x3f,
+              bufferSize: data[13] << 16 | data[14] << 8 | data[15],
+              maxBitrate: data[16] << 24 | data[17] << 16 | data[18] << 8 | data[19],
+              avgBitrate: data[20] << 24 | data[21] << 16 | data[22] << 8 | data[23],
+              decoderConfigDescriptor: {
+                tag: data[24],
+                length: data[25],
+                audioObjectType: data[26] >>> 3 & 0x1f,
+                samplingFrequencyIndex: (data[26] & 0x07) << 1 | data[27] >>> 7 & 0x01,
+                channelConfiguration: data[27] >>> 3 & 0x0f
+              }
+            }
+          };
+        },
+        ftyp: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              majorBrand: parseType$2(data.subarray(0, 4)),
+              minorVersion: view.getUint32(4),
+              compatibleBrands: []
+            },
+            i = 8;
+          while (i < data.byteLength) {
+            result.compatibleBrands.push(parseType$2(data.subarray(i, i + 4)));
+            i += 4;
+          }
+          return result;
+        },
+        dinf: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        dref: function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            dataReferences: inspectMp4(data.subarray(8))
+          };
+        },
+        hdlr: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4)),
+              handlerType: parseType$2(data.subarray(8, 12)),
+              name: ''
+            },
+            i = 8; // parse out the name field
+
+          for (i = 24; i < data.byteLength; i++) {
+            if (data[i] === 0x00) {
+              // the name field is null-terminated
+              i++;
+              break;
+            }
+            result.name += String.fromCharCode(data[i]);
+          } // decode UTF-8 to javascript's internal representation
+          // see http://ecmanaut.blogspot.com/2006/07/encoding-decoding-utf8-in-javascript.html
+
+          result.name = decodeURIComponent(escape(result.name));
+          return result;
+        },
+        mdat: function (data) {
+          return {
+            byteLength: data.byteLength,
+            nals: nalParse(data)
+          };
+        },
+        mdhd: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            i = 4,
+            language,
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4)),
+              language: ''
+            };
+          if (result.version === 1) {
+            i += 4;
+            result.creationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 8;
+            result.modificationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 4;
+            result.timescale = view.getUint32(i);
+            i += 8;
+            result.duration = view.getUint32(i); // truncating top 4 bytes
+          } else {
+            result.creationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.modificationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.timescale = view.getUint32(i);
+            i += 4;
+            result.duration = view.getUint32(i);
+          }
+          i += 4; // language is stored as an ISO-639-2/T code in an array of three 5-bit fields
+          // each field is the packed difference between its ASCII value and 0x60
+
+          language = view.getUint16(i);
+          result.language += String.fromCharCode((language >> 10) + 0x60);
+          result.language += String.fromCharCode(((language & 0x03e0) >> 5) + 0x60);
+          result.language += String.fromCharCode((language & 0x1f) + 0x60);
+          return result;
+        },
+        mdia: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        mfhd: function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            sequenceNumber: data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]
+          };
+        },
+        minf: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        // codingname, not a first-class box type. stsd entries share the
+        // same format as real boxes so the parsing infrastructure can be
+        // shared
+        mp4a: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              // 6 bytes reserved
+              dataReferenceIndex: view.getUint16(6),
+              // 4 + 4 bytes reserved
+              channelcount: view.getUint16(16),
+              samplesize: view.getUint16(18),
+              // 2 bytes pre_defined
+              // 2 bytes reserved
+              samplerate: view.getUint16(24) + view.getUint16(26) / 65536
+            }; // if there are more bytes to process, assume this is an ISO/IEC
+          // 14496-14 MP4AudioSampleEntry and parse the ESDBox
+
+          if (data.byteLength > 28) {
+            result.streamDescriptor = inspectMp4(data.subarray(28))[0];
+          }
+          return result;
+        },
+        moof: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        moov: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        mvex: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        mvhd: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            i = 4,
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4))
+            };
+          if (result.version === 1) {
+            i += 4;
+            result.creationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 8;
+            result.modificationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 4;
+            result.timescale = view.getUint32(i);
+            i += 8;
+            result.duration = view.getUint32(i); // truncating top 4 bytes
+          } else {
+            result.creationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.modificationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.timescale = view.getUint32(i);
+            i += 4;
+            result.duration = view.getUint32(i);
+          }
+          i += 4; // convert fixed-point, base 16 back to a number
+
+          result.rate = view.getUint16(i) + view.getUint16(i + 2) / 16;
+          i += 4;
+          result.volume = view.getUint8(i) + view.getUint8(i + 1) / 8;
+          i += 2;
+          i += 2;
+          i += 2 * 4;
+          result.matrix = new Uint32Array(data.subarray(i, i + 9 * 4));
+          i += 9 * 4;
+          i += 6 * 4;
+          result.nextTrackId = view.getUint32(i);
+          return result;
+        },
+        pdin: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+          return {
+            version: view.getUint8(0),
+            flags: new Uint8Array(data.subarray(1, 4)),
+            rate: view.getUint32(4),
+            initialDelay: view.getUint32(8)
+          };
+        },
+        sdtp: function (data) {
+          var result = {
+              version: data[0],
+              flags: new Uint8Array(data.subarray(1, 4)),
+              samples: []
+            },
+            i;
+          for (i = 4; i < data.byteLength; i++) {
+            result.samples.push({
+              dependsOn: (data[i] & 0x30) >> 4,
+              isDependedOn: (data[i] & 0x0c) >> 2,
+              hasRedundancy: data[i] & 0x03
+            });
+          }
+          return result;
+        },
+        sidx: parseSidx_1,
+        smhd: function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            balance: data[4] + data[5] / 256
+          };
+        },
+        stbl: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        ctts: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4)),
+              compositionOffsets: []
+            },
+            entryCount = view.getUint32(4),
+            i;
+          for (i = 8; entryCount; i += 8, entryCount--) {
+            result.compositionOffsets.push({
+              sampleCount: view.getUint32(i),
+              sampleOffset: view[result.version === 0 ? 'getUint32' : 'getInt32'](i + 4)
+            });
+          }
+          return result;
+        },
+        stss: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4)),
+              syncSamples: []
+            },
+            entryCount = view.getUint32(4),
+            i;
+          for (i = 8; entryCount; i += 4, entryCount--) {
+            result.syncSamples.push(view.getUint32(i));
+          }
+          return result;
+        },
+        stco: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: data[0],
+              flags: new Uint8Array(data.subarray(1, 4)),
+              chunkOffsets: []
+            },
+            entryCount = view.getUint32(4),
+            i;
+          for (i = 8; entryCount; i += 4, entryCount--) {
+            result.chunkOffsets.push(view.getUint32(i));
+          }
+          return result;
+        },
+        stsc: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            entryCount = view.getUint32(4),
+            result = {
+              version: data[0],
+              flags: new Uint8Array(data.subarray(1, 4)),
+              sampleToChunks: []
+            },
+            i;
+          for (i = 8; entryCount; i += 12, entryCount--) {
+            result.sampleToChunks.push({
+              firstChunk: view.getUint32(i),
+              samplesPerChunk: view.getUint32(i + 4),
+              sampleDescriptionIndex: view.getUint32(i + 8)
+            });
+          }
+          return result;
+        },
+        stsd: function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            sampleDescriptions: inspectMp4(data.subarray(8))
+          };
+        },
+        stsz: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: data[0],
+              flags: new Uint8Array(data.subarray(1, 4)),
+              sampleSize: view.getUint32(4),
+              entries: []
+            },
+            i;
+          for (i = 12; i < data.byteLength; i += 4) {
+            result.entries.push(view.getUint32(i));
+          }
+          return result;
+        },
+        stts: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            result = {
+              version: data[0],
+              flags: new Uint8Array(data.subarray(1, 4)),
+              timeToSamples: []
+            },
+            entryCount = view.getUint32(4),
+            i;
+          for (i = 8; entryCount; i += 8, entryCount--) {
+            result.timeToSamples.push({
+              sampleCount: view.getUint32(i),
+              sampleDelta: view.getUint32(i + 4)
+            });
+          }
+          return result;
+        },
+        styp: function (data) {
+          return parse.ftyp(data);
+        },
+        tfdt: parseTfdt$3,
+        tfhd: parseTfhd$2,
+        tkhd: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
+            i = 4,
+            result = {
+              version: view.getUint8(0),
+              flags: new Uint8Array(data.subarray(1, 4))
+            };
+          if (result.version === 1) {
+            i += 4;
+            result.creationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 8;
+            result.modificationTime = parseMp4Date(view.getUint32(i)); // truncating top 4 bytes
+
+            i += 4;
+            result.trackId = view.getUint32(i);
+            i += 4;
+            i += 8;
+            result.duration = view.getUint32(i); // truncating top 4 bytes
+          } else {
+            result.creationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.modificationTime = parseMp4Date(view.getUint32(i));
+            i += 4;
+            result.trackId = view.getUint32(i);
+            i += 4;
+            i += 4;
+            result.duration = view.getUint32(i);
+          }
+          i += 4;
+          i += 2 * 4;
+          result.layer = view.getUint16(i);
+          i += 2;
+          result.alternateGroup = view.getUint16(i);
+          i += 2; // convert fixed-point, base 16 back to a number
+
+          result.volume = view.getUint8(i) + view.getUint8(i + 1) / 8;
+          i += 2;
+          i += 2;
+          result.matrix = new Uint32Array(data.subarray(i, i + 9 * 4));
+          i += 9 * 4;
+          result.width = view.getUint16(i) + view.getUint16(i + 2) / 65536;
+          i += 4;
+          result.height = view.getUint16(i) + view.getUint16(i + 2) / 65536;
+          return result;
+        },
+        traf: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        trak: function (data) {
+          return {
+            boxes: inspectMp4(data)
+          };
+        },
+        trex: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            trackId: view.getUint32(4),
+            defaultSampleDescriptionIndex: view.getUint32(8),
+            defaultSampleDuration: view.getUint32(12),
+            defaultSampleSize: view.getUint32(16),
+            sampleDependsOn: data[20] & 0x03,
+            sampleIsDependedOn: (data[21] & 0xc0) >> 6,
+            sampleHasRedundancy: (data[21] & 0x30) >> 4,
+            samplePaddingValue: (data[21] & 0x0e) >> 1,
+            sampleIsDifferenceSample: !!(data[21] & 0x01),
+            sampleDegradationPriority: view.getUint16(22)
+          };
+        },
+        trun: parseTrun$2,
+        'url ': function (data) {
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4))
+          };
+        },
+        vmhd: function (data) {
+          var view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+          return {
+            version: data[0],
+            flags: new Uint8Array(data.subarray(1, 4)),
+            graphicsmode: view.getUint16(4),
+            opcolor: new Uint16Array([view.getUint16(6), view.getUint16(8), view.getUint16(10)])
+          };
+        }
+      };
+    /**
+     * Return a javascript array of box objects parsed from an ISO base
+     * media file.
+     * @param data {Uint8Array} the binary data of the media to be inspected
+     * @return {array} a javascript array of potentially nested box objects
+     */
+
+    inspectMp4 = function (data) {
+      var i = 0,
+        result = [],
+        view,
+        size,
+        type,
+        end,
+        box; // Convert data from Uint8Array to ArrayBuffer, to follow Dataview API
+
+      var ab = new ArrayBuffer(data.length);
+      var v = new Uint8Array(ab);
+      for (var z = 0; z < data.length; ++z) {
+        v[z] = data[z];
       }
-      if (sampleDescriptionIndexPresent) {
-        result.sampleDescriptionIndex = view.getUint32(i);
-        i += 4;
-      }
-      if (defaultSampleDurationPresent) {
-        result.defaultSampleDuration = view.getUint32(i);
-        i += 4;
-      }
-      if (defaultSampleSizePresent) {
-        result.defaultSampleSize = view.getUint32(i);
-        i += 4;
-      }
-      if (defaultSampleFlagsPresent) {
-        result.defaultSampleFlags = view.getUint32(i);
-      }
-      if (durationIsEmpty) {
-        result.durationIsEmpty = true;
-      }
-      if (!baseDataOffsetPresent && defaultBaseIsMoof) {
-        result.baseDataOffsetIsMoof = true;
+      view = new DataView(ab);
+      while (i < data.byteLength) {
+        // parse box data
+        size = view.getUint32(i);
+        type = parseType$2(data.subarray(i + 4, i + 8));
+        end = size > 1 ? i + size : data.byteLength; // parse type-specific data
+
+        box = (parse[type] || function (data) {
+          return {
+            data: data
+          };
+        })(data.subarray(i + 8, end));
+        box.size = size;
+        box.type = type; // store this box and move to the next
+
+        result.push(box);
+        i = end;
       }
       return result;
     };
-    var parseTfhd$2 = tfhd;
+    /**
+     * Returns a textual representation of the javascript represtentation
+     * of an MP4 file. You can use it as an alternative to
+     * JSON.stringify() to compare inspected MP4s.
+     * @param inspectedMp4 {array} the parsed array of boxes in an MP4
+     * file
+     * @param depth {number} (optional) the number of ancestor boxes of
+     * the elements of inspectedMp4. Assumed to be zero if unspecified.
+     * @return {string} a text representation of the parsed MP4
+     */
+
+    textifyMp4 = function (inspectedMp4, depth) {
+      var indent;
+      depth = depth || 0;
+      indent = new Array(depth * 2 + 1).join(' '); // iterate over all the boxes
+
+      return inspectedMp4.map(function (box, index) {
+        // list the box type first at the current indentation level
+        return indent + box.type + '\n' +
+        // the type is already included and handle child boxes separately
+        Object.keys(box).filter(function (key) {
+          return key !== 'type' && key !== 'boxes'; // output all the box properties
+        }).map(function (key) {
+          var prefix = indent + '  ' + key + ': ',
+            value = box[key]; // print out raw bytes as hexademical
+
+          if (value instanceof Uint8Array || value instanceof Uint32Array) {
+            var bytes = Array.prototype.slice.call(new Uint8Array(value.buffer, value.byteOffset, value.byteLength)).map(function (byte) {
+              return ' ' + ('00' + byte.toString(16)).slice(-2);
+            }).join('').match(/.{1,24}/g);
+            if (!bytes) {
+              return prefix + '<>';
+            }
+            if (bytes.length === 1) {
+              return prefix + '<' + bytes.join('').slice(1) + '>';
+            }
+            return prefix + '<\n' + bytes.map(function (line) {
+              return indent + '  ' + line;
+            }).join('\n') + '\n' + indent + '  >';
+          } // stringify generic objects
+
+          return prefix + JSON.stringify(value, null, 2).split('\n').map(function (line, index) {
+            if (index === 0) {
+              return line;
+            }
+            return indent + '  ' + line;
+          }).join('\n');
+        }).join('\n') + (
+        // recursively textify the child boxes
+        box.boxes ? '\n' + textifyMp4(box.boxes, depth + 1) : '');
+      }).join('\n');
+    };
+    var mp4Inspector = {
+      inspect: inspectMp4,
+      textify: textifyMp4,
+      parseType: parseType$2,
+      findBox: findBox$4,
+      parseTraf: parse.traf,
+      parseTfdt: parse.tfdt,
+      parseHdlr: parse.hdlr,
+      parseTfhd: parse.tfhd,
+      parseTrun: parse.trun,
+      parseSidx: parse.sidx
+    };
+    /**
+     * Returns the first string in the data array ending with a null char '\0'
+     * @param {UInt8} data
+     * @returns the string with the null char
+     */
+
+    var uint8ToCString$1 = function (data) {
+      var index = 0;
+      var curChar = String.fromCharCode(data[index]);
+      var retString = '';
+      while (curChar !== '\0') {
+        retString += curChar;
+        index++;
+        curChar = String.fromCharCode(data[index]);
+      } // Add nullChar
+
+      retString += curChar;
+      return retString;
+    };
+    var string = {
+      uint8ToCString: uint8ToCString$1
+    };
+    var uint8ToCString = string.uint8ToCString;
+    var getUint64$1 = numbers.getUint64;
+    /**
+     * Based on: ISO/IEC 23009 Section: 5.10.3.3
+     * References:
+     * https://dashif-documents.azurewebsites.net/Events/master/event.html#emsg-format
+     * https://aomediacodec.github.io/id3-emsg/
+     *
+     * Takes emsg box data as a uint8 array and returns a emsg box object
+     * @param {UInt8Array} boxData data from emsg box
+     * @returns A parsed emsg box object
+     */
+
+    var parseEmsgBox = function (boxData) {
+      // version + flags
+      var offset = 4;
+      var version = boxData[0];
+      var scheme_id_uri, value, timescale, presentation_time, presentation_time_delta, event_duration, id, message_data;
+      if (version === 0) {
+        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
+        offset += scheme_id_uri.length;
+        value = uint8ToCString(boxData.subarray(offset));
+        offset += value.length;
+        var dv = new DataView(boxData.buffer);
+        timescale = dv.getUint32(offset);
+        offset += 4;
+        presentation_time_delta = dv.getUint32(offset);
+        offset += 4;
+        event_duration = dv.getUint32(offset);
+        offset += 4;
+        id = dv.getUint32(offset);
+        offset += 4;
+      } else if (version === 1) {
+        var dv = new DataView(boxData.buffer);
+        timescale = dv.getUint32(offset);
+        offset += 4;
+        presentation_time = getUint64$1(boxData.subarray(offset));
+        offset += 8;
+        event_duration = dv.getUint32(offset);
+        offset += 4;
+        id = dv.getUint32(offset);
+        offset += 4;
+        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
+        offset += scheme_id_uri.length;
+        value = uint8ToCString(boxData.subarray(offset));
+        offset += value.length;
+      }
+      message_data = new Uint8Array(boxData.subarray(offset, boxData.byteLength));
+      var emsgBox = {
+        scheme_id_uri,
+        value,
+        // if timescale is undefined or 0 set to 1
+        timescale: timescale ? timescale : 1,
+        presentation_time,
+        presentation_time_delta,
+        event_duration,
+        id,
+        message_data
+      };
+      return isValidEmsgBox(version, emsgBox) ? emsgBox : undefined;
+    };
+    /**
+     * Scales a presentation time or time delta with an offset with a provided timescale
+     * @param {number} presentationTime
+     * @param {number} timescale
+     * @param {number} timeDelta
+     * @param {number} offset
+     * @returns the scaled time as a number
+     */
+
+    var scaleTime = function (presentationTime, timescale, timeDelta, offset) {
+      return presentationTime || presentationTime === 0 ? presentationTime / timescale : offset + timeDelta / timescale;
+    };
+    /**
+     * Checks the emsg box data for validity based on the version
+     * @param {number} version of the emsg box to validate
+     * @param {Object} emsg the emsg data to validate
+     * @returns if the box is valid as a boolean
+     */
+
+    var isValidEmsgBox = function (version, emsg) {
+      var hasScheme = emsg.scheme_id_uri !== '\0';
+      var isValidV0Box = version === 0 && isDefined(emsg.presentation_time_delta) && hasScheme;
+      var isValidV1Box = version === 1 && isDefined(emsg.presentation_time) && hasScheme; // Only valid versions of emsg are 0 and 1
+
+      return !(version > 1) && isValidV0Box || isValidV1Box;
+    }; // Utility function to check if an object is defined
+
+    var isDefined = function (data) {
+      return data !== undefined || data !== null;
+    };
+    var emsg$1 = {
+      parseEmsgBox: parseEmsgBox,
+      scaleTime: scaleTime
+    };
     var win;
     if (typeof window !== "undefined") {
       win = window;
@@ -51624,6 +52661,427 @@
      * Copyright (c) Brightcove
      * Licensed Apache-2.0 https://github.com/videojs/mux.js/blob/master/LICENSE
      *
+     * Utilities to detect basic properties and metadata about MP4s.
+     */
+
+    var toUnsigned = bin.toUnsigned;
+    var toHexString = bin.toHexString;
+    var findBox$3 = findBox_1;
+    var parseType$1 = parseType_1;
+    var emsg = emsg$1;
+    var parseTfhd$1 = parseTfhd$2;
+    var parseTrun$1 = parseTrun$2;
+    var parseTfdt$2 = parseTfdt$3;
+    var getUint64 = numbers.getUint64;
+    var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks, getTimescaleFromMediaHeader$1, getEmsgID3;
+    var window$2 = window_1;
+    var parseId3Frames = parseId3.parseId3Frames;
+    /**
+     * Parses an MP4 initialization segment and extracts the timescale
+     * values for any declared tracks. Timescale values indicate the
+     * number of clock ticks per second to assume for time-based values
+     * elsewhere in the MP4.
+     *
+     * To determine the start time of an MP4, you need two pieces of
+     * information: the timescale unit and the earliest base media decode
+     * time. Multiple timescales can be specified within an MP4 but the
+     * base media decode time is always expressed in the timescale from
+     * the media header box for the track:
+     * ```
+     * moov > trak > mdia > mdhd.timescale
+     * ```
+     * @param init {Uint8Array} the bytes of the init segment
+     * @return {object} a hash of track ids to timescale values or null if
+     * the init segment is malformed.
+     */
+
+    timescale = function (init) {
+      var result = {},
+        traks = findBox$3(init, ['moov', 'trak']); // mdhd timescale
+
+      return traks.reduce(function (result, trak) {
+        var tkhd, version, index, id, mdhd;
+        tkhd = findBox$3(trak, ['tkhd'])[0];
+        if (!tkhd) {
+          return null;
+        }
+        version = tkhd[0];
+        index = version === 0 ? 12 : 20;
+        id = toUnsigned(tkhd[index] << 24 | tkhd[index + 1] << 16 | tkhd[index + 2] << 8 | tkhd[index + 3]);
+        mdhd = findBox$3(trak, ['mdia', 'mdhd'])[0];
+        if (!mdhd) {
+          return null;
+        }
+        version = mdhd[0];
+        index = version === 0 ? 12 : 20;
+        result[id] = toUnsigned(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
+        return result;
+      }, result);
+    };
+    /**
+     * Determine the base media decode start time, in seconds, for an MP4
+     * fragment. If multiple fragments are specified, the earliest time is
+     * returned.
+     *
+     * The base media decode time can be parsed from track fragment
+     * metadata:
+     * ```
+     * moof > traf > tfdt.baseMediaDecodeTime
+     * ```
+     * It requires the timescale value from the mdhd to interpret.
+     *
+     * @param timescale {object} a hash of track ids to timescale values.
+     * @return {number} the earliest base media decode start time for the
+     * fragment, in seconds
+     */
+
+    startTime = function (timescale, fragment) {
+      var trafs; // we need info from two childrend of each track fragment box
+
+      trafs = findBox$3(fragment, ['moof', 'traf']); // determine the start times for each track
+
+      var lowestTime = trafs.reduce(function (acc, traf) {
+        var tfhd = findBox$3(traf, ['tfhd'])[0]; // get the track id from the tfhd
+
+        var id = toUnsigned(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
+
+        var scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
+
+        var tfdt = findBox$3(traf, ['tfdt'])[0];
+        var dv = new DataView(tfdt.buffer, tfdt.byteOffset, tfdt.byteLength);
+        var baseTime; // version 1 is 64 bit
+
+        if (tfdt[0] === 1) {
+          baseTime = getUint64(tfdt.subarray(4, 12));
+        } else {
+          baseTime = dv.getUint32(4);
+        } // convert base time to seconds if it is a valid number.
+
+        let seconds;
+        if (typeof baseTime === 'bigint') {
+          seconds = baseTime / window$2.BigInt(scale);
+        } else if (typeof baseTime === 'number' && !isNaN(baseTime)) {
+          seconds = baseTime / scale;
+        }
+        if (seconds < Number.MAX_SAFE_INTEGER) {
+          seconds = Number(seconds);
+        }
+        if (seconds < acc) {
+          acc = seconds;
+        }
+        return acc;
+      }, Infinity);
+      return typeof lowestTime === 'bigint' || isFinite(lowestTime) ? lowestTime : 0;
+    };
+    /**
+     * Determine the composition start, in seconds, for an MP4
+     * fragment.
+     *
+     * The composition start time of a fragment can be calculated using the base
+     * media decode time, composition time offset, and timescale, as follows:
+     *
+     * compositionStartTime = (baseMediaDecodeTime + compositionTimeOffset) / timescale
+     *
+     * All of the aforementioned information is contained within a media fragment's
+     * `traf` box, except for timescale info, which comes from the initialization
+     * segment, so a track id (also contained within a `traf`) is also necessary to
+     * associate it with a timescale
+     *
+     *
+     * @param timescales {object} - a hash of track ids to timescale values.
+     * @param fragment {Unit8Array} - the bytes of a media segment
+     * @return {number} the composition start time for the fragment, in seconds
+     **/
+
+    compositionStartTime = function (timescales, fragment) {
+      var trafBoxes = findBox$3(fragment, ['moof', 'traf']);
+      var baseMediaDecodeTime = 0;
+      var compositionTimeOffset = 0;
+      var trackId;
+      if (trafBoxes && trafBoxes.length) {
+        // The spec states that track run samples contained within a `traf` box are contiguous, but
+        // it does not explicitly state whether the `traf` boxes themselves are contiguous.
+        // We will assume that they are, so we only need the first to calculate start time.
+        var tfhd = findBox$3(trafBoxes[0], ['tfhd'])[0];
+        var trun = findBox$3(trafBoxes[0], ['trun'])[0];
+        var tfdt = findBox$3(trafBoxes[0], ['tfdt'])[0];
+        if (tfhd) {
+          var parsedTfhd = parseTfhd$1(tfhd);
+          trackId = parsedTfhd.trackId;
+        }
+        if (tfdt) {
+          var parsedTfdt = parseTfdt$2(tfdt);
+          baseMediaDecodeTime = parsedTfdt.baseMediaDecodeTime;
+        }
+        if (trun) {
+          var parsedTrun = parseTrun$1(trun);
+          if (parsedTrun.samples && parsedTrun.samples.length) {
+            compositionTimeOffset = parsedTrun.samples[0].compositionTimeOffset || 0;
+          }
+        }
+      } // Get timescale for this specific track. Assume a 90kHz clock if no timescale was
+      // specified.
+
+      var timescale = timescales[trackId] || 90e3; // return the composition start time, in seconds
+
+      if (typeof baseMediaDecodeTime === 'bigint') {
+        compositionTimeOffset = window$2.BigInt(compositionTimeOffset);
+        timescale = window$2.BigInt(timescale);
+      }
+      var result = (baseMediaDecodeTime + compositionTimeOffset) / timescale;
+      if (typeof result === 'bigint' && result < Number.MAX_SAFE_INTEGER) {
+        result = Number(result);
+      }
+      return result;
+    };
+    /**
+      * Find the trackIds of the video tracks in this source.
+      * Found by parsing the Handler Reference and Track Header Boxes:
+      *   moov > trak > mdia > hdlr
+      *   moov > trak > tkhd
+      *
+      * @param {Uint8Array} init - The bytes of the init segment for this source
+      * @return {Number[]} A list of trackIds
+      *
+      * @see ISO-BMFF-12/2015, Section 8.4.3
+     **/
+
+    getVideoTrackIds = function (init) {
+      var traks = findBox$3(init, ['moov', 'trak']);
+      var videoTrackIds = [];
+      traks.forEach(function (trak) {
+        var hdlrs = findBox$3(trak, ['mdia', 'hdlr']);
+        var tkhds = findBox$3(trak, ['tkhd']);
+        hdlrs.forEach(function (hdlr, index) {
+          var handlerType = parseType$1(hdlr.subarray(8, 12));
+          var tkhd = tkhds[index];
+          var view;
+          var version;
+          var trackId;
+          if (handlerType === 'vide') {
+            view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
+            version = view.getUint8(0);
+            trackId = version === 0 ? view.getUint32(12) : view.getUint32(20);
+            videoTrackIds.push(trackId);
+          }
+        });
+      });
+      return videoTrackIds;
+    };
+    getTimescaleFromMediaHeader$1 = function (mdhd) {
+      // mdhd is a FullBox, meaning it will have its own version as the first byte
+      var version = mdhd[0];
+      var index = version === 0 ? 12 : 20;
+      return toUnsigned(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
+    };
+    /**
+     * Get all the video, audio, and hint tracks from a non fragmented
+     * mp4 segment
+     */
+
+    getTracks = function (init) {
+      var traks = findBox$3(init, ['moov', 'trak']);
+      var tracks = [];
+      traks.forEach(function (trak) {
+        var track = {};
+        var tkhd = findBox$3(trak, ['tkhd'])[0];
+        var view, tkhdVersion; // id
+
+        if (tkhd) {
+          view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
+          tkhdVersion = view.getUint8(0);
+          track.id = tkhdVersion === 0 ? view.getUint32(12) : view.getUint32(20);
+        }
+        var hdlr = findBox$3(trak, ['mdia', 'hdlr'])[0]; // type
+
+        if (hdlr) {
+          var type = parseType$1(hdlr.subarray(8, 12));
+          if (type === 'vide') {
+            track.type = 'video';
+          } else if (type === 'soun') {
+            track.type = 'audio';
+          } else {
+            track.type = type;
+          }
+        } // codec
+
+        var stsd = findBox$3(trak, ['mdia', 'minf', 'stbl', 'stsd'])[0];
+        if (stsd) {
+          var sampleDescriptions = stsd.subarray(8); // gives the codec type string
+
+          track.codec = parseType$1(sampleDescriptions.subarray(4, 8));
+          var codecBox = findBox$3(sampleDescriptions, [track.codec])[0];
+          var codecConfig, codecConfigType;
+          if (codecBox) {
+            // https://tools.ietf.org/html/rfc6381#section-3.3
+            if (/^[asm]vc[1-9]$/i.test(track.codec)) {
+              // we don't need anything but the "config" parameter of the
+              // avc1 codecBox
+              codecConfig = codecBox.subarray(78);
+              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
+              if (codecConfigType === 'avcC' && codecConfig.length > 11) {
+                track.codec += '.'; // left padded with zeroes for single digit hex
+                // profile idc
+
+                track.codec += toHexString(codecConfig[9]); // the byte containing the constraint_set flags
+
+                track.codec += toHexString(codecConfig[10]); // level idc
+
+                track.codec += toHexString(codecConfig[11]);
+              } else {
+                // TODO: show a warning that we couldn't parse the codec
+                // and are using the default
+                track.codec = 'avc1.4d400d';
+              }
+            } else if (/^mp4[a,v]$/i.test(track.codec)) {
+              // we do not need anything but the streamDescriptor of the mp4a codecBox
+              codecConfig = codecBox.subarray(28);
+              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
+              if (codecConfigType === 'esds' && codecConfig.length > 20 && codecConfig[19] !== 0) {
+                track.codec += '.' + toHexString(codecConfig[19]); // this value is only a single digit
+
+                track.codec += '.' + toHexString(codecConfig[20] >>> 2 & 0x3f).replace(/^0/, '');
+              } else {
+                // TODO: show a warning that we couldn't parse the codec
+                // and are using the default
+                track.codec = 'mp4a.40.2';
+              }
+            } else {
+              // flac, opus, etc
+              track.codec = track.codec.toLowerCase();
+            }
+          }
+        }
+        var mdhd = findBox$3(trak, ['mdia', 'mdhd'])[0];
+        if (mdhd) {
+          track.timescale = getTimescaleFromMediaHeader$1(mdhd);
+        }
+        tracks.push(track);
+      });
+      return tracks;
+    };
+    /**
+     * Returns an array of emsg ID3 data from the provided segmentData.
+     * An offset can also be provided as the Latest Arrival Time to calculate
+     * the Event Start Time of v0 EMSG boxes.
+     * See: https://dashif-documents.azurewebsites.net/Events/master/event.html#Inband-event-timing
+     *
+     * @param {Uint8Array} segmentData the segment byte array.
+     * @param {number} offset the segment start time or Latest Arrival Time,
+     * @return {Object[]} an array of ID3 parsed from EMSG boxes
+     */
+
+    getEmsgID3 = function (segmentData, offset = 0) {
+      var emsgBoxes = findBox$3(segmentData, ['emsg']);
+      return emsgBoxes.map(data => {
+        var parsedBox = emsg.parseEmsgBox(new Uint8Array(data));
+        var parsedId3Frames = parseId3Frames(parsedBox.message_data);
+        return {
+          cueTime: emsg.scaleTime(parsedBox.presentation_time, parsedBox.timescale, parsedBox.presentation_time_delta, offset),
+          duration: emsg.scaleTime(parsedBox.event_duration, parsedBox.timescale),
+          frames: parsedId3Frames
+        };
+      });
+    };
+    var probe$2 = {
+      // export mp4 inspector's findBox and parseType for backwards compatibility
+      findBox: findBox$3,
+      parseType: parseType$1,
+      timescale: timescale,
+      startTime: startTime,
+      compositionStartTime: compositionStartTime,
+      videoTrackIds: getVideoTrackIds,
+      tracks: getTracks,
+      getTimescaleFromMediaHeader: getTimescaleFromMediaHeader$1,
+      getEmsgID3: getEmsgID3
+    };
+    const {
+      parseTrun
+    } = mp4Inspector;
+    const {
+      findBox: findBox$2
+    } = probe$2;
+    var window$1 = window_1;
+    /**
+     * Utility function for parsing data from mdat boxes.
+     * @param {Array<Uint8Array>} segment the segment data to create mdat/traf pairs from.
+     * @returns mdat and traf boxes paired up for easier parsing.
+     */
+
+    var getMdatTrafPairs$2 = function (segment) {
+      var trafs = findBox$2(segment, ['moof', 'traf']);
+      var mdats = findBox$2(segment, ['mdat']);
+      var mdatTrafPairs = []; // Pair up each traf with a mdat as moofs and mdats are in pairs
+
+      mdats.forEach(function (mdat, index) {
+        var matchingTraf = trafs[index];
+        mdatTrafPairs.push({
+          mdat: mdat,
+          traf: matchingTraf
+        });
+      });
+      return mdatTrafPairs;
+    };
+    /**
+      * Parses sample information out of Track Run Boxes and calculates
+      * the absolute presentation and decode timestamps of each sample.
+      *
+      * @param {Array<Uint8Array>} truns - The Trun Run boxes to be parsed
+      * @param {Number|BigInt} baseMediaDecodeTime - base media decode time from tfdt
+          @see ISO-BMFF-12/2015, Section 8.8.12
+      * @param {Object} tfhd - The parsed Track Fragment Header
+      *   @see inspect.parseTfhd
+      * @return {Object[]} the parsed samples
+      *
+      * @see ISO-BMFF-12/2015, Section 8.8.8
+     **/
+
+    var parseSamples$2 = function (truns, baseMediaDecodeTime, tfhd) {
+      var currentDts = baseMediaDecodeTime;
+      var defaultSampleDuration = tfhd.defaultSampleDuration || 0;
+      var defaultSampleSize = tfhd.defaultSampleSize || 0;
+      var trackId = tfhd.trackId;
+      var allSamples = [];
+      truns.forEach(function (trun) {
+        // Note: We currently do not parse the sample table as well
+        // as the trun. It's possible some sources will require this.
+        // moov > trak > mdia > minf > stbl
+        var trackRun = parseTrun(trun);
+        var samples = trackRun.samples;
+        samples.forEach(function (sample) {
+          if (sample.duration === undefined) {
+            sample.duration = defaultSampleDuration;
+          }
+          if (sample.size === undefined) {
+            sample.size = defaultSampleSize;
+          }
+          sample.trackId = trackId;
+          sample.dts = currentDts;
+          if (sample.compositionTimeOffset === undefined) {
+            sample.compositionTimeOffset = 0;
+          }
+          if (typeof currentDts === 'bigint') {
+            sample.pts = currentDts + window$1.BigInt(sample.compositionTimeOffset);
+            currentDts += window$1.BigInt(sample.duration);
+          } else {
+            sample.pts = currentDts + sample.compositionTimeOffset;
+            currentDts += sample.duration;
+          }
+        });
+        allSamples = allSamples.concat(samples);
+      });
+      return allSamples;
+    };
+    var samples = {
+      getMdatTrafPairs: getMdatTrafPairs$2,
+      parseSamples: parseSamples$2
+    };
+    /**
+     * mux.js
+     *
+     * Copyright (c) Brightcove
+     * Licensed Apache-2.0 https://github.com/videojs/mux.js/blob/master/LICENSE
+     *
      * Reads in-band CEA-708 captions out of FMP4 segments.
      * @see https://en.wikipedia.org/wiki/CEA-708
      */
@@ -51631,10 +53089,12 @@
     var discardEmulationPreventionBytes = captionPacketParser.discardEmulationPreventionBytes;
     var CaptionStream = captionStream.CaptionStream;
     var findBox$1 = findBox_1;
-    var parseTfdt$1 = parseTfdt$2;
-    var parseTrun$1 = parseTrun$2;
-    var parseTfhd$1 = parseTfhd$2;
-    var window$2 = window_1;
+    var parseTfdt$1 = parseTfdt$3;
+    var parseTfhd = parseTfhd$2;
+    var {
+      getMdatTrafPairs: getMdatTrafPairs$1,
+      parseSamples: parseSamples$1
+    } = samples;
     /**
       * Maps an offset in the mdat to a sample based on the the size of the samples.
       * Assumes that `parseSamples` has been called first.
@@ -51723,56 +53183,6 @@
       return result;
     };
     /**
-      * Parses sample information out of Track Run Boxes and calculates
-      * the absolute presentation and decode timestamps of each sample.
-      *
-      * @param {Array<Uint8Array>} truns - The Trun Run boxes to be parsed
-      * @param {Number|BigInt} baseMediaDecodeTime - base media decode time from tfdt
-          @see ISO-BMFF-12/2015, Section 8.8.12
-      * @param {Object} tfhd - The parsed Track Fragment Header
-      *   @see inspect.parseTfhd
-      * @return {Object[]} the parsed samples
-      *
-      * @see ISO-BMFF-12/2015, Section 8.8.8
-     **/
-
-    var parseSamples = function (truns, baseMediaDecodeTime, tfhd) {
-      var currentDts = baseMediaDecodeTime;
-      var defaultSampleDuration = tfhd.defaultSampleDuration || 0;
-      var defaultSampleSize = tfhd.defaultSampleSize || 0;
-      var trackId = tfhd.trackId;
-      var allSamples = [];
-      truns.forEach(function (trun) {
-        // Note: We currently do not parse the sample table as well
-        // as the trun. It's possible some sources will require this.
-        // moov > trak > mdia > minf > stbl
-        var trackRun = parseTrun$1(trun);
-        var samples = trackRun.samples;
-        samples.forEach(function (sample) {
-          if (sample.duration === undefined) {
-            sample.duration = defaultSampleDuration;
-          }
-          if (sample.size === undefined) {
-            sample.size = defaultSampleSize;
-          }
-          sample.trackId = trackId;
-          sample.dts = currentDts;
-          if (sample.compositionTimeOffset === undefined) {
-            sample.compositionTimeOffset = 0;
-          }
-          if (typeof currentDts === 'bigint') {
-            sample.pts = currentDts + window$2.BigInt(sample.compositionTimeOffset);
-            currentDts += window$2.BigInt(sample.duration);
-          } else {
-            sample.pts = currentDts + sample.compositionTimeOffset;
-            currentDts += sample.duration;
-          }
-        });
-        allSamples = allSamples.concat(samples);
-      });
-      return allSamples;
-    };
-    /**
       * Parses out caption nals from an FMP4 segment's video tracks.
       *
       * @param {Uint8Array} segment - The bytes of a single segment
@@ -51782,26 +53192,14 @@
      **/
 
     var parseCaptionNals = function (segment, videoTrackId) {
-      // To get the samples
-      var trafs = findBox$1(segment, ['moof', 'traf']); // To get SEI NAL units
-
-      var mdats = findBox$1(segment, ['mdat']);
       var captionNals = {};
-      var mdatTrafPairs = []; // Pair up each traf with a mdat as moofs and mdats are in pairs
-
-      mdats.forEach(function (mdat, index) {
-        var matchingTraf = trafs[index];
-        mdatTrafPairs.push({
-          mdat: mdat,
-          traf: matchingTraf
-        });
-      });
+      var mdatTrafPairs = getMdatTrafPairs$1(segment);
       mdatTrafPairs.forEach(function (pair) {
         var mdat = pair.mdat;
         var traf = pair.traf;
         var tfhd = findBox$1(traf, ['tfhd']); // Exactly 1 tfhd per traf
 
-        var headerInfo = parseTfhd$1(tfhd[0]);
+        var headerInfo = parseTfhd(tfhd[0]);
         var trackId = headerInfo.trackId;
         var tfdt = findBox$1(traf, ['tfdt']); // Either 0 or 1 tfdt per traf
 
@@ -51811,7 +53209,7 @@
         var result; // Only parse video data for the chosen video track
 
         if (videoTrackId === trackId && truns.length > 0) {
-          samples = parseSamples(truns, baseMediaDecodeTime, headerInfo);
+          samples = parseSamples$1(truns, baseMediaDecodeTime, headerInfo);
           result = findSeiNals(mdat, samples, trackId);
           if (!captionNals[trackId]) {
             captionNals[trackId] = {
@@ -52052,463 +53450,123 @@
       this.reset();
     };
     var captionParser = CaptionParser;
+    const {
+      parseTfdt
+    } = mp4Inspector;
+    const findBox = findBox_1;
+    const {
+      getTimescaleFromMediaHeader
+    } = probe$2;
+    const {
+      parseSamples,
+      getMdatTrafPairs
+    } = samples;
     /**
-     * Returns the first string in the data array ending with a null char '\0'
-     * @param {UInt8} data 
-     * @returns the string with the null char
+     * Module for parsing WebVTT text and styles from FMP4 segments.
+     * Based on the ISO/IEC 14496-30.
      */
 
-    var uint8ToCString$1 = function (data) {
-      var index = 0;
-      var curChar = String.fromCharCode(data[index]);
-      var retString = '';
-      while (curChar !== '\0') {
-        retString += curChar;
-        index++;
-        curChar = String.fromCharCode(data[index]);
-      } // Add nullChar
+    const WebVttParser = function () {
+      // default timescale to 90k
+      let timescale = 90e3;
+      /**
+       * Parses the timescale from the init segment.
+       * @param {Array<Uint8Array>} segment The initialization segment to parse the timescale from.
+       */
 
-      retString += curChar;
-      return retString;
-    };
-    var string = {
-      uint8ToCString: uint8ToCString$1
-    };
-    var uint8ToCString = string.uint8ToCString;
-    var getUint64$1 = numbers.getUint64;
-    /**
-     * Based on: ISO/IEC 23009 Section: 5.10.3.3
-     * References:
-     * https://dashif-documents.azurewebsites.net/Events/master/event.html#emsg-format
-     * https://aomediacodec.github.io/id3-emsg/
-     * 
-     * Takes emsg box data as a uint8 array and returns a emsg box object
-     * @param {UInt8Array} boxData data from emsg box
-     * @returns A parsed emsg box object
-     */
-
-    var parseEmsgBox = function (boxData) {
-      // version + flags
-      var offset = 4;
-      var version = boxData[0];
-      var scheme_id_uri, value, timescale, presentation_time, presentation_time_delta, event_duration, id, message_data;
-      if (version === 0) {
-        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
-        offset += scheme_id_uri.length;
-        value = uint8ToCString(boxData.subarray(offset));
-        offset += value.length;
-        var dv = new DataView(boxData.buffer);
-        timescale = dv.getUint32(offset);
-        offset += 4;
-        presentation_time_delta = dv.getUint32(offset);
-        offset += 4;
-        event_duration = dv.getUint32(offset);
-        offset += 4;
-        id = dv.getUint32(offset);
-        offset += 4;
-      } else if (version === 1) {
-        var dv = new DataView(boxData.buffer);
-        timescale = dv.getUint32(offset);
-        offset += 4;
-        presentation_time = getUint64$1(boxData.subarray(offset));
-        offset += 8;
-        event_duration = dv.getUint32(offset);
-        offset += 4;
-        id = dv.getUint32(offset);
-        offset += 4;
-        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
-        offset += scheme_id_uri.length;
-        value = uint8ToCString(boxData.subarray(offset));
-        offset += value.length;
-      }
-      message_data = new Uint8Array(boxData.subarray(offset, boxData.byteLength));
-      var emsgBox = {
-        scheme_id_uri,
-        value,
-        // if timescale is undefined or 0 set to 1 
-        timescale: timescale ? timescale : 1,
-        presentation_time,
-        presentation_time_delta,
-        event_duration,
-        id,
-        message_data
+      this.init = function (segment) {
+        // We just need the timescale from the init segment.
+        const mdhd = findBox(segment, ['moov', 'trak', 'mdia', 'mdhd'])[0];
+        if (mdhd) {
+          timescale = getTimescaleFromMediaHeader(mdhd);
+        }
       };
-      return isValidEmsgBox(version, emsgBox) ? emsgBox : undefined;
-    };
-    /**
-     * Scales a presentation time or time delta with an offset with a provided timescale
-     * @param {number} presentationTime 
-     * @param {number} timescale 
-     * @param {number} timeDelta 
-     * @param {number} offset 
-     * @returns the scaled time as a number
-     */
+      /**
+       * Parses a WebVTT FMP4 segment.
+       * @param {Array<Uint8Array>} segment The content segment to parse the WebVTT cues from.
+       * @returns The WebVTT cue text, styling, and timing info as an array of cue objects.
+       */
 
-    var scaleTime = function (presentationTime, timescale, timeDelta, offset) {
-      return presentationTime || presentationTime === 0 ? presentationTime / timescale : offset + timeDelta / timescale;
-    };
-    /**
-     * Checks the emsg box data for validity based on the version
-     * @param {number} version of the emsg box to validate
-     * @param {Object} emsg the emsg data to validate
-     * @returns if the box is valid as a boolean
-     */
+      this.parseSegment = function (segment) {
+        const vttCues = [];
+        const mdatTrafPairs = getMdatTrafPairs(segment);
+        let baseMediaDecodeTime = 0;
+        mdatTrafPairs.forEach(function (pair) {
+          const mdatBox = pair.mdat;
+          const trafBox = pair.traf; // zero or one.
 
-    var isValidEmsgBox = function (version, emsg) {
-      var hasScheme = emsg.scheme_id_uri !== '\0';
-      var isValidV0Box = version === 0 && isDefined(emsg.presentation_time_delta) && hasScheme;
-      var isValidV1Box = version === 1 && isDefined(emsg.presentation_time) && hasScheme; // Only valid versions of emsg are 0 and 1
+          const tfdtBox = findBox(trafBox, ['tfdt'])[0]; // zero or one.
 
-      return !(version > 1) && isValidV0Box || isValidV1Box;
-    }; // Utility function to check if an object is defined
+          const tfhdBox = findBox(trafBox, ['tfhd'])[0]; // zero or more.
 
-    var isDefined = function (data) {
-      return data !== undefined || data !== null;
-    };
-    var emsg$1 = {
-      parseEmsgBox: parseEmsgBox,
-      scaleTime: scaleTime
-    };
-    /**
-     * mux.js
-     *
-     * Copyright (c) Brightcove
-     * Licensed Apache-2.0 https://github.com/videojs/mux.js/blob/master/LICENSE
-     *
-     * Utilities to detect basic properties and metadata about MP4s.
-     */
-
-    var toUnsigned = bin.toUnsigned;
-    var toHexString = bin.toHexString;
-    var findBox = findBox_1;
-    var parseType$1 = parseType_1;
-    var emsg = emsg$1;
-    var parseTfhd = parseTfhd$2;
-    var parseTrun = parseTrun$2;
-    var parseTfdt = parseTfdt$2;
-    var getUint64 = numbers.getUint64;
-    var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks, getTimescaleFromMediaHeader, getEmsgID3;
-    var window$1 = window_1;
-    var parseId3Frames = parseId3.parseId3Frames;
-    /**
-     * Parses an MP4 initialization segment and extracts the timescale
-     * values for any declared tracks. Timescale values indicate the
-     * number of clock ticks per second to assume for time-based values
-     * elsewhere in the MP4.
-     *
-     * To determine the start time of an MP4, you need two pieces of
-     * information: the timescale unit and the earliest base media decode
-     * time. Multiple timescales can be specified within an MP4 but the
-     * base media decode time is always expressed in the timescale from
-     * the media header box for the track:
-     * ```
-     * moov > trak > mdia > mdhd.timescale
-     * ```
-     * @param init {Uint8Array} the bytes of the init segment
-     * @return {object} a hash of track ids to timescale values or null if
-     * the init segment is malformed.
-     */
-
-    timescale = function (init) {
-      var result = {},
-        traks = findBox(init, ['moov', 'trak']); // mdhd timescale
-
-      return traks.reduce(function (result, trak) {
-        var tkhd, version, index, id, mdhd;
-        tkhd = findBox(trak, ['tkhd'])[0];
-        if (!tkhd) {
-          return null;
-        }
-        version = tkhd[0];
-        index = version === 0 ? 12 : 20;
-        id = toUnsigned(tkhd[index] << 24 | tkhd[index + 1] << 16 | tkhd[index + 2] << 8 | tkhd[index + 3]);
-        mdhd = findBox(trak, ['mdia', 'mdhd'])[0];
-        if (!mdhd) {
-          return null;
-        }
-        version = mdhd[0];
-        index = version === 0 ? 12 : 20;
-        result[id] = toUnsigned(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
-        return result;
-      }, result);
-    };
-    /**
-     * Determine the base media decode start time, in seconds, for an MP4
-     * fragment. If multiple fragments are specified, the earliest time is
-     * returned.
-     *
-     * The base media decode time can be parsed from track fragment
-     * metadata:
-     * ```
-     * moof > traf > tfdt.baseMediaDecodeTime
-     * ```
-     * It requires the timescale value from the mdhd to interpret.
-     *
-     * @param timescale {object} a hash of track ids to timescale values.
-     * @return {number} the earliest base media decode start time for the
-     * fragment, in seconds
-     */
-
-    startTime = function (timescale, fragment) {
-      var trafs; // we need info from two childrend of each track fragment box
-
-      trafs = findBox(fragment, ['moof', 'traf']); // determine the start times for each track
-
-      var lowestTime = trafs.reduce(function (acc, traf) {
-        var tfhd = findBox(traf, ['tfhd'])[0]; // get the track id from the tfhd
-
-        var id = toUnsigned(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
-
-        var scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
-
-        var tfdt = findBox(traf, ['tfdt'])[0];
-        var dv = new DataView(tfdt.buffer, tfdt.byteOffset, tfdt.byteLength);
-        var baseTime; // version 1 is 64 bit
-
-        if (tfdt[0] === 1) {
-          baseTime = getUint64(tfdt.subarray(4, 12));
-        } else {
-          baseTime = dv.getUint32(4);
-        } // convert base time to seconds if it is a valid number.
-
-        let seconds;
-        if (typeof baseTime === 'bigint') {
-          seconds = baseTime / window$1.BigInt(scale);
-        } else if (typeof baseTime === 'number' && !isNaN(baseTime)) {
-          seconds = baseTime / scale;
-        }
-        if (seconds < Number.MAX_SAFE_INTEGER) {
-          seconds = Number(seconds);
-        }
-        if (seconds < acc) {
-          acc = seconds;
-        }
-        return acc;
-      }, Infinity);
-      return typeof lowestTime === 'bigint' || isFinite(lowestTime) ? lowestTime : 0;
-    };
-    /**
-     * Determine the composition start, in seconds, for an MP4
-     * fragment.
-     *
-     * The composition start time of a fragment can be calculated using the base
-     * media decode time, composition time offset, and timescale, as follows:
-     *
-     * compositionStartTime = (baseMediaDecodeTime + compositionTimeOffset) / timescale
-     *
-     * All of the aforementioned information is contained within a media fragment's
-     * `traf` box, except for timescale info, which comes from the initialization
-     * segment, so a track id (also contained within a `traf`) is also necessary to
-     * associate it with a timescale
-     *
-     *
-     * @param timescales {object} - a hash of track ids to timescale values.
-     * @param fragment {Unit8Array} - the bytes of a media segment
-     * @return {number} the composition start time for the fragment, in seconds
-     **/
-
-    compositionStartTime = function (timescales, fragment) {
-      var trafBoxes = findBox(fragment, ['moof', 'traf']);
-      var baseMediaDecodeTime = 0;
-      var compositionTimeOffset = 0;
-      var trackId;
-      if (trafBoxes && trafBoxes.length) {
-        // The spec states that track run samples contained within a `traf` box are contiguous, but
-        // it does not explicitly state whether the `traf` boxes themselves are contiguous.
-        // We will assume that they are, so we only need the first to calculate start time.
-        var tfhd = findBox(trafBoxes[0], ['tfhd'])[0];
-        var trun = findBox(trafBoxes[0], ['trun'])[0];
-        var tfdt = findBox(trafBoxes[0], ['tfdt'])[0];
-        if (tfhd) {
-          var parsedTfhd = parseTfhd(tfhd);
-          trackId = parsedTfhd.trackId;
-        }
-        if (tfdt) {
-          var parsedTfdt = parseTfdt(tfdt);
-          baseMediaDecodeTime = parsedTfdt.baseMediaDecodeTime;
-        }
-        if (trun) {
-          var parsedTrun = parseTrun(trun);
-          if (parsedTrun.samples && parsedTrun.samples.length) {
-            compositionTimeOffset = parsedTrun.samples[0].compositionTimeOffset || 0;
+          const trunBoxes = findBox(trafBox, ['trun']);
+          if (tfdtBox) {
+            const tfdt = parseTfdt(tfdtBox);
+            baseMediaDecodeTime = tfdt.baseMediaDecodeTime;
           }
-        }
-      } // Get timescale for this specific track. Assume a 90kHz clock if no timescale was
-      // specified.
+          if (trunBoxes.length && tfhdBox) {
+            const samples = parseSamples(trunBoxes, baseMediaDecodeTime, tfhdBox);
+            let mdatOffset = 0;
+            samples.forEach(function (sample) {
+              // decode utf8 payload
+              const UTF_8 = 'utf-8';
+              const textDecoder = new TextDecoder(UTF_8); // extract sample data from the mdat box.
+              // WebVTT Sample format:
+              // Exactly one VTTEmptyCueBox box
+              // OR one or more VTTCueBox boxes.
 
-      var timescale = timescales[trackId] || 90e3; // return the composition start time, in seconds
+              const sampleData = mdatBox.slice(mdatOffset, mdatOffset + sample.size); // single vtte box.
 
-      if (typeof baseMediaDecodeTime === 'bigint') {
-        compositionTimeOffset = window$1.BigInt(compositionTimeOffset);
-        timescale = window$1.BigInt(timescale);
-      }
-      var result = (baseMediaDecodeTime + compositionTimeOffset) / timescale;
-      if (typeof result === 'bigint' && result < Number.MAX_SAFE_INTEGER) {
-        result = Number(result);
-      }
-      return result;
-    };
-    /**
-      * Find the trackIds of the video tracks in this source.
-      * Found by parsing the Handler Reference and Track Header Boxes:
-      *   moov > trak > mdia > hdlr
-      *   moov > trak > tkhd
-      *
-      * @param {Uint8Array} init - The bytes of the init segment for this source
-      * @return {Number[]} A list of trackIds
-      *
-      * @see ISO-BMFF-12/2015, Section 8.4.3
-     **/
+              const vtteBox = findBox(sampleData, ['vtte'])[0]; // empty box
 
-    getVideoTrackIds = function (init) {
-      var traks = findBox(init, ['moov', 'trak']);
-      var videoTrackIds = [];
-      traks.forEach(function (trak) {
-        var hdlrs = findBox(trak, ['mdia', 'hdlr']);
-        var tkhds = findBox(trak, ['tkhd']);
-        hdlrs.forEach(function (hdlr, index) {
-          var handlerType = parseType$1(hdlr.subarray(8, 12));
-          var tkhd = tkhds[index];
-          var view;
-          var version;
-          var trackId;
-          if (handlerType === 'vide') {
-            view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
-            version = view.getUint8(0);
-            trackId = version === 0 ? view.getUint32(12) : view.getUint32(20);
-            videoTrackIds.push(trackId);
+              if (vtteBox) {
+                mdatOffset += sample.size;
+                return;
+              } // TODO: Support 'vtta' boxes.
+              // VTTAdditionalTextBoxes can be interleaved between VTTCueBoxes.
+
+              const vttcBoxes = findBox(sampleData, ['vttc']);
+              vttcBoxes.forEach(function (vttcBox) {
+                // mandatory payload box.
+                const paylBox = findBox(vttcBox, ['payl'])[0]; // optional settings box
+
+                const sttgBox = findBox(vttcBox, ['sttg'])[0];
+                const start = sample.pts / timescale;
+                const end = (sample.pts + sample.duration) / timescale;
+                let cueText, settings; // contains cue text.
+
+                if (paylBox) {
+                  try {
+                    cueText = textDecoder.decode(paylBox);
+                  } catch (e) {
+                    console.error(e);
+                  }
+                } // settings box contains styling.
+
+                if (sttgBox) {
+                  try {
+                    settings = textDecoder.decode(sttgBox);
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }
+                if (sample.duration && cueText) {
+                  vttCues.push({
+                    cueText,
+                    start,
+                    end,
+                    settings
+                  });
+                }
+              });
+              mdatOffset += sample.size;
+            });
           }
         });
-      });
-      return videoTrackIds;
+        return vttCues;
+      };
     };
-    getTimescaleFromMediaHeader = function (mdhd) {
-      // mdhd is a FullBox, meaning it will have its own version as the first byte
-      var version = mdhd[0];
-      var index = version === 0 ? 12 : 20;
-      return toUnsigned(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
-    };
-    /**
-     * Get all the video, audio, and hint tracks from a non fragmented
-     * mp4 segment
-     */
-
-    getTracks = function (init) {
-      var traks = findBox(init, ['moov', 'trak']);
-      var tracks = [];
-      traks.forEach(function (trak) {
-        var track = {};
-        var tkhd = findBox(trak, ['tkhd'])[0];
-        var view, tkhdVersion; // id
-
-        if (tkhd) {
-          view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
-          tkhdVersion = view.getUint8(0);
-          track.id = tkhdVersion === 0 ? view.getUint32(12) : view.getUint32(20);
-        }
-        var hdlr = findBox(trak, ['mdia', 'hdlr'])[0]; // type
-
-        if (hdlr) {
-          var type = parseType$1(hdlr.subarray(8, 12));
-          if (type === 'vide') {
-            track.type = 'video';
-          } else if (type === 'soun') {
-            track.type = 'audio';
-          } else {
-            track.type = type;
-          }
-        } // codec
-
-        var stsd = findBox(trak, ['mdia', 'minf', 'stbl', 'stsd'])[0];
-        if (stsd) {
-          var sampleDescriptions = stsd.subarray(8); // gives the codec type string
-
-          track.codec = parseType$1(sampleDescriptions.subarray(4, 8));
-          var codecBox = findBox(sampleDescriptions, [track.codec])[0];
-          var codecConfig, codecConfigType;
-          if (codecBox) {
-            // https://tools.ietf.org/html/rfc6381#section-3.3
-            if (/^[asm]vc[1-9]$/i.test(track.codec)) {
-              // we don't need anything but the "config" parameter of the
-              // avc1 codecBox
-              codecConfig = codecBox.subarray(78);
-              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
-              if (codecConfigType === 'avcC' && codecConfig.length > 11) {
-                track.codec += '.'; // left padded with zeroes for single digit hex
-                // profile idc
-
-                track.codec += toHexString(codecConfig[9]); // the byte containing the constraint_set flags
-
-                track.codec += toHexString(codecConfig[10]); // level idc
-
-                track.codec += toHexString(codecConfig[11]);
-              } else {
-                // TODO: show a warning that we couldn't parse the codec
-                // and are using the default
-                track.codec = 'avc1.4d400d';
-              }
-            } else if (/^mp4[a,v]$/i.test(track.codec)) {
-              // we do not need anything but the streamDescriptor of the mp4a codecBox
-              codecConfig = codecBox.subarray(28);
-              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
-              if (codecConfigType === 'esds' && codecConfig.length > 20 && codecConfig[19] !== 0) {
-                track.codec += '.' + toHexString(codecConfig[19]); // this value is only a single digit
-
-                track.codec += '.' + toHexString(codecConfig[20] >>> 2 & 0x3f).replace(/^0/, '');
-              } else {
-                // TODO: show a warning that we couldn't parse the codec
-                // and are using the default
-                track.codec = 'mp4a.40.2';
-              }
-            } else {
-              // flac, opus, etc
-              track.codec = track.codec.toLowerCase();
-            }
-          }
-        }
-        var mdhd = findBox(trak, ['mdia', 'mdhd'])[0];
-        if (mdhd) {
-          track.timescale = getTimescaleFromMediaHeader(mdhd);
-        }
-        tracks.push(track);
-      });
-      return tracks;
-    };
-    /**
-     * Returns an array of emsg ID3 data from the provided segmentData.
-     * An offset can also be provided as the Latest Arrival Time to calculate 
-     * the Event Start Time of v0 EMSG boxes. 
-     * See: https://dashif-documents.azurewebsites.net/Events/master/event.html#Inband-event-timing
-     * 
-     * @param {Uint8Array} segmentData the segment byte array.
-     * @param {number} offset the segment start time or Latest Arrival Time, 
-     * @return {Object[]} an array of ID3 parsed from EMSG boxes
-     */
-
-    getEmsgID3 = function (segmentData, offset = 0) {
-      var emsgBoxes = findBox(segmentData, ['emsg']);
-      return emsgBoxes.map(data => {
-        var parsedBox = emsg.parseEmsgBox(new Uint8Array(data));
-        var parsedId3Frames = parseId3Frames(parsedBox.message_data);
-        return {
-          cueTime: emsg.scaleTime(parsedBox.presentation_time, parsedBox.timescale, parsedBox.presentation_time_delta, offset),
-          duration: emsg.scaleTime(parsedBox.event_duration, parsedBox.timescale),
-          frames: parsedId3Frames
-        };
-      });
-    };
-    var probe$2 = {
-      // export mp4 inspector's findBox and parseType for backwards compatibility
-      findBox: findBox,
-      parseType: parseType$1,
-      timescale: timescale,
-      startTime: startTime,
-      compositionStartTime: compositionStartTime,
-      videoTrackIds: getVideoTrackIds,
-      tracks: getTracks,
-      getTimescaleFromMediaHeader: getTimescaleFromMediaHeader,
-      getEmsgID3: getEmsgID3
-    };
+    var webvttParser = WebVttParser;
     /**
      * mux.js
      *
@@ -53377,6 +54435,42 @@
           data: segment.buffer
         }, [segment.buffer]);
       }
+      /**
+       * Initializes the WebVttParser and passes the init segment.
+       *
+       * @param {Uint8Array} data mp4 boxed WebVTT init segment data
+       */
+
+      initMp4WebVttParser(data) {
+        if (!this.webVttParser) {
+          this.webVttParser = new webvttParser();
+        }
+        const segment = new Uint8Array(data.data, data.byteOffset, data.byteLength); // Set the timescale for the parser.
+        // This can be called repeatedly in order to set and re-set the timescale.
+
+        this.webVttParser.init(segment);
+      }
+      /**
+       * Parse an mp4 encapsulated WebVTT segment and return an array of cues.
+       *
+       * @param {Uint8Array} data a text/webvtt segment
+       * @return {Object[]} an array of parsed cue objects
+       */
+
+      getMp4WebVttText(data) {
+        if (!this.webVttParser) {
+          // timescale might not be set yet if the parser is created before an init segment is passed.
+          // default timescale is 90k.
+          this.webVttParser = new webvttParser();
+        }
+        const segment = new Uint8Array(data.data, data.byteOffset, data.byteLength);
+        const parsed = this.webVttParser.parseSegment(segment);
+        this.self.postMessage({
+          action: 'getMp4WebVttText',
+          mp4VttCues: parsed || [],
+          data: segment.buffer
+        }, [segment.buffer]);
+      }
       probeMp4StartTime({
         timescales,
         data
@@ -53855,6 +54949,7 @@
     TIMEOUT: -101,
     ABORTED: -102
   };
+  const WEB_VTT_CODEC = 'wvtt';
   /**
    * Abort all requests
    *
@@ -53996,6 +55091,48 @@
     });
     return finishProcessingFn(null, segment);
   };
+  /**
+   * Processes an mp4 init segment depending on the codec through the transmuxer.
+   *
+   * @param {Object} segment init segment to process
+   * @param {string} codec the codec of the text segments
+   */
+
+  const initMp4Text = (segment, codec) => {
+    if (codec === WEB_VTT_CODEC) {
+      segment.transmuxer.postMessage({
+        action: 'initMp4WebVttParser',
+        data: segment.map.bytes
+      });
+    }
+  };
+  /**
+   * Parses an mp4 text segment with the transmuxer and calls the doneFn from
+   * the segment loader.
+   *
+   * @param {Object} segment the text segment to parse
+   * @param {string} codec the codec of the text segment
+   * @param {Function} doneFn the doneFn passed from the segment loader
+   */
+
+  const parseMp4TextSegment = (segment, codec, doneFn) => {
+    if (codec === WEB_VTT_CODEC) {
+      workerCallback({
+        action: 'getMp4WebVttText',
+        data: segment.bytes,
+        transmuxer: segment.transmuxer,
+        callback: ({
+          data,
+          mp4VttCues
+        }) => {
+          segment.bytes = data;
+          doneFn(null, segment, {
+            mp4VttCues
+          });
+        }
+      });
+    }
+  };
   const parseInitSegment = (segment, callback) => {
     const type = detectContainerForBytes(segment.map.bytes); // TODO: We should also handle ts init segments here, but we
     // only know how to parse mp4 init segments at the moment
@@ -54032,6 +55169,9 @@
           if (typeof track.id === 'number' && track.timescale) {
             segment.map.timescales = segment.map.timescales || {};
             segment.map.timescales[track.id] = track.timescale;
+          }
+          if (track.type === 'text') {
+            initMp4Text(segment, track.codec);
           }
         });
         return callback(null);
@@ -54293,6 +55433,15 @@
       const {
         tracks
       } = segment.map;
+      const isMp4TextSegment = tracks.text && (!tracks.audio || !tracks.video);
+      if (isMp4TextSegment) {
+        dataFn(segment, {
+          data: bytesAsUint8Array,
+          type: 'text'
+        });
+        parseMp4TextSegment(segment, tracks.text.codec, doneFn);
+        return;
+      }
       const trackInfo = {
         isFmp4: true,
         hasVideo: !!tracks.video,
@@ -56366,13 +57515,50 @@
     }
     return false;
   };
-  const fixBadTimelineChange = segmentLoader => {
-    if (!segmentLoader) {
+  /**
+   * Check if the pending audio timeline change is behind the
+   * pending main timeline change.
+   *
+   * @param {SegmentLoader} segmentLoader
+   * @return {boolean}
+   */
+
+  const isAudioTimelineBehind = segmentLoader => {
+    const pendingAudioTimelineChange = segmentLoader.timelineChangeController_.pendingTimelineChange({
+      type: 'audio'
+    });
+    const pendingMainTimelineChange = segmentLoader.timelineChangeController_.pendingTimelineChange({
+      type: 'main'
+    });
+    const hasPendingTimelineChanges = pendingAudioTimelineChange && pendingMainTimelineChange;
+    return hasPendingTimelineChanges && pendingAudioTimelineChange.to < pendingMainTimelineChange.to;
+  };
+  /**
+   * A method to check if the player is waiting for a timeline change, and fixes
+   * certain scenarios where the timelines need to be updated.
+   *
+   * @param {SegmentLoader} segmentLoader
+   */
+
+  const checkAndFixTimelines = segmentLoader => {
+    const segmentInfo = segmentLoader.pendingSegment_;
+    if (!segmentInfo) {
       return;
     }
-    segmentLoader.pause();
-    segmentLoader.resetEverything();
-    segmentLoader.load();
+    const waitingForTimelineChange = shouldWaitForTimelineChange({
+      timelineChangeController: segmentLoader.timelineChangeController_,
+      currentTimeline: segmentLoader.currentTimeline_,
+      segmentTimeline: segmentInfo.timeline,
+      loaderType: segmentLoader.loaderType_,
+      audioDisabled: segmentLoader.audioDisabled_
+    });
+    if (waitingForTimelineChange && shouldFixBadTimelineChanges(segmentLoader.timelineChangeController_)) {
+      if (isAudioTimelineBehind(segmentLoader)) {
+        segmentLoader.timelineChangeController_.trigger('audioTimelineBehind');
+        return;
+      }
+      segmentLoader.timelineChangeController_.trigger('fixBadTimelineChange');
+    }
   };
   const mediaDuration = timingInfos => {
     let maxDuration = 0;
@@ -56615,6 +57801,8 @@
       this.sourceUpdater_.on('ready', () => {
         if (this.hasEnoughInfoToAppend_()) {
           this.processCallQueue_();
+        } else {
+          checkAndFixTimelines(this);
         }
       });
       this.sourceUpdater_.on('codecschange', metadata => {
@@ -56630,6 +57818,8 @@
         this.timelineChangeController_.on('pendingtimelinechange', () => {
           if (this.hasEnoughInfoToAppend_()) {
             this.processCallQueue_();
+          } else {
+            checkAndFixTimelines(this);
           }
         });
       } // The main loader only listens on pending timeline changes, but the audio loader,
@@ -56643,9 +57833,13 @@
           }, metadata));
           if (this.hasEnoughInfoToLoad_()) {
             this.processLoadQueue_();
+          } else {
+            checkAndFixTimelines(this);
           }
           if (this.hasEnoughInfoToAppend_()) {
             this.processCallQueue_();
+          } else {
+            checkAndFixTimelines(this);
           }
         });
       }
@@ -56727,6 +57921,7 @@
         if (this.pendingSegment_) {
           this.pendingSegment_ = null;
         }
+        this.timelineChangeController_.clearPendingTimelineChange(this.loaderType_);
         return;
       }
       this.abort_(); // We aborted the requests we were waiting on, so reset the loader's state to READY
@@ -56945,6 +58140,10 @@
 
     playlist(newPlaylist, options = {}) {
       if (!newPlaylist) {
+        return;
+      }
+      if (this.playlist_ && this.playlist_.endList && newPlaylist.endList && this.playlist_.uri === newPlaylist.uri) {
+        // skip update if both prev and new are vod and have the same URI
         return;
       }
       const oldPlaylist = this.playlist_;
@@ -57718,6 +58917,8 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
 
       if (this.hasEnoughInfoToAppend_()) {
         this.processCallQueue_();
+      } else {
+        checkAndFixTimelines(this);
       }
     }
     handleTimingInfo_(simpleSegment, mediaType, timeType, time) {
@@ -57733,6 +58934,8 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
 
       if (this.hasEnoughInfoToAppend_()) {
         this.processCallQueue_();
+      } else {
+        checkAndFixTimelines(this);
       }
     }
     handleCaptions_(simpleSegment, captionData) {
@@ -57883,9 +59086,6 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
         loaderType: this.loaderType_,
         audioDisabled: this.audioDisabled_
       })) {
-        if (shouldFixBadTimelineChanges(this.timelineChangeController_)) {
-          fixBadTimelineChange(this);
-        }
         return false;
       }
       return true;
@@ -57936,9 +59136,6 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
         loaderType: this.loaderType_,
         audioDisabled: this.audioDisabled_
       })) {
-        if (shouldFixBadTimelineChanges(this.timelineChangeController_)) {
-          fixBadTimelineChange(this);
-        }
         return false;
       }
       return true;
@@ -57951,6 +59148,7 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
       // executed after the calls currently queued.
 
       if (this.callQueue_.length || !this.hasEnoughInfoToAppend_()) {
+        checkAndFixTimelines(this);
         this.callQueue_.push(this.handleData_.bind(this, simpleSegment, result));
         return;
       }
@@ -58308,6 +59506,7 @@ Fetch At Buffer: ${this.fetchAtBuffer_}
         }
       }
       if (!this.hasEnoughInfoToLoad_()) {
+        checkAndFixTimelines(this);
         this.loadQueue_.push(() => {
           // regenerate the audioAppendStart, timestampOffset, etc as they
           // may have changed since this function was added to the queue.
@@ -59878,10 +61077,6 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
 
       this.shouldSaveSegmentTimingInfo_ = false;
     }
-    createTransmuxer_() {
-      // don't need to transmux any subtitles
-      return null;
-    }
     /**
      * Indicates which time ranges are buffered
      *
@@ -60088,7 +61283,11 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         this.stopForError(error);
         return;
       }
-      const segmentInfo = this.pendingSegment_; // although the VTT segment loader bandwidth isn't really used, it's good to
+      const segmentInfo = this.pendingSegment_;
+      const isMp4WebVttSegmentWithCues = result.mp4VttCues && result.mp4VttCues.length;
+      if (isMp4WebVttSegmentWithCues) {
+        segmentInfo.mp4VttCues = result.mp4VttCues;
+      } // although the VTT segment loader bandwidth isn't really used, it's good to
       // maintain functionality between segment loaders
 
       this.saveBandwidthRelatedStats_(segmentInfo.duration, simpleSegment.stats); // if this request included a segment key, save that data in the cache
@@ -60127,7 +61326,9 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         });
         return;
       }
-      this.updateTimeMapping_(segmentInfo, this.syncController_.timelines[segmentInfo.timeline], this.playlist_);
+      if (!isMp4WebVttSegmentWithCues) {
+        this.updateTimeMapping_(segmentInfo, this.syncController_.timelines[segmentInfo.timeline], this.playlist_);
+      }
       if (segmentInfo.cues.length) {
         segmentInfo.timingInfo = {
           start: segmentInfo.cues[0].startTime,
@@ -60159,10 +61360,39 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       removeDuplicateCuesFromTrack(this.subtitlesTrack_);
       this.handleAppendsDone_();
     }
-    handleData_() {// noop as we shouldn't be getting video/audio data captions
-      // that we do not support here.
+    handleData_(simpleSegment, result) {
+      const isVttType = simpleSegment && simpleSegment.type === 'vtt';
+      const isTextResult = result && result.type === 'text';
+      const isFmp4VttSegment = isVttType && isTextResult; // handle segment data for fmp4 encapsulated webvtt
+
+      if (isFmp4VttSegment) {
+        super.handleData_(simpleSegment, result);
+      }
     }
     updateTimingInfoEnd_() {// noop
+    }
+    /**
+     * Utility function for converting mp4 webvtt cue objects into VTTCues.
+     *
+     * @param {Object} segmentInfo with mp4 webvtt cues for parsing into VTTCue objecs
+     */
+
+    parseMp4VttCues_(segmentInfo) {
+      const timestampOffset = this.sourceUpdater_.videoTimestampOffset() === null ? this.sourceUpdater_.audioTimestampOffset() : this.sourceUpdater_.videoTimestampOffset();
+      segmentInfo.mp4VttCues.forEach(cue => {
+        const start = cue.start + timestampOffset;
+        const end = cue.end + timestampOffset;
+        const vttCue = new window.VTTCue(start, end, cue.cueText);
+        if (cue.settings) {
+          cue.settings.split(' ').forEach(cueSetting => {
+            const keyValString = cueSetting.split(':');
+            const key = keyValString[0];
+            const value = keyValString[1];
+            vttCue[key] = isNaN(value) ? value : Number(value);
+          });
+        }
+        segmentInfo.cues.push(vttCue);
+      });
     }
     /**
      * Uses the WebVTT parser to parse the segment response
@@ -60181,6 +61411,15 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         // caller is responsible for exception handling.
         throw new NoVttJsError();
       }
+      segmentInfo.cues = [];
+      segmentInfo.timestampmap = {
+        MPEGTS: 0,
+        LOCAL: 0
+      };
+      if (segmentInfo.mp4VttCues) {
+        this.parseMp4VttCues_(segmentInfo);
+        return;
+      }
       if (typeof window.TextDecoder === 'function') {
         decoder = new window.TextDecoder('utf8');
       } else {
@@ -60188,11 +61427,6 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         decodeBytesToString = true;
       }
       const parser = new window.WebVTT.Parser(window, window.vttjs, decoder);
-      segmentInfo.cues = [];
-      segmentInfo.timestampmap = {
-        MPEGTS: 0,
-        LOCAL: 0
-      };
       parser.oncue = segmentInfo.cues.push.bind(segmentInfo.cues);
       parser.ontimestampmap = map => {
         segmentInfo.timestampmap = map;
@@ -60257,7 +61491,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       const diff = mpegTsInSeconds - LOCAL + mappingObj.mapping;
       segmentInfo.cues.forEach(cue => {
         const duration = cue.endTime - cue.startTime;
-        const startTime = MPEGTS === 0 ? cue.startTime + diff : this.handleRollover_(cue.startTime + diff, mappingObj.time);
+        const startTime = this.handleRollover_(cue.startTime + diff, mappingObj.time);
         cue.startTime = Math.max(startTime, 0);
         cue.endTime = Math.max(startTime + duration, 0);
       });
@@ -60507,7 +61741,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       if (!this.isReliable_) {
         return;
       }
-      return this.updateStorage_(segments, mediaSequence, this.calculateBaseTime_(mediaSequence, currentTime));
+      return this.updateStorage_(segments, mediaSequence, this.calculateBaseTime_(mediaSequence, segments, currentTime));
     }
     /**
      * @param {number} targetTime
@@ -60582,7 +61816,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       this.storage_ = newStorage;
       this.diagnostics_ = newDiagnostics;
     }
-    calculateBaseTime_(mediaSequence, fallback) {
+    calculateBaseTime_(mediaSequence, segments, fallback) {
       if (!this.storage_.size) {
         // Initial setup flow.
         return 0;
@@ -60590,6 +61824,18 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       if (this.storage_.has(mediaSequence)) {
         // Normal flow.
         return this.storage_.get(mediaSequence).segmentSyncInfo.start;
+      }
+      const minMediaSequenceFromStorage = Math.min(...this.storage_.keys()); // This case captures a race condition that can occur if we switch to a new media playlist that is out of date
+      // and still has an older Media Sequence. If this occurs, we extrapolate backwards to get the base time.
+
+      if (mediaSequence < minMediaSequenceFromStorage) {
+        const mediaSequenceDiff = minMediaSequenceFromStorage - mediaSequence;
+        let baseTime = this.storage_.get(minMediaSequenceFromStorage).segmentSyncInfo.start;
+        for (let i = 0; i < mediaSequenceDiff; i++) {
+          const segment = segments[i];
+          baseTime -= segment.duration;
+        }
+        return baseTime;
       } // Fallback flow.
       // There is a gap between last recorded playlist and a new one received.
 
@@ -60604,7 +61850,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       super();
       this.parent_ = parent;
     }
-    calculateBaseTime_(mediaSequence, fallback) {
+    calculateBaseTime_(mediaSequence, segments, fallback) {
       if (!this.storage_.size) {
         const info = this.parent_.getSyncInfoForMediaSequence(mediaSequence);
         if (info) {
@@ -60612,7 +61858,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         }
         return 0;
       }
-      return super.calculateBaseTime_(mediaSequence, fallback);
+      return super.calculateBaseTime_(mediaSequence, segments, fallback);
     }
   }
 
@@ -61399,7 +62645,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
     function unpad(padded) {
       return padded.subarray(0, padded.byteLength - padded[padded.byteLength - 1]);
     }
-    /*! @name aes-decrypter @version 4.0.1 @license Apache-2.0 */
+    /*! @name aes-decrypter @version 4.0.2 @license Apache-2.0 */
 
     /**
      * @file aes.js
@@ -63174,6 +64420,15 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       return this.availablePathways_;
     }
   }
+  const debounce = (callback, wait) => {
+    let timeoutId = null;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        callback.apply(null, args);
+      }, wait);
+    };
+  };
   const ABORT_EARLY_EXCLUSION_SECONDS = 10;
   let Vhs$1; // SegmentLoader stats that need to have each loader's
   // values summed to calculate the final value
@@ -63268,7 +64523,11 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
 
   class PlaylistController extends videojs.EventTarget {
     constructor(options) {
-      super();
+      super(); // Adding a slight debounce to avoid duplicate calls during rapid quality changes, for example:
+      // When selecting quality from the quality list,
+      // where we may have multiple bandwidth profiles for the same vertical resolution.
+
+      this.fastQualityChange_ = debounce(this.fastQualityChange_.bind(this), 100);
       const {
         src,
         withCredentials,
@@ -63282,7 +64541,8 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         cacheEncryptionKeys,
         bufferBasedABR,
         leastPixelDiffSelector,
-        captionServices
+        captionServices,
+        experimentalUseMMS
       } = options;
       if (!src) {
         throw new Error('A non-empty playlist URL or JSON manifest string is required');
@@ -63305,6 +64565,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       this.playlistExclusionDuration = playlistExclusionDuration;
       this.maxPlaylistRetries = maxPlaylistRetries;
       this.enableLowInitialPlaylist = enableLowInitialPlaylist;
+      this.usingManagedMediaSource_ = false;
       if (this.useCueTags_) {
         this.cueTagsTrack_ = this.tech_.addTextTrack('metadata', 'ad-cues');
         this.cueTagsTrack_.inBandMetadataTrackDispatchType = '';
@@ -63316,14 +64577,26 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       };
       this.on('error', this.pauseLoading);
       this.mediaTypes_ = createMediaTypes();
-      this.mediaSource = new window.MediaSource();
+      if (experimentalUseMMS && window.ManagedMediaSource) {
+        // Airplay source not yet implemented. Remote playback must be disabled.
+        this.tech_.el_.disableRemotePlayback = true;
+        this.mediaSource = new window.ManagedMediaSource();
+        this.usingManagedMediaSource_ = true;
+        videojs.log('Using ManagedMediaSource');
+      } else if (window.MediaSource) {
+        this.mediaSource = new window.MediaSource();
+      }
       this.handleDurationChange_ = this.handleDurationChange_.bind(this);
       this.handleSourceOpen_ = this.handleSourceOpen_.bind(this);
       this.handleSourceEnded_ = this.handleSourceEnded_.bind(this);
+      this.load = this.load.bind(this);
+      this.pause = this.pause.bind(this);
       this.mediaSource.addEventListener('durationchange', this.handleDurationChange_); // load the media source into the player
 
       this.mediaSource.addEventListener('sourceopen', this.handleSourceOpen_);
-      this.mediaSource.addEventListener('sourceended', this.handleSourceEnded_); // we don't have to handle sourceclose since dispose will handle termination of
+      this.mediaSource.addEventListener('sourceended', this.handleSourceEnded_);
+      this.mediaSource.addEventListener('startstreaming', this.load);
+      this.mediaSource.addEventListener('endstreaming', this.pause); // we don't have to handle sourceclose since dispose will handle termination of
       // everything, and the MediaSource should not be detached without a proper disposal
 
       this.seekable_ = createTimeRanges();
@@ -63730,7 +65003,15 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         }
         if (this.sourceType_ === 'dash') {
           // we don't want to re-request the same hls playlist right after it was changed
-          this.mainPlaylistLoader_.load();
+          // Initially it was implemented as workaround to restart playlist loader for live
+          // when playlist loader is paused because of playlist exclusions:
+          // see: https://github.com/videojs/http-streaming/pull/1339
+          // but this introduces duplicate "loadedplaylist" event.
+          // Ideally we want to re-think playlist loader life-cycle events,
+          // but simply checking "paused" state should help a lot
+          if (this.mainPlaylistLoader_.isPaused) {
+            this.mainPlaylistLoader_.load();
+          }
         } // TODO: Create a new event on the PlaylistLoader that signals
         // that the segments have changed in some way and use that to
         // update the SegmentLoader instead of doing it twice here and
@@ -63953,6 +65234,38 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       this.mainSegmentLoader_.on('ended', () => {
         this.logger_('main segment loader ended');
         this.onEndOfStream();
+      }); // There is the possibility of the video segment and the audio segment
+      // at a current time to be on different timelines. When this occurs, the player
+      // forwards playback to a point where these two segment types are back on the same
+      // timeline. This time will be just after the end of the audio segment that is on
+      // a previous timeline.
+
+      this.timelineChangeController_.on('audioTimelineBehind', () => {
+        const segmentInfo = this.audioSegmentLoader_.pendingSegment_;
+        if (!segmentInfo || !segmentInfo.segment || !segmentInfo.segment.syncInfo) {
+          return;
+        } // Update the current time to just after the faulty audio segment.
+        // This moves playback to a spot where both audio and video segments
+        // are on the same timeline.
+
+        const newTime = segmentInfo.segment.syncInfo.end + 0.01;
+        this.tech_.setCurrentTime(newTime);
+      });
+      this.timelineChangeController_.on('fixBadTimelineChange', () => {
+        // pause, reset-everything and load for all segment-loaders
+        this.logger_('Fix bad timeline change. Restarting al segment loaders...');
+        this.mainSegmentLoader_.pause();
+        this.mainSegmentLoader_.resetEverything();
+        if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+          this.audioSegmentLoader_.pause();
+          this.audioSegmentLoader_.resetEverything();
+        }
+        if (this.mediaTypes_.SUBTITLES.activePlaylistLoader) {
+          this.subtitleSegmentLoader_.pause();
+          this.subtitleSegmentLoader_.resetEverything();
+        } // start segment loader loading in case they are paused
+
+        this.load();
       });
       this.mainSegmentLoader_.on('earlyabort', event => {
         // never try to early abort with the new ABR algorithm
@@ -64032,6 +65345,19 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       }
     }
     /**
+     * Call pause on our SegmentLoaders
+     */
+
+    pause() {
+      this.mainSegmentLoader_.pause();
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        this.audioSegmentLoader_.pause();
+      }
+      if (this.mediaTypes_.SUBTITLES.activePlaylistLoader) {
+        this.subtitleSegmentLoader_.pause();
+      }
+    }
+    /**
      * Re-tune playback quality level for the current player
      * conditions. This method will perform destructive actions like removing
      * already buffered content in order to readjust the currently active
@@ -64051,12 +65377,19 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       this.waitingForFastQualityPlaylistReceived_ = true;
     }
     runFastQualitySwitch_() {
-      this.waitingForFastQualityPlaylistReceived_ = false; // Delete all buffered data to allow an immediate quality switch.
-
+      this.waitingForFastQualityPlaylistReceived_ = false;
       this.mainSegmentLoader_.pause();
-      this.mainSegmentLoader_.resetEverything(() => {
-        this.mainSegmentLoader_.load();
-      }); // don't need to reset audio as it is reset when media changes
+      this.mainSegmentLoader_.resetEverything();
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        this.audioSegmentLoader_.pause();
+        this.audioSegmentLoader_.resetEverything();
+      }
+      if (this.mediaTypes_.SUBTITLES.activePlaylistLoader) {
+        this.subtitleSegmentLoader_.pause();
+        this.subtitleSegmentLoader_.resetEverything();
+      } // start segment loader loading in case they are paused
+
+      this.load();
     }
     /**
      * Begin playback.
@@ -64498,8 +65831,50 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
     seekable() {
       return this.seekable_;
     }
+    getSeekableRange_(playlistLoader, mediaType) {
+      const media = playlistLoader.media();
+      if (!media) {
+        return null;
+      }
+      const mediaSequenceSync = this.syncController_.getMediaSequenceSync(mediaType);
+      if (mediaSequenceSync && mediaSequenceSync.isReliable) {
+        const start = mediaSequenceSync.start;
+        const end = mediaSequenceSync.end;
+        if (!isFinite(start) || !isFinite(end)) {
+          return null;
+        }
+        const liveEdgeDelay = Vhs$1.Playlist.liveEdgeDelay(this.mainPlaylistLoader_.main, media); // Make sure our seekable end is not negative
+
+        const calculatedEnd = Math.max(0, end - liveEdgeDelay);
+        if (calculatedEnd < start) {
+          return null;
+        }
+        return createTimeRanges([[start, calculatedEnd]]);
+      }
+      const expired = this.syncController_.getExpiredTime(media, this.duration());
+      if (expired === null) {
+        return null;
+      }
+      const seekable = Vhs$1.Playlist.seekable(media, expired, Vhs$1.Playlist.liveEdgeDelay(this.mainPlaylistLoader_.main, media));
+      return seekable.length ? seekable : null;
+    }
+    computeFinalSeekable_(mainSeekable, audioSeekable) {
+      if (!audioSeekable) {
+        return mainSeekable;
+      }
+      const mainStart = mainSeekable.start(0);
+      const mainEnd = mainSeekable.end(0);
+      const audioStart = audioSeekable.start(0);
+      const audioEnd = audioSeekable.end(0);
+      if (audioStart > mainEnd || mainStart > audioEnd) {
+        // Seekables are far apart, rely on main
+        return mainSeekable;
+      } // Return the overlapping seekable range
+
+      return createTimeRanges([[Math.max(mainStart, audioStart), Math.min(mainEnd, audioEnd)]]);
+    }
     onSyncInfoUpdate_() {
-      let audioSeekable; // TODO check for creation of both source buffers before updating seekable
+      // TODO check for creation of both source buffers before updating seekable
       //
       // A fix was made to this function where a check for
       // this.sourceUpdater_.hasCreatedSourceBuffers
@@ -64518,54 +65893,28 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       //
       // For now, fall back to the older behavior, with the understanding that the seekable
       // range may not be completely correct, leading to a suboptimal initial live point.
-
       if (!this.mainPlaylistLoader_) {
         return;
       }
-      let media = this.mainPlaylistLoader_.media();
-      if (!media) {
+      const mainSeekable = this.getSeekableRange_(this.mainPlaylistLoader_, 'main');
+      if (!mainSeekable) {
         return;
       }
-      let expired = this.syncController_.getExpiredTime(media, this.duration());
-      if (expired === null) {
-        // not enough information to update seekable
-        return;
-      }
-      const main = this.mainPlaylistLoader_.main;
-      const mainSeekable = Vhs$1.Playlist.seekable(media, expired, Vhs$1.Playlist.liveEdgeDelay(main, media));
-      if (mainSeekable.length === 0) {
-        return;
-      }
+      let audioSeekable;
       if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
-        media = this.mediaTypes_.AUDIO.activePlaylistLoader.media();
-        expired = this.syncController_.getExpiredTime(media, this.duration());
-        if (expired === null) {
-          return;
-        }
-        audioSeekable = Vhs$1.Playlist.seekable(media, expired, Vhs$1.Playlist.liveEdgeDelay(main, media));
-        if (audioSeekable.length === 0) {
+        audioSeekable = this.getSeekableRange_(this.mediaTypes_.AUDIO.activePlaylistLoader, 'audio');
+        if (!audioSeekable) {
           return;
         }
       }
-      let oldEnd;
-      let oldStart;
-      if (this.seekable_ && this.seekable_.length) {
-        oldEnd = this.seekable_.end(0);
-        oldStart = this.seekable_.start(0);
+      const oldSeekable = this.seekable_;
+      this.seekable_ = this.computeFinalSeekable_(mainSeekable, audioSeekable);
+      if (!this.seekable_) {
+        return;
       }
-      if (!audioSeekable) {
-        // seekable has been calculated based on buffering video data so it
-        // can be returned directly
-        this.seekable_ = mainSeekable;
-      } else if (audioSeekable.start(0) > mainSeekable.end(0) || mainSeekable.start(0) > audioSeekable.end(0)) {
-        // seekables are pretty far off, rely on main
-        this.seekable_ = mainSeekable;
-      } else {
-        this.seekable_ = createTimeRanges([[audioSeekable.start(0) > mainSeekable.start(0) ? audioSeekable.start(0) : mainSeekable.start(0), audioSeekable.end(0) < mainSeekable.end(0) ? audioSeekable.end(0) : mainSeekable.end(0)]]);
-      } // seekable is the same as last time
-
-      if (this.seekable_ && this.seekable_.length) {
-        if (this.seekable_.end(0) === oldEnd && this.seekable_.start(0) === oldStart) {
+      if (oldSeekable && oldSeekable.length && this.seekable_.length) {
+        if (oldSeekable.start(0) === this.seekable_.start(0) && oldSeekable.end(0) === this.seekable_.end(0)) {
+          // Seekable range hasn't changed
           return;
         }
       }
@@ -64740,7 +66089,7 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         return;
       } // fmp4 relies on browser support, while ts relies on muxer support
 
-      const supportFunction = (isFmp4, codec) => isFmp4 ? browserSupportsCodec(codec) : muxerSupportsCodec(codec);
+      const supportFunction = (isFmp4, codec) => isFmp4 ? browserSupportsCodec(codec, this.usingManagedMediaSource_) : muxerSupportsCodec(codec);
       const unsupportedCodecs = {};
       let unsupportedAudio;
       ['video', 'audio'].forEach(function (type) {
@@ -64850,10 +66199,10 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
         ids.push(variant.id);
         const codecs = codecsForPlaylist(this.main, variant);
         const unsupported = [];
-        if (codecs.audio && !muxerSupportsCodec(codecs.audio) && !browserSupportsCodec(codecs.audio)) {
+        if (codecs.audio && !muxerSupportsCodec(codecs.audio) && !browserSupportsCodec(codecs.audio, this.usingManagedMediaSource_)) {
           unsupported.push(`audio codec ${codecs.audio}`);
         }
-        if (codecs.video && !muxerSupportsCodec(codecs.video) && !browserSupportsCodec(codecs.video)) {
+        if (codecs.video && !muxerSupportsCodec(codecs.video) && !browserSupportsCodec(codecs.video, this.usingManagedMediaSource_)) {
           unsupported.push(`video codec ${codecs.video}`);
         }
         if (codecs.text && codecs.text === 'stpp.ttml.im1t') {
@@ -65341,8 +66690,9 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
     };
     if (enable !== currentlyEnabled && !incompatible) {
       // Ensure the outside world knows about our changes
-      changePlaylistFn(playlist);
       if (enable) {
+        // call fast quality change only when the playlist is enabled
+        changePlaylistFn(playlist);
         loader.trigger({
           type: 'renditionenabled',
           metadata
@@ -66093,11 +67443,11 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
   const reloadSourceOnError = function (options) {
     initPlugin(this, options);
   };
-  var version$4 = "3.13.2";
-  var version$3 = "7.0.3";
-  var version$2 = "1.3.0";
-  var version$1 = "7.1.0";
-  var version = "4.0.1";
+  var version$4 = "3.16.2";
+  var version$3 = "7.1.0";
+  var version$2 = "1.3.1";
+  var version$1 = "7.2.0";
+  var version = "4.0.2";
   const Vhs = {
     PlaylistLoader,
     Playlist,
@@ -66975,8 +68325,15 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
       if (!this.tech_.el()) {
         return;
       }
-      this.mediaSourceUrl_ = window.URL.createObjectURL(this.playlistController_.mediaSource);
-      this.tech_.src(this.mediaSourceUrl_);
+      this.mediaSourceUrl_ = window.URL.createObjectURL(this.playlistController_.mediaSource); // If we are playing HLS with MSE in Safari, add source elements for both the blob and manifest URLs.
+      // The latter will enable Airplay playback on receiver devices.
+
+      if ((videojs.browser.IS_ANY_SAFARI || videojs.browser.IS_IOS) && this.options_.overrideNative && this.options_.sourceType === 'hls' && typeof this.tech_.addSourceElement === 'function') {
+        this.tech_.addSourceElement(this.mediaSourceUrl_);
+        this.tech_.addSourceElement(this.source_.src);
+      } else {
+        this.tech_.src(this.mediaSourceUrl_);
+      }
     }
     createKeySessions_() {
       const audioPlaylistLoader = this.playlistController_.mediaTypes_.AUDIO.activePlaylistLoader;
@@ -67229,7 +68586,11 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
     name: 'videojs-http-streaming',
     VERSION: version$4,
     canHandleSource(srcObj, options = {}) {
-      const localOptions = merge(videojs.options, options);
+      const localOptions = merge(videojs.options, options); // If not opting to experimentalUseMMS, and playback is only supported with MediaSource, cannot handle source
+
+      if (!localOptions.vhs.experimentalUseMMS && !browserSupportsCodec('avc1.4d400d,mp4a.40.2', false)) {
+        return false;
+      }
       return VhsSourceHandler.canPlayType(srcObj.type, localOptions);
     },
     handleSource(source, tech, options = {}) {
@@ -67262,14 +68623,15 @@ ${segmentInfoString(segmentInfo)}`); // If there's an init segment associated wi
     }
   };
   /**
-   * Check to see if the native MediaSource object exists and supports
-   * an MP4 container with both H.264 video and AAC-LC audio.
+   * Check to see if either the native MediaSource or ManagedMediaSource
+   * objectx exist and support an MP4 container with both H.264 video
+   * and AAC-LC audio.
    *
    * @return {boolean} if  native media sources are supported
    */
 
   const supportsNativeMediaSources = () => {
-    return browserSupportsCodec('avc1.4d400d,mp4a.40.2');
+    return browserSupportsCodec('avc1.4d400d,mp4a.40.2', true);
   }; // register source handlers with the appropriate techs
 
   if (supportsNativeMediaSources()) {
