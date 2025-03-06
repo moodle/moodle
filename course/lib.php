@@ -2647,8 +2647,14 @@ class course_request {
         $this->delete();
 
         $a = new stdClass();
-        $a->name = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
-        $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
+        $a->name = format_string($course->fullname, true, ['context' => $context]);
+        $a->url = course_get_url($course);
+
+        $usernameplaceholders = \core\user::get_name_placeholders($user);
+        foreach ($usernameplaceholders as $field => $value) {
+            $a->{$field} = $value;
+        }
+
         $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a), $course->id);
 
         return $course->id;
