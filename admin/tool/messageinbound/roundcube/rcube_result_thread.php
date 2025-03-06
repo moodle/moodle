@@ -375,7 +375,7 @@ class rcube_result_thread
             $regexp  = '(' . $element . '|' . $item . ')';
 
             if (isset($this->meta['pos'][$index])) {
-                if (preg_match('/([0-9]+)/', $this->raw_data, $m, null, $this->meta['pos'][$index])) {
+                if (preg_match('/([0-9]+)/', $this->raw_data, $m, 0, $this->meta['pos'][$index])) {
                     $result = $m[1];
                 }
             }
@@ -587,8 +587,8 @@ class rcube_result_thread
     protected function parse_thread($str, $begin = 0, $end = 0, $depth = 0)
     {
         // Don't be tempted to change $str to pass by reference to speed this up - it will slow it down by about
-        // 7 times instead :-) See comments on http://uk2.php.net/references and this article:
-        // http://derickrethans.nl/files/phparch-php-variables-article.pdf
+        // 7 times instead :-) See comments on https://www.php.net/references and this article:
+        // https://derickrethans.nl/files/phparch-php-variables-article.pdf
         $node = '';
         if (!$end) {
             $end = strlen($str);

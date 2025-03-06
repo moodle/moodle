@@ -554,7 +554,7 @@ class rcube_charset
         }
 
         // No match, check for UTF-8
-        // from http://w3.org/International/questions/qa-forms-utf-8.html
+        // from https://w3.org/International/questions/qa-forms-utf-8.html
         if (preg_match('/\A(
             [\x09\x0A\x0D\x20-\x7E]
             | [\xC2-\xDF][\x80-\xBF]
