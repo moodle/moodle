@@ -2295,5 +2295,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025091600.01);
     }
 
+    if ($oldversion < 2025092200.00) {
+        // Changing precision of field name on table customfield_category to (1333).
+        $table = new xmldb_table('customfield_category');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field name on table customfield_field to (1333).
+        $table = new xmldb_table('customfield_field');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'shortname');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025092200.00);
+    }
+
     return true;
 }
