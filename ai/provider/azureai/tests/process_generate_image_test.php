@@ -17,7 +17,7 @@
 namespace aiprovider_azureai;
 
 use core_ai\aiactions\base;
-use core_ai\provider;
+use core_ai\manager;
 use GuzzleHttp\Psr7\Response;
 
 /**
@@ -26,14 +26,14 @@ use GuzzleHttp\Psr7\Response;
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\provider\azureai
+ * @covers     \aiprovider_azureai\process_generate_image
  */
 final class process_generate_image_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
 
-    /** @var \core_ai\manager */
-    private $manager;
+    /** @var manager $manager */
+    private manager $manager;
 
     /** @var provider The provider that will process the action. */
     protected provider $provider;
@@ -399,7 +399,7 @@ final class process_generate_image_test extends \advanced_testcase {
             ],
         ];
         $provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
+            classname: provider::class,
             name: 'dummy',
             config: $config,
         );
@@ -554,7 +554,7 @@ final class process_generate_image_test extends \advanced_testcase {
             ],
         ];
         $provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
+            classname: provider::class,
             name: 'dummy',
             config: $config,
         );

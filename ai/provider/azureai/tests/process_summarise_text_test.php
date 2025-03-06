@@ -16,9 +16,8 @@
 
 namespace aiprovider_azureai;
 
-use aiprovider_azureai\process_summarise_text;
 use core_ai\aiactions\base;
-use core_ai\provider;
+use core_ai\manager;
 use GuzzleHttp\Psr7\Response;
 
 /**
@@ -35,8 +34,8 @@ final class process_summarise_text_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
 
-    /** @var \core_ai\manager */
-    private $manager;
+    /** @var manager $manager */
+    private manager $manager;
 
     /** @var provider The provider that will process the action. */
     protected provider $provider;
@@ -328,7 +327,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ],
         ];
         $provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
+            classname: provider::class,
             name: 'dummy',
             config: $config,
         );
@@ -428,7 +427,7 @@ final class process_summarise_text_test extends \advanced_testcase {
             ],
         ];
         $provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
+            classname: provider::class,
             name: 'dummy',
             config: $config,
         );
