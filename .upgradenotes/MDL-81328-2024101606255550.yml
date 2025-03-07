@@ -1,0 +1,7 @@
+issueNumber: MDL-81328
+notes:
+  mod_book:
+    - message: |-
+        The method book_get_nav_classes has been finally
+        deprecated and will now throw an exception if called.
+      type: deprecated

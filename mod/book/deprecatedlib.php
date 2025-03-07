@@ -38,14 +38,9 @@ function book_get_nav_types() {
 }
 
 /**
- * Returns list of available navigation link CSS classes.
- *
  * @deprecated since Moodle 4.4.
- * @todo MDL-81328 Final deprecation in Moodle 4.8.
- * @return array
  */
+#[\core\attribute\deprecated('book_get_nav_classes', since: '4.4', final: true)]
 function book_get_nav_classes() {
-    debugging(__FUNCTION__ . '() is deprecated. There is no replacement.');
-
-    return ['navtoc', 'navimages', 'navtext'];
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
