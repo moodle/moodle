@@ -27,9 +27,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-    /** @var int The maximum length of a message */
-    const MESSAGE_LENGTH_LIMIT = 160 * 3;
-
     /**
      * Create a new SMS manager.
      *
@@ -105,13 +102,12 @@ class manager {
             return $message;
         }
 
-        if (\core_text::strlen($message->content) > self::MESSAGE_LENGTH_LIMIT) {
-            $message = $message->with(status: message_status::MESSAGE_OVER_SIZE);
-        } else if ($gateway = $this->get_gateway_for_message($message, $gatewayid)) {
-            $message = $message->with(gatewayid: $gateway->id);
-            $message = $gateway->send(
-                message: $message,
+        if ($gateway = $this->get_gateway_for_message($message, $gatewayid)) {
+            $modifiedmessage = $message->with(
+                gatewayid: $gateway->id,
+                content: $gateway->truncate_message($message->content),
             );
+            $message = $gateway->send($modifiedmessage);
         } else {
             $message = $message->with(status: message_status::GATEWAY_NOT_AVAILABLE);
         }
