@@ -318,15 +318,10 @@ class mnet_peer {
     }
 
     /**
-     * Get public key.
-     *
      * @deprecated since Moodle 4.3
-     * @todo MDL-78304 Final deprecation.
      */
-    function get_public_key() {
-        debugging('Function get_public_key() is deprecated.', DEBUG_DEVELOPER);
-        if (isset($this->public_key_ref)) return $this->public_key_ref;
-        $this->public_key_ref = openssl_pkey_get_public($this->public_key);
-        return $this->public_key_ref;
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-77341', final: true)]
+    public function get_public_key(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 }
