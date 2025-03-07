@@ -125,7 +125,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
         // Column sortable.
         $this->assertEquals([
             true,
-            false,
+            true,
             true,
             true,
             true,

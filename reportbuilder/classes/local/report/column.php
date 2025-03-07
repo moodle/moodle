@@ -440,24 +440,28 @@ final class column {
     public function get_groupby_sql(): array {
         global $DB;
 
+        // We can reference field aliases in GROUP BY only in MySQL/Postgres (MDL-78783).
+        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
+
         $fieldsalias = $this->get_fields_sql_alias();
 
         // To ensure cross-platform support for column aggregation, where the aggregation should also be grouped, we need
         // to generate SQL from column fields and use it to generate aggregation SQL.
         if (!empty($this->aggregation) && $this->aggregation::column_groupby()) {
-            $fieldsaliassql = array_column($fieldsalias, 'sql');
-            return [$this->get_field_aggregation_sql($fieldsaliassql)];
+            if ($usealias) {
+                $this->set_groupby_sql($this->get_column_alias());
+            } else {
+                $fieldsaliassql = array_column($fieldsalias, 'sql');
+                $this->set_groupby_sql($this->get_field_aggregation_sql($fieldsaliassql));
+            }
         }
 
-        // Return defined value if it's already been set during column definition.
+        // Return defined value if it's been set.
         if (!empty($this->groupbysql)) {
             return [$this->groupbysql];
         }
 
-        // Note that we can reference field aliases in GROUP BY only in MySQL/Postgres.
-        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
         $columnname = $usealias ? 'alias' : 'sql';
-
         return array_column($fieldsalias, $columnname);
     }
 

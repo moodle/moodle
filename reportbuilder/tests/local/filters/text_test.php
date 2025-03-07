@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\filters;
 
 use advanced_testcase;
-use lang_string;
+use core\lang_string;
 use core_reportbuilder\local\report\filter;
 
 /**
@@ -40,25 +40,33 @@ final class text_test extends advanced_testcase {
      */
     public static function get_sql_filter_simple_provider(): array {
         return [
-            [text::ANY_VALUE, null, true],
-            [text::CONTAINS, 'looking', true],
-            [text::CONTAINS, 'sky', false],
-            [text::DOES_NOT_CONTAIN, 'sky', true],
-            [text::DOES_NOT_CONTAIN, 'looking', false],
-            [text::IS_EQUAL_TO, "Hello, is it me you're looking for?", true],
-            [text::IS_EQUAL_TO, 'I can see it in your eyes', false],
-            [text::IS_NOT_EQUAL_TO, "Hello, is it me you're looking for?", false],
-            [text::IS_NOT_EQUAL_TO, 'I can see it in your eyes', true],
-            [text::STARTS_WITH, 'Hello', true],
-            [text::STARTS_WITH, 'sunlight', false],
-            [text::ENDS_WITH, 'looking for?', true],
-            [text::ENDS_WITH, 'your heart', false],
+            [text::ANY_VALUE, 'Looking for', null, true],
+            [text::CONTAINS, 'Looking for', 'king', true],
+            [text::CONTAINS, 'Looking for', 'sky', false],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'sky', true],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'king', false],
+            [text::IS_EQUAL_TO, 'Looking for', 'Looking for', true],
+            [text::IS_EQUAL_TO, 'Looking for', 'Your eyes', false],
+            [text::IS_NOT_EQUAL_TO, 'Looking for', 'Looking for', false],
+            [text::IS_NOT_EQUAL_TO, 'Looking for', 'Your eyes', true],
+            [text::STARTS_WITH, 'Looking for', 'Looking', true],
+            [text::STARTS_WITH, 'Looking for', 'Your', false],
+            [text::ENDS_WITH, 'Looking for', 'for', true],
+            [text::ENDS_WITH, 'Looking for', 'eyes', false],
+
+            // Empty content.
+            [text::IS_EMPTY, null, null, true],
+            [text::IS_EMPTY, '', null, true],
+            [text::IS_EMPTY, 'Looking for', null, false],
+            [text::IS_NOT_EMPTY, null, null, false],
+            [text::IS_NOT_EMPTY, '', null, false],
+            [text::IS_NOT_EMPTY, 'Looking for', null, true],
 
             // Ensure whitespace is trimmed.
-            [text::CONTAINS, '   looking for   ', true],
-            [text::IS_EQUAL_TO, '  Hello, is it me you\'re looking for?  ', true],
-            [text::STARTS_WITH, '  Hello, is it me  ', true],
-            [text::ENDS_WITH, '  you\'re looking for?  ', true],
+            [text::CONTAINS, 'Looking for', '   Looking for   ', true],
+            [text::IS_EQUAL_TO, 'Looking for', '  Looking for  ', true],
+            [text::STARTS_WITH, 'Looking for', '  Looking  ', true],
+            [text::ENDS_WITH, 'Looking for', '  for  ', true],
         ];
     }
 
@@ -66,18 +74,25 @@ final class text_test extends advanced_testcase {
      * Test getting filter SQL
      *
      * @param int $operator
-     * @param string|null $value
+     * @param string|null $fieldvalue
+     * @param string|null $filtervalue
      * @param bool $expectmatch
      *
      * @dataProvider get_sql_filter_simple_provider
      */
-    public function test_get_sql_filter_simple(int $operator, ?string $value, bool $expectmatch): void {
+    public function test_get_sql_filter_simple(
+        int $operator,
+        ?string $fieldvalue,
+        ?string $filtervalue,
+        bool $expectmatch,
+    ): void {
         global $DB;
 
         $this->resetAfterTest();
 
+        // We are using the pdfexportfont field because it is nullable.
         $course = $this->getDataGenerator()->create_course([
-            'fullname' => "Hello, is it me you're looking for?",
+            'pdfexportfont' => $fieldvalue,
         ]);
 
         $filter = new filter(
@@ -85,13 +100,13 @@ final class text_test extends advanced_testcase {
             'test',
             new lang_string('course'),
             'testentity',
-            'fullname'
+            'pdfexportfont',
         );
 
         // Create instance of our filter, passing given operator.
         [$select, $params] = text::create($filter)->get_sql_filter([
             $filter->get_unique_identifier() . '_operator' => $operator,
-            $filter->get_unique_identifier() . '_value' => $value,
+            $filter->get_unique_identifier() . '_value' => $filtervalue,
         ]);
 
         $fullnames = $DB->get_fieldset_select('course', 'fullname', $select, $params);
@@ -99,62 +114,6 @@ final class text_test extends advanced_testcase {
             $this->assertContains($course->fullname, $fullnames);
         } else {
             $this->assertNotContains($course->fullname, $fullnames);
-        }
-    }
-
-    /**
-     * Data provider for {@see test_get_sql_filter_empty}
-     *
-     * @return array
-     */
-    public static function get_sql_filter_empty_provider(): array {
-        return [
-            [text::IS_EMPTY, null, true],
-            [text::IS_EMPTY, '', true],
-            [text::IS_EMPTY, 'hola', false],
-            [text::IS_NOT_EMPTY, null, false],
-            [text::IS_NOT_EMPTY, '', false],
-            [text::IS_NOT_EMPTY, 'hola', true],
-        ];
-    }
-
-    /**
-     * Test getting filter SQL using the {@see text::IS_EMPTY} and {@see text::IS_NOT_EMPTY} operators
-     *
-     * @param int $operator
-     * @param string|null $profilefieldvalue
-     * @param bool $expectmatch
-     *
-     * @dataProvider get_sql_filter_empty_provider
-     */
-    public function test_get_sql_filter_empty(int $operator, ?string $profilefieldvalue, bool $expectmatch): void {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        // We are using the user.moodlenetprofile field because it is nullable.
-        $user = $this->getDataGenerator()->create_user([
-            'moodlenetprofile' => $profilefieldvalue,
-        ]);
-
-        $filter = new filter(
-            text::class,
-            'test',
-            new lang_string('user'),
-            'testentity',
-            'moodlenetprofile'
-        );
-
-        // Create instance of our filter, passing given operator.
-        [$select, $params] = text::create($filter)->get_sql_filter([
-            $filter->get_unique_identifier() . '_operator' => $operator,
-        ]);
-
-        $usernames = $DB->get_fieldset_select('user', 'username', $select, $params);
-        if ($expectmatch) {
-            $this->assertContains($user->username, $usernames);
-        } else {
-            $this->assertNotContains($user->username, $usernames);
         }
     }
 }

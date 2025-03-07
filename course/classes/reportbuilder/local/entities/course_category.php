@@ -89,8 +89,6 @@ class course_category extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $tablealias = $this->get_table_alias('course_categories');
         $tablealiascontext = $this->get_table_alias('context');
 
@@ -168,10 +166,6 @@ class course_category extends base {
             ->set_is_sortable(true);
 
         // Description column (note we need to join/select from the context table in order to format the column).
-        $descriptionfieldsql = "{$tablealias}.description";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
-        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
@@ -180,9 +174,9 @@ class course_category extends base {
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field($descriptionfieldsql, 'description')
-            ->add_fields("{$tablealias}.descriptionformat, {$tablealias}.id")
+            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
+            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $category): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");

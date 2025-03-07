@@ -85,16 +85,10 @@ class comment extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $commentalias = $this->get_table_alias('comments');
         $contextalias = $this->get_table_alias('context');
 
         // Content.
-        $contentfieldsql = "{$commentalias}.content";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $contentfieldsql = $DB->sql_order_by_text($contentfieldsql, 1024);
-        }
         $columns[] = (new column(
             'content',
             new lang_string('content'),
@@ -103,9 +97,9 @@ class comment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_join($this->get_context_join())
-            ->add_field($contentfieldsql, 'content')
-            ->add_fields("{$commentalias}.format, {$commentalias}.contextid, " .
-                context_helper::get_preload_record_columns_sql($contextalias))
+            ->add_fields("{$commentalias}.content, {$commentalias}.format, {$commentalias}.contextid")
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(true)
             ->add_callback(static function($content, stdClass $comment): string {
                 if ($content === null) {
                     return '';
@@ -170,8 +164,6 @@ class comment extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        global $DB;
-
         $commentalias = $this->get_table_alias('comments');
 
         // Content.
@@ -180,7 +172,7 @@ class comment extends base {
             'content',
             new lang_string('content'),
             $this->get_entity_name(),
-            $DB->sql_cast_to_char("{$commentalias}.content")
+            "{$commentalias}.content"
         ))
             ->add_joins($this->get_joins());
 

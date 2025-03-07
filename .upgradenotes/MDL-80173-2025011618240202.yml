@@ -1,0 +1,7 @@
+issueNumber: MDL-80173
+notes:
+  core_reportbuilder:
+    - message: >-
+        Various Oracle-specific support/workarounds in APIs and component report
+        entities have been removed
+      type: removed

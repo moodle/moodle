@@ -87,15 +87,9 @@ class note extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $postalias = $this->get_table_alias('post');
 
         // Content.
-        $contentfieldsql = "{$postalias}.content";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $contentfieldsql = $DB->sql_order_by_text($contentfieldsql, 1024);
-        }
         $columns[] = (new column(
             'content',
             new lang_string('content', 'core_notes'),
@@ -103,8 +97,8 @@ class note extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field($contentfieldsql, 'content')
-            ->add_field("{$postalias}.format")
+            ->add_fields("{$postalias}.content, {$postalias}.format")
+            ->set_is_sortable(true)
             ->add_callback(static function(?string $content, stdClass $note): string {
                 if ($content === null) {
                     return '';
@@ -165,8 +159,6 @@ class note extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        global $DB;
-
         $postalias = $this->get_table_alias('post');
 
         // Content.
@@ -175,7 +167,7 @@ class note extends base {
             'content',
             new lang_string('content', 'core_notes'),
             $this->get_entity_name(),
-            $DB->sql_cast_to_char("{$postalias}.content")
+            "{$postalias}.content"
         ))
             ->add_joins($this->get_joins());
 

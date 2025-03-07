@@ -86,8 +86,6 @@ class tag extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $tagalias = $this->get_table_alias('tag');
 
         // Name.
@@ -151,10 +149,6 @@ class tag extends base {
             });
 
         // Description.
-        $descriptionfieldsql = "{$tagalias}.description";
-        if ($DB->get_dbfamily() === 'oracle') {
-            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
-        }
         $columns[] = (new column(
             'description',
             new lang_string('tagdescription', 'core_tag'),
@@ -162,8 +156,8 @@ class tag extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field($descriptionfieldsql, 'description')
-            ->add_fields("{$tagalias}.descriptionformat, {$tagalias}.id")
+            ->add_fields("{$tagalias}.description, {$tagalias}.descriptionformat, {$tagalias}.id")
+            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $tag): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
