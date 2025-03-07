@@ -1,7 +1,7 @@
 Description of MathJAX library integration in Moodle
 ====================================================
 
-* Default MathJax version: 2.7.9
+* Default MathJax version: 3.2.2
 * License: Apache 2.0
 * Source: https://www.mathjax.org/
 
@@ -17,9 +17,14 @@ Upgrading the default MathJax version
    previous default.
 3. Check and eventually update the list of language mappings in filter.php.
    Also see the unit test for the language mappings.
+4. Add any required configurations from (https://docs.mathjax.org/en/v3.2-latest/web/configuration.html#web-configuration)
+   to "filter_mathjaxloader/mathjaxconfig" because it has been removed as the required ones have been loaded by default.
+   For more details about the documentation please check MDL-75486.
 
 Changes
 -------
+
+* Updated to the 3.2.2 version. See MDL-75486 for details
 
 * Updated to the 2.7.9 version. See MDL-70317 for details.
 

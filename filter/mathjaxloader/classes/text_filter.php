@@ -74,19 +74,21 @@ class text_filter extends \core_filters\text_filter {
         if (!$page->requires->should_create_one_time_item_now('filter_mathjaxloader-scripts')) {
             return;
         }
+
         $url = get_config('filter_mathjaxloader', 'httpsurl');
         $lang = $this->map_language_code(current_language());
-        $url = new url($url, ['delayStartupUntil' => 'configured']);
-
+        $url = new url($url);
         $page->requires->js($url);
 
+        // Let's still get this config even if the value is null due to the setting being set as default.
+        // For the config we can set based on the needs when we need from:
+        // https://docs.mathjax.org/en/v3.2-latest/web/configuration.html#web-configuration.
         $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
         $wwwroot = new url('/');
-
         $config = str_replace('{wwwroot}', $wwwroot->out(true), $config);
-
         $params = ['mathjaxconfig' => $config, 'lang' => $lang];
 
+        // Let's still send the config and lang to the loader.
         $page->requires->js_call_amd('filter_mathjaxloader/loader', 'configure', [$params]);
     }
 

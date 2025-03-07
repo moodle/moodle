@@ -64,9 +64,9 @@ Feature: Preview a drag-drop marker question
     And the "mathjaxloader" filter applies to "content and headings"
     And I am on the "Drag to mathjax equation" "core_question > preview" page logged in as teacher
     When I press "Submit and finish"
-    Then ".markertexts .markertext .MathJax_Display" "css_element" should exist in the ".droparea" "css_element"
+    Then ".markertexts .markertext .MathJax" "css_element" should exist in the ".droparea" "css_element"
     And I press "Start again"
     And I press "Fill in correct responses"
     And I press "Submit and finish"
     And ".filter_mathjaxloader_equation" "css_element" should exist in the ".droparea" "css_element"
-    And ".markertexts .markertext .MathJax_Display" "css_element" should not exist in the ".droparea" "css_element"
+    And ".markertexts .markertext .MathJax" "css_element" should not exist in the ".droparea" "css_element"
