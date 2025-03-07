@@ -146,7 +146,6 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             $dateformat = array_reverse($dateformat);
         }
         foreach ($dateformat as $key => $date) {
-            // E_STRICT creating elements without forms is nasty because it internally uses $this
             $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $date,
                 $this->getAttributesForFormElement(), true);
         }

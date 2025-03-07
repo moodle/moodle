@@ -183,7 +183,6 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             $attributes['size'] = 3;
         }
         $this->_elements = [];
-        // E_STRICT creating elements without forms is nasty because it internally uses $this
         $number = $this->createFormElement('text', 'number',
                 get_string('time', 'form'), $attributes, true);
         $number->set_force_ltr(true);

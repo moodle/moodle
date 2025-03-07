@@ -133,7 +133,6 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
                 get_string('enable'), $this->getAttributesForFormElement(), true);
         }
         foreach ($dateformat as $key => $value) {
-            // E_STRICT creating elements without forms is nasty because it internally uses $this
             $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $value,
                 $this->getAttributesForFormElement(), true);
         }
