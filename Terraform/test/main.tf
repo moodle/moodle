@@ -23,16 +23,25 @@ resource "azurerm_storage_share" "storage_share_theme" {
   quota                = var.StorageQuota
 }
 
+resource "azurerm_storage_container" "assessment_container" {
+  name                  = "assessmentstoragecontainer"
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.ClusterName
   location            = azurerm_resource_group.learningHubMoodleResourceGroup.location
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   dns_prefix          = var.ClusterName
   default_node_pool {
-    name       = "default"
-    node_count = var.ClusterNodeCount
-    vm_size    = var.ClusterNodeSize
-    temporary_name_for_rotation = "tmpnodepool1"
+    name                         = "default"
+    vm_size                      = "Standard_B4ms"
+    temporary_name_for_rotation  = "tmpnodepool1"
+	auto_scaling_enabled         = true
+    min_count                    = 2
+    max_count                    = 3
+    only_critical_addons_enabled = true
   }
   identity {
     type = "SystemAssigned"
@@ -42,6 +51,33 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
   tags = {
     environment = var.Environment
+  }
+}
+
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+}
+
+resource "kubernetes_namespace" "custom_namespace" {
+  metadata {
+    name = "learninghubmoodle"
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
+  name                  = "userpool"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = var.ClusterNodeSize
+  auto_scaling_enabled  = true
+  min_count             = 1
+  max_count             = 5
+  node_count            = 2
+  mode                  = "User"
+  tags = {
+    Environment = var.Environment
   }
 }
 
@@ -259,6 +295,12 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
   tags = {
     environment = var.Environment
   }
+  identity {
+    type = "SystemAssigned"
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mssql_managed_database" "sqldb" {
@@ -273,7 +315,7 @@ resource "azurerm_redis_cache" "moodle_cache" {
   capacity            = 2
   family              = "C"
   sku_name            = "Standard"
-  non_ssl_port_enabled = true
+  non_ssl_port_enabled = false
   minimum_tls_version = "1.2"
 }
 

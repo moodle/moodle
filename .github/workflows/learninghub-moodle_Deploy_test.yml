@@ -46,9 +46,9 @@ jobs:
       #       -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
       #       -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
       #       -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
-      #       -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}"
-      #       -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}"
-      #       -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}"
+      #       -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+      #       -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+      #       -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
       #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
       #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
       #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
@@ -209,12 +209,12 @@ jobs:
           STORAGE_KEY=$(az storage account keys list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --account-name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query [0].value -o tsv)
           echo "storage_key=$STORAGE_KEY" >> $GITHUB_OUTPUT
 
-      - name: Create the default namespace secret
-        run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n default
+      - name: Create the namespace secret
+        run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n learninghubmoodle
         continue-on-error: true
 
       - name: Deploy application image to AKS cluster
-        run: kubectl apply -f kubectl/deployment-test.yml
+        run: kubectl apply -f kubectl/deployment-test.yml --validate=false
 
       - name: Deploy the Horizontal Pod Autoscaler to the AKS cluster
         run: kubectl apply -f kubectl/hpa-test.yml
@@ -224,7 +224,7 @@ jobs:
           az aks nodepool update \
           --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
           --cluster-name ${{ vars.AZURE_CLUSTER_NAME }} \
-          --name default \
+          --name userpool \
           --enable-cluster-autoscaler \
           --min-count 1 \
           --max-count 2
@@ -233,4 +233,70 @@ jobs:
         run: kubectl apply -f kubectl/service-test.yml
 
       - name: Restart the pods to reload the image
-        run: kubectl rollout restart deployment/learninghubmoodletest
+        run: kubectl rollout restart deployment/learninghubmoodletest -n learninghubmoodle
+
+  fix_recommendations:
+    needs: deploy_learninghubmoodle_to_cluster
+    runs-on: ubuntu-latest
+    environment: test
+    name: 'Ensure Azure recommendations are fixed'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Enable Defender for AKS cluster
+        run: az aks update --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --enable-defender
+
+      - name: Disable automounting API credentials
+        run: |
+          kubectl patch deployment learninghubmoodledev -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}" -n learninghubmoodle
+          kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}" -n learninghubmoodle
+
+      - name: Get node resource group
+        id: get_node_resource_group
+        run: |
+          node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
+          echo "node_resource_group=$node_resource_group" >> $GITHUB_OUTPUT
+ 
+      - name: Add Azure Policy add-on for AKS
+        run: az aks enable-addons --addon azure-policy --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+
+      - name: Enable Container insights
+        run: az aks enable-addons --addon monitoring --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+        continue-on-error: true
+
+      - name: Get cluster id
+        id: get_cluster_id
+        run: |
+          CLUSTER_ID=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query id -o tsv)
+          echo "cluster_id=$CLUSTER_ID" >> $GITHUB_OUTPUT
+
+      - name: Create analytics workspace
+        id: create_analytics_workspace
+        run: |
+          az monitor log-analytics workspace create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --workspace-name LearningHubWorkspace --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}
+          WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --workspace-name LearningHubWorkspace --query id -o tsv)
+          echo "workspace_id=$WORKSPACE_ID" >> $GITHUB_OUTPUT
+
+      - name: Create diagnostic settings
+        run: |
+          az monitor diagnostic-settings create --name "AKS-Diagnostic-Logs" --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --resource ${{ steps.get_cluster_id.outputs.cluster_id }} --workspace ${{ steps.create_analytics_workspace.outputs.workspace_id }} --logs "[{\"category\": \"kube-apiserver\", \"enabled\": true}, {\"category\": \"kube-controller-manager\", \"enabled\": true}, {\"category\": \"kube-scheduler\", \"enabled\": true}, {\"category\": \"cluster-autoscaler\", \"enabled\": true}]"
+
+      - name: Define trusted container registries
+        run: |
+          az policy assignment create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name "EnforceTrustedRegistries" --policy "febd0533-8e55-448f-b837-bd0e06f16469" --params "{\"allowedContainerImagesRegex\":{\"value\":\"learninghubmoodlecrdev.azurecr.io\"}}" --location uksouth

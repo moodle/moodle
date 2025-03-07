@@ -89,7 +89,7 @@ jobs:
         env:
           dbtype: ${{ matrix.db }}
         run: |
-          echo "pathtophp=$(which php)" >> $GITHUB_ENV Inject installed pathtophp to env. The template config needs it.
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV # Inject installed pathtophp to env. The template config needs it.
           cp .github/workflows/config-template.php config.php
           mkdir ../moodledata
           sudo locale-gen en_AU.UTF-8

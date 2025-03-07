@@ -67,7 +67,6 @@ resource "kubernetes_namespace" "custom_namespace" {
   }
 }
 
-
 resource "azurerm_kubernetes_cluster_node_pool" "user_node_pool" {
   name                  = "userpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
@@ -303,18 +302,7 @@ resource "azurerm_mssql_managed_instance" "sqlmi" {
     prevent_destroy = true
   }
 }
-/*
-resource "azurerm_advanced_threat_protection" "atp" {
-  target_resource_id = azurerm_mssql_managed_instance.sqlmi.id
-  enabled = true
-}
 
-resource "azurerm_mssql_managed_instance_vulnerability_assessment" "sqlmi_va" {
-  managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
-  storage_container_path = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.assessment_container.name}"
-  storage_account_access_key = azurerm_storage_account.storage_account.primary_access_key
-}
-*/
 resource "azurerm_mssql_managed_database" "sqldb" {
   name = "LearningHubMoodle"
   managed_instance_id = azurerm_mssql_managed_instance.sqlmi.id
