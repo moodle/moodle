@@ -20,6 +20,7 @@ use context_system;
 use core_table\dynamic as dynamic_table;
 use flexible_table;
 use moodle_url;
+use html_writer;
 
 /**
  * Table to manage AI provider plugins.
@@ -34,6 +35,9 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
      */
     protected array $aiproviders = [];
 
+    /** @var int The number of enabled provider instances. */
+    protected int $enabledprovidercount = 0;
+
     /**
      * Constructor for the AI provider table.
      */
@@ -46,6 +50,10 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
         $this->setup();
         $tableclasses = $this->attributes['class'] . ' ' . $this->get_table_id();
         $this->set_attribute('class', $tableclasses);
+
+        $this->enabledprovidercount = count(array_filter($this->aiproviders, function ($provider) {
+            return $provider->enabled;
+        }));
     }
 
     /**
@@ -135,11 +143,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
      * @return array
      */
     protected function get_providers(): array {
-        $providers = \core\di::get(\core_ai\manager::class)->get_provider_records();
-        if (!empty($providers)) {
-            \core_collator::asort_objects_by_property($providers, 'id');
-        }
-        return $providers;
+        return \core\di::get(\core_ai\manager::class)->get_sorted_providers();
     }
 
     /**
@@ -166,6 +170,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
             'name' => get_string('name'),
             'provider' => get_string('provider', 'core_ai'),
             'enabled' => get_string('pluginenabled', 'core_plugin'),
+            'order' => get_string('order', 'core'),
             'settings' => get_string('settings', 'core'),
             'delete' => get_string('delete'),
         ];
@@ -304,5 +309,113 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
             'delete-method' => $this->get_delete_service(),
         ];
         return $OUTPUT->render_from_template('core_ai/admin_delete_provider', $params);
+    }
+
+    /**
+     * Get the web service method used to order provider instances.
+     *
+     * @return null|string
+     */
+    protected function get_sortorder_service(): ?string {
+        return 'core_ai_set_provider_order';
+    }
+
+    /**
+     * Generates the HTML for the order column with up and down controls.
+     *
+     * @param \stdClass $row An object representing a row of data.
+     * @return string The HTML string for the order controls, or an empty string if no controls are needed.
+     */
+    protected function col_order(\stdClass $row): string {
+        global $OUTPUT;
+
+        if (!$row->enabled) {
+            return '';
+        }
+
+        if ($this->enabledprovidercount <= 1) {
+            // There is only one row.
+            return '';
+        }
+
+        $hasup = true;
+        $hasdown = true;
+
+        if (empty($this->currentrow)) {
+            // This is the top row.
+            $hasup = false;
+        }
+
+        if ($this->currentrow === ($this->enabledprovidercount - 1)) {
+            // This is the last row.
+            $hasdown = false;
+        }
+
+        $dataattributes = [
+            'data-method' => $this->get_sortorder_service(),
+            'data-action' => 'move',
+            'data-plugin' => $row->id,
+        ];
+
+        if ($hasup) {
+            $upicon = html_writer::link(
+                $this->get_base_action_url([
+                    'sesskey' => sesskey(),
+                    'action' => \core\plugininfo\aiprovider::UP,
+                    'id' => $row->id,
+                ]),
+                $OUTPUT->pix_icon(
+                    pix: 't/up',
+                    alt: '',
+                ),
+                array_merge($dataattributes, [
+                    'data-direction' => \core\plugininfo\aiprovider::UP,
+                    'role' => 'button',
+                    'aria-label' => get_string('moveitemup', 'core', $row->name),
+                    'title' => get_string('moveitemup', 'core', $row->name),
+                    'class' => 'btn btn-link btn-icon pt-2 pl-2',
+                ]),
+            );
+        } else {
+            $upicon = '';
+        }
+
+        if ($hasdown) {
+            $downicon = html_writer::link(
+                $this->get_base_action_url([
+                    'sesskey' => sesskey(),
+                    'action' => \core\plugininfo\aiprovider::DOWN,
+                    'id' => $row->id,
+                ]),
+                $OUTPUT->pix_icon(
+                    pix: 't/down',
+                    alt: '',
+                ),
+                array_merge($dataattributes, [
+                    'data-direction' => \core\plugininfo\aiprovider::DOWN,
+                    'role' => 'button',
+                    'aria-label' => get_string('moveitemdown', 'core', $row->name),
+                    'title' => get_string('moveitemdown', 'core', $row->name),
+                    'class' => 'btn btn-link btn-icon pt-2 pl-2',
+                ]),
+            );
+        } else {
+            $downicon = '';
+        }
+
+        $spacer = ($hasup && $hasdown) ? $OUTPUT->spacer() : '';
+        return html_writer::div($upicon . $spacer . $downicon, '', ['class' => 'w-25 d-flex justify-content-center']);
+    }
+
+    /**
+     * Get the action URL for this table.
+     *
+     * The action URL is used to perform all actions when JS is not available.
+     *
+     * @param array $params
+     * @return moodle_url
+     */
+    protected function get_base_action_url(array $params = []): moodle_url {
+        return new moodle_url('/ai/configure_providers.php', $params);
     }
 }

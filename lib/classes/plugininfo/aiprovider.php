@@ -27,6 +27,18 @@ use moodle_url;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class aiprovider extends base {
+    /** @var string Enable a plugin */
+    public const ENABLE = 'enable';
+
+    /** @var string Disable a plugin */
+    public const DISABLE = 'disable';
+
+    /** @var string Move a plugin up in the plugin order */
+    public const UP = 'up';
+
+    /** @var string Move a plugin down in the plugin order */
+    public const DOWN = 'down';
+
     #[\Override]
     public function is_uninstall_allowed(): bool {
         return true;
@@ -64,5 +76,14 @@ class aiprovider extends base {
             }
         }
         return $enabled;
+    }
+
+    /**
+     * Returns the list of available actions with provider.
+     *
+     * @return array
+     */
+    public static function get_provider_actions(): array {
+        return [self::UP, self::DOWN];
     }
 }

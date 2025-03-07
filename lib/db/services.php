@@ -3266,6 +3266,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_ai_set_provider_order' => [
+        'classname' => \core_ai\external\set_provider_order::class,
+        'description' => 'Set the order of a provider',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'core_sms_set_gateway_status' => [
         'classname'   => 'core_sms\external\sms_gateway_status',
         'description' => 'Set the sms gateway status',
