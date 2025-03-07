@@ -26528,6 +26528,10 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   text-align: left;
 }
 
+#page-admin-index .upgradekeyreq {
+  min-width: 220px;
+}
+
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
   display: block;
 }
