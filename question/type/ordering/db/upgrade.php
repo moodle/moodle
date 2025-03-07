@@ -300,7 +300,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // We need to find all ordering question configurations that currently store the unsupported "0" (all) option
         // for the 'selectcount' setting and the total number of answers that are related to each of these ordering
         // questions.
-        $sql = "SELECT qoo.*, COUNT(DISTINCT(qa.id)) AS answerscount
+        $sql = "SELECT qoo.id, COUNT(DISTINCT(qa.id)) AS answerscount
                 FROM {qtype_ordering_options} qoo
                 JOIN {question_answers} qa ON qa.question = qoo.questionid
                 WHERE selectcount = :selectcount
@@ -311,9 +311,8 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             // to the total number of answers related to this question. This way, we are making sure that the original
             // behavior is preserved and all existing items (answers) related to the question will be included in the
             // subset.
-            $questionoption->selectcount = $questionoption->answerscount;
-            unset($questionoption->answerscount);
-            $DB->update_record('qtype_ordering_options', $questionoption);
+            $DB->set_field('qtype_ordering_options', 'selectcount', $questionoption->answerscount,
+                ['id' => $questionoption->id]);
         }
         $questionoptions->close();
 
@@ -341,7 +340,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // We need to find all ordering question configurations that currently store the unsupported "0" (all) option
         // for the 'selectcount' setting and the total number of answers that are related to each of these ordering
         // questions.
-        $sql = "SELECT qoo.*, COUNT(DISTINCT(qa.id)) AS answerscount
+        $sql = "SELECT qoo.id, COUNT(DISTINCT(qa.id)) AS answerscount
                 FROM {qtype_ordering_options} qoo
                 JOIN {question_answers} qa ON qa.question = qoo.questionid
                 WHERE selectcount = :selectcount
@@ -352,9 +351,8 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             // to the total number of answers related to this question. This way, we are making sure that the original
             // behavior is preserved and all existing items (answers) related to the question will be included in the
             // subset.
-            $questionoption->selectcount = $questionoption->answerscount;
-            unset($questionoption->answerscount);
-            $DB->update_record('qtype_ordering_options', $questionoption);
+            $DB->set_field('qtype_ordering_options', 'selectcount', $questionoption->answerscount,
+                ['id' => $questionoption->id]);
         }
         $questionoptions->close();
 
