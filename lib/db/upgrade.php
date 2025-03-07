@@ -1503,15 +1503,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025030500.01);
     }
 
-    // Remove mnetservice_enrol.
-    if ($oldversion < 2025030600.01) {
-        if (!file_exists($CFG->dirroot . "/mnetservice/enrol/version.php")) {
-            uninstall_plugin('mnetservice', 'enrol');
-        }
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025030600.01);
-    }
-
     // Remove portfolio_mahara.
     if ($oldversion < 2025030600.02) {
         if (!file_exists($CFG->dirroot . "/portfolio/mahara/version.php")) {
@@ -1590,6 +1581,15 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2025030600.07);
+    }
+
+    // Remove mnetservice_enrol.
+    if ($oldversion < 2025030600.08) {
+        if (!file_exists($CFG->dirroot . "/mnet/service/enrol/version.php")) {
+            uninstall_plugin('mnetservice', 'enrol');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.08);
     }
 
     return true;
