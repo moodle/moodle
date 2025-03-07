@@ -159,16 +159,6 @@
 
     echo $OUTPUT->header();
 
-    if (has_capability('moodle/user:create', $sitecontext)) {
-        echo html_writer::start_div('d-flex mb-2');
-        $url = new moodle_url('/user/editadvanced.php', ['id' => -1]);
-        echo html_writer::link($url, get_string('addnewuser', 'moodle'), [
-            'class' => 'btn btn-primary ms-auto',
-            'data-action' => 'add-user',
-        ]);
-        echo html_writer::end_div();
-    }
-
     echo html_writer::start_div('', ['data-region' => 'report-user-list-wrapper']);
 
     $bulkactions = new user_bulk_action_form(new moodle_url('/admin/user/user_bulk.php'),
@@ -179,6 +169,15 @@
 
     $report = \core_reportbuilder\system_report_factory::create(\core_admin\reportbuilder\local\systemreports\users::class,
         context_system::instance(), parameters: ['withcheckboxes' => $bulkactions->has_bulk_actions()]);
+    if (has_capability('moodle/user:create', $sitecontext)) {
+        $url = new moodle_url('/user/editadvanced.php', ['id' => -1]);
+        $report->set_report_action(new \core_reportbuilder\output\report_action(
+            get_string('addnewuser', 'moodle'),
+            ['class' => 'btn btn-primary ms-auto', 'data-action' => 'add-user', 'href' => (string) $url],
+            'a',
+        ));
+    }
+
     echo $report->output();
 
     if ($bulkactions->has_bulk_actions()) {
