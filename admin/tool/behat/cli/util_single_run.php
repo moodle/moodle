@@ -117,7 +117,7 @@ define('ABORT_AFTER_CONFIG', true);
 require_once(__DIR__ . '/../../../../config.php');
 
 // Remove error handling overrides done in config.php.
-$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debug = (E_ALL);
 $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');

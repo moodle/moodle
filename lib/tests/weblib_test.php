@@ -538,7 +538,7 @@ final class weblib_test extends advanced_testcase {
 
         set_debugging(DEBUG_ALL);
         $this->assertEquals(DEBUG_ALL, $CFG->debug);
-        $this->assertFalse($CFG->debugdeveloper);
+        $this->assertTrue($CFG->debugdeveloper);
 
         set_debugging(DEBUG_NORMAL);
         $this->assertEquals(DEBUG_NORMAL, $CFG->debug);

@@ -121,7 +121,7 @@ require_once(__DIR__ . '/../../../../lib/behat/classes/behat_command.php');
 require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php');
 
 // Remove error handling overrides done in config.php. This is consistent with admin/tool/behat/cli/util_single_run.php.
-$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debug = (E_ALL);
 $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');

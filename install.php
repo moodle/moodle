@@ -181,7 +181,7 @@ $CFG->umaskpermissions     = (($CFG->directorypermissions & 0777) ^ 0777);
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
 $CFG->ostype               = (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) ? 'WINDOWS' : 'UNIX';
-$CFG->debug                = (E_ALL | E_STRICT);
+$CFG->debug                = (E_ALL);
 $CFG->debugdisplay         = true;
 $CFG->debugdeveloper       = true;
 
