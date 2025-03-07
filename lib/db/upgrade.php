@@ -1552,5 +1552,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025030600.05);
     }
 
+    if ($oldversion < 2025030600.06) {
+        // If mlbackend_php is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/lib/mlbackend/php/version.php')) {
+            // Clean config.
+            uninstall_plugin('mlbackend', 'php');
+
+            // Change the processor if mlbackend_php is set.
+            if (get_config('analytics', 'predictionsprocessor') === '\mlbackend_php\processor') {
+                set_config('predictionsprocessor', '\mlbackend_python\processor', 'analytics');
+                // We can't be sure mlbackend_python is set up correctly, so we disable analytics.
+                set_config('enableanalytics', false);
+            }
+
+            // Cleanup any references to mlbackend_php.
+            $select = $DB->sql_like('predictionsprocessor', ':predictionsprocessor', false);
+            $params = ['predictionsprocessor' => '%' . $DB->sql_like_escape('mlbackend_php') . '%'];
+            $DB->set_field_select(
+                table: 'analytics_models',
+                newfield: 'predictionsprocessor',
+                newvalue: null,
+                select: $select,
+                params: $params,
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.06);
+    }
+
     return true;
 }

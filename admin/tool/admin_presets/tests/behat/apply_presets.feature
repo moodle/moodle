@@ -30,7 +30,6 @@ Feature: I can apply presets
     And I should see "Activities" in the "Setting changes" "table"
     And I should see "Activity chooser tabs" in the "Setting changes" "table"
     And I should see "Adaptive mode (no penalties)" in the "Setting changes" "table"
-    And I should see "Analytics" in the "Setting changes" "table"
     And I should see "Blog menu" in the "Setting changes" "table"
     And I should see "Blog tags" in the "Setting changes" "table"
     And I should see "Calculated" in the "Setting changes" "table"

@@ -11,6 +11,10 @@ Feature: Restoring default models
     And the following "role assigns" exist:
       | user    	| role    	| contextlevel	| reference		|
       | manager 	| manager		| System      	|							|
+    And the following config values are set as admin:
+      | enableanalytics | 1 |
+    And a Python Machine Learning backend server is configured
+    And I change the Python Machine Learning backend to use external server
 
   Scenario: Restore a single deleted default model
     Given I log in as "manager"

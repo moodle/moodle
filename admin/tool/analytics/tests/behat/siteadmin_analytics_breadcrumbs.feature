@@ -6,6 +6,10 @@ Feature: Verify the breadcrumbs in analytics site administration pages
 
   Background:
     Given I log in as "admin"
+    And the following config values are set as admin:
+      | enableanalytics | 1 |
+    And a Python Machine Learning backend server is configured
+    And I change the Python Machine Learning backend to use external server
 
   Scenario: Verify the breadcrumbs in analytics models page by visiting the create model, import model, restore model and edit page
     Given I navigate to "Analytics > Analytics models" in site administration
