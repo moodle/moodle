@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_aiplacement/imagecontrol
+    @template tiny_aiplacement/imagecontrols
 
     Modal to manage AI generated image content within the Tiny Editor.
 
@@ -34,7 +34,7 @@
     }
 }}
 <div class="tiny-aiplacement-image-options">
-    <div class="form-group">
+    <div class="mb-3">
         <label for="{{elementid}}_tiny_aiplacement_imageprompt" class="fw-bold">
             {{#str}} imageprompt_label, tiny_aiplacement {{/str}}
         </label>
@@ -49,24 +49,26 @@
         {{#str}} imagequality, tiny_aiplacement{{/str}}
     </span>
     <div class="tiny-aiplacement-toggle-container mt-1 mb-1">
-        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
-            <label class="btn btn-outline-secondary active">
-                <input
-                        type="radio"
-                        class="btn-check"
-                        name="quality"
-                        value="standard"
-                        checked
-                >
+        <div class="btn-group w-100" role="group" aria-label="{{#str}} imagequality, tiny_aiplacement{{/str}}">
+            <input
+                type="radio"
+                class="btn-check"
+                name="quality"
+                value="standard"
+                id="quality-standard"
+                checked
+            >
+            <label class="btn btn-outline-secondary" for="quality-standard">
                 {{#str}} definitionstandard, tiny_aiplacement{{/str}}
             </label>
-            <label class="btn btn-outline-secondary">
-                <input
-                        type="radio"
-                        class="btn-check"
-                        name="quality"
-                        value="hd"
-                >
+            <input
+                type="radio"
+                class="btn-check"
+                name="quality"
+                value="hd"
+                id="quality-hd"
+            >
+            <label class="btn btn-outline-secondary" for="quality-hd">
                 {{#str}} definitionhigh, tiny_aiplacement{{/str}}
             </label>
         </div>
@@ -75,35 +77,38 @@
         {{#str}} aspectratio, tiny_aiplacement{{/str}}
     </span>
     <div class="tiny-aiplacement-aspect-ratio-container mt-1 mb-1">
-        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
-            <label class="btn btn-outline-secondary active">
-                <input
-                        type="radio"
-                        class="btn-check"
-                        name="aspect-ratio"
-                        value="square"
-                        checked
-                >
+        <div class="btn-group w-100" role="group" aria-label="{{#str}} aspectratio, tiny_aiplacement{{/str}}">
+            <input
+                type="radio"
+                class="btn-check"
+                name="aspect-ratio"
+                value="square"
+                id="aspect-square"
+                checked
+            >
+            <label class="btn btn-outline-secondary" for="aspect-square">
                 <span class="d-block"><i class="fas fa-square"></i></span>
                 {{#str}} aspectsquare, tiny_aiplacement{{/str}}
             </label>
-            <label class="btn btn-outline-secondary">
-                <input
-                        type="radio"
-                        class="btn-check"
-                        name="aspect-ratio"
-                        value="landscape"
-                >
+            <input
+                type="radio"
+                class="btn-check"
+                name="aspect-ratio"
+                value="landscape"
+                id="aspect-landscape"
+            >
+            <label class="btn btn-outline-secondary" for="aspect-landscape">
                 <span class="d-block"><i class="fas fa-mobile fa-rotate-90"></i></span>
                 {{#str}} aspectlandscape, tiny_aiplacement{{/str}}
             </label>
-            <label class="btn btn-outline-secondary">
-                <input
-                        type="radio"
-                        class="btn-check"
-                        name="aspect-ratio"
-                        value="portrait"
-                >
+            <input
+                type="radio"
+                class="btn-check"
+                name="aspect-ratio"
+                value="portrait"
+                id="aspect-portrait"
+            >
+            <label class="btn btn-outline-secondary" for="aspect-portrait">
                 <span class="d-block"><i class="fas fa-mobile"></i></span>
                 {{#str}} aspectportrait, tiny_aiplacement{{/str}}
             </label>
