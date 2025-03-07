@@ -83,6 +83,40 @@ Feature: Testing overview integration in mod_assign
     And I should see "Submitted for grading" in the "Username 1" "table_row"
     And I should see "No submission" in the "Username 2" "table_row"
 
+  Scenario: The assign overview actions has information about the number of pending elements to grade
+    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    # Check main actions.
+    And I should see "Grade" in the "Date assign" "table_row"
+    And I should see "(1)" in the "Date assign" "table_row"
+    And I should see "Grade" in the "No submissions" "table_row"
+    And I should see "Grade" in the "Pending grades" "table_row"
+    And I should see "(2)" in the "Pending grades" "table_row"
+    # Validate the grade alert count data attribute.
+    And "[data-mdl-overview-alertcount='1']" "css_element" should exist in the "Date assign" "table_row"
+    And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Date assign" "table_row"
+    And "[data-mdl-overview-alertcount]" "css_element" should not exist in the "No submissions" "table_row"
+    And "[data-mdl-overview-alertlabel]" "css_element" should not exist in the "No submissions" "table_row"
+    And "[data-mdl-overview-alertcount='2']" "css_element" should exist in the "Pending grades" "table_row"
+    And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Pending grades" "table_row"
+    # Validate alert badge updates.
+    And the following "grade grades" exist:
+      | gradeitem      | user     | grade |
+      | Date assign    | student1 | 50    |
+      | Pending grades | student1 | 50    |
+    And I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    And I should see "Grade" in the "Date assign" "table_row"
+    And I should not see "(1)" in the "Date assign" "table_row"
+    And I should see "Grade" in the "No submissions" "table_row"
+    And I should see "Grade" in the "Pending grades" "table_row"
+    And I should see "(1)" in the "Pending grades" "table_row"
+    # Validate the grade alert count data attribute update.
+    And "[data-mdl-overview-alertcount]" "css_element" should not exist in the "Date assign" "table_row"
+    And "[data-mdl-overview-alertlabel]" "css_element" should not exist in the "Date assign" "table_row"
+    And "[data-mdl-overview-alertcount]" "css_element" should not exist in the "No submissions" "table_row"
+    And "[data-mdl-overview-alertlabel]" "css_element" should not exist in the "No submissions" "table_row"
+    And "[data-mdl-overview-alertcount='1']" "css_element" should exist in the "Pending grades" "table_row"
+    And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Pending grades" "table_row"
+
   Scenario: Students can see relevant columns in the assign overview
     When I am on the "Course 1" "course > activities > assign" page logged in as "student1"
     # Check columns.

@@ -84,27 +84,31 @@ class overview extends \core_courseformat\activityoverviewbase {
         }
         $needgrading = $this->assign->count_submissions_need_grading();
 
-        $renderer = $this->rendererhelper->get_core_renderer();
+        $alertlabel = get_string('numberofsubmissionsneedgrading', 'assign');
+        $name = get_string('gradeverb');
 
         $badge = '';
         if ($needgrading > 0) {
+            $renderer = $this->rendererhelper->get_core_renderer();
             $badge = $renderer->notice_badge(
                 contents: $needgrading,
-                title: get_string('numberofsubmissionsneedgrading', 'assign'),
+                title: $alertlabel,
             );
         }
 
         $content = new action_link(
             url: new url('/mod/assign/view.php', ['id' => $this->cm->id, 'action' => 'grading']),
-            text: get_string('gradeverb') . $badge,
+            text: $name . $badge,
             attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
         );
 
         return new overviewitem(
             name: get_string('actions'),
-            value: $needgrading,
+            value: $name,
             content: $content,
             textalign: text_align::CENTER,
+            alertcount: $needgrading,
+            alertlabel: $alertlabel,
         );
     }
 
