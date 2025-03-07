@@ -1,0 +1,5 @@
+issueNumber: MDL-84617
+notes:
+  core_calendar:
+    - message: 'core_calendar_renderer::event() method has been removed.'
+      type: removed

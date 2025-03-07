@@ -166,3 +166,10 @@ version_help,core_badges
 atto_h5p,core_h5p
 atto_h5p_description,core_h5p
 sqliteextensionisnotpresentinphp,core_install
+siteevent,core_calendar
+categoryevent,core_calendar
+courseevent,core_calendar
+groupevent,core_calendar
+tt_deleteevent,core_calendar
+tt_editevent,core_calendar
+userevent,core_calendar

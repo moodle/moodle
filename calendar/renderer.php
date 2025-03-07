@@ -84,112 +84,16 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Displays an event
-     *
-     * @deprecated since 3.9
-     *
-     * @param calendar_event $event
-     * @param bool $showactions
-     * @return string
+     * @deprecated 3.9
      */
-    public function event(calendar_event $event, $showactions=true) {
-        global $CFG;
-        debugging('This function is no longer used', DEBUG_DEVELOPER);
-
-        $event = calendar_add_event_metadata($event);
-        $context = $event->context;
-        $output = '';
-
-        $output .= $this->output->box_start('card-header clearfix');
-        if (calendar_edit_event_allowed($event) && $showactions) {
-            if (calendar_delete_event_allowed($event)) {
-                $editlink = new moodle_url(CALENDAR_URL.'event.php', array('action' => 'edit', 'id' => $event->id));
-                $deletelink = new moodle_url(CALENDAR_URL.'delete.php', array('id' => $event->id));
-                if (!empty($event->calendarcourseid)) {
-                    $editlink->param('course', $event->calendarcourseid);
-                    $deletelink->param('course', $event->calendarcourseid);
-                }
-            } else {
-                $params = array('update' => $event->cmid, 'return' => true, 'sesskey' => sesskey());
-                $editlink = new moodle_url('/course/mod.php', $params);
-                $deletelink = null;
-            }
-
-            $commands  = html_writer::start_tag('div', array('class' => 'commands float-sm-end'));
-            $commands .= html_writer::start_tag('a', array('href' => $editlink));
-            $str = get_string('tt_editevent', 'calendar');
-            $commands .= $this->output->pix_icon('t/edit', $str);
-            $commands .= html_writer::end_tag('a');
-            if ($deletelink != null) {
-                $commands .= html_writer::start_tag('a', array('href' => $deletelink));
-                $str = get_string('tt_deleteevent', 'calendar');
-                $commands .= $this->output->pix_icon('t/delete', $str);
-                $commands .= html_writer::end_tag('a');
-            }
-            $commands .= html_writer::end_tag('div');
-            $output .= $commands;
-        }
-        if (!empty($event->icon)) {
-            $output .= $event->icon;
-        } else {
-            $output .= $this->output->spacer(array('height' => 16, 'width' => 16));
-        }
-
-        if (!empty($event->referer)) {
-            $output .= $this->output->heading($event->referer, 3, array('class' => 'referer'));
-        } else {
-            $output .= $this->output->heading(
-                format_string($event->name, false, array('context' => $context)),
-                3,
-                array('class' => 'name d-inline-block')
-            );
-        }
-        // Show subscription source if needed.
-        if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
-            if (!empty($event->subscription->url)) {
-                $source = html_writer::link($event->subscription->url,
-                        get_string('subscriptionsource', 'calendar', $event->subscription->name));
-            } else {
-                // File based ical.
-                $source = get_string('subscriptionsource', 'calendar', $event->subscription->name);
-            }
-            $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
-        }
-        if (!empty($event->courselink)) {
-            $output .= html_writer::tag('div', $event->courselink);
-        }
-        if (!empty($event->time)) {
-            $output .= html_writer::tag('span', $event->time, array('class' => 'date float-sm-end me-1'));
-        } else {
-            $humantime = \core_calendar\output\humandate::create_from_timestamp(
-                timestamp: $event->timestart,
-                near: null,
-                timeonly: true,
-            );
-            $output .= html_writer::tag('span', $this->output->render($humantime));
-        }
-
-        if (!empty($event->actionurl)) {
-            $actionlink = html_writer::link(new moodle_url($event->actionurl), $event->actionname);
-            $output .= html_writer::tag('div', $actionlink, ['class' => 'action']);
-        }
-
-        $output .= $this->output->box_end();
-        $eventdetailshtml = '';
-        $eventdetailsclasses = '';
-
-        $eventdetailshtml .= format_text($event->description, $event->format, array('context' => $context));
-        $eventdetailsclasses .= 'description card-block';
-        if (isset($event->cssclass)) {
-            $eventdetailsclasses .= ' '.$event->cssclass;
-        }
-
-        if (!empty($eventdetailshtml)) {
-            $output .= html_writer::tag('div', $eventdetailshtml, array('class' => $eventdetailsclasses));
-        }
-
-        $eventhtml = html_writer::tag('div', $output, array('class' => 'card'));
-        return html_writer::tag('div', $eventhtml, array('class' => 'event', 'id' => 'event_' . $event->id));
+    #[\core\attribute\deprecated(
+        replacement: 'event no longer used',
+        since: '3.9',
+        mdl: 'MDL-58866',
+        final: true,
+    )]
+    public function event() {
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     }
 
     /**

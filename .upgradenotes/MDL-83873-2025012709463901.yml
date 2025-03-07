@@ -1,0 +1,7 @@
+issueNumber: MDL-84617
+notes:
+  core_calendar:
+    - message: >-
+        prepare_for_view(), calendar_add_event_metadata() functions have
+        been removed.
+      type: removed
