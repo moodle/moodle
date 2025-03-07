@@ -1,0 +1,5 @@
+issueNumber: MDL-84311
+notes:
+  mnetservice_enrol:
+    - message: Removed mnetservice_enrol plugin from core
+      type: removed

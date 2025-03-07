@@ -1503,5 +1503,54 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025030500.01);
     }
 
+    // Remove mnetservice_enrol.
+    if ($oldversion < 2025030600.01) {
+        if (!file_exists($CFG->dirroot . "/mnetservice/enrol/version.php")) {
+            uninstall_plugin('mnetservice', 'enrol');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.01);
+    }
+
+    // Remove portfolio_mahara.
+    if ($oldversion < 2025030600.02) {
+        if (!file_exists($CFG->dirroot . "/portfolio/mahara/version.php")) {
+            uninstall_plugin('portfolio', 'mahara');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.02);
+    }
+
+    // Remove enrol_mnet.
+    if ($oldversion < 2025030600.03) {
+        if (!file_exists($CFG->dirroot . "/enrol/mnet/version.php")) {
+            uninstall_plugin('enrol', 'mnet');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.03);
+    }
+
+    // Remove block_mnet_hosts.
+    if ($oldversion < 2025030600.04) {
+        if (!file_exists($CFG->dirroot . "/blocks/mnet_hosts/version.php")) {
+            uninstall_plugin('block', 'mnet_hosts');
+
+            // Delete all the admin preset plugin states concerning mnet_hosts in adminpresets_plug table.
+            $DB->delete_records('adminpresets_plug', ['name' => 'mnet_hosts']);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.04);
+    }
+
+    // Remove auth_mnet.
+    if ($oldversion < 2025030600.05) {
+        if (!file_exists($CFG->dirroot . "/auth/mnet/version.php")) {
+            uninstall_plugin('auth', 'mnet');
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025030600.05);
+    }
+
     return true;
 }

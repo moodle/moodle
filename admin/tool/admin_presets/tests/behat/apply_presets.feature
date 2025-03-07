@@ -73,7 +73,6 @@ Feature: I can apply presets
     And "Maximum number of attachments" row "Current value" column of "Setting changes" table should contain "9"
     And "Maximum number of attachments" row "New value" column of "Setting changes" table should contain "3"
     And I should see "Mentees" in the "Setting changes" "table"
-    And I should see "Network servers" in the "Setting changes" "table"
     And I should see "Numerical" in the "Setting changes" "table"
     And I should see "Online users" in the "Setting changes" "table"
     And I should see "Private files" in the "Setting changes" "table"

@@ -183,8 +183,8 @@ final class login_lib_test extends \advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
-        $CFG->auth = $CFG->auth . ',mnet';
-        $user = $this->getDataGenerator()->create_user(array('auth' => 'mnet'));
+        $CFG->auth = $CFG->auth . ',ldap';
+        $user = $this->getDataGenerator()->create_user(['auth' => 'ldap']);
 
         $sink = $this->redirectEmails();
 

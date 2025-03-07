@@ -28,7 +28,6 @@
             "ldap",
             "lti",
             "manual",
-            "mnet",
             "nologin",
             "none",
             "oauth2",
@@ -65,7 +64,6 @@
             "login",
             "lp",
             "mentees",
-            "mnet_hosts",
             "myoverview",
             "myprofile",
             "navigation",
@@ -166,7 +164,6 @@
             "lti",
             "manual",
             "meta",
-            "mnet",
             "paypal",
             "self"
         ],
@@ -269,9 +266,7 @@
             "php",
             "python"
         ],
-        "mnetservice": [
-            "enrol"
-        ],
+        "mnetservice": [],
         "mod": [
             "assign",
             "bigbluebuttonbn",
@@ -304,8 +299,7 @@
         "portfolio": [
             "download",
             "flickr",
-            "googledocs",
-            "mahara"
+            "googledocs"
         ],
         "profilefield": [
             "checkbox",
@@ -578,6 +572,7 @@
             "cas",
             "fc",
             "imap",
+            "mnet",
             "nntp",
             "pam",
             "pop3",
@@ -587,6 +582,7 @@
             "community",
             "course_overview",
             "messages",
+            "mnet_hosts",
             "participants",
             "quiz_results"
         ],
@@ -600,7 +596,8 @@
             "tinymce"
         ],
         "enrol": [
-            "authorize"
+            "authorize",
+            "mnet"
         ],
         "filter": [
             "censor",
@@ -619,6 +616,9 @@
         "message": [
             "jabber"
         ],
+        "mnetservice": [
+            "enrol"
+        ],
         "mod": [
             "assignment",
             "chat",
@@ -626,6 +626,7 @@
         ],
         "portfolio": [
             "boxnet",
+            "mahara",
             "picasa"
         ],
         "qformat": [

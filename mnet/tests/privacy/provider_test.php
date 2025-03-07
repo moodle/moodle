@@ -13,19 +13,20 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Privacy test for the authentication mnet
+ * Privacy test for the mnet subsystems
  *
- * @package    auth_mnet
+ * @package    core_mnet
  * @category   test
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace auth_mnet\privacy;
+namespace core_mnet\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use auth_mnet\privacy\provider;
+use core_mnet\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
@@ -33,9 +34,9 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\approved_userlist;
 
 /**
- * Privacy test for the authentication mnet
+ * Privacy test for the mnet subsystem
  *
- * @package    auth_mnet
+ * @package    core_mnet
  * @category   test
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -56,7 +57,7 @@ final class provider_test extends provider_testcase {
     public function test_get_contexts_for_userid(): void {
         global $DB;
 
-        $user = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
         // Insert mnet_log record.
@@ -84,7 +85,7 @@ final class provider_test extends provider_testcase {
     public function test_export_user_data(): void {
         global $DB;
 
-        $user = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user = $this->getDataGenerator()->create_user();
 
         // Insert mnet_host record.
         $hostrecord = new \stdClass();
@@ -110,10 +111,10 @@ final class provider_test extends provider_testcase {
         /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
-        $approvedlist = new approved_contextlist($user, 'auth_mnet', [$usercontext->id]);
+        $approvedlist = new approved_contextlist($user, 'core_mnet', [$usercontext->id]);
         provider::export_user_data($approvedlist);
 
-        $data = (array)$writer->get_data([get_string('pluginname', 'auth_mnet'), $hostrecord->name, $logrecord->coursename]);
+        $data = (array)$writer->get_data([get_string('mnet', 'core_mnet'), $hostrecord->name, $logrecord->coursename]);
 
         $this->assertEquals($logrecord->remoteid, reset($data)->remoteid);
         $this->assertEquals(transform::datetime($logrecord->time),  reset($data)->time);
@@ -125,7 +126,7 @@ final class provider_test extends provider_testcase {
     public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
-        $user1 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user1 = $this->getDataGenerator()->create_user();
 
         // Insert mnet_log record.
         $logrecord1 = new \stdClass();
@@ -138,7 +139,7 @@ final class provider_test extends provider_testcase {
 
         $user1context = \context_user::instance($user1->id);
 
-        $user2 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user2 = $this->getDataGenerator()->create_user();
 
         // Insert mnet_log record.
         $logrecord2 = new \stdClass();
@@ -150,7 +151,7 @@ final class provider_test extends provider_testcase {
         $DB->insert_record('mnet_log', $logrecord2);
 
         // Get all mnet log records.
-        $mnetlogrecords = $DB->get_records('mnet_log', array());
+        $mnetlogrecords = $DB->get_records('mnet_log', []);
         // There should be two.
         $this->assertCount(2, $mnetlogrecords);
 
@@ -162,7 +163,7 @@ final class provider_test extends provider_testcase {
         $this->assertCount(0, $mnetlogrecords);
 
         // Get all mnet log records.
-        $mnetlogrecords = $DB->get_records('mnet_log', array());
+        $mnetlogrecords = $DB->get_records('mnet_log', []);
         // There should be one (user2).
         $this->assertCount(1, $mnetlogrecords);
     }
@@ -173,7 +174,7 @@ final class provider_test extends provider_testcase {
     public function test_delete_data_for_user(): void {
         global $DB;
 
-        $user1 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user1 = $this->getDataGenerator()->create_user();
 
         // Insert mnet_log record.
         $logrecord1 = new \stdClass();
@@ -186,7 +187,7 @@ final class provider_test extends provider_testcase {
 
         $user1context = \context_user::instance($user1->id);
 
-        $user2 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user2 = $this->getDataGenerator()->create_user();
 
         // Insert mnet_log record.
         $logrecord2 = new \stdClass();
@@ -198,12 +199,12 @@ final class provider_test extends provider_testcase {
         $DB->insert_record('mnet_log', $logrecord2);
 
         // Get all mnet log records.
-        $mnetlogrecords = $DB->get_records('mnet_log', array());
+        $mnetlogrecords = $DB->get_records('mnet_log', []);
         // There should be two.
         $this->assertCount(2, $mnetlogrecords);
 
         // Delete everything for the first user.
-        $approvedlist = new approved_contextlist($user1, 'auth_mnet', [$user1context->id]);
+        $approvedlist = new approved_contextlist($user1, 'core_mnet', [$user1context->id]);
         provider::delete_data_for_user($approvedlist);
 
         // Get all user1 mnet log records.
@@ -211,7 +212,7 @@ final class provider_test extends provider_testcase {
         $this->assertCount(0, $mnetlogrecords);
 
         // Get all mnet log records.
-        $mnetlogrecords = $DB->get_records('mnet_log', array());
+        $mnetlogrecords = $DB->get_records('mnet_log', []);
         // There should be one (user2).
         $this->assertCount(1, $mnetlogrecords);
     }
@@ -224,9 +225,9 @@ final class provider_test extends provider_testcase {
 
         $this->resetAfterTest();
 
-        $component = 'auth_mnet';
+        $component = 'core_mnet';
         // Create a user.
-        $user = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user = $this->getDataGenerator()->create_user();
         $usercontext = \context_user::instance($user->id);
 
         // The list of users should not return anything yet (related data still haven't been created).
@@ -264,12 +265,12 @@ final class provider_test extends provider_testcase {
 
         $this->resetAfterTest();
 
-        $component = 'auth_mnet';
+        $component = 'core_mnet';
         // Create user1.
-        $user1 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user1 = $this->getDataGenerator()->create_user();
         $usercontext1 = \context_user::instance($user1->id);
         // Create user2.
-        $user2 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $user2 = $this->getDataGenerator()->create_user();
         $usercontext2 = \context_user::instance($user2->id);
 
         // Insert mnet_log record.
