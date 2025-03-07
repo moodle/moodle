@@ -26,6 +26,9 @@ use core_sms\message;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gateway extends \core_sms\gateway {
+    /** @var int The maximum length of a message */
+    protected const MESSAGE_LENGTH_LIMIT = 160 * 1;
+
     #[\Override]
     public function send(message $message): message {
         return $message->with(

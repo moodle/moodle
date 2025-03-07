@@ -1,0 +1,7 @@
+issueNumber: MDL-84342
+notes:
+  core_sms:
+    - message: >-
+        Introducing a new function \core_sms\gateway::truncate_message() to truncate SMS message content
+        according to the length limit of the gateway.
+      type: improved

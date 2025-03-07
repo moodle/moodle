@@ -492,6 +492,39 @@ final class manager_test extends \advanced_testcase {
         $this->assertEmpty($message->gatewayid);
     }
 
+    /**
+     * Test the truncate content process while sending the SMS.
+     */
+    public function test_send_truncate_content(): void {
+        $this->resetAfterTest();
+
+        $config = new \stdClass();
+        $config->priority = 50;
+
+        $manager = \core\di::get(\core_sms\manager::class);
+        $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
+
+        $message = $manager->send(
+            recipientnumber: '+447123456789',
+            content: str_repeat('a', 161),
+            component: 'core',
+            messagetype: 'test',
+            recipientuserid: null,
+            async: false,
+        );
+
+        // Expected the message to be truncated with the length limit.
+        $this->assertEquals(
+            expected: str_repeat('a', 160), // 160 is the limit of the dummy gateway.
+            actual: $message->content,
+        );
+    }
+
     public function test_get_messages(): void {
         $db = $this->createStub(\moodle_database::class);
         $db->method('get_records')->willReturn([
