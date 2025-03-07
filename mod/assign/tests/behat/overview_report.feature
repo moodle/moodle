@@ -44,6 +44,7 @@ Feature: Testing overview integration in mod_assign
       | gradeitem      | user     | grade |
       | Pending grades | student1 | 50    |
 
+  @javascript
   Scenario: The assign overview report should generate log events
     Given I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     When I am on the "Course 1" "course" page logged in as "teacher1"
@@ -53,6 +54,7 @@ Feature: Testing overview integration in mod_assign
     Then I should see "Course activities overview page viewed"
     And I should see "viewed the instance list for the module 'assign'"
 
+  @javascript
   Scenario: Teachers can see relevant columns in the assign overview
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     # Check columns.
@@ -83,6 +85,7 @@ Feature: Testing overview integration in mod_assign
     And I should see "Submitted for grading" in the "Username 1" "table_row"
     And I should see "No submission" in the "Username 2" "table_row"
 
+  @javascript
   Scenario: The assign overview actions has information about the number of pending elements to grade
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     # Check main actions.
@@ -117,6 +120,7 @@ Feature: Testing overview integration in mod_assign
     And "[data-mdl-overview-alertcount='1']" "css_element" should exist in the "Pending grades" "table_row"
     And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Pending grades" "table_row"
 
+  @javascript
   Scenario: Students can see relevant columns in the assign overview
     When I am on the "Course 1" "course > activities > assign" page logged in as "student1"
     # Check columns.
