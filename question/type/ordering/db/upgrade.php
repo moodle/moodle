@@ -300,7 +300,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // We need to find all ordering question configurations that currently store the unsupported "0" (all) option
         // for the 'selectcount' setting and the total number of answers that are related to each of these ordering
         // questions.
-        $sql = "SELECT qoo.*, COUNT(DISTINCT(qa.id)) AS answerscount
+        $sql = "SELECT qoo.id, COUNT(DISTINCT(qa.id)) AS answerscount
                 FROM {qtype_ordering_options} qoo
                 JOIN {question_answers} qa ON qa.question = qoo.questionid
                 WHERE selectcount = :selectcount
@@ -311,17 +311,17 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             // to the total number of answers related to this question. This way, we are making sure that the original
             // behavior is preserved and all existing items (answers) related to the question will be included in the
             // subset.
-            $questionoption->selectcount = $questionoption->answerscount;
-            unset($questionoption->answerscount);
-            $DB->update_record('qtype_ordering_options', $questionoption);
+            $DB->set_field('qtype_ordering_options', 'selectcount', $questionoption->answerscount,
+                ['id' => $questionoption->id]);
         }
         $questionoptions->close();
 
         // Currently, a 'qtype_ordering_selectcount' user preference is set (or updated, if it already exists) each time
         // a new ordering question is created. If there are user preferences that store the removed "0" (all) option, they
         // need to be updated. In this case, replace it with "2" (minimum number of items required to create a subset).
-        $DB->set_field('user_preferences', 'value', 2,
-            ['name' => 'qtype_ordering_selectcount', 'value' => 0]);
+        $wheresql = 'name = ? AND ' . $DB->sql_compare_text('value') . ' = ?';
+        $params = ['qtype_ordering_selectcount', '0'];
+        $DB->set_field_select('user_preferences', 'value', 2, $wheresql, $params);
 
         upgrade_plugin_savepoint(true, 2023092911, 'qtype', 'ordering');
     }
@@ -341,7 +341,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         // We need to find all ordering question configurations that currently store the unsupported "0" (all) option
         // for the 'selectcount' setting and the total number of answers that are related to each of these ordering
         // questions.
-        $sql = "SELECT qoo.*, COUNT(DISTINCT(qa.id)) AS answerscount
+        $sql = "SELECT qoo.id, COUNT(DISTINCT(qa.id)) AS answerscount
                 FROM {qtype_ordering_options} qoo
                 JOIN {question_answers} qa ON qa.question = qoo.questionid
                 WHERE selectcount = :selectcount
@@ -352,17 +352,17 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             // to the total number of answers related to this question. This way, we are making sure that the original
             // behavior is preserved and all existing items (answers) related to the question will be included in the
             // subset.
-            $questionoption->selectcount = $questionoption->answerscount;
-            unset($questionoption->answerscount);
-            $DB->update_record('qtype_ordering_options', $questionoption);
+            $DB->set_field('qtype_ordering_options', 'selectcount', $questionoption->answerscount,
+                ['id' => $questionoption->id]);
         }
         $questionoptions->close();
 
         // Currently, a 'qtype_ordering_selectcount' user preference is set (or updated, if it already exists) each time
         // a new ordering question is created. If there are user preferences that store the removed "0" (all) option, they
         // need to be updated. In this case, replace it with "2" (minimum number of items required to create a subset).
-        $DB->set_field('user_preferences', 'value', 2,
-            ['name' => 'qtype_ordering_selectcount', 'value' => 0]);
+        $wheresql = 'name = ? AND ' . $DB->sql_compare_text('value') . ' = ?';
+        $params = ['qtype_ordering_selectcount', '0'];
+        $DB->set_field_select('user_preferences', 'value', 2, $wheresql, $params);
 
         upgrade_plugin_savepoint(true, 2024040401, 'qtype', 'ordering');
     }
