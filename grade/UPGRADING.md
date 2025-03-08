@@ -11,6 +11,12 @@
     grade_structure::get_activity_link()
 
   For more information see [MDL-79907](https://tracker.moodle.org/browse/MDL-79907)
+- The external function core_grades_get_enrolled_users_for_search_widget has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
+- The external function core_grades_get_groups_for_search_widget has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
 
 ## 4.5
 

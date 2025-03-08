@@ -93,6 +93,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   | `\core\router\mocking_route_loader` | `\core\tests\router\mocking_route_loader` |
 
   For more information see [MDL-83968](https://tracker.moodle.org/browse/MDL-83968)
+- Analytics is now disabled by default on new installs.
+
+  For more information see [MDL-84107](https://tracker.moodle.org/browse/MDL-84107)
 
 #### Deprecated
 
@@ -130,6 +133,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `site_registration_form::add_select_with_email()` has been finally deprecated and will now throw an exception if called.
 
   For more information see [MDL-71472](https://tracker.moodle.org/browse/MDL-71472)
+- Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
+
+  For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
@@ -137,15 +143,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     functionality has been replaced by native PHP functionality.
 
   For more information see [MDL-82825](https://tracker.moodle.org/browse/MDL-82825)
-- Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
+- Oracle support has been removed in LMS
 
   For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
+- The Atto HTML editor has been removed from core, along with all standard
+  subplugins.
+
+  The editor is available for continued use in the Plugins Database.
+
+  For more information see [MDL-83282](https://tracker.moodle.org/browse/MDL-83282)
 - Support for `subplugins.php` files has been removed. All subplugin metadata must be created in a `subplugins.json` file.
 
   For more information see [MDL-83703](https://tracker.moodle.org/browse/MDL-83703)
 - set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
 
   For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
+- The `core_output_load_fontawesome_icon_map` web service has been fully removed and replaced by `core_output_load_fontawesome_icon_system_map`
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
 - Final deprecation and removal of \core\event\course_module_instances_list_viewed
 
   For more information see [MDL-84593](https://tracker.moodle.org/browse/MDL-84593)
@@ -157,6 +172,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove chat and survey from Adminpresets.
 
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
+- Removed block_mnet_hosts from admin presets
+
+  For more information see [MDL-84309](https://tracker.moodle.org/browse/MDL-84309)
 
 ### core_ai
 
@@ -190,6 +208,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
 
+### core_auth
+
+#### Removed
+
+- Cas authentication is removed from core and added to the following git repository: https://github.com/moodlehq/moodle-auth_cas
+
+  For more information see [MDL-78778](https://tracker.moodle.org/browse/MDL-78778)
+- Removed auth_mnet plugin from core
+
+  For more information see [MDL-84307](https://tracker.moodle.org/browse/MDL-84307)
+
 ### core_backup
 
 #### Removed
@@ -200,11 +229,37 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_badges
 
+#### Added
+
+- Added fields `courseid` and `coursefullname` to `badgeclass_exporter`, which is used in the return structure of external function `core_badges_get_badge`.
+
+  For more information see [MDL-83026](https://tracker.moodle.org/browse/MDL-83026)
+- Added field `coursefullname` to `user_badge_exporter`, which is used in the return structure of external functions `core_badges_get_user_badge_by_hash` and `core_badges_get_user_badges`.
+
+  For more information see [MDL-83026](https://tracker.moodle.org/browse/MDL-83026)
+- The class in badges/lib/bakerlib.php has been moved to core_badges\png_metadata_handler. If you've extended or directly used the old bakerlib.php, you'll need to update your code to use the new namespaced class.
+
+  For more information see [MDL-83886](https://tracker.moodle.org/browse/MDL-83886)
+
 #### Removed
 
+- The following previously deprecated renderer methods have been removed:
+
+  * `print_badge_table_actions`
+  * `render_badge_management`
+
+  For more information see [MDL-79162](https://tracker.moodle.org/browse/MDL-79162)
 - The fields imageauthorname, imageauthoremail, and imageauthorurl have been removed from badges due to confusion and their absence from the official specification. These fields also do not appear in OBv3.0. Additionally, the image_author_json.php file has been removed as it is no longer needed.
 
   For more information see [MDL-83909](https://tracker.moodle.org/browse/MDL-83909)
+
+### core_block
+
+#### Removed
+
+- Removed block_mnet_hosts plugin from core
+
+  For more information see [MDL-84309](https://tracker.moodle.org/browse/MDL-84309)
 
 ### core_calendar
 
@@ -213,6 +268,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - calendar_day_representation(), calendar_time_representation() and calendar_format_event_time() functions have been deprecated and can't be used anymore. Use humandate and humantimeperiod classes instead.
 
   For more information see [MDL-83873](https://tracker.moodle.org/browse/MDL-83873)
+- calendar_get_courselink(), calendar_events_by_day() functions have been deprecated.
+
+  For more information see [MDL-84617](https://tracker.moodle.org/browse/MDL-84617)
+
+#### Removed
+
+- prepare_for_view(), calendar_add_event_metadata() functions have been removed.
+
+  For more information see [MDL-84617](https://tracker.moodle.org/browse/MDL-84617)
+- core_calendar_renderer::event() method has been removed.
+
+  For more information see [MDL-84617](https://tracker.moodle.org/browse/MDL-84617)
 
 ### core_completion
 
@@ -279,6 +346,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- The state actions section_move and all related functions are final deprecated and cannot be used anymore. Use the newer section_move_after from now on.
+
+  For more information see [MDL-80116](https://tracker.moodle.org/browse/MDL-80116)
+- The core_courseformat::base get_section_number and set_section_number are now final deprecated. Use get_sectionum and set_sectionnum instead.
+
+  For more information see [MDL-80116](https://tracker.moodle.org/browse/MDL-80116)
 - All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
 
   For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)
@@ -325,6 +398,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83432](https://tracker.moodle.org/browse/MDL-83432)
 
+#### Removed
+
+- Removed enrol_mnet plugin from core
+
+  For more information see [MDL-84310](https://tracker.moodle.org/browse/MDL-84310)
+
 ### core_form
 
 #### Changed
@@ -344,6 +423,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     grade_structure::get_activity_link()
 
   For more information see [MDL-79907](https://tracker.moodle.org/browse/MDL-79907)
+- The external function core_grades_get_enrolled_users_for_search_widget has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
+- The external function core_grades_get_groups_for_search_widget has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
+
+### core_mnet
+
+#### Removed
+
+- Remove deprecated mnet_peer::get_public_key()
+
+  For more information see [MDL-78304](https://tracker.moodle.org/browse/MDL-78304)
+
+### core_portfolio
+
+#### Removed
+
+- Removed portfolio_mahara plugin from core
+
+  For more information see [MDL-84308](https://tracker.moodle.org/browse/MDL-84308)
 
 ### core_question
 
@@ -388,6 +489,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New `get_deprecated_tables` method in base entity, to be overridden when an entity no longer uses a table (due to column/filter re-factoring, etc) in order to avoid breaking third-party reports
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+- The base report class, used by both `\core_reportbuilder\system_report` and `\core_reportbuilder\datasource`, contains new methods for enhancing report rendering
+
+  * `set_report_action` allows for an action button to belong to your report, and be rendered alongside the filters button;
+  * `set_report_info_container` allows for content to be rendered by your report, between the action buttons and the table content
+
+  For more information see [MDL-82936](https://tracker.moodle.org/browse/MDL-82936)
 - The base aggregation class has a new `column_groupby` method, to be implemented in aggregation types to determime whether report tables should group by the fields of the aggregated column
 
   For more information see [MDL-83361](https://tracker.moodle.org/browse/MDL-83361)
@@ -412,6 +519,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Report table instances no longer populate the `countsql` and `countparams` class properties. Instead calling code can access `totalrows` to obtain the same value, or by calling the helper method `report::get_report_row_count`
 
   For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
+- For columns implementing custom sorting via their `set_is_sortable` method, the specified sort fields must also be part of the columns initially selected fields
+
+  For more information see [MDL-83718](https://tracker.moodle.org/browse/MDL-83718)
 - The `select` filter type is now stricter in it's filtering, in that it will now discard values that aren't present in available filter options
 
   For more information see [MDL-84213](https://tracker.moodle.org/browse/MDL-84213)
@@ -421,6 +531,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `schedule` helper class `get_schedule_report_count` method is now deprecated, existing code should instead use `report::get_report_row_count`
 
   For more information see [MDL-74488](https://tracker.moodle.org/browse/MDL-74488)
+- The `render_new_report_button` method of the `core_reportbuilder` renderer has been deprecated. Instead, refer to the report instance `set_report_action` method
+
+  For more information see [MDL-82936](https://tracker.moodle.org/browse/MDL-82936)
+- Use of the `course_completion` table is deprecated in the `completion` entity, please use `course_completions` instead
+
+  For more information see [MDL-84135](https://tracker.moodle.org/browse/MDL-84135)
 
 #### Removed
 
@@ -429,7 +545,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `comment:context`
   - `comment:contexturl`
   - `enrolment:method` (plus enrolment formatter `enrolment_name` method)
-  - 'enrolment:role`
+  - `enrolment:role`
   - `file:context`
   - `file:contexturl`
   - `instance:context` (tag)
@@ -438,9 +554,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Use of the `context` table is also deprecated in the `file` and `instance` (tag) entities
 
   For more information see [MDL-78118](https://tracker.moodle.org/browse/MDL-78118)
+- Various Oracle-specific support/workarounds in APIs and component report entities have been removed
+
+  For more information see [MDL-80173](https://tracker.moodle.org/browse/MDL-80173)
 - Final removal of support for `get_default_table_aliases` method. Entities must now implement `get_default_tables`, which is now abstract, to define the tables they use
 
   For more information see [MDL-80430](https://tracker.moodle.org/browse/MDL-80430)
+
+### core_sms
+
+#### Added
+
+- Introducing a new function \core_sms\gateway::truncate_message() to truncate SMS message content according to the length limit of the gateway.
+
+  For more information see [MDL-84342](https://tracker.moodle.org/browse/MDL-84342)
 
 ### core_tag
 
@@ -499,6 +626,30 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-77107](https://tracker.moodle.org/browse/MDL-77107)
 
+### mlbackend_php
+
+#### Removed
+
+- The plugin `mlbackend_php` has been removed and replaced by `mlbackend_python` as the new default value for the Analytics setting `predictionsprocessor`. The plugin is available at https://github.com/moodlehq/moodle-mlbackend_php.
+
+  For more information see [MDL-84107](https://tracker.moodle.org/browse/MDL-84107)
+
+### mnetservice
+
+#### Deprecated
+
+- The plugintype mnetservice was deprecated. MNet has been deprecated for many years now and will be removed.
+
+  For more information see [MDL-84311](https://tracker.moodle.org/browse/MDL-84311)
+
+### mnetservice_enrol
+
+#### Removed
+
+- Removed mnetservice_enrol plugin from core
+
+  For more information see [MDL-84311](https://tracker.moodle.org/browse/MDL-84311)
+
 ### mod
 
 #### Removed
@@ -512,6 +663,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### mod_assign
 
+#### Deprecated
+
+- The assign_course_index_summary is now deprecated. The assign index is now generated using the mod_assign\course\overview integration class.
+
+  For more information see [MDL-83888](https://tracker.moodle.org/browse/MDL-83888)
+
 #### Fixed
 
 - The unit test for the privacy provider has been marked as final.
@@ -523,6 +680,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   class should be updated to extend `\mod_assign\tests\provider_testcase` instead.
 
   For more information see [MDL-81520](https://tracker.moodle.org/browse/MDL-81520)
+
+### mod_book
+
+#### Deprecated
+
+- The method book_get_nav_classes has been finally
+  deprecated and will now throw an exception if called.
+
+  For more information see [MDL-81328](https://tracker.moodle.org/browse/MDL-81328)
+
+### mod_choice
+
+#### Changed
+
+- The WebService `mod_choice_get_choice_results` has a new parameter `groupid` that allows specifying the group to get the results for. The default behaviour hasn't changed: if a choice has groups and the parameter isn't specified the WebService will return the results for the active group.
+
+  For more information see [MDL-78449](https://tracker.moodle.org/browse/MDL-78449)
+- The function `choice_get_response_data` has a new parameter that allows specifying the group to get the results for. The default behaviour hasn't changed: if a choice has groups and the parameter isn't used, the function will return the results for the active group.
+
+  For more information see [MDL-78449](https://tracker.moodle.org/browse/MDL-78449)
 
 ### mod_data
 
@@ -616,6 +793,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
+### report_insights
+
+#### Removed
+
+- report_insights_set_notuseful_prediction() external function has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
+- report_insights_set_fixed_prediction() external function has been fully removed.
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
+
+### report_log
+
+#### Removed
+
+- Support for the $grouplist public member in the report_log_renderable class has been removed.
+
+  For more information see [MDL-81155](https://tracker.moodle.org/browse/MDL-81155)
+
 ### theme_boost
 
 #### Changed
@@ -704,6 +900,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The two language strings in the tool_mfa plugin, namely `inputrequired` and `setuprequired`, are deprecated.
 
   For more information see [MDL-83516](https://tracker.moodle.org/browse/MDL-83516)
+
+#### Removed
+
+- The previously deprecated `setup_factor` renderer method has been removed
+
+  For more information see [MDL-80995](https://tracker.moodle.org/browse/MDL-80995)
 
 ### tool_mobile
 

@@ -85,6 +85,9 @@
   | `\core\router\mocking_route_loader` | `\core\tests\router\mocking_route_loader` |
 
   For more information see [MDL-83968](https://tracker.moodle.org/browse/MDL-83968)
+- Analytics is now disabled by default on new installs.
+
+  For more information see [MDL-84107](https://tracker.moodle.org/browse/MDL-84107)
 
 ### Deprecated
 
@@ -122,6 +125,9 @@
 - The method `site_registration_form::add_select_with_email()` has been finally deprecated and will now throw an exception if called.
 
   For more information see [MDL-71472](https://tracker.moodle.org/browse/MDL-71472)
+- Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
+
+  For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
@@ -129,15 +135,24 @@
     functionality has been replaced by native PHP functionality.
 
   For more information see [MDL-82825](https://tracker.moodle.org/browse/MDL-82825)
-- Oracle support has been removed in LMS, with the exception of report builder which will be handled in a separate issue (MDL-80173).
+- Oracle support has been removed in LMS
 
   For more information see [MDL-83172](https://tracker.moodle.org/browse/MDL-83172)
+- The Atto HTML editor has been removed from core, along with all standard
+  subplugins.
+
+  The editor is available for continued use in the Plugins Database.
+
+  For more information see [MDL-83282](https://tracker.moodle.org/browse/MDL-83282)
 - Support for `subplugins.php` files has been removed. All subplugin metadata must be created in a `subplugins.json` file.
 
   For more information see [MDL-83703](https://tracker.moodle.org/browse/MDL-83703)
 - set_alignment(), set_constraint() and do_not_enhance() functions have been fully removed from action_menu class.
 
   For more information see [MDL-83765](https://tracker.moodle.org/browse/MDL-83765)
+- The `core_output_load_fontawesome_icon_map` web service has been fully removed and replaced by `core_output_load_fontawesome_icon_system_map`
+
+  For more information see [MDL-84036](https://tracker.moodle.org/browse/MDL-84036)
 - Final deprecation and removal of \core\event\course_module_instances_list_viewed
 
   For more information see [MDL-84593](https://tracker.moodle.org/browse/MDL-84593)

@@ -25,6 +25,12 @@
 
 ### Deprecated
 
+- The state actions section_move and all related functions are final deprecated and cannot be used anymore. Use the newer section_move_after from now on.
+
+  For more information see [MDL-80116](https://tracker.moodle.org/browse/MDL-80116)
+- The core_courseformat::base get_section_number and set_section_number are now final deprecated. Use get_sectionum and set_sectionnum instead.
+
+  For more information see [MDL-80116](https://tracker.moodle.org/browse/MDL-80116)
 - All course editing YUI modules are now deprecated. All course formats not using components must migrate before 6.0. Follow the devdocs guide https://moodledev.io/docs/5.0/apis/plugintypes/format/migration to know how to proceed.
 
   For more information see [MDL-82341](https://tracker.moodle.org/browse/MDL-82341)

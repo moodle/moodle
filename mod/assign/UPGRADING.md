@@ -2,6 +2,12 @@
 
 ## 5.0dev+
 
+### Deprecated
+
+- The assign_course_index_summary is now deprecated. The assign index is now generated using the mod_assign\course\overview integration class.
+
+  For more information see [MDL-83888](https://tracker.moodle.org/browse/MDL-83888)
+
 ### Fixed
 
 - The unit test for the privacy provider has been marked as final.

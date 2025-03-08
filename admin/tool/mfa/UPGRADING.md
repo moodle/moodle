@@ -16,3 +16,9 @@
 - The two language strings in the tool_mfa plugin, namely `inputrequired` and `setuprequired`, are deprecated.
 
   For more information see [MDL-83516](https://tracker.moodle.org/browse/MDL-83516)
+
+### Removed
+
+- The previously deprecated `setup_factor` renderer method has been removed
+
+  For more information see [MDL-80995](https://tracker.moodle.org/browse/MDL-80995)
