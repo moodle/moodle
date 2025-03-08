@@ -19,6 +19,8 @@
  * @module    mod_quiz/add_random_form
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since 5.0 MDL-78091.
+ * @todo       Final deprecation in Moodle 6.0. See MDL-84777.
  */
 define(
     [
