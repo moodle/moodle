@@ -3,6 +3,10 @@
 	url = https://github.com/Syxton/moodle-block_massaction
 	branch = master
 	tag = 7.4.1
+[submodule "blocks/quickmail"]
+	path = blocks/quickmail
+	url = https://github.com/ucsf-education/moodle-block_quickmail
+	branch = UCSFCLE_405_STABLE
 [submodule "mod/oublog"]
 	path = mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
