@@ -134,12 +134,18 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
                     // it is either absolute or pluginfile link
                     continue;
                 }
-                $chapterpath = dirname($chapter->importsrc).'/'.$matches[2][$i];
+
+                [$path, $anchor] = array_pad(explode('#', $matches[2][$i], 2), 2, '');
+                if (!empty($anchor)) {
+                    $anchor = '#' . $anchor;
+                }
+
+                $chapterpath = dirname($chapter->importsrc).'/'.$path;
                 $chapterpath = toolbook_importhtml_fix_path($chapterpath);
                 foreach ($allchapters as $target) {
                     if ($target->importsrc === $chapterpath) {
-                        $newcontent = str_replace($match, 'href="'.new moodle_url('/mod/book/view.php',
-                                array('id'=>$context->instanceid, 'chapterid'=>$target->id)).'"', $newcontent);
+                        $newcontent = str_replace($match, 'href="' . new moodle_url('/mod/book/view.php',
+                            ['id' => $context->instanceid, 'chapterid' => $target->id]) . $anchor . '"', $newcontent);
                     }
                 }
             }
