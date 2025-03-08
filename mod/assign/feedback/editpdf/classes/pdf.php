@@ -23,13 +23,14 @@
  */
 
 namespace assignfeedback_editpdf;
-use setasign\Fpdi\TcpdfFpdi;
+
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/pdflib.php');
-require_once($CFG->dirroot.'/mod/assign/feedback/editpdf/fpdi/autoload.php');
+require_once($CFG->dirroot.'/mod/assign/feedback/editpdf/fpdi/src/autoload.php');
 
 /**
  * Library code for manipulating PDFs
@@ -38,7 +39,7 @@ require_once($CFG->dirroot.'/mod/assign/feedback/editpdf/fpdi/autoload.php');
  * @copyright 2012 Davo Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pdf extends TcpdfFpdi {
+class pdf extends Fpdi {
 
     /** @var int the number of the current page in the PDF being processed */
     protected $currentpage = 0;

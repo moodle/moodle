@@ -1,0 +1,51 @@
+{
+    "name": "setasign/fpdi",
+    "homepage": "https://www.setasign.com/fpdi",
+    "description": "FPDI is a collection of PHP classes facilitating developers to read pages from existing PDF documents and use them as templates in FPDF. Because it is also possible to use FPDI with TCPDF, there are no fixed dependencies defined. Please see suggestions for packages which evaluates the dependencies automatically.",
+    "type": "library",
+    "keywords": [
+        "pdf",
+        "fpdi",
+        "fpdf"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "setasign\\Fpdi\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.1 || ^8.0",
+        "ext-zlib": "*"
+    },
+    "conflict": {
+        "setasign/tfpdf": "<1.31"
+    },
+    "authors": [
+        {
+            "name": "Jan Slabon",
+            "email": "jan.slabon@setasign.com",
+            "homepage": "https://www.setasign.com"
+        },
+        {
+            "name": "Maximilian Kresse",
+            "email": "maximilian.kresse@setasign.com",
+            "homepage": "https://www.setasign.com"
+        }
+    ],
+    "suggest": {
+        "setasign/fpdf": "FPDI will extend this class but as it is also possible to use TCPDF or tFPDF as an alternative. There's no fixed dependency configured."
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7",
+        "setasign/fpdf": "~1.8.6",
+        "tecnickcom/tcpdf": "^6.2",
+        "setasign/tfpdf": "~1.33",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "setasign\\Fpdi\\": "tests/"
+        }
+    }
+}
