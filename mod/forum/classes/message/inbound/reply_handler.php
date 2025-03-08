@@ -135,23 +135,16 @@ class reply_handler extends \core\message\inbound\handler {
         }
 
         $subject = clean_param($messagedata->envelope->subject, PARAM_TEXT);
-        $restring = get_string('re', 'forum');
         if (strpos($subject, $discussion->name)) {
             // The discussion name is mentioned in the e-mail subject. This is probably just the standard reply. Use the
             // standard reply subject instead.
-            $newsubject = $restring . ' ' . $discussion->name;
-            mtrace("--> Note: Post subject matched discussion name. Optimising from {$subject} to {$newsubject}");
-            $subject = $newsubject;
+            mtrace("--> Note: Post subject matched discussion name. Optimising from {$subject} to {$discussion->name}");
+            $subject = $discussion->name;
         } else if (strpos($subject, $post->subject)) {
             // The replied-to post's subject is mentioned in the e-mail subject.
             // Use the previous post's subject instead of the e-mail subject.
-            $newsubject = $post->subject;
-            if (!strpos($restring, $post->subject)) {
-                // The previous post did not contain a re string, add it.
-                $newsubject = $restring . ' ' . $newsubject;
-            }
-            mtrace("--> Note: Post subject matched original post subject. Optimising from {$subject} to {$newsubject}");
-            $subject = $newsubject;
+            mtrace("--> Note: Post subject matched original post subject. Optimising from {$subject} to {$post->subject}");
+            $subject = $post->subject;
         }
 
         $addpost = new \stdClass();

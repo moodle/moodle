@@ -608,7 +608,6 @@ $string['prunedpost'] = 'A new discussion has been created from that post';
 $string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['qandaforum'] = 'Q and A forum';
 $string['qandanotify'] = 'This is a question and answer forum. To see other replies, you must first post your reply.';
-$string['re'] = 'Re:';
 $string['readtherest'] = 'Read the rest of this topic';
 $string['removeallforumtags'] = 'All forum tags';
 $string['removefromfavourites'] = 'Unstar this discussion';
@@ -797,3 +796,6 @@ $string['privacy:request:delete:discussion:name'] = 'Delete at the request of th
 $string['privacy:request:delete:post:message'] = 'The content of this post has been deleted at the request of its author.';
 $string['privacy:request:delete:post:subject'] = 'Delete at the request of the author';
 $string['tagsdeleted'] = 'Forum tags have been deleted';
+
+// Deprecated since Moodle 5.0.
+$string['re'] = 'Re:';

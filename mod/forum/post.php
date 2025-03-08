@@ -282,11 +282,6 @@ if (!empty($forum)) {
 
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
 
-    $strre = get_string('re', 'forum');
-    if (!(substr($post->subject, 0, strlen($strre)) == $strre)) {
-        $post->subject = $strre.' '.$post->subject;
-    }
-
     // Unsetting this will allow the correct return URL to be calculated later.
     unset($SESSION->fromdiscussion);
 

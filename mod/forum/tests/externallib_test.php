@@ -494,7 +494,7 @@ final class externallib_test extends externallib_advanced_testcase {
             'timecreated' => $discussion1reply2->created,
             'timemodified' => $discussion1reply2->modified,
             'subject' => $discussion1reply2->subject,
-            'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply2->subject}",
+            'replysubject' => $discussion1reply2->subject,
             'message' => $message,
             'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
             'unread' => null,
@@ -553,7 +553,7 @@ final class externallib_test extends externallib_advanced_testcase {
             'timecreated' => $discussion1reply1->created,
             'timemodified' => $discussion1reply1->modified,
             'subject' => $discussion1reply1->subject,
-            'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
+            'replysubject' => $discussion1reply1->subject,
             'message' => $message,
             'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
             'unread' => null,
@@ -2472,7 +2472,7 @@ final class externallib_test extends externallib_advanced_testcase {
                         'timecreated' => $discussion1reply1->created,
                         'timemodified' => $discussion1reply1->modified,
                         'subject' => $discussion1reply1->subject,
-                        'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
+                        'replysubject' => $discussion1reply1->subject,
                         'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
                         $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
                         'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
@@ -2538,7 +2538,7 @@ final class externallib_test extends externallib_advanced_testcase {
                         'timecreated' => $discussion1firstpostobject->created,
                         'timemodified' => $discussion1firstpostobject->modified,
                         'subject' => $discussion1firstpostobject->subject,
-                        'replysubject' => get_string('re', 'mod_forum') . " {$discussion1firstpostobject->subject}",
+                        'replysubject' => $discussion1firstpostobject->subject,
                         'message' => file_rewrite_pluginfile_urls($discussion1firstpostobject->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion1firstpostobject->id),
                         'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
@@ -2615,7 +2615,7 @@ final class externallib_test extends externallib_advanced_testcase {
                         'timecreated' => $discussion2reply1->created,
                         'timemodified' => $discussion2reply1->modified,
                         'subject' => $discussion2reply1->subject,
-                        'replysubject' => get_string('re', 'mod_forum') . " {$discussion2reply1->subject}",
+                        'replysubject' => $discussion2reply1->subject,
                         'message' => file_rewrite_pluginfile_urls($discussion2reply1->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion2reply1->id),
                         'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
@@ -2681,7 +2681,7 @@ final class externallib_test extends externallib_advanced_testcase {
                         'timecreated' => $discussion2firstpostobject->created,
                         'timemodified' => $discussion2firstpostobject->modified,
                         'subject' => $discussion2firstpostobject->subject,
-                        'replysubject' => get_string('re', 'mod_forum') . " {$discussion2firstpostobject->subject}",
+                        'replysubject' => $discussion2firstpostobject->subject,
                         'message' => file_rewrite_pluginfile_urls($discussion2firstpostobject->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion2firstpostobject->id),
                         'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
