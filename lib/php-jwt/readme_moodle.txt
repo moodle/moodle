@@ -7,10 +7,11 @@ Dependencies
 
 Instructions
 ------------
-1.  Check dependencies to confirm suitability of the new version of the library (see above).
-2.  Visit [https://github.com/firebase/php-jwt].
-3.  Click on 'X releases'.
-4.  Download the latest release.
-5.  Unzip it in lib as php-jwt.
-6.  Update entry for this library in lib/thirdpartylibs.xml.
+1. Check dependencies to confirm suitability of the new version of the library (see above).
+2. Visit [https://github.com/firebase/php-jwt].
+3. Click on 'X releases'.
+4. Download the latest release.
+5. Remove everything under lib/php-jwt/ except this file (readme_moodle.txt).
+6. Unzip the release and put its content as into lib/php-jwt.
+7. Update entry for this library in lib/thirdpartylibs.xml.
 

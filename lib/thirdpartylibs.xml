@@ -515,7 +515,7 @@ All rights reserved.</copyright>
     <location>php-jwt</location>
     <name>PHP-JWT</name>
     <description>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</description>
-    <version>6.10.0</version>
+    <version>6.11.0</version>
     <license>BSD</license>
     <licenseversion>3-Clause</licenseversion>
     <repository>https://github.com/firebase/php-jwt</repository>
