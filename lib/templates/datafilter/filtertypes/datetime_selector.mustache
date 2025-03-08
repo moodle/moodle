@@ -50,7 +50,7 @@
             value="{{aftervalue}}"
             data-filterfield="{{filtertype}}1"
             data-field-title="{{afterlabel}}"
-            max="{{now}}"
+            {{#max}}max="{{max}}"{{/max}}
         >
     </span>
     <span class="{{filtertype}}-betweenwrapper ms-2 me-2">
@@ -66,7 +66,7 @@
             value="{{beforevalue}}"
             data-filterfield="{{filtertype}}2"
             data-field-title="{{beforelabel}}"
-            max="{{now}}"
+            {{#max}}max="{{max}}"{{/max}}
         >
     </span>
 </div>
