@@ -29,15 +29,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 use coding_exception;
-use core\plugininfo\qbank;
 use core\output\datafilter;
-use core_plugin_manager;
 use core_question\local\bank\condition;
 use core_question\local\statistics\statistics_bulk_loader;
 use core_question\output\question_bank_filter_ui;
 use core_question\local\bank\column_manager_base;
-use qbank_deletequestion\hidden_condition;
-use qbank_editquestion\editquestion_helper;
 use qbank_managecategories\category_condition;
 
 /**
@@ -328,25 +324,16 @@ class view {
     }
 
     /**
-     * Initialize search conditions from plugins
-     * local_*_get_question_bank_search_conditions() must return an array of
-     * \core_question\bank\search\condition objects.
-     *
      * @deprecated Since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
+    #[\core\attribute\deprecated(
+        'create a qbank plugin and implement a filter object',
+        since: '4.3',
+        mdl: 'MDL-72321',
+        final: true
+    )]
     protected function init_search_conditions(): void {
-        debugging(
-            'Function init_search_conditions() has been deprecated, please create a qbank plugin' .
-                'and implement a filter object instead.',
-            DEBUG_DEVELOPER
-        );
-        $searchplugins = get_plugin_list_with_function('local', 'get_question_bank_search_conditions');
-        foreach ($searchplugins as $component => $function) {
-            foreach ($function($this) as $searchobject) {
-                $this->add_searchcondition($searchobject);
-            }
-        }
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -953,146 +940,53 @@ class view {
     }
 
     /**
-     * Print the text if category id not available.
-     *
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
+    #[\core\attribute\deprecated(
+        'question/bank/managecategories/classes/category_confition.php',
+        since: '4.3',
+        mdl: 'MDL-72321',
+        final: true
+    )]
     protected function print_choose_category_message(): void {
-        debugging(
-            'Function print_choose_category_message() is deprecated, all the features for this method is currently ' .
-                'handled by the qbank filter api, please have a look at ' .
-                'question/bank/managecategories/classes/category_confition.php for more information.',
-            DEBUG_DEVELOPER
-        );
-        echo \html_writer::start_tag('p', ['style' => "\"text-align:center;\""]);
-        echo \html_writer::tag('b', get_string('selectcategoryabove', 'question'));
-        echo \html_writer::end_tag('p');
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Gets current selected category.
-     * @param string $categoryandcontext
-     * @return false|mixed|\stdClass
-     *
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
-    protected function get_current_category($categoryandcontext) {
-        debugging(
-            'Function get_current_category() is deprecated, all the features for this method is currently handled by ' .
-            'the qbank filter api, please have a look at question/bank/managecategories/classes/category_confition.php ' .
-            'for more information.',
-            DEBUG_DEVELOPER
-        );
-        global $DB, $OUTPUT;
-        [$categoryid, $contextid] = explode(',', $categoryandcontext);
-        if (!$categoryid) {
-            $this->print_choose_category_message();
-            return false;
-        }
-
-        if (!$category = $DB->get_record('question_categories',
-            ['id' => $categoryid, 'contextid' => $contextid])) {
-            echo $OUTPUT->box_start('generalbox questionbank');
-            echo $OUTPUT->notification('Category not found!');
-            echo $OUTPUT->box_end();
-            return false;
-        }
-
-        return $category;
+    #[\core\attribute\deprecated(
+        'question/bank/managecategories/classes/category_confition.php',
+        since: '4.3',
+        mdl: 'MDL-72321',
+        final: true
+    )]
+    protected function get_current_category(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Display the form with options for which questions are displayed and how they are displayed.
-     *
-     * @param bool $showquestiontext Display the text of the question within the list.
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
-    protected function display_options_form($showquestiontext): void {
-        debugging(
-            'Function display_options_form() is deprecated, this method has been replaced with mustaches in filters, ' .
-                'please use filtering objects',
-            DEBUG_DEVELOPER
-        );
-        global $PAGE;
-
-        // The html will be refactored in the filter feature implementation.
-        echo \html_writer::start_tag('form', ['method' => 'get',
-            'action' => new \moodle_url($this->baseurl), 'id' => 'displayoptions']);
-        echo \html_writer::start_div();
-
-        $excludes = ['recurse', 'showhidden', 'qbshowtext'];
-        // If the URL contains any tags then we need to prevent them
-        // being added to the form as hidden elements because the tags
-        // are managed separately.
-        if ($this->baseurl->param('qtagids[0]')) {
-            $index = 0;
-            while ($this->baseurl->param("qtagids[{$index}]")) {
-                $excludes[] = "qtagids[{$index}]";
-                $index++;
-            }
-        }
-        echo \html_writer::input_hidden_params($this->baseurl, $excludes);
-
-        $advancedsearch = [];
-
-        foreach ($this->searchconditions as $searchcondition) {
-            if ($searchcondition->display_options_adv()) {
-                $advancedsearch[] = $searchcondition;
-            }
-        }
-        if (!empty($advancedsearch)) {
-            $this->display_advanced_search_form($advancedsearch);
-        }
-
-        $go = \html_writer::empty_tag('input', ['type' => 'submit', 'value' => get_string('go')]);
-        echo \html_writer::tag('noscript', \html_writer::div($go), ['class' => 'inline']);
-        echo \html_writer::end_div();
-        echo \html_writer::end_tag('form');
-        $PAGE->requires->yui_module('moodle-question-searchform', 'M.question.searchform.init');
+    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
+    protected function display_options_form(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Print the "advanced" UI elements for the form to select which questions. Hidden by default.
-     *
-     * @param array $advancedsearch
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
-    protected function display_advanced_search_form($advancedsearch): void {
-        debugging(
-            'Function display_advanced_search_form() is deprecated, this method has been replaced with mustaches in ' .
-            'filters, please use filtering objects',
-            DEBUG_DEVELOPER
-        );
-        print_collapsible_region_start('', 'advancedsearch',
-            get_string('advancedsearchoptions', 'question'),
-            'question_bank_advanced_search');
-        foreach ($advancedsearch as $searchcondition) {
-            echo $searchcondition->display_options_adv();
-        }
-        print_collapsible_region_end();
+    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
+    protected function display_advanced_search_form(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Display the checkbox UI for toggling the display of the question text in the list.
-     * @param bool $showquestiontext the current or default value for whether to display the text.
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
-    protected function display_showtext_checkbox($showquestiontext): void {
-        debugging('Function display_showtext_checkbox() is deprecated, please use filtering objects', DEBUG_DEVELOPER);
-        global $PAGE;
-        $displaydata = [
-            'checked' => $showquestiontext
-        ];
-        if (class_exists('qbank_viewquestiontext\\question_text_row')) {
-            if (\core\plugininfo\qbank::is_plugin_enabled('qbank_viewquestiontext')) {
-                echo $PAGE->get_renderer('core_question', 'bank')->render_showtext_checkbox($displaydata);
-            }
-        }
+    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
+    protected function display_showtext_checkbox(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1471,32 +1365,19 @@ class view {
     }
 
     /**
-     * Start of the table html.
-     *
-     * @see print_table()
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
+    #[\core\attribute\deprecated('print_table()', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function start_table() {
-        debugging('Function start_table() is deprecated, please use print_table() instead.', DEBUG_DEVELOPER);
-        echo '<table id="categoryquestions" class="table table-responsive">' . "\n";
-        echo "<thead>\n";
-        $this->print_table_headers();
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * End of the table html.
-     *
-     * @see print_table()
      * @deprecated since Moodle 4.3 MDL-72321
-     * @todo Final deprecation on Moodle 4.7 MDL-78090
      */
+    #[\core\attribute\deprecated('print_table()', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function end_table() {
-        debugging('Function end_table() is deprecated, please use print_table() instead.', DEBUG_DEVELOPER);
-        echo "</tbody>\n";
-        echo "</table>\n";
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

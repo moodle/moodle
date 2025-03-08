@@ -314,7 +314,6 @@ $string['reviewresponse'] = 'Review response';
 $string['save'] = 'Save';
 $string['savechangesandcontinueediting'] = 'Save changes and continue editing';
 $string['saveflags'] = 'Save the state of the flags';
-$string['selectacategory'] = 'Select a category:';
 $string['selectaqtypefordescription'] = 'Select a question type to see its description.';
 $string['selectcategoryabove'] = 'Select a category above';
 $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
@@ -536,5 +535,7 @@ $string['versioninfolatest'] = 'Version {$a->version} (latest)';
 $string['question_version'] = 'Question version';
 $string['question_versionshort'] = 'v{$a}';
 $string['versioninfolatestshort'] = 'v{$a} (latest)';
+
 // Deprecated since Moodle 5.0.
 $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';
+$string['selectacategory'] = 'Select a category:';
