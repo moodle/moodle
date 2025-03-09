@@ -534,7 +534,7 @@ class renderer extends plugin_renderer_base {
      */
     public function during_attempt_tertiary_nav($quizviewurl): string {
         $output = '';
-        $output .= html_writer::start_div('container-fluid tertiary-navigation');
+        $output .= html_writer::start_div('tertiary-navigation');
         $output .= html_writer::start_div('row');
         $output .= html_writer::start_div('navitem');
         $output .= html_writer::link($quizviewurl, get_string('back'),
@@ -933,7 +933,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if ($content) {
-            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid tertiary-navigation');
+            return html_writer::div(html_writer::div($content, 'd-flex'), 'tertiary-navigation');
         } else {
             return '';
         }
