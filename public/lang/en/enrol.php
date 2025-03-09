@@ -39,6 +39,7 @@ $string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-a
 <ul>
 <li>Course name {$a->coursename}</li>
 <li>Link to course page {$a->courselink}</li>
+<li>Course start date {$a->coursestartdate}</li>
 <li>Link to user\'s profile page {$a->profileurl}</li>
 <li>User email {$a->email}</li>
 <li>User fullname {$a->fullname}</li>
