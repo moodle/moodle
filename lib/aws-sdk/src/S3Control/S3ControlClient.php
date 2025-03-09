@@ -141,6 +141,8 @@ use GuzzleHttp\Promise\PromiseInterface;
  * @method \GuzzleHttp\Promise\Promise listAccessPointsAsync(array $args = [])
  * @method \Aws\Result listAccessPointsForObjectLambda(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listAccessPointsForObjectLambdaAsync(array $args = [])
+ * @method \Aws\Result listCallerAccessGrants(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listCallerAccessGrantsAsync(array $args = [])
  * @method \Aws\Result listJobs(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listJobsAsync(array $args = [])
  * @method \Aws\Result listMultiRegionAccessPoints(array $args = [])
@@ -267,25 +269,26 @@ class S3ControlClient extends AwsClient
 
         if ($this->isUseEndpointV2()) {
             $this->processEndpointV2Model();
+        } else {
+            $stack = $this->getHandlerList();
+            $stack->appendBuild(
+                EndpointArnMiddleware::wrap(
+                    $this->getApi(),
+                    $this->getRegion(),
+                    [
+                        'use_arn_region' => $this->getConfig('use_arn_region'),
+                        'dual_stack' =>
+                            $this->getConfig('use_dual_stack_endpoint')->isUseDualStackEndpoint(),
+                        'endpoint' => isset($args['endpoint'])
+                            ? $args['endpoint']
+                            : null,
+                        'use_fips_endpoint' => $this->getConfig('use_fips_endpoint'),
+                    ],
+                    $this->isUseEndpointV2()
+                ),
+                's3control.endpoint_arn_middleware'
+            );
         }
-        $stack = $this->getHandlerList();
-        $stack->appendBuild(
-            EndpointArnMiddleware::wrap(
-                $this->getApi(),
-                $this->getRegion(),
-                [
-                    'use_arn_region' => $this->getConfig('use_arn_region'),
-                    'dual_stack' =>
-                        $this->getConfig('use_dual_stack_endpoint')->isUseDualStackEndpoint(),
-                    'endpoint' => isset($args['endpoint'])
-                        ? $args['endpoint']
-                        : null,
-                    'use_fips_endpoint' => $this->getConfig('use_fips_endpoint'),
-                ],
-                $this->isUseEndpointV2()
-            ),
-            's3control.endpoint_arn_middleware'
-        );
     }
 
     /**
