@@ -146,6 +146,7 @@ class format_singleactivity extends core_courseformat\base {
 
         if ($fetchtypes) {
             $availabletypes = $this->get_supported_activities();
+            core_collator::asort($availabletypes);
             if ($this->courseid) {
                 // The course exists. Test against the course.
                 $testcontext = context_course::instance($this->courseid);
