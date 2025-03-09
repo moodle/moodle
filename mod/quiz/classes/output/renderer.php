@@ -923,12 +923,13 @@ class renderer extends plugin_renderer_base {
             $attemptbtn = $this->start_attempt_button($viewobj->buttontext,
                     $viewobj->startattempturl, $viewobj->preflightcheckform,
                     $viewobj->popuprequired, $viewobj->popupoptions);
-            $content .= $attemptbtn;
+            $content .= html_writer::div($attemptbtn, 'navitem');
         }
 
         if ($viewobj->canedit && !$viewobj->quizhasquestions) {
-            $content .= html_writer::link($viewobj->editurl, get_string('addquestion', 'quiz'),
+            $addquestionbutton = html_writer::link($viewobj->editurl, get_string('addquestion', 'quiz'),
                     ['class' => 'btn btn-secondary']);
+            $content .= html_writer::div($addquestionbutton, 'navitem');
         }
 
         if ($content) {
