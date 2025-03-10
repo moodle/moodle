@@ -1,0 +1,18 @@
+issueNumber: MDL-84537
+notes:
+  core_reportbuilder:
+    - message: >-
+        Aggregation types can access passed options set via the base class
+        constructor in the `$this->options[]` class property. As such, their
+        `format_value` method is no longer static and is always called from an
+        instantiated class instance
+      type: changed
+    - message: >-
+        New `$options` argument added to the
+        `column::set_aggregation` method for system reports, to set aggregation
+        type-specific options
+
+
+        Report entities can call new `column::set_aggregation_options` to
+        achieve the same
+      type: changed

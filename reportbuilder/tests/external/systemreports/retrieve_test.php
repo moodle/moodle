@@ -75,7 +75,7 @@ final class retrieve_test extends externallib_advanced_testcase {
 
         $this->assertStringContainsString('My second report', $name);
         $this->assertEquals(users::get_name(), $source);
-        $this->assertMatchesRegularExpression('/cat.*, .*dog/', $tags);
+        $this->assertMatchesRegularExpression('/cat.*dog/', $tags);
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
         $this->assertEquals('Admin User', $modifiedby);

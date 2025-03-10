@@ -25,6 +25,9 @@ use core_reportbuilder\local\report\column;
 /**
  * Column group concatenation aggregation type
  *
+ * The value used for the separator between aggregated items can be specified by passing the 'separator' option
+ * via {@see column::set_aggregation} or {@see column::set_aggregation_options} methods
+ *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -100,7 +103,7 @@ class groupconcat extends base {
      * @param int $columntype
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype) {
+    public function format_value($value, array $values, array $callbacks, int $columntype) {
         $firstvalue = reset($values);
         if ($firstvalue === null) {
             return '';
@@ -133,7 +136,11 @@ class groupconcat extends base {
             $formattedvalues[] = parent::format_value($originalvalue, $originalvalues, $callbacks, $columntype);
         }
 
-        $listseparator = get_string('listsep', 'langconfig') . ' ';
-        return implode($listseparator, $formattedvalues);
+        // Determine separator based on passed options, defaulting to language pack list separator.
+        $separator = array_key_exists('separator', $this->options)
+            ? (string) $this->options['separator']
+            : get_string('listsep', 'langconfig') . ' ';
+
+        return implode($separator, $formattedvalues);
     }
 }

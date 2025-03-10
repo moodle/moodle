@@ -76,7 +76,10 @@ final class column {
     private $callbacks = [];
 
     /** @var base|null $aggregation Aggregation type to apply to column */
-    private $aggregation = null;
+    private base|null $aggregation = null;
+
+    /** @var array[] $aggregationoptions Aggregation type options */
+    private array $aggregationoptions = [];
 
     /** @var array $disabledaggregation Aggregation types explicitly disabled  */
     private $disabledaggregation = [];
@@ -358,7 +361,7 @@ final class column {
     public function get_fields(): array {
         $fieldsalias = $this->get_fields_sql_alias();
 
-        if (!empty($this->aggregation)) {
+        if ($this->aggregation !== null) {
             $fieldsaliassql = array_column($fieldsalias, 'sql');
             $field = reset($fieldsalias);
 
@@ -383,7 +386,7 @@ final class column {
      * @throws coding_exception
      */
     private function get_field_aggregation_sql(array $sqlfields): string {
-        if (empty($this->aggregation)) {
+        if ($this->aggregation === null) {
             throw new coding_exception('Column aggregation is undefined');
         }
 
@@ -447,7 +450,7 @@ final class column {
 
         // To ensure cross-platform support for column aggregation, where the aggregation should also be grouped, we need
         // to generate SQL from column fields and use it to generate aggregation SQL.
-        if (!empty($this->aggregation) && $this->aggregation::column_groupby()) {
+        if ($this->aggregation !== null && $this->aggregation::column_groupby()) {
             if ($usealias) {
                 $this->set_groupby_sql($this->get_column_alias());
             } else {
@@ -504,18 +507,25 @@ final class column {
      * Set column aggregation type
      *
      * @param string|null $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @param array|null $options Aggregation type options
      * @return self
      * @throws coding_exception For invalid aggregation type, or one that is incompatible with column type
      */
-    public function set_aggregation(?string $aggregation): self {
-        if (!empty($aggregation)) {
-            $aggregation = aggregation::get_full_classpath($aggregation);
-            if (!aggregation::valid($aggregation) || !$aggregation::compatible($this->get_type())) {
+    public function set_aggregation(?string $aggregation, ?array $options = null): self {
+        if ((string) $aggregation !== '') {
+
+            // Convert aggregation to full class instance for internal storage.
+            $aggregationclasspath = aggregation::get_full_classpath($aggregation);
+            if (!aggregation::valid($aggregationclasspath) || !$aggregationclasspath::compatible($this->get_type())) {
                 throw new coding_exception('Invalid column aggregation', $aggregation);
             }
+
+            $options ??= $this->get_aggregation_options($aggregation);
+            $this->aggregation = new $aggregationclasspath($options);
+        } else {
+            $this->aggregation = null;
         }
 
-        $this->aggregation = $aggregation;
         return $this;
     }
 
@@ -524,8 +534,30 @@ final class column {
      *
      * @return base|null
      */
-    public function get_aggregation(): ?string {
+    public function get_aggregation(): ?base {
         return $this->aggregation;
+    }
+
+    /**
+     * Set options for the given aggregation type
+     *
+     * @param string $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @param array $options Aggregation type options
+     * @return self
+     */
+    public function set_aggregation_options(string $aggregation, array $options): self {
+        $this->aggregationoptions[$aggregation] = $options;
+        return $this;
+    }
+
+    /**
+     * Get options for the given aggregation type
+     *
+     * @param string|null $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @return array
+     */
+    public function get_aggregation_options(?string $aggregation): array {
+        return $this->aggregationoptions[$aggregation] ?? [];
     }
 
     /**
@@ -585,7 +617,7 @@ final class column {
     public function get_is_sortable(): bool {
 
         // Defer sortable status to aggregation type if column is being aggregated.
-        if (!empty($this->aggregation)) {
+        if ($this->aggregation !== null) {
             return $this->aggregation::sortable($this->issortable);
         }
 
@@ -673,9 +705,9 @@ final class column {
         $values = $this->get_values($row);
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
-        if (!empty($this->aggregation)) {
+        if ($this->aggregation !== null) {
             $value = self::get_default_value($values, $this->aggregation::get_column_type($this->get_type()));
-            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->get_type());
+            $value = $this->aggregation->format_value($value, $values, $this->callbacks, $this->get_type());
         } else {
             $value = self::get_default_value($values, $this->get_type());
             foreach ($this->callbacks as $callback) {
