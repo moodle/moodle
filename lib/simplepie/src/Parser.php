@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -151,9 +150,8 @@ class Parser implements RegistryAware
             $xml = xml_parser_create_ns($this->encoding, $this->separator);
             xml_parser_set_option($xml, XML_OPTION_SKIP_WHITE, 1);
             xml_parser_set_option($xml, XML_OPTION_CASE_FOLDING, 0);
-            xml_set_object($xml, $this);
-            xml_set_character_data_handler($xml, 'cdata');
-            xml_set_element_handler($xml, 'tag_open', 'tag_close');
+            xml_set_character_data_handler($xml, [$this, 'cdata']);
+            xml_set_element_handler($xml, [$this, 'tag_open'], [$this, 'tag_close']);
 
             // Parse!
             $wrapper = @is_writable(sys_get_temp_dir()) ? 'php://temp' : 'php://memory';
@@ -303,8 +301,8 @@ class Parser implements RegistryAware
                 $this->data['data'] .= '>';
             }
         } else {
-            $this->datas[] =& $this->data;
-            $this->data =& $this->data['child'][end($this->namespace)][end($this->element)][];
+            $this->datas[] = &$this->data;
+            $this->data = &$this->data['child'][end($this->namespace)][end($this->element)][];
             $this->data = ['data' => '', 'attribs' => $attribs, 'xml_base' => end($this->xml_base), 'xml_base_explicit' => end($this->xml_base_explicit), 'xml_lang' => end($this->xml_lang)];
             if ((end($this->namespace) === \SimplePie\SimplePie::NAMESPACE_ATOM_03 && in_array(end($this->element), ['title', 'tagline', 'copyright', 'info', 'summary', 'content']) && isset($attribs['']['mode']) && $attribs['']['mode'] === 'xml')
             || (end($this->namespace) === \SimplePie\SimplePie::NAMESPACE_ATOM_10 && in_array(end($this->element), ['rights', 'subtitle', 'summary', 'info', 'title', 'content']) && isset($attribs['']['type']) && $attribs['']['type'] === 'xhtml')
@@ -334,7 +332,7 @@ class Parser implements RegistryAware
             }
         }
         if ($this->current_xhtml_construct === -1) {
-            $this->data =& $this->datas[count($this->datas) - 1];
+            $this->data = &$this->datas[count($this->datas) - 1];
             array_pop($this->datas);
         }
 

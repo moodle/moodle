@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -133,7 +132,7 @@ class Sanitize implements RegistryAware
         $this->registry = $registry;
     }
 
-    public function pass_cache_data($enable_cache = true, $cache_location = './cache', $cache_name_function = 'md5', $cache_class = 'SimplePie\Cache', DataCache $cache = null)
+    public function pass_cache_data($enable_cache = true, $cache_location = './cache', $cache_name_function = 'md5', $cache_class = 'SimplePie\Cache', ?DataCache $cache = null)
     {
         if (isset($enable_cache)) {
             $this->enable_cache = (bool) $enable_cache;
@@ -143,7 +142,7 @@ class Sanitize implements RegistryAware
             $this->cache_location = (string) $cache_location;
         }
 
-        if (! is_string($cache_name_function) && ! is_object($cache_name_function) && ! $cache_name_function instanceof NameFilter) {
+        if (!is_string($cache_name_function) && !is_object($cache_name_function) && !$cache_name_function instanceof NameFilter) {
             throw new InvalidArgumentException(sprintf(
                 '%s(): Argument #3 ($cache_name_function) must be of type %s',
                 __METHOD__,
@@ -297,7 +296,7 @@ class Sanitize implements RegistryAware
         foreach ($domains as $domain) {
             $domain = trim($domain, ". \t\n\r\0\x0B");
             $segments = array_reverse(explode('.', $domain));
-            $node =& $this->https_domains;
+            $node = &$this->https_domains;
             foreach ($segments as $segment) {//Build a tree
                 if ($node === true) {
                     break;
@@ -305,7 +304,7 @@ class Sanitize implements RegistryAware
                 if (!isset($node[$segment])) {
                     $node[$segment] = [];
                 }
-                $node =& $node[$segment];
+                $node = &$node[$segment];
             }
             $node = true;
         }
@@ -318,10 +317,10 @@ class Sanitize implements RegistryAware
     {
         $domain = trim($domain, '. ');
         $segments = array_reverse(explode('.', $domain));
-        $node =& $this->https_domains;
+        $node = &$this->https_domains;
         foreach ($segments as $segment) {//Explore the tree
             if (isset($node[$segment])) {
-                $node =& $node[$segment];
+                $node = &$node[$segment];
             } else {
                 break;
             }

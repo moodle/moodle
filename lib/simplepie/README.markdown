@@ -18,6 +18,22 @@ Requirements
 * PCRE support
 
 
+PSR-16: Caching support
+--------------
+
+Since SimplePie 1.8.0 you can use the [PSR-16](https://www.php-fig.org/psr/psr-16/) cache from
+[Symfony](https://symfony.com/doc/current/components/cache.html)
+or [every other implementation](https://packagist.org/providers/psr/simple-cache-implementation).
+
+```php
+$simplepie = new \SimplePie\SimplePie();
+$simplepie->set_cache(
+    new \Symfony\Component\Cache\Psr16Cache(
+        new \Symfony\Component\Cache\Adapter\FilesystemAdapter()
+    ),
+);
+```
+
 What comes in the package?
 --------------------------
 1. `src/` - SimplePie classes for use with the autoloader

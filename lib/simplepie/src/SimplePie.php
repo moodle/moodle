@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * SimplePie
  *
@@ -71,7 +70,7 @@ class SimplePie
     /**
      * SimplePie Version
      */
-    public const VERSION = '1.8.0';
+    public const VERSION = '1.8.1';
 
     /**
      * SimplePie Website URL
@@ -691,8 +690,7 @@ class SimplePie
     public function __construct()
     {
         if (version_compare(PHP_VERSION, '7.2', '<')) {
-            trigger_error('Please upgrade to PHP 7.2 or newer.');
-            die();
+            exit('Please upgrade to PHP 7.2 or newer.');
         }
 
         $this->set_useragent();
@@ -803,7 +801,7 @@ class SimplePie
         if ($file instanceof \SimplePie\File) {
             $this->feed_url = $file->url;
             $this->permanent_url = $this->feed_url;
-            $this->file =& $file;
+            $this->file = &$file;
             return true;
         }
         return false;
@@ -1375,7 +1373,7 @@ class SimplePie
         }
         $this->sanitize->strip_htmltags($tags);
         if ($encode !== null) {
-            $this->sanitize->encode_instead_of_strip($tags);
+            $this->sanitize->encode_instead_of_strip($encode);
         }
     }
 
@@ -1666,7 +1664,7 @@ class SimplePie
 
                     // Cache the file if caching is enabled
                     $this->data['cache_expiration_time'] = $this->cache_duration + time();
-                    if ($cache && ! $cache->set_data($this->get_cache_filename($this->feed_url), $this->data, $this->cache_duration)) {
+                    if ($cache && !$cache->set_data($this->get_cache_filename($this->feed_url), $this->data, $this->cache_duration)) {
                         trigger_error("$this->cache_location is not writable. Make sure you've set the correct relative or absolute path, and that the location is server-writable.", E_USER_WARNING);
                     }
                     return true;
@@ -1716,7 +1714,7 @@ class SimplePie
             $cache = new BaseDataCache($cache);
         }
 
-        if ($cache !== false && ! $cache instanceof DataCache) {
+        if ($cache !== false && !$cache instanceof DataCache) {
             throw new InvalidArgumentException(sprintf(
                 '%s(): Argument #1 ($cache) must be of type %s|false',
                 __METHOD__,
@@ -1774,7 +1772,7 @@ class SimplePie
                             $headers['if-none-match'] = $this->data['headers']['etag'];
                         }
 
-                        $file = $this->registry->create(File::class, [$this->feed_url, $this->timeout/10, 5, $headers, $this->useragent, $this->force_fsockopen, $this->curl_options]);
+                        $file = $this->registry->create(File::class, [$this->feed_url, $this->timeout / 10, 5, $headers, $this->useragent, $this->force_fsockopen, $this->curl_options]);
                         $this->status_code = $file->status_code;
 
                         if ($file->success) {
@@ -1811,7 +1809,7 @@ class SimplePie
         // If we don't already have the file (it'll only exist if we've opened it to check if the cache has been modified), open it.
         if (!isset($file)) {
             if ($this->file instanceof \SimplePie\File && $this->file->url === $this->feed_url) {
-                $file =& $this->file;
+                $file = &$this->file;
             } else {
                 $headers = [
                     'Accept' => 'application/atom+xml, application/rss+xml, application/rdf+xml;q=0.9, application/xml;q=0.8, text/xml;q=0.8, text/html;q=0.7, unknown/unknown;q=0.1, application/unknown;q=0.1, */*;q=0.1',
@@ -1833,7 +1831,7 @@ class SimplePie
 
             if (!$locate->is_feed($file)) {
                 $copyStatusCode = $file->status_code;
-                $copyContentType = $file->headers['content-type'];
+                $copyContentType = $file->headers['content-type'] ?? '';
                 try {
                     $microformats = false;
                     if (class_exists('DOMXpath') && function_exists('Mf2\parse')) {
@@ -2641,12 +2639,12 @@ class SimplePie
                 if ($this->registry->call(Misc::class, 'is_isegment_nz_nc', [$key])) {
                     if (isset($this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key])) {
                         $this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key] = array_merge($this->data['links'][$key], $this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key]);
-                        $this->data['links'][$key] =& $this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key];
+                        $this->data['links'][$key] = &$this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key];
                     } else {
-                        $this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key] =& $this->data['links'][$key];
+                        $this->data['links'][self::IANA_LINK_RELATIONS_REGISTRY . $key] = &$this->data['links'][$key];
                     }
                 } elseif (substr($key, 0, 41) === self::IANA_LINK_RELATIONS_REGISTRY) {
-                    $this->data['links'][substr($key, 41)] =& $this->data['links'][$key];
+                    $this->data['links'][substr($key, 41)] = &$this->data['links'][$key];
                 }
                 $this->data['links'][$key] = array_unique($this->data['links'][$key]);
             }
@@ -3103,7 +3101,7 @@ class SimplePie
         $trace = debug_backtrace();
         $file = $trace[0]['file'];
         $line = $trace[0]['line'];
-        trigger_error("Call to undefined method $class::$method() in $file on line $line", E_USER_ERROR);
+        throw new SimplePieException("Call to undefined method $class::$method() in $file on line $line");
     }
 
     /**
