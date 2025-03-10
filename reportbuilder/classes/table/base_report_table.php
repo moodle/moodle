@@ -232,7 +232,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
      */
     public function get_sql_sort() {
         $columnsbyalias = $this->report->get_active_columns_by_alias();
-        $columnsortby = $columnsortbyalias = [];
+        $columnsortby = [];
 
         // First pass over sorted columns, to extract all the fullname fields from table_sql.
         $sortedcolumns = $this->get_sort_columns();
@@ -245,32 +245,30 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $column = $columnsbyalias[$alias] ?? null;
 
             // If the column is not being aggregated and defines custom sort fields, then use them.
-            if ($column && !$column->get_aggregation() &&
-                    ($sortfields = $column->get_sort_fields())) {
-
+            if ($column && !$column->get_aggregation() && ($sortfields = $column->get_sort_fields())) {
                 foreach ($sortfields as $sortfield) {
-                    $columnsortby[$sortfield] = $order;
+                    if (!array_key_exists($sortfield, $columnsortby)) {
+                        $columnsortby[$sortfield] = $order;
+                    }
+                }
+            } else if (array_key_exists($alias, $sortedcolumnsfullname)) {
+                // Ensure that magic fullname sorted columns refer to correct alias.
+                foreach ($columnsbyalias as $column) {
+                    $sortfieldalias = array_filter(
+                        $column->get_sort_fields(),
+                        fn(string $key) => preg_match("/^c[\d]+_{$alias}$/", $key),
+                    );
+                    if (count($sortfieldalias) > 0) {
+                        $columnsortby[reset($sortfieldalias)] = $order;
+                        break;
+                    }
                 }
             } else {
                 $columnsortby[$alias] = $order;
             }
         }
 
-        // Now ensure that any fullname sorted columns have duplicated aliases removed.
-        foreach ($columnsortby as $sortfield => $dir) {
-            if (array_key_exists($sortfield, $sortedcolumnsfullname)) {
-                $sortfieldalias = array_filter(
-                    $columnsortby,
-                    fn(string $key) => preg_match("/^c[\d]+_{$sortfield}$/", $key),
-                    ARRAY_FILTER_USE_KEY,
-                );
-                $columnsortbyalias[array_key_first($sortfieldalias)] = $dir;
-            } else if (!array_key_exists($sortfield, $columnsortbyalias)) {
-                $columnsortbyalias[$sortfield] = $dir;
-            }
-        }
-
-        return static::construct_order_by($columnsortbyalias);
+        return static::construct_order_by($columnsortby);
     }
 
     /**
