@@ -39,6 +39,10 @@ define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
 define('ABORT_AFTER_CONFIG', true);
 
+// It makes no sense to use BEHAT_CLI for this script (the Behat launch scripts expect to start
+// from the normal environment), so in case user has set tne environment variable, disable it.
+putenv('BEHAT_CLI=0');
+
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 
 // CLI options.
