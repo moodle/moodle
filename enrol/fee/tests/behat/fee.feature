@@ -49,3 +49,23 @@ Feature: Signing up for a course with a fee enrolment method
     Then I should see "This course requires a payment for entry."
     And I should see "123.45"
     And I should see "Log in to the site"
+
+  @javascript
+  Scenario: Setting a custom instance name for the fee enrolment method
+    And I log in as "manager1"
+    And I am on the "Course 1" "enrolment methods" page
+    And I click on "Edit" "link" in the "Enrolment on payment" "table_row"
+    And I set the following fields to these values:
+      | Custom instance name | Lifetime access |
+      | Instance description | Only for teachers  |
+    And I press "Save changes"
+    And I should see "Lifetime access"
+    And I should see "Only for teachers"
+    And I should not see "Enrolment on payment" in the "Lifetime access" "table_row"
+    And I log out
+    When I log in as "student1"
+    And I am on course index
+    And I follow "Course 1"
+    Then I should not see "This course requires a payment for entry."
+    Then I should see "Lifetime access"
+    Then I should not see "Only for teachers"

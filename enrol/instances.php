@@ -217,7 +217,7 @@ foreach ($instances as $instance) {
     }
     $plugin = $plugins[$instance->enrol];
 
-    $displayname = $plugin->get_instance_name($instance);
+    $displayname = $plugin->get_instance_name_for_management_page($instance);
     if (!enrol_is_enabled($instance->enrol) or $instance->status != ENROL_INSTANCE_ENABLED) {
         $displayname = html_writer::tag('span', $displayname, array('class'=>'dimmed_text'));
     }

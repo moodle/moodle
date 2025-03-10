@@ -96,7 +96,7 @@ define('ENROL_ACTION_UNENROL', 'unenrol');
 /**
  * Returns instances of enrol plugins
  * @param bool $enabled return enabled only
- * @return array of enrol plugins name=>instance
+ * @return enrol_plugin[] array of enrol plugins name=>instance
  */
 function enrol_get_plugins($enabled) {
     global $CFG;
@@ -1895,7 +1895,7 @@ abstract class enrol_plugin {
     /**
      * Returns localised name of enrol instance
      *
-     * @param object $instance (null is accepted too)
+     * @param stdClass|null $instance (null is accepted too)
      * @return string
      */
     public function get_instance_name($instance) {
@@ -1906,6 +1906,18 @@ abstract class enrol_plugin {
             $context = context_course::instance($instance->courseid);
             return format_string($instance->name, true, array('context'=>$context));
         }
+    }
+
+    /**
+     * How this enrolment method should be displayed on the "Enrolment methods" page
+     *
+     * Some plugins may choose to add more information, for example, user role, dates, etc.
+     *
+     * @param stdClass $instance
+     * @return string
+     */
+    public function get_instance_name_for_management_page(stdClass $instance): string {
+        return (string)$this->get_instance_name($instance);
     }
 
     /**
