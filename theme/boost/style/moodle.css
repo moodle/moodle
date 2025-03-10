@@ -28632,16 +28632,6 @@ span.editinstructions .alert-link {
   border-radius: 0.5rem;
 }
 
-.subcategories .coursebox > .info > .coursename a,
-#frontpage-category-names .coursebox > .info > .coursename a,
-#frontpage-category-combo .coursebox > .info > .coursename a {
-  display: block;
-  background-image: url([[pix:moodle|i/course]]);
-  background-size: 16px 16px;
-  background-repeat: no-repeat;
-  padding-left: 21px;
-}
-
 .coursebox > .info > .coursename {
   font-size: 0.9375rem;
   font-weight: normal;
