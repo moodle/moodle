@@ -55,23 +55,34 @@
 
 /* Override the columns width to leave more room for the labels. */
 .path-backup .mform {
-    .root_setting,
-    .grouped_settings {
+    fieldset {
+        padding: map-get($spacers, 3) 0;
+    }
+    .grouped_settings.activity_level {
         /* Striped rows like a table */
         &:nth-of-type(odd) {
-            background-color: $table-accent-bg;
+            background-color: $table-striped-bg;
         }
         &:nth-of-type(even) {
-            background-color: $card-bg;
+            background-color: $table-accent-bg;
         }
-        .fitem {
-            /* These checkboxes with no label on the left. */
-            .col-md-3.checkbox {
-                width: 0%;
-            }
-            .col-md-9.checkbox {
-                width: 100%;
-                left: 0;
+    }
+    .fcontainer {
+        .grouped_settings,
+        .root_setting {
+            .fitem {
+                margin: map-get($spacers, 1) 0 !important; /* stylelint-disable declaration-no-important */
+                .col-form-label {
+                    padding-top: 0;
+                }
+                /* These checkboxes with no label on the left. */
+                .col-md-3.checkbox {
+                    width: 0%;
+                }
+                .col-md-9.checkbox {
+                    width: 100%;
+                    left: 0;
+                }
             }
         }
     }

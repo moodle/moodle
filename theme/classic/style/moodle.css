@@ -36888,28 +36888,33 @@ img.userpicture {
 }
 
 /* Override the columns width to leave more room for the labels. */
-.path-backup .mform .root_setting,
-.path-backup .mform .grouped_settings {
+.path-backup .mform fieldset {
+  padding: 1rem 0;
+}
+.path-backup .mform .grouped_settings.activity_level {
   /* Striped rows like a table */
 }
-.path-backup .mform .root_setting:nth-of-type(odd),
-.path-backup .mform .grouped_settings:nth-of-type(odd) {
+.path-backup .mform .grouped_settings.activity_level:nth-of-type(odd) {
+  background-color: rgba(var(--bs-emphasis-color-rgb), 0.05);
+}
+.path-backup .mform .grouped_settings.activity_level:nth-of-type(even) {
   background-color: transparent;
 }
-.path-backup .mform .root_setting:nth-of-type(even),
-.path-backup .mform .grouped_settings:nth-of-type(even) {
-  background-color: var(--bs-body-bg);
-}
-.path-backup .mform .root_setting .fitem,
-.path-backup .mform .grouped_settings .fitem {
+.path-backup .mform .fcontainer .grouped_settings .fitem,
+.path-backup .mform .fcontainer .root_setting .fitem {
+  margin: 0.25rem 0 !important; /* stylelint-disable declaration-no-important */
   /* These checkboxes with no label on the left. */
 }
-.path-backup .mform .root_setting .fitem .col-md-3.checkbox,
-.path-backup .mform .grouped_settings .fitem .col-md-3.checkbox {
+.path-backup .mform .fcontainer .grouped_settings .fitem .col-form-label,
+.path-backup .mform .fcontainer .root_setting .fitem .col-form-label {
+  padding-top: 0;
+}
+.path-backup .mform .fcontainer .grouped_settings .fitem .col-md-3.checkbox,
+.path-backup .mform .fcontainer .root_setting .fitem .col-md-3.checkbox {
   width: 0%;
 }
-.path-backup .mform .root_setting .fitem .col-md-9.checkbox,
-.path-backup .mform .grouped_settings .fitem .col-md-9.checkbox {
+.path-backup .mform .fcontainer .grouped_settings .fitem .col-md-9.checkbox,
+.path-backup .mform .fcontainer .root_setting .fitem .col-md-9.checkbox {
   width: 100%;
   left: 0;
 }
