@@ -402,6 +402,8 @@ class manager {
             }
         }
 
+        $rs->close();
+
         if (count($batchinserts) > 0) {
             $DB->insert_records(self::DB_PROCESS, $batchinserts);
         }
