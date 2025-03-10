@@ -1576,11 +1576,8 @@ SELECT /*+ RULE */ distinct b.column_name
 	 */
 	function qStr($s, $magic_quotes=false)
 	{
-		if ($this->noNullStrings && strlen($s) == 0) {
-			$s = ' ';
-		}
-		else if (strlen($s) == 0) {
-			return "''";
+		if (strlen((string)$s) == 0) {
+			return $this->noNullStrings ? "' '" : "''";
 		}
 		if ($this->replaceQuote[0] == '\\'){
 			$s = str_replace('\\','\\\\',$s);

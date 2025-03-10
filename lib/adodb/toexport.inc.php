@@ -107,9 +107,9 @@ function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = 
 		if ($hasNumIndex) {
 			for ($j=0; $j < $max; $j++) {
 				$v = $rs->fields[$j];
-				if (!is_object($v)) $v = trim($v);
+				if (!is_object($v)) $v = trim((string)$v);
 				else $v = 'Object';
-				if ($escquote) $v = str_replace($quote,$escquotequote,$v);
+				if ($escquote) $v = str_replace($quote,$escquotequote,(string)$v);
 				$v = strip_tags(str_replace("\n", $replaceNewLine, str_replace("\r\n",$replaceNewLine,str_replace($sep,$sepreplace,$v))));
 
 				if (strpos($v,$sep) !== false || strpos($v,$quote) !== false) $elements[] = "$quote$v$quote";
@@ -117,8 +117,8 @@ function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = 
 			}
 		} else { // ASSOCIATIVE ARRAY
 			foreach($rs->fields as $v) {
-				if ($escquote) $v = str_replace($quote,$escquotequote,trim($v));
-				$v = strip_tags(str_replace("\n", $replaceNewLine, str_replace("\r\n",$replaceNewLine,str_replace($sep,$sepreplace,$v))));
+				if ($escquote) $v = str_replace($quote,$escquotequote,trim((string)$v));
+				$v = strip_tags(str_replace("\n", $replaceNewLine, str_replace("\r\n",$replaceNewLine,str_replace($sep,$sepreplace,(string)$v))));
 
 				if (strpos($v,$sep) !== false || strpos($v,$quote) !== false) $elements[] = "$quote$v$quote";
 				else $elements[] = $v;

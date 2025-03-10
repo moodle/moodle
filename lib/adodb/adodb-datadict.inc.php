@@ -510,10 +510,12 @@ class ADODB_DataDict {
 	 *
 	 * As some DBMs can't do that on their own, you need to supply the complete definition of the new table,
 	 * to allow recreating the table and copying the content over to the new table
-	 * @param string $tabname table-name
-	 * @param string $flds column-name and type for the changed column
-	 * @param string $tableflds='' complete definition of the new table, eg. for postgres, default ''
+	 *
+	 * @param string       $tabname table-name
+	 * @param array|string $flds column-name and type for the changed column
+	 * @param string       $tableflds='' complete definition of the new table, eg. for postgres, default ''
 	 * @param array|string $tableoptions='' options for the new table see createTableSQL, default ''
+	 *
 	 * @return array with SQL strings
 	 */
 	function alterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
@@ -1027,7 +1029,6 @@ class ADODB_DataDict {
 	function changeTableSQL($tablename, $flds, $tableoptions = false, $dropOldFlds=false)
 	{
 	global $ADODB_FETCH_MODE;
-
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		if ($this->connection->fetchMode !== false) $savem = $this->connection->setFetchMode(false);
@@ -1045,12 +1046,15 @@ class ADODB_DataDict {
 			return $this->createTableSQL($tablename, $flds, $tableoptions);
 		}
 
+		$sql = [];
 		if (is_array($flds)) {
 		// Cycle through the update fields, comparing
 		// existing fields to fields to update.
 		// if the Metatype and size is exactly the
 		// same, ignore - by Mark Newham
 			$holdflds = array();
+			$fields_to_add = [];
+			$fields_to_alter = [];
 			foreach($flds as $k=>$v) {
 				if ( isset($cols[$k]) && is_object($cols[$k]) ) {
 					// If already not allowing nulls, then don't change
@@ -1074,15 +1078,20 @@ class ADODB_DataDict {
 					if ($mt == 'X') $ml = $v['SIZE'];
 					if (($mt != $v['TYPE']) || ($ml != $fsize || $sc != $fprec) || (isset($v['AUTOINCREMENT']) && $v['AUTOINCREMENT'] != $obj->auto_increment)) {
 						$holdflds[$k] = $v;
+						$fields_to_alter[$k] = $v;
 					}
 				} else {
+					$fields_to_add[$k] = $v;
 					$holdflds[$k] = $v;
 				}
 			}
 			$flds = $holdflds;
-		}
 
-		$sql = $this->alterColumnSql($tablename, $flds);
+			$sql = array_merge(
+				$this->addColumnSQL($tablename, $fields_to_add),
+				$this->alterColumnSql($tablename, $fields_to_alter)
+			);
+		}
 
 		if ($dropOldFlds) {
 			foreach ($cols as $id => $v) {

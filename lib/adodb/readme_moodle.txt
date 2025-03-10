@@ -14,11 +14,8 @@ Removed:
  * lang/* everything but adodb-en.inc.php (originally because they were not utf-8, now because of not used)
  * nbproject/ (if present)
  * pear/
- * replicate/ (if present)
- * scripts/ (if present)
  * server.php (if present)
  * session/
- * tests/ (if present)
 
 Added:
  * index.html - prevent directory browsing on misconfigured servers
