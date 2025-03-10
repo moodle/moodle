@@ -3,6 +3,10 @@
 	url = https://github.com/Syxton/moodle-block_massaction
 	branch = master
 	tag = 7.4.1
+[submodule "enrol/ucsfsis"]
+	path = enrol/ucsfsis
+	url = https://github.com/ucsf-education/moodle-enrol-ucsfsis
+	branch = main
 [submodule "mod/oublog"]
 	path = mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
