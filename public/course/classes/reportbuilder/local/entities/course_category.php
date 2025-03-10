@@ -26,9 +26,8 @@ use stdClass;
 use theme_config;
 use core_course_category;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{category, select, text};
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\filters\{category, number, select, text};
+use core_reportbuilder\local\report\{column, filter};
 
 /**
  * Course category entity
@@ -278,6 +277,16 @@ class course_category extends base {
                     get_list_of_themes(),
                 );
             })
+            ->add_joins($this->get_joins());
+
+        // Course count filter.
+        $filters[] = (new filter(
+            number::class,
+            'coursecount',
+            new lang_string('coursecount', 'core_course'),
+            $this->get_entity_name(),
+            "{$tablealias}.coursecount",
+        ))
             ->add_joins($this->get_joins());
 
         return $filters;
