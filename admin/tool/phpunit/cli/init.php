@@ -34,6 +34,10 @@ if (function_exists('opcache_reset')) {
 
 define('IGNORE_COMPONENT_CACHE', true);
 
+// It makes no sense to use BEHAT_CLI for this script (you cannot initialise PHPunit starting from
+// the Behat environment), so in case user has set tne environment variable, disable it.
+putenv('BEHAT_CLI=0');
+
 require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 require_once(__DIR__.'/../../../../lib/testing/lib.php');
