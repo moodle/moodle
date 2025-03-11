@@ -16,21 +16,23 @@
 
 namespace aiprovider_azureai;
 
+use core_ai\manager;
+
 /**
  * Test Azure AI provider methods.
  *
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\provider\azureai
+ * @covers     \aiprovider_azureai\provider
  */
 final class provider_test extends \advanced_testcase {
 
-    /** @var \core_ai\manager */
-    private $manager;
+    /** @var manager $manager */
+    private manager $manager;
 
-    /** @var \core_ai\provider */
-    private $provider;
+    /** @var provider $provider */
+    private provider $provider;
 
     /**
      * Overriding setUp() function to always reset after tests.
@@ -83,8 +85,10 @@ final class provider_test extends \advanced_testcase {
             'enableglobalratelimit' => true,
             'globalratelimit' => 5,
         ];
+
+        /** @var provider $provider */
         $provider = $this->manager->create_provider_instance(
-            classname: '\aiprovider_openai\provider',
+            classname: provider::class,
             name: 'dummy',
             config: $config,
         );
