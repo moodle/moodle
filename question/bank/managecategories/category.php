@@ -100,7 +100,6 @@ $PAGE->activityheader->disable();
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-$categoriesrenderer = $PAGE->get_renderer('qbank_managecategories');
 echo $OUTPUT->header();
 $qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
 echo $renderer->render($qbankaction);
