@@ -66,7 +66,6 @@ class ai_provider_form extends moodleform {
             $providerplugins,
             ['data-aiproviderchooser-field' => 'selector'],
         );
-        $mform->setDefault('aiprovider', 'aiprovider_openai');
         if (isset($providerconfigs['id'])) {
             $mform->hardFreeze('aiprovider');
         }
@@ -91,9 +90,10 @@ class ai_provider_form extends moodleform {
         );
 
         // Dispatch a hook for plugins to add their fields.
+        $providerplugindefault = array_key_first($providerplugins);
         $hook = new \core_ai\hook\after_ai_provider_form_hook(
             mform: $mform,
-            plugin: $providerconfigs['aiprovider'] ?? 'aiprovider_openai',
+            plugin: $providerconfigs['aiprovider'] ?? $providerplugindefault,
         );
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
