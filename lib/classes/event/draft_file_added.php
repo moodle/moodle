@@ -29,6 +29,7 @@ namespace core\event;
  *      - string filesize: The file size.
  *      - string filepath: The filepath.
  *      - string contenthash: The file contenthash.
+ *      - float avscantime: (optional) if present, the time taken to do any AV scanning, in seconds.
  * }
  *
  * @package   core
@@ -77,5 +78,13 @@ class draft_file_added extends base {
         if (!isset($this->other['contenthash'])) {
             throw new \coding_exception('The \'contenthash\' value must be set in other.');
         }
+
+        if (isset($this->data['other']['avscantime'])) {
+            if (!is_numeric($this->data['other']['avscantime'])) {
+                throw new \coding_exception('If given, \'avscantime\' in other must be a number.');
+            }
+            $this->data['other']['avscantime'] = (float) $this->data['other']['avscantime'];
+        }
+
     }
 }

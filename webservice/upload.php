@@ -98,9 +98,11 @@ foreach ($_FILES as $fieldname => $uploadedfile) {
     }
 
     // Scan for viruses.
+    $avscanstarttime = microtime(true);
     \core\antivirus\manager::scan_file($_FILES[$fieldname]['tmp_name'], $_FILES[$fieldname]['name'], true);
 
     $file = new stdClass();
+    $file->avscantime = microtime(true) - $avscanstarttime;
     $file->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
     // Check system maxbytes setting.
     if (($_FILES[$fieldname]['size'] > get_max_upload_file_size($CFG->maxbytes))) {
@@ -173,6 +175,7 @@ foreach ($files as $file) {
                         'filesize' => $filerecord->filesize,
                         'filepath' => $filerecord->filepath,
                         'contenthash' => $storedfile->get_contenthash(),
+                        'avscantime' => $file->avscantime,
                 ],
         ]);
         $logevent->trigger();
