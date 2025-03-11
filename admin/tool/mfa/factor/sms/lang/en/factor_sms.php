@@ -53,7 +53,7 @@ $string['settings:duration_help'] = 'The period of time that the code is valid.'
 $string['settings:gateway'] = 'SMS gateway';
 $string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
 $string['settings:heading'] = 'Users will receive a 6-digit verification code via SMS, which they must enter to complete the login process. Users will need to register their mobile phone number first.';
-$string['settings:setupdesc'] = '<br><br>To use SMS as an authentication factor, you first need to <a href="{$a}">set up an SMS gateway</a>.';
+$string['settings:setupdesc'] = 'To use SMS as an authentication factor, you first need to <a href="{$a}">set up an SMS gateway</a>.';
 $string['settings:shortdescription'] = 'Require users to enter a code received via SMS during login.';
 $string['settings:smsgateway'] = 'SMS gateway';
 $string['settings:smsgateway_help'] = 'Select a gateway from the list, or <a href="{$a}">create a new gateway</a>.';

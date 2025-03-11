@@ -106,16 +106,10 @@ if ($ADMIN->fulltree) {
         );
         $settings->hide_if('factor_sms/duration', 'factor_sms/enabled');
     } else {
-        $settings->add(
-            new admin_setting_description(
-                'factor_sms/setupdesc',
-                '',
-                new lang_string(
-                    'settings:setupdesc',
-                    'factor_sms',
-                    $smsconfigureurl,
-                ),
-            ),
+        $notify = new \core\output\notification(
+            get_string('settings:setupdesc', 'factor_sms', $smsconfigureurl),
+            \core\output\notification::NOTIFY_WARNING
         );
+        $settings->add(new admin_setting_heading('factor_sms/setupdesc', '', $OUTPUT->render($notify)));
     }
 }
