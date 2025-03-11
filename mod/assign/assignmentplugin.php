@@ -108,6 +108,20 @@ abstract class assign_plugin {
     }
 
     /**
+     * This method is called when the mod_assign_mod_form is submitted.
+     *
+     * It is an opportunity to validate the settings form fields added by {@see get_settings()}.
+     *
+     * @param array $data as passed to mod_assign_mod_form::validation().
+     * @param array $files as passed to mod_assign_mod_form::validation().
+     * @return array and validation errors that should be displayed.
+     *      This is array_merged with any other validation errors from the form.
+     */
+    public function settings_validation(array $data, array $files): array {
+        return [];
+    }
+
+    /**
      * The assignment subtype is responsible for saving it's own settings as the database table for the
      * standard type cannot be modified.
      *

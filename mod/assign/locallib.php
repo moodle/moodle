@@ -150,10 +150,10 @@ class assign {
      */
     private $cache;
 
-    /** @var array list of the installed submission plugins */
+    /** @var assign_submission_plugin[] list of the installed submission plugins */
     private $submissionplugins;
 
-    /** @var array list of the installed feedback plugins */
+    /** @var assign_feedback_plugin[] list of the installed feedback plugins */
     private $feedbackplugins;
 
     /** @var string action to be used to return to this page
@@ -1744,6 +1744,31 @@ class assign {
                 $plugin->data_preprocessing($defaultvalues);
             }
         }
+    }
+
+    /**
+     * Allow each plugin to validiate the data from the assignments settings form.
+     *
+     * @param array $data as passed to mod_assign_mod_form::validation().
+     * @param array $files as passed to mod_assign_mod_form::validation().
+     * @return array and validation errors that should be displayed.
+     */
+    public function plugin_settings_validation(array $data, array $files): array {
+        $errors = [];
+
+        foreach ($this->submissionplugins as $plugin) {
+            if ($plugin->is_visible()) {
+                $errors = array_merge($errors, $plugin->settings_validation($data, $files));
+            }
+        }
+
+        foreach ($this->feedbackplugins as $plugin) {
+            if ($plugin->is_visible()) {
+                $errors = array_merge($errors, $plugin->settings_validation($data, $files));
+            }
+        }
+
+        return $errors;
     }
 
     /**
