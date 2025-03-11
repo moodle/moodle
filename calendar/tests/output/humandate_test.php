@@ -29,6 +29,16 @@ use DateTime;
  */
 final class humandate_test extends \advanced_testcase {
 
+    /**
+     * Initialize.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+
+        // Mock the clock.
+        $this->setTimezone('Australia/Perth');
+    }
+
      /**
       * Test export_for_template() method.
       *
@@ -52,7 +62,8 @@ final class humandate_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $clock = $this->mock_clock_with_frozen();
+        // 26 February 2025 15:59:59 (GMT).
+        $clock = $this->mock_clock_with_frozen(1740585599);
         $renderer = $PAGE->get_renderer('core');
 
         $timestamp = $clock->time() + $addseconds;
@@ -81,12 +92,12 @@ final class humandate_test extends \advanced_testcase {
                 'addseconds' => 0,
                 'userelatives' => true,
                 'date' => 'Today',
-                'ispast' => true,
+                'ispast' => false,
                 'needtitle' => true,
                 'isnear' => false,
             ],
             'Tomorrow with relatives' => [
-                'addseconds' => 87000,
+                'addseconds' => 86400,
                 'userelatives' => true,
                 'date' => 'Tomorrow',
                 'ispast' => false,
@@ -94,7 +105,7 @@ final class humandate_test extends \advanced_testcase {
                 'isnear' => false,
             ],
             'Yesterday with relatives' => [
-                'addseconds' => -87000,
+                'addseconds' => -86400,
                 'userelatives' => true,
                 'date' => 'Yesterday',
                 'ispast' => true,
@@ -104,7 +115,7 @@ final class humandate_test extends \advanced_testcase {
             'One hour future with relatives' => [
                 'addseconds' => 3600,
                 'userelatives' => true,
-                'date' => null,
+                'date' => 'Tomorrow',
                 'ispast' => false,
                 'needtitle' => true,
                 'isnear' => true,
@@ -112,7 +123,7 @@ final class humandate_test extends \advanced_testcase {
             'One hour past with relatives' => [
                 'addseconds' => -3600,
                 'userelatives' => true,
-                'date' => null,
+                'date' => 'Today',
                 'ispast' => true,
                 'needtitle' => true,
                 'isnear' => false,
@@ -121,12 +132,12 @@ final class humandate_test extends \advanced_testcase {
                 'addseconds' => 0,
                 'userelatives' => false,
                 'date' => 'Today',
-                'ispast' => true,
+                'ispast' => false,
                 'needtitle' => false,
                 'isnear' => false,
             ],
             'Tomorrow without relatives' => [
-                'addseconds' => 87000,
+                'addseconds' => 86400,
                 'userelatives' => false,
                 'date' => 'Tomorrow',
                 'ispast' => false,
@@ -134,7 +145,7 @@ final class humandate_test extends \advanced_testcase {
                 'isnear' => false,
             ],
             'Yesterday without relatives' => [
-                'addseconds' => -87000,
+                'addseconds' => -86400,
                 'userelatives' => false,
                 'date' => 'Yesterday',
                 'ispast' => true,
@@ -205,6 +216,10 @@ final class humandate_test extends \advanced_testcase {
             } else {
                 $this->assertStringNotContainsString($expected['date'], $actual['date']);
             }
+        } else {
+            $this->assertStringNotContainsString('Today', $actual['date']);
+            $this->assertStringNotContainsString('Yesterday', $actual['date']);
+            $this->assertStringNotContainsString('Tomorrow', $actual['date']);
         }
     }
 }
