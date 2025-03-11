@@ -37260,80 +37260,83 @@ p.arrow_button {
 /**
  * Icon buttons.
  */
-.btn.btn-icon {
-  height: 36px;
-  width: 36px;
-  font-size: 16px;
-  line-height: 16px;
-  padding: 0;
-  border-radius: 50%;
-  flex-shrink: 0;
+.btn-icon {
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-border-radius: var(--bs-border-radius);
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  --bs-btn-font-size: 16px;
+  height: calc(16px + 1rem);
+  width: calc(16px + 1rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn.btn-icon:hover, .btn.btn-icon:focus {
-  background-color: #e9ecef;
-}
-.btn.btn-icon:focus-visible, .btn.btn-icon.focus {
+.btn-icon:focus-visible, .btn-icon.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
-.btn.btn-icon.icon-size-0 {
-  height: 20px !important; /* stylelint-disable-line declaration-no-important */
-  width: 20px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 0 !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 0 !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon .icon {
+  margin: 0;
 }
-.btn.btn-icon.icon-size-1 {
-  height: 24px !important; /* stylelint-disable-line declaration-no-important */
-  width: 25px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 4px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 4px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-0 {
+  height: calc(0 + 1rem);
+  width: calc(0 + 1rem);
+  --bs-btn-font-size: 0;
+  --bs-btn-line-height: 0;
 }
-.btn.btn-icon.icon-size-2 {
-  height: 28px !important; /* stylelint-disable-line declaration-no-important */
-  width: 30px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 8px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 8px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-1 {
+  height: calc(4px + 1rem);
+  width: calc(4px + 1rem);
+  --bs-btn-font-size: 4px;
+  --bs-btn-line-height: 4px;
 }
-.btn.btn-icon.icon-size-3 {
-  height: 36px !important; /* stylelint-disable-line declaration-no-important */
-  width: 40px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 16px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 16px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-2 {
+  height: calc(8px + 1rem);
+  width: calc(8px + 1rem);
+  --bs-btn-font-size: 8px;
+  --bs-btn-line-height: 8px;
 }
-.btn.btn-icon.icon-size-4 {
-  height: 44px !important; /* stylelint-disable-line declaration-no-important */
-  width: 50px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 24px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 24px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-3 {
+  height: calc(16px + 1rem);
+  width: calc(16px + 1rem);
+  --bs-btn-font-size: 16px;
+  --bs-btn-line-height: 16px;
 }
-.btn.btn-icon.icon-size-5 {
-  height: 52px !important; /* stylelint-disable-line declaration-no-important */
-  width: 60px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 32px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 32px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-4 {
+  height: calc(24px + 1rem);
+  width: calc(24px + 1rem);
+  --bs-btn-font-size: 24px;
+  --bs-btn-line-height: 24px;
 }
-.btn.btn-icon.icon-size-6 {
-  height: 60px !important; /* stylelint-disable-line declaration-no-important */
-  width: 70px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 40px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 40px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-5 {
+  height: calc(32px + 1rem);
+  width: calc(32px + 1rem);
+  --bs-btn-font-size: 32px;
+  --bs-btn-line-height: 32px;
 }
-.btn.btn-icon.icon-size-7 {
-  height: 68px !important; /* stylelint-disable-line declaration-no-important */
-  width: 80px !important; /* stylelint-disable-line declaration-no-important */
-  font-size: 48px !important; /* stylelint-disable-line declaration-no-important */
-  line-height: 48px !important; /* stylelint-disable-line declaration-no-important */
+.btn-icon.icon-size-6 {
+  height: calc(40px + 1rem);
+  width: calc(40px + 1rem);
+  --bs-btn-font-size: 40px;
+  --bs-btn-line-height: 40px;
+}
+.btn-icon.icon-size-7 {
+  height: calc(48px + 1rem);
+  width: calc(48px + 1rem);
+  --bs-btn-font-size: 48px;
+  --bs-btn-line-height: 48px;
 }
 
 /* Specific styles for the collapse/expand buttons. */
-.btn.btn-icon.icons-collapse-expand {
+.btn-icon.icons-collapse-expand {
   color: #0f6cbf;
   background-color: #e7f0f9;
 }
-.btn.btn-icon.icons-collapse-expand:hover {
+.btn-icon.icons-collapse-expand:hover {
   outline: 2px solid #0f6cbf;
 }
-.btn.btn-icon.icons-collapse-expand:focus-visible, .btn.btn-icon.icons-collapse-expand.focus {
+.btn-icon.icons-collapse-expand:focus-visible, .btn-icon.icons-collapse-expand.focus {
   outline: 0.25rem solid #3481c1;
   box-shadow: inset 0 0 0 2px #fff;
 }
