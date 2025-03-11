@@ -4,6 +4,9 @@
 
 ### Removed
 
+- Removed unused grade_edit_tree_column_select class
+
+  For more information see [MDL-77668](https://tracker.moodle.org/browse/MDL-77668)
 - Final deprecation of
     grade_structure::get_element_type_string(),
     grade_structure::get_element_header(),

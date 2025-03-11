@@ -8,4 +8,3 @@
   deprecated and will now throw an exception if called.
 
   For more information see [MDL-81328](https://tracker.moodle.org/browse/MDL-81328)
-

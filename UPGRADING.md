@@ -390,6 +390,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_enrol
 
+#### Added
+
+- New method enrol_plugin::get_instance_name_for_management_page() can be used to display additional details next to the instance name.
+
+  For more information see [MDL-84139](https://tracker.moodle.org/browse/MDL-84139)
+
 #### Changed
 
 - The `after_user_enrolled` hook now contains a `roleid` property to allow for listeners to determine which role was assigned during user enrolment (if any)
@@ -416,6 +422,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Removed
 
+- Removed unused grade_edit_tree_column_select class
+
+  For more information see [MDL-77668](https://tracker.moodle.org/browse/MDL-77668)
 - Final deprecation of
     grade_structure::get_element_type_string(),
     grade_structure::get_element_header(),
@@ -507,6 +516,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Columns added to system reports can render help icons in table headers via `[set|get]_help_icon` column instance methods
 
   For more information see [MDL-84016](https://tracker.moodle.org/browse/MDL-84016)
+- The `groupconcat[distinct]` aggregation types support optional `'separator'` value to specify the text to display between aggregated items
+
+  For more information see [MDL-84537](https://tracker.moodle.org/browse/MDL-84537)
 
 #### Changed
 
@@ -525,6 +537,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `select` filter type is now stricter in it's filtering, in that it will now discard values that aren't present in available filter options
 
   For more information see [MDL-84213](https://tracker.moodle.org/browse/MDL-84213)
+- Aggregation types can access passed options set via the base class constructor in the `$this->options[]` class property. As such, their `format_value` method is no longer static and is always called from an instantiated class instance
+
+  For more information see [MDL-84537](https://tracker.moodle.org/browse/MDL-84537)
+- New `$options` argument added to the `column::set_aggregation` method for system reports, to set aggregation type-specific options
+
+  Report entities can call new `column::set_aggregation_options` to achieve the same
+
+  For more information see [MDL-84537](https://tracker.moodle.org/browse/MDL-84537)
 
 #### Deprecated
 
@@ -760,6 +780,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The external function get_user_attempts now returns the total number of attempts.
 
   For more information see [MDL-82775](https://tracker.moodle.org/browse/MDL-82775)
+
+### mod_lesson
+
+#### Removed
+
+- Remove unused /mod/lesson/tabs.php
+
+  For more information see [MDL-82937](https://tracker.moodle.org/browse/MDL-82937)
 
 ### mod_quiz
 

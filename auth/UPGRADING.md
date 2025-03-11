@@ -10,4 +10,3 @@
 - Removed auth_mnet plugin from core
 
   For more information see [MDL-84307](https://tracker.moodle.org/browse/MDL-84307)
-
