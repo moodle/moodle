@@ -1,4 +1,4 @@
-@core @core_tag
+@core @core_tag @core_reportbuilder
 Feature: Users can edit tags to add description or rename
   In order to use tags
   As a manager
@@ -8,9 +8,10 @@ Feature: Users can edit tags to add description or rename
     Given the following "users" exist:
       | username | firstname | lastname | email                | interests         |
       | manager1 | Manager   | 1        | manager1@example.com |                   |
-      | user1    | User      | 1        | user1@example.com    | Cat,Dog,Turtle    |
+      | user1    | User      | One      | user1@example.com    | Cat,Dog,Turtle    |
+      | user2    | User      | Two      | user2@example.com    |                   |
       | editor1  | Editor    | 1        | editor1@example.com  |                   |
-    Given the following "roles" exist:
+    And the following "roles" exist:
       | name       | shortname |
       | Tag editor | tageditor |
     And the following "system role assigns" exist:
@@ -37,7 +38,7 @@ Feature: Users can edit tags to add description or rename
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Turtle"
-    And I follow "User 1"
+    And I follow "User One"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I should not see "Tag name"
@@ -64,7 +65,7 @@ Feature: Users can edit tags to add description or rename
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Turtle"
-    And I follow "User 1"
+    And I follow "User One"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I set the following fields to these values:
@@ -98,7 +99,7 @@ Feature: Users can edit tags to add description or rename
     And I add the "Navigation" block if not present
     And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Turtle"
-    And I follow "User 1"
+    And I follow "User One"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I set the following fields to these values:
@@ -160,7 +161,7 @@ Feature: Users can edit tags to add description or rename
     And I follow "Default collection"
     # Renaming tag to a valid name
     And I set the field "Edit tag name" in the "Cat" "table_row" to "Kitten"
-    Then the following should not exist in the "reportbuilder-table" table:
+    Then the following should not exist in the "Tags" table:
       | First name | Tag name |
       | Admin User | Cat      |
     And I reload the page
@@ -223,6 +224,27 @@ Feature: Users can edit tags to add description or rename
     And I should not see "Neverusedtag"
 
   @javascript
+  Scenario: Sorting tags
+    When I log in as "user2"
+    And I open my profile in edit mode
+    And I expand all fieldsets
+    And I set the field "List of interests" to "Goat"
+    And I press "Update profile"
+    And I log out
+    And I log in as "manager1"
+    And I navigate to "Appearance > Manage tags" in site administration
+    And I follow "Default collection"
+    # Sort by users name.
+    And I click on "Last name" "link" in the "Tags" "table"
+    Then "Admin User" "table_row" should appear before "User Two" "table_row"
+    And I click on "Last name" "link" in the "Tags" "table"
+    And "User Two" "table_row" should appear before "Admin User" "table_row"
+    And I click on "First name" "link" in the "Tags" "table"
+    And "Admin User" "table_row" should appear before "User Two" "table_row"
+    And I click on "First name" "link" in the "Tags" "table"
+    And "User Two" "table_row" should appear before "Admin User" "table_row"
+
+  @javascript
   Scenario: Filtering tags
     When I log in as "manager1"
     And I navigate to "Appearance > Manage tags" in site administration
@@ -232,7 +254,11 @@ Feature: Users can edit tags to add description or rename
       | Tag name operator | Is equal to |
       | Tag name value    | Cat,Dog     |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Cat" in the "reportbuilder-table" "table"
-    And I should see "Dog" in the "reportbuilder-table" "table"
-    And I should not see "Turtle" in the "reportbuilder-table" "table"
-    And I should not see "Neverusedtag" in the "reportbuilder-table" "table"
+    Then the following should exist in the "Tags" table:
+      | Tag name |
+      | Cat      |
+      | Dog      |
+    And the following should not exist in the "Tags" table:
+      | Tag name     |
+      | Turtle       |
+      | Neverusedtag |
