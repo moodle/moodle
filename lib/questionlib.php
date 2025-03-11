@@ -233,8 +233,9 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
  * NOTE: this function is called from lib/db/upgrade.php
  *
  * @param object|core_course_category $category course category object
+ * @param bool $coursedeletion Is the course this category is under being deleted? If so, move saved questions to the site course.
  */
-function question_category_delete_safe($category): void {
+function question_category_delete_safe($category, bool $coursedeletion = false): void {
     global $DB;
     $criteria = ['questioncategoryid' => $category->id];
     $context = context::instance_by_id($category->contextid, IGNORE_MISSING);
@@ -270,7 +271,7 @@ function question_category_delete_safe($category): void {
             if ($context !== false) {
                 $name = $context->get_context_name();
                 $parentcontext = $context->get_course_context(false);
-                $course = $parentcontext ? get_course($parentcontext->instanceid) : get_site();
+                $course = ($parentcontext && !$coursedeletion) ? get_course($parentcontext->instanceid) : get_site();
             }
             $qbank = core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($course, true);
             question_save_from_deletion(array_keys($questionids), $qbank->context->id, $name, $rescue);
@@ -422,9 +423,10 @@ function question_delete_question($questionid): void {
  * All question categories and their questions are deleted for this context id.
  *
  * @param int $contextid The contextid to delete question categories from
+ * @param bool $coursedeletion Are we calling this as part of deleting the course the context is under?
  * @return array only returns an empty array for backwards compatibility.
  */
-function question_delete_context($contextid): array {
+function question_delete_context($contextid, bool $coursedeletion = false): array {
     global $DB;
 
     $fields = 'id, parent, name, contextid';
@@ -432,7 +434,7 @@ function question_delete_context($contextid): array {
         // Sort categories following their tree (parent-child) relationships this will make the feedback more readable.
         $categories = sort_categories_by_tree($categories);
         foreach ($categories as $category) {
-            question_category_delete_safe($category);
+            question_category_delete_safe($category, $coursedeletion);
         }
     }
     return [];
@@ -481,11 +483,12 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
  *
  * @param object $cm the course module object representing the activity
  * @param bool $notused the argument is not used any more. Kept for backwards compatibility.
+ * @param bool $coursedeletion Are we calling this as part of deleting the course the activity belongs to?
  * @return boolean
  */
-function question_delete_activity($cm, $notused = false): bool {
+function question_delete_activity($cm, $notused = false, bool $coursedeletion = false): bool {
     $modcontext = context_module::instance($cm->id);
-    question_delete_context($modcontext->id);
+    question_delete_context($modcontext->id, $coursedeletion);
     return true;
 }
 

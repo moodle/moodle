@@ -342,27 +342,66 @@ final class questionlib_test extends \advanced_testcase {
     }
 
     /**
-     * This function tests the question_category_delete_safe function.
+     * Test parameters for calling question_category_delete_safe
+     *
+     * @return array
      */
-    public function test_question_category_delete_safe(): void {
+    public static function delete_category_parameters(): array {
+        return [
+            'Delete category' => [
+                'coursedeletion' => false,
+            ],
+            'Delete category with course' => [
+                'coursedeletion' => true,
+            ],
+        ];
+    }
+
+    /**
+     * This function tests the question_category_delete_safe function.
+     *
+     * @param bool $coursedeletion If true, simulate calling question_category_delete_safe as part of deletion of the whole course.
+     * @dataProvider delete_category_parameters
+     * @covers ::question_category_delete_safe
+     */
+    public function test_question_category_delete_safe(bool $coursedeletion): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+        [, $course, , $qcat, $questions] = $this->setup_quiz_and_questions();
 
-        question_category_delete_safe($qcat);
+        $targetcourseid = $coursedeletion ? SITEID : $course->id;
+
+        question_category_delete_safe($qcat, $coursedeletion);
 
         // Verify category deleted.
-        $criteria = array('id' => $qcat->id);
+        $criteria = ['id' => $qcat->id];
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
         $this->assert_category_contains_questions($qcat->id, 0);
 
         // Verify question not deleted.
-        $criteria = array('id' => $questions[0]->id);
-        $this->assertEquals(1, $DB->count_records('question', $criteria));
+        $criteria = ['id' => $questions[0]->id];
+        $savedquestion = $DB->get_record_sql(
+            "SELECT q.*, qbe.questioncategoryid
+               FROM {question} q
+                    JOIN {question_versions} qv ON qv.questionid = q.id
+                    JOIN {question_bank_entries} qbe ON qv.questionbankentryid = qbe.id",
+            $criteria
+        );
+        $this->assertNotEmpty($savedquestion);
+
+        // Verify question now sits in a system qbank in the target course.
+        $this->assertNotEquals($qcat->id, $savedquestion->id);
+        $newcategory = $DB->get_record('question_categories', ['id' => $savedquestion->questioncategoryid], strictness: MUST_EXIST);
+        $newcategorycontext = context::instance_by_id($newcategory->contextid);
+        $this->assertEquals(\context_module::LEVEL, $newcategorycontext->contextlevel);
+        [$newcourse, $newcm] = get_course_and_cm_from_cmid($newcategorycontext->instanceid);
+        $this->assertEquals($newcm->modname, 'qbank');
+        $this->assertEquals(question_bank_helper::TYPE_SYSTEM, $DB->get_field('qbank', 'type', ['id' => $newcm->instance]));
+        $this->assertEquals($targetcourseid, $newcourse->id);
     }
 
     /**
