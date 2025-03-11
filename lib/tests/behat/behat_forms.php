@@ -167,7 +167,7 @@ class behat_forms extends behat_base {
 
         // Different try & catch as we can have expanded fieldsets with advanced fields on them.
         try {
-
+            $this->wait_for_pending_js();
             // Expand all fields xpath.
             $showmorexpath = "//a[normalize-space(.)='" . get_string('showmore', 'form') . "']" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]";
@@ -177,22 +177,23 @@ class behat_forms extends behat_base {
                 return;
             }
 
-            if ($this->getSession()->getDriver() instanceof \DMore\ChromeDriver\ChromeDriver) {
-                // Chrome Driver produces unique xpaths for each element.
-                foreach ($showmores as $showmore) {
-                    $showmore->click();
+            $js = <<<EOF
+            require(['core/pending'], function(Pending) {
+                const query = document.evaluate("{$showmorexpath}", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                if (query.snapshotLength > 0) {
+                    const pendingPromise = new Pending('showmore:expand');
+                    for (let i = 0, length = query.snapshotLength; i < length; ++i) {
+                        query.snapshotItem(i).click();
+                        if (i === length - 1) {
+                            pendingPromise.resolve();
+                        }
+                    }
                 }
-            } else {
-                // Funny thing about this, with findAll() we specify a pattern and each element matching the pattern
-                // is added to the array with of xpaths with a [0], [1]... sufix, but when we click on an element it
-                // does not matches the specified xpath anymore (now is a "Show less..." link) so [1] becomes [0],
-                // that's why we always click on the first XPath match, will be always the next one.
-                $iterations = count($showmores);
-                for ($i = 0; $i < $iterations; $i++) {
-                    $showmores[0]->click();
-                }
-            }
+            });
+            EOF;
 
+            $this->execute_script($js);
+            $this->wait_for_pending_js();
         } catch (ElementNotFoundException $e) {
             // We continue with the test.
         }
