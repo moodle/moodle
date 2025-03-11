@@ -16,6 +16,8 @@
 
 namespace mod_quiz;
 
+use core\exception\coding_exception;
+use core_question\local\bank\random_question_loader;
 use core_question\question_reference_manager;
 use mod_quiz\question\display_options;
 
@@ -34,6 +36,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\question\bank\qbank_helper
+ * @covers \restore_quiz_activity_structure_step
+ * @covers \restore_question_set_reference_data_trait
  */
 final class quiz_question_restore_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
@@ -56,21 +61,115 @@ final class quiz_question_restore_test extends \advanced_testcase {
     }
 
     /**
+     * Create a quiz with 2 questions and 1 random question, using question categories in the provided context.
      *
-     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
+     * @param int $questioncontextid Context to create question categories in.
+     * @return array The quiz, slots, random questions in each slot that has them, and the quiz context.
+     */
+    public function create_quiz_with_questions(int $questioncontextid): array {
+        $quiz = $this->create_test_quiz($this->course);
+        $quizcontext = \context_module::instance($quiz->cmid);
+
+        // Test for questions from a different context.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $questioncontextid]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $questioncontextid]);
+        $slots = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $quiz->id, $quizcontext);
+        $randomquestions = [];
+        $loader = new random_question_loader(new \qubaid_list([]));
+        foreach ($slots as $number => $slot) {
+            if (!empty($slot->filtercondition)) {
+                $randomquestions[$number] = $loader->get_filtered_questions($slot->filtercondition['filter']);
+            }
+        }
+        return [
+            $quiz,
+            $slots,
+            $randomquestions,
+            $quizcontext,
+        ];
+    }
+
+    /**
+     * Verify the layout of the quiz on the provided course matches (or doesn't match) the expected layout.
+     *
+     * For $expectedslots, the value should be provided as an array keyed by slot number. Each slot can be provided as a single
+     * number, which will considered a question ID, or an array with 'filter' and 'randomquestionids' which will be considered
+     * a random question.
+     *
+     * For example,
+     * [
+     *  [1] => 123,
+     *  [2] => [
+     *           'filter' => ['name' => 'category', 'values' => ['345']],
+     *           'randomquestionids' => ['101', '102'],
+     *         ],
+     *  [3] => 124,
+     * ]
+     * Will assert that the quiz contains (or doesn't contain if $expectequal is false):
+     * - A question in slot 1 with ID 123,
+     * - A random question in slot 2 with a filter for category ID 345, which matches questions with IDs 101 and 102,
+     * - A question in slot 3 with ID 124.
+     *
+     * @param int $courseid The ID of the course to pick the quiz from.
+     * @param array $expectedslots The layout of slots to compare to, see above for details of the structure.
+     * @param bool $expectequal If true, assert that each slot is equal to the expected value. Otherwise assert it's not equal.
+     */
+    public function verify_restored_quiz_layout(
+        int $courseid,
+        array $expectedslots,
+        bool $expectequal
+    ): void {
+        $loader = new random_question_loader(new \qubaid_list([]));
+        $modules = get_fast_modinfo($courseid)->get_instances_of('quiz');
+        $module = reset($modules);
+        $newslots = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module->instance, $module->context);
+        $this->assertCount(count($expectedslots), $newslots);
+        foreach ($newslots as $number => $slot) {
+            $randomquestionids = null;
+            if (is_array($expectedslots[$number])) {
+                // A random question, compare filters and filtered question ids.
+                $actualcontents = $slot->filtercondition['filter'];
+                $expectedcontents = $expectedslots[$number]['filter'];
+                $randomquestions = $loader->get_filtered_questions($slot->filtercondition['filter']);
+                $randomquestionids = array_keys($randomquestions);
+                sort($randomquestionids);
+                sort($expectedslots[$number]['randomquestionids']);
+            } else if (is_numeric($expectedslots[$number])) {
+                // A normal question, compare IDs.
+                $actualcontents = $slot->questionid;
+                $expectedcontents = $expectedslots[$number];
+            } else {
+                throw new coding_exception('Slots must either be a number or an array.');
+            }
+            if ($expectequal) {
+                $this->assertEquals($expectedcontents, $actualcontents);
+                if (!is_null($randomquestionids)) {
+                    $this->assertEquals($expectedslots[$number]['randomquestionids'], $randomquestionids);
+                }
+            } else {
+                $this->assertNotEquals($expectedcontents, $actualcontents);
+                if (!is_null($randomquestionids)) {
+                    $this->assertNotEquals($expectedslots[$number]['randomquestionids'], $randomquestionids);
+                }
+            }
+        }
+    }
+
+    /**
+     * Restore a quiz that used questions from a shared question bank on the same course, after the course is deleted.
+     *
+     * The restored quiz should use new copies of the questions.
      */
     public function test_quiz_restore_in_a_different_course_using_question_bank(): void {
         $this->resetAfterTest();
 
         // Create the test quiz.
-        $quiz = $this->create_test_quiz($this->course);
-        $oldquizcontext = \context_module::instance($quiz->cmid);
         $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course]);
         $qbankcontext = \context_module::instance($qbank->cmid);
-        // Test for questions from a different context.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $qbankcontext->id]);
-        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $qbankcontext->id]);
+        [$quiz, $originalslots, $randomquestions, $quizcontext] = $this->create_quiz_with_questions($qbankcontext->id);
 
         // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
@@ -79,19 +178,134 @@ final class quiz_question_restore_test extends \advanced_testcase {
         delete_course($this->course, false);
 
         // Check if the questions and associated data are deleted properly.
-        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
-                $quiz->id, $oldquizcontext)));
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($quiz->id, $quizcontext)));
 
         // Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
 
+        $this->verify_restored_quiz_layout(
+            courseid: $newcourse->id,
+            expectedslots: [
+                1 => $originalslots[1]->questionid,
+                2 => $originalslots[2]->questionid,
+                3 => [
+                    'filter' => $originalslots[3]->filtercondition['filter'],
+                    'randomquestionids' => array_keys($randomquestions[3]),
+                ],
+            ],
+            expectequal: false,
+        );
+    }
+
+    /**
+     * Restore a quiz that used questions from a shared question bank on the same course.
+     *
+     * The restored quiz should reference the questions in the original question bank.
+     */
+    public function test_quiz_restore_in_a_different_course_reference_original_question_bank(): void {
+        $this->resetAfterTest();
+
+        // Create the test quiz.
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        [$quiz, $originalslots, $randomquestions] = $this->create_quiz_with_questions($qbankcontext->id);
+
+        // Make the backup.
+        $backupid = $this->backup_quiz($quiz, $this->user);
+
+        // Restore the course.
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_quiz($backupid, $newcourse, $this->user);
+
+        $this->verify_restored_quiz_layout(
+            courseid: $newcourse->id,
+            expectedslots: [
+                1 => $originalslots[1]->questionid,
+                2 => $originalslots[2]->questionid,
+                3 => [
+                    'filter' => $originalslots[3]->filtercondition['filter'],
+                    'randomquestionids' => array_keys($randomquestions[3]),
+                ],
+            ],
+            expectequal: true,
+        );
+    }
+
+    /**
+     * Restore a quiz that used questions from a shared question bank on the same course, as a user who cannot access the course.
+     *
+     * The restored quiz should use new copies of the questions.
+     */
+    public function test_quiz_restore_in_a_different_course_cant_use_original_question_bank(): void {
+        $this->resetAfterTest();
+
+        // Create the test quiz.
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        [$quiz, $originalslots, $randomquestions] = $this->create_quiz_with_questions($qbankcontext->id);
+
+        // Make the backup.
+        $backupid = $this->backup_quiz($quiz, $this->user);
+
+        // Restore the course as a new user without access to the original course.
+        $newcourse = $this->getDataGenerator()->create_course();
+        $newuser = self::getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($newuser->id, $newcourse->id, 'manager');
+        $this->setUser($newuser);
+        $this->restore_quiz($backupid, $newcourse, $newuser);
+
+        $this->verify_restored_quiz_layout(
+            courseid: $newcourse->id,
+            expectedslots: [
+                1 => $originalslots[1]->questionid,
+                2 => $originalslots[2]->questionid,
+                3 => [
+                    'filter' => $originalslots[3]->filtercondition['filter'],
+                    'randomquestionids' => array_keys($randomquestions[3]),
+                ],
+            ],
+            expectequal: false,
+        );
+    }
+
+    /**
+     * Restore a quiz that used questions from a shared question bank on another course, after that other course is deleted.
+     *
+     * The restored quiz should use new copies of the questions.
+     */
+    public function test_quiz_restore_in_a_different_course_question_course_has_been_deleted(): void {
+        $this->resetAfterTest();
+
+        // Create the test quiz.
+        $qbankcourse = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $qbankcourse]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        [$quiz, $originalslots, $randomquestions] = $this->create_quiz_with_questions($qbankcontext->id);
+
+        // Make the backup.
+        $backupid = $this->backup_quiz($quiz, $this->user);
+
+        // Delete the qbank course.
+        delete_course($qbankcourse, false);
+
+        // Restore the course as a new copy.
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_quiz($backupid, $newcourse, $this->user);
+
         // Verify.
-        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
-        $module = reset($modules);
-        $questions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
-                $module->instance, $module->context);
-        $this->assertCount(3, $questions);
+        $this->verify_restored_quiz_layout(
+            courseid: $newcourse->id,
+            expectedslots: [
+                1 => $originalslots[1]->questionid,
+                2 => $originalslots[2]->questionid,
+                3 => [
+                    'filter' => $originalslots[3]->filtercondition['filter'],
+                    'randomquestionids' => array_keys($randomquestions[3]),
+                ],
+            ],
+            expectequal: false,
+        );
     }
 
     /**
@@ -151,26 +365,38 @@ final class quiz_question_restore_test extends \advanced_testcase {
     }
 
     /**
-     * Test if a duplicate does not duplicate questions from a shared question bank.
+     * Duplicate a quiz that uses questions from a shared bank on the same course.
      *
-     * @covers ::duplicate_module
+     * The new quiz should reference the same questions.
      */
     public function test_quiz_duplicate_does_not_duplicate_questions_from_shared_banks(): void {
         $this->resetAfterTest();
-        $quiz = $this->create_test_quiz($this->course);
-        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $this->course->id]);
         // Test for questions from a qbank context.
+        $qbankcourse = self::getDataGenerator()->create_course();
+        $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $qbankcourse]);
         $context = \context_module::instance($qbank->cmid);
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $context->id]);
+        [$quiz, $originalslots, $randomquestions] = $this->create_quiz_with_questions($context->id);
         // Count the questions in qbank context.
         $this->assertEquals(7, $this->question_count($context->id));
+        $this->assertCount(3, $originalslots);
         $newquiz = $this->duplicate_quiz($this->course, $quiz);
         $this->assertEquals(7, $this->question_count($context->id));
-        $context = \context_module::instance($newquiz->id);
+        $newquizcontext = \context_module::instance($newquiz->id);
         // Count the questions in the quiz context.
-        $this->assertEquals(0, $this->question_count($context->id));
+        $this->assertEquals(0, $this->question_count($newquizcontext->id));
+
+        $this->verify_restored_quiz_layout(
+            courseid: $this->course->id,
+            expectedslots: [
+                1 => $originalslots[1]->questionid,
+                2 => $originalslots[2]->questionid,
+                3 => [
+                    'filter' => $originalslots[3]->filtercondition['filter'],
+                    'randomquestionids' => array_keys($randomquestions[3]),
+                ],
+            ],
+            expectequal: true,
+        );
     }
 
     /**

@@ -6394,6 +6394,7 @@ trait restore_question_set_reference_data_trait {
     public function process_question_set_reference($data) {
         global $DB;
         $data = (object) $data;
+        $owncontext = $data->usingcontextid == $data->questionscontextid;
         $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
         $data->itemid = $this->get_new_parentid('quiz_question_instance');
         $filtercondition = json_decode($data->filtercondition, true);
@@ -6406,8 +6407,22 @@ trait restore_question_set_reference_data_trait {
 
         // Map category id used for category filter condition and corresponding context id.
         $oldcategoryid = $filtercondition['filter']['category']['values'][0];
-        $newcategoryid = $this->get_mappingid('question_category', $oldcategoryid);
-        $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+        // Decide if we're going to refer back to the original category, or to the new category.
+        // Are we restoring to a different site?
+        // Has the original context or category been deleted?
+        // Did the old category belong to the same context as the original set reference?
+        // Are we allowed to use its questions?
+        $questionscontext = context::instance_by_id($data->questionscontextid, IGNORE_MISSING);
+        if (
+            !$this->get_task()->is_samesite()
+            || !$questionscontext
+            || !$DB->record_exists('question_categories', ['id' => $oldcategoryid])
+            || $owncontext
+            || !has_capability('moodle/question:useall', $questionscontext)
+        ) {
+            $newcategoryid = $this->get_mappingid('question_category', $oldcategoryid);
+            $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+        }
 
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
