@@ -294,7 +294,8 @@ if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php')) 
 }
 
 // Add the keepalive system to keep checking for a connection.
-\core\session\manager::keepalive('networkdropped', 'mod_scorm', 30, 10);
+$redirecturl = new moodle_url('/mod/scorm/view.php', ['id' => $id]);
+\core\session\manager::keepalive('networkdropped', 'mod_scorm', 30, 10, $redirecturl);
 
 echo $OUTPUT->footer();
 
