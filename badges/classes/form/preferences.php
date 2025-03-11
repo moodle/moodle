@@ -14,23 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Form class for editing badges preferences.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
+namespace core_badges\form;
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+use moodleform;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class badges_preferences_form extends moodleform {
+/**
+ * Form class for editing badges preferences.
+ *
+ * @package    core_badges
+ * @copyright  2018 Tung Thai
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
+ * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
+ */
+class preferences extends moodleform {
+    /**
+     * Defines the form.
+     */
     public function definition() {
         global $USER, $CFG;
 

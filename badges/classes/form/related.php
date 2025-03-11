@@ -13,15 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Form related badges.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
- */
+
+namespace core_badges\form;
+
+use moodleform;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/badgeslib.php');
@@ -29,11 +25,12 @@ require_once($CFG->libdir . '/badgeslib.php');
 /**
  * Form to edit badge details.
  *
+ * @package   core_badges
  * @copyright 2018 Tung Thai
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-class edit_relatedbadge_form extends moodleform {
+class related extends moodleform {
 
     /**
      * Defines the form.
@@ -44,10 +41,10 @@ class edit_relatedbadge_form extends moodleform {
         $badgesarray = $this->get_badges_option($badge);
         $mform->addElement('header', 'alignment', get_string('relatedbages', 'badges'));
         if (!$badgesarray) {
-            $badgesarray = array(get_string('none'));
-            $attributes = array('size' => '3', 'disabled' => true, 'style' => 'min-width: 200px');
+            $badgesarray = [get_string('none')];
+            $attributes = ['size' => '3', 'disabled' => true, 'style' => 'min-width: 200px'];
         } else {
-            $attributes = array('size' => '10');
+            $attributes = ['size' => '10'];
         }
         $mform->addElement('select', 'relatedbadgeids', get_string('relatedbages', 'badges'), $badgesarray, $attributes);
         $mform->getElement('relatedbadgeids')->setMultiple(true);
@@ -55,7 +52,7 @@ class edit_relatedbadge_form extends moodleform {
 
         // Freeze all elements if badge is active or locked.
         if ($badge->is_active() || $badge->is_locked()) {
-            $mform->hardFreezeAllVisibleExcept(array());
+            $mform->hardFreezeAllVisibleExcept([]);
         }
     }
 
@@ -96,7 +93,7 @@ class edit_relatedbadge_form extends moodleform {
 
         $records = $DB->get_records_sql($sql, $params);
         $languages = get_string_manager()->get_list_of_languages();
-        $options = array();
+        $options = [];
         foreach ($records as $record) {
             $language = isset($languages[$record->language]) ? $languages[$record->language] : '';
             $options[$record->id] = $record->name .

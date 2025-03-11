@@ -13,15 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Form alignment for editing.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
- */
+
+namespace core_badges\form;
+use moodleform;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/badgeslib.php');
@@ -29,12 +25,12 @@ require_once($CFG->libdir . '/badgeslib.php');
 /**
  * Form to edit alignment.
  *
+ * @package    core_badges
  * @copyright  2018 Tung Thai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-class alignment_form extends moodleform {
-
+class alignment extends moodleform {
     /**
      * Defines the form.
      */
@@ -45,21 +41,21 @@ class alignment_form extends moodleform {
         $action = $this->_customdata['action'];
         $alignmentid = $this->_customdata['alignmentid'];
         $mform->addElement('header', 'alignment', get_string('alignment', 'badges'));
-        $mform->addElement('text', 'targetname', get_string('targetname', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'targetname', get_string('targetname', 'badges'), ['size' => '70']);
         $mform->setType('targetname', PARAM_TEXT);
         $mform->addRule('targetname', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addRule('targetname', null, 'required');
         $mform->addHelpButton('targetname', 'targetname', 'badges');
-        $mform->addElement('text', 'targeturl', get_string('targeturl', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'targeturl', get_string('targeturl', 'badges'), ['size' => '70']);
         $mform->setType('targeturl', PARAM_URL);
         $mform->addRule('targeturl', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addRule('targeturl', null, 'required');
         $mform->addHelpButton('targeturl', 'targeturl', 'badges');
-        $mform->addElement('text', 'targetframework', get_string('targetframework', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'targetframework', get_string('targetframework', 'badges'), ['size' => '70']);
         $mform->setType('targetframework', PARAM_TEXT);
         $mform->addRule('targetframework', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('targetframework', 'targetframework', 'badges');
-        $mform->addElement('text', 'targetcode', get_string('targetcode', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'targetcode', get_string('targetcode', 'badges'), ['size' => '70']);
         $mform->setType('targetcode', PARAM_TEXT);
         $mform->addRule('targetcode', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('targetcode', 'targetcode', 'badges');
@@ -68,11 +64,11 @@ class alignment_form extends moodleform {
         $this->add_action_buttons();
         if ($action == 'edit' || $alignmentid) {
             $alignment = new stdClass();
-            $alignment = $DB->get_record_select('badge_alignment', 'id = ?', array($alignmentid));
+            $alignment = $DB->get_record_select('badge_alignment', 'id = ?', [$alignmentid]);
             $this->set_data($alignment);
             // Freeze all elements if badge is active or locked.
             if ($badge->is_active() || $badge->is_locked()) {
-                $mform->hardFreezeAllVisibleExcept(array());
+                $mform->hardFreezeAllVisibleExcept([]);
             }
         }
     }
@@ -80,8 +76,8 @@ class alignment_form extends moodleform {
     /**
      * Validate the data from the form.
      *
-     * @param  array $data form data
-     * @param  array $files form files
+     * @param array $data form data
+     * @param array $files form files
      * @return array An array of error messages.
      */
     public function validation($data, $files) {

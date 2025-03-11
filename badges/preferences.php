@@ -17,7 +17,7 @@
 /**
  * Badges user preferences page.
  *
- * @package    core
+ * @package    core_badges
  * @subpackage badges
  * @copyright  2013 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,8 +25,9 @@
  */
 
 require_once(__DIR__ . '/../config.php');
-require_once('preferences_form.php');
-require_once($CFG->dirroot.'/user/editlib.php');
+require_once($CFG->dirroot . '/user/editlib.php');
+
+use core_badges\form\preferences;
 
 $url = new moodle_url('/badges/preferences.php');
 
@@ -39,8 +40,8 @@ if (empty($CFG->enablebadges)) {
     throw new \moodle_exception('badgesdisabled', 'badges');
 }
 
-$mform = new badges_preferences_form();
-$mform->set_data(array('badgeprivacysetting' => get_user_preferences('badgeprivacysetting')));
+$mform = new preferences();
+$mform->set_data(['badgeprivacysetting' => get_user_preferences('badgeprivacysetting')]);
 
 if (!$mform->is_cancelled() && $data = $mform->get_data()) {
     useredit_update_user_preference(['id' => $USER->id,

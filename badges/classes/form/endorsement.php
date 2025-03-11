@@ -13,26 +13,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Form endorsement for editing.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
- */
+
+namespace core_badges\form;
+
+use moodleform;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/badgeslib.php');
+
 /**
- * Form to edit endorsement.
+ * Form endorsement for editing.
  *
+ * @package    core_badges
  * @copyright  2018 Tung Thai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Tung Thai
  */
-class endorsement_form extends moodleform {
+class endorsement extends moodleform {
 
     /**
      * Defines the form.
@@ -41,22 +40,22 @@ class endorsement_form extends moodleform {
         $mform = $this->_form;
         $badge = $this->_customdata['badge'];
         $mform->addElement('header', 'endorsement', get_string('issuerdetails', 'badges'));
-        $mform->addElement('text', 'issuername', get_string('issuername_endorsement', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'issuername', get_string('issuername_endorsement', 'badges'), ['size' => '70']);
         $mform->setType('issuername', PARAM_TEXT);
         $mform->addRule('issuername', null, 'required');
         $mform->addHelpButton('issuername', 'issuername_endorsement', 'badges');
-        $mform->addElement('text', 'issueremail', get_string('issueremail', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'issueremail', get_string('issueremail', 'badges'), ['size' => '70']);
         $mform->addRule('issueremail', null, 'required');
         $mform->setType('issueremail', PARAM_RAW);
         $mform->addHelpButton('issueremail', 'issueremail', 'badges');
-        $mform->addElement('text', 'issuerurl', get_string('issuerurl', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'issuerurl', get_string('issuerurl', 'badges'), ['size' => '70']);
         $mform->setType('issuerurl', PARAM_URL);
         $mform->addRule('issuerurl', null, 'required');
         $mform->addHelpButton('issuerurl', 'issuerurl', 'badges');
         $mform->addElement('date_time_selector', 'dateissued',
-            get_string('dateawarded', 'badges'));
+                get_string('dateawarded', 'badges'));
         $mform->addElement('header', 'claim', get_string('claim', 'badges'));
-        $mform->addElement('text', 'claimid', get_string('claimid', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'claimid', get_string('claimid', 'badges'), ['size' => '70']);
         $mform->setType('claimid', PARAM_URL);
         $mform->addRule('claimid', null, 'required');
         $mform->addElement('textarea', 'claimcomment', get_string('claimcomment', 'badges'), 'wrap="virtual" rows="8" cols="70"');
@@ -70,7 +69,7 @@ class endorsement_form extends moodleform {
         $this->add_action_buttons();
         // Freeze all elements if badge is active or locked.
         if ($badge->is_active() || $badge->is_locked()) {
-            $mform->hardFreezeAllVisibleExcept(array());
+            $mform->hardFreezeAllVisibleExcept([]);
         }
     }
 
