@@ -987,9 +987,11 @@ final class self_test extends \advanced_testcase {
     }
 
     /**
-     * Test get_welcome_email_contact().
+     * Test getting welcome message contact
+     *
+     * @covers \enrol_plugin::get_welcome_message_contact
      */
-    public function test_get_welcome_email_contact(): void {
+    public function test_get_welcome_message_contact(): void {
         global $DB;
         self::resetAfterTest(true);
 

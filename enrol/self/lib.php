@@ -1182,22 +1182,11 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Get the "from" contact which the email will be sent from.
-     *
-     * @param int $sendoption send email from constant ENROL_SEND_EMAIL_FROM_*
-     * @param $context context where the user will be fetched
-     * @return mixed|stdClass the contact user object.
      * @deprecated since Moodle 4.4
-     * @see \enrol_plugin::get_welcome_message_contact()
-     * @todo MDL-81185 Final deprecation in Moodle 4.8.
      */
-    #[\core\attribute\deprecated('enrol_plugin::get_welcome_message_contact', since: '4.4', mdl: 'MDL-4188')]
-    public function get_welcome_email_contact($sendoption, $context) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
-        return $this->get_welcome_message_contact(
-            sendoption: $sendoption,
-            context: $context,
-        );
+    #[\core\attribute\deprecated('enrol_plugin::get_welcome_message_contact', since: '4.4', mdl: 'MDL-4188', final: true)]
+    public function get_welcome_email_contact() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
