@@ -1615,18 +1615,6 @@ function calendar_days_in_month($month, $year) {
 }
 
 /**
- * Get the next following month.
- *
- * @param int $month the number of the month.
- * @param int $year the number of the year.
- * @return array the following month
- */
-function calendar_add_month($month, $year) {
-    $calendartype = \core_calendar\type_factory::get_calendar_instance();
-    return $calendartype->get_next_month($year, $month);
-}
-
-/**
  * Returns the courses to load events for.
  *
  * @param array $courseeventsfrom An array of courses to load calendar events for
