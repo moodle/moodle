@@ -1,0 +1,12 @@
+issueNumber: MDL-78780
+notes:
+  core_grades:
+    - message: >-
+        The previously deprecated `grade_helper::get_lang_string` method has
+        been removed
+      type: removed
+  gradereport:
+    - message: >-
+        The previously deprecated `grade_report::get_lang_string` method has
+        been removed
+      type: removed
