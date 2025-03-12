@@ -14,13 +14,13 @@
 //
 
 .media {
-    @include deprecated-styles();
+    @include deprecated-styles(".media");
     display: flex;
     align-items: flex-start;
 }
 
 .media-body {
-    @include deprecated-styles();
+    @include deprecated-styles(".media-body");
     flex: 1;
 }
 
@@ -73,7 +73,7 @@ $yiq-contrasted-threshold: 128;
 
 @each $color, $value in $theme-colors {
     .badge-#{$color} {
-        @include deprecated-styles();
+        @include deprecated-styles(".badge-#{$color}");
         @include badge-variant($value);
     }
 }
@@ -82,7 +82,7 @@ $badge-pill-padding-x: .6em !default;
 $badge-pill-border-radius: 10rem !default;
 
 .badge-pill {
-    @include deprecated-styles();
+    @include deprecated-styles(".badge-pill");
     padding-right: $badge-pill-padding-x;
     padding-left: $badge-pill-padding-x;
     @include border-radius($badge-pill-border-radius);
@@ -95,14 +95,14 @@ $badge-pill-border-radius: 10rem !default;
 $form-group-margin-bottom: 1rem !default;
 
 .form-group {
-    @include deprecated-styles();
+    @include deprecated-styles(".form-group");
     margin-bottom: $form-group-margin-bottom;
 }
 
 $form-check-input-margin-x: .25rem !default;
 
 .form-inline {
-    @include deprecated-styles();
+    @include deprecated-styles(".form-inline");
     display: flex;
     flex-flow: row wrap;
     align-items: center;
@@ -174,7 +174,7 @@ $form-check-input-margin-x: .25rem !default;
 $card-deck-margin: 30px * .5 !default;
 
 .card-deck {
-    @include deprecated-styles();
+    @include deprecated-styles(".card-deck");
     .card {
         margin-bottom: $card-deck-margin;
     }
@@ -199,7 +199,7 @@ $card-deck-margin: 30px * .5 !default;
 //
 
 .no-gutters {
-    @include deprecated-styles();
+    @include deprecated-styles(".no-gutters");
     margin-right: 0;
     margin-left: 0;
     > .col,
@@ -220,11 +220,11 @@ $card-deck-margin: 30px * .5 !default;
         @each $prop, $abbrev in (margin: m, padding: p) {
             @each $size, $length in $spacers {
                 .#{$abbrev}r#{$infix}-#{$size} {
-                    @include deprecated-styles();
+                    @include deprecated-styles(".#{$abbrev}r");
                     #{$prop}-right: $length !important;
                 }
                 .#{$abbrev}l#{$infix}-#{$size} {
-                    @include deprecated-styles();
+                    @include deprecated-styles(".#{$abbrev}l");
                     #{$prop}-left: $length !important;
                 }
             }
@@ -234,11 +234,11 @@ $card-deck-margin: 30px * .5 !default;
         @each $size, $length in $spacers {
             @if "#{$size}" != "0" {
                 .mr#{$infix}-n#{$size} {
-                    @include deprecated-styles();
+                    @include deprecated-styles(".mr");
                     margin-right: -$length !important;
                 }
                 .ml#{$infix}-n#{$size} {
-                    @include deprecated-styles();
+                    @include deprecated-styles(".ml");
                     margin-left: -$length !important;
                 }
             }
@@ -246,11 +246,11 @@ $card-deck-margin: 30px * .5 !default;
 
         // Some special margin utils
         .mr#{$infix}-auto {
-            @include deprecated-styles();
+            @include deprecated-styles(".mr");
             margin-right: auto !important;
         }
         .ml#{$infix}-auto {
-            @include deprecated-styles();
+            @include deprecated-styles(".ml");
             margin-left: auto !important;
         }
     }
@@ -265,11 +265,11 @@ $card-deck-margin: 30px * .5 !default;
         $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
 
         .text#{$infix}-left {
-            @include deprecated-styles();
+            @include deprecated-styles(".text-left");
             text-align: left !important;
         }
         .text#{$infix}-right {
-            @include deprecated-styles();
+            @include deprecated-styles(".text-right");
             text-align: right !important;
         }
     }
@@ -280,28 +280,28 @@ $card-deck-margin: 30px * .5 !default;
 //
 
 .border-right {
-    @include deprecated-styles();
+    @include deprecated-styles(".border-right");
     border-right: $border-width solid $border-color !important;
 }
 .border-left {
-    @include deprecated-styles();
+    @include deprecated-styles(".border-left");
     border-left: $border-width solid $border-color !important;
 }
 .border-right-0 {
-    @include deprecated-styles();
+    @include deprecated-styles(".border-right");
     border-right: 0 !important;
 }
 .border-left-0 {
-    @include deprecated-styles();
+    @include deprecated-styles(".border-left");
     border-left: 0 !important;
 }
 .rounded-right {
-    @include deprecated-styles();
+    @include deprecated-styles(".rounded-right");
     border-top-right-radius: $border-radius !important;
     border-bottom-right-radius: $border-radius !important;
 }
 .rounded-left {
-    @include deprecated-styles();
+    @include deprecated-styles(".rounded-left");
     border-top-left-radius: $border-radius !important;
     border-bottom-left-radius: $border-radius !important;
 }
@@ -315,11 +315,11 @@ $card-deck-margin: 30px * .5 !default;
         $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
 
         .float#{$infix}-left {
-            @include deprecated-styles();
+            @include deprecated-styles(".float-left");
             float: left !important;
         }
         .float#{$infix}-right {
-            @include deprecated-styles();
+            @include deprecated-styles(".float-right");
             float: right !important;
         }
     }
@@ -376,27 +376,27 @@ a.close.disabled {
 //
 
 .font-weight-light {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-weight: $font-weight-light !important;
 }
 .font-weight-lighter {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-weight: $font-weight-lighter !important;
 }
 .font-weight-normal {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-weight: $font-weight-normal !important;
 }
 .font-weight-bold {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-weight: $font-weight-bold !important;
 }
 .font-weight-bolder {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-weight: $font-weight-bolder !important;
 }
 .font-italic {
-    @include deprecated-styles();
+    @include deprecated-styles(".font-weight");
     font-style: italic !important;
 }
 
@@ -404,11 +404,11 @@ a.close.disabled {
 // Rounded sizes
 //
 .rounded-sm {
-    @include deprecated-styles();
+    @include deprecated-styles(".rounded-sm");
     border-radius: $border-radius-sm !important;
 }
 .rounded-lg {
-    @include deprecated-styles();
+    @include deprecated-styles(".rounded-lg");
     border-radius: $border-radius-lg !important;
 }
 
@@ -438,12 +438,12 @@ a.close.disabled {
 }
 
 .sr-only {
-    @include deprecated-styles();
+    @include deprecated-styles(".sr-only");
     @include sr-only();
 }
 
 .sr-only-focusable {
-    @include deprecated-styles();
+    @include deprecated-styles(".sr-only-focusable");
     @include sr-only-focusable();
 }
 
@@ -646,7 +646,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-checkbox {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-checkbox");
     .custom-control-label::before {
         @include border-radius($custom-checkbox-indicator-border-radius);
     }
@@ -676,7 +676,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-radio {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-radio");
     .custom-control-label::before {
         border-radius: $custom-radio-indicator-border-radius;
     }
@@ -693,7 +693,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-switch {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-switch");
     padding-left: $custom-switch-width + $custom-control-gutter;
     .custom-control-label {
         &::before {
@@ -726,7 +726,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-select {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-select");
     display: inline-block;
     width: 100%;
     height: $custom-select-height;
@@ -790,7 +790,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-file {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-file");
     position: relative;
     display: inline-block;
     width: 100%;
@@ -858,7 +858,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 }
 
 .custom-range {
-    @include deprecated-styles();
+    @include deprecated-styles(".custom-range");
     width: 100%;
     height: add($custom-range-thumb-height, $custom-range-thumb-focus-box-shadow-width * 2);
     padding: 0;
@@ -993,7 +993,7 @@ $custom-forms-transition:               background-color .15s ease-in-out, borde
 $btn-block-spacing-y:         .5rem !default;
 
 .btn-block {
-    @include deprecated-styles();
+    @include deprecated-styles(".btn-block");
     display: block;
     width: 100%;
     + .btn-block {

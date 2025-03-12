@@ -40812,7 +40812,7 @@ body.behat-site .course-content .stateready .section .spinner,
 body.behat-site .course-content .stateready .section .spinner::before,
 .course-content .stateready .section .spinner body.behat-site.course-content .stateready .section .spinner::before, body.themedesignermode .course-content .stateready .section .spinner::before,
 .course-content .stateready .section .spinner body.themedesignermode.course-content .stateready .section .spinner::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.course-content .stateready .section .spinner)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40835,7 +40835,7 @@ body.behat-site .media,
 body.behat-site .media::before,
 .media body.behat-site.media::before, body.themedesignermode .media::before,
 .media body.themedesignermode.media::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.media)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40854,7 +40854,7 @@ body.behat-site .media-body,
 body.behat-site .media-body::before,
 .media-body body.behat-site.media-body::before, body.themedesignermode .media-body::before,
 .media-body body.themedesignermode.media-body::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.media-body)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40874,7 +40874,7 @@ body.behat-site .badge-primary,
 body.behat-site .badge-primary::before,
 .badge-primary body.behat-site.badge-primary::before, body.themedesignermode .badge-primary::before,
 .badge-primary body.themedesignermode.badge-primary::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-primary)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40902,7 +40902,7 @@ body.behat-site .badge-secondary,
 body.behat-site .badge-secondary::before,
 .badge-secondary body.behat-site.badge-secondary::before, body.themedesignermode .badge-secondary::before,
 .badge-secondary body.themedesignermode.badge-secondary::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-secondary)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40930,7 +40930,7 @@ body.behat-site .badge-success,
 body.behat-site .badge-success::before,
 .badge-success body.behat-site.badge-success::before, body.themedesignermode .badge-success::before,
 .badge-success body.themedesignermode.badge-success::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-success)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40958,7 +40958,7 @@ body.behat-site .badge-info,
 body.behat-site .badge-info::before,
 .badge-info body.behat-site.badge-info::before, body.themedesignermode .badge-info::before,
 .badge-info body.themedesignermode.badge-info::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-info)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -40986,7 +40986,7 @@ body.behat-site .badge-warning,
 body.behat-site .badge-warning::before,
 .badge-warning body.behat-site.badge-warning::before, body.themedesignermode .badge-warning::before,
 .badge-warning body.themedesignermode.badge-warning::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-warning)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41014,7 +41014,7 @@ body.behat-site .badge-danger,
 body.behat-site .badge-danger::before,
 .badge-danger body.behat-site.badge-danger::before, body.themedesignermode .badge-danger::before,
 .badge-danger body.themedesignermode.badge-danger::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-danger)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41042,7 +41042,7 @@ body.behat-site .badge-light,
 body.behat-site .badge-light::before,
 .badge-light body.behat-site.badge-light::before, body.themedesignermode .badge-light::before,
 .badge-light body.themedesignermode.badge-light::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-light)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41070,7 +41070,7 @@ body.behat-site .badge-dark,
 body.behat-site .badge-dark::before,
 .badge-dark body.behat-site.badge-dark::before, body.themedesignermode .badge-dark::before,
 .badge-dark body.themedesignermode.badge-dark::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-dark)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41099,7 +41099,7 @@ body.behat-site .badge-pill,
 body.behat-site .badge-pill::before,
 .badge-pill body.behat-site.badge-pill::before, body.themedesignermode .badge-pill::before,
 .badge-pill body.themedesignermode.badge-pill::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.badge-pill)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41118,7 +41118,7 @@ body.behat-site .form-group,
 body.behat-site .form-group::before,
 .form-group body.behat-site.form-group::before, body.themedesignermode .form-group::before,
 .form-group body.themedesignermode.form-group::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.form-group)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41139,7 +41139,7 @@ body.behat-site .form-inline,
 body.behat-site .form-inline::before,
 .form-inline body.behat-site.form-inline::before, body.themedesignermode .form-inline::before,
 .form-inline body.themedesignermode.form-inline::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.form-inline)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41208,7 +41208,7 @@ body.behat-site .card-deck,
 body.behat-site .card-deck::before,
 .card-deck body.behat-site.card-deck::before, body.themedesignermode .card-deck::before,
 .card-deck body.themedesignermode.card-deck::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.card-deck)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41245,7 +41245,7 @@ body.behat-site .no-gutters,
 body.behat-site .no-gutters::before,
 .no-gutters body.behat-site.no-gutters::before, body.themedesignermode .no-gutters::before,
 .no-gutters body.themedesignermode.no-gutters::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.no-gutters)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41269,7 +41269,7 @@ body.behat-site .mr-0,
 body.behat-site .mr-0::before,
 .mr-0 body.behat-site.mr-0::before, body.themedesignermode .mr-0::before,
 .mr-0 body.themedesignermode.mr-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41288,7 +41288,7 @@ body.behat-site .ml-0,
 body.behat-site .ml-0::before,
 .ml-0 body.behat-site.ml-0::before, body.themedesignermode .ml-0::before,
 .ml-0 body.themedesignermode.ml-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41307,7 +41307,7 @@ body.behat-site .mr-1,
 body.behat-site .mr-1::before,
 .mr-1 body.behat-site.mr-1::before, body.themedesignermode .mr-1::before,
 .mr-1 body.themedesignermode.mr-1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41326,7 +41326,7 @@ body.behat-site .ml-1,
 body.behat-site .ml-1::before,
 .ml-1 body.behat-site.ml-1::before, body.themedesignermode .ml-1::before,
 .ml-1 body.themedesignermode.ml-1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41345,7 +41345,7 @@ body.behat-site .mr-2,
 body.behat-site .mr-2::before,
 .mr-2 body.behat-site.mr-2::before, body.themedesignermode .mr-2::before,
 .mr-2 body.themedesignermode.mr-2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41364,7 +41364,7 @@ body.behat-site .ml-2,
 body.behat-site .ml-2::before,
 .ml-2 body.behat-site.ml-2::before, body.themedesignermode .ml-2::before,
 .ml-2 body.themedesignermode.ml-2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41383,7 +41383,7 @@ body.behat-site .mr-3,
 body.behat-site .mr-3::before,
 .mr-3 body.behat-site.mr-3::before, body.themedesignermode .mr-3::before,
 .mr-3 body.themedesignermode.mr-3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41402,7 +41402,7 @@ body.behat-site .ml-3,
 body.behat-site .ml-3::before,
 .ml-3 body.behat-site.ml-3::before, body.themedesignermode .ml-3::before,
 .ml-3 body.themedesignermode.ml-3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41421,7 +41421,7 @@ body.behat-site .mr-4,
 body.behat-site .mr-4::before,
 .mr-4 body.behat-site.mr-4::before, body.themedesignermode .mr-4::before,
 .mr-4 body.themedesignermode.mr-4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41440,7 +41440,7 @@ body.behat-site .ml-4,
 body.behat-site .ml-4::before,
 .ml-4 body.behat-site.ml-4::before, body.themedesignermode .ml-4::before,
 .ml-4 body.themedesignermode.ml-4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41459,7 +41459,7 @@ body.behat-site .mr-5,
 body.behat-site .mr-5::before,
 .mr-5 body.behat-site.mr-5::before, body.themedesignermode .mr-5::before,
 .mr-5 body.themedesignermode.mr-5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41478,7 +41478,7 @@ body.behat-site .ml-5,
 body.behat-site .ml-5::before,
 .ml-5 body.behat-site.ml-5::before, body.themedesignermode .ml-5::before,
 .ml-5 body.themedesignermode.ml-5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41497,7 +41497,7 @@ body.behat-site .mr-6,
 body.behat-site .mr-6::before,
 .mr-6 body.behat-site.mr-6::before, body.themedesignermode .mr-6::before,
 .mr-6 body.themedesignermode.mr-6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41516,7 +41516,7 @@ body.behat-site .ml-6,
 body.behat-site .ml-6::before,
 .ml-6 body.behat-site.ml-6::before, body.themedesignermode .ml-6::before,
 .ml-6 body.themedesignermode.ml-6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41535,7 +41535,7 @@ body.behat-site .pr-0,
 body.behat-site .pr-0::before,
 .pr-0 body.behat-site.pr-0::before, body.themedesignermode .pr-0::before,
 .pr-0 body.themedesignermode.pr-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41554,7 +41554,7 @@ body.behat-site .pl-0,
 body.behat-site .pl-0::before,
 .pl-0 body.behat-site.pl-0::before, body.themedesignermode .pl-0::before,
 .pl-0 body.themedesignermode.pl-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41573,7 +41573,7 @@ body.behat-site .pr-1,
 body.behat-site .pr-1::before,
 .pr-1 body.behat-site.pr-1::before, body.themedesignermode .pr-1::before,
 .pr-1 body.themedesignermode.pr-1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41592,7 +41592,7 @@ body.behat-site .pl-1,
 body.behat-site .pl-1::before,
 .pl-1 body.behat-site.pl-1::before, body.themedesignermode .pl-1::before,
 .pl-1 body.themedesignermode.pl-1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41611,7 +41611,7 @@ body.behat-site .pr-2,
 body.behat-site .pr-2::before,
 .pr-2 body.behat-site.pr-2::before, body.themedesignermode .pr-2::before,
 .pr-2 body.themedesignermode.pr-2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41630,7 +41630,7 @@ body.behat-site .pl-2,
 body.behat-site .pl-2::before,
 .pl-2 body.behat-site.pl-2::before, body.themedesignermode .pl-2::before,
 .pl-2 body.themedesignermode.pl-2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41649,7 +41649,7 @@ body.behat-site .pr-3,
 body.behat-site .pr-3::before,
 .pr-3 body.behat-site.pr-3::before, body.themedesignermode .pr-3::before,
 .pr-3 body.themedesignermode.pr-3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41668,7 +41668,7 @@ body.behat-site .pl-3,
 body.behat-site .pl-3::before,
 .pl-3 body.behat-site.pl-3::before, body.themedesignermode .pl-3::before,
 .pl-3 body.themedesignermode.pl-3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41687,7 +41687,7 @@ body.behat-site .pr-4,
 body.behat-site .pr-4::before,
 .pr-4 body.behat-site.pr-4::before, body.themedesignermode .pr-4::before,
 .pr-4 body.themedesignermode.pr-4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41706,7 +41706,7 @@ body.behat-site .pl-4,
 body.behat-site .pl-4::before,
 .pl-4 body.behat-site.pl-4::before, body.themedesignermode .pl-4::before,
 .pl-4 body.themedesignermode.pl-4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41725,7 +41725,7 @@ body.behat-site .pr-5,
 body.behat-site .pr-5::before,
 .pr-5 body.behat-site.pr-5::before, body.themedesignermode .pr-5::before,
 .pr-5 body.themedesignermode.pr-5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41744,7 +41744,7 @@ body.behat-site .pl-5,
 body.behat-site .pl-5::before,
 .pl-5 body.behat-site.pl-5::before, body.themedesignermode .pl-5::before,
 .pl-5 body.themedesignermode.pl-5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41763,7 +41763,7 @@ body.behat-site .pr-6,
 body.behat-site .pr-6::before,
 .pr-6 body.behat-site.pr-6::before, body.themedesignermode .pr-6::before,
 .pr-6 body.themedesignermode.pr-6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41782,7 +41782,7 @@ body.behat-site .pl-6,
 body.behat-site .pl-6::before,
 .pl-6 body.behat-site.pl-6::before, body.themedesignermode .pl-6::before,
 .pl-6 body.themedesignermode.pl-6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.pl)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41801,7 +41801,7 @@ body.behat-site .mr-n1,
 body.behat-site .mr-n1::before,
 .mr-n1 body.behat-site.mr-n1::before, body.themedesignermode .mr-n1::before,
 .mr-n1 body.themedesignermode.mr-n1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41820,7 +41820,7 @@ body.behat-site .ml-n1,
 body.behat-site .ml-n1::before,
 .ml-n1 body.behat-site.ml-n1::before, body.themedesignermode .ml-n1::before,
 .ml-n1 body.themedesignermode.ml-n1::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41839,7 +41839,7 @@ body.behat-site .mr-n2,
 body.behat-site .mr-n2::before,
 .mr-n2 body.behat-site.mr-n2::before, body.themedesignermode .mr-n2::before,
 .mr-n2 body.themedesignermode.mr-n2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41858,7 +41858,7 @@ body.behat-site .ml-n2,
 body.behat-site .ml-n2::before,
 .ml-n2 body.behat-site.ml-n2::before, body.themedesignermode .ml-n2::before,
 .ml-n2 body.themedesignermode.ml-n2::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41877,7 +41877,7 @@ body.behat-site .mr-n3,
 body.behat-site .mr-n3::before,
 .mr-n3 body.behat-site.mr-n3::before, body.themedesignermode .mr-n3::before,
 .mr-n3 body.themedesignermode.mr-n3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41896,7 +41896,7 @@ body.behat-site .ml-n3,
 body.behat-site .ml-n3::before,
 .ml-n3 body.behat-site.ml-n3::before, body.themedesignermode .ml-n3::before,
 .ml-n3 body.themedesignermode.ml-n3::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41915,7 +41915,7 @@ body.behat-site .mr-n4,
 body.behat-site .mr-n4::before,
 .mr-n4 body.behat-site.mr-n4::before, body.themedesignermode .mr-n4::before,
 .mr-n4 body.themedesignermode.mr-n4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41934,7 +41934,7 @@ body.behat-site .ml-n4,
 body.behat-site .ml-n4::before,
 .ml-n4 body.behat-site.ml-n4::before, body.themedesignermode .ml-n4::before,
 .ml-n4 body.themedesignermode.ml-n4::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41953,7 +41953,7 @@ body.behat-site .mr-n5,
 body.behat-site .mr-n5::before,
 .mr-n5 body.behat-site.mr-n5::before, body.themedesignermode .mr-n5::before,
 .mr-n5 body.themedesignermode.mr-n5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41972,7 +41972,7 @@ body.behat-site .ml-n5,
 body.behat-site .ml-n5::before,
 .ml-n5 body.behat-site.ml-n5::before, body.themedesignermode .ml-n5::before,
 .ml-n5 body.themedesignermode.ml-n5::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -41991,7 +41991,7 @@ body.behat-site .mr-n6,
 body.behat-site .mr-n6::before,
 .mr-n6 body.behat-site.mr-n6::before, body.themedesignermode .mr-n6::before,
 .mr-n6 body.themedesignermode.mr-n6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -42010,7 +42010,7 @@ body.behat-site .ml-n6,
 body.behat-site .ml-n6::before,
 .ml-n6 body.behat-site.ml-n6::before, body.themedesignermode .ml-n6::before,
 .ml-n6 body.themedesignermode.ml-n6::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -42029,7 +42029,7 @@ body.behat-site .mr-auto,
 body.behat-site .mr-auto::before,
 .mr-auto body.behat-site.mr-auto::before, body.themedesignermode .mr-auto::before,
 .mr-auto body.themedesignermode.mr-auto::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.mr)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -42048,7 +42048,7 @@ body.behat-site .ml-auto,
 body.behat-site .ml-auto::before,
 .ml-auto body.behat-site.ml-auto::before, body.themedesignermode .ml-auto::before,
 .ml-auto body.themedesignermode.ml-auto::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.ml)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -42068,7 +42068,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-0::before,
   .mr-sm-0 body.behat-site.mr-sm-0::before, body.themedesignermode .mr-sm-0::before,
   .mr-sm-0 body.themedesignermode.mr-sm-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42086,7 +42086,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-0::before,
   .ml-sm-0 body.behat-site.ml-sm-0::before, body.themedesignermode .ml-sm-0::before,
   .ml-sm-0 body.themedesignermode.ml-sm-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42104,7 +42104,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-1::before,
   .mr-sm-1 body.behat-site.mr-sm-1::before, body.themedesignermode .mr-sm-1::before,
   .mr-sm-1 body.themedesignermode.mr-sm-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42122,7 +42122,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-1::before,
   .ml-sm-1 body.behat-site.ml-sm-1::before, body.themedesignermode .ml-sm-1::before,
   .ml-sm-1 body.themedesignermode.ml-sm-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42140,7 +42140,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-2::before,
   .mr-sm-2 body.behat-site.mr-sm-2::before, body.themedesignermode .mr-sm-2::before,
   .mr-sm-2 body.themedesignermode.mr-sm-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42158,7 +42158,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-2::before,
   .ml-sm-2 body.behat-site.ml-sm-2::before, body.themedesignermode .ml-sm-2::before,
   .ml-sm-2 body.themedesignermode.ml-sm-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42176,7 +42176,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-3::before,
   .mr-sm-3 body.behat-site.mr-sm-3::before, body.themedesignermode .mr-sm-3::before,
   .mr-sm-3 body.themedesignermode.mr-sm-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42194,7 +42194,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-3::before,
   .ml-sm-3 body.behat-site.ml-sm-3::before, body.themedesignermode .ml-sm-3::before,
   .ml-sm-3 body.themedesignermode.ml-sm-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42212,7 +42212,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-4::before,
   .mr-sm-4 body.behat-site.mr-sm-4::before, body.themedesignermode .mr-sm-4::before,
   .mr-sm-4 body.themedesignermode.mr-sm-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42230,7 +42230,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-4::before,
   .ml-sm-4 body.behat-site.ml-sm-4::before, body.themedesignermode .ml-sm-4::before,
   .ml-sm-4 body.themedesignermode.ml-sm-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42248,7 +42248,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-5::before,
   .mr-sm-5 body.behat-site.mr-sm-5::before, body.themedesignermode .mr-sm-5::before,
   .mr-sm-5 body.themedesignermode.mr-sm-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42266,7 +42266,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-5::before,
   .ml-sm-5 body.behat-site.ml-sm-5::before, body.themedesignermode .ml-sm-5::before,
   .ml-sm-5 body.themedesignermode.ml-sm-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42284,7 +42284,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-6::before,
   .mr-sm-6 body.behat-site.mr-sm-6::before, body.themedesignermode .mr-sm-6::before,
   .mr-sm-6 body.themedesignermode.mr-sm-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42302,7 +42302,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-6::before,
   .ml-sm-6 body.behat-site.ml-sm-6::before, body.themedesignermode .ml-sm-6::before,
   .ml-sm-6 body.themedesignermode.ml-sm-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42320,7 +42320,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-0::before,
   .pr-sm-0 body.behat-site.pr-sm-0::before, body.themedesignermode .pr-sm-0::before,
   .pr-sm-0 body.themedesignermode.pr-sm-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42338,7 +42338,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-0::before,
   .pl-sm-0 body.behat-site.pl-sm-0::before, body.themedesignermode .pl-sm-0::before,
   .pl-sm-0 body.themedesignermode.pl-sm-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42356,7 +42356,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-1::before,
   .pr-sm-1 body.behat-site.pr-sm-1::before, body.themedesignermode .pr-sm-1::before,
   .pr-sm-1 body.themedesignermode.pr-sm-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42374,7 +42374,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-1::before,
   .pl-sm-1 body.behat-site.pl-sm-1::before, body.themedesignermode .pl-sm-1::before,
   .pl-sm-1 body.themedesignermode.pl-sm-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42392,7 +42392,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-2::before,
   .pr-sm-2 body.behat-site.pr-sm-2::before, body.themedesignermode .pr-sm-2::before,
   .pr-sm-2 body.themedesignermode.pr-sm-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42410,7 +42410,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-2::before,
   .pl-sm-2 body.behat-site.pl-sm-2::before, body.themedesignermode .pl-sm-2::before,
   .pl-sm-2 body.themedesignermode.pl-sm-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42428,7 +42428,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-3::before,
   .pr-sm-3 body.behat-site.pr-sm-3::before, body.themedesignermode .pr-sm-3::before,
   .pr-sm-3 body.themedesignermode.pr-sm-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42446,7 +42446,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-3::before,
   .pl-sm-3 body.behat-site.pl-sm-3::before, body.themedesignermode .pl-sm-3::before,
   .pl-sm-3 body.themedesignermode.pl-sm-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42464,7 +42464,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-4::before,
   .pr-sm-4 body.behat-site.pr-sm-4::before, body.themedesignermode .pr-sm-4::before,
   .pr-sm-4 body.themedesignermode.pr-sm-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42482,7 +42482,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-4::before,
   .pl-sm-4 body.behat-site.pl-sm-4::before, body.themedesignermode .pl-sm-4::before,
   .pl-sm-4 body.themedesignermode.pl-sm-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42500,7 +42500,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-5::before,
   .pr-sm-5 body.behat-site.pr-sm-5::before, body.themedesignermode .pr-sm-5::before,
   .pr-sm-5 body.themedesignermode.pr-sm-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42518,7 +42518,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-5::before,
   .pl-sm-5 body.behat-site.pl-sm-5::before, body.themedesignermode .pl-sm-5::before,
   .pl-sm-5 body.themedesignermode.pl-sm-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42536,7 +42536,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-sm-6::before,
   .pr-sm-6 body.behat-site.pr-sm-6::before, body.themedesignermode .pr-sm-6::before,
   .pr-sm-6 body.themedesignermode.pr-sm-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42554,7 +42554,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-sm-6::before,
   .pl-sm-6 body.behat-site.pl-sm-6::before, body.themedesignermode .pl-sm-6::before,
   .pl-sm-6 body.themedesignermode.pl-sm-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42572,7 +42572,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n1::before,
   .mr-sm-n1 body.behat-site.mr-sm-n1::before, body.themedesignermode .mr-sm-n1::before,
   .mr-sm-n1 body.themedesignermode.mr-sm-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42590,7 +42590,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n1::before,
   .ml-sm-n1 body.behat-site.ml-sm-n1::before, body.themedesignermode .ml-sm-n1::before,
   .ml-sm-n1 body.themedesignermode.ml-sm-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42608,7 +42608,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n2::before,
   .mr-sm-n2 body.behat-site.mr-sm-n2::before, body.themedesignermode .mr-sm-n2::before,
   .mr-sm-n2 body.themedesignermode.mr-sm-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42626,7 +42626,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n2::before,
   .ml-sm-n2 body.behat-site.ml-sm-n2::before, body.themedesignermode .ml-sm-n2::before,
   .ml-sm-n2 body.themedesignermode.ml-sm-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42644,7 +42644,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n3::before,
   .mr-sm-n3 body.behat-site.mr-sm-n3::before, body.themedesignermode .mr-sm-n3::before,
   .mr-sm-n3 body.themedesignermode.mr-sm-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42662,7 +42662,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n3::before,
   .ml-sm-n3 body.behat-site.ml-sm-n3::before, body.themedesignermode .ml-sm-n3::before,
   .ml-sm-n3 body.themedesignermode.ml-sm-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42680,7 +42680,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n4::before,
   .mr-sm-n4 body.behat-site.mr-sm-n4::before, body.themedesignermode .mr-sm-n4::before,
   .mr-sm-n4 body.themedesignermode.mr-sm-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42698,7 +42698,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n4::before,
   .ml-sm-n4 body.behat-site.ml-sm-n4::before, body.themedesignermode .ml-sm-n4::before,
   .ml-sm-n4 body.themedesignermode.ml-sm-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42716,7 +42716,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n5::before,
   .mr-sm-n5 body.behat-site.mr-sm-n5::before, body.themedesignermode .mr-sm-n5::before,
   .mr-sm-n5 body.themedesignermode.mr-sm-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42734,7 +42734,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n5::before,
   .ml-sm-n5 body.behat-site.ml-sm-n5::before, body.themedesignermode .ml-sm-n5::before,
   .ml-sm-n5 body.themedesignermode.ml-sm-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42752,7 +42752,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-n6::before,
   .mr-sm-n6 body.behat-site.mr-sm-n6::before, body.themedesignermode .mr-sm-n6::before,
   .mr-sm-n6 body.themedesignermode.mr-sm-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42770,7 +42770,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-n6::before,
   .ml-sm-n6 body.behat-site.ml-sm-n6::before, body.themedesignermode .ml-sm-n6::before,
   .ml-sm-n6 body.themedesignermode.ml-sm-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42788,7 +42788,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-sm-auto::before,
   .mr-sm-auto body.behat-site.mr-sm-auto::before, body.themedesignermode .mr-sm-auto::before,
   .mr-sm-auto body.themedesignermode.mr-sm-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42806,7 +42806,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-sm-auto::before,
   .ml-sm-auto body.behat-site.ml-sm-auto::before, body.themedesignermode .ml-sm-auto::before,
   .ml-sm-auto body.themedesignermode.ml-sm-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42826,7 +42826,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-0::before,
   .mr-md-0 body.behat-site.mr-md-0::before, body.themedesignermode .mr-md-0::before,
   .mr-md-0 body.themedesignermode.mr-md-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42844,7 +42844,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-0::before,
   .ml-md-0 body.behat-site.ml-md-0::before, body.themedesignermode .ml-md-0::before,
   .ml-md-0 body.themedesignermode.ml-md-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42862,7 +42862,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-1::before,
   .mr-md-1 body.behat-site.mr-md-1::before, body.themedesignermode .mr-md-1::before,
   .mr-md-1 body.themedesignermode.mr-md-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42880,7 +42880,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-1::before,
   .ml-md-1 body.behat-site.ml-md-1::before, body.themedesignermode .ml-md-1::before,
   .ml-md-1 body.themedesignermode.ml-md-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42898,7 +42898,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-2::before,
   .mr-md-2 body.behat-site.mr-md-2::before, body.themedesignermode .mr-md-2::before,
   .mr-md-2 body.themedesignermode.mr-md-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42916,7 +42916,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-2::before,
   .ml-md-2 body.behat-site.ml-md-2::before, body.themedesignermode .ml-md-2::before,
   .ml-md-2 body.themedesignermode.ml-md-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42934,7 +42934,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-3::before,
   .mr-md-3 body.behat-site.mr-md-3::before, body.themedesignermode .mr-md-3::before,
   .mr-md-3 body.themedesignermode.mr-md-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42952,7 +42952,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-3::before,
   .ml-md-3 body.behat-site.ml-md-3::before, body.themedesignermode .ml-md-3::before,
   .ml-md-3 body.themedesignermode.ml-md-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42970,7 +42970,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-4::before,
   .mr-md-4 body.behat-site.mr-md-4::before, body.themedesignermode .mr-md-4::before,
   .mr-md-4 body.themedesignermode.mr-md-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -42988,7 +42988,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-4::before,
   .ml-md-4 body.behat-site.ml-md-4::before, body.themedesignermode .ml-md-4::before,
   .ml-md-4 body.themedesignermode.ml-md-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43006,7 +43006,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-5::before,
   .mr-md-5 body.behat-site.mr-md-5::before, body.themedesignermode .mr-md-5::before,
   .mr-md-5 body.themedesignermode.mr-md-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43024,7 +43024,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-5::before,
   .ml-md-5 body.behat-site.ml-md-5::before, body.themedesignermode .ml-md-5::before,
   .ml-md-5 body.themedesignermode.ml-md-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43042,7 +43042,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-6::before,
   .mr-md-6 body.behat-site.mr-md-6::before, body.themedesignermode .mr-md-6::before,
   .mr-md-6 body.themedesignermode.mr-md-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43060,7 +43060,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-6::before,
   .ml-md-6 body.behat-site.ml-md-6::before, body.themedesignermode .ml-md-6::before,
   .ml-md-6 body.themedesignermode.ml-md-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43078,7 +43078,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-0::before,
   .pr-md-0 body.behat-site.pr-md-0::before, body.themedesignermode .pr-md-0::before,
   .pr-md-0 body.themedesignermode.pr-md-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43096,7 +43096,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-0::before,
   .pl-md-0 body.behat-site.pl-md-0::before, body.themedesignermode .pl-md-0::before,
   .pl-md-0 body.themedesignermode.pl-md-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43114,7 +43114,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-1::before,
   .pr-md-1 body.behat-site.pr-md-1::before, body.themedesignermode .pr-md-1::before,
   .pr-md-1 body.themedesignermode.pr-md-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43132,7 +43132,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-1::before,
   .pl-md-1 body.behat-site.pl-md-1::before, body.themedesignermode .pl-md-1::before,
   .pl-md-1 body.themedesignermode.pl-md-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43150,7 +43150,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-2::before,
   .pr-md-2 body.behat-site.pr-md-2::before, body.themedesignermode .pr-md-2::before,
   .pr-md-2 body.themedesignermode.pr-md-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43168,7 +43168,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-2::before,
   .pl-md-2 body.behat-site.pl-md-2::before, body.themedesignermode .pl-md-2::before,
   .pl-md-2 body.themedesignermode.pl-md-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43186,7 +43186,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-3::before,
   .pr-md-3 body.behat-site.pr-md-3::before, body.themedesignermode .pr-md-3::before,
   .pr-md-3 body.themedesignermode.pr-md-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43204,7 +43204,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-3::before,
   .pl-md-3 body.behat-site.pl-md-3::before, body.themedesignermode .pl-md-3::before,
   .pl-md-3 body.themedesignermode.pl-md-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43222,7 +43222,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-4::before,
   .pr-md-4 body.behat-site.pr-md-4::before, body.themedesignermode .pr-md-4::before,
   .pr-md-4 body.themedesignermode.pr-md-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43240,7 +43240,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-4::before,
   .pl-md-4 body.behat-site.pl-md-4::before, body.themedesignermode .pl-md-4::before,
   .pl-md-4 body.themedesignermode.pl-md-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43258,7 +43258,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-5::before,
   .pr-md-5 body.behat-site.pr-md-5::before, body.themedesignermode .pr-md-5::before,
   .pr-md-5 body.themedesignermode.pr-md-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43276,7 +43276,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-5::before,
   .pl-md-5 body.behat-site.pl-md-5::before, body.themedesignermode .pl-md-5::before,
   .pl-md-5 body.themedesignermode.pl-md-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43294,7 +43294,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-md-6::before,
   .pr-md-6 body.behat-site.pr-md-6::before, body.themedesignermode .pr-md-6::before,
   .pr-md-6 body.themedesignermode.pr-md-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43312,7 +43312,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-md-6::before,
   .pl-md-6 body.behat-site.pl-md-6::before, body.themedesignermode .pl-md-6::before,
   .pl-md-6 body.themedesignermode.pl-md-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43330,7 +43330,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n1::before,
   .mr-md-n1 body.behat-site.mr-md-n1::before, body.themedesignermode .mr-md-n1::before,
   .mr-md-n1 body.themedesignermode.mr-md-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43348,7 +43348,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n1::before,
   .ml-md-n1 body.behat-site.ml-md-n1::before, body.themedesignermode .ml-md-n1::before,
   .ml-md-n1 body.themedesignermode.ml-md-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43366,7 +43366,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n2::before,
   .mr-md-n2 body.behat-site.mr-md-n2::before, body.themedesignermode .mr-md-n2::before,
   .mr-md-n2 body.themedesignermode.mr-md-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43384,7 +43384,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n2::before,
   .ml-md-n2 body.behat-site.ml-md-n2::before, body.themedesignermode .ml-md-n2::before,
   .ml-md-n2 body.themedesignermode.ml-md-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43402,7 +43402,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n3::before,
   .mr-md-n3 body.behat-site.mr-md-n3::before, body.themedesignermode .mr-md-n3::before,
   .mr-md-n3 body.themedesignermode.mr-md-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43420,7 +43420,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n3::before,
   .ml-md-n3 body.behat-site.ml-md-n3::before, body.themedesignermode .ml-md-n3::before,
   .ml-md-n3 body.themedesignermode.ml-md-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43438,7 +43438,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n4::before,
   .mr-md-n4 body.behat-site.mr-md-n4::before, body.themedesignermode .mr-md-n4::before,
   .mr-md-n4 body.themedesignermode.mr-md-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43456,7 +43456,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n4::before,
   .ml-md-n4 body.behat-site.ml-md-n4::before, body.themedesignermode .ml-md-n4::before,
   .ml-md-n4 body.themedesignermode.ml-md-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43474,7 +43474,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n5::before,
   .mr-md-n5 body.behat-site.mr-md-n5::before, body.themedesignermode .mr-md-n5::before,
   .mr-md-n5 body.themedesignermode.mr-md-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43492,7 +43492,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n5::before,
   .ml-md-n5 body.behat-site.ml-md-n5::before, body.themedesignermode .ml-md-n5::before,
   .ml-md-n5 body.themedesignermode.ml-md-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43510,7 +43510,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-n6::before,
   .mr-md-n6 body.behat-site.mr-md-n6::before, body.themedesignermode .mr-md-n6::before,
   .mr-md-n6 body.themedesignermode.mr-md-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43528,7 +43528,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-n6::before,
   .ml-md-n6 body.behat-site.ml-md-n6::before, body.themedesignermode .ml-md-n6::before,
   .ml-md-n6 body.themedesignermode.ml-md-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43546,7 +43546,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-md-auto::before,
   .mr-md-auto body.behat-site.mr-md-auto::before, body.themedesignermode .mr-md-auto::before,
   .mr-md-auto body.themedesignermode.mr-md-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43564,7 +43564,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-md-auto::before,
   .ml-md-auto body.behat-site.ml-md-auto::before, body.themedesignermode .ml-md-auto::before,
   .ml-md-auto body.themedesignermode.ml-md-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43584,7 +43584,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-0::before,
   .mr-lg-0 body.behat-site.mr-lg-0::before, body.themedesignermode .mr-lg-0::before,
   .mr-lg-0 body.themedesignermode.mr-lg-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43602,7 +43602,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-0::before,
   .ml-lg-0 body.behat-site.ml-lg-0::before, body.themedesignermode .ml-lg-0::before,
   .ml-lg-0 body.themedesignermode.ml-lg-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43620,7 +43620,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-1::before,
   .mr-lg-1 body.behat-site.mr-lg-1::before, body.themedesignermode .mr-lg-1::before,
   .mr-lg-1 body.themedesignermode.mr-lg-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43638,7 +43638,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-1::before,
   .ml-lg-1 body.behat-site.ml-lg-1::before, body.themedesignermode .ml-lg-1::before,
   .ml-lg-1 body.themedesignermode.ml-lg-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43656,7 +43656,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-2::before,
   .mr-lg-2 body.behat-site.mr-lg-2::before, body.themedesignermode .mr-lg-2::before,
   .mr-lg-2 body.themedesignermode.mr-lg-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43674,7 +43674,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-2::before,
   .ml-lg-2 body.behat-site.ml-lg-2::before, body.themedesignermode .ml-lg-2::before,
   .ml-lg-2 body.themedesignermode.ml-lg-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43692,7 +43692,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-3::before,
   .mr-lg-3 body.behat-site.mr-lg-3::before, body.themedesignermode .mr-lg-3::before,
   .mr-lg-3 body.themedesignermode.mr-lg-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43710,7 +43710,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-3::before,
   .ml-lg-3 body.behat-site.ml-lg-3::before, body.themedesignermode .ml-lg-3::before,
   .ml-lg-3 body.themedesignermode.ml-lg-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43728,7 +43728,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-4::before,
   .mr-lg-4 body.behat-site.mr-lg-4::before, body.themedesignermode .mr-lg-4::before,
   .mr-lg-4 body.themedesignermode.mr-lg-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43746,7 +43746,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-4::before,
   .ml-lg-4 body.behat-site.ml-lg-4::before, body.themedesignermode .ml-lg-4::before,
   .ml-lg-4 body.themedesignermode.ml-lg-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43764,7 +43764,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-5::before,
   .mr-lg-5 body.behat-site.mr-lg-5::before, body.themedesignermode .mr-lg-5::before,
   .mr-lg-5 body.themedesignermode.mr-lg-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43782,7 +43782,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-5::before,
   .ml-lg-5 body.behat-site.ml-lg-5::before, body.themedesignermode .ml-lg-5::before,
   .ml-lg-5 body.themedesignermode.ml-lg-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43800,7 +43800,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-6::before,
   .mr-lg-6 body.behat-site.mr-lg-6::before, body.themedesignermode .mr-lg-6::before,
   .mr-lg-6 body.themedesignermode.mr-lg-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43818,7 +43818,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-6::before,
   .ml-lg-6 body.behat-site.ml-lg-6::before, body.themedesignermode .ml-lg-6::before,
   .ml-lg-6 body.themedesignermode.ml-lg-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43836,7 +43836,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-0::before,
   .pr-lg-0 body.behat-site.pr-lg-0::before, body.themedesignermode .pr-lg-0::before,
   .pr-lg-0 body.themedesignermode.pr-lg-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43854,7 +43854,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-0::before,
   .pl-lg-0 body.behat-site.pl-lg-0::before, body.themedesignermode .pl-lg-0::before,
   .pl-lg-0 body.themedesignermode.pl-lg-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43872,7 +43872,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-1::before,
   .pr-lg-1 body.behat-site.pr-lg-1::before, body.themedesignermode .pr-lg-1::before,
   .pr-lg-1 body.themedesignermode.pr-lg-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43890,7 +43890,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-1::before,
   .pl-lg-1 body.behat-site.pl-lg-1::before, body.themedesignermode .pl-lg-1::before,
   .pl-lg-1 body.themedesignermode.pl-lg-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43908,7 +43908,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-2::before,
   .pr-lg-2 body.behat-site.pr-lg-2::before, body.themedesignermode .pr-lg-2::before,
   .pr-lg-2 body.themedesignermode.pr-lg-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43926,7 +43926,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-2::before,
   .pl-lg-2 body.behat-site.pl-lg-2::before, body.themedesignermode .pl-lg-2::before,
   .pl-lg-2 body.themedesignermode.pl-lg-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43944,7 +43944,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-3::before,
   .pr-lg-3 body.behat-site.pr-lg-3::before, body.themedesignermode .pr-lg-3::before,
   .pr-lg-3 body.themedesignermode.pr-lg-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43962,7 +43962,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-3::before,
   .pl-lg-3 body.behat-site.pl-lg-3::before, body.themedesignermode .pl-lg-3::before,
   .pl-lg-3 body.themedesignermode.pl-lg-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43980,7 +43980,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-4::before,
   .pr-lg-4 body.behat-site.pr-lg-4::before, body.themedesignermode .pr-lg-4::before,
   .pr-lg-4 body.themedesignermode.pr-lg-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -43998,7 +43998,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-4::before,
   .pl-lg-4 body.behat-site.pl-lg-4::before, body.themedesignermode .pl-lg-4::before,
   .pl-lg-4 body.themedesignermode.pl-lg-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44016,7 +44016,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-5::before,
   .pr-lg-5 body.behat-site.pr-lg-5::before, body.themedesignermode .pr-lg-5::before,
   .pr-lg-5 body.themedesignermode.pr-lg-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44034,7 +44034,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-5::before,
   .pl-lg-5 body.behat-site.pl-lg-5::before, body.themedesignermode .pl-lg-5::before,
   .pl-lg-5 body.themedesignermode.pl-lg-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44052,7 +44052,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-lg-6::before,
   .pr-lg-6 body.behat-site.pr-lg-6::before, body.themedesignermode .pr-lg-6::before,
   .pr-lg-6 body.themedesignermode.pr-lg-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44070,7 +44070,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-lg-6::before,
   .pl-lg-6 body.behat-site.pl-lg-6::before, body.themedesignermode .pl-lg-6::before,
   .pl-lg-6 body.themedesignermode.pl-lg-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44088,7 +44088,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n1::before,
   .mr-lg-n1 body.behat-site.mr-lg-n1::before, body.themedesignermode .mr-lg-n1::before,
   .mr-lg-n1 body.themedesignermode.mr-lg-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44106,7 +44106,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n1::before,
   .ml-lg-n1 body.behat-site.ml-lg-n1::before, body.themedesignermode .ml-lg-n1::before,
   .ml-lg-n1 body.themedesignermode.ml-lg-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44124,7 +44124,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n2::before,
   .mr-lg-n2 body.behat-site.mr-lg-n2::before, body.themedesignermode .mr-lg-n2::before,
   .mr-lg-n2 body.themedesignermode.mr-lg-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44142,7 +44142,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n2::before,
   .ml-lg-n2 body.behat-site.ml-lg-n2::before, body.themedesignermode .ml-lg-n2::before,
   .ml-lg-n2 body.themedesignermode.ml-lg-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44160,7 +44160,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n3::before,
   .mr-lg-n3 body.behat-site.mr-lg-n3::before, body.themedesignermode .mr-lg-n3::before,
   .mr-lg-n3 body.themedesignermode.mr-lg-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44178,7 +44178,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n3::before,
   .ml-lg-n3 body.behat-site.ml-lg-n3::before, body.themedesignermode .ml-lg-n3::before,
   .ml-lg-n3 body.themedesignermode.ml-lg-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44196,7 +44196,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n4::before,
   .mr-lg-n4 body.behat-site.mr-lg-n4::before, body.themedesignermode .mr-lg-n4::before,
   .mr-lg-n4 body.themedesignermode.mr-lg-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44214,7 +44214,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n4::before,
   .ml-lg-n4 body.behat-site.ml-lg-n4::before, body.themedesignermode .ml-lg-n4::before,
   .ml-lg-n4 body.themedesignermode.ml-lg-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44232,7 +44232,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n5::before,
   .mr-lg-n5 body.behat-site.mr-lg-n5::before, body.themedesignermode .mr-lg-n5::before,
   .mr-lg-n5 body.themedesignermode.mr-lg-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44250,7 +44250,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n5::before,
   .ml-lg-n5 body.behat-site.ml-lg-n5::before, body.themedesignermode .ml-lg-n5::before,
   .ml-lg-n5 body.themedesignermode.ml-lg-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44268,7 +44268,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-n6::before,
   .mr-lg-n6 body.behat-site.mr-lg-n6::before, body.themedesignermode .mr-lg-n6::before,
   .mr-lg-n6 body.themedesignermode.mr-lg-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44286,7 +44286,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-n6::before,
   .ml-lg-n6 body.behat-site.ml-lg-n6::before, body.themedesignermode .ml-lg-n6::before,
   .ml-lg-n6 body.themedesignermode.ml-lg-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44304,7 +44304,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-lg-auto::before,
   .mr-lg-auto body.behat-site.mr-lg-auto::before, body.themedesignermode .mr-lg-auto::before,
   .mr-lg-auto body.themedesignermode.mr-lg-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44322,7 +44322,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-lg-auto::before,
   .ml-lg-auto body.behat-site.ml-lg-auto::before, body.themedesignermode .ml-lg-auto::before,
   .ml-lg-auto body.themedesignermode.ml-lg-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44342,7 +44342,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-0::before,
   .mr-xl-0 body.behat-site.mr-xl-0::before, body.themedesignermode .mr-xl-0::before,
   .mr-xl-0 body.themedesignermode.mr-xl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44360,7 +44360,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-0::before,
   .ml-xl-0 body.behat-site.ml-xl-0::before, body.themedesignermode .ml-xl-0::before,
   .ml-xl-0 body.themedesignermode.ml-xl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44378,7 +44378,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-1::before,
   .mr-xl-1 body.behat-site.mr-xl-1::before, body.themedesignermode .mr-xl-1::before,
   .mr-xl-1 body.themedesignermode.mr-xl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44396,7 +44396,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-1::before,
   .ml-xl-1 body.behat-site.ml-xl-1::before, body.themedesignermode .ml-xl-1::before,
   .ml-xl-1 body.themedesignermode.ml-xl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44414,7 +44414,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-2::before,
   .mr-xl-2 body.behat-site.mr-xl-2::before, body.themedesignermode .mr-xl-2::before,
   .mr-xl-2 body.themedesignermode.mr-xl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44432,7 +44432,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-2::before,
   .ml-xl-2 body.behat-site.ml-xl-2::before, body.themedesignermode .ml-xl-2::before,
   .ml-xl-2 body.themedesignermode.ml-xl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44450,7 +44450,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-3::before,
   .mr-xl-3 body.behat-site.mr-xl-3::before, body.themedesignermode .mr-xl-3::before,
   .mr-xl-3 body.themedesignermode.mr-xl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44468,7 +44468,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-3::before,
   .ml-xl-3 body.behat-site.ml-xl-3::before, body.themedesignermode .ml-xl-3::before,
   .ml-xl-3 body.themedesignermode.ml-xl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44486,7 +44486,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-4::before,
   .mr-xl-4 body.behat-site.mr-xl-4::before, body.themedesignermode .mr-xl-4::before,
   .mr-xl-4 body.themedesignermode.mr-xl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44504,7 +44504,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-4::before,
   .ml-xl-4 body.behat-site.ml-xl-4::before, body.themedesignermode .ml-xl-4::before,
   .ml-xl-4 body.themedesignermode.ml-xl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44522,7 +44522,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-5::before,
   .mr-xl-5 body.behat-site.mr-xl-5::before, body.themedesignermode .mr-xl-5::before,
   .mr-xl-5 body.themedesignermode.mr-xl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44540,7 +44540,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-5::before,
   .ml-xl-5 body.behat-site.ml-xl-5::before, body.themedesignermode .ml-xl-5::before,
   .ml-xl-5 body.themedesignermode.ml-xl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44558,7 +44558,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-6::before,
   .mr-xl-6 body.behat-site.mr-xl-6::before, body.themedesignermode .mr-xl-6::before,
   .mr-xl-6 body.themedesignermode.mr-xl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44576,7 +44576,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-6::before,
   .ml-xl-6 body.behat-site.ml-xl-6::before, body.themedesignermode .ml-xl-6::before,
   .ml-xl-6 body.themedesignermode.ml-xl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44594,7 +44594,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-0::before,
   .pr-xl-0 body.behat-site.pr-xl-0::before, body.themedesignermode .pr-xl-0::before,
   .pr-xl-0 body.themedesignermode.pr-xl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44612,7 +44612,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-0::before,
   .pl-xl-0 body.behat-site.pl-xl-0::before, body.themedesignermode .pl-xl-0::before,
   .pl-xl-0 body.themedesignermode.pl-xl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44630,7 +44630,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-1::before,
   .pr-xl-1 body.behat-site.pr-xl-1::before, body.themedesignermode .pr-xl-1::before,
   .pr-xl-1 body.themedesignermode.pr-xl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44648,7 +44648,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-1::before,
   .pl-xl-1 body.behat-site.pl-xl-1::before, body.themedesignermode .pl-xl-1::before,
   .pl-xl-1 body.themedesignermode.pl-xl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44666,7 +44666,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-2::before,
   .pr-xl-2 body.behat-site.pr-xl-2::before, body.themedesignermode .pr-xl-2::before,
   .pr-xl-2 body.themedesignermode.pr-xl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44684,7 +44684,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-2::before,
   .pl-xl-2 body.behat-site.pl-xl-2::before, body.themedesignermode .pl-xl-2::before,
   .pl-xl-2 body.themedesignermode.pl-xl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44702,7 +44702,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-3::before,
   .pr-xl-3 body.behat-site.pr-xl-3::before, body.themedesignermode .pr-xl-3::before,
   .pr-xl-3 body.themedesignermode.pr-xl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44720,7 +44720,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-3::before,
   .pl-xl-3 body.behat-site.pl-xl-3::before, body.themedesignermode .pl-xl-3::before,
   .pl-xl-3 body.themedesignermode.pl-xl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44738,7 +44738,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-4::before,
   .pr-xl-4 body.behat-site.pr-xl-4::before, body.themedesignermode .pr-xl-4::before,
   .pr-xl-4 body.themedesignermode.pr-xl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44756,7 +44756,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-4::before,
   .pl-xl-4 body.behat-site.pl-xl-4::before, body.themedesignermode .pl-xl-4::before,
   .pl-xl-4 body.themedesignermode.pl-xl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44774,7 +44774,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-5::before,
   .pr-xl-5 body.behat-site.pr-xl-5::before, body.themedesignermode .pr-xl-5::before,
   .pr-xl-5 body.themedesignermode.pr-xl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44792,7 +44792,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-5::before,
   .pl-xl-5 body.behat-site.pl-xl-5::before, body.themedesignermode .pl-xl-5::before,
   .pl-xl-5 body.themedesignermode.pl-xl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44810,7 +44810,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xl-6::before,
   .pr-xl-6 body.behat-site.pr-xl-6::before, body.themedesignermode .pr-xl-6::before,
   .pr-xl-6 body.themedesignermode.pr-xl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44828,7 +44828,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xl-6::before,
   .pl-xl-6 body.behat-site.pl-xl-6::before, body.themedesignermode .pl-xl-6::before,
   .pl-xl-6 body.themedesignermode.pl-xl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44846,7 +44846,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n1::before,
   .mr-xl-n1 body.behat-site.mr-xl-n1::before, body.themedesignermode .mr-xl-n1::before,
   .mr-xl-n1 body.themedesignermode.mr-xl-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44864,7 +44864,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n1::before,
   .ml-xl-n1 body.behat-site.ml-xl-n1::before, body.themedesignermode .ml-xl-n1::before,
   .ml-xl-n1 body.themedesignermode.ml-xl-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44882,7 +44882,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n2::before,
   .mr-xl-n2 body.behat-site.mr-xl-n2::before, body.themedesignermode .mr-xl-n2::before,
   .mr-xl-n2 body.themedesignermode.mr-xl-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44900,7 +44900,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n2::before,
   .ml-xl-n2 body.behat-site.ml-xl-n2::before, body.themedesignermode .ml-xl-n2::before,
   .ml-xl-n2 body.themedesignermode.ml-xl-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44918,7 +44918,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n3::before,
   .mr-xl-n3 body.behat-site.mr-xl-n3::before, body.themedesignermode .mr-xl-n3::before,
   .mr-xl-n3 body.themedesignermode.mr-xl-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44936,7 +44936,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n3::before,
   .ml-xl-n3 body.behat-site.ml-xl-n3::before, body.themedesignermode .ml-xl-n3::before,
   .ml-xl-n3 body.themedesignermode.ml-xl-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44954,7 +44954,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n4::before,
   .mr-xl-n4 body.behat-site.mr-xl-n4::before, body.themedesignermode .mr-xl-n4::before,
   .mr-xl-n4 body.themedesignermode.mr-xl-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44972,7 +44972,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n4::before,
   .ml-xl-n4 body.behat-site.ml-xl-n4::before, body.themedesignermode .ml-xl-n4::before,
   .ml-xl-n4 body.themedesignermode.ml-xl-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -44990,7 +44990,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n5::before,
   .mr-xl-n5 body.behat-site.mr-xl-n5::before, body.themedesignermode .mr-xl-n5::before,
   .mr-xl-n5 body.themedesignermode.mr-xl-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45008,7 +45008,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n5::before,
   .ml-xl-n5 body.behat-site.ml-xl-n5::before, body.themedesignermode .ml-xl-n5::before,
   .ml-xl-n5 body.themedesignermode.ml-xl-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45026,7 +45026,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-n6::before,
   .mr-xl-n6 body.behat-site.mr-xl-n6::before, body.themedesignermode .mr-xl-n6::before,
   .mr-xl-n6 body.themedesignermode.mr-xl-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45044,7 +45044,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-n6::before,
   .ml-xl-n6 body.behat-site.ml-xl-n6::before, body.themedesignermode .ml-xl-n6::before,
   .ml-xl-n6 body.themedesignermode.ml-xl-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45062,7 +45062,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xl-auto::before,
   .mr-xl-auto body.behat-site.mr-xl-auto::before, body.themedesignermode .mr-xl-auto::before,
   .mr-xl-auto body.themedesignermode.mr-xl-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45080,7 +45080,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xl-auto::before,
   .ml-xl-auto body.behat-site.ml-xl-auto::before, body.themedesignermode .ml-xl-auto::before,
   .ml-xl-auto body.themedesignermode.ml-xl-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45100,7 +45100,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-0::before,
   .mr-xxl-0 body.behat-site.mr-xxl-0::before, body.themedesignermode .mr-xxl-0::before,
   .mr-xxl-0 body.themedesignermode.mr-xxl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45118,7 +45118,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-0::before,
   .ml-xxl-0 body.behat-site.ml-xxl-0::before, body.themedesignermode .ml-xxl-0::before,
   .ml-xxl-0 body.themedesignermode.ml-xxl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45136,7 +45136,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-1::before,
   .mr-xxl-1 body.behat-site.mr-xxl-1::before, body.themedesignermode .mr-xxl-1::before,
   .mr-xxl-1 body.themedesignermode.mr-xxl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45154,7 +45154,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-1::before,
   .ml-xxl-1 body.behat-site.ml-xxl-1::before, body.themedesignermode .ml-xxl-1::before,
   .ml-xxl-1 body.themedesignermode.ml-xxl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45172,7 +45172,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-2::before,
   .mr-xxl-2 body.behat-site.mr-xxl-2::before, body.themedesignermode .mr-xxl-2::before,
   .mr-xxl-2 body.themedesignermode.mr-xxl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45190,7 +45190,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-2::before,
   .ml-xxl-2 body.behat-site.ml-xxl-2::before, body.themedesignermode .ml-xxl-2::before,
   .ml-xxl-2 body.themedesignermode.ml-xxl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45208,7 +45208,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-3::before,
   .mr-xxl-3 body.behat-site.mr-xxl-3::before, body.themedesignermode .mr-xxl-3::before,
   .mr-xxl-3 body.themedesignermode.mr-xxl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45226,7 +45226,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-3::before,
   .ml-xxl-3 body.behat-site.ml-xxl-3::before, body.themedesignermode .ml-xxl-3::before,
   .ml-xxl-3 body.themedesignermode.ml-xxl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45244,7 +45244,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-4::before,
   .mr-xxl-4 body.behat-site.mr-xxl-4::before, body.themedesignermode .mr-xxl-4::before,
   .mr-xxl-4 body.themedesignermode.mr-xxl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45262,7 +45262,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-4::before,
   .ml-xxl-4 body.behat-site.ml-xxl-4::before, body.themedesignermode .ml-xxl-4::before,
   .ml-xxl-4 body.themedesignermode.ml-xxl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45280,7 +45280,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-5::before,
   .mr-xxl-5 body.behat-site.mr-xxl-5::before, body.themedesignermode .mr-xxl-5::before,
   .mr-xxl-5 body.themedesignermode.mr-xxl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45298,7 +45298,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-5::before,
   .ml-xxl-5 body.behat-site.ml-xxl-5::before, body.themedesignermode .ml-xxl-5::before,
   .ml-xxl-5 body.themedesignermode.ml-xxl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45316,7 +45316,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-6::before,
   .mr-xxl-6 body.behat-site.mr-xxl-6::before, body.themedesignermode .mr-xxl-6::before,
   .mr-xxl-6 body.themedesignermode.mr-xxl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45334,7 +45334,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-6::before,
   .ml-xxl-6 body.behat-site.ml-xxl-6::before, body.themedesignermode .ml-xxl-6::before,
   .ml-xxl-6 body.themedesignermode.ml-xxl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45352,7 +45352,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-0::before,
   .pr-xxl-0 body.behat-site.pr-xxl-0::before, body.themedesignermode .pr-xxl-0::before,
   .pr-xxl-0 body.themedesignermode.pr-xxl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45370,7 +45370,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-0::before,
   .pl-xxl-0 body.behat-site.pl-xxl-0::before, body.themedesignermode .pl-xxl-0::before,
   .pl-xxl-0 body.themedesignermode.pl-xxl-0::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45388,7 +45388,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-1::before,
   .pr-xxl-1 body.behat-site.pr-xxl-1::before, body.themedesignermode .pr-xxl-1::before,
   .pr-xxl-1 body.themedesignermode.pr-xxl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45406,7 +45406,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-1::before,
   .pl-xxl-1 body.behat-site.pl-xxl-1::before, body.themedesignermode .pl-xxl-1::before,
   .pl-xxl-1 body.themedesignermode.pl-xxl-1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45424,7 +45424,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-2::before,
   .pr-xxl-2 body.behat-site.pr-xxl-2::before, body.themedesignermode .pr-xxl-2::before,
   .pr-xxl-2 body.themedesignermode.pr-xxl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45442,7 +45442,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-2::before,
   .pl-xxl-2 body.behat-site.pl-xxl-2::before, body.themedesignermode .pl-xxl-2::before,
   .pl-xxl-2 body.themedesignermode.pl-xxl-2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45460,7 +45460,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-3::before,
   .pr-xxl-3 body.behat-site.pr-xxl-3::before, body.themedesignermode .pr-xxl-3::before,
   .pr-xxl-3 body.themedesignermode.pr-xxl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45478,7 +45478,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-3::before,
   .pl-xxl-3 body.behat-site.pl-xxl-3::before, body.themedesignermode .pl-xxl-3::before,
   .pl-xxl-3 body.themedesignermode.pl-xxl-3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45496,7 +45496,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-4::before,
   .pr-xxl-4 body.behat-site.pr-xxl-4::before, body.themedesignermode .pr-xxl-4::before,
   .pr-xxl-4 body.themedesignermode.pr-xxl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45514,7 +45514,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-4::before,
   .pl-xxl-4 body.behat-site.pl-xxl-4::before, body.themedesignermode .pl-xxl-4::before,
   .pl-xxl-4 body.themedesignermode.pl-xxl-4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45532,7 +45532,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-5::before,
   .pr-xxl-5 body.behat-site.pr-xxl-5::before, body.themedesignermode .pr-xxl-5::before,
   .pr-xxl-5 body.themedesignermode.pr-xxl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45550,7 +45550,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-5::before,
   .pl-xxl-5 body.behat-site.pl-xxl-5::before, body.themedesignermode .pl-xxl-5::before,
   .pl-xxl-5 body.themedesignermode.pl-xxl-5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45568,7 +45568,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pr-xxl-6::before,
   .pr-xxl-6 body.behat-site.pr-xxl-6::before, body.themedesignermode .pr-xxl-6::before,
   .pr-xxl-6 body.themedesignermode.pr-xxl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45586,7 +45586,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .pl-xxl-6::before,
   .pl-xxl-6 body.behat-site.pl-xxl-6::before, body.themedesignermode .pl-xxl-6::before,
   .pl-xxl-6 body.themedesignermode.pl-xxl-6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.pl)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45604,7 +45604,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n1::before,
   .mr-xxl-n1 body.behat-site.mr-xxl-n1::before, body.themedesignermode .mr-xxl-n1::before,
   .mr-xxl-n1 body.themedesignermode.mr-xxl-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45622,7 +45622,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n1::before,
   .ml-xxl-n1 body.behat-site.ml-xxl-n1::before, body.themedesignermode .ml-xxl-n1::before,
   .ml-xxl-n1 body.themedesignermode.ml-xxl-n1::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45640,7 +45640,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n2::before,
   .mr-xxl-n2 body.behat-site.mr-xxl-n2::before, body.themedesignermode .mr-xxl-n2::before,
   .mr-xxl-n2 body.themedesignermode.mr-xxl-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45658,7 +45658,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n2::before,
   .ml-xxl-n2 body.behat-site.ml-xxl-n2::before, body.themedesignermode .ml-xxl-n2::before,
   .ml-xxl-n2 body.themedesignermode.ml-xxl-n2::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45676,7 +45676,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n3::before,
   .mr-xxl-n3 body.behat-site.mr-xxl-n3::before, body.themedesignermode .mr-xxl-n3::before,
   .mr-xxl-n3 body.themedesignermode.mr-xxl-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45694,7 +45694,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n3::before,
   .ml-xxl-n3 body.behat-site.ml-xxl-n3::before, body.themedesignermode .ml-xxl-n3::before,
   .ml-xxl-n3 body.themedesignermode.ml-xxl-n3::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45712,7 +45712,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n4::before,
   .mr-xxl-n4 body.behat-site.mr-xxl-n4::before, body.themedesignermode .mr-xxl-n4::before,
   .mr-xxl-n4 body.themedesignermode.mr-xxl-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45730,7 +45730,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n4::before,
   .ml-xxl-n4 body.behat-site.ml-xxl-n4::before, body.themedesignermode .ml-xxl-n4::before,
   .ml-xxl-n4 body.themedesignermode.ml-xxl-n4::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45748,7 +45748,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n5::before,
   .mr-xxl-n5 body.behat-site.mr-xxl-n5::before, body.themedesignermode .mr-xxl-n5::before,
   .mr-xxl-n5 body.themedesignermode.mr-xxl-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45766,7 +45766,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n5::before,
   .ml-xxl-n5 body.behat-site.ml-xxl-n5::before, body.themedesignermode .ml-xxl-n5::before,
   .ml-xxl-n5 body.themedesignermode.ml-xxl-n5::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45784,7 +45784,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-n6::before,
   .mr-xxl-n6 body.behat-site.mr-xxl-n6::before, body.themedesignermode .mr-xxl-n6::before,
   .mr-xxl-n6 body.themedesignermode.mr-xxl-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45802,7 +45802,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-n6::before,
   .ml-xxl-n6 body.behat-site.ml-xxl-n6::before, body.themedesignermode .ml-xxl-n6::before,
   .ml-xxl-n6 body.themedesignermode.ml-xxl-n6::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45820,7 +45820,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .mr-xxl-auto::before,
   .mr-xxl-auto body.behat-site.mr-xxl-auto::before, body.themedesignermode .mr-xxl-auto::before,
   .mr-xxl-auto body.themedesignermode.mr-xxl-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.mr)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45838,7 +45838,7 @@ body.behat-site .ml-auto::before,
   body.behat-site .ml-xxl-auto::before,
   .ml-xxl-auto body.behat-site.ml-xxl-auto::before, body.themedesignermode .ml-xxl-auto::before,
   .ml-xxl-auto body.themedesignermode.ml-xxl-auto::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.ml)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45857,7 +45857,7 @@ body.behat-site .text-left,
 body.behat-site .text-left::before,
 .text-left body.behat-site.text-left::before, body.themedesignermode .text-left::before,
 .text-left body.themedesignermode.text-left::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.text-left)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -45876,7 +45876,7 @@ body.behat-site .text-right,
 body.behat-site .text-right::before,
 .text-right body.behat-site.text-right::before, body.themedesignermode .text-right::before,
 .text-right body.themedesignermode.text-right::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.text-right)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -45896,7 +45896,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-sm-left::before,
   .text-sm-left body.behat-site.text-sm-left::before, body.themedesignermode .text-sm-left::before,
   .text-sm-left body.themedesignermode.text-sm-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45914,7 +45914,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-sm-right::before,
   .text-sm-right body.behat-site.text-sm-right::before, body.themedesignermode .text-sm-right::before,
   .text-sm-right body.themedesignermode.text-sm-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45934,7 +45934,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-md-left::before,
   .text-md-left body.behat-site.text-md-left::before, body.themedesignermode .text-md-left::before,
   .text-md-left body.themedesignermode.text-md-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45952,7 +45952,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-md-right::before,
   .text-md-right body.behat-site.text-md-right::before, body.themedesignermode .text-md-right::before,
   .text-md-right body.themedesignermode.text-md-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45972,7 +45972,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-lg-left::before,
   .text-lg-left body.behat-site.text-lg-left::before, body.themedesignermode .text-lg-left::before,
   .text-lg-left body.themedesignermode.text-lg-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -45990,7 +45990,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-lg-right::before,
   .text-lg-right body.behat-site.text-lg-right::before, body.themedesignermode .text-lg-right::before,
   .text-lg-right body.themedesignermode.text-lg-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46010,7 +46010,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-xl-left::before,
   .text-xl-left body.behat-site.text-xl-left::before, body.themedesignermode .text-xl-left::before,
   .text-xl-left body.themedesignermode.text-xl-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46028,7 +46028,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-xl-right::before,
   .text-xl-right body.behat-site.text-xl-right::before, body.themedesignermode .text-xl-right::before,
   .text-xl-right body.themedesignermode.text-xl-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46048,7 +46048,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-xxl-left::before,
   .text-xxl-left body.behat-site.text-xxl-left::before, body.themedesignermode .text-xxl-left::before,
   .text-xxl-left body.themedesignermode.text-xxl-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46066,7 +46066,7 @@ body.behat-site .text-right::before,
   body.behat-site .text-xxl-right::before,
   .text-xxl-right body.behat-site.text-xxl-right::before, body.themedesignermode .text-xxl-right::before,
   .text-xxl-right body.themedesignermode.text-xxl-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.text-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46085,7 +46085,7 @@ body.behat-site .border-right,
 body.behat-site .border-right::before,
 .border-right body.behat-site.border-right::before, body.themedesignermode .border-right::before,
 .border-right body.themedesignermode.border-right::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.border-right)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46104,7 +46104,7 @@ body.behat-site .border-left,
 body.behat-site .border-left::before,
 .border-left body.behat-site.border-left::before, body.themedesignermode .border-left::before,
 .border-left body.themedesignermode.border-left::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.border-left)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46123,7 +46123,7 @@ body.behat-site .border-right-0,
 body.behat-site .border-right-0::before,
 .border-right-0 body.behat-site.border-right-0::before, body.themedesignermode .border-right-0::before,
 .border-right-0 body.themedesignermode.border-right-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.border-right)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46142,7 +46142,7 @@ body.behat-site .border-left-0,
 body.behat-site .border-left-0::before,
 .border-left-0 body.behat-site.border-left-0::before, body.themedesignermode .border-left-0::before,
 .border-left-0 body.themedesignermode.border-left-0::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.border-left)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46162,7 +46162,7 @@ body.behat-site .rounded-right,
 body.behat-site .rounded-right::before,
 .rounded-right body.behat-site.rounded-right::before, body.themedesignermode .rounded-right::before,
 .rounded-right body.themedesignermode.rounded-right::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.rounded-right)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46182,7 +46182,7 @@ body.behat-site .rounded-left,
 body.behat-site .rounded-left::before,
 .rounded-left body.behat-site.rounded-left::before, body.themedesignermode .rounded-left::before,
 .rounded-left body.themedesignermode.rounded-left::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.rounded-left)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46201,7 +46201,7 @@ body.behat-site .float-left,
 body.behat-site .float-left::before,
 .float-left body.behat-site.float-left::before, body.themedesignermode .float-left::before,
 .float-left body.themedesignermode.float-left::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.float-left)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46220,7 +46220,7 @@ body.behat-site .float-right,
 body.behat-site .float-right::before,
 .float-right body.behat-site.float-right::before, body.themedesignermode .float-right::before,
 .float-right body.themedesignermode.float-right::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.float-right)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46240,7 +46240,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-sm-left::before,
   .float-sm-left body.behat-site.float-sm-left::before, body.themedesignermode .float-sm-left::before,
   .float-sm-left body.themedesignermode.float-sm-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46258,7 +46258,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-sm-right::before,
   .float-sm-right body.behat-site.float-sm-right::before, body.themedesignermode .float-sm-right::before,
   .float-sm-right body.themedesignermode.float-sm-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46278,7 +46278,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-md-left::before,
   .float-md-left body.behat-site.float-md-left::before, body.themedesignermode .float-md-left::before,
   .float-md-left body.themedesignermode.float-md-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46296,7 +46296,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-md-right::before,
   .float-md-right body.behat-site.float-md-right::before, body.themedesignermode .float-md-right::before,
   .float-md-right body.themedesignermode.float-md-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46316,7 +46316,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-lg-left::before,
   .float-lg-left body.behat-site.float-lg-left::before, body.themedesignermode .float-lg-left::before,
   .float-lg-left body.themedesignermode.float-lg-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46334,7 +46334,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-lg-right::before,
   .float-lg-right body.behat-site.float-lg-right::before, body.themedesignermode .float-lg-right::before,
   .float-lg-right body.themedesignermode.float-lg-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46354,7 +46354,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-xl-left::before,
   .float-xl-left body.behat-site.float-xl-left::before, body.themedesignermode .float-xl-left::before,
   .float-xl-left body.themedesignermode.float-xl-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46372,7 +46372,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-xl-right::before,
   .float-xl-right body.behat-site.float-xl-right::before, body.themedesignermode .float-xl-right::before,
   .float-xl-right body.themedesignermode.float-xl-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46392,7 +46392,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-xxl-left::before,
   .float-xxl-left body.behat-site.float-xxl-left::before, body.themedesignermode .float-xxl-left::before,
   .float-xxl-left body.themedesignermode.float-xxl-left::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-left)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46410,7 +46410,7 @@ body.behat-site .float-right::before,
   body.behat-site .float-xxl-right::before,
   .float-xxl-right body.behat-site.float-xxl-right::before, body.themedesignermode .float-xxl-right::before,
   .float-xxl-right body.themedesignermode.float-xxl-right::before {
-    content: "Deprecated style in use" !important;
+    content: "Deprecated style in use (.float-right)" !important;
     color: #ca3120 !important;
     font-size: smaller !important;
   }
@@ -46461,7 +46461,7 @@ body.behat-site .font-weight-light,
 body.behat-site .font-weight-light::before,
 .font-weight-light body.behat-site.font-weight-light::before, body.themedesignermode .font-weight-light::before,
 .font-weight-light body.themedesignermode.font-weight-light::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46480,7 +46480,7 @@ body.behat-site .font-weight-lighter,
 body.behat-site .font-weight-lighter::before,
 .font-weight-lighter body.behat-site.font-weight-lighter::before, body.themedesignermode .font-weight-lighter::before,
 .font-weight-lighter body.themedesignermode.font-weight-lighter::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46499,7 +46499,7 @@ body.behat-site .font-weight-normal,
 body.behat-site .font-weight-normal::before,
 .font-weight-normal body.behat-site.font-weight-normal::before, body.themedesignermode .font-weight-normal::before,
 .font-weight-normal body.themedesignermode.font-weight-normal::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46518,7 +46518,7 @@ body.behat-site .font-weight-bold,
 body.behat-site .font-weight-bold::before,
 .font-weight-bold body.behat-site.font-weight-bold::before, body.themedesignermode .font-weight-bold::before,
 .font-weight-bold body.themedesignermode.font-weight-bold::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46537,7 +46537,7 @@ body.behat-site .font-weight-bolder,
 body.behat-site .font-weight-bolder::before,
 .font-weight-bolder body.behat-site.font-weight-bolder::before, body.themedesignermode .font-weight-bolder::before,
 .font-weight-bolder body.themedesignermode.font-weight-bolder::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46556,7 +46556,7 @@ body.behat-site .font-italic,
 body.behat-site .font-italic::before,
 .font-italic body.behat-site.font-italic::before, body.themedesignermode .font-italic::before,
 .font-italic body.themedesignermode.font-italic::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.font-weight)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46575,7 +46575,7 @@ body.behat-site .rounded-sm,
 body.behat-site .rounded-sm::before,
 .rounded-sm body.behat-site.rounded-sm::before, body.themedesignermode .rounded-sm::before,
 .rounded-sm body.themedesignermode.rounded-sm::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.rounded-sm)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46594,7 +46594,7 @@ body.behat-site .rounded-lg,
 body.behat-site .rounded-lg::before,
 .rounded-lg body.behat-site.rounded-lg::before, body.themedesignermode .rounded-lg::before,
 .rounded-lg body.themedesignermode.rounded-lg::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.rounded-lg)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46621,7 +46621,7 @@ body.behat-site .sr-only,
 body.behat-site .sr-only::before,
 .sr-only body.behat-site.sr-only::before, body.themedesignermode .sr-only::before,
 .sr-only body.themedesignermode.sr-only::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.sr-only)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46639,7 +46639,7 @@ body.behat-site .sr-only-focusable,
 body.behat-site .sr-only-focusable::before,
 .sr-only-focusable body.behat-site.sr-only-focusable::before, body.themedesignermode .sr-only-focusable::before,
 .sr-only-focusable body.themedesignermode.sr-only-focusable::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.sr-only-focusable)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46738,7 +46738,7 @@ body.behat-site .custom-checkbox,
 body.behat-site .custom-checkbox::before,
 .custom-checkbox body.behat-site.custom-checkbox::before, body.themedesignermode .custom-checkbox::before,
 .custom-checkbox body.themedesignermode.custom-checkbox::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-checkbox)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46775,7 +46775,7 @@ body.behat-site .custom-radio,
 body.behat-site .custom-radio::before,
 .custom-radio body.behat-site.custom-radio::before, body.themedesignermode .custom-radio::before,
 .custom-radio body.themedesignermode.custom-radio::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-radio)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46803,7 +46803,7 @@ body.behat-site .custom-switch,
 body.behat-site .custom-switch::before,
 .custom-switch body.behat-site.custom-switch::before, body.themedesignermode .custom-switch::before,
 .custom-switch body.themedesignermode.custom-switch::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-switch)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46861,7 +46861,7 @@ body.behat-site .custom-select,
 body.behat-site .custom-select::before,
 .custom-select body.behat-site.custom-select::before, body.themedesignermode .custom-select::before,
 .custom-select body.themedesignermode.custom-select::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-select)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -46925,7 +46925,7 @@ body.behat-site .custom-file,
 body.behat-site .custom-file::before,
 .custom-file body.behat-site.custom-file::before, body.themedesignermode .custom-file::before,
 .custom-file body.themedesignermode.custom-file::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-file)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -47004,7 +47004,7 @@ body.behat-site .custom-range,
 body.behat-site .custom-range::before,
 .custom-range body.behat-site.custom-range::before, body.themedesignermode .custom-range::before,
 .custom-range body.themedesignermode.custom-range::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.custom-range)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
@@ -47158,7 +47158,7 @@ body.behat-site .btn-block,
 body.behat-site .btn-block::before,
 .btn-block body.behat-site.btn-block::before, body.themedesignermode .btn-block::before,
 .btn-block body.themedesignermode.btn-block::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.btn-block)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }

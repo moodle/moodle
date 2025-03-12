@@ -5,7 +5,7 @@
 //
 // Deprecation mixin.
 //
-@mixin deprecated-styles() {
+@mixin deprecated-styles($deprecatedrule) {
     /* stylelint-disable declaration-no-important */
     body.behat-site &,
     body.behat-site#{&},
@@ -14,7 +14,7 @@
         outline: 3px dotted $red !important;
         background-color: lighten($red, 50%) !important;
         &::before {
-            content: "Deprecated style in use" !important;
+            content: "Deprecated style in use (#{$deprecatedrule})" !important;
             color: $red !important;
             font-size: smaller !important;
         }
@@ -43,7 +43,7 @@
 
 // In 6.0 all YUI section spinners wont be needed.
 .course-content .stateready .section .spinner {
-    @include deprecated-styles();
+    @include deprecated-styles(".course-content .stateready .section .spinner");
     display: none;
 }
 
