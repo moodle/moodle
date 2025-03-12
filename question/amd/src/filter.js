@@ -26,7 +26,7 @@ import Notification from 'core/notification';
 import Selectors from 'core/datafilter/selectors';
 import Templates from 'core/templates';
 import Fragment from 'core/fragment';
-
+import {get_strings as getStrings} from 'core/str';
 /**
  * Initialise the question bank filter on the element with the given id.
  *
@@ -66,6 +66,8 @@ export const init = (
         MENU_ACTIONS: '.menu-action',
         EDIT_SWITCH: '.editmode-switch-form input[name=setmode]',
         EDIT_SWITCH_URL: '.editmode-switch-form input[name=pageurl]',
+        CATEGORY_VALIDATION_INPUT: 'div[data-filter-type="category"] div.form-autocomplete-input input',
+        QUESTION_BANK_WINDOW: '.questionbankwindow',
     };
 
     const filterSet = document.querySelector(`#${filterRegionId}`);
@@ -97,6 +99,27 @@ export const init = (
      * @param {Promise} pendingPromise pending promise
      */
     const applyFilter = (filterdata, pendingPromise) => {
+
+        // MDL-84578 - This is a simple fix for older stable branches, which does not require
+        // backporting loads of functionality to validate filters properly.
+        let categoryid = parseInt(filterdata.category.values[0]);
+        let categorynode = document.querySelector(SELECTORS.CATEGORY_VALIDATION_INPUT);
+        categorynode.setCustomValidity('');
+        if (isNaN(categoryid) || categoryid <= 0) {
+            getStrings([
+                {
+                    key: 'error:category',
+                    component: 'qbank_managecategories',
+                },
+            ]).then((strings) => {
+                categorynode.setCustomValidity(strings[0]);
+                categorynode.reportValidity();
+                return strings;
+            }).catch(Notification.exception);
+            pendingPromise.resolve();
+            return;
+        }
+
         // Reload the questions based on the specified filters. If no filters are provided,
         // use the default category filter condition.
         if (filterdata) {
@@ -180,7 +203,7 @@ export const init = (
     };
 
     // Add listeners for the sorting, paging and clear actions.
-    document.addEventListener('click', e => {
+    document.querySelector(SELECTORS.QUESTION_BANK_WINDOW).addEventListener('click', e => {
         const sortableLink = e.target.closest(SELECTORS.SORT_LINK);
         const paginationLink = e.target.closest(SELECTORS.PAGINATION_LINK);
         const clearLink = e.target.closest(Selectors.filterset.actions.resetFilters);

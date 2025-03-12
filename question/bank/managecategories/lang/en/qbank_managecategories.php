@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['error:category'] = 'You must select a valid category';
 $string['pluginname'] = 'Manage categories';
 $string['privacy:preference:includesubcategories_filter_default'] = 'Indicates whether or not the "Also show questions from subcategories" filter option is enabled by default when the user views the question bank.';
 $string['questionsubcategoriesdisplayed'] = 'When selecting categories in the question bank, the "Also show questions from subcategories" option is used and are automatically included in the filter results.';
