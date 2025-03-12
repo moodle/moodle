@@ -61,6 +61,9 @@ class core_reportbuilder_generator extends component_generator_base {
         // Include default setup unless specifically disabled in passed record.
         $default = (bool) ($record['default'] ?? true);
 
+        // Report custom fields.
+        \core_reportbuilder\customfield\report_handler::create()->instance_form_before_set_data((object)$record);
+
         // If setting up default report, purge caches to ensure any default attributes are always loaded in tests.
         $report = helper::create_report((object) $record, $default);
         if ($default) {

@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\reports;
 
+use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_external\external_api;
 use externallib_advanced_testcase;
@@ -49,11 +50,26 @@ final class retrieve_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->create_user(['firstname' => 'Zoe', 'lastname' => 'Zebra', 'email' => 'u1@example.com']);
         $this->getDataGenerator()->create_user(['firstname' => 'Charlie', 'lastname' => 'Carrot', 'email' => 'u2@example.com']);
 
+        /** @var core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $category = $generator->create_category(['component' => 'core_reportbuilder', 'area' => 'report']);
+        $generator->create_field([
+            'categoryid' => $category->get('id'),
+            'name' => 'My field',
+            'shortname' => 'myfield',
+            'type' => 'number',
+        ]);
+
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
-        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false,
-            'tags' => ['cat', 'dog']]);
+        $report = $generator->create_report([
+            'name' => 'My report',
+            'source' => users::class,
+            'default' => false,
+            'tags' => ['cat', 'dog'],
+            'customfield_myfield' => 42,
+        ]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname', 'sortenabled' => 1]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
 
@@ -87,6 +103,7 @@ final class retrieve_test extends externallib_advanced_testcase {
         $this->assertArrayHasKey('details', $result);
         $this->assertEquals('My report', $result['details']['name']);
         $this->assertEquals(['cat', 'dog'], array_column($result['details']['tags'], 'name'));
+        $this->assertEquals(['42'], array_column($result['details']['customfields']['data'], 'value'));
 
         $this->assertArrayHasKey('data', $result);
         $this->assertEquals(['Full name', 'Email address'], $result['data']['headers']);

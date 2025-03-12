@@ -1,0 +1,7 @@
+issueNumber: MDL-83552
+notes:
+  core_customfield:
+    - message: >-
+        Added a new custom field exporter to export custom field data in
+        `\core_customfield\external\field_data_exporter`
+      type: improved
