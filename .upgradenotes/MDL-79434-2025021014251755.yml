@@ -1,0 +1,9 @@
+issueNumber: MDL-79434
+notes:
+  core_calendar:
+    - message: >
+        Final removal of calendar functions:
+          - calendar_top_controls()
+          - calendar_get_link_previous()
+          - calendar_get_link_next()
+      type: removed
