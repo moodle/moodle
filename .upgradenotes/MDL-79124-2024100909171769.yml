@@ -1,0 +1,14 @@
+issueNumber: MDL-79124
+notes:
+  core_user:
+    - message: >-
+        Final removal of the following user preference helpers, please use the
+        `core_user/repository` module instead:
+
+
+        - `user_preference_allow_ajax_update`
+
+        - `M.util.set_user_preference`
+
+        - `lib/ajax/setuserpref.php`
+      type: removed
