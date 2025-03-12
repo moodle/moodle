@@ -55,3 +55,7 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
 	tag = v4.5.1
+[submodule "admin/tool/ilioscategoryassignment"]
+	path = admin/tool/ilioscategoryassignment
+	url = https://github.com:/ilios/tool_ilioscategoryassignment.git
+	branch = MOODLE_405_STABLE
