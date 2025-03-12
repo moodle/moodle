@@ -30,15 +30,12 @@ use core_courseformat\base as course_format;
  * @package    core_courseformat
  * @copyright  2024 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 5.0
- * @todo Remove this class in Moodle 6.0 MDL-83851
  */
-class create_module extends external_api {
+class new_module extends external_api {
 
     /**
      * Webservice parameters.
      *
-     * @deprecated since Moodle 5.0
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
@@ -46,7 +43,7 @@ class create_module extends external_api {
             [
                 'courseid' => new external_value(PARAM_INT, 'course id', VALUE_REQUIRED),
                 'modname' => new external_value(PARAM_ALPHANUMEXT, 'module name', VALUE_REQUIRED),
-                'targetsectionnum' => new external_value(PARAM_INT, 'target section number', VALUE_REQUIRED, null),
+                'targetsectionid' => new external_value(PARAM_INT, 'target section id', VALUE_REQUIRED, null),
                 'targetcmid' => new external_value(PARAM_INT, 'Optional target cm id', VALUE_DEFAULT, null),
             ]
         );
@@ -63,17 +60,16 @@ class create_module extends external_api {
      * on cms, sections and the general course data. However, if some plugin needs adhoc messages for
      * its own mutation module, extend this class in format_XXX\course.
      *
-     * @deprecated since Moodle 5.0
      * @param int $courseid the course id
      * @param string $modname the module name
-     * @param int $targetsectionnum the target section number
+     * @param int $targetsectionid the target section id
      * @param int|null $targetcmid optional target cm id
      * @return string Course state in JSON
      */
     public static function execute(
         int $courseid,
         string $modname,
-        int $targetsectionnum,
+        int $targetsectionid,
         ?int $targetcmid = null
     ): string {
         global $CFG;
@@ -83,12 +79,12 @@ class create_module extends external_api {
         [
             'courseid' => $courseid,
             'modname' => $modname,
-            'targetsectionnum' => $targetsectionnum,
+            'targetsectionid' => $targetsectionid,
             'targetcmid' => $targetcmid,
         ] = self::validate_parameters(self::execute_parameters(), [
             'courseid' => $courseid,
             'modname' => $modname,
-            'targetsectionnum' => $targetsectionnum,
+            'targetsectionid' => $targetsectionid,
             'targetcmid' => $targetcmid,
         ]);
 
@@ -119,9 +115,10 @@ class create_module extends external_api {
         if (!class_exists($actionsclass)) {
             $actionsclass = 'core_courseformat\\stateactions';
         }
+        /** @var \core_courseformat\stateactions $actions */
         $actions = new $actionsclass();
 
-        $action = 'create_module';
+        $action = 'new_module';
         if (!is_callable([$actions, $action])) {
             throw new moodle_exception("Invalid course state action $action in ".get_class($actions));
         }
@@ -129,7 +126,7 @@ class create_module extends external_api {
         $course = $courseformat->get_course();
 
         // Execute the action.
-        $actions->$action($updates, $course, $modname, $targetsectionnum, $targetcmid);
+        $actions->$action($updates, $course, $modname, $targetsectionid, $targetcmid);
 
         // Dispatch the hook for post course content update.
         $hook = new \core_courseformat\hook\after_course_content_updated(
@@ -143,18 +140,9 @@ class create_module extends external_api {
     /**
      * Webservice returns.
      *
-     * @deprecated since Moodle 5.0
      * @return external_value
      */
     public static function execute_returns(): external_value {
         return new external_value(PARAM_RAW, 'Encoded course update JSON');
-    }
-
-    /**
-     * Mark the function as deprecated.
-     * @return bool
-     */
-    public static function execute_is_deprecated() {
-        return true;
     }
 }
