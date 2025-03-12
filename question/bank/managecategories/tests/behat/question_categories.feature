@@ -137,3 +137,20 @@ Feature: A teacher can put questions in categories in the question bank
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And the field "Also show questions from subcategories" matches value "0"
+
+  Scenario: Filter question by an invalid category should show validation error
+    When I am on the "Qbank 1" "core_question > question bank" page
+    And I click on "Default for qbank1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I click on "Apply filters" "button"
+    Then the "Category" field validity check should return "false"
+    And the "Category" field validation message should contain "You must select a valid category"
+
+  Scenario: Correcting an invalid category should no longer show validation error
+    When I am on the "Qbank 1" "core_question > question bank" page
+    # First try to submit with a blank category.
+    And I click on "Default for qbank1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I click on "Apply filters" "button"
+    # Then apply a correct category.
+    And I apply question bank filter "Category" with value "Used category"
+    Then the "Category" field validity check should return "true"
+    And I should see "Test question to be moved"
