@@ -1,0 +1,7 @@
+issueNumber: MDL-84143
+notes:
+  core_enrol:
+    - message: >-
+        It's now possible for themes to override the course enrolment index page
+        by overriding the new course renderer `enrolment_options` method
+      type: improved
