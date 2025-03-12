@@ -2740,25 +2740,11 @@ abstract class enrol_plugin {
     }
 
     /**
-     * Update instance members.
-     *
-     * Update communication room membership for an instance action being performed.
-     *
-     * @param int $enrolmentinstanceid ID of the enrolment instance
-     * @param string $action The update action being performed
-     * @param stdClass $course The course object
-     * @return void
      * @deprecated Since Moodle 4.4.0.
-     * @see \core_communication\hook_listener::update_communication_memberships_for_enrol_status_change()
-     * @todo MDL-80491 Final deprecation in Moodle 4.8.
-     *
      */
-    public function update_communication(int $enrolmentinstanceid, string $action, stdClass $course): void {
-        debugging('Use of method update_communication is deprecated. This feature has been moved to
-        core_communication as a part of hooks api implementation so that plugins or core does not need to call this method anymore.
-        Method update_communication_memberships_for_enrol_status_change method in communication/classes/hook_listener.php
-        now handles all the operations related to this method using hooks callback recorded in lib/db/hooks.php.', DEBUG_DEVELOPER);
-        return;
+    #[\core\attribute\deprecated(null, reason: 'Replaced with hooks', since: '4.4', mdl: 'MDL-78551', final: true)]
+    public function update_communication(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
