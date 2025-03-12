@@ -1,0 +1,13 @@
+issueNumber: MDL-78926
+notes:
+  core_course:
+    - message: Final removal of core_course\output\activity_information
+      type: removed
+    - message: Final deprecation of core_course_renderer\render_activity_information()
+      type: removed
+  core:
+    - message: Final deprecation of core_renderer\activity_information()
+      type: removed
+  mod_wiki:
+    - message: Final deprecation of mod_wiki_renderer\wiki_info()
+      type: removed
