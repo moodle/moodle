@@ -1,0 +1,5 @@
+issueNumber: MDL-78706
+notes:
+  core_repository:
+    - message: Final removal of base `repository` class method `get_file_size`
+      type: removed
