@@ -120,7 +120,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $listing = core_course_category::top()->get_children();
 
         $attributes = [
-            'class' => 'ms-1 list-unstyled list-group',
+            'class' => 'ms-1 list-unstyled category-list list-group',
             'role' => 'tree',
             'aria-labelledby' => 'category-listing-title',
         ];

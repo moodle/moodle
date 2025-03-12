@@ -652,8 +652,8 @@ DragDrop.prototype = {
             container = managementconsole.get('element'),
             categorylisting = container.one('#category-listing'),
             courselisting = container.one('#course-listing > .course-listing'),
-            categoryul = (categorylisting) ? categorylisting.one('ul.ml') : null,
-            courseul = (courselisting) ? courselisting.one('ul.ml') : null,
+            categoryul = (categorylisting) ? categorylisting.one('ul.category-list') : null,
+            courseul = (courselisting) ? courselisting.one('ul.course-list') : null,
             canmoveoutof = (courselisting) ? courselisting.getData('canmoveoutof') : false,
             contstraint = (canmoveoutof) ? container : courseul;
 
