@@ -94,6 +94,44 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders course info box.
+     *
+     * @param stdClass $course course object
+     * @param string[] $widgets array of enrolment widgets
+     * @param \core\url|null $returnurl return url
+     * @return string
+     */
+    public function enrolment_options(stdClass $course, array $widgets, ?\core\url $returnurl = null): string {
+        if (!$widgets) {
+            if (isguestuser()) {
+                $message = get_string('noguestaccess', 'enrol');
+                $continuebutton = $this->output->continue_button(get_login_url());
+            } else if ($returnurl) {
+                $message = get_string('notenrollable', 'enrol');
+                $continuebutton = $this->output->continue_button($returnurl);
+            } else {
+                $url = get_local_referer(false);
+                if (empty($url)) {
+                    $url = new moodle_url('/index.php');
+                }
+                $message = get_string('notenrollable', 'enrol');
+                $continuebutton = $this->output->continue_button($url);
+            }
+        }
+
+        $courseinfobox = $this->course_info_box($course);
+
+        $templatecontext = [
+            'heading' => get_string('enrolmentoptions', 'enrol'),
+            'courseinfobox' => $courseinfobox,
+            'widgets' => array_values($widgets),
+            'message' => $message ?? '',
+            'continuebutton' => $continuebutton ?? '',
+        ];
+        return $this->render_from_template('core_enrol/enrolment_options', $templatecontext);
+    }
+
+    /**
      * Renderers a structured array of courses and categories into a nice XHTML tree structure.
      *
      * @deprecated since 2.5
