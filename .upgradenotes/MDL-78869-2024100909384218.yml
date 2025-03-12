@@ -1,0 +1,14 @@
+issueNumber: MDL-78869
+notes:
+  core:
+    - message: >-
+        Final removal of the following constants/methods from the
+        `\core\encyption` class, removing support for OpenSSL fallback:
+
+
+        - `METHOD_OPENSSL`
+
+        - `OPENSSL_CIPHER`
+
+        - `is_sodium_installed`
+      type: removed
