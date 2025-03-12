@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /**
  * List of features supported in IMS CP module
  * @param string $feature FEATURE_xx constant for requested feature

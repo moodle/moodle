@@ -1,0 +1,10 @@
+issueNumber: MDL-78635
+notes:
+  mod_imscp:
+    - message: >-
+        Final removal of deprecated `imscp_libxml_disable_entity_loader`
+        function
+      type: removed
+  mod_lti:
+    - message: Final removal of deprecated `lti_libxml_disable_entity_loader` function
+      type: removed
