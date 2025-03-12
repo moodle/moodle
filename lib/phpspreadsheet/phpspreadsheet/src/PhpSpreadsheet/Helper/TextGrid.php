@@ -4,30 +4,15 @@ namespace PhpOffice\PhpSpreadsheet\Helper;
 
 class TextGrid
 {
-    /**
-     * @var bool
-     */
-    private $isCli = true;
+    private bool $isCli;
 
-    /**
-     * @var array
-     */
-    protected $matrix;
+    protected array $matrix;
 
-    /**
-     * @var array
-     */
-    protected $rows;
+    protected array $rows;
 
-    /**
-     * @var array
-     */
-    protected $columns;
+    protected array $columns;
 
-    /**
-     * @var string
-     */
-    private $gridDisplay;
+    private string $gridDisplay;
 
     public function __construct(array $matrix, bool $isCli = true)
     {
@@ -50,13 +35,15 @@ class TextGrid
     {
         $this->gridDisplay = $this->isCli ? '' : '<pre>';
 
-        $maxRow = max($this->rows);
-        $maxRowLength = mb_strlen((string) $maxRow) + 1;
-        $columnWidths = $this->getColumnWidths();
+        if (!empty($this->rows)) {
+            $maxRow = max($this->rows);
+            $maxRowLength = mb_strlen((string) $maxRow) + 1;
+            $columnWidths = $this->getColumnWidths();
 
-        $this->renderColumnHeader($maxRowLength, $columnWidths);
-        $this->renderRows($maxRowLength, $columnWidths);
-        $this->renderFooter($maxRowLength, $columnWidths);
+            $this->renderColumnHeader($maxRowLength, $columnWidths);
+            $this->renderRows($maxRowLength, $columnWidths);
+            $this->renderFooter($maxRowLength, $columnWidths);
+        }
 
         $this->gridDisplay .= $this->isCli ? '' : '</pre>';
 

@@ -9,20 +9,15 @@ class Delimiter
     /** @var resource */
     protected $fileHandle;
 
-    /** @var string */
-    protected $escapeCharacter;
+    protected string $escapeCharacter;
 
-    /** @var string */
-    protected $enclosure;
+    protected string $enclosure;
 
-    /** @var array */
-    protected $counts = [];
+    protected array $counts = [];
 
-    /** @var int */
-    protected $numberLines = 0;
+    protected int $numberLines = 0;
 
-    /** @var ?string */
-    protected $delimiter;
+    protected ?string $delimiter = null;
 
     /**
      * @param resource $fileHandle
@@ -60,14 +55,12 @@ class Delimiter
 
     protected function countDelimiterValues(string $line, array $delimiterKeys): void
     {
-        $splitString = str_split($line, 1);
-        if (is_array($splitString)) {
-            $distribution = array_count_values($splitString);
-            $countLine = array_intersect_key($distribution, $delimiterKeys);
+        $splitString = mb_str_split($line, 1, 'UTF-8');
+        $distribution = array_count_values($splitString);
+        $countLine = array_intersect_key($distribution, $delimiterKeys);
 
-            foreach (self::POTENTIAL_DELIMETERS as $delimiter) {
-                $this->counts[$delimiter][] = $countLine[$delimiter] ?? 0;
-            }
+        foreach (self::POTENTIAL_DELIMETERS as $delimiter) {
+            $this->counts[$delimiter][] = $countLine[$delimiter] ?? 0;
         }
     }
 
@@ -92,9 +85,7 @@ class Delimiter
 
             $meanSquareDeviations[$delimiter] = array_reduce(
                 $series,
-                function ($sum, $value) use ($median) {
-                    return $sum + ($value - $median) ** 2;
-                }
+                fn ($sum, $value): int|float => $sum + ($value - $median) ** 2
             ) / count($series);
         }
 

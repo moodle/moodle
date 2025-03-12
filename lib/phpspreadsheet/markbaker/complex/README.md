@@ -24,7 +24,7 @@ The library currently provides the following operations:
     - division by
     - division into
 
-together with functions for
+together with functions for 
 
  - theta (polar theta angle)
  - rho (polar distance/radius)
@@ -61,8 +61,8 @@ together with functions for
  - log10 (base-10 log)
  - log2 (base-2 log)
  - pow (raised to the power of a real number)
-
-
+ 
+ 
 ---
 
 # Installation

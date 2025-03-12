@@ -30,8 +30,10 @@ final class Locale
         }
     }
 
-    public function format(): string
+    public function format(bool $stripRlm = true): string
     {
-        return $this->formatter->getPattern();
+        $str = $this->formatter->getPattern();
+
+        return ($stripRlm && str_starts_with($str, "\xe2\x80\x8f")) ? substr($str, 3) : $str;
     }
 }

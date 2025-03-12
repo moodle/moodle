@@ -1,0 +1,17 @@
+diff --git a/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php b/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
+index 022c1bb0d1..a17cb419a9 100644
+--- a/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
++++ b/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
+@@ -112,6 +112,12 @@ class File
+      */
+     public static function sysGetTempDir(): string
+     {
++        // Moodle hack!
++        if (function_exists('make_temp_directory')) {
++            $temp = make_temp_directory('phpspreadsheet');
++            return realpath(dirname($temp));
++        }
++
+         $path = sys_get_temp_dir();
+         if (self::$useUploadTempDirectory) {
+             //  use upload-directory when defined to allow running on environments having very restricted

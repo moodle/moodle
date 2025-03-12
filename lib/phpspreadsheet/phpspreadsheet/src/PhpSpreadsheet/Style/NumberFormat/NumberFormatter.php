@@ -5,9 +5,9 @@ namespace PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class NumberFormatter
+class NumberFormatter extends BaseFormatter
 {
-    private const NUMBER_REGEX = '/(0+)(\\.?)(0*)/';
+    private const NUMBER_REGEX = '/(0+)(\.?)(0*)/';
 
     private static function mergeComplexNumberFormatMasks(array $numbers, array $masks): array
     {
@@ -28,12 +28,9 @@ class NumberFormatter
         ];
     }
 
-    /**
-     * @param mixed $number
-     */
-    private static function processComplexNumberFormatMask($number, string $mask): string
+    private static function processComplexNumberFormatMask(mixed $number, string $mask): string
     {
-        /** @var string */
+        /** @var string $result */
         $result = $number;
         $maskingBlockCount = preg_match_all('/0+/', $mask, $maskingBlocks, PREG_OFFSET_CAPTURE);
 
@@ -46,13 +43,13 @@ class NumberFormatter
                 $divisor = 10 ** $size;
                 $offset = $block[1];
 
-                /** @var float */
+                /** @var float $numberFloat */
                 $numberFloat = $number;
                 $blockValue = sprintf("%0{$size}d", fmod($numberFloat, $divisor));
                 $number = floor($numberFloat / $divisor);
                 $mask = substr_replace($mask, $blockValue, $offset, $size);
             }
-            /** @var string */
+            /** @var string $numberString */
             $numberString = $number;
             if ($number > 0) {
                 $mask = substr_replace($mask, $numberString, $offset, 0);
@@ -63,12 +60,9 @@ class NumberFormatter
         return self::makeString($result);
     }
 
-    /**
-     * @param mixed $number
-     */
-    private static function complexNumberFormatMask($number, string $mask, bool $splitOnPoint = true): string
+    private static function complexNumberFormatMask(mixed $number, string $mask, bool $splitOnPoint = true): string
     {
-        /** @var float */
+        /** @var float $numberFloat */
         $numberFloat = $number;
         if ($splitOnPoint) {
             $masks = explode('.', $mask);
@@ -81,7 +75,7 @@ class NumberFormatter
         $sign = ($numberFloat < 0.0) ? '-' : '';
         $number = self::f2s(abs($numberFloat));
 
-        if ($splitOnPoint && strpos($mask, '.') !== false && strpos($number, '.') !== false) {
+        if ($splitOnPoint && str_contains($mask, '.') && str_contains($number, '.')) {
             $numbers = explode('.', $number);
             $masks = explode('.', $mask);
             if (count($masks) > 2) {
@@ -138,12 +132,9 @@ class NumberFormatter
         return $s;
     }
 
-    /**
-     * @param mixed $value
-     */
-    private static function formatStraightNumericValue($value, string $format, array $matches, bool $useThousands): string
+    private static function formatStraightNumericValue(mixed $value, string $format, array $matches, bool $useThousands): string
     {
-        /** @var float */
+        /** @var float $valueFloat */
         $valueFloat = $value;
         $left = $matches[1];
         $dec = $matches[2];
@@ -174,7 +165,7 @@ class NumberFormatter
             }
 
             $result = self::complexNumberFormatMask($value, $format);
-            if (strpos($result, 'E') !== false) {
+            if (str_contains($result, 'E')) {
                 // This is a hack and doesn't match Excel.
                 // It will, at least, be an accurate representation,
                 //  even if formatted incorrectly.
@@ -185,19 +176,17 @@ class NumberFormatter
             return $result;
         }
 
-        $sprintf_pattern = "%0$minWidth." . strlen($right) . 'f';
+        $sprintf_pattern = "%0$minWidth." . strlen($right) . 'F';
 
-        /** @var float */
+        /** @var float $valueFloat */
         $valueFloat = $value;
-        $value = sprintf($sprintf_pattern, round($valueFloat, strlen($right)));
+        $value = self::adjustSeparators(sprintf($sprintf_pattern, round($valueFloat, strlen($right))));
 
         return self::pregReplace(self::NUMBER_REGEX, $value, $format);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public static function format($value, string $format): string
+    /** @param float|int|numeric-string $value value to be formatted */
+    public static function format(mixed $value, string $format): string
     {
         // The "_" in this string has already been stripped out,
         // so this test is never true. Furthermore, testing
@@ -220,14 +209,14 @@ class NumberFormatter
             // Handle the number itself
             // scale number
             $value = $value / $scale;
-            $paddingPlaceholder = (strpos($format, '?') !== false);
+            $paddingPlaceholder = (str_contains($format, '?'));
 
             // Replace # or ? with 0
-            $format = self::pregReplace('/[\\#\?](?=(?:[^"]*"[^"]*")*[^"]*\Z)/', '0', $format);
+            $format = self::pregReplace('/[\#\?](?=(?:[^"]*"[^"]*")*[^"]*\Z)/', '0', $format);
             // Remove locale code [$-###] for an LCID
             $format = self::pregReplace('/\[\$\-.*\]/', '', $format);
 
-            $n = '/\\[[^\\]]+\\]/';
+            $n = '/\[[^\]]+\]/';
             $m = self::pregReplace($n, '', $format);
 
             // Some non-number strings are quoted, so we'll get rid of the quotes, likewise any positional * symbols
@@ -247,6 +236,7 @@ class NumberFormatter
 
         if (preg_match('/\[\$(.*)\]/u', $format, $m)) {
             //  Currency or Accounting
+            $value = preg_replace('/-0+(( |\xc2\xa0))?\[/', '- [', (string) $value) ?? $value;
             $currencyCode = $m[1];
             [$currencyCode] = explode('-', $currencyCode);
             if ($currencyCode == '') {
@@ -256,8 +246,8 @@ class NumberFormatter
         }
 
         if (
-            (strpos((string) $value, '0.') !== false) &&
-            ((strpos($baseFormat, '#.') !== false) || (strpos($baseFormat, '?.') !== false))
+            (str_contains((string) $value, '0.'))
+            && ((str_contains($baseFormat, '#.')) || (str_contains($baseFormat, '?.')))
         ) {
             $value = preg_replace('/(\b)0\.|([^\d])0\./', '${2}.', (string) $value);
         }
@@ -265,10 +255,7 @@ class NumberFormatter
         return (string) $value;
     }
 
-    /**
-     * @param array|string $value
-     */
-    private static function makeString($value): string
+    private static function makeString(array|string $value): string
     {
         return is_array($value) ? '' : "$value";
     }
@@ -280,14 +267,18 @@ class NumberFormatter
 
     public static function padValue(string $value, string $baseFormat): string
     {
-        /** @phpstan-ignore-next-line */
-        [$preDecimal, $postDecimal] = preg_split('/\.(?=(?:[^"]*"[^"]*")*[^"]*\Z)/miu', $baseFormat . '.?');
+        $preDecimal = $postDecimal = '';
+        $pregArray = preg_split('/\.(?=(?:[^"]*"[^"]*")*[^"]*\Z)/miu', $baseFormat . '.?');
+        if (is_array($pregArray)) {
+            $preDecimal = $pregArray[0] ?? '';
+            $postDecimal = $pregArray[1] ?? '';
+        }
 
         $length = strlen($value);
-        if (strpos($postDecimal, '?') !== false) {
+        if (str_contains($postDecimal, '?')) {
             $value = str_pad(rtrim($value, '0. '), $length, ' ', STR_PAD_RIGHT);
         }
-        if (strpos($preDecimal, '?') !== false) {
+        if (str_contains($preDecimal, '?')) {
             $value = str_pad(ltrim($value, '0, '), $length, ' ', STR_PAD_LEFT);
         }
 
