@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learninghubmoodlepgvle
+  namespace: learninghubmoodle
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: learninghubmoodlepgvle
+  template:
+    metadata:
+      labels:
+        app: learninghubmoodlepgvle
+    spec:
+      containers:
+      - name: learninghubmoodleimage
+        image: learninghubmoodlecrpgvle.azurecr.io/learninghubmoodleimage:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1000m"
+            memory: "512Mi"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: moodledata
+          mountPath: /var/www/moodledata
+          readOnly: false
+        - name: moodletheme
+          mountPath: /var/www/html/theme
+      volumes:
+      - name: moodledata
+        persistentVolumeClaim:
+          claimName: moodledataclaim
+      - name: moodletheme
+        persistentVolumeClaim:
+          claimName: moodlethemeclaim

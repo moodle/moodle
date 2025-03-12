@@ -1,0 +1,301 @@
+name: Deploy LearningHub-Moodle to PGVLE
+on:
+  push:
+    branches:
+      - CI
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: pgvle
+    name: 'Terraform LearningHub Moodle'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false  # Skip wrapper script installation
+
+      - name: 'Terraform init'
+        id: init
+        run: |
+          cd Terraform/${{ vars.AZURE_ENVIRONMENT }}
+          terraform init "-backend-config=backend-${{ vars.AZURE_ENVIRONMENT }}.tfvars"
+
+      # - name: 'Terraform destroy'
+      #   id: destroy
+      #   run: |
+      #     cd Terraform/pgvle
+      #     terraform destroy -auto-approve \
+      #       -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
+      #       -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
+      #       -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
+      #       -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
+      #       -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
+      #       -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
+      #       -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
+      #       -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
+      #       -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+      #       -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+      #       -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
+      #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
+      #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
+      #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+      - name: 'Terraform apply'
+        id: apply
+        run: |
+          cd Terraform/${{ vars.AZURE_ENVIRONMENT }}
+          terraform apply -auto-approve \
+            -var="ResourceGroupName=${{ vars.AZURE_RESOURCE_GROUP_NAME }}" \
+            -var="ResourceGroupLocation=${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}" \
+            -var="StorageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}" \
+            -var="ClusterName=${{ vars.AZURE_CLUSTER_NAME }}" \
+            -var="ContainerRegistryName=${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}" \
+            -var="SQLAdministratorLogin=${{ vars.SQL_ADMINISTRATOR_LOGIN }}" \
+            -var="SQLAdministratorLoginPassword=${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}" \
+            -var="Environment=${{ vars.AZURE_ENVIRONMENT }}" \
+            -var="StorageQuota=${{ vars.AZURE_STORAGE_QUOTA }}" \
+            -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
+            -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
+            -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
+            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
+            -var="SQLVcores=${{ vars.SQL_VCORES }}"
+
+  create_persistent_storage:
+    needs: terraform
+    runs-on: ubuntu-latest
+    environment: ${{ vars.AZURE_ENVIRONMENT }}
+    name: 'Create persistent volume and persistent volume claim'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Create PersistentVolume
+        run: kubectl apply -f kubectl/pv-definition-${{ vars.AZURE_ENVIRONMENT }}.yml
+
+      - name: Create PersistentVolume for theme
+        run: kubectl apply -f kubectl/pv-definition-theme-${{ vars.AZURE_ENVIRONMENT }}.yml
+  
+      - name: Create PersistentVolumeClaim
+        run: kubectl apply -f kubectl/pvc-definition-${{ vars.AZURE_ENVIRONMENT }}.yml
+   
+      - name: Create PersistentVolumeClaim for theme
+        run: kubectl apply -f kubectl/pvc-definition-theme-${{ vars.AZURE_ENVIRONMENT }}.yml
+
+      - name: Attach ACR to cluster
+        run: az aks update -n ${{ vars.AZURE_CLUSTER_NAME }} -g ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --attach-acr ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+
+      - name: Get SQL ManagedInstance resource ID
+        id: get_mi_id
+        run: |
+          mi_vnet_id=$(az network vnet list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --query [0].id -o tsv)
+          echo "mi_vnet_id=$mi_vnet_id" >> $GITHUB_OUTPUT
+
+      - name: Get node resource group
+        id: get_node_resource_group
+        run: |
+          node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
+          echo "node_resource_group=$node_resource_group" >> $GITHUB_OUTPUT
+ 
+      - name: Get Node ID
+        id: get_node_id
+        run: |
+          node_id=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query [0].id -o tsv)
+          echo "node_id=$node_id" >> $GITHUB_OUTPUT
+
+      - name: Get Cluster VNET name
+        id: get_cluster_vnet_name
+        run: |
+          vnet_name=$(az network vnet list --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --query "[].name" -o tsv)
+          echo "vnet_name=$vnet_name" >> $GITHUB_OUTPUT
+
+      - name: Peer the vnets
+        run: |
+          az network vnet peering create --name VNetPeering1 --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --vnet-name ManagedInstanceVnet --remote-vnet ${{ steps.get_node_id.outputs.node_id }} --allow-vnet-access
+          az network vnet peering create --name VNetPeering2 --resource-group ${{ steps.get_node_resource_group.outputs.node_resource_group }} --vnet-name ${{ steps.get_cluster_vnet_name.outputs.vnet_name }} --remote-vnet ${{ steps.get_mi_id.outputs.mi_vnet_id }} --allow-vnet-access
+
+  build_and_push_docker_image:
+    needs: create_persistent_storage
+    runs-on: ubuntu-latest
+    environment: ${{ vars.AZURE_ENVIRONMENT }}
+    name: 'Build and push learninghub moodle docker image'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Replace values in config.php
+        run : |
+          sed -i -e 's/DB-HOST-NAME/${{ vars.CONFIG_DB_HOST_NAME }}/g' config.php
+          sed -i -e 's/DB-NAME/${{ vars.CONFIG_DB_NAME }}/g' config.php
+          sed -i -e 's/DB-USER-NAME/${{ vars.SQL_ADMINISTRATOR_LOGIN }}/g' config.php
+          sed -i -e 's/DB-USER-PASSWORD/${{ secrets.SQL_ADMINISTRATOR_LOGIN_PASSWORD }}/g' config.php
+          sed -i -e 's|WWW-ROOT|${{ vars.CONFIG_WWW_ROOT }}|g' config.php
+          sed -i -e 's|DATA-ROOT|/var/www/moodledata|g' config.php
+          sed -i -e 's/TOOL-GENERATOR-PASSWORD/${{ secrets.CONFIG_TOOL_GENERATOR_PASSWORD }}/g' config.php
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ vars.DOCKER_IMAGE_NAME }}:latest . 
+          docker push ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ vars.DOCKER_IMAGE_NAME }}:latest
+
+  deploy_learninghubmoodle_to_cluster:
+    needs: build_and_push_docker_image
+    runs-on: ubuntu-latest
+    environment: ${{ vars.AZURE_ENVIRONMENT }}
+    name: 'Deploy learninghub moodle to AKS cluster'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Get Storage Account Key
+        id: get-storage-key
+        run: |
+          STORAGE_KEY=$(az storage account keys list --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --account-name ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --query [0].value -o tsv)
+          echo "storage_key=$STORAGE_KEY" >> $GITHUB_OUTPUT
+
+      - name: Create the namespace secret
+        run: kubectl create secret generic azure-secret --from-literal=azurestorageaccountname=${{ vars.AZURE_STORAGE_ACCOUNT_NAME }} --from-literal=azurestorageaccountkey=${{ steps.get-storage-key.outputs.storage_key }} -n learninghubmoodle
+        continue-on-error: true
+
+      - name: Deploy application image to AKS cluster
+        run: kubectl apply -f kubectl/deployment-${{ vars.AZURE_ENVIRONMENT }}.yml --validate=false
+
+      - name: Deploy the Horizontal Pod Autoscaler to the AKS cluster
+        run: kubectl apply -f kubectl/hpa-${{ vars.AZURE_ENVIRONMENT }}.yml
+
+      - name: Setup Node Pool Autoscaler
+        run: |
+          az aks nodepool update \
+          --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} \
+          --cluster-name ${{ vars.AZURE_CLUSTER_NAME }} \
+          --name userpool \
+          --enable-cluster-autoscaler \
+          --min-count 1 \
+          --max-count 2
+
+      - name: Create the loadbalancer service
+        run: kubectl apply -f kubectl/service-${{ vars.AZURE_ENVIRONMENT }}.yml
+
+      - name: Restart the pods to reload the image
+        run: kubectl rollout restart deployment/learninghubmoodle${{ vars.AZURE_ENVIRONMENT }} -n learninghubmoodle
+
+  fix_recommendations:
+    needs: deploy_learninghubmoodle_to_cluster
+    runs-on: ubuntu-latest
+    environment: ${{ vars.AZURE_ENVIRONMENT }}
+    name: 'Ensure Azure recommendations are fixed'
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }}
+
+      - name: Enable Defender for AKS cluster
+        run: az aks update --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --enable-defender
+
+      - name: Disable automounting API credentials
+        run: |
+          kubectl patch deployment learninghubmoodle${{ vars.AZURE_ENVIRONMENT }} -p "{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": false}}}}" -n learninghubmoodle
+          kubectl patch serviceaccount default -p "{\"automountServiceAccountToken\": false}" -n learninghubmoodle
+
+      - name: Get node resource group
+        id: get_node_resource_group
+        run: |
+          node_resource_group=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query "nodeResourceGroup" -o tsv)
+          echo "node_resource_group=$node_resource_group" >> $GITHUB_OUTPUT
+ 
+      - name: Add Azure Policy add-on for AKS
+        run: az aks enable-addons --addon azure-policy --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+
+      - name: Enable Container insights
+        run: az aks enable-addons --addon monitoring --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} 
+        continue-on-error: true
+
+      - name: Get cluster id
+        id: get_cluster_id
+        run: |
+          CLUSTER_ID=$(az aks show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name ${{ vars.AZURE_CLUSTER_NAME }} --query id -o tsv)
+          echo "cluster_id=$CLUSTER_ID" >> $GITHUB_OUTPUT
+
+      - name: Create analytics workspace
+        id: create_analytics_workspace
+        run: |
+          az monitor log-analytics workspace create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --workspace-name LearningHubWorkspace --location ${{ vars.AZURE_RESOURCE_GROUP_LOCATION }}
+          WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --workspace-name LearningHubWorkspace --query id -o tsv)
+          echo "workspace_id=$WORKSPACE_ID" >> $GITHUB_OUTPUT
+
+      - name: Create diagnostic settings
+        run: |
+          az monitor diagnostic-settings create --name "AKS-Diagnostic-Logs" --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --resource ${{ steps.get_cluster_id.outputs.cluster_id }} --workspace ${{ steps.create_analytics_workspace.outputs.workspace_id }} --logs "[{\"category\": \"kube-apiserver\", \"enabled\": true}, {\"category\": \"kube-controller-manager\", \"enabled\": true}, {\"category\": \"kube-scheduler\", \"enabled\": true}, {\"category\": \"cluster-autoscaler\", \"enabled\": true}]"
+
+      - name: Define trusted container registries
+        run: |
+          az policy assignment create --resource-group ${{ vars.AZURE_RESOURCE_GROUP_NAME }} --name "EnforceTrustedRegistries" --policy "febd0533-8e55-448f-b837-bd0e06f16469" --params "{\"allowedContainerImagesRegex\":{\"value\":\"learninghubmoodlecr${{ vars.AZURE_ENVIRONMENT }}.azurecr.io\"}}" --location uksouth
