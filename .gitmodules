@@ -14,6 +14,10 @@
 [submodule "filter/ucsfezproxy"]
 	path = filter/ucsfezproxy
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
+	branch = MOODLE_405_STABLE
+[submodule "mod/attendance"]
+	path = mod/attendance
+	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_405_STABLE	
 [submodule "mod/checklist"]
 	path = mod/checklist
