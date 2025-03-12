@@ -39266,7 +39266,7 @@ body.behat-site .path-course-view li.activity form.togglecompletion,
 body.behat-site .path-course-view li.activity form.togglecompletion::before,
 .path-course-view li.activity form.togglecompletion body.behat-site.path-course-view li.activity form.togglecompletion::before, body.themedesignermode .path-course-view li.activity form.togglecompletion::before,
 .path-course-view li.activity form.togglecompletion body.themedesignermode.path-course-view li.activity form.togglecompletion::before {
-  content: "Deprecated style in use" !important;
+  content: "Deprecated style in use (.togglecompletion)" !important;
   color: #ca3120 !important;
   font-size: smaller !important;
 }
