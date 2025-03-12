@@ -3723,14 +3723,14 @@ function course_get_user_navigation_options($context, $course = null) {
  * This function also handles the frontpage settings.
  *
  * @param  stdClass $course  course object (for frontpage it should be a clone of $SITE)
- * @param  stdClass $context context object (course context)
+ * @param  context_course $context context object (course context)
  * @return stdClass          the administration options in a course and their availability status
  * @since  Moodle 3.2
  */
 function course_get_user_administration_options($course, $context) {
     global $CFG;
+
     $isfrontpage = $course->id == SITEID;
-    $completionenabled = $CFG->enablecompletion && $course->enablecompletion;
     $hascompletionoptions = count(core_completion\manager::get_available_completion_options($course->id)) > 0;
     $options = new stdClass;
     $options->update = has_capability('moodle/course:update', $context);
@@ -3745,7 +3745,7 @@ function course_get_user_administration_options($course, $context) {
     $options->files = ($course->legacyfiles == 2 && has_capability('moodle/course:managefiles', $context));
 
     if (!$isfrontpage) {
-        $options->tags = has_capability('moodle/course:tag', $context);
+        $options->tags = core_tag_tag::is_enabled('core', 'course') && has_capability('moodle/course:tag', $context);
         $options->gradebook = has_capability('moodle/grade:manage', $context);
         $options->outcomes = !empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $context);
         $options->badges = !empty($CFG->enablebadges);
