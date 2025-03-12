@@ -133,7 +133,7 @@ class summarise_text extends external_api {
                 VALUE_DEFAULT,
             ),
             'finishreason' => new external_value(
-                PARAM_ALPHA,
+                PARAM_ALPHAEXT,
                 'The reason generation was stopped',
                 VALUE_DEFAULT,
                 'stop',
