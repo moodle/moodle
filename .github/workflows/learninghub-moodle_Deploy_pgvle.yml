@@ -2,7 +2,7 @@ name: Deploy LearningHub-Moodle to PGVLE
 on:
   push:
     branches:
-      - CI
+      - PGVLE
   
 permissions:
   id-token: write
