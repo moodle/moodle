@@ -189,6 +189,24 @@ class AuthenticatorData {
         return $this->_flags->userVerified;
     }
 
+    /**
+     * returns true if the backup is eligible
+     * @return boolean
+     */
+    public function getIsBackupEligible()
+    {
+        return $this->_flags->isBackupEligible;
+    }
+
+    /**
+     * returns true if the current credential is backed up
+     * @return boolean
+     */
+    public function getIsBackup()
+    {
+        return $this->_flags->isBackup;
+    }
+
     // -----------------------------------------------
     // PRIVATE
     // -----------------------------------------------
@@ -259,6 +277,8 @@ class AuthenticatorData {
         // named flags
         $flags->userPresent = $flags->bit_0;
         $flags->userVerified = $flags->bit_2;
+        $flags->isBackupEligible = $flags->bit_3;
+        $flags->isBackup = $flags->bit_4;
         $flags->attestedDataIncluded = $flags->bit_6;
         $flags->extensionDataIncluded = $flags->bit_7;
         return $flags;

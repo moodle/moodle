@@ -1,5 +1,6 @@
-WebAuthn 2.0.1
+WebAuthn
 --------------
+
 https://github.com/lbuchs/WebAuthn
 
 Instructions to import WebAuthn into Moodle:

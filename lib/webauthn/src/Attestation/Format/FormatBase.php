@@ -89,7 +89,7 @@ abstract class FormatBase {
 
     /**
      * creates a PEM encoded chain file
-     * @return type
+     * @return string|null
      */
     protected function _createX5cChainFile() {
         $content = '';
