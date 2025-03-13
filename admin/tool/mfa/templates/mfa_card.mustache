@@ -48,7 +48,8 @@
         }
     }
 }}
-<div class="card dashboard-card {{#active}}active{{/active}}" role="listitem" id="factor-card-{{name}}" aria-labelledby="factor-name-{{name}} {{#active}}active-factor-{{name}}{{/active}}">
+<div class="col d-flex mb-4">
+  <div class="card dashboard-card {{#active}}active{{/active}}" role="listitem" id="factor-card-{{name}}" aria-labelledby="factor-name-{{name}} {{#active}}active-factor-{{name}}{{/active}}">
     <div class="card-img p-3">
         <div class="icon-circle {{^active}}reversed{{/active}}">
             <i class="icon iconsize-big fa {{icon}}" role="presentation"></i>
@@ -74,5 +75,6 @@
             </div>
         {{/button}}
     </div>
+  </div>
 </div>
 
