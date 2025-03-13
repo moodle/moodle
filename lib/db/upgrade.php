@@ -1303,24 +1303,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     // Moodle 5.0 Upgrade.
-    // Remove survey.
-    if ($oldversion < 2024120500.01) {
-        if (!file_exists($CFG->dirroot . "/mod/survey/version.php")) {
-            uninstall_plugin('mod', 'survey');
-        }
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024120500.01);
-    }
-
-    // Remove chat.
-    if ($oldversion < 2024120500.02) {
-        if (!file_exists($CFG->dirroot . "/mod/chat/version.php")) {
-            uninstall_plugin('mod', 'chat');
-        }
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2024120500.02);
-    }
-
     if ($oldversion < 2024121800.00) {
         $smsgateways = $DB->get_records('sms_gateways');
         foreach ($smsgateways as $gateway) {
@@ -1592,5 +1574,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025030600.08);
     }
 
+    // Overall step to remove chat and survey.
+    if ($oldversion < 2025031100.01) {
+        if (!file_exists($CFG->dirroot . "/mod/survey/version.php")) {
+            uninstall_plugin('mod', 'survey');
+            $DB->delete_records('adminpresets_plug', ['plugin' => 'mod', 'name' => 'survey']);
+        }
+        if (!file_exists($CFG->dirroot . "/mod/chat/version.php")) {
+            uninstall_plugin('mod', 'chat');
+            $DB->delete_records('adminpresets_plug', ['plugin' => 'mod', 'name' => 'chat']);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025031100.01);
+    }
     return true;
 }
