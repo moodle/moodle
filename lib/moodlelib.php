@@ -5069,8 +5069,7 @@ function reset_course_userdata($data) {
 
     // Calculate the time shift of dates.
     if (!empty($data->reset_start_date)) {
-        // Time part of course startdate should be zero.
-        $data->timeshift = $data->reset_start_date - usergetmidnight($data->reset_start_date_old);
+        $data->timeshift = $data->reset_start_date - $data->reset_start_date_old;
     } else {
         $data->timeshift = 0;
     }
