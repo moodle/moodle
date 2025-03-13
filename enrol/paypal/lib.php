@@ -24,7 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use core\output\single_button;
+use core_enrol\output\enrol_page;
 
 /**
  * Paypal enrolment plugin implementation.
@@ -147,45 +148,24 @@ class enrol_paypal_plugin extends enrol_plugin {
         return parent::update_instance($instance, $data);
     }
 
-    /**
-     * Creates course enrol form, checks if form submitted
-     * and enrols user if necessary. It can also redirect.
-     *
-     * @param stdClass $instance
-     * @return string html text, usually a form in a text box
-     */
-    function enrol_page_hook(stdClass $instance) {
+    #[\Override]
+    public function enrol_page_hook(stdClass $instance) {
         global $CFG, $USER, $OUTPUT, $PAGE, $DB;
 
-        ob_start();
-
-        if ($DB->record_exists('user_enrolments', array('userid'=>$USER->id, 'enrolid'=>$instance->id))) {
-            return ob_get_clean();
+        if ($DB->record_exists('user_enrolments', ['userid' => $USER->id, 'enrolid' => $instance->id])) {
+            return '';
         }
 
         if ($instance->enrolstartdate != 0 && $instance->enrolstartdate > time()) {
-            return ob_get_clean();
+            return '';
         }
 
         if ($instance->enrolenddate != 0 && $instance->enrolenddate < time()) {
-            return ob_get_clean();
+            return '';
         }
 
-        $course = $DB->get_record('course', array('id'=>$instance->courseid));
+        $course = $DB->get_record('course', ['id' => $instance->courseid]);
         $context = context_course::instance($course->id);
-
-        $shortname = format_string($course->shortname, true, array('context' => $context));
-        $strloginto = get_string("loginto", "", $shortname);
-        $strcourses = get_string("courses");
-
-        // Pass $view=true to filter hidden caps if the user cannot see them
-        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
-                                             '', '', '', '', false, true)) {
-            $users = sort_by_roleassignment_authority($users, $context);
-            $teacher = array_shift($users);
-        } else {
-            $teacher = false;
-        }
 
         if ( (float) $instance->cost <= 0 ) {
             $cost = (float) $this->get_config('cost');
@@ -193,38 +173,78 @@ class enrol_paypal_plugin extends enrol_plugin {
             $cost = (float) $instance->cost;
         }
 
-        if (abs($cost) < 0.01) { // no cost, other enrolment methods (instances) should be used
-            echo '<p>'.get_string('nocost', 'enrol_paypal').'</p>';
-        } else {
+        $name = $this->get_instance_name($instance);
 
+        if (abs($cost) < 0.01) {
+            // No cost, other enrolment methods (instances) should be used.
+            $notification = new \core\output\notification(get_string('nocost', 'enrol_paypal'), 'error', false);
+            $notification->set_extra_classes(['mb-0']);
+            $enrolpage = new enrol_page(
+                instance: $instance,
+                header: $name,
+                body: $OUTPUT->render($notification));
+            return $OUTPUT->render($enrolpage);
+        } else {
             // Calculate localised and "." cost, make sure we send PayPal the same value,
             // please note PayPal expects amount with 2 decimal places and "." separator.
             $localisedcost = format_float($cost, 2, true);
             $cost = format_float($cost, 2, false);
 
-            if (isguestuser()) { // force login only for guest user, not real users with guest role
-                $wwwroot = $CFG->wwwroot;
-                echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
-                echo '<p><b>'.get_string('cost').": $instance->currency $localisedcost".'</b></p>';
-                echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
-                echo '</div>';
+            $body = $OUTPUT->render_from_template('enrol_paypal/enrol_page',
+                ['currency' => $instance->currency, 'cost' => $localisedcost]);
+            if (isguestuser() || !isloggedin()) {
+                $button = new single_button(new moodle_url(get_login_url()), get_string('loginsite'), 'get',
+                    single_button::BUTTON_PRIMARY);
             } else {
-                //Sanitise some fields before building the PayPal form
-                $coursefullname  = format_string($course->fullname, true, array('context'=>$context));
-                $courseshortname = $shortname;
+                // Sanitise some fields before building the PayPal form.
+                $coursefullname  = format_string($course->fullname, true, ['context' => $context]);
+                $courseshortname = format_string($course->shortname, true, ['context' => $context]);
                 $userfullname    = fullname($USER);
                 $userfirstname   = $USER->firstname;
                 $userlastname    = $USER->lastname;
                 $useraddress     = $USER->address;
                 $usercity        = $USER->city;
-                $instancename    = $this->get_instance_name($instance);
-
-                include($CFG->dirroot.'/enrol/paypal/enrol.html');
+                $buttonurl = new moodle_url(empty($CFG->usepaypalsandbox) ?
+                        'https://www.paypal.com/cgi-bin/webscr' :
+                        'https://www.sandbox.paypal.com/cgi-bin/webscr',
+                    [
+                        'cmd' => '_xclick',
+                        'charset' => 'utf-8',
+                        'business' => $this->get_config('paypalbusiness'),
+                        'item_name' => $coursefullname,
+                        'item_number' => $courseshortname,
+                        'quantity' => 1,
+                        'on0' => get_string("user"),
+                        'os0' => $userfullname,
+                        'custom' => "{$USER->id}-{$course->id}-{$instance->id}",
+                        'currency_code' => $instance->currency,
+                        'amount' => $cost,
+                        'for_auction' => 'false',
+                        'no_note' => 1,
+                        'no_shipping' => 1,
+                        'notify_url' => "$CFG->wwwroot/enrol/paypal/ipn.php",
+                        'return' => "$CFG->wwwroot/enrol/paypal/return.php?id={$course->id}",
+                        'cancel_return' => $CFG->wwwroot,
+                        'rm' => 2,
+                        'cbt' => get_string("continuetocourse"),
+                        'first_name' => $userfirstname,
+                        'last_name' => $userlastname,
+                        'address' => $useraddress,
+                        'city' => $usercity,
+                        'email' => $USER->email,
+                        'country' => $USER->country,
+                    ]);
+                $button = new single_button($buttonurl, get_string("sendpaymentbutton", "enrol_paypal"),
+                    'get', single_button::BUTTON_PRIMARY);
             }
 
+            $enrolpage = new enrol_page(
+                instance: $instance,
+                header: $name,
+                body: $body,
+                buttons: [$button]);
+            return $OUTPUT->render($enrolpage);
         }
-
-        return $OUTPUT->box(ob_get_clean());
     }
 
     /**

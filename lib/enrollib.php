@@ -2793,11 +2793,15 @@ abstract class enrol_plugin {
     }
 
     /**
-     * Creates course enrol form, checks if form submitted
-     * and enrols user if necessary. It can also redirect.
+     * Creates a widget to display on the course enrolment page. It can also redirect.
+     *
+     * It is recommended that all plugins use the same template for the consistent output. Example:
+     *
+     *     $obj = new \core_enrol\output\enrol_page($instance, ...);
+     *     return $OUTPUT->render($obj);
      *
      * @param stdClass $instance
-     * @return string html text, usually a form in a text box
+     * @return string|null html to display on the enrolment page
      */
     public function enrol_page_hook(stdClass $instance) {
         return null;

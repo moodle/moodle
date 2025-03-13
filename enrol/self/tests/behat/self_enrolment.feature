@@ -42,6 +42,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     Then I should see "New section"
     And I should not see "Enrolment options"
 
+  @javascript
   Scenario: Self-enrolment enabled requiring an enrolment key
     Given I log in as "teacher1"
     When I add "Self enrolment" enrolment method in "Course 1" with:
@@ -50,9 +51,11 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
+    And I should see "An enrolment key will be required"
+    And I press "Enrol me"
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
-    And I press "Enrol me"
+    And I click on "Enrol me" "button" in the "Test student enrolment" "dialogue"
     Then I should see "New section"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"
@@ -62,6 +65,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     When I am on "Course 1" course homepage
     Then I should see "You cannot enrol yourself in this course"
 
+  @javascript
   Scenario: Self-enrolment enabled requiring a group enrolment key
     Given I log in as "teacher1"
     When I add "Self enrolment" enrolment method in "Course 1" with:
@@ -77,16 +81,18 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
+    And I press "Enrol me"
     And I set the following fields to these values:
       | Enrolment key | Test-groupenrolkey1 |
-    And I press "Enrol me"
+    And I click on "Enrol me" "button" in the "Test student enrolment" "dialogue"
     Then I should see "New section"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"
     And I am on the "Course 1" course page logged in as student2
+    And I press "Enrol me"
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
-    And I press "Enrol me"
+    And I click on "Enrol me" "button" in the "Test student enrolment" "dialogue"
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to course participants
     And the following should exist in the "participants" table:

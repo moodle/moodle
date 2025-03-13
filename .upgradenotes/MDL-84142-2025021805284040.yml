@@ -1,0 +1,7 @@
+issueNumber: MDL-84142
+notes:
+  enrol_guest:
+    - message: >-
+        Class enrol_guest_enrol_form is deprecated, use
+        enrol_guest\form\enrol_form instead
+      type: deprecated

@@ -24,6 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\single_button;
+use core_enrol\output\enrol_page;
+
 /**
  * Fee enrolment plugin implementation.
  *
@@ -172,53 +175,20 @@ class enrol_fee_plugin extends enrol_plugin {
         return parent::update_instance($instance, $data);
     }
 
-    /**
-     * Creates course enrol form, checks if form submitted
-     * and enrols user if necessary. It can also redirect.
-     *
-     * @param stdClass $instance
-     * @return string html text, usually a form in a text box
-     */
+    #[\Override]
     public function enrol_page_hook(stdClass $instance) {
-        return $this->show_payment_info($instance);
-    }
-
-    /**
-     * Returns optional enrolment instance description text.
-     *
-     * This is used in detailed course information.
-     *
-     *
-     * @param object $instance
-     * @return string short html text
-     */
-    public function get_description_text($instance) {
-        return $this->show_payment_info($instance);
-    }
-
-    /**
-     * Generates payment information to display on enrol/info page.
-     *
-     * @param stdClass $instance
-     * @return false|string
-     * @throws coding_exception
-     * @throws dml_exception
-     */
-    private function show_payment_info(stdClass $instance) {
-        global $USER, $OUTPUT, $DB;
-
-        ob_start();
+        global $USER, $OUTPUT, $DB, $PAGE;
 
         if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
-            return ob_get_clean();
+            return '';
         }
 
         if ($instance->enrolstartdate != 0 && $instance->enrolstartdate > time()) {
-            return ob_get_clean();
+            return '';
         }
 
         if ($instance->enrolenddate != 0 && $instance->enrolenddate < time()) {
-            return ob_get_clean();
+            return '';
         }
 
         $course = $DB->get_record('course', array('id' => $instance->courseid));
@@ -230,26 +200,51 @@ class enrol_fee_plugin extends enrol_plugin {
             $cost = (float) $instance->cost;
         }
 
+        $name = !empty($instance->name) ?
+            format_string($instance->name, true, ['context' => $context]) :
+            get_string('paymentrequired');
+
         if (abs($cost) < 0.01) { // No cost, other enrolment methods (instances) should be used.
-            echo '<p>'.get_string('nocost', 'enrol_fee').'</p>';
+            $notification = new \core\output\notification(get_string('nocost', 'enrol_fee'), 'error', false);
+            $notification->set_extra_classes(['mb-0']);
+            $enrolpage = new enrol_page(
+                instance: $instance,
+                header: $name,
+                body: $OUTPUT->render($notification));
+            return $OUTPUT->render($enrolpage);
         } else {
+            if (isguestuser() || !isloggedin()) {
+                $button = new single_button(new moodle_url(get_login_url()), get_string('loginsite'),
+                     'get', single_button::BUTTON_PRIMARY);
+            } else {
+                $PAGE->requires->js_call_amd('core_payment/gateways_modal', 'init');
+                $button = new single_button(
+                    $PAGE->url,
+                    get_string('sendpaymentbutton', 'enrol_fee'),
+                    'post',
+                    single_button::BUTTON_PRIMARY,
+                    [
+                        'data-action' => 'core_payment/triggerPayment',
+                        'data-component' => 'enrol_fee',
+                        'data-paymentarea' => 'fee',
+                        'data-itemid' => $instance->id,
+                        'data-cost' => $cost,
+                        'data-successurl' => \enrol_fee\payment\service_provider::get_success_url('fee', $instance->id)->out(false),
+                        'data-description' => get_string('purchasedescription', 'enrol_fee',
+                            format_string($course->fullname, true, ['context' => $context])),
+                    ]);
+            }
 
-            $name = !empty($instance->name) ?
-                format_string($instance->name, true, ['context' => $context]) :
-                get_string('paymentrequired');
-            $data = [
-                'name' => $name,
-                'isguestuser' => isguestuser() || !isloggedin(),
+            $body = $OUTPUT->render_from_template('enrol_fee/enrol_page', [
                 'cost' => \core_payment\helper::get_cost_as_string($cost, $instance->currency),
-                'instanceid' => $instance->id,
-                'description' => get_string('purchasedescription', 'enrol_fee',
-                    format_string($course->fullname, true, ['context' => $context])),
-                'successurl' => \enrol_fee\payment\service_provider::get_success_url('fee', $instance->id)->out(false),
-            ];
-            echo $OUTPUT->render_from_template('enrol_fee/payment_region', $data);
+            ]);
+            $enrolpage = new enrol_page(
+                instance: $instance,
+                header: $name,
+                body: $body,
+                buttons: [$button]);
+            return $OUTPUT->render($enrolpage);
         }
-
-        return $OUTPUT->box(ob_get_clean());
     }
 
     /**

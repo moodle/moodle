@@ -40,6 +40,7 @@ Feature: Keyholder role is listed as course contact
     And I follow "Course 1"
     Then I should see "Keyholder 1"
 
+  @javascript
   Scenario: Keyholder assigned to a category
     Given the following "role assigns" exist:
       | user       | role      | contextlevel | reference |
@@ -50,4 +51,5 @@ Feature: Keyholder role is listed as course contact
     When I log in as "student1"
     And I am on site homepage
     And I follow "Course 1"
+    And I press "Enrol me"
     Then I should see "Keyholder 1"

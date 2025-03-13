@@ -30,6 +30,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     When I am on the "Test forum name" "forum activity" page logged in as student1
     Then I should not see "Subscribe to this forum"
 
+  @javascript
   Scenario: Allow guest access with password
     Given I click on "Edit" "link" in the "Guest access" "table_row"
     And I set the following fields to these values:
@@ -38,7 +39,8 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I press "Save changes"
     When I am on the "Course 1" course page logged in as student1
     Then I should see "Guest access"
+    And I press "Access as a guest"
     And I set the following fields to these values:
       | Password | moodle_rules |
-    And I press "Submit"
+    And I click on "Access as a guest" "button" in the "Guest access" "dialogue"
     And I should see "Test forum name"

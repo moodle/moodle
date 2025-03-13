@@ -53,9 +53,32 @@ function enrol_self_check_group_enrolment_key($courseid, $enrolpassword) {
     return $found;
 }
 
+/**
+ * Old class for displaying the self enrolment form
+ *
+ * @deprecated since Moodle 5.0 - please use {@see enrol_self\form\enrol_form}
+ */
+#[\core\attribute\deprecated(replacement: enrol_self\form\enrol_form::class, since: '5.0', reason: 'Now a dynamic form is used')]
 class enrol_self_enrol_form extends moodleform {
     protected $instance;
     protected $toomany = false;
+
+    /**
+     * Constructor
+     *
+     * @param mixed $action
+     * @param mixed $customdata
+     * @param string $method
+     * @param string $target
+     * @param mixed $attributes
+     * @param bool $editable
+     * @param array $ajaxformdata
+     */
+    public function __construct($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
+                                $ajaxformdata=null) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
 
     /**
      * Overriding this function to get unique form id for multiple self enrolments.

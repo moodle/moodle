@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\single_button;
+use core_enrol\output\enrol_page;
+
 /**
  * Self enrolment plugin implementation.
  * @author Petr Skoda
@@ -164,7 +167,6 @@ class enrol_self_plugin extends enrol_plugin {
      *
      * @param stdClass $instance enrolment instance
      * @param stdClass $data data needed for enrolment.
-     * @return bool|array true if enroled else eddor code and messege
      */
     public function enrol_self(stdClass $instance, $data = null) {
         global $DB, $USER, $CFG;
@@ -202,46 +204,61 @@ class enrol_self_plugin extends enrol_plugin {
         }
     }
 
-    /**
-     * Creates course enrol form, checks if form submitted
-     * and enrols user if necessary. It can also redirect.
-     *
-     * @param stdClass $instance
-     * @return string html text, usually a form in a text box
-     */
+    #[\Override]
     public function enrol_page_hook(stdClass $instance) {
-        global $CFG, $OUTPUT, $USER;
+        global $CFG, $OUTPUT, $USER, $PAGE;
 
-        require_once("$CFG->dirroot/enrol/self/locallib.php");
+        $buttonurl = null;
+        $buttontext = '';
+        $buttonattrs = [];
+        $body = '';
+        $title = $this->get_instance_name($instance);
 
         $enrolstatus = $this->can_self_enrol($instance);
-
-        if (true === $enrolstatus) {
-            // This user can self enrol using this instance.
-            $form = new enrol_self_enrol_form(null, $instance);
-            $instanceid = optional_param('instance', 0, PARAM_INT);
-            if ($instance->id == $instanceid) {
-                if ($data = $form->get_data()) {
-                    $this->enrol_self($instance, $data);
+        if ($enrolstatus === true) {
+            if ($instance->password) {
+                // Self-enrolment with password. Display a button to open a form in a modal.
+                $body = get_string('enrolkeyrequired', 'enrol_self');
+                $buttonurl = $PAGE->url;
+                $buttonattrs = [
+                    'data-id' => $instance->courseid,
+                    'data-instance' => $instance->id,
+                    'data-form' => enrol_self\form\enrol_form::class,
+                    'data-title' => $title,
+                ];
+                $PAGE->requires->js_call_amd('enrol_self/enrol_page', 'initEnrol', [$instance->id]);
+            } else {
+                // Self-enrolment without password. Display a button to self enrol. If button is pressed - enrol the user.
+                if (optional_param('action', null, PARAM_TEXT) === 'enrol' && confirm_sesskey()) {
+                    $this->enrol_self($instance, (object)[]);
+                    return '';
                 }
+                $body = get_string('nopassword', 'enrol_self');
+                $buttonurl = new moodle_url($PAGE->url, ['action' => 'enrol', 'sesskey' => sesskey()]);
             }
+            $buttontext = get_string('enrolme', 'enrol_self');
+        } else if (isguestuser()) {
+            // User is not logged in. Display a button to login.
+            $buttonurl = new moodle_url(get_login_url());
+            $body = get_string('noguestaccess', 'enrol');
+            $buttontext = get_string('continue');
+        } else if (!$enrolstatus) {
+            // No reason why user can not use this method, do not display anything.
+            return '';
         } else {
-            // This user can not self enrol using this instance. Using an empty form to keep
-            // the UI consistent with other enrolment plugins that returns a form.
-            $data = new stdClass();
-            $data->header = $this->get_instance_name($instance);
-            $data->info = $enrolstatus;
-
-            // The can_self_enrol call returns a button to the login page if the user is a
-            // guest, setting the login url to the form if that is the case.
-            $url = isguestuser() ? get_login_url() : null;
-            $form = new enrol_self_empty_form($url, $data);
+            $body = $enrolstatus;
         }
 
-        ob_start();
-        $form->display();
-        $output = ob_get_clean();
-        return $OUTPUT->box($output);
+        $notification = new \core\output\notification($body, 'info', false);
+        $notification->set_extra_classes(['mb-0']);
+        $enrolpage = new enrol_page(
+            instance: $instance,
+            header: $title,
+            body: $OUTPUT->render($notification),
+            buttons: $buttonurl ?
+                [new single_button($buttonurl, $buttontext, 'get', single_button::BUTTON_PRIMARY, $buttonattrs)] :
+                []);
+        return $OUTPUT->render($enrolpage);
     }
 
     /**
@@ -285,7 +302,7 @@ class enrol_self_plugin extends enrol_plugin {
      * This function doesn't check user capabilities. Use can_self_enrol to check capabilities.
      *
      * @param stdClass $instance enrolment instance
-     * @return bool - true means "Enrol me in this course" link could be available
+     * @return bool|string - true means "Enrol me in this course" link could be available
      */
     public function is_self_enrol_available(stdClass $instance) {
         global $CFG, $DB, $USER;

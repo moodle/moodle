@@ -14,20 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Guest access plugin implementation.
- *
- * @package    enrol_guest
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Guest access plugin implementation.
+ *
+ * @deprecated since Moodle 5.0 - please use {@see enrol_guest\form\enrol_form}
+ *
+ * @package    enrol_guest
+ * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+#[\core\attribute\deprecated(replacement: enrol_guest\form\enrol_form::class, since: '5.0', reason: 'Now a dynamic form is used')]
 class enrol_guest_enrol_form extends moodleform {
     protected $instance;
+
+    /**
+     * Constructor
+     *
+     * @param mixed $action
+     * @param mixed $customdata
+     * @param string $method
+     * @param string $target
+     * @param mixed $attributes
+     * @param bool $editable
+     * @param array $ajaxformdata
+     */
+    public function __construct($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
+                                $ajaxformdata=null) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
 
     public function definition() {
         $mform = $this->_form;
