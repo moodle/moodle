@@ -13,3 +13,9 @@ Import procedure:
   them from the list.
 
 Licensed under MIT, Copyright (c) 2015 Leaf Corcoran.
+
+Local changes:
+
+- Apply local changes to ensure that all nullable method parameters are correctly type-hinted.
+  These can be detected using:
+  phpcs --sniffs=PHPCompatibility.FunctionDeclarations.RemovedImplicitlyNullableParam lib/scssphp

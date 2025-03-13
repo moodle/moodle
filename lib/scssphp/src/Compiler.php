@@ -5036,7 +5036,7 @@ EOL;
      *
      * @return array
      */
-    protected function multiplyMedia(Environment $env = null, $childQueries = null)
+    protected function multiplyMedia(?Environment $env = null, $childQueries = null)
     {
         if (
             ! isset($env) ||
@@ -5128,7 +5128,7 @@ EOL;
      *
      * @return \ScssPhp\ScssPhp\Compiler\Environment
      */
-    protected function pushEnv(Block $block = null)
+    protected function pushEnv(?Block $block = null)
     {
         $env = new Environment();
         $env->parent = $this->env;
@@ -5192,7 +5192,7 @@ EOL;
      *
      * @return void
      */
-    protected function set($name, $value, $shadow = false, Environment $env = null, $valueUnreduced = null)
+    protected function set($name, $value, $shadow = false, ?Environment $env = null, $valueUnreduced = null)
     {
         $name = $this->normalizeName($name);
 
@@ -5298,7 +5298,7 @@ EOL;
      *
      * @return mixed|null
      */
-    public function get($name, $shouldThrow = true, Environment $env = null, $unreduced = false)
+    public function get($name, $shouldThrow = true, ?Environment $env = null, $unreduced = false)
     {
         $normalizedName = $this->normalizeName($name);
         $specialContentKey = static::$namespaces['special'] . 'content';
@@ -5363,7 +5363,7 @@ EOL;
      *
      * @return bool
      */
-    protected function has($name, Environment $env = null)
+    protected function has($name, ?Environment $env = null)
     {
         return ! \is_null($this->get($name, false, $env));
     }
