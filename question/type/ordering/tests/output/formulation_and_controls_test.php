@@ -107,7 +107,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                 'horizontal',
                 [
                     'readonly' => false,
-                    'questiontext' => 'Put these words in order',
+                    'questiontext' => '<div class="clearfix">Put these words in order</div>',
                     'responsename' => 'q0:_response_0',
                     'responseid' => 'id_q0_response_0',
                     'value' => 'ordering_item_ac5fc041de63c8c5b34d0aabb96cf33d,' .
@@ -168,7 +168,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                 'vertical',
                 [
                     'readonly' => false,
-                    'questiontext' => 'Put these words in order',
+                    'questiontext' => '<div class="clearfix">Put these words in order</div>',
                     'responsename' => 'q0:_response_0',
                     'responseid' => 'id_q0_response_0',
                     'value' => 'ordering_item_497031794414a552435f90151ac3b54b,' .
@@ -229,7 +229,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                 'horizontal',
                 [
                     'readonly' => false,
-                    'questiontext' => 'Put these words in order',
+                    'questiontext' => '<div class="clearfix">Put these words in order</div>',
                     'responsename' => 'q0:_response_0',
                     'responseid' => 'id_q0_response_0',
                     'value' => 'ordering_item_ac5fc041de63c8c5b34d0aabb96cf33d,' .
