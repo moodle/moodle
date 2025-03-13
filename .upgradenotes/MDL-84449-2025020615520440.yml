@@ -1,0 +1,8 @@
+issueNumber: MDL-84449
+notes:
+  core:
+    - message: >-
+        The function imagecopybicubic() is now deprecated.
+        The GD lib is a strict requirement, so use
+        imagecopyresampled() instead.
+      type: deprecated
