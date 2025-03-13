@@ -55,8 +55,11 @@
     $PAGE->set_course($course);
     $PAGE->set_pagelayout('incourse');
     $PAGE->set_url('/course/info.php', array('id' => $course->id));
-    $PAGE->set_title(get_string("summaryof", "", $course->fullname));
-    $PAGE->set_heading(get_string('courseinfo'));
+
+    $strcourseinfo = get_string('courseinfo');
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, [$strcourseinfo, $course->fullname]));
+    $PAGE->set_heading($strcourseinfo);
+
     $PAGE->navbar->add(get_string('summary'));
 
     echo $OUTPUT->header();
@@ -68,6 +71,7 @@
         echo $OUTPUT->box_end();
     }
 
+    /** @var core_course_renderer $courserenderer */
     $courserenderer = $PAGE->get_renderer('core', 'course');
     echo $courserenderer->course_info_box($course);
 
