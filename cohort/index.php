@@ -104,8 +104,7 @@ if ($editcontrols = cohort_edit_controls($context, $baseurl)) {
     echo $OUTPUT->render($editcontrols);
 }
 
-$reportparams = ['contextid' => $context->id, 'showall' => $showall];
-$report = system_report_factory::create(cohorts::class, $context, '', '', 0, $reportparams);
+$report = system_report_factory::create(cohorts::class, $context, '', '', 0, ['showall' => $showall]);
 
 // Check if it needs to search by name.
 if (!empty($searchquery)) {
