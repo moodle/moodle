@@ -167,7 +167,7 @@ class behat_command {
      *
      * @return int Error code or 0 if all ok
      */
-    public static function behat_setup_problem() {
+    public static function behat_setup_problem(): int {
         global $CFG;
 
         // Moodle setting.

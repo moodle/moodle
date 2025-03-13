@@ -264,7 +264,7 @@ exit(0);
  * @param string $featurestepfile feature step file in which steps will be saved.
  * @return int exitcode.
  */
-function print_update_step_output($process, $featurestepfile) {
+function print_update_step_output($process, $featurestepfile): int {
     $printedlength = 0;
 
     echo "Updating steps feature file for parallel behat runs" . PHP_EOL;
