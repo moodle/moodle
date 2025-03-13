@@ -606,10 +606,6 @@ function(
             return true;
         };
 
-        // Set the minimum height of the section to the height of the toggle. This
-        // smooths out the collapse animation.
-        var toggle = root.find(SELECTORS.TOGGLE);
-        root.css('min-height', toggle.outerHeight());
 
         root[0].addEventListener('show.bs.collapse', function() {
             setExpanded(root);
