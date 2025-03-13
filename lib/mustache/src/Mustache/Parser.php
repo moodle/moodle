@@ -66,11 +66,11 @@ class Mustache_Parser
      * @throws Mustache_Exception_SyntaxException when nesting errors or mismatched section tags are encountered
      *
      * @param array &$tokens Set of Mustache tokens
-     * @param array $parent  Parent token (default: null)
+     * @param ?array $parent  Parent token (default: null)
      *
      * @return array Mustache Token parse tree
      */
-    private function buildTree(array &$tokens, array $parent = null)
+    private function buildTree(array &$tokens, ?array $parent = null)
     {
         $nodes = array();
 

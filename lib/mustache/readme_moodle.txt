@@ -26,3 +26,6 @@ This can be achieved by:
     b) In terminal, navigate to lib/mustache/src/Mustache
     c) Run the following: patch --directory . < ~/path/to/patch.patch
     d) We do not need the unit test, so run rm DisableLambdaRenderingTest.php
+2) Apply local changes to ensure that all nullable method parameters are correctly type-hinted.
+   These can be detected using:
+   phpcs --sniffs=PHPCompatibility.FunctionDeclarations.RemovedImplicitlyNullableParam lib/mustache
