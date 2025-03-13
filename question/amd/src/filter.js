@@ -27,6 +27,9 @@ import Selectors from 'core/datafilter/selectors';
 import Templates from 'core/templates';
 import Fragment from 'core/fragment';
 import {get_strings as getStrings} from 'core/str';
+import {getString} from 'core/str';
+import {addIconToContainerRemoveOnCompletion} from 'core/loadingicon';
+
 /**
  * Initialise the question bank filter on the element with the given id.
  *
@@ -42,7 +45,7 @@ import {get_strings as getStrings} from 'core/str';
  * @param {Object} pagevars JSON-encoded parameters from passed from the view, including filters and jointype.
  * @param {Object} extraparams JSON-encoded additional parameters specific to this view class, used for re-rendering the view.
  */
-export const init = (
+export const init = async(
     filterRegionId,
     defaultcourseid,
     defaultcategoryid,
@@ -68,9 +71,18 @@ export const init = (
         EDIT_SWITCH_URL: '.editmode-switch-form input[name=pageurl]',
         CATEGORY_VALIDATION_INPUT: 'div[data-filter-type="category"] div.form-autocomplete-input input',
         QUESTION_BANK_WINDOW: '.questionbankwindow',
+        SHOW_ALL_LINK: '[data-filteraction="showall"]',
     };
 
     const filterSet = document.querySelector(`#${filterRegionId}`);
+
+    const [
+        showAllText,
+        showPerPageText,
+    ] = await Promise.all([
+        getString('showall', 'core', ''),
+        getString('showperpage', 'core', extraparams.defaultqperpage),
+    ]);
 
     const viewData = {
         extraparams: JSON.stringify(extraparams),
@@ -138,10 +150,15 @@ export const init = (
         // Load questions for first page.
         viewData.filter = JSON.stringify(filterdata);
         viewData.sortdata = JSON.stringify(sortData);
+
+        const questionscontainer = document.querySelector(SELECTORS.QUESTION_CONTAINER_ID);
+        // Clear the contents of the element, then append the loading icon.
+        questionscontainer.innerHTML = '';
+        addIconToContainerRemoveOnCompletion(questionscontainer, pendingPromise);
+
         Fragment.loadFragment(component, callback, contextId, viewData)
             // Render questions for first page and pagination.
             .then((questionhtml, jsfooter) => {
-                const questionscontainer = document.querySelector(SELECTORS.QUESTION_CONTAINER_ID);
                 if (questionhtml === undefined) {
                     questionhtml = '';
                 }
@@ -207,6 +224,7 @@ export const init = (
         const sortableLink = e.target.closest(SELECTORS.SORT_LINK);
         const paginationLink = e.target.closest(SELECTORS.PAGINATION_LINK);
         const clearLink = e.target.closest(Selectors.filterset.actions.resetFilters);
+        const showallLink = e.target.closest(SELECTORS.SHOW_ALL_LINK);
         if (sortableLink) {
             e.preventDefault();
             const oldSort = sortData;
@@ -231,6 +249,23 @@ export const init = (
         }
         if (clearLink) {
             cleanUrlParams();
+        }
+        if (showallLink) {
+
+            e.preventDefault();
+
+            // Toggle between showing all and going back to the original qperpage.
+            if (Number(showallLink.dataset.status) === 0) {
+                viewData.qperpage = extraparams.maxqperpage;
+                showallLink.dataset.status = 1;
+                showallLink.innerText = showPerPageText;
+            } else {
+                viewData.qperpage = extraparams.defaultqperpage;
+                showallLink.dataset.status = 0;
+                showallLink.innerText = showAllText;
+            }
+            viewData.qpage = 0;
+            coreFilter.updateTableFromFilter();
         }
     });
 
