@@ -73,11 +73,11 @@ class cohorts extends system_report {
         });
 
         // Check if report needs to show a specific category.
-        $contextid = $this->get_parameter('contextid', 0, PARAM_INT);
-        $showall = $this->get_parameter('showall', true, PARAM_BOOL);
-        if (!$showall) {
+        if (!$this->get_context() instanceof context_system || !$this->get_parameter('showall', false, PARAM_BOOL)) {
             $paramcontextid = database::generate_param_name();
-            $this->add_base_condition_sql("{$entitymainalias}.contextid = :$paramcontextid", [$paramcontextid => $contextid]);
+            $this->add_base_condition_sql("{$entitymainalias}.contextid = :{$paramcontextid}", [
+                $paramcontextid => $this->get_context()->id,
+            ]);
         }
 
         // Now we can call our helper methods to add the content we want to include in the report.
@@ -95,14 +95,7 @@ class cohorts extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        $contextid = $this->get_parameter('contextid', 0, PARAM_INT);
-        if ($contextid) {
-            $context = context::instance_by_id($contextid, MUST_EXIST);
-        } else {
-            $context = context_system::instance();
-        }
-
-        return has_any_capability(['moodle/cohort:manage', 'moodle/cohort:view'], $context);
+        return has_any_capability(['moodle/cohort:manage', 'moodle/cohort:view'], $this->get_context());
     }
 
     /**
@@ -115,10 +108,8 @@ class cohorts extends system_report {
         $cohortentity = $this->get_entity('cohort');
         $entitymainalias = $cohortentity->get_table_alias('cohort');
 
-        $showall = $this->get_parameter('showall', false, PARAM_BOOL);
-
         // Category column. An extra callback is appended in order to extend the current column formatting.
-        if ($showall) {
+        if ($this->get_context() instanceof context_system && $this->get_parameter('showall', false, PARAM_BOOL)) {
             $this->add_column_from_entity('cohort:context')
                 ->add_callback(static function(string $value, stdClass $cohort): string {
                     $context = context::instance_by_id($cohort->contextid);
@@ -198,10 +189,11 @@ class cohorts extends system_report {
      */
     protected function add_actions(): void {
 
-        $contextid = $this->get_parameter('contextid', 0, PARAM_INT);
-        $showall = $this->get_parameter('showall', true, PARAM_BOOL);
-        $returnurl = (new moodle_url('/cohort/index.php',
-            ['id' => ':id', 'contextid' => $contextid, 'showall' => $showall]))->out(false);
+        $returnurl = (new moodle_url('/cohort/index.php', [
+            'id' => ':id',
+            'contextid' => $this->get_context()->id,
+            'showall' => $this->get_parameter('showall', false, PARAM_BOOL),
+        ]))->out(false);
 
         // Hide action. It will be only shown if the property 'visible' is true and user has 'moodle/cohort:manage' capabillity.
         $this->add_action((new action(
