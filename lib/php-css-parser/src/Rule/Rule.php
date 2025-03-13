@@ -108,7 +108,9 @@ class Rule implements Renderable, Commentable
             $oParserState->consume(';');
         }
 
-        $oParserState->consumeWhiteSpace();
+        // Begin Moodle Hack.
+        // $oParserState->consumeWhiteSpace();
+        // End Moodle Hack.
 
         return $oRule;
     }

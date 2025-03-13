@@ -14,4 +14,4 @@ cp -rf $tempdir/readme* lib/php-css-parser
 ```
 
 Apply the following patches:
-- None at this time
+- https://github.com/sabberworm/PHP-CSS-Parser/pull/173
