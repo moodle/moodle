@@ -171,12 +171,11 @@ final class repeated_restore_test extends advanced_testcase {
 
         // Create a quiz with questions in the first course.
         $quiz = $this->create_test_quiz($course1);
-        $qbank = $generator->get_plugin_generator('mod_qbank')->create_instance(['course' => $course1->id]);
-        $context = \context_module::instance($qbank->cmid);
+        $coursecontext = \context_course::instance($course1->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // Create a question category.
-        $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
+        $cat = $questiongenerator->create_question_category(['contextid' => $coursecontext->id]);
 
         // Create questions and add to the quiz.
         $q1 = $questiongenerator->create_question('truefalse', null, [
