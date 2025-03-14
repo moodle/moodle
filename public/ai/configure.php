@@ -72,6 +72,12 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+// Explode if there are no provider plugins installed.
+$plugins = core_plugin_manager::instance()->get_plugins_of_type('aiprovider');
+if (empty($plugins)) {
+    throw new moodle_exception('noproviderplugins', 'core_ai');
+}
+
 // Provider instance form processing.
 $mform = new \core_ai\form\ai_provider_form(customdata: $data);
 if ($mform->is_cancelled()) {

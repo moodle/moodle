@@ -123,6 +123,7 @@ $string['globalratelimit'] = 'Maximum number of site-wide requests';
 $string['globalratelimit_help'] = 'The number of site-wide requests allowed per hour.';
 $string['manageaiplacements'] = 'Manage AI placements';
 $string['manageaiproviders'] = 'Manage AI providers';
+$string['noproviderplugins'] = 'There are no provider plugins installed. Install a provider plugin to enable provider instance creation.';
 $string['noproviders'] = 'This action is unavailable. No <a href="{$a}">AI providers</a> are configured for this action.';
 $string['off'] = 'Off';
 $string['on'] = 'On';
