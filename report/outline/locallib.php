@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\local\properties\iconsize;
+use core_course\output\activity_icon;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once(__DIR__.'/lib.php');
@@ -31,7 +34,9 @@ require_once($CFG->dirroot.'/course/lib.php');
 function report_outline_print_row($mod, $instance, $result) {
     global $OUTPUT, $CFG;
 
-    $image = $OUTPUT->image_icon('monologo', $mod->modfullname, $mod->modname);
+    $activityicon = activity_icon::from_cm_info($mod)
+        ->set_icon_size(iconsize::SIZE4);
+    $image = $OUTPUT->render($activityicon);
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

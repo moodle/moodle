@@ -42,9 +42,13 @@
 }}
 <tr>
     {{#activitycolumn}}
-        <td class="cell activityname {{#indelegated}}delegated{{/indelegated}}{{^indelegated}}ps-5{{/indelegated}}">
-            {{{ activityicon }}}
-            {{#link}}<a href="{{ link }}">{{/link}}{{{ text }}}{{#link}}</a>{{/link}}
+        <td class="cell activityname {{!
+            }}{{#indelegated}}delegated{{/indelegated}}{{^indelegated}}ps-5{{/indelegated}}"
+        >
+            <div class="d-flex align-items-center">
+                {{{ activityicon }}}
+                {{#link}}<a href="{{ link }}">{{/link}}{{{ text }}}{{#link}}</a>{{/link}}
+            </div>
             {{^visible}}
             <div class="activity-badges my-1" data-region="visibility">
                 <span class="badge rounded-pill bg-secondary text-dark">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
