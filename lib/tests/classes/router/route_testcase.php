@@ -429,6 +429,9 @@ abstract class route_testcase extends \advanced_testcase {
         $payload = $this->decode_response($response);
         $this->assertObjectHasProperty('message', $payload);
         $this->assertObjectHasProperty('stacktrace', $payload);
+        foreach ($payload->stacktrace as $frame) {
+            $this->assertObjectNotHasProperty('args', $frame);
+        }
     }
 
     /**

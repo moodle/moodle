@@ -123,7 +123,10 @@ abstract class exception_response extends \core\router\schema\response\response 
     ): array {
         $data = [
             'message' => $exception->getMessage(),
-            'stacktrace' => $exception->getTrace(),
+            'stacktrace' => array_map(
+                fn ($frame): array => array_filter($frame, fn ($key) => $key !== 'args', ARRAY_FILTER_USE_KEY),
+                $exception->getTrace(),
+            ),
         ];
 
         if (is_a($exception, \moodle_exception::class)) {
