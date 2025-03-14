@@ -540,4 +540,37 @@ final class upgradelib_test extends \advanced_testcase {
             $this->assertEquals($expected, $block);
         }
     }
+
+    /**
+     * Ensure that the upgrade_create_async_mimetype_upgrade_task function performs as expected.
+     *
+     * @covers ::upgrade_create_async_mimetype_upgrade_task
+     */
+    public function test_upgrade_create_async_mimetype_upgrade_task(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $clock = $this->mock_clock_with_frozen();
+
+        upgrade_create_async_mimetype_upgrade_task('type/subtype', ['extension1', 'extension2']);
+
+        // Ensure that the task was created with correct next runtime.
+        $nextruntime = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'nextruntime',
+            conditions: ['component' => 'core', 'classname' => '\core_files\task\asynchronous_mimetype_upgrade_task'],
+            strictness: MUST_EXIST,
+        );
+        $this->assertEquals(expected: $clock->time() - 1, actual: $nextruntime);
+
+        // Ensure that the task has the correct custom data.
+        $customdata = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'customdata',
+            conditions: ['component' => 'core', 'classname' => '\core_files\task\asynchronous_mimetype_upgrade_task'],
+            strictness: MUST_EXIST,
+        );
+        $customdata = json_decode($customdata);
+        $this->assertEquals(expected: 'type/subtype', actual: $customdata->mimetype);
+        $this->assertEquals(expected: ['extension1', 'extension2'], actual: $customdata->extensions);
+    }
 }

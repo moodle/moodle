@@ -2066,3 +2066,32 @@ function upgrade_add_explain_action_to_ai_providers() {
 
     $currentrecords->close();
 }
+
+/**
+ * Creates a new ad-hoc task to upgrade the mime-type of files asynchronously.
+ * Thus, we can considerably reduce the time an upgrade takes.
+ *
+ * @param string $mimetype the desired mime-type
+ * @param string[] $extensions a list of file extensions, without the leading dot
+ * @return void
+ */
+function upgrade_create_async_mimetype_upgrade_task(string $mimetype, array $extensions): void {
+    global $DB;
+
+    // Create adhoc task for upgrading of existing files. Due to a code restriction on the upgrade, invoking any core
+    // functions is not permitted. Thus we craft our own ad-hoc task that will process all existing files.
+    $record = new \stdClass();
+    $record->classname = '\core_files\task\asynchronous_mimetype_upgrade_task';
+    $record->component = 'core';
+    $record->customdata = json_encode([
+        'mimetype' => $mimetype,
+        'extensions' => $extensions,
+    ]);
+
+    // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+    $clock = \core\di::get(\core\clock::class);
+    $nextruntime = $clock->time() - 1;
+    $record->nextruntime = $nextruntime;
+
+    $DB->insert_record('task_adhoc', $record);
+}
