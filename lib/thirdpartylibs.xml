@@ -84,7 +84,7 @@
     <description>PHP Class for handling Matrices.</description>
     <version>3.0.0</version>
     <license>MIT</license>
-    <repository>https://github.com/MarkBaker/PHPMarix</repository>
+    <repository>https://github.com/MarkBaker/PHPMatrix</repository>
   </library>
   <library>
     <location>google</location>
