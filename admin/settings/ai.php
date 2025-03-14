@@ -32,19 +32,29 @@ if ($hassiteconfig) {
     $providers->add(new admin_setting_heading('availableproviders',
         get_string('availableproviders', 'core_ai'),
         get_string('availableproviders_desc', 'core_ai')));
-    // Add call to action to add a new provider.
-    $providers->add(new \core_admin\admin\admin_setting_template_render(
-        name: 'addnewprovider',
-        templatename: 'core_ai/admin_add_provider',
-        context: ['addnewproviderurl' => new moodle_url('/ai/configure.php')]
-    ));
 
-    $providers->add(new \core_ai\admin\admin_setting_provider_manager(
+    if (!empty(core_plugin_manager::instance()->get_plugins_of_type("aiprovider"))) {
+        // Add call to action to add a new provider.
+        $providers->add(new \core_admin\admin\admin_setting_template_render(
+            name: 'addnewprovider',
+            templatename: 'core_ai/admin_add_provider',
+            context: ['addnewproviderurl' => new moodle_url('/ai/configure.php')]
+        ));
+
+        $providers->add(new \core_ai\admin\admin_setting_provider_manager(
             'aiprovider',
             \core_ai\table\aiprovider_management_table::class,
             'manageaiproviders',
             new lang_string('manageaiproviders', 'core_ai'),
-    ));
+        ));
+    } else {
+        $providers->add(new \core_admin\admin\admin_setting_notification(
+            name:'noproviderplugins',
+            notification: get_string('noproviderplugins', 'core_ai'),
+            type: 'danger'
+        ));
+    }
+
     $ADMIN->add('ai', $providers);
 
     // Add settings page for AI placement settings.
