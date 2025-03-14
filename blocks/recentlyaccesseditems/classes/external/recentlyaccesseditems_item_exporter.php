@@ -21,8 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_recentlyaccesseditems\external;
-defined('MOODLE_INTERNAL') || die();
 
+use core_course\output\activity_icon;
 use renderer_base;
 use moodle_url;
 
@@ -51,22 +51,18 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
     protected function get_other_values(renderer_base $output) {
         global $CFG;
         require_once($CFG->libdir.'/modinfolib.php');
-        $iconurl = get_fast_modinfo($this->data->courseid)->cms[$this->data->cmid]->get_icon_url();
-        $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
 
-        $isbranded = component_callback('mod_' . $this->data->modname, 'is_branded') !== null ? : false;
+        $renderer = \core\di::get(\core\output\renderer_helper::class)->get_core_renderer();
+        $cminfo = get_fast_modinfo($this->data->courseid)->get_cm($this->data->cmid);
+        $icon = activity_icon::from_cm_info($cminfo);
 
         return array(
             'viewurl' => (new moodle_url('/mod/'.$this->data->modname.'/view.php',
                 array('id' => $this->data->cmid)))->out(false),
             'courseviewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->courseid)))->out(false),
-            'icon' => \html_writer::img(
-                $iconurl,
-                get_string('pluginname', $this->data->modname),
-                ['title' => get_string('pluginname', $this->data->modname), 'class' => "icon $iconclass"]
-            ),
+            'icon' => $renderer->render($icon),
             'purpose' => plugin_supports('mod', $this->data->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
-            'branded' => $isbranded,
+            'branded' => $icon->is_branded(),
         );
     }
 
