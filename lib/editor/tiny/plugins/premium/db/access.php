@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'tiny/premium:use' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
@@ -35,119 +35,119 @@ $capabilities = [
     ],
     'tiny/premium:usea11ychecker' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:useadvtable' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usetypography' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usecasechange' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usechecklist' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:useeditimage' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:useexport' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usefootnotes' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:useformatpainter' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:uselinkchecker' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usepageembed' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usepermanentpen' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usepowerpaste' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usetinymcespellchecker' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:useautocorrect' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usetableofcontents' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
     ],
     'tiny/premium:usemath' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],

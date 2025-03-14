@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'tiny/html:use' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
