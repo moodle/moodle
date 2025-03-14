@@ -28,6 +28,12 @@
 - Final deprecation of edit_default_completion()
 
   For more information see [MDL-78711](https://tracker.moodle.org/browse/MDL-78711)
+- Final removal of core_course\output\activity_information
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
+- Final deprecation of core_course_renderer\render_activity_information()
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
 
 ## 4.5
 

@@ -56,6 +56,11 @@
   Any plugin using these methods must update their uses.
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
+- PHPSpreadSheet has been updated to version 4.0.0.
+
+  All library usage should be via the Moodle wrapper and no change should be required.
+
+  For more information see [MDL-81664](https://tracker.moodle.org/browse/MDL-81664)
 - The Moodle subplugins.json format has been updated to accept a new `subplugintypes` object.
 
   This should have the same format as the current `plugintypes` format, except that the paths should be relative to the _plugin_ root instead of the Moodle document root.
@@ -116,6 +121,9 @@
 - The 'core_renderer::sr_text()' function has been deprecated, use 'core_renderer::visually_hidden_text()' instead.
 
   For more information see [MDL-81825](https://tracker.moodle.org/browse/MDL-81825)
+- The function imagecopybicubic() is now deprecated. The GD lib is a strict requirement, so use imagecopyresampled() instead.
+
+  For more information see [MDL-84449](https://tracker.moodle.org/browse/MDL-84449)
 
 ### Removed
 
@@ -128,6 +136,16 @@
 - Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
 
   For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
+- Final removal of the following constants/methods from the `\core\encyption` class, removing support for OpenSSL fallback:
+
+  - `METHOD_OPENSSL`
+  - `OPENSSL_CIPHER`
+  - `is_sodium_installed`
+
+  For more information see [MDL-78869](https://tracker.moodle.org/browse/MDL-78869)
+- Final deprecation of core_renderer\activity_information()
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)

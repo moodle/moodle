@@ -2,6 +2,12 @@
 
 ## 5.0dev+
 
+### Added
+
+- Assign sub-plugins have a new method `assign_plugin::settings_validation` which can be overridden to validate the data when the assignments form is saved.
+
+  For more information see [MDL-83440](https://tracker.moodle.org/browse/MDL-83440)
+
 ### Deprecated
 
 - The assign_course_index_summary is now deprecated. The assign index is now generated using the mod_assign\course\overview integration class.

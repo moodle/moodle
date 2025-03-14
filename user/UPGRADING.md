@@ -1,5 +1,17 @@
 # core_user (subsystem) Upgrade notes
 
+## 5.0dev+
+
+### Removed
+
+- Final removal of the following user preference helpers, please use the `core_user/repository` module instead:
+
+  - `user_preference_allow_ajax_update`
+  - `M.util.set_user_preference`
+  - `lib/ajax/setuserpref.php`
+
+  For more information see [MDL-79124](https://tracker.moodle.org/browse/MDL-79124)
+
 ## 4.5
 
 ### Added

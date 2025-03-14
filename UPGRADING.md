@@ -64,6 +64,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Any plugin using these methods must update their uses.
 
   For more information see [MDL-81308](https://tracker.moodle.org/browse/MDL-81308)
+- PHPSpreadSheet has been updated to version 4.0.0.
+
+  All library usage should be via the Moodle wrapper and no change should be required.
+
+  For more information see [MDL-81664](https://tracker.moodle.org/browse/MDL-81664)
 - The Moodle subplugins.json format has been updated to accept a new `subplugintypes` object.
 
   This should have the same format as the current `plugintypes` format, except that the paths should be relative to the _plugin_ root instead of the Moodle document root.
@@ -124,6 +129,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The 'core_renderer::sr_text()' function has been deprecated, use 'core_renderer::visually_hidden_text()' instead.
 
   For more information see [MDL-81825](https://tracker.moodle.org/browse/MDL-81825)
+- The function imagecopybicubic() is now deprecated. The GD lib is a strict requirement, so use imagecopyresampled() instead.
+
+  For more information see [MDL-84449](https://tracker.moodle.org/browse/MDL-84449)
 
 #### Removed
 
@@ -136,6 +144,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
 
   For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
+- Final removal of the following constants/methods from the `\core\encyption` class, removing support for OpenSSL fallback:
+
+  - `METHOD_OPENSSL`
+  - `OPENSSL_CIPHER`
+  - `is_sodium_installed`
+
+  For more information see [MDL-78869](https://tracker.moodle.org/browse/MDL-78869)
+- Final deprecation of core_renderer\activity_information()
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
@@ -265,15 +283,27 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- Initial deprecation of calendar_sub_month. Use \core_calendar\type_factory::get_calendar_instance()->get_prev_month() instead.
+
+  For more information see [MDL-79434](https://tracker.moodle.org/browse/MDL-79434)
 - calendar_day_representation(), calendar_time_representation() and calendar_format_event_time() functions have been deprecated and can't be used anymore. Use humandate and humantimeperiod classes instead.
 
   For more information see [MDL-83873](https://tracker.moodle.org/browse/MDL-83873)
 - calendar_get_courselink(), calendar_events_by_day() functions have been deprecated.
 
   For more information see [MDL-84617](https://tracker.moodle.org/browse/MDL-84617)
+- Initial deprecation of calendar_add_month(). Use \core_calendar\type_factory::get_calendar_instance()->get_next_month() instead.
+
+  For more information see [MDL-84657](https://tracker.moodle.org/browse/MDL-84657)
 
 #### Removed
 
+- Final removal of calendar functions:
+    - calendar_top_controls()
+    - calendar_get_link_previous()
+    - calendar_get_link_next()
+
+  For more information see [MDL-79434](https://tracker.moodle.org/browse/MDL-79434)
 - prepare_for_view(), calendar_add_event_metadata() functions have been removed.
 
   For more information see [MDL-84617](https://tracker.moodle.org/browse/MDL-84617)
@@ -320,6 +350,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of edit_default_completion()
 
   For more information see [MDL-78711](https://tracker.moodle.org/browse/MDL-78711)
+- Final removal of core_course\output\activity_information
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
+- Final deprecation of core_course_renderer\render_activity_information()
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
 
 ### core_courseformat
 
@@ -388,6 +424,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82679](https://tracker.moodle.org/browse/MDL-82679)
 
+### core_customfield
+
+#### Added
+
+- Added a new custom field exporter to export custom field data in `\core_customfield\external\field_data_exporter`
+
+  For more information see [MDL-83552](https://tracker.moodle.org/browse/MDL-83552)
+
 ### core_enrol
 
 #### Added
@@ -395,6 +439,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New method enrol_plugin::get_instance_name_for_management_page() can be used to display additional details next to the instance name.
 
   For more information see [MDL-84139](https://tracker.moodle.org/browse/MDL-84139)
+- Plugins implementing enrol_page_hook() method are encouraged to use the renderable \core_enrol\output\enrol_page to produce HTML for the enrolment page. Forms should be displayed in a modal dialogue. See enrol_self plugin as an example.
+
+  For more information see [MDL-84142](https://tracker.moodle.org/browse/MDL-84142)
+- It's now possible for themes to override the course enrolment index page by overriding the new course renderer `enrolment_options` method
+
+  For more information see [MDL-84143](https://tracker.moodle.org/browse/MDL-84143)
 
 #### Changed
 
@@ -406,6 +456,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Removed
 
+- Final removal of base `enrol_plugin` class method `update_communication`
+
+  For more information see [MDL-80491](https://tracker.moodle.org/browse/MDL-80491)
 - Removed enrol_mnet plugin from core
 
   For more information see [MDL-84310](https://tracker.moodle.org/browse/MDL-84310)
@@ -425,6 +478,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Removed unused grade_edit_tree_column_select class
 
   For more information see [MDL-77668](https://tracker.moodle.org/browse/MDL-77668)
+- The previously deprecated `grade_helper::get_lang_string` method has been removed
+
+  For more information see [MDL-78780](https://tracker.moodle.org/browse/MDL-78780)
 - Final deprecation of
     grade_structure::get_element_type_string(),
     grade_structure::get_element_header(),
@@ -487,6 +543,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Behat steps `behat_qbank_comment::i_should_see_on_the_column` and `behat_qbank_comment::i_click_on_the_row_containing` have been deprecated in favour of the new component named selectors, `qbank_comment > Comment count link` and `qbank_comment > Comment count text` which can be used with the standard `should exist` and `I click on` steps to replace the custom steps.
 
   For more information see [MDL-79122](https://tracker.moodle.org/browse/MDL-79122)
+
+#### Fixed
+
+- Duplication or multiple restores of questions has been modified to avoid errors where a question with the same stamp already exists in the target category.
+  To achieve this all data for the question is hashed, excluding any ID fields.
+
+  The question data from the backup is first reformatted to match the questiondata structure returned by calling `get_question_options()` (see  https://docs.moodle.org/dev/Question_data_structures#Representation_1:_%24questiondata). Common question elements will be handled automatically, but any elements that the qtype adds to the backup will need to be handled by overriding `restore_qtype_plugin::convert_backup_to_questiondata`. See `restore_qtype_match_plugin` as an example.
+  If a qtype plugin calls any `$this->add_question_*()` methods in its `restore_qtype_*_plugin::define_question_plugin_structure()` method, the ID fields used in these records will be excluded automatically.
+  If a qtype plugin defines its own tables with ID fields, it must define `restore_qtype_*_plugin::define_excluded_identity_hash_fields()` to return  an array of paths to these fields within the question data. This should be all that is required for the majority of plugins. See the PHPDoc of `restore_qtype_plugin::define_excluded_identity_hash_fields()` for a full explanation of how these paths should be defined, and  `restore_qtype_truefalse_plugin` for an example.
+  If the data structure for a qtype returned by calling `get_question_options()` contains data other than ID fields that are not contained in the backup structure or vice-versa, it will need to override `restore_qtype_*_plugin::remove_excluded_question_data()`  to remove the inconsistent data. See `restore_qtype_multianswer_plugin` as  an example.
+
+  For more information see [MDL-83541](https://tracker.moodle.org/browse/MDL-83541)
 
 ### core_reportbuilder
 
@@ -581,6 +649,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80430](https://tracker.moodle.org/browse/MDL-80430)
 
+### core_repository
+
+#### Removed
+
+- Final removal of base `repository` class method `get_file_size`
+
+  For more information see [MDL-78706](https://tracker.moodle.org/browse/MDL-78706)
+
 ### core_sms
 
 #### Added
@@ -596,6 +672,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core_tag\taglist` class now includes a new property called `displaylink`, which has a default value of `true`. When `displaylink` is set to `true`, the tag name will be displayed as a clickable hyperlink. If `displaylink` is set to `false`, the tag name will be rendered as plain text instead.
 
   For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
+
+### core_user
+
+#### Removed
+
+- Final removal of the following user preference helpers, please use the `core_user/repository` module instead:
+
+  - `user_preference_allow_ajax_update`
+  - `M.util.set_user_preference`
+  - `lib/ajax/setuserpref.php`
+
+  For more information see [MDL-79124](https://tracker.moodle.org/browse/MDL-79124)
 
 ### aiplacement_courseassist
 
@@ -621,6 +709,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83733](https://tracker.moodle.org/browse/MDL-83733)
 
+### enrol_guest
+
+#### Deprecated
+
+- Class enrol_guest_enrol_form is deprecated, use enrol_guest\form\enrol_form instead
+
+  For more information see [MDL-84142](https://tracker.moodle.org/browse/MDL-84142)
+
+### enrol_self
+
+#### Deprecated
+
+- Class enrol_self_enrol_form is deprecated, use enrol_self\form\enrol_form instead
+
+  For more information see [MDL-84142](https://tracker.moodle.org/browse/MDL-84142)
+
+#### Removed
+
+- Final removal of `enrol_self_plugin::get_welcome_email_contact` method, please use `enrol_plugin::get_welcome_message_contact` instead
+
+  For more information see [MDL-81185](https://tracker.moodle.org/browse/MDL-81185)
+
 ### format_topics
 
 #### Deprecated
@@ -631,6 +741,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The get_highlight_control in the section controlmenu class is now deprecated. Use get_section_highlight_item instead
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
+
+### gradereport
+
+#### Removed
+
+- The previously deprecated `grade_report::get_lang_string` method has been removed
+
+  For more information see [MDL-78780](https://tracker.moodle.org/browse/MDL-78780)
 
 ### gradereport_grader
 
@@ -682,6 +800,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-82457](https://tracker.moodle.org/browse/MDL-82457)
 
 ### mod_assign
+
+#### Added
+
+- Assign sub-plugins have a new method `assign_plugin::settings_validation` which can be overridden to validate the data when the assignments form is saved.
+
+  For more information see [MDL-83440](https://tracker.moodle.org/browse/MDL-83440)
 
 #### Deprecated
 
@@ -781,6 +905,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82775](https://tracker.moodle.org/browse/MDL-82775)
 
+### mod_imscp
+
+#### Removed
+
+- Final removal of deprecated `imscp_libxml_disable_entity_loader` function
+
+  For more information see [MDL-78635](https://tracker.moodle.org/browse/MDL-78635)
+
 ### mod_lesson
 
 #### Removed
@@ -788,6 +920,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove unused /mod/lesson/tabs.php
 
   For more information see [MDL-82937](https://tracker.moodle.org/browse/MDL-82937)
+
+### mod_lti
+
+#### Removed
+
+- Final removal of deprecated `lti_libxml_disable_entity_loader` function
+
+  For more information see [MDL-78635](https://tracker.moodle.org/browse/MDL-78635)
 
 ### mod_quiz
 
@@ -805,6 +945,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Both the existing instance property and the new static method can co-exist.
 
   For more information see [MDL-81521](https://tracker.moodle.org/browse/MDL-81521)
+
+### mod_wiki
+
+#### Removed
+
+- Final deprecation of mod_wiki_renderer\wiki_info()
+
+  For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
 
 ### qbank_bulkmove
 
