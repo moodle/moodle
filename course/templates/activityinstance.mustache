@@ -36,27 +36,32 @@
 <div class="row mb-1">
     <div class="activityinstance col-6">
         <div class="mod-indent-outer"></div>
-        <div>
+        <div class="d-flex align-items-center align-self-start gap-3 mb-2">
             {{#canmanage}}
             <label class="accesshide" for="selectactivity_{{cmid}}">{{#str}}select, completion{{/str}} {{modname}}</label>
-            <input type="checkbox" id="selectactivity_{{cmid}}" class="me-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
+            <input type="checkbox" id="selectactivity_{{cmid}}" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
             {{/canmanage}}
-            <a href="{{url}}">
-            <img src="{{icon}}" class="activityicon" alt="">
-            <span class="instancename">{{{modname}}}</span>
+            <a href="{{url}}" class="activityiconcontainer">
+                {{#activityicon}}
+                    {{> core_course/activity_icon}}
+                {{/activityicon}}
+                {{^activityicon}}
+                    <img src="{{icon}}" class="activityicon" alt="">
+                {{/activityicon}}
+                <span class="instancename">{{{modname}}}</span>
             </a>
         </div>
     </div>
-    <div class="activity-completionstatus col-6" id="completionstatus_{{cmid}}">
-        <div class="col-sm-1  ps-0">
+    <div class="activity-completionstatus col-6 d-flex align-items-start gap-1" id="completionstatus_{{cmid}}">
+        <div>
             {{#completionstatus.icon}}
                 {{{completionstatus.icon}}}
             {{/completionstatus.icon}}
             {{^completionstatus.icon}}
-                <span class="me-3"></span>
+                <span class="me-4">&nbsp;</span>
             {{/completionstatus.icon}}
         </div>
-        <div class="col-sm-11  ps-0">
+        <div>
             <span class="text-muted muted">{{{completionstatus.string}}}</span>
         </div>
     </div>
