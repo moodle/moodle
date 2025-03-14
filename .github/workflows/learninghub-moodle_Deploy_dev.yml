@@ -50,8 +50,10 @@ jobs:
       #       -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
       #       -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
       #       -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
-      #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
-      #       -var="SQLVcores=${{ vars.SQL_VCORES }}"
+      #       -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}" \
+      #       -var="SQLVcores=${{ vars.SQL_VCORES }}" \
+      #       -var="RedisName=${{ vars.REDIS_NAME }}" \
+      #       -var="SqlmiName=${{ vars.SQLMI_NAME }}"
 
       - name: 'Terraform apply'
         id: apply
@@ -70,8 +72,10 @@ jobs:
             -var="ClusterNodeCount=${{ vars.AZURE_CLUSTER_NODE_COUNT }}" \
             -var="ClusterNodeSize=${{ vars.AZURE_CLUSTER_NODE_SIZE }}" \
             -var="SQLSkuName=${{ vars.SQL_SKU_NAME }}" \
-            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}"\
-            -var="SQLVcores=${{ vars.SQL_VCORES }}"
+            -var="SQLStorageSize=${{ vars.SQL_STORAGE_SIZE }}" \
+            -var="SQLVcores=${{ vars.SQL_VCORES }}" \
+            -var="RedisName=${{ vars.REDIS_NAME }}" \
+            -var="SqlmiName=${{ vars.SQLMI_NAME }}"
 
   create_persistent_storage:
     needs: terraform

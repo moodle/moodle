@@ -53,3 +53,11 @@ variable "SQLStorageSize" {
 variable "SQLVcores" {
     type = string
 }
+
+variable "RedisName" {
+    type = string
+}
+
+variable "SqlmiName" {
+    type = string
+}

@@ -246,7 +246,7 @@ resource "azurerm_subnet_route_table_association" "subnet_route_table_associatio
 }
 
 resource "azurerm_mssql_managed_instance" "sqlmi" {
-  name = "learninghub-moodle-sql-mi-prod"
+  name = var.SqlmiName
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   location = azurerm_resource_group.learningHubMoodleResourceGroup.location
   license_type = "BasePrice"
@@ -267,7 +267,7 @@ resource "azurerm_mssql_managed_database" "sqldb" {
 }
 
 resource "azurerm_redis_cache" "moodle_cache" {
-  name                = "moodle-cache-prod"
+  name                = var.RedisName
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   location = azurerm_resource_group.learningHubMoodleResourceGroup.location
   capacity            = 2
@@ -278,7 +278,7 @@ resource "azurerm_redis_cache" "moodle_cache" {
 }
 
 resource "azurerm_communication_service" "CommunicationService" {
-  name                = "CommunicationServiceProd-7312A316-1CCB-4823-B0FB-9146628802E3"
+  name                = "CommunicationServiceProd"
   resource_group_name = azurerm_resource_group.learningHubMoodleResourceGroup.name
   data_location       = "UK"
 }
