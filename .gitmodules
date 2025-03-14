@@ -19,6 +19,11 @@
 	path = filter/ucsfezproxy
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
 	branch = MOODLE_405_STABLE
+[submodule "local/staticpage"]
+	path = local/staticpage
+	url = https://github.com/moodle-an-hochschulen/moodle-local_staticpage
+	branch = MOODLE_405_STABLE
+	tag =v4.5-r1
 [submodule "mod/attendance"]
 	path = mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
@@ -59,3 +64,4 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
 	tag = v4.5.1
+
