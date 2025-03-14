@@ -769,9 +769,11 @@ if (!isset($CFG->debugdisplay)) {
     // Some parts of Moodle cannot display errors and debug at all.
     ini_set('display_errors', '0');
     ini_set('log_errors', '1');
+    ini_set('zend.exception_ignore_args', '1');
 } else if (empty($CFG->debugdisplay)) {
     ini_set('display_errors', '0');
     ini_set('log_errors', '1');
+    ini_set('zend.exception_ignore_args', '1');
 } else {
     // This is very problematic in XHTML strict mode!
     ini_set('display_errors', '1');
