@@ -61,6 +61,9 @@ class qtype_ddtoimage_base extends question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $question->shufflechoices = $questiondata->options->shuffleanswers;
+        if (isset($questiondata->options->dropzonevisibility)) {
+            $question->dropzonevisibility = $questiondata->options->dropzonevisibility;
+        }
 
         $this->initialise_combined_feedback($question, $questiondata, true);
 

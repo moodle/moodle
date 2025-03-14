@@ -57,6 +57,7 @@ Feature: Test creating a drag and drop onto image question
 
     # Drop zones
     And I follow "Drop zones"
+    And I set the field "id_dropzonevisibility" to "1"
     And I press "Blanks for 3 more drop zones"
 
     And I set the field "id_drops_0_xleft" to "53"
@@ -98,7 +99,8 @@ Feature: Test creating a drag and drop onto image question
     And I set the field "item_qtype_ddimageortext" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And the following fields match these values:
-      | id_shuffleanswers | 1   |
+      | id_shuffleanswers     | 1 |
+      | id_dropzonevisibility | 1 |
 
   @javascript @_file_upload
   Scenario: Question must have at least one drag item and one drop zone

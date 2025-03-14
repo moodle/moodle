@@ -167,6 +167,7 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         );
         $fromform->bgimage = $bgdraftitemid;
         $fromform->shuffleanswers = 0;
+        $fromform->dropzonevisibility = 0;
         $fromform->drags = array(
             array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
             array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),

@@ -54,7 +54,7 @@ class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
         $dds = new backup_nested_element($qtype, array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect', 'dropzonevisibility'));
 
         $pluginwrapper->add_child($dds);
         $drags = new backup_nested_element('drags');

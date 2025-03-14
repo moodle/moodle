@@ -35,7 +35,8 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/questionbase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimageortext_question extends qtype_ddtoimage_question_base {
-
+    /** @var string Whether the dropzone transparent or not. */
+    public $dropzonevisibility;
 }
 
 

@@ -59,6 +59,10 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
         $dropareaclass = 'droparea';
         $draghomesclass = 'draghomes';
+        if ($question->dropzonevisibility) {
+            $draghomesclass .= ' transparent';
+            $dropareaclass .= ' transparent';
+        }
         if ($options->readonly) {
             $dropareaclass .= ' readonly';
             $draghomesclass .= ' readonly';
