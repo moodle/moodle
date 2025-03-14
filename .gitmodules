@@ -33,6 +33,11 @@
 	url = https://github.com/davosmith/moodle-checklist
 	branch = master
 	tag = 4.1.0.3
+[submodule "mod/choicegroup"]
+	path = mod/choicegroup
+	url = https://github.com/ndunand/moodle-mod_choicegroup
+	branch = master
+	tag = 2024111301
 [submodule "mod/customcert"]
 	path = mod/customcert
 	url = https://github.com/mdjnelson/moodle-mod_customcert
