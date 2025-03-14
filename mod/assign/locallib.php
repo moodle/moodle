@@ -6506,7 +6506,7 @@ class assign {
      * @param string $eventtype
      * @param int $updatetime
      * @param stdClass $coursemodule
-     * @param stdClass $context
+     * @param context $context
      * @param stdClass $course
      * @param string $modulename
      * @param string $assignmentname
@@ -6530,6 +6530,11 @@ class assign {
                                                         $extrainfo = []) {
         global $CFG, $PAGE;
 
+        // We put more data into info that is used by the default language strings,
+        // so that there is more flexibility for organisations that want to use
+        // Language Customisation to customise the messages.
+
+        // Information about the sender - normally the user who performed the action.
         $info = new stdClass();
         if ($blindmarking) {
             $userfrom = clone($userfrom);
@@ -6538,14 +6543,33 @@ class assign {
             $userfrom->lastname = $uniqueidforuser;
             $userfrom->email = $CFG->noreplyaddress;
         } else {
-            $info->username = fullname($userfrom, true);
+            $info->username = core_user::get_fullname($userfrom, $context, ['override' => true]);
         }
-        $info->assignment = format_string($assignmentname, true, array('context'=>$context));
-        $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
+
+        // Information about the recipient (for greeting, etc).
+        $info->recipentname = core_user::get_fullname($userto, $context, ['override' => true]);
+
+        // Information about the assignment.
+        $info->assignment = format_string($assignmentname, true, ['context' => $context]);
+        $info->url = $CFG->wwwroot . '/mod/assign/view.php?id=' . $coursemodule->id;
+        $info->assignmentlink  = '<a href="' . $info->url . '">' . s($info->assignment) . ' report</a>';
+        $info->assigncmid = $coursemodule->id;
+
+        // Information about the course.
+        $info->courseshortname = format_string($course->shortname, true, ['context' => $context]);
+        $info->coursefullname = format_string($course->fullname, true, ['context' => $context]);
+        $info->courseurl = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
+        $info->courseassignsurl = $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id;
+
+        // Time of the action.
         $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
+
+        // Other data passed in.
         $info = (object) array_merge((array) $info, $extrainfo);
 
+        // Prepare the message subject and body.
         $postsubject = get_string($messagetype . 'small', 'assign', $info);
+
         $posttext = self::format_notification_message_text($messagetype,
                                                            $info,
                                                            $course,

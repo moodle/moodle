@@ -1,0 +1,9 @@
+issueNumber: MDL-84733
+notes:
+  mod_assign:
+    - message: >-
+        When the assignment activity sends notifications, it now sets more
+        information in the $a object passed to the languages strings for the
+        message subject and body. This is to give more flexibility to people
+        using Language Customisation.
+      type: improved
