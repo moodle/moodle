@@ -1791,13 +1791,17 @@ You can see it appended to your assignment submission:
             $message->fullmessage,
         );
         $this->assertEquals(
-            '<p><font face="sans-serif"><a href="' . $courseurl . '">' . $course->shortname . '</a> ' .
-            '-><a href="' . $assignsurl . '">Assignment</a> ' .
-            '-><a href="' . $assignurl . '">' . $assignname . '</a></font></p><hr />' .
-            '<font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
-            'assignment submission for \'<i>' . $assignname . '</i>\'<br /><br />' . "\n" .
-            'You can see it appended to your <a href="' . $assignurl .
-            '">assignment submission</a>.</p></font><hr />',
+            '<p><font face="sans-serif">
+    <a href="' . $courseurl . '">' . $course->shortname . '</a> ->
+    <a href="' . $assignsurl . '">Assignment</a> ->
+    <a href="' . $assignurl . '">' . $assignname . '</a>
+</font></p>
+<hr>
+<font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
+            'assignment submission for \'<i>' . $assignname . '</i>\'<br /><br />
+You can see it appended to your <a href="' . $assignurl .
+            '">assignment submission</a>.</p></font>
+<hr>',
             $message->fullmessagehtml
         );
     }

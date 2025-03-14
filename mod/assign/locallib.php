@@ -6434,70 +6434,6 @@ class assign {
     }
 
     /**
-     * Format a notification for plain text.
-     *
-     * @param string $messagetype
-     * @param stdClass $info
-     * @param stdClass $course
-     * @param stdClass $context
-     * @param string $modulename
-     * @param string $assignmentname
-     */
-    protected static function format_notification_message_text($messagetype,
-                                                             $info,
-                                                             $course,
-                                                             $context,
-                                                             $modulename,
-                                                             $assignmentname) {
-        $formatparams = array('context' => $context->get_course_context());
-        $posttext  = format_string($course->shortname, true, $formatparams) .
-                     ' -> ' .
-                     $modulename .
-                     ' -> ' .
-                     format_string($assignmentname, true, $formatparams) . "\n";
-        $posttext .= '---------------------------------------------------------------------' . "\n";
-        $posttext .= get_string($messagetype . 'text', 'assign', $info)."\n";
-        $posttext .= "\n---------------------------------------------------------------------\n";
-        return $posttext;
-    }
-
-    /**
-     * Format a notification for HTML.
-     *
-     * @param string $messagetype
-     * @param stdClass $info
-     * @param stdClass $course
-     * @param stdClass $context
-     * @param string $modulename
-     * @param stdClass $coursemodule
-     * @param string $assignmentname
-     */
-    protected static function format_notification_message_html($messagetype,
-                                                             $info,
-                                                             $course,
-                                                             $context,
-                                                             $modulename,
-                                                             $coursemodule,
-                                                             $assignmentname) {
-        global $CFG;
-        $formatparams = array('context' => $context->get_course_context());
-        $posthtml  = '<p><font face="sans-serif">' .
-                     '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' .
-                     format_string($course->shortname, true, $formatparams) .
-                     '</a> ->' .
-                     '<a href="' . $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id . '">' .
-                     $modulename .
-                     '</a> ->' .
-                     '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $coursemodule->id . '">' .
-                     format_string($assignmentname, true, $formatparams) .
-                     '</a></font></p>';
-        $posthtml .= '<hr /><font face="sans-serif">';
-        $posthtml .= '<p>' . get_string($messagetype . 'html', 'assign', $info) . '</p>';
-        $posthtml .= '</font><hr />';
-        return $posthtml;
-    }
-
-    /**
      * Message someone about something (static so it can be called from cron).
      *
      * @param stdClass $userfrom
@@ -6508,7 +6444,7 @@ class assign {
      * @param stdClass $coursemodule
      * @param context $context
      * @param stdClass $course
-     * @param string $modulename
+     * @param string $modulename - no longer used.
      * @param string $assignmentname
      * @param bool $blindmarking
      * @param int $uniqueidforuser
@@ -6567,26 +6503,25 @@ class assign {
         // Other data passed in.
         $info = (object) array_merge((array) $info, $extrainfo);
 
-        // Prepare the message subject and body.
+        // Prepare the message subject and bodies.
         $postsubject = get_string($messagetype . 'small', 'assign', $info);
 
-        $posttext = self::format_notification_message_text($messagetype,
-                                                           $info,
-                                                           $course,
-                                                           $context,
-                                                           $modulename,
-                                                           $assignmentname);
+        $renderer = $PAGE->get_renderer('mod_assign');
+        $context = clone $info;
+        $context->messagetext = get_string($messagetype . 'text', 'assign', $info);
+        // Mustache strips off all training whitespace, but we want a newline at the end.
+        $posttext = $renderer->render_from_template(
+            'mod_assign/messages/notification_text', $context) . "\n";
+
         $posthtml = '';
         if ($userto->mailformat == 1) {
-            $posthtml = self::format_notification_message_html($messagetype,
-                                                               $info,
-                                                               $course,
-                                                               $context,
-                                                               $modulename,
-                                                               $coursemodule,
-                                                               $assignmentname);
+            $context = clone $info;
+            $context->messagehtml = get_string($messagetype . 'html', 'assign', $info);
+            $posthtml = $renderer->render_from_template(
+                'mod_assign/messages/notification_html', $context);
         }
 
+        // Build the message object.
         $eventdata = new \core\message\message();
         $eventdata->courseid         = $course->id;
         $eventdata->modulename       = 'assign';
