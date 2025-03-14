@@ -57,8 +57,45 @@ if (empty($reportsbyname) && empty($rulesbyname)) {
 $quizsettings = new admin_settingpage('modsettingquiz', $pagetitle, 'moodle/site:config');
 
 if ($ADMIN->fulltree) {
-    // Introductory explanation that all the settings are defaults for the add quiz form.
-    $quizsettings->add(new admin_setting_heading('quizintro', '', get_string('configintro', 'quiz')));
+
+    $quizsettings->add(new admin_setting_heading('quizintro', '', get_string('configintroglobal', 'quiz')));
+
+    // Delay to notify graded attempts.
+    $quizsettings->add(new admin_setting_configduration('quiz/notifyattemptgradeddelay',
+        get_string('attemptgradeddelay', 'quiz'), get_string('attemptgradeddelay_desc', 'quiz'), 5 * HOURSECS, HOURSECS));
+
+    // Pre-create attempt period.
+    $precreateoptions = [get_string('precreateoff', 'quiz')];
+    for ($i = 1; $i <= 24; $i++) {
+        $precreateoptions[$i * HOURSECS] = sprintf(get_string('dateintervalhrfull', 'langconfig'), $i);
+    }
+    $setting = new admin_setting_configselect(
+        'quiz/precreateperiod',
+        get_string('precreateperiod', 'quiz'),
+        get_string('precreateperiod_desc', 'quiz'),
+        0,
+        $precreateoptions,
+    );
+    $quizsettings->add($setting);
+
+    // Minimum grace period used behind the scenes.
+    $quizsettings->add(new admin_setting_configduration('quiz/graceperiodmin',
+        get_string('graceperiodmin', 'quiz'), get_string('graceperiodmin_desc', 'quiz'),
+        60, 1));
+
+    // Initial number of feedback items.
+    $quizsettings->add(new admin_setting_configtext('quiz/initialnumfeedbacks',
+        get_string('initialnumfeedbacks', 'quiz'), get_string('initialnumfeedbacks_desc', 'quiz'),
+        2, PARAM_INT, 5));
+
+    // Autosave frequency.
+    $quizsettings->add(new admin_setting_configduration('quiz/autosaveperiod',
+        get_string('autosaveperiod', 'quiz'), get_string('autosaveperiod_desc', 'quiz'), 60, 1));
+
+    // Heading explanation that all the settings below are defaults for the add quiz form.
+    $name = new lang_string('defaultsettings', 'quiz');
+    $description = new lang_string('configintro', 'quiz');
+    $quizsettings->add(new admin_setting_heading('defaultsettings', $name, $description));
 
     // Time limit.
     $setting = new admin_setting_configduration('quiz/timelimit',
@@ -67,10 +104,6 @@ if ($ADMIN->fulltree) {
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $quizsettings->add($setting);
-
-    // Delay to notify graded attempts.
-    $quizsettings->add(new admin_setting_configduration('quiz/notifyattemptgradeddelay',
-        get_string('attemptgradeddelay', 'quiz'), get_string('attemptgradeddelay_desc', 'quiz'), 5 * HOURSECS, HOURSECS));
 
     // What to do with overdue attempts.
     $setting = new \mod_quiz\admin\overdue_handling_setting('quiz/overduehandling',
@@ -94,25 +127,9 @@ if ($ADMIN->fulltree) {
         get_string('precreateattempts_help', 'quiz'),
         0,
     );
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, true);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, true);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, true);
     $quizsettings->add($setting);
-
-    // Pre-create attempt period.
-    $precreateoptions = mod_quiz_mod_form::generate_precreate_options();
-    $setting = new admin_setting_configselect(
-        'quiz/precreateperiod',
-        get_string('precreateperiod', 'quiz'),
-        get_string('precreateperiod_desc', 'quiz'),
-        0,
-        $precreateoptions,
-    );
-    $quizsettings->add($setting);
-
-    // Minimum grace period used behind the scenes.
-    $quizsettings->add(new admin_setting_configduration('quiz/graceperiodmin',
-            get_string('graceperiodmin', 'quiz'), get_string('graceperiodmin_desc', 'quiz'),
-            60, 1));
 
     // Number of attempts.
     $options = [get_string('unlimited')];
@@ -288,20 +305,12 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $quizsettings->add($setting);
 
-    $quizsettings->add(new admin_setting_configtext('quiz/initialnumfeedbacks',
-            get_string('initialnumfeedbacks', 'quiz'), get_string('initialnumfeedbacks_desc', 'quiz'),
-            2, PARAM_INT, 5));
-
     // Allow user to specify if setting outcomes is an advanced setting.
     if (!empty($CFG->enableoutcomes)) {
         $quizsettings->add(new admin_setting_configcheckbox('quiz/outcomes_adv',
             get_string('outcomesadvanced', 'quiz'), get_string('configoutcomesadvanced', 'quiz'),
             '0'));
     }
-
-    // Autosave frequency.
-    $quizsettings->add(new admin_setting_configduration('quiz/autosaveperiod',
-            get_string('autosaveperiod', 'quiz'), get_string('autosaveperiod_desc', 'quiz'), 60, 1));
 }
 
 // Now, depending on whether any reports have their own settings page, add

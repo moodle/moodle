@@ -718,18 +718,4 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         return $this->maxattemptsanyoverride;
     }
-
-    /**
-     * Return a list of options for site-wide and per-instance precreate period settings.
-     *
-     * @return array
-     */
-    public static function generate_precreate_options(): array {
-        $precreateoptions[0] = get_string('precreateoff', 'quiz');
-        for ($i = 1; $i <= 24; $i++) {
-            $precreateoptions[$i * HOURSECS] = sprintf(get_string('dateintervalhrfull', 'langconfig'), $i);
-        }
-        return $precreateoptions;
-    }
-
 }
