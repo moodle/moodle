@@ -64,6 +64,8 @@ final class quiz_restore_decode_links_test extends \advanced_testcase {
 
         $questiondata = \question_bank::load_question_data($question->id);
 
+        $DB->set_field('question', 'questiontext', $CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, ['id' => $question->id]);
+
         $firstanswer = array_shift($questiondata->options->answers);
         $DB->set_field('question_answers', 'answer', $CFG->wwwroot . '/course/view.php?id=' . $course->id,
             ['id' => $firstanswer->id]);
@@ -87,6 +89,7 @@ final class quiz_restore_decode_links_test extends \advanced_testcase {
         $questionids = [];
         foreach ($quizquestions as $quizquestion) {
             if ($quizquestion->questionid) {
+                $this->assertEquals($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, $quizquestion->questiontext);
                 $questionids[] = $quizquestion->questionid;
             }
         }
