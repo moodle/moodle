@@ -41,7 +41,7 @@ trait mod_assign_test_generator {
      * Convenience function to create a testable instance of an assignment.
      *
      * @param array $params Array of parameters to pass to the generator
-     * @return testable_assign Testable wrapper around the assign class.
+     * @return mod_assign_testable_assign Testable wrapper around the assign class.
      */
     protected function create_instance($course, $params = [], $options = []) {
         $params['course'] = $course->id;

@@ -1765,8 +1765,41 @@ final class locallib_test extends \advanced_testcase {
         $messages = $sink->get_messages();
 
         $this->assertEquals(1, count($messages));
-        $this->assertEquals(1, $messages[0]->notification);
-        $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+
+        // Get some bits we will need to verify the content of the message.
+        $assignname = $assign->get_instance()->name;
+        $assignurl = (new \moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]))->out();
+        $teachername = fullname($teacher);
+        $assignsurl = (new \moodle_url('/mod/assign/index.php', ['id' => $course->id]))->out();
+        $courseurl = (new \moodle_url('/course/view.php', ['id' => $course->id]))->out();
+
+        $message = $messages[0];
+        $this->assertEquals(1, $message->notification);
+        $this->assertEquals($assign->get_instance()->name, $message->contexturlname);
+        $this->assertEquals("$teachername has given feedback for assignment $assignname", $message->subject, );
+        $this->assertEquals("$course->shortname -> Assignment -> $assignname
+---------------------------------------------------------------------
+$teachername has posted some feedback on your
+assignment submission for '$assignname'
+
+You can see it appended to your assignment submission:
+
+    $assignurl
+
+---------------------------------------------------------------------
+",
+            $message->fullmessage,
+        );
+        $this->assertEquals(
+            '<p><font face="sans-serif"><a href="' . $courseurl . '">' . $course->shortname . '</a> ' .
+            '-><a href="' . $assignsurl . '">Assignment</a> ' .
+            '-><a href="' . $assignurl . '">' . $assignname . '</a></font></p><hr />' .
+            '<font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
+            'assignment submission for \'<i>' . $assignname . '</i>\'<br /><br />' . "\n" .
+            'You can see it appended to your <a href="' . $assignurl .
+            '">assignment submission</a>.</p></font><hr />',
+            $message->fullmessagehtml
+        );
     }
 
     public function test_cron_message_includes_courseid(): void {

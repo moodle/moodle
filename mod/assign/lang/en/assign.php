@@ -92,8 +92,7 @@ assignment submission for \'{$a->assignment}\'
 You can see it appended to your assignment submission:
 
     {$a->url}';
-$string['assignmentmailhtml'] = '<p>{$a->grader} has posted some feedback on your
-assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+$string['assignmentmailhtml'] = '<p>{$a->grader} has posted some feedback on your assignment submission for \'<i>{$a->assignment}</i>\'.</p>
 <p>You can see it appended to your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['assignmentmailsmall'] = '{$a->grader} has posted some feedback on your
 assignment submission for \'{$a->assignment}\' You can see it appended to your submission';
@@ -268,8 +267,7 @@ for \'{$a->assignment}\' at {$a->timeupdated}
 It is available here:
 
     {$a->url}';
-$string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission
-for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
+$string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->assignment}.';
 $string['gradeuser'] = 'Grade {$a}';
@@ -286,8 +284,7 @@ assignment submission for \'{$a->assignment}\'
 You can see it appended to your assignment submission:
 
     {$a->url}';
-$string['feedbackavailablehtml'] = '{$a->username} has posted some feedback on your
-assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+$string['feedbackavailablehtml'] = '{$a->username} has posted some feedback on your assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['feedbackavailablesmall'] = '{$a->username} has given feedback for assignment {$a->assignment}';
 $string['feedbackavailableanontext'] = 'You have new feedback on your
@@ -296,8 +293,7 @@ assignment submission for \'{$a->assignment}\'
 You can see it appended to your assignment submission:
 
     {$a->url}';
-$string['feedbackavailableanonhtml'] = 'You have new feedback on your
-assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+$string['feedbackavailableanonhtml'] = 'You have new feedback on your assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['feedbackavailableanonsmall'] = 'New feedback for assignment {$a->assignment}';
 $string['feedbackplugins'] = 'Feedback plugins';
@@ -580,8 +576,7 @@ $string['submissioncopiedtext'] = 'You have made a copy of your previous assignm
 You can see the status of your assignment submission:
 
     {$a->url}';
-$string['submissioncopiedhtml'] = '<p>You have made a copy of your previous
-assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+$string['submissioncopiedhtml'] = '<p>You have made a copy of your previous assignment submission for \'<i>{$a->assignment}</i>\'.</p>
 <p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissioncopiedsmall'] = 'You have copied your previous assignment submission for {$a->assignment}';
 $string['submissiondrafts'] = 'Require students to click the submit button';
@@ -603,8 +598,7 @@ $string['submissionreceiptothertext'] = 'Your assignment submission for \'{$a->a
 You can see the status of your assignment submission:
 
     {$a->url}';
-$string['submissionreceiptotherhtml'] = 'Your assignment submission for
-\'<i>{$a->assignment}</i>\' has been submitted.<br /><br />
+$string['submissionreceiptotherhtml'] = 'Your assignment submission for \'<i>{$a->assignment}</i>\' has been submitted.<br /><br />
 You can see the status of your <a href="{$a->url}">assignment submission</a>.';
 $string['submissionreceiptothersmall'] = 'Your assignment submission for {$a->assignment} has been submitted.';
 $string['submissionreceipts'] = 'Send submission receipts';
