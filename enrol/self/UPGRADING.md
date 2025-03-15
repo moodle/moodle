@@ -13,4 +13,3 @@
 - Final removal of `enrol_self_plugin::get_welcome_email_contact` method, please use `enrol_plugin::get_welcome_message_contact` instead
 
   For more information see [MDL-81185](https://tracker.moodle.org/browse/MDL-81185)
-
