@@ -87,6 +87,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     right: 0;
     top: 0;
     height: $region-container-height;
+    max-height: 80vh;
     width: $region-container-width;
     border: $standard-border;
     transition: height 0.25s;
