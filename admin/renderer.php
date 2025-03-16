@@ -2177,29 +2177,30 @@ class core_admin_renderer extends plugin_renderer_base {
                 } else {
                     $report = $this->doc_link(join('/', $linkparts), get_string($stringtouse, 'admin', $rec), true);
                 }
-                // Enclose report text in div so feedback text will be displayed underneath it.
-                $report = html_writer::div($report);
 
                 // Format error or warning line
                 if ($errorline) {
                     $messagetype = 'error';
                     $statusclass = 'bg-danger text-white';
+                    $feedbackclass = 'alert-danger';
                 } else if ($warningline) {
                     $messagetype = 'warn';
                     $statusclass = 'bg-warning text-dark';
+                    $feedbackclass = 'alert-warning';
                 } else {
                     $messagetype = 'ok';
                     $statusclass = 'bg-success text-white';
+                    $feedbackclass = 'alert-success';
                 }
                 $status = html_writer::span($status, 'badge ' . $statusclass);
                 // Here we'll store all the feedback found
                 $feedbacktext = '';
                 // Append the feedback if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), $messagetype);
+                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), "alert {$feedbackclass}");
                 //Append the bypass if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'warn');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'alert alert-warning');
                 //Append the restrict if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'alert alert-danger');
 
                 $report .= $feedbacktext;
 
