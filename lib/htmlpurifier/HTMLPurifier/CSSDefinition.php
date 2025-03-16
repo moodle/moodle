@@ -116,8 +116,6 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
                         'auto',
                         'cover',
                         'contain',
-                        'initial',
-                        'inherit',
                     ]
                 ),
                 new HTMLPurifier_AttrDef_CSS_Percentage(),
@@ -236,21 +234,20 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             [
                 new HTMLPurifier_AttrDef_CSS_Length('0'),
                 new HTMLPurifier_AttrDef_CSS_Percentage(true),
-                new HTMLPurifier_AttrDef_Enum(['auto', 'initial', 'inherit'])
+                new HTMLPurifier_AttrDef_Enum(['auto'])
             ]
         );
         $trusted_min_wh = new HTMLPurifier_AttrDef_CSS_Composite(
             [
                 new HTMLPurifier_AttrDef_CSS_Length('0'),
                 new HTMLPurifier_AttrDef_CSS_Percentage(true),
-                new HTMLPurifier_AttrDef_Enum(['initial', 'inherit'])
             ]
         );
         $trusted_max_wh = new HTMLPurifier_AttrDef_CSS_Composite(
             [
                 new HTMLPurifier_AttrDef_CSS_Length('0'),
                 new HTMLPurifier_AttrDef_CSS_Percentage(true),
-                new HTMLPurifier_AttrDef_Enum(['none', 'initial', 'inherit'])
+                new HTMLPurifier_AttrDef_Enum(['none'])
             ]
         );
         $max = $config->get('CSS.MaxImgLength');
@@ -278,12 +275,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
                 new HTMLPurifier_AttrDef_Switch(
                     'img',
                     // For img tags:
-                    new HTMLPurifier_AttrDef_CSS_Composite(
-                        [
-                            new HTMLPurifier_AttrDef_CSS_Length('0', $max),
-                            new HTMLPurifier_AttrDef_Enum(['initial', 'inherit'])
-                        ]
-                    ),
+                    new HTMLPurifier_AttrDef_CSS_Length('0', $max),
                     // For everyone else:
                     $trusted_min_wh
                 );
@@ -297,22 +289,29 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
                     new HTMLPurifier_AttrDef_CSS_Composite(
                         [
                             new HTMLPurifier_AttrDef_CSS_Length('0', $max),
-                            new HTMLPurifier_AttrDef_Enum(['none', 'initial', 'inherit'])
+                            new HTMLPurifier_AttrDef_Enum(['none'])
                         ]
                     ),
                     // For everyone else:
                     $trusted_max_wh
                 );
 
+        $this->info['aspect-ratio'] = new HTMLPurifier_AttrDef_CSS_Multiple(
+            new HTMLPurifier_AttrDef_CSS_Composite([
+                new HTMLPurifier_AttrDef_CSS_Ratio(),
+                new HTMLPurifier_AttrDef_Enum(['auto']),
+            ])
+        );
+
         // text-decoration and related shorthands
         $this->info['text-decoration'] = new HTMLPurifier_AttrDef_CSS_TextDecoration();
 
         $this->info['text-decoration-line'] = new HTMLPurifier_AttrDef_Enum(
-            ['none', 'underline', 'overline', 'line-through', 'initial', 'inherit']
+            ['none', 'underline', 'overline', 'line-through']
         );
 
         $this->info['text-decoration-style'] = new HTMLPurifier_AttrDef_Enum(
-            ['solid', 'double', 'dotted', 'dashed', 'wavy', 'initial', 'inherit']
+            ['solid', 'double', 'dotted', 'dashed', 'wavy']
         );
 
         $this->info['text-decoration-color'] = new HTMLPurifier_AttrDef_CSS_Color();
@@ -320,7 +319,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['text-decoration-thickness'] = new HTMLPurifier_AttrDef_CSS_Composite([
             new HTMLPurifier_AttrDef_CSS_Length(),
             new HTMLPurifier_AttrDef_CSS_Percentage(),
-            new HTMLPurifier_AttrDef_Enum(['auto', 'from-font', 'initial', 'inherit'])
+            new HTMLPurifier_AttrDef_Enum(['auto', 'from-font'])
         ]);
 
         $this->info['font-family'] = new HTMLPurifier_AttrDef_CSS_FontFamily();

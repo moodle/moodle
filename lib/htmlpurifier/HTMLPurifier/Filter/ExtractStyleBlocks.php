@@ -54,6 +54,11 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
      */
     private $_enum_attrdef;
 
+    /**
+     * @type HTMLPurifier_AttrDef_Enum
+     */
+    private $_universal_attrdef;
+
     public function __construct()
     {
         $this->_tidy = new csstidy();
@@ -68,6 +73,13 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
                 'active',
                 'hover',
                 'focus'
+            )
+        );
+        $this->_universal_attrdef = new HTMLPurifier_AttrDef_Enum(
+            array(
+                'initial',
+                'inherit',
+                'unset',
             )
         );
     }
@@ -305,6 +317,11 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
                     foreach ($style as $name => $value) {
                         if (!isset($css_definition->info[$name])) {
                             unset($style[$name]);
+                            continue;
+                        }
+                        $uni_ret = $this->_universal_attrdef->validate($value, $config, $context);
+                        if ($uni_ret !== false) {
+                            $style[$name] = $uni_ret;
                             continue;
                         }
                         $def = $css_definition->info[$name];
