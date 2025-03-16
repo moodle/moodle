@@ -35,46 +35,46 @@ type NormalizedEvent<E, T = any> = E & {
 };
 type MappedEvent<T extends {}, K extends string> = K extends keyof T ? T[K] : any;
 interface NativeEventMap {
-    'beforepaste': Event;
-    'blur': FocusEvent;
-    'beforeinput': InputEvent;
-    'click': MouseEvent;
-    'compositionend': Event;
-    'compositionstart': Event;
-    'compositionupdate': Event;
-    'contextmenu': PointerEvent;
-    'copy': ClipboardEvent;
-    'cut': ClipboardEvent;
-    'dblclick': MouseEvent;
-    'drag': DragEvent;
-    'dragdrop': DragEvent;
-    'dragend': DragEvent;
-    'draggesture': DragEvent;
-    'dragover': DragEvent;
-    'dragstart': DragEvent;
-    'drop': DragEvent;
-    'focus': FocusEvent;
-    'focusin': FocusEvent;
-    'focusout': FocusEvent;
-    'input': InputEvent;
-    'keydown': KeyboardEvent;
-    'keypress': KeyboardEvent;
-    'keyup': KeyboardEvent;
-    'mousedown': MouseEvent;
-    'mouseenter': MouseEvent;
-    'mouseleave': MouseEvent;
-    'mousemove': MouseEvent;
-    'mouseout': MouseEvent;
-    'mouseover': MouseEvent;
-    'mouseup': MouseEvent;
-    'paste': ClipboardEvent;
-    'selectionchange': Event;
-    'submit': Event;
-    'touchend': TouchEvent;
-    'touchmove': TouchEvent;
-    'touchstart': TouchEvent;
-    'touchcancel': TouchEvent;
-    'wheel': WheelEvent;
+    beforepaste: Event;
+    blur: FocusEvent;
+    beforeinput: InputEvent;
+    click: MouseEvent;
+    compositionend: Event;
+    compositionstart: Event;
+    compositionupdate: Event;
+    contextmenu: PointerEvent;
+    copy: ClipboardEvent;
+    cut: ClipboardEvent;
+    dblclick: MouseEvent;
+    drag: DragEvent;
+    dragdrop: DragEvent;
+    dragend: DragEvent;
+    draggesture: DragEvent;
+    dragover: DragEvent;
+    dragstart: DragEvent;
+    drop: DragEvent;
+    focus: FocusEvent;
+    focusin: FocusEvent;
+    focusout: FocusEvent;
+    input: InputEvent;
+    keydown: KeyboardEvent;
+    keypress: KeyboardEvent;
+    keyup: KeyboardEvent;
+    mousedown: MouseEvent;
+    mouseenter: MouseEvent;
+    mouseleave: MouseEvent;
+    mousemove: MouseEvent;
+    mouseout: MouseEvent;
+    mouseover: MouseEvent;
+    mouseup: MouseEvent;
+    paste: ClipboardEvent;
+    selectionchange: Event;
+    submit: Event;
+    touchend: TouchEvent;
+    touchmove: TouchEvent;
+    touchstart: TouchEvent;
+    touchcancel: TouchEvent;
+    wheel: WheelEvent;
 }
 type EditorEvent<T> = NormalizedEvent<T>;
 interface EventDispatcherSettings {
@@ -501,6 +501,7 @@ interface ButtonSpec {
     icon?: string;
     borderless?: boolean;
     buttonType?: 'primary' | 'secondary' | 'toolbar';
+    context?: string;
 }
 interface FormComponentSpec {
     type: string;
@@ -513,9 +514,11 @@ interface CheckboxSpec extends FormComponentSpec {
     type: 'checkbox';
     label: string;
     enabled?: boolean;
+    context?: string;
 }
 interface CollectionSpec extends FormComponentWithLabelSpec {
     type: 'collection';
+    context?: string;
 }
 interface CollectionItem {
     value: string;
@@ -525,6 +528,7 @@ interface CollectionItem {
 interface ColorInputSpec extends FormComponentWithLabelSpec {
     type: 'colorinput';
     storageKey?: string;
+    context?: string;
 }
 interface ColorPickerSpec extends FormComponentWithLabelSpec {
     type: 'colorpicker';
@@ -551,6 +555,7 @@ interface CustomEditorNewSpec extends FormComponentSpec {
 type CustomEditorSpec = CustomEditorOldSpec | CustomEditorNewSpec;
 interface DropZoneSpec extends FormComponentWithLabelSpec {
     type: 'dropzone';
+    context?: string;
 }
 interface GridSpec {
     type: 'grid';
@@ -581,6 +586,7 @@ interface InputSpec extends FormComponentWithLabelSpec {
     placeholder?: string;
     maximized?: boolean;
     enabled?: boolean;
+    context?: string;
 }
 type Alignment = 'start' | 'center' | 'end';
 interface LabelSpec {
@@ -603,6 +609,7 @@ interface ListBoxSpec extends FormComponentWithLabelSpec {
     type: 'listbox';
     items: ListBoxItemSpec[];
     disabled?: boolean;
+    context?: string;
 }
 interface PanelSpec {
     type: 'panel';
@@ -618,11 +625,13 @@ interface SelectBoxSpec extends FormComponentWithLabelSpec {
     items: SelectBoxItemSpec[];
     size?: number;
     enabled?: boolean;
+    context?: string;
 }
 interface SizeInputSpec extends FormComponentWithLabelSpec {
     type: 'sizeinput';
     constrain?: boolean;
     enabled?: boolean;
+    context?: string;
 }
 interface SliderSpec extends FormComponentSpec {
     type: 'slider';
@@ -640,6 +649,7 @@ interface TextAreaSpec extends FormComponentWithLabelSpec {
     placeholder?: string;
     maximized?: boolean;
     enabled?: boolean;
+    context?: string;
 }
 interface BaseToolbarButtonSpec<I extends BaseToolbarButtonInstanceApi> {
     enabled?: boolean;
@@ -647,6 +657,7 @@ interface BaseToolbarButtonSpec<I extends BaseToolbarButtonInstanceApi> {
     icon?: string;
     text?: string;
     onSetup?: (api: I) => (api: I) => void;
+    context?: string;
 }
 interface BaseToolbarButtonInstanceApi {
     isEnabled: () => boolean;
@@ -701,6 +712,7 @@ interface CommonMenuItemSpec {
     value?: string;
     meta?: Record<string, any>;
     shortcut?: string;
+    context?: string;
 }
 interface CommonMenuItemInstanceApi {
     isEnabled: () => boolean;
@@ -740,11 +752,11 @@ interface ContextMenuApi {
     update: (element: Element) => string | Array<ContextMenuContents>;
 }
 interface FancyActionArgsMap {
-    'inserttable': {
+    inserttable: {
         numRows: number;
         numColumns: number;
     };
-    'colorswatch': {
+    colorswatch: {
         value: string;
     };
 }
@@ -816,6 +828,7 @@ interface BaseMenuButtonSpec {
     };
     fetch: (success: SuccessCallback$1, fetchContext: MenuButtonFetchContext, api: BaseMenuButtonInstanceApi) => void;
     onSetup?: (api: BaseMenuButtonInstanceApi) => (api: BaseMenuButtonInstanceApi) => void;
+    context?: string;
 }
 interface BaseMenuButtonInstanceApi {
     isEnabled: () => boolean;
@@ -848,6 +861,7 @@ interface ToolbarSplitButtonSpec {
     onSetup?: (api: ToolbarSplitButtonInstanceApi) => (api: ToolbarSplitButtonInstanceApi) => void;
     onAction: (api: ToolbarSplitButtonInstanceApi) => void;
     onItemAction: (api: ToolbarSplitButtonInstanceApi, value: string) => void;
+    context?: string;
 }
 interface ToolbarSplitButtonInstanceApi {
     isEnabled: () => boolean;
@@ -889,6 +903,8 @@ interface BaseTreeItemSpec {
     title: string;
     id: Id;
     menu?: ToolbarMenuButtonSpec;
+    customStateIcon?: string;
+    customStateIconTooltip?: string;
 }
 interface DirectorySpec extends BaseTreeItemSpec {
     type: 'directory';
@@ -903,6 +919,7 @@ interface UrlInputSpec extends FormComponentWithLabelSpec {
     filetype?: 'image' | 'media' | 'file';
     enabled?: boolean;
     picker_text?: string;
+    context?: string;
 }
 interface UrlInputData {
     value: string;
@@ -927,6 +944,7 @@ interface BaseDialogFooterButtonSpec {
     enabled?: boolean;
     icon?: string;
     buttonType?: 'primary' | 'secondary';
+    context?: string;
 }
 interface DialogFooterNormalButtonSpec extends BaseDialogFooterButtonSpec {
     type: 'submit' | 'cancel' | 'custom';
@@ -1075,30 +1093,59 @@ interface ContextFormButtonInstanceApi extends BaseToolbarButtonInstanceApi {
 }
 interface ContextFormToggleButtonInstanceApi extends BaseToolbarToggleButtonInstanceApi {
 }
-interface ContextFormButtonSpec extends BaseToolbarButtonSpec<ContextFormButtonInstanceApi> {
+interface ContextFormButtonSpec<T> extends BaseToolbarButtonSpec<ContextFormButtonInstanceApi> {
     type?: 'contextformbutton';
     primary?: boolean;
-    onAction: (formApi: ContextFormInstanceApi, api: ContextFormButtonInstanceApi) => void;
+    align?: 'start' | 'end';
+    onAction: (formApi: ContextFormInstanceApi<T>, api: ContextFormButtonInstanceApi) => void;
 }
-interface ContextFormToggleButtonSpec extends BaseToolbarToggleButtonSpec<ContextFormToggleButtonInstanceApi> {
+interface ContextFormToggleButtonSpec<T> extends BaseToolbarToggleButtonSpec<ContextFormToggleButtonInstanceApi> {
     type?: 'contextformtogglebutton';
-    onAction: (formApi: ContextFormInstanceApi, buttonApi: ContextFormToggleButtonInstanceApi) => void;
     primary?: boolean;
+    align?: 'start' | 'end';
+    onAction: (formApi: ContextFormInstanceApi<T>, buttonApi: ContextFormToggleButtonInstanceApi) => void;
 }
-interface ContextFormInstanceApi {
+interface ContextFormInstanceApi<T> {
+    setInputEnabled: (state: boolean) => void;
+    isInputEnabled: () => boolean;
     hide: () => void;
-    getValue: () => string;
+    back: () => void;
+    getValue: () => T;
+    setValue: (value: T) => void;
 }
-interface ContextFormSpec extends ContextBarSpec {
-    type?: 'contextform';
-    initValue?: () => string;
+interface SizeData {
+    width: string;
+    height: string;
+}
+interface BaseContextFormSpec<T> extends ContextBarSpec {
+    initValue?: () => T;
     label?: string;
     launch?: ContextFormLaunchButtonApi | ContextFormLaunchToggleButtonSpec;
-    commands: Array<ContextFormToggleButtonSpec | ContextFormButtonSpec>;
+    commands: Array<ContextFormToggleButtonSpec<T> | ContextFormButtonSpec<T>>;
+    onInput?: (api: ContextFormInstanceApi<T>) => void;
+    onSetup?: (api: ContextFormInstanceApi<T>) => (api: ContextFormInstanceApi<T>) => void;
+}
+interface ContextInputFormSpec extends BaseContextFormSpec<string> {
+    type?: 'contextform';
+    placeholder?: string;
+}
+interface ContextSliderFormSpec extends BaseContextFormSpec<number> {
+    type: 'contextsliderform';
+    min?: () => number;
+    max?: () => number;
+}
+interface ContextSizeInputFormSpec extends BaseContextFormSpec<SizeData> {
+    type: 'contextsizeinputform';
+}
+type ContextFormSpec = ContextInputFormSpec | ContextSliderFormSpec | ContextSizeInputFormSpec;
+interface ToolbarGroupSpec {
+    name?: string;
+    label?: string;
+    items: string[];
 }
 interface ContextToolbarSpec extends ContextBarSpec {
     type?: 'contexttoolbar';
-    items: string;
+    items: string | ToolbarGroupSpec[];
 }
 type PublicDialog_d_AlertBannerSpec = AlertBannerSpec;
 type PublicDialog_d_BarSpec = BarSpec;
@@ -1159,10 +1206,10 @@ type PublicInlineContent_d_AutocompleterInstanceApi = AutocompleterInstanceApi;
 type PublicInlineContent_d_ContextPosition = ContextPosition;
 type PublicInlineContent_d_ContextScope = ContextScope;
 type PublicInlineContent_d_ContextFormSpec = ContextFormSpec;
-type PublicInlineContent_d_ContextFormInstanceApi = ContextFormInstanceApi;
-type PublicInlineContent_d_ContextFormButtonSpec = ContextFormButtonSpec;
+type PublicInlineContent_d_ContextFormInstanceApi<T> = ContextFormInstanceApi<T>;
+type PublicInlineContent_d_ContextFormButtonSpec<T> = ContextFormButtonSpec<T>;
 type PublicInlineContent_d_ContextFormButtonInstanceApi = ContextFormButtonInstanceApi;
-type PublicInlineContent_d_ContextFormToggleButtonSpec = ContextFormToggleButtonSpec;
+type PublicInlineContent_d_ContextFormToggleButtonSpec<T> = ContextFormToggleButtonSpec<T>;
 type PublicInlineContent_d_ContextFormToggleButtonInstanceApi = ContextFormToggleButtonInstanceApi;
 type PublicInlineContent_d_ContextToolbarSpec = ContextToolbarSpec;
 type PublicInlineContent_d_SeparatorItemSpec = SeparatorItemSpec;
@@ -1229,6 +1276,7 @@ interface ViewButtonApi {
 interface ViewToggleButtonApi extends ViewButtonApi {
     isActive: () => boolean;
     setActive: (state: boolean) => void;
+    focus: () => void;
 }
 interface BaseButtonSpec<Api extends ViewButtonApi> {
     text?: string;
@@ -1237,6 +1285,7 @@ interface BaseButtonSpec<Api extends ViewButtonApi> {
     buttonType?: 'primary' | 'secondary';
     borderless?: boolean;
     onAction: (api: Api) => void;
+    context?: string;
 }
 interface ViewNormalButtonSpec extends BaseButtonSpec<ViewButtonApi> {
     text: string;
@@ -1281,6 +1330,7 @@ interface Registry$1 {
     addAutocompleter: (name: string, spec: AutocompleterSpec) => void;
     addSidebar: (name: string, spec: SidebarSpec) => void;
     addView: (name: string, spec: ViewSpec) => void;
+    addContext: (name: string, pred: (args: string) => boolean) => void;
     getAll: () => {
         buttons: Record<string, ToolbarButtonSpec | GroupToolbarButtonSpec | ToolbarMenuButtonSpec | ToolbarSplitButtonSpec | ToolbarToggleButtonSpec>;
         menuItems: Record<string, MenuItemSpec | NestedMenuItemSpec | ToggleMenuItemSpec>;
@@ -1290,6 +1340,7 @@ interface Registry$1 {
         icons: Record<string, string>;
         sidebars: Record<string, SidebarSpec>;
         views: Record<string, ViewSpec>;
+        contexts: Record<string, (args: string) => boolean>;
     };
 }
 interface AutocompleteLookupData {
@@ -1392,6 +1443,7 @@ interface DomParserSettings {
     allow_html_in_named_anchor?: boolean;
     allow_script_urls?: boolean;
     allow_unsafe_link_target?: boolean;
+    allow_mathml_annotation_encodings?: string[];
     blob_cache?: BlobCache;
     convert_fonts_to_spans?: boolean;
     convert_unsafe_embeds?: boolean;
@@ -1597,111 +1649,114 @@ interface BeforeOpenNotificationEvent {
 interface OpenNotificationEvent {
     notification: NotificationApi;
 }
+interface DisabledStateChangeEvent {
+    readonly state: boolean;
+}
 interface EditorEventMap extends Omit<NativeEventMap, 'blur' | 'focus'> {
-    'activate': {
+    activate: {
         relatedTarget: Editor | null;
     };
-    'deactivate': {
+    deactivate: {
         relatedTarget: Editor;
     };
-    'focus': {
+    focus: {
         blurredEditor: Editor | null;
     };
-    'blur': {
+    blur: {
         focusedEditor: Editor | null;
     };
-    'resize': UIEvent;
-    'scroll': UIEvent;
-    'input': InputEvent;
-    'beforeinput': InputEvent;
-    'detach': {};
-    'remove': {};
-    'init': {};
-    'ScrollIntoView': ScrollIntoViewEvent;
-    'AfterScrollIntoView': ScrollIntoViewEvent;
-    'ObjectResized': ObjectResizeEvent;
-    'ObjectResizeStart': ObjectResizeEvent;
-    'SwitchMode': SwitchModeEvent;
-    'ScrollWindow': Event;
-    'ResizeWindow': UIEvent;
-    'SkinLoaded': {};
-    'SkinLoadError': LoadErrorEvent;
-    'PluginLoadError': LoadErrorEvent;
-    'ModelLoadError': LoadErrorEvent;
-    'IconsLoadError': LoadErrorEvent;
-    'ThemeLoadError': LoadErrorEvent;
-    'LanguageLoadError': LoadErrorEvent;
-    'BeforeExecCommand': ExecCommandEvent;
-    'ExecCommand': ExecCommandEvent;
-    'NodeChange': NodeChangeEvent;
-    'FormatApply': FormatEvent;
-    'FormatRemove': FormatEvent;
-    'ShowCaret': ShowCaretEvent;
-    'SelectionChange': {};
-    'ObjectSelected': ObjectSelectedEvent;
-    'BeforeObjectSelected': ObjectSelectedEvent;
-    'GetSelectionRange': {
+    resize: UIEvent;
+    scroll: UIEvent;
+    input: InputEvent;
+    beforeinput: InputEvent;
+    detach: {};
+    remove: {};
+    init: {};
+    ScrollIntoView: ScrollIntoViewEvent;
+    AfterScrollIntoView: ScrollIntoViewEvent;
+    ObjectResized: ObjectResizeEvent;
+    ObjectResizeStart: ObjectResizeEvent;
+    SwitchMode: SwitchModeEvent;
+    ScrollWindow: Event;
+    ResizeWindow: UIEvent;
+    SkinLoaded: {};
+    SkinLoadError: LoadErrorEvent;
+    PluginLoadError: LoadErrorEvent;
+    ModelLoadError: LoadErrorEvent;
+    IconsLoadError: LoadErrorEvent;
+    ThemeLoadError: LoadErrorEvent;
+    LanguageLoadError: LoadErrorEvent;
+    BeforeExecCommand: ExecCommandEvent;
+    ExecCommand: ExecCommandEvent;
+    NodeChange: NodeChangeEvent;
+    FormatApply: FormatEvent;
+    FormatRemove: FormatEvent;
+    ShowCaret: ShowCaretEvent;
+    SelectionChange: {};
+    ObjectSelected: ObjectSelectedEvent;
+    BeforeObjectSelected: ObjectSelectedEvent;
+    GetSelectionRange: {
         range: Range;
     };
-    'SetSelectionRange': SetSelectionRangeEvent;
-    'AfterSetSelectionRange': SetSelectionRangeEvent;
-    'BeforeGetContent': BeforeGetContentEvent;
-    'GetContent': GetContentEvent;
-    'BeforeSetContent': BeforeSetContentEvent;
-    'SetContent': SetContentEvent;
-    'SaveContent': SaveContentEvent;
-    'RawSaveContent': SaveContentEvent;
-    'LoadContent': {
+    SetSelectionRange: SetSelectionRangeEvent;
+    AfterSetSelectionRange: SetSelectionRangeEvent;
+    BeforeGetContent: BeforeGetContentEvent;
+    GetContent: GetContentEvent;
+    BeforeSetContent: BeforeSetContentEvent;
+    SetContent: SetContentEvent;
+    SaveContent: SaveContentEvent;
+    RawSaveContent: SaveContentEvent;
+    LoadContent: {
         load: boolean;
         element: HTMLElement;
     };
-    'PreviewFormats': {};
-    'AfterPreviewFormats': {};
-    'ScriptsLoaded': {};
-    'PreInit': {};
-    'PostRender': {};
-    'NewBlock': NewBlockEvent;
-    'ClearUndos': {};
-    'TypingUndo': {};
-    'Redo': UndoRedoEvent;
-    'Undo': UndoRedoEvent;
-    'BeforeAddUndo': AddUndoEvent;
-    'AddUndo': AddUndoEvent;
-    'change': ChangeEvent;
-    'CloseWindow': WindowEvent<any>;
-    'OpenWindow': WindowEvent<any>;
-    'ProgressState': ProgressStateEvent;
-    'AfterProgressState': AfterProgressStateEvent;
-    'PlaceholderToggle': PlaceholderToggleEvent;
-    'tap': TouchEvent;
-    'longpress': TouchEvent;
-    'longpresscancel': {};
-    'PreProcess': PreProcessEvent;
-    'PostProcess': PostProcessEvent;
-    'AutocompleterStart': AutocompleterEventArgs;
-    'AutocompleterUpdate': AutocompleterEventArgs;
-    'AutocompleterEnd': {};
-    'PastePlainTextToggle': PastePlainTextToggleEvent;
-    'PastePreProcess': PastePreProcessEvent;
-    'PastePostProcess': PastePostProcessEvent;
-    'TableModified': TableModifiedEvent;
-    'NewRow': NewTableRowEvent;
-    'NewCell': NewTableCellEvent;
-    'SetAttrib': SetAttribEvent;
-    'hide': {};
-    'show': {};
-    'dirty': {};
-    'BeforeOpenNotification': BeforeOpenNotificationEvent;
-    'OpenNotification': OpenNotificationEvent;
+    PreviewFormats: {};
+    AfterPreviewFormats: {};
+    ScriptsLoaded: {};
+    PreInit: {};
+    PostRender: {};
+    NewBlock: NewBlockEvent;
+    ClearUndos: {};
+    TypingUndo: {};
+    Redo: UndoRedoEvent;
+    Undo: UndoRedoEvent;
+    BeforeAddUndo: AddUndoEvent;
+    AddUndo: AddUndoEvent;
+    change: ChangeEvent;
+    CloseWindow: WindowEvent<any>;
+    OpenWindow: WindowEvent<any>;
+    ProgressState: ProgressStateEvent;
+    AfterProgressState: AfterProgressStateEvent;
+    PlaceholderToggle: PlaceholderToggleEvent;
+    tap: TouchEvent;
+    longpress: TouchEvent;
+    longpresscancel: {};
+    PreProcess: PreProcessEvent;
+    PostProcess: PostProcessEvent;
+    AutocompleterStart: AutocompleterEventArgs;
+    AutocompleterUpdate: AutocompleterEventArgs;
+    AutocompleterEnd: {};
+    PastePlainTextToggle: PastePlainTextToggleEvent;
+    PastePreProcess: PastePreProcessEvent;
+    PastePostProcess: PastePostProcessEvent;
+    TableModified: TableModifiedEvent;
+    NewRow: NewTableRowEvent;
+    NewCell: NewTableCellEvent;
+    SetAttrib: SetAttribEvent;
+    hide: {};
+    show: {};
+    dirty: {};
+    BeforeOpenNotification: BeforeOpenNotificationEvent;
+    OpenNotification: OpenNotificationEvent;
 }
 interface EditorManagerEventMap {
-    'AddEditor': {
+    AddEditor: {
         editor: Editor;
     };
-    'RemoveEditor': {
+    RemoveEditor: {
         editor: Editor;
     };
-    'BeforeUnload': {
+    BeforeUnload: {
         returnValue: any;
     };
 }
@@ -1740,10 +1795,11 @@ type EventTypes_d_TableEventData = TableEventData;
 type EventTypes_d_TableModifiedEvent = TableModifiedEvent;
 type EventTypes_d_BeforeOpenNotificationEvent = BeforeOpenNotificationEvent;
 type EventTypes_d_OpenNotificationEvent = OpenNotificationEvent;
+type EventTypes_d_DisabledStateChangeEvent = DisabledStateChangeEvent;
 type EventTypes_d_EditorEventMap = EditorEventMap;
 type EventTypes_d_EditorManagerEventMap = EditorManagerEventMap;
 declare namespace EventTypes_d {
-    export { EventTypes_d_ExecCommandEvent as ExecCommandEvent, EventTypes_d_BeforeGetContentEvent as BeforeGetContentEvent, EventTypes_d_GetContentEvent as GetContentEvent, EventTypes_d_BeforeSetContentEvent as BeforeSetContentEvent, EventTypes_d_SetContentEvent as SetContentEvent, EventTypes_d_SaveContentEvent as SaveContentEvent, EventTypes_d_NewBlockEvent as NewBlockEvent, EventTypes_d_NodeChangeEvent as NodeChangeEvent, EventTypes_d_FormatEvent as FormatEvent, EventTypes_d_ObjectResizeEvent as ObjectResizeEvent, EventTypes_d_ObjectSelectedEvent as ObjectSelectedEvent, EventTypes_d_ScrollIntoViewEvent as ScrollIntoViewEvent, EventTypes_d_SetSelectionRangeEvent as SetSelectionRangeEvent, EventTypes_d_ShowCaretEvent as ShowCaretEvent, EventTypes_d_SwitchModeEvent as SwitchModeEvent, EventTypes_d_ChangeEvent as ChangeEvent, EventTypes_d_AddUndoEvent as AddUndoEvent, EventTypes_d_UndoRedoEvent as UndoRedoEvent, EventTypes_d_WindowEvent as WindowEvent, EventTypes_d_ProgressStateEvent as ProgressStateEvent, EventTypes_d_AfterProgressStateEvent as AfterProgressStateEvent, EventTypes_d_PlaceholderToggleEvent as PlaceholderToggleEvent, EventTypes_d_LoadErrorEvent as LoadErrorEvent, EventTypes_d_PreProcessEvent as PreProcessEvent, EventTypes_d_PostProcessEvent as PostProcessEvent, EventTypes_d_PastePlainTextToggleEvent as PastePlainTextToggleEvent, EventTypes_d_PastePreProcessEvent as PastePreProcessEvent, EventTypes_d_PastePostProcessEvent as PastePostProcessEvent, EventTypes_d_EditableRootStateChangeEvent as EditableRootStateChangeEvent, EventTypes_d_NewTableRowEvent as NewTableRowEvent, EventTypes_d_NewTableCellEvent as NewTableCellEvent, EventTypes_d_TableEventData as TableEventData, EventTypes_d_TableModifiedEvent as TableModifiedEvent, EventTypes_d_BeforeOpenNotificationEvent as BeforeOpenNotificationEvent, EventTypes_d_OpenNotificationEvent as OpenNotificationEvent, EventTypes_d_EditorEventMap as EditorEventMap, EventTypes_d_EditorManagerEventMap as EditorManagerEventMap, };
+    export { EventTypes_d_ExecCommandEvent as ExecCommandEvent, EventTypes_d_BeforeGetContentEvent as BeforeGetContentEvent, EventTypes_d_GetContentEvent as GetContentEvent, EventTypes_d_BeforeSetContentEvent as BeforeSetContentEvent, EventTypes_d_SetContentEvent as SetContentEvent, EventTypes_d_SaveContentEvent as SaveContentEvent, EventTypes_d_NewBlockEvent as NewBlockEvent, EventTypes_d_NodeChangeEvent as NodeChangeEvent, EventTypes_d_FormatEvent as FormatEvent, EventTypes_d_ObjectResizeEvent as ObjectResizeEvent, EventTypes_d_ObjectSelectedEvent as ObjectSelectedEvent, EventTypes_d_ScrollIntoViewEvent as ScrollIntoViewEvent, EventTypes_d_SetSelectionRangeEvent as SetSelectionRangeEvent, EventTypes_d_ShowCaretEvent as ShowCaretEvent, EventTypes_d_SwitchModeEvent as SwitchModeEvent, EventTypes_d_ChangeEvent as ChangeEvent, EventTypes_d_AddUndoEvent as AddUndoEvent, EventTypes_d_UndoRedoEvent as UndoRedoEvent, EventTypes_d_WindowEvent as WindowEvent, EventTypes_d_ProgressStateEvent as ProgressStateEvent, EventTypes_d_AfterProgressStateEvent as AfterProgressStateEvent, EventTypes_d_PlaceholderToggleEvent as PlaceholderToggleEvent, EventTypes_d_LoadErrorEvent as LoadErrorEvent, EventTypes_d_PreProcessEvent as PreProcessEvent, EventTypes_d_PostProcessEvent as PostProcessEvent, EventTypes_d_PastePlainTextToggleEvent as PastePlainTextToggleEvent, EventTypes_d_PastePreProcessEvent as PastePreProcessEvent, EventTypes_d_PastePostProcessEvent as PastePostProcessEvent, EventTypes_d_EditableRootStateChangeEvent as EditableRootStateChangeEvent, EventTypes_d_NewTableRowEvent as NewTableRowEvent, EventTypes_d_NewTableCellEvent as NewTableCellEvent, EventTypes_d_TableEventData as TableEventData, EventTypes_d_TableModifiedEvent as TableModifiedEvent, EventTypes_d_BeforeOpenNotificationEvent as BeforeOpenNotificationEvent, EventTypes_d_OpenNotificationEvent as OpenNotificationEvent, EventTypes_d_DisabledStateChangeEvent as DisabledStateChangeEvent, EventTypes_d_EditorEventMap as EditorEventMap, EventTypes_d_EditorManagerEventMap as EditorManagerEventMap, };
 }
 type Format_d_Formats = Formats;
 type Format_d_Format = Format;
@@ -1812,6 +1868,7 @@ type URLConverter = (url: string, name: string, elm?: string | Element) => strin
 type URLConverterCallback = (url: string, node: Node | string | undefined, on_save: boolean, name: string) => string;
 interface ToolbarGroup {
     name?: string;
+    label?: string;
     items: string[];
 }
 type ToolbarMode = 'floating' | 'sliding' | 'scrolling' | 'wrap';
@@ -2022,6 +2079,7 @@ interface BaseEditorOptions {
     width?: number | string;
     xss_sanitization?: boolean;
     license_key?: string;
+    disabled?: boolean;
     disable_nodechange?: boolean;
     forced_plugins?: string | string[];
     plugin_base_urls?: Record<string, string>;
@@ -2122,6 +2180,7 @@ interface EditorOptions extends NormalizedEditorOptions {
     visual_table_class: string;
     width: number | string;
     xss_sanitization: boolean;
+    disabled: boolean;
 }
 type StyleMap = Record<string, string | number>;
 interface StylesSettings {

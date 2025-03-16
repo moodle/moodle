@@ -97,19 +97,40 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-icon--flip svg {
   transform: rotateY(180deg);
 }
+@keyframes tox-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .tox .accessibility-issue__header {
   align-items: center;
   display: flex;
   margin-bottom: 4px;
 }
+.tox #accessibility-issue__subheader {
+  font-size: 16px;
+  color: #222f3e;
+}
+.tox .accessbility-sr-only {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(0 0 99.9% 99.9%);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  padding: 0;
+  border: 0;
+}
 .tox .accessibility-issue__description {
   align-items: stretch;
   border-radius: 6px;
-  display: flex;
   justify-content: space-between;
 }
 .tox .accessibility-issue__description > div {
-  padding-bottom: 4px;
+  padding-bottom: 16px;
 }
 .tox .accessibility-issue__description > div > div {
   align-items: center;
@@ -119,17 +140,31 @@ button::-moz-focus-inner {
 .tox .accessibility-issue__description > div > div .tox-icon svg {
   display: block;
 }
-.tox .accessibility-issue__repair {
+.tox #accessibility-issue__contentID {
   margin-top: 16px;
+  margin-bottom: 16px;
+}
+.tox #accessibility-issue__contentID span:first-child {
+  font-weight: bold;
+}
+.tox #accessibility-issue__document {
+  padding-bottom: 8px;
+}
+.tox .accessibility-issue__repair {
+  margin-top: 8px;
+}
+.tox .accessibility-issue__repair .tox-form__group .tox-form__group--error {
+  color: #c00;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info .accessibility-issue__description {
-  background-color: rgba(0, 101, 216, 0.1);
+  background-color: #e6f0fd;
   color: #222f3e;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info .tox-form__group h2 {
+  font-size: 14px;
   color: #006ce7;
 }
-.tox .tox-dialog__body-content .accessibility-issue--info .tox-icon svg {
+.tox .tox-dialog__body-content .accessibility-issue--info .tox-icon.accessibility-issue__icon svg {
   fill: #006ce7;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon {
@@ -143,18 +178,16 @@ button::-moz-focus-inner {
 .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon:active {
   background-color: #0054b4;
 }
-.tox .tox-dialog__body-content .accessibility-issue--warn {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-dialog__body-content .accessibility-issue--warn .accessibility-issue__description {
-  background-color: rgba(255, 165, 0, 0.08);
+  background-color: #fffae6;
   color: #222f3e;
 }
 .tox .tox-dialog__body-content .accessibility-issue--warn .tox-form__group h2 {
-  color: #8f5d00;
+  font-size: 14px;
+  color: #7a6e25;
 }
-.tox .tox-dialog__body-content .accessibility-issue--warn .tox-icon svg {
-  fill: #8f5d00;
+.tox .tox-dialog__body-content .accessibility-issue--warn .tox-icon.accessibility-issue__icon svg {
+  fill: #7a6e25;
 }
 .tox .tox-dialog__body-content .accessibility-issue--warn a.tox-button--naked.tox-button--icon {
   background-color: #FFE89D;
@@ -169,17 +202,15 @@ button::-moz-focus-inner {
   background-color: #E8C657;
   color: #222f3e;
 }
-.tox .tox-dialog__body-content .accessibility-issue--error {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-dialog__body-content .accessibility-issue--error .accessibility-issue__description {
-  background-color: rgba(204, 0, 0, 0.1);
+  background-color: #fae6e6;
   color: #222f3e;
 }
 .tox .tox-dialog__body-content .accessibility-issue--error .tox-form__group h2 {
+  font-size: 14px;
   color: #c00;
 }
-.tox .tox-dialog__body-content .accessibility-issue--error .tox-icon svg {
+.tox .tox-dialog__body-content .accessibility-issue--error .tox-icon.accessibility-issue__icon svg {
   fill: #c00;
 }
 .tox .tox-dialog__body-content .accessibility-issue--error a.tox-button--naked.tox-button--icon {
@@ -205,12 +236,11 @@ button::-moz-focus-inner {
 .tox .tox-dialog__body-content .accessibility-issue--success .tox-form__group h2 {
   color: #527530;
 }
-.tox .tox-dialog__body-content .accessibility-issue--success .tox-icon svg {
+.tox .tox-dialog__body-content .accessibility-issue--success .tox-icon.accessibility-issue__icon svg {
   fill: #527530;
 }
 .tox .tox-dialog__body-content .accessibility-issue__header .tox-form__group h1,
 .tox .tox-dialog__body-content .tox-form__group .accessibility-issue__description h2 {
-  font-size: 14px;
   margin-top: 0;
 }
 .tox:not([dir=rtl]) .tox-dialog__body-content .accessibility-issue__header .tox-button {
@@ -220,7 +250,7 @@ button::-moz-focus-inner {
   margin-left: auto;
 }
 .tox:not([dir=rtl]) .tox-dialog__body-content .accessibility-issue__description {
-  padding: 4px 4px 4px 8px;
+  padding: 8px;
 }
 .tox[dir=rtl] .tox-dialog__body-content .accessibility-issue__header .tox-button {
   margin-right: 4px;
@@ -499,6 +529,11 @@ button::-moz-focus-inner {
   display: block;
   fill: currentColor;
 }
+.tox-context-form__group .tox-button--icon,
+.tox-context-form__group .tox-button.tox-button--icon {
+  margin: 6px 1px 5px 0;
+  padding: 0;
+}
 .tox .tox-button-link {
   background: 0;
   border: none;
@@ -644,9 +679,6 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-bar .tox-checkbox {
   margin-right: 4px;
 }
-.tox {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-collection--toolbar .tox-collection__group {
   display: flex;
   padding: 0;
@@ -706,55 +738,20 @@ button::-moz-focus-inner {
   border-radius: 3px;
   padding: 4px;
 }
-.tox .tox-collection--list .tox-collection__item--enabled {
+.tox .tox-collection--list .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
   background-color: #fff;
   color: #222f3e;
 }
-.tox .tox-collection--list .tox-collection__item--active {
+.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
   background-color: #006ce7;
-}
-.tox .tox-collection--toolbar .tox-collection__item--enabled,
-.tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active,
-.tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active:hover {
-  background-color: #a6ccf7;
-  color: #222f3e;
+  color: #fff;
 }
 @media (forced-colors: active) {
-  .tox .tox-collection--toolbar .tox-collection__item--enabled,
-  .tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active,
-  .tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active:hover {
-    border-radius: 3px;
-    outline: solid 1px;
+  .tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+    border: solid 1px;
   }
 }
-.tox .tox-collection--toolbar .tox-collection__item--active {
-  background-color: #fff;
-  position: relative;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:hover {
-  background-color: #f0f0f0;
-  color: #222f3e;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:focus {
-  background-color: #f0f0f0;
-  color: #222f3e;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:focus::after {
-  border-radius: 3px;
-  bottom: 0;
-  box-shadow: 0 0 0 2px #006ce7 ;
-  content: '';
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-@media (forced-colors: active) {
-  .tox .tox-collection--toolbar .tox-collection__item--active:focus::after {
-    border: 2px solid highlight;
-  }
-}
-.tox .tox-collection--grid .tox-collection__item--enabled {
+.tox .tox-collection--grid .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
   background-color: #a6ccf7;
   color: #222f3e;
 }
@@ -779,16 +776,43 @@ button::-moz-focus-inner {
     border: 2px solid highlight;
   }
 }
-.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
-  color: #fff;
+.tox .tox-collection--toolbar .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
+  background-color: #a6ccf7;
+  color: #222f3e;
 }
 @media (forced-colors: active) {
-  .tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
-    border: solid 1px;
+  .tox .tox-collection--toolbar .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
+    border-radius: 3px;
+    outline: solid 1px;
   }
 }
 .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
   color: #222f3e;
+  background-color: #fff;
+  position: relative;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):hover {
+  background-color: #f0f0f0;
+  color: #222f3e;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus {
+  background-color: #f0f0f0;
+  color: #222f3e;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+  border-radius: 3px;
+  bottom: 0;
+  box-shadow: 0 0 0 2px #006ce7 ;
+  content: '';
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+@media (forced-colors: active) {
+  .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+    border: 2px solid highlight;
+  }
 }
 @media (forced-colors: active) {
   .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):hover {
@@ -1190,20 +1214,75 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-swatches__picker-btn {
   margin-right: auto;
 }
-.tox .tox-comment-thread {
-  background: #fff;
-  position: relative;
+.tox {
+  /* Animation for deleting a comment */
+  /* A comment fades to 0 when it is being deleted, then is removed */
 }
-.tox .tox-comment-thread > *:not(:first-child) {
-  margin-top: 8px;
+.tox .tox-conversations {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  /* This is to give the sidebar a consistent width. Need a solution for this */
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
+}
+.tox .tox-conversations__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0px 4px 8px 0px rgba(34, 47, 62, 0.1);
+  padding: 8px 12px;
+  background: #fff;
+  z-index: 1;
+}
+.tox .tox-conversations__title {
+  font-size: 20px;
+  font-weight: 400;
+  padding: 8px 0 8px 0;
+  color: #222f3e;
+  line-height: 28px;
 }
 .tox .tox-comment {
   background: #fff;
-  border: 1px solid #eeeeee;
+  border: 1px solid #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 8px 0 rgba(34, 47, 62, 0.1);
   padding: 8px 8px 16px 8px;
   position: relative;
+}
+.tox .tox-comment:hover {
+  box-shadow: 0 4px 8px 0 rgba(34, 47, 62, 0.1);
+}
+.tox .tox-comment.tox-comment--selected {
+  background-color: #fff2c9;
+  border: 1px solid #ffcf30;
+  box-shadow: 0px 4px 8px 0px rgba(34, 47, 62, 0.1);
+}
+.tox .tox-comment.tox-comment--selected:focus {
+  border: 2px solid #006ce7;
+  margin: -1px;
+}
+.tox .tox-comment.tox-comment--selected:focus:not(:first-child) {
+  margin-top: 7px;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single {
+  margin-bottom: 12px;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single:focus {
+  position: relative;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single:focus::after {
+  top: -9px;
+  pointer-events: none;
+  position: absolute;
+  content: "";
+  display: block;
+  bottom: -9px;
+  left: -9px;
+  right: -9px;
+  border-radius: 6px;
+  border: 2px solid #006ce7;
 }
 .tox .tox-comment__header {
   align-items: center;
@@ -1218,86 +1297,32 @@ button::-moz-focus-inner {
 }
 .tox .tox-comment__body {
   color: #222f3e;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
   font-weight: normal;
   line-height: 1.3;
   margin-top: 8px;
   position: relative;
   text-transform: initial;
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+  white-space: pre-wrap;
+  /* We remove the transitions when wanting to measure and jump straight to collapsed or expanded */
+}
+.tox .tox-comment__body.tox-comment__body--expanded {
+  max-height: 100em;
+  transition: max-height 1s ease-in-out;
+}
+.tox .tox-comment__body.tox-comment__body--pending {
+  transition: max-height 0s;
+}
+.tox .tox-comment__body p {
+  margin: 0;
 }
 .tox .tox-comment__body textarea {
   resize: none;
   white-space: normal;
   width: 100%;
-}
-.tox .tox-comment__expander {
-  padding-top: 8px;
-}
-.tox .tox-comment__expander p {
-  color: rgba(34, 47, 62, 0.7);
-  font-size: 14px;
-  font-style: normal;
-}
-.tox .tox-comment__body p {
-  margin: 0;
-}
-.tox .tox-comment__buttonspacing {
-  padding-top: 16px;
-  text-align: center;
-}
-.tox .tox-comment-thread__overlay::after {
-  background: #fff;
-  bottom: 0;
-  content: "";
-  display: flex;
-  left: 0;
-  opacity: 0.9;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 5;
-}
-.tox .tox-comment__reply {
-  display: flex;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  margin-top: 8px;
-}
-.tox .tox-comment__reply > *:first-child {
-  margin-bottom: 8px;
-  width: 100%;
-}
-.tox .tox-comment__edit {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-.tox .tox-comment__gradient::after {
-  background: linear-gradient(rgba(255, 255, 255, 0), #fff);
-  bottom: 0;
-  content: "";
-  display: block;
-  height: 5em;
-  margin-top: -40px;
-  position: absolute;
-  width: 100%;
-}
-.tox .tox-comment__overlay {
-  background: #fff;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  left: 0;
-  opacity: 0.9;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  top: 0;
-  z-index: 5;
+  font-size: 16px;
 }
 .tox .tox-comment__loading-text {
   align-items: center;
@@ -1329,6 +1354,94 @@ button::-moz-focus-inner {
 .tox .tox-comment__overlaytext div:nth-of-type(2) {
   font-size: 0.8em;
 }
+.tox .tox-comment__expander {
+  padding-top: 8px;
+}
+.tox .tox-comment__expander p {
+  color: rgba(34, 47, 62, 0.7);
+  font-size: 14px;
+  font-style: normal;
+  /* Need a focus highlight on the show more/less button */
+}
+.tox .tox-comment__expander p:focus {
+  font-weight: bold;
+}
+.tox .tox-comment__buttonspacing {
+  padding-top: 16px;
+  text-align: center;
+}
+.tox .tox-tbtn.tox-comment__mention-btn {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background-color: transparent;
+}
+.tox .tox-comment-thread {
+  background: #fff;
+  position: relative;
+  border-radius: 6px;
+  background-color: transparent;
+}
+.tox .tox-comment-thread > *:not(:first-child) {
+  margin-top: 8px;
+}
+.tox .tox-comment-thread__overlay::after {
+  background: #fff;
+  bottom: 0;
+  content: "";
+  display: flex;
+  left: 0;
+  opacity: 0.9;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 5;
+}
+.tox .tox-comment__reply {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.tox .tox-comment__reply > *:first-child {
+  margin-bottom: 8px;
+  width: 100%;
+}
+.tox .tox-comment__edit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.tox .tox-comment__gradient::after {
+  background: linear-gradient(rgba(255, 255, 255, 0), #fff);
+  bottom: 0;
+  content: "";
+  display: block;
+  height: 5em;
+  margin-top: -40px;
+  position: absolute;
+  width: 100%;
+}
+.tox .tox-comment__overlay {
+  background: #fff;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  left: 0;
+  opacity: 0.9;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  z-index: 5;
+}
 .tox .tox-comment__busy-spinner {
   align-items: center;
   background-color: #fff;
@@ -1346,9 +1459,49 @@ button::-moz-focus-inner {
   flex-direction: column;
   flex-shrink: 1;
   overflow: auto;
+  padding: 12px;
+  scroll-behavior: smooth;
 }
-.tox .tox-conversations {
-  margin: 8px;
+.tox .tox-comment__scroll:has(textarea:focus) {
+  scroll-behavior: auto;
+}
+.tox .tox-comment--disappearing {
+  transition: opacity 0.5s ease;
+}
+.tox .tox-comment[data-transitioning-destination="deleting"] {
+  opacity: 0;
+}
+.tox .tox-skeleton .tox-skeleton__line {
+  height: 16px;
+  width: 100%;
+  background: linear-gradient(to right, rgba(240, 240, 240, 0.5) 8%, rgba(240, 240, 240, 0.7) 18%, rgba(240, 240, 240, 0.5) 33%);
+  animation: wave 2s infinite ease-out;
+}
+.tox .tox-skeleton .tox-skeleton__circle {
+  height: 36px;
+  width: 36px;
+  margin-right: 8px;
+  border-radius: 100%;
+  background: linear-gradient(to right, rgba(240, 240, 240, 0.5) 8%, rgba(240, 240, 240, 0.7) 18%, rgba(240, 240, 240, 0.5) 33%);
+  animation: wave 2s infinite ease-out;
+}
+@keyframes wave {
+  0% {
+    background-position: -268px 0;
+  }
+  100% {
+    background-position: 268px 0;
+  }
+}
+.tox .tox-ring-loader {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: tox-rotation 1s linear infinite;
 }
 .tox:not([dir=rtl]) .tox-comment__edit {
   margin-left: 8px;
@@ -1547,8 +1700,8 @@ button::-moz-focus-inner {
   background-color: rgba(0, 108, 231, 0.1);
 }
 .tox .tox-dialog__body-nav-item--active {
-  border-bottom: 2px solid #006ce7;
-  color: #006ce7;
+  border-bottom: 2px solid #144782;
+  color: #144782;
 }
 @media (forced-colors: active) {
   .tox .tox-dialog__body-nav-item--active {
@@ -1581,24 +1734,24 @@ button::-moz-focus-inner {
   margin-top: 0;
 }
 .tox .tox-dialog__body-content a {
-  color: #006ce7;
+  color: #144782;
   cursor: pointer;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 .tox .tox-dialog__body-content a:hover,
 .tox .tox-dialog__body-content a:focus {
-  color: #003c81;
+  color: #071729;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 .tox .tox-dialog__body-content a:focus-visible {
   border-radius: 1px;
-  outline: 2px solid #006ce7;
+  outline: 2px solid #144782;
   outline-offset: 2px;
 }
 .tox .tox-dialog__body-content a:active {
-  color: #00244e;
+  color: #000000;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
@@ -2060,17 +2213,11 @@ body.tox-dialog__disable-scroll {
 .tox .tox-color-input span[aria-disabled=true] {
   cursor: not-allowed;
 }
-.tox:not([dir=rtl]) .tox-color-input {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox:not([dir=rtl]) .tox-color-input .tox-textfield {
   padding-left: 36px;
 }
 .tox:not([dir=rtl]) .tox-color-input span {
   left: 6px;
-}
-.tox[dir="rtl"] .tox-color-input {
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox[dir="rtl"] .tox-color-input .tox-textfield {
   padding-right: 36px;
@@ -2188,15 +2335,18 @@ body.tox-dialog__disable-scroll {
   width: 100%;
 }
 .tox .tox-textfield[disabled],
+.tox .tox-toolbar-textfield[disabled],
 .tox .tox-textarea[disabled] {
   background-color: #f2f2f2;
   color: rgba(34, 47, 62, 0.85);
   cursor: not-allowed;
 }
 .tox .tox-textfield:focus,
+.tox .tox-toolbar-textfield:focus,
 .tox .tox-listboxfield .tox-listbox--select:focus,
 .tox .tox-textarea-wrap:focus-within,
 .tox .tox-textarea:focus,
+.tox .tox-focusable-wrapper:focus,
 .tox .tox-custom-editor:focus-within {
   background-color: #fff;
   border-color: #006ce7;
@@ -2204,10 +2354,10 @@ body.tox-dialog__disable-scroll {
   outline: none;
 }
 .tox .tox-toolbar-textfield {
-  border-width: 0;
-  margin-bottom: 3px;
-  margin-top: 2px;
   max-width: 250px;
+  min-height: unset;
+  height: 28px;
+  margin: 5px 0 6px 0;
 }
 .tox .tox-naked-btn {
   background-color: transparent;
@@ -2223,6 +2373,9 @@ body.tox-dialog__disable-scroll {
 .tox .tox-naked-btn svg {
   display: block;
   fill: #222f3e;
+}
+.tox .tox-textfield-size {
+  width: 80px;
 }
 .tox:not([dir=rtl]) .tox-toolbar-textfield + * {
   margin-left: 4px;
@@ -2491,14 +2644,8 @@ body.tox-dialog__disable-scroll {
   text-align: center;
   width: 100%;
 }
-.tox:not([dir=rtl]) {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox:not([dir=rtl]) .tox-insert-table-picker > div:nth-child(10n) {
   border-right: 0;
-}
-.tox[dir=rtl] {
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox[dir=rtl] .tox-insert-table-picker > div:nth-child(10n+1) {
   border-right: 0;
@@ -2734,7 +2881,6 @@ body.tox-dialog__disable-scroll {
   background-color: #f5cccc;
   border-color: #f0b3b3;
   color: #222f3e;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--error p {
   color: #222f3e;
@@ -2766,7 +2912,6 @@ body.tox-dialog__disable-scroll {
   background-color: #fff5cc;
   border-color: #fff0b3;
   color: #222f3e;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--warn p,
 .tox .tox-notification--warning p {
@@ -2804,7 +2949,6 @@ body.tox-dialog__disable-scroll {
   background-color: #d6e7fb;
   border-color: #c1dbf9;
   color: #222f3e;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--info p {
   color: #222f3e;
@@ -3025,7 +3169,7 @@ body.tox-dialog__disable-scroll {
   min-height: 0;
 }
 .tox .tox-sidebar {
-  background-color: #fff;
+  background-color: #f0f0f0;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -3102,6 +3246,71 @@ body.tox-dialog__disable-scroll {
 .tox .tox-form__controls-h-stack > .tox-slider + .tox-form__group {
   margin-inline-start: 32px;
 }
+.tox .tox-toolbar-slider {
+  align-items: center;
+  display: inline-flex;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input {
+  appearance: none;
+  background: #eeeeee;
+  border-radius: 16px;
+  width: 130px;
+  height: 2px;
+}
+.tox .tox-toolbar-slider__input::-webkit-slider-runnable-track {
+  background-color: transparent;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input::-moz-range-track {
+  background-color: transparent;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #006ce7;
+  border-radius: 16px;
+  border: none;
+  height: 16px;
+  width: 16px;
+}
+.tox .tox-toolbar-slider__input::-moz-range-thumb {
+  appearance: none;
+  background-color: #006ce7;
+  border-radius: 16px;
+  border: none;
+  height: 16px;
+  width: 16px;
+}
+.tox .tox-toolbar-slider__input:focus-visible {
+  outline: none;
+}
+.tox .tox-toolbar-slider__input:focus::-webkit-slider-thumb {
+  background-color: #0060ce;
+  box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px #006ce7;
+}
+.tox .tox-toolbar-slider__input:focus::-moz-range-thumb {
+  background-color: #0060ce;
+  box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px #006ce7;
+}
+.tox .tox-toolbar-slider__input:hover::-webkit-slider-thumb {
+  background-color: #0060ce;
+}
+.tox .tox-toolbar-slider__input:hover::-moz-range-thumb {
+  background-color: #0060ce;
+}
+.tox .tox-toolbar-slider__input:active::-webkit-slider-thumb {
+  background-color: #0054b4;
+}
+.tox .tox-toolbar-slider__input:active::-moz-range-thumb {
+  background-color: #0054b4;
+}
+.tox .tox-toolbar-slider__input[disabled]::-webkit-slider-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.tox .tox-toolbar-slider__input[disabled]::-moz-range-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+}
 .tox .tox-source-code {
   overflow: auto;
 }
@@ -3172,7 +3381,6 @@ body.tox-dialog__disable-scroll {
   flex: 1 1 auto;
   height: 16px;
   justify-content: space-between;
-  overflow: hidden;
 }
 @media only screen and (min-width: 768px ) {
   .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__help-text,
@@ -3254,7 +3462,6 @@ body.tox-dialog__disable-scroll {
   }
 }
 .tox .tox-statusbar__branding a {
-  /* stylelint-disable-line no-descending-specificity */
   align-items: center;
   display: inline-flex;
 }
@@ -3305,6 +3512,9 @@ body.tox-dialog__disable-scroll {
   .tox .tox-statusbar__resize-handle:focus-visible::after {
     border: 2px solid highlight;
   }
+}
+.tox .tox-statusbar__resize-handle:only-child {
+  margin-left: auto;
 }
 .tox:not([dir=rtl]) .tox-statusbar__path > * {
   margin-right: 4px;
@@ -3451,7 +3661,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tbtn--disabled:hover svg,
 .tox .tox-tbtn:disabled svg,
 .tox .tox-tbtn:disabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: rgba(34, 47, 62, 0.5);
 }
 .tox .tox-tbtn--active,
@@ -3474,7 +3683,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tbtn--enabled svg,
 .tox .tox-tbtn--enabled:hover svg,
 .tox .tox-tbtn--enabled:focus svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: #222f3e;
 }
 .tox .tox-tbtn--active.tox-tbtn--disabled svg,
@@ -3532,6 +3740,12 @@ body.tox-dialog__disable-scroll {
   letter-spacing: -0.025em;
   margin-bottom: 4px;
   white-space: nowrap;
+}
+.tox .tox-label--context-toolbar {
+  margin: 6px 1px 5px 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .tox .tox-number-input {
   background: #f7f7f7;
@@ -3834,9 +4048,9 @@ body.tox-dialog__disable-scroll {
 .tox.tox-platform-touch .tox-split-button__chevron {
   width: 20px;
 }
-.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-text-color__color,
-.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-highlight-bg-color__color {
-  opacity: 0.6;
+.tox .tox-split-button.tox-tbtn--disabled svg .tox-icon-text-color__color,
+.tox .tox-split-button.tox-tbtn--disabled svg .tox-icon-highlight-bg-color__color {
+  opacity: 0.3;
 }
 .tox .tox-toolbar-overlord {
   background-color: #fff;
@@ -3860,8 +4074,8 @@ body.tox-dialog__disable-scroll {
 .tox .tox-toolbar-overlord > .tox-toolbar,
 .tox .tox-toolbar-overlord > .tox-toolbar__primary,
 .tox .tox-toolbar-overlord > .tox-toolbar__overflow {
-  background-position: center top 0;
-  background-size: calc(100% - 11px * 2) calc(100% - 0);
+  background-position: center top 0px;
+  background-size: calc(100% - 11px * 2) calc(100% - 0px);
 }
 .tox .tox-toolbar__overflow.tox-toolbar__overflow--closed {
   height: 0;
@@ -3911,6 +4125,20 @@ body.tox-dialog__disable-scroll {
 .tox .tox-toolbar-overlord .tox-toolbar--scrolling:first-child {
   background-image: none;
 }
+.tox .tox-focusable-wrapper {
+  border: 1px solid transparent;
+  margin-right: 2px;
+  pointer-events: none;
+}
+.tox .tox-focusable-wrapper .tox-textfield-size {
+  pointer-events: all;
+}
+.tox .tox-focusable-wrapper:focus {
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 1px;
+}
 .tox.tox-tinymce-aux .tox-toolbar__overflow {
   background-color: #fff;
   background-position: center top 43px;
@@ -3926,13 +4154,14 @@ body.tox-dialog__disable-scroll {
     border: solid;
   }
 }
-.tox-pop .tox-pop__dialog {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox-pop .tox-pop__dialog .tox-toolbar {
   background-position: center top 43px;
   background-size: calc(100% - 11px * 2) calc(100% - 51px);
   padding: 4px 0;
+}
+.tox-context-form__group {
+  display: flex;
+  align-items: center;
 }
 .tox .tox-toolbar__group {
   align-items: center;
@@ -4097,7 +4326,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tree .tox-trbtn--disabled:hover svg,
 .tox .tox-tree .tox-trbtn:disabled svg,
 .tox .tox-tree .tox-trbtn:disabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: rgba(34, 47, 62, 0.5);
 }
 .tox .tox-tree .tox-trbtn--enabled,
@@ -4113,7 +4341,6 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-tree .tox-trbtn--enabled svg,
 .tox .tox-tree .tox-trbtn--enabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: #222f3e;
 }
 .tox .tox-tree .tox-trbtn:focus:not(.tox-trbtn--disabled) {
@@ -4145,7 +4372,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tree .tox-tree--directory {
   display: flex;
   flex-direction: column;
-  /* stylelint-disable no-descending-specificity */
 }
 .tox .tox-tree .tox-tree--directory .tox-tree--directory__label {
   font-weight: bold;
@@ -4204,6 +4430,11 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-tree .tox-tree--leaf__label:hover:has(.tox-mbtn:hover) .tox-chevron svg {
   fill: #222f3e;
+}
+.tox .tox-tree .tox-icon-custom-state {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 .tox .tox-tree .tox-tree--directory__children {
   overflow: hidden;

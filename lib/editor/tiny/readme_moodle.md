@@ -3,7 +3,7 @@
 Please note that we have a clone of the official TinyMCE repository which contains the working build and branch for each release. This ensures build repeatability and gives us the ability to patch stable versions of Moodle for security fixes where relevant.
 
 Each Moodle branch has a similar branch in the https://github.com/moodlehq/tinymce.
-The Moodle `master` branch is named as the upcoming STABLE branch name, for example during the development of Moodle 4.5.0, the upcoming STABLE branch name will be MOODLE_405_STABLE.
+The Moodle `main` branch is named as the upcoming STABLE branch name, for example during the development of Moodle 4.5.0, the upcoming STABLE branch name will be MOODLE_405_STABLE.
 
 ## Patches included in this release
 
@@ -14,7 +14,7 @@ N/A
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`/../../
+MOODLEDIR=/your_moodle_dir/lib/editor/tiny
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
@@ -47,6 +47,9 @@ git commit -m 'MDL: Add build configuration'
 yarn
 yarn build
  ```
+
+Note: If you encounter a problem during the build, please check your node version.
+The latest node version that worked for this build was v21.
 
 7. Remove the old TinyMCE configuration and replace it with the newly built version.
 
@@ -115,7 +118,7 @@ cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`../../
+MOODLEDIR=/your_moodle_dir/lib/editor/tiny
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
@@ -137,6 +140,9 @@ git checkout -b MOODLE_405_STABLE moodlehq/MOODLE_405_STABLE
 yarn
 yarn build
  ```
+
+Note: If you encounter a problem during the build, please check your node version.
+The latest node version that worked for this build was v21.
 
 5. Remove the old TinyMCE configuration and replace it with the newly built version.
 

@@ -97,19 +97,40 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-icon--flip svg {
   transform: rotateY(180deg);
 }
+@keyframes tox-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .tox .accessibility-issue__header {
   align-items: center;
   display: flex;
   margin-bottom: 4px;
 }
+.tox #accessibility-issue__subheader {
+  font-size: 16px;
+  color: #fff;
+}
+.tox .accessbility-sr-only {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(0 0 99.9% 99.9%);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  padding: 0;
+  border: 0;
+}
 .tox .accessibility-issue__description {
   align-items: stretch;
   border-radius: 3px;
-  display: flex;
   justify-content: space-between;
 }
 .tox .accessibility-issue__description > div {
-  padding-bottom: 4px;
+  padding-bottom: 16px;
 }
 .tox .accessibility-issue__description > div > div {
   align-items: center;
@@ -119,18 +140,32 @@ button::-moz-focus-inner {
 .tox .accessibility-issue__description > div > div .tox-icon svg {
   display: block;
 }
-.tox .accessibility-issue__repair {
+.tox #accessibility-issue__contentID {
   margin-top: 16px;
+  margin-bottom: 16px;
+}
+.tox #accessibility-issue__contentID span:first-child {
+  font-weight: bold;
+}
+.tox #accessibility-issue__document {
+  padding-bottom: 8px;
+}
+.tox .accessibility-issue__repair {
+  margin-top: 8px;
+}
+.tox .accessibility-issue__repair .tox-form__group .tox-form__group--error {
+  color: #eb9999;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info .accessibility-issue__description {
-  background-color: rgba(30, 113, 170, 0.4);
+  background-color: #22374a;
   color: #fff;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info .tox-form__group h2 {
-  color: #fff;
+  font-size: 14px;
+  color: #a6cae2;
 }
-.tox .tox-dialog__body-content .accessibility-issue--info .tox-icon svg {
-  fill: #fff;
+.tox .tox-dialog__body-content .accessibility-issue--info .tox-icon.accessibility-issue__icon svg {
+  fill: #a6cae2;
 }
 .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon {
   background-color: #207ab7;
@@ -143,18 +178,16 @@ button::-moz-focus-inner {
 .tox .tox-dialog__body-content .accessibility-issue--info a.tox-button--naked.tox-button--icon:active {
   background-color: #185d8c;
 }
-.tox .tox-dialog__body-content .accessibility-issue--warn {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-dialog__body-content .accessibility-issue--warn .accessibility-issue__description {
-  background-color: rgba(255, 165, 0, 0.5);
+  background-color: #383f38;
   color: #fff;
 }
 .tox .tox-dialog__body-content .accessibility-issue--warn .tox-form__group h2 {
-  color: #fff;
+  font-size: 14px;
+  color: #ffeb99;
 }
-.tox .tox-dialog__body-content .accessibility-issue--warn .tox-icon svg {
-  fill: #fff;
+.tox .tox-dialog__body-content .accessibility-issue--warn .tox-icon.accessibility-issue__icon svg {
+  fill: #ffeb99;
 }
 .tox .tox-dialog__body-content .accessibility-issue--warn a.tox-button--naked.tox-button--icon {
   background-color: #FFE89D;
@@ -169,18 +202,16 @@ button::-moz-focus-inner {
   background-color: #E8C657;
   color: #2A3746;
 }
-.tox .tox-dialog__body-content .accessibility-issue--error {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-dialog__body-content .accessibility-issue--error .accessibility-issue__description {
-  background-color: rgba(204, 0, 0, 0.5);
+  background-color: #332a38;
   color: #fff;
 }
 .tox .tox-dialog__body-content .accessibility-issue--error .tox-form__group h2 {
-  color: #fff;
+  font-size: 14px;
+  color: #eb9999;
 }
-.tox .tox-dialog__body-content .accessibility-issue--error .tox-icon svg {
-  fill: #fff;
+.tox .tox-dialog__body-content .accessibility-issue--error .tox-icon.accessibility-issue__icon svg {
+  fill: #eb9999;
 }
 .tox .tox-dialog__body-content .accessibility-issue--error a.tox-button--naked.tox-button--icon {
   background-color: #F2BFBF;
@@ -205,12 +236,11 @@ button::-moz-focus-inner {
 .tox .tox-dialog__body-content .accessibility-issue--success .tox-form__group h2 {
   color: #fff;
 }
-.tox .tox-dialog__body-content .accessibility-issue--success .tox-icon svg {
+.tox .tox-dialog__body-content .accessibility-issue--success .tox-icon.accessibility-issue__icon svg {
   fill: #fff;
 }
 .tox .tox-dialog__body-content .accessibility-issue__header .tox-form__group h1,
 .tox .tox-dialog__body-content .tox-form__group .accessibility-issue__description h2 {
-  font-size: 14px;
   margin-top: 0;
 }
 .tox:not([dir=rtl]) .tox-dialog__body-content .accessibility-issue__header .tox-button {
@@ -220,7 +250,7 @@ button::-moz-focus-inner {
   margin-left: auto;
 }
 .tox:not([dir=rtl]) .tox-dialog__body-content .accessibility-issue__description {
-  padding: 4px 4px 4px 8px;
+  padding: 8px;
 }
 .tox[dir=rtl] .tox-dialog__body-content .accessibility-issue__header .tox-button {
   margin-right: 4px;
@@ -499,6 +529,11 @@ button::-moz-focus-inner {
   display: block;
   fill: currentColor;
 }
+.tox-context-form__group .tox-button--icon,
+.tox-context-form__group .tox-button.tox-button--icon {
+  margin: 3px 0 2px 0;
+  padding: 0;
+}
 .tox .tox-button-link {
   background: 0;
   border: none;
@@ -644,9 +679,6 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-bar .tox-checkbox {
   margin-right: 4px;
 }
-.tox {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox .tox-collection--toolbar .tox-collection__group {
   display: flex;
   padding: 0;
@@ -706,55 +738,20 @@ button::-moz-focus-inner {
   border-radius: 3px;
   padding: 4px;
 }
-.tox .tox-collection--list .tox-collection__item--enabled {
+.tox .tox-collection--list .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
   background-color: #2b3b4e;
   color: #fff;
 }
-.tox .tox-collection--list .tox-collection__item--active {
+.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
   background-color: #4a5562;
-}
-.tox .tox-collection--toolbar .tox-collection__item--enabled,
-.tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active,
-.tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active:hover {
-  background-color: #757d87;
   color: #fff;
 }
 @media (forced-colors: active) {
-  .tox .tox-collection--toolbar .tox-collection__item--enabled,
-  .tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active,
-  .tox .tox-collection--toolbar .tox-collection__item--enabled.tox-collection__item--active:hover {
-    border-radius: 3px;
-    outline: solid 1px;
+  .tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+    border: solid 1px;
   }
 }
-.tox .tox-collection--toolbar .tox-collection__item--active {
-  background-color: #2b3b4e;
-  position: relative;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:hover {
-  background-color: #4a5562;
-  color: #fff;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:focus {
-  background-color: #4a5562;
-  color: #fff;
-}
-.tox .tox-collection--toolbar .tox-collection__item--active:focus::after {
-  border-radius: 3px;
-  bottom: 0;
-  box-shadow: 0 0 0 0 transparent ;
-  content: '';
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-@media (forced-colors: active) {
-  .tox .tox-collection--toolbar .tox-collection__item--active:focus::after {
-    border: 2px solid highlight;
-  }
-}
-.tox .tox-collection--grid .tox-collection__item--enabled {
+.tox .tox-collection--grid .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
   background-color: #757d87;
   color: #fff;
 }
@@ -779,16 +776,43 @@ button::-moz-focus-inner {
     border: 2px solid highlight;
   }
 }
-.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+.tox .tox-collection--toolbar .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
+  background-color: #757d87;
   color: #fff;
 }
 @media (forced-colors: active) {
-  .tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
-    border: solid 1px;
+  .tox .tox-collection--toolbar .tox-collection__item--enabled:not(.tox-collection__item--state-disabled) {
+    border-radius: 3px;
+    outline: solid 1px;
   }
 }
 .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
   color: #fff;
+  background-color: #2b3b4e;
+  position: relative;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):hover {
+  background-color: #4a5562;
+  color: #fff;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus {
+  background-color: #4a5562;
+  color: #fff;
+}
+.tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+  border-radius: 3px;
+  bottom: 0;
+  box-shadow: 0 0 0 0 transparent ;
+  content: '';
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+@media (forced-colors: active) {
+  .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+    border: 2px solid highlight;
+  }
 }
 @media (forced-colors: active) {
   .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):hover {
@@ -1190,20 +1214,75 @@ button::-moz-focus-inner {
 .tox[dir=rtl] .tox-swatches__picker-btn {
   margin-right: auto;
 }
-.tox .tox-comment-thread {
-  background: #2b3b4e;
-  position: relative;
+.tox {
+  /* Animation for deleting a comment */
+  /* A comment fades to 0 when it is being deleted, then is removed */
 }
-.tox .tox-comment-thread > *:not(:first-child) {
-  margin-top: 8px;
+.tox .tox-conversations {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  /* This is to give the sidebar a consistent width. Need a solution for this */
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
+}
+.tox .tox-conversations__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0px 4px 8px 0px rgba(34, 47, 62, 0.1);
+  padding: 8px 12px;
+  background: #222f3e;
+  z-index: 1;
+}
+.tox .tox-conversations__title {
+  font-size: 20px;
+  font-weight: 400;
+  padding: 8px 0 8px 0;
+  color: #fff;
+  line-height: 28px;
 }
 .tox .tox-comment {
-  background: #2b3b4e;
-  border: 1px solid #000000;
+  background: #222f3e;
+  border: 1px solid #222f3e;
   border-radius: 3px;
-  box-shadow: 0 4px 8px 0 rgba(42, 55, 70, 0.1);
   padding: 8px 8px 16px 8px;
   position: relative;
+}
+.tox .tox-comment:hover {
+  box-shadow: 0 4px 8px 0 rgba(42, 55, 70, 0.1);
+}
+.tox .tox-comment.tox-comment--selected {
+  background-color: #555542;
+  border: 1px solid #ffcf30;
+  box-shadow: 0px 4px 8px 0px rgba(34, 47, 62, 0.1);
+}
+.tox .tox-comment.tox-comment--selected:focus {
+  border: 2px solid transparent;
+  margin: -1px;
+}
+.tox .tox-comment.tox-comment--selected:focus:not(:first-child) {
+  margin-top: 7px;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single {
+  margin-bottom: 12px;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single:focus {
+  position: relative;
+}
+.tox .tox-comment.tox-comment--selected .tox-comment__single:focus::after {
+  top: -9px;
+  pointer-events: none;
+  position: absolute;
+  content: "";
+  display: block;
+  bottom: -9px;
+  left: -9px;
+  right: -9px;
+  border-radius: 6px;
+  border: 2px solid transparent;
 }
 .tox .tox-comment__header {
   align-items: center;
@@ -1218,18 +1297,62 @@ button::-moz-focus-inner {
 }
 .tox .tox-comment__body {
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
   font-weight: normal;
   line-height: 1.3;
   margin-top: 8px;
   position: relative;
   text-transform: initial;
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+  white-space: pre-wrap;
+  /* We remove the transitions when wanting to measure and jump straight to collapsed or expanded */
+}
+.tox .tox-comment__body.tox-comment__body--expanded {
+  max-height: 100em;
+  transition: max-height 1s ease-in-out;
+}
+.tox .tox-comment__body.tox-comment__body--pending {
+  transition: max-height 0s;
+}
+.tox .tox-comment__body p {
+  margin: 0;
 }
 .tox .tox-comment__body textarea {
   resize: none;
   white-space: normal;
   width: 100%;
+  font-size: 16px;
+}
+.tox .tox-comment__loading-text {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.tox .tox-comment__loading-text > div {
+  padding-bottom: 16px;
+}
+.tox .tox-comment__overlaytext {
+  bottom: 0;
+  flex-direction: column;
+  font-size: 14px;
+  left: 0;
+  padding: 1em;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.tox .tox-comment__overlaytext p {
+  background-color: #222f3e;
+  box-shadow: 0 0 8px 8px #222f3e;
+  color: #fff;
+  text-align: center;
+}
+.tox .tox-comment__overlaytext div:nth-of-type(2) {
+  font-size: 0.8em;
 }
 .tox .tox-comment__expander {
   padding-top: 8px;
@@ -1238,16 +1361,36 @@ button::-moz-focus-inner {
   color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
   font-style: normal;
+  /* Need a focus highlight on the show more/less button */
 }
-.tox .tox-comment__body p {
-  margin: 0;
+.tox .tox-comment__expander p:focus {
+  font-weight: bold;
 }
 .tox .tox-comment__buttonspacing {
   padding-top: 16px;
   text-align: center;
 }
+.tox .tox-tbtn.tox-comment__mention-btn {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background-color: transparent;
+}
+.tox .tox-comment-thread {
+  background: #222f3e;
+  position: relative;
+  border-radius: 6px;
+  background-color: transparent;
+}
+.tox .tox-comment-thread > *:not(:first-child) {
+  margin-top: 8px;
+}
 .tox .tox-comment-thread__overlay::after {
-  background: #2b3b4e;
+  background: #222f3e;
   bottom: 0;
   content: "";
   display: flex;
@@ -1273,10 +1416,10 @@ button::-moz-focus-inner {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 .tox .tox-comment__gradient::after {
-  background: linear-gradient(rgba(43, 59, 78, 0), #2b3b4e);
+  background: linear-gradient(rgba(34, 47, 62, 0), #222f3e);
   bottom: 0;
   content: "";
   display: block;
@@ -1286,7 +1429,7 @@ button::-moz-focus-inner {
   width: 100%;
 }
 .tox .tox-comment__overlay {
-  background: #2b3b4e;
+  background: #222f3e;
   bottom: 0;
   display: flex;
   flex-direction: column;
@@ -1299,39 +1442,9 @@ button::-moz-focus-inner {
   top: 0;
   z-index: 5;
 }
-.tox .tox-comment__loading-text {
-  align-items: center;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-.tox .tox-comment__loading-text > div {
-  padding-bottom: 16px;
-}
-.tox .tox-comment__overlaytext {
-  bottom: 0;
-  flex-direction: column;
-  font-size: 14px;
-  left: 0;
-  padding: 1em;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 10;
-}
-.tox .tox-comment__overlaytext p {
-  background-color: #2b3b4e;
-  box-shadow: 0 0 8px 8px #2b3b4e;
-  color: #fff;
-  text-align: center;
-}
-.tox .tox-comment__overlaytext div:nth-of-type(2) {
-  font-size: 0.8em;
-}
 .tox .tox-comment__busy-spinner {
   align-items: center;
-  background-color: #2b3b4e;
+  background-color: #222f3e;
   bottom: 0;
   display: flex;
   justify-content: center;
@@ -1346,9 +1459,49 @@ button::-moz-focus-inner {
   flex-direction: column;
   flex-shrink: 1;
   overflow: auto;
+  padding: 12px;
+  scroll-behavior: smooth;
 }
-.tox .tox-conversations {
-  margin: 8px;
+.tox .tox-comment__scroll:has(textarea:focus) {
+  scroll-behavior: auto;
+}
+.tox .tox-comment--disappearing {
+  transition: opacity 0.5s ease;
+}
+.tox .tox-comment[data-transitioning-destination="deleting"] {
+  opacity: 0;
+}
+.tox .tox-skeleton .tox-skeleton__line {
+  height: 16px;
+  width: 100%;
+  background: linear-gradient(to right, rgba(240, 240, 240, 0.5) 8%, rgba(240, 240, 240, 0.7) 18%, rgba(240, 240, 240, 0.5) 33%);
+  animation: wave 2s infinite ease-out;
+}
+.tox .tox-skeleton .tox-skeleton__circle {
+  height: 36px;
+  width: 36px;
+  margin-right: 8px;
+  border-radius: 100%;
+  background: linear-gradient(to right, rgba(240, 240, 240, 0.5) 8%, rgba(240, 240, 240, 0.7) 18%, rgba(240, 240, 240, 0.5) 33%);
+  animation: wave 2s infinite ease-out;
+}
+@keyframes wave {
+  0% {
+    background-position: -268px 0;
+  }
+  100% {
+    background-position: 268px 0;
+  }
+}
+.tox .tox-ring-loader {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: tox-rotation 1s linear infinite;
 }
 .tox:not([dir=rtl]) .tox-comment__edit {
   margin-left: 8px;
@@ -1547,8 +1700,8 @@ button::-moz-focus-inner {
   background-color: rgba(32, 122, 183, 0.1);
 }
 .tox .tox-dialog__body-nav-item--active {
-  border-bottom: 2px solid #207ab7;
-  color: #207ab7;
+  border-bottom: 2px solid #90bddb;
+  color: #90bddb;
 }
 @media (forced-colors: active) {
   .tox .tox-dialog__body-nav-item--active {
@@ -1581,24 +1734,24 @@ button::-moz-focus-inner {
   margin-top: 0;
 }
 .tox .tox-dialog__body-content a {
-  color: #207ab7;
+  color: #90bddb;
   cursor: pointer;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 .tox .tox-dialog__body-content a:hover,
 .tox .tox-dialog__body-content a:focus {
-  color: #114060;
+  color: #428fc2;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 .tox .tox-dialog__body-content a:focus-visible {
   border-radius: 1px;
-  outline: 2px solid #207ab7;
+  outline: 2px solid #90bddb;
   outline-offset: 2px;
 }
 .tox .tox-dialog__body-content a:active {
-  color: #092335;
+  color: #33739e;
   -webkit-text-decoration: underline;
   text-decoration: underline;
 }
@@ -2060,17 +2213,11 @@ body.tox-dialog__disable-scroll {
 .tox .tox-color-input span[aria-disabled=true] {
   cursor: not-allowed;
 }
-.tox:not([dir=rtl]) .tox-color-input {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox:not([dir=rtl]) .tox-color-input .tox-textfield {
   padding-left: 36px;
 }
 .tox:not([dir=rtl]) .tox-color-input span {
   left: 6px;
-}
-.tox[dir="rtl"] .tox-color-input {
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox[dir="rtl"] .tox-color-input .tox-textfield {
   padding-right: 36px;
@@ -2188,15 +2335,18 @@ body.tox-dialog__disable-scroll {
   width: 100%;
 }
 .tox .tox-textfield[disabled],
+.tox .tox-toolbar-textfield[disabled],
 .tox .tox-textarea[disabled] {
   background-color: #222f3e;
   color: rgba(255, 255, 255, 0.85);
   cursor: not-allowed;
 }
 .tox .tox-textfield:focus,
+.tox .tox-toolbar-textfield:focus,
 .tox .tox-listboxfield .tox-listbox--select:focus,
 .tox .tox-textarea-wrap:focus-within,
 .tox .tox-textarea:focus,
+.tox .tox-focusable-wrapper:focus,
 .tox .tox-custom-editor:focus-within {
   background-color: #2b3b4e;
   border-color: #207ab7;
@@ -2204,10 +2354,10 @@ body.tox-dialog__disable-scroll {
   outline: 2px solid rgba(32, 122, 183, 0.25);
 }
 .tox .tox-toolbar-textfield {
-  border-width: 0;
-  margin-bottom: 3px;
-  margin-top: 2px;
   max-width: 250px;
+  min-height: unset;
+  height: 34px;
+  margin: 2px 0 3px 0;
 }
 .tox .tox-naked-btn {
   background-color: transparent;
@@ -2223,6 +2373,9 @@ body.tox-dialog__disable-scroll {
 .tox .tox-naked-btn svg {
   display: block;
   fill: #fff;
+}
+.tox .tox-textfield-size {
+  width: 80px;
 }
 .tox:not([dir=rtl]) .tox-toolbar-textfield + * {
   margin-left: 4px;
@@ -2491,14 +2644,8 @@ body.tox-dialog__disable-scroll {
   text-align: center;
   width: 100%;
 }
-.tox:not([dir=rtl]) {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox:not([dir=rtl]) .tox-insert-table-picker > div:nth-child(10n) {
   border-right: 0;
-}
-.tox[dir=rtl] {
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox[dir=rtl] .tox-insert-table-picker > div:nth-child(10n+1) {
   border-right: 0;
@@ -2734,7 +2881,6 @@ body.tox-dialog__disable-scroll {
   background-color: #442632;
   border-color: #55212b;
   color: #fff;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--error p {
   color: #fff;
@@ -2766,7 +2912,6 @@ body.tox-dialog__disable-scroll {
   background-color: #222f3e;
   border-color: #000000;
   color: #fff0b3;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--warn p,
 .tox .tox-notification--warning p {
@@ -2804,7 +2949,6 @@ body.tox-dialog__disable-scroll {
   background-color: #254161;
   border-color: #264972;
   color: #fff;
-  /* stylelint-disable-next-line no-descending-specificity */
 }
 .tox .tox-notification--info p {
   color: #fff;
@@ -3025,7 +3169,7 @@ body.tox-dialog__disable-scroll {
   min-height: 0;
 }
 .tox .tox-sidebar {
-  background-color: #222f3e;
+  background-color: #34485f;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -3102,6 +3246,71 @@ body.tox-dialog__disable-scroll {
 .tox .tox-form__controls-h-stack > .tox-slider + .tox-form__group {
   margin-inline-start: 32px;
 }
+.tox .tox-toolbar-slider {
+  align-items: center;
+  display: inline-flex;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input {
+  appearance: none;
+  background: #000000;
+  border-radius: 16px;
+  width: 130px;
+  height: 2px;
+}
+.tox .tox-toolbar-slider__input::-webkit-slider-runnable-track {
+  background-color: transparent;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input::-moz-range-track {
+  background-color: transparent;
+  height: 16px;
+}
+.tox .tox-toolbar-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #207ab7;
+  border-radius: 16px;
+  border: none;
+  height: 16px;
+  width: 16px;
+}
+.tox .tox-toolbar-slider__input::-moz-range-thumb {
+  appearance: none;
+  background-color: #207ab7;
+  border-radius: 16px;
+  border: none;
+  height: 16px;
+  width: 16px;
+}
+.tox .tox-toolbar-slider__input:focus-visible {
+  outline: none;
+}
+.tox .tox-toolbar-slider__input:focus::-webkit-slider-thumb {
+  background-color: #1c6ca1;
+  box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px #207ab7;
+}
+.tox .tox-toolbar-slider__input:focus::-moz-range-thumb {
+  background-color: #1c6ca1;
+  box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px #207ab7;
+}
+.tox .tox-toolbar-slider__input:hover::-webkit-slider-thumb {
+  background-color: #1c6ca1;
+}
+.tox .tox-toolbar-slider__input:hover::-moz-range-thumb {
+  background-color: #1c6ca1;
+}
+.tox .tox-toolbar-slider__input:active::-webkit-slider-thumb {
+  background-color: #185d8c;
+}
+.tox .tox-toolbar-slider__input:active::-moz-range-thumb {
+  background-color: #185d8c;
+}
+.tox .tox-toolbar-slider__input[disabled]::-webkit-slider-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.tox .tox-toolbar-slider__input[disabled]::-moz-range-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+}
 .tox .tox-source-code {
   overflow: auto;
 }
@@ -3172,7 +3381,6 @@ body.tox-dialog__disable-scroll {
   flex: 1 1 auto;
   height: 16px;
   justify-content: space-between;
-  overflow: hidden;
 }
 @media only screen and (min-width: 768px ) {
   .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__help-text,
@@ -3254,7 +3462,6 @@ body.tox-dialog__disable-scroll {
   }
 }
 .tox .tox-statusbar__branding a {
-  /* stylelint-disable-line no-descending-specificity */
   align-items: center;
   display: inline-flex;
 }
@@ -3305,6 +3512,9 @@ body.tox-dialog__disable-scroll {
   .tox .tox-statusbar__resize-handle:focus-visible::after {
     border: 2px solid highlight;
   }
+}
+.tox .tox-statusbar__resize-handle:only-child {
+  margin-left: auto;
 }
 .tox:not([dir=rtl]) .tox-statusbar__path > * {
   margin-right: 4px;
@@ -3451,7 +3661,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tbtn--disabled:hover svg,
 .tox .tox-tbtn:disabled svg,
 .tox .tox-tbtn:disabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: rgba(255, 255, 255, 0.5);
 }
 .tox .tox-tbtn--active,
@@ -3474,7 +3683,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tbtn--enabled svg,
 .tox .tox-tbtn--enabled:hover svg,
 .tox .tox-tbtn--enabled:focus svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: #fff;
 }
 .tox .tox-tbtn--active.tox-tbtn--disabled svg,
@@ -3532,6 +3740,12 @@ body.tox-dialog__disable-scroll {
   letter-spacing: -0.025em;
   margin-bottom: 4px;
   white-space: nowrap;
+}
+.tox .tox-label--context-toolbar {
+  margin: 6px 1px 5px 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .tox .tox-number-input {
   background: transparent;
@@ -3834,9 +4048,9 @@ body.tox-dialog__disable-scroll {
 .tox.tox-platform-touch .tox-split-button__chevron {
   width: 20px;
 }
-.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-text-color__color,
-.tox .tox-split-button.tox-tbtn--disabled svg #tox-icon-highlight-bg-color__color {
-  opacity: 0.6;
+.tox .tox-split-button.tox-tbtn--disabled svg .tox-icon-text-color__color,
+.tox .tox-split-button.tox-tbtn--disabled svg .tox-icon-highlight-bg-color__color {
+  opacity: 0.3;
 }
 .tox .tox-toolbar-overlord {
   background-color: #222f3e;
@@ -3860,8 +4074,8 @@ body.tox-dialog__disable-scroll {
 .tox .tox-toolbar-overlord > .tox-toolbar,
 .tox .tox-toolbar-overlord > .tox-toolbar__primary,
 .tox .tox-toolbar-overlord > .tox-toolbar__overflow {
-  background-position: center top 0;
-  background-size: calc(100% - 4px * 2) calc(100% - 0);
+  background-position: center top 0px;
+  background-size: calc(100% - 4px * 2) calc(100% - 0px);
 }
 .tox .tox-toolbar__overflow.tox-toolbar__overflow--closed {
   height: 0;
@@ -3911,6 +4125,20 @@ body.tox-dialog__disable-scroll {
 .tox .tox-toolbar-overlord .tox-toolbar--scrolling:first-child {
   background-image: none;
 }
+.tox .tox-focusable-wrapper {
+  border: 1px solid transparent;
+  margin-right: 2px;
+  pointer-events: none;
+}
+.tox .tox-focusable-wrapper .tox-textfield-size {
+  pointer-events: all;
+}
+.tox .tox-focusable-wrapper:focus {
+  background-color: #4a5562;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px;
+}
 .tox.tox-tinymce-aux .tox-toolbar__overflow {
   background-color: #222f3e;
   background-position: center top 43px;
@@ -3926,13 +4154,14 @@ body.tox-dialog__disable-scroll {
     border: solid;
   }
 }
-.tox-pop .tox-pop__dialog {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
 .tox-pop .tox-pop__dialog .tox-toolbar {
   background-position: center top 43px;
   background-size: calc(100% - 4px * 2) calc(100% - 51px);
   padding: 4px 0;
+}
+.tox-context-form__group {
+  display: flex;
+  align-items: center;
 }
 .tox .tox-toolbar__group {
   align-items: center;
@@ -4097,7 +4326,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tree .tox-trbtn--disabled:hover svg,
 .tox .tox-tree .tox-trbtn:disabled svg,
 .tox .tox-tree .tox-trbtn:disabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: rgba(255, 255, 255, 0.5);
 }
 .tox .tox-tree .tox-trbtn--enabled,
@@ -4113,7 +4341,6 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-tree .tox-trbtn--enabled svg,
 .tox .tox-tree .tox-trbtn--enabled:hover svg {
-  /* stylelint-disable-line no-descending-specificity */
   fill: #fff;
 }
 .tox .tox-tree .tox-trbtn:focus:not(.tox-trbtn--disabled) {
@@ -4145,7 +4372,6 @@ body.tox-dialog__disable-scroll {
 .tox .tox-tree .tox-tree--directory {
   display: flex;
   flex-direction: column;
-  /* stylelint-disable no-descending-specificity */
 }
 .tox .tox-tree .tox-tree--directory .tox-tree--directory__label {
   font-weight: bold;
@@ -4204,6 +4430,11 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-tree .tox-tree--leaf__label:hover:has(.tox-mbtn:hover) .tox-chevron svg {
   fill: #fff;
+}
+.tox .tox-tree .tox-icon-custom-state {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 .tox .tox-tree .tox-tree--directory__children {
   overflow: hidden;
@@ -4559,9 +4790,11 @@ body.tox-dialog__disable-scroll {
   box-shadow: none;
 }
 .tox .tox-tbtn,
+.tox .tox-label,
 .tox .tox-number-input,
 .tox .tox-tbtn--select,
-.tox .tox-split-button {
+.tox .tox-split-button,
+.tox .tox-toolbar-label {
   margin: 2px 0 3px 0;
 }
 .tox .tox-toolbar,
@@ -4618,7 +4851,6 @@ body.tox-dialog__disable-scroll {
   }
 }
 .tox .tox-statusbar__branding a {
-  /* stylelint-disable-line no-descending-specificity */
   align-items: center;
   display: inline-flex;
 }
