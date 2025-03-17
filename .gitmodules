@@ -1,6 +1,6 @@
 [submodule "admin/tool/ilioscategoryassignment"]
 	path = admin/tool/ilioscategoryassignment
-	url = https://github.com:/ilios/tool_ilioscategoryassignment.git
+	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_405_STABLE
 [submodule "blocks/massaction"]
 	path = blocks/massaction
