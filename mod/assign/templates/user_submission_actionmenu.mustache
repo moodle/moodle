@@ -143,9 +143,9 @@
 
 }}
 <div class="container-fluid mb-4">
-    <div class="row">
+    <div class="d-flex flex-wrap gap-2">
         {{#submit}}
-        <div class="col-xs-6 me-3">
+        <div>
             {{#button}}
                 {{>core/single_button}}
             {{/button}}
@@ -155,7 +155,7 @@
         </div>
         {{/submit}}
         {{#previoussubmission}}
-        <div class="col-xs-6 me-3">
+        <div>
             {{#button}}
                 {{>core/single_button}}
             {{/button}}
@@ -165,7 +165,7 @@
         </div>
         {{/previoussubmission}}
         {{#edit}}
-        <div class="col-xs-6 me-3">
+        <div>
             {{#begin}}
                 {{#button}}
                     {{>core/action_link}}
@@ -182,7 +182,7 @@
         </div>
         {{/edit}}
         {{#remove}}
-        <div class="col-xs-6">
+        <div>
             {{#button}}
                 {{>core/single_button}}
             {{/button}}

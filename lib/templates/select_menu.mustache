@@ -90,7 +90,7 @@
         <label id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
     {{/inlinelabel}}{{/label}}
     <div
-        class="btn dropdown-toggle{{#inlinelabel}} d-flex text-left align-items-center p-0{{/inlinelabel}}"
+        class="btn dropdown-toggle{{#inlinelabel}} d-flex text-start align-items-center p-0{{/inlinelabel}}"
         role="combobox"
         data-bs-toggle="dropdown"
         {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}
@@ -102,7 +102,7 @@
     >
         {{#inlinelabel}}
             <div
-                class="pr-3 text-truncate"
+                class="pe-3 text-truncate"
                 {{#headinglevel}}
                 role="heading"
                 aria-level="{{headinglevel}}"
