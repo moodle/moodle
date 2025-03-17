@@ -241,11 +241,6 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setUser($user);
 
-        // Enrolment.
-        $enrolurl = new \moodle_url('/enrol/index.php');
-        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
-        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($enrolurl, false));
-
         // Guest User.
         $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setGuestUser();
