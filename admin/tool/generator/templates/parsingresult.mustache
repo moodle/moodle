@@ -74,14 +74,14 @@
             <div>
                 {{text}}
                 {{^isvalid}}
-                <span class="badge badge-pill badge-danger">
+                <span class="badge rounded-pill text-bg-danger">
                     <span class="fa fa-times"></span>
                     {{#str}} error {{/str}}
                 </span>
                 {{/isvalid}}
                 {{#isvalid}}
                     {{#isexecuted}}
-                    <span class="badge badge-pill badge-success">
+                    <span class="badge rounded-pill text-bg-success">
                         <span class="fa fa-check "></span>
                         {{#str}} success {{/str}}
                     </span>
