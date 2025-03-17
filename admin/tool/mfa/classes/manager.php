@@ -469,12 +469,6 @@ class manager {
             return self::NO_REDIRECT;
         }
 
-        // Enrolment.
-        $enrol = new \moodle_url('/enrol/index.php');
-        if ($enrol->compare($url, URL_MATCH_BASE)) {
-            return self::NO_REDIRECT;
-        }
-
         // Guest access.
         if (isguestuser()) {
             return self::NO_REDIRECT;
