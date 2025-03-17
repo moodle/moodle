@@ -26,12 +26,11 @@ use gradepenalty_duedate\tests\penalty_testcase;
  * @package   gradepenalty_duedate
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \gradepenalty_duedate\penalty_rule
  */
 final class penalty_rule_persistent_test extends penalty_testcase {
     /**
      * Test get rules.
-     *
-     * @covers \gradepenalty_duedate\penalty_rule::get_rules
      */
     public function test_get_rules(): void {
         $this->resetAfterTest();
@@ -67,8 +66,6 @@ final class penalty_rule_persistent_test extends penalty_testcase {
 
     /**
      * Test reset rules.
-     *
-     * @covers \gradepenalty_duedate\penalty_rule::reset_rules
      */
     public function test_reset_rules(): void {
         $this->resetAfterTest();
@@ -83,8 +80,6 @@ final class penalty_rule_persistent_test extends penalty_testcase {
 
     /**
      * Test check if rules are overridden.
-     *
-     * @covers \gradepenalty_duedate\penalty_rule::is_overridden
      */
     public function test_is_overridden(): void {
         $this->resetAfterTest();
@@ -106,8 +101,6 @@ final class penalty_rule_persistent_test extends penalty_testcase {
 
     /**
      * Test check if rules are inherited.
-     *
-     * @covers \gradepenalty_duedate\penalty_rule::is_inherited
      */
     public function test_is_inherited(): void {
         $this->resetAfterTest();

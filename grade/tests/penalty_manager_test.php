@@ -30,8 +30,6 @@ use grade_item;
 final class penalty_manager_test extends advanced_testcase {
     /**
      * Test is_penalty_enabled_for_module method.
-     *
-     * @covers \core_grades\penalty_manager::is_penalty_enabled_for_module
      */
     public function test_is_penalty_enabled_for_module(): void {
         $this->resetAfterTest();
@@ -68,8 +66,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test apply_grade_penalty_to_user method.
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
      */
     public function test_apply_grade_penalty_to_user(): void {
         $this->resetAfterTest();
@@ -90,13 +86,15 @@ final class penalty_manager_test extends advanced_testcase {
 
         $gradeitem = grade_item::fetch($gradeitemparams);
 
-        grade_update('mod/assign',
+        grade_update(
+            'mod/assign',
             $course->id,
             'mod',
             'assign',
             $assign->id,
             0,
-           ['userid' => $user->id, 'rawgrade' => 90]);
+           ['userid' => $user->id, 'rawgrade' => 90],
+        );
 
         $submissiondate = time();
         $duedate = time();

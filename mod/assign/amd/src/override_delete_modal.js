@@ -16,12 +16,13 @@
 /**
  * Modal for deleting an override with the option to recalculate penalties.
  *
- * @module     mod_assign/override_delete_modal
+ * @module     `mod_assign/override_delete_modal
  * @copyright  2025 Catalyst IT Australia Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import * as CustomEvents from 'core/custom_interaction_events';
+import Config from 'core/config';
 import Modal from 'core/modal';
 
 const SELECTORS = {
@@ -46,11 +47,14 @@ export default class OverrideDeleteModal extends Modal {
         modalConfig.large = true;
 
         // Always show on creation.
-        modalConfig.show = false;
+        modalConfig.show = true;
         modalConfig.removeOnClose = true;
 
         // Apply standard configuration.
         super.configure(modalConfig);
+
+        this.setOverrideId(modalConfig.overrideId);
+        this.setSessionKey(modalConfig.sessionKey);
     }
 
     /**
@@ -132,10 +136,15 @@ export default class OverrideDeleteModal extends Modal {
         const recalculate = this.recalculationCheckbox.prop('checked');
 
         // Redirect to the delete URL.
-        window.location.href = M.cfg.wwwroot + '/mod/assign/overridedelete.php?id=' + this.getOverrideId() +
-            '&sesskey=' + this.getSessionKey() + '&confirm=1'
-            + (recalculate ? '&recalculate=1' : '');
+        const targetUrl = new URL(`${Config.wwwroot}/mod/assign/overridedelete.php`);
+        targetUrl.searchParams.append('id', this.getOverrideId());
+        targetUrl.searchParams.append('sesskey', this.getSessionKey());
+        targetUrl.searchParams.append('confirm', 1);
+
+        if (recalculate) {
+            targetUrl.searchParams.append('recalculate', 1);
+        }
+
+        window.location.href = targetUrl.href;
     }
 }
-
-OverrideDeleteModal.registerModalType();

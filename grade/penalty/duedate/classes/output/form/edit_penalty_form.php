@@ -43,11 +43,7 @@ class edit_penalty_form extends moodleform {
     /** @var int contextid context id where the penalty rules are edited */
     protected int $contextid = 0;
 
-    /**
-     * Define the form.
-     *
-     * @return void
-     */
+    #[\Override]
     public function definition(): void {
         global $PAGE;
         $mform = $this->_form;
@@ -120,13 +116,7 @@ class edit_penalty_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    /**
-     * Validate the form data.
-     *
-     * @param array $data form data
-     * @param array $files form files
-     * @return array of errors
-     */
+    #[\Override]
     public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
 
@@ -339,7 +329,16 @@ class edit_penalty_form extends moodleform {
         $elements[] = $mform->createElement('static', 'name1', 'name2', $actionmenu);
 
         // Group.
-        return [$mform->createElement('group', 'rulegroup',
-            get_string('penaltyrule_group', 'gradepenalty_duedate'), $elements, [''], false), $options];
+        return [
+            $mform->createElement(
+                'group',
+                'rulegroup',
+                get_string('penaltyrule_group', 'gradepenalty_duedate'),
+                $elements,
+                [''],
+                false
+            ),
+            $options,
+        ];
     }
 }

@@ -53,15 +53,14 @@ export const init = (mode, showRecalculationCheckBox) => {
         const confirmMessage = await getConfirmMessage(mode, name);
 
         // Create and show the modal.
-        const modal = await OverrideDeleteModal.create({
+        OverrideDeleteModal.create({
             templateContext: {
                 confirmmessage: confirmMessage,
                 showpenaltyrecalculation: showRecalculationCheckBox,
             },
+            overrideId: button.getAttribute('data-overrideid'),
+            sessionKey: button.getAttribute('data-sesskey'),
         });
-        modal.setOverrideId(button.getAttribute('data-overrideid'));
-        modal.setSessionKey(button.getAttribute('data-sesskey'));
-        modal.show();
     });
 };
 
@@ -72,12 +71,12 @@ export const init = (mode, showRecalculationCheckBox) => {
  * @param {boolean} name The name of the user or group.
  * @returns {Promise<string>} The confirm message.
  */
-const getConfirmMessage = async(mode, name) => {
+const getConfirmMessage = (mode, name) => {
     switch (mode) {
         case "group":
-            return await getString('overridedeletegroupsure', 'assign', name);
+            return getString('overridedeletegroupsure', 'assign', name);
         case "user":
-            return await getString('overridedeleteusersure', 'assign', name);
+            return getString('overridedeleteusersure', 'assign', name);
         default:
             return "";
     }

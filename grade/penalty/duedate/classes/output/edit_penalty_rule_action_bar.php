@@ -16,10 +16,7 @@
 
 namespace gradepenalty_duedate\output;
 
-use core\output\notification;
 use core\output\single_button;
-use core_grades\output\action_bar;
-use gradepenalty_duedate\penalty_rule;
 use core\url;
 
 /**
@@ -30,21 +27,12 @@ use core\url;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_penalty_rule_action_bar extends view_penalty_rule_action_bar {
-    /**
-     * Returns the template for the action bar.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_template(): string {
         return 'gradepenalty_duedate/edit_penalty_rule_action_bar';
     }
 
-    /**
-     * Export the data for the mustache template.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
+    #[\Override]
     public function export_for_template(\renderer_base $output): array {
          $data = [];
 

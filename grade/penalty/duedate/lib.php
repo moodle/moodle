@@ -22,9 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Minimum late for value */
-
-use core_grades\penalty_manager;
 use core\url;
 
 /**
@@ -85,7 +82,7 @@ function gradepenalty_duedate_output_fragment_penalty_rule_form(array $args): st
 /**
  * Define the setting page for the penalty rule.
  */
-function gradepenalty_duedate_get_settings_url(): moodle_url {
+function gradepenalty_duedate_get_settings_url(): url {
     return new url('/grade/penalty/duedate/manage_penalty_rule.php', [
         'contextid' => \core\context\system::instance()->id,
     ]);

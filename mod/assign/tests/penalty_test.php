@@ -134,9 +134,15 @@ final class penalty_test extends \advanced_testcase {
      * @param float $expectedgrade The expected final grade.
      *
      */
-    public function test_apply_penalty($submissiondate, $duedate,
-                                       $useroverrideduedate, $groupoverrideduedate, $extensionduedate,
-                                       $expectedmessages, $expectedgrade): void {
+    public function test_apply_penalty(
+        $submissiondate,
+        $duedate,
+        $useroverrideduedate,
+        $groupoverrideduedate,
+        $extensionduedate,
+        $expectedmessages,
+        $expectedgrade,
+    ): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -194,15 +200,13 @@ final class penalty_test extends \advanced_testcase {
         $this->assertdebuggingcalledcount(count($expectedmessages), $expectedmessages);
 
         // The expected final grade.
-        $gradeitem = grade_item::fetch(
-            [
-                'courseid' => $course->id,
-                'itemtype' => 'mod',
-                'itemmodule' => 'assign',
-                'iteminstance' => $instance->id,
-                'itemnumber' => 0,
-            ]
-        );
+        $gradeitem = grade_item::fetch([
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $instance->id,
+            'itemnumber' => 0,
+        ]);
         $this->assertEquals($expectedgrade, $gradeitem->get_final($student->id)->finalgrade);
     }
 
@@ -245,15 +249,13 @@ final class penalty_test extends \advanced_testcase {
         $this->assertdebuggingcalledcount(2);
 
         // Check the grade.
-        $gradeitem = grade_item::fetch(
-            [
-                'courseid' => $course->id,
-                'itemtype' => 'mod',
-                'itemmodule' => 'assign',
-                'iteminstance' => $instance->id,
-                'itemnumber' => 0,
-            ]
-        );
+        $gradeitem = grade_item::fetch([
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $instance->id,
+            'itemnumber' => 0,
+        ]);
         $this->assertEquals(30, $gradeitem->get_final($student->id)->finalgrade);
 
         // Change the due date.

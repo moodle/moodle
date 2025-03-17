@@ -14,55 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines classes used for plugin info.
- *
- * @package   core
- * @copyright 2024 Catalyst IT Australia Pty Ltd
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace core\plugininfo;
 
 use core\url;
 
 /**
- * Class for admin tool plugins.
+ * Plugin information for the gradepenalty plugin type.
+ *
+ * @package   core
+ * @copyright 2024 Catalyst IT Australia Pty Ltd
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradepenalty extends base {
-
-
-    /**
-     * Allow the plugin to be uninstalled.
-     *
-     * @return true
-     */
+    #[\Override]
     public function is_uninstall_allowed(): bool {
         return true;
     }
 
-    /**
-     * Get the URL to manage the penalty plugin.
-     *
-     * @return url
-     */
+    #[\Override]
     public static function get_manage_url(): url {
         return new url('/grade/penalty/manage_penalty_plugins.php');
     }
 
-    /**
-     * Support disabling the plugin.
-     *
-     * @return bool
-     */
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Get the enabled plugins.
-     *
-     * @return array
-     */
+    #[\Override]
     public static function get_enabled_plugins(): array {
         // List of enabled plugins, string delimited.
         $plugins = get_config('core_grades', 'gradepenalty_enabled_plugins');
@@ -71,13 +51,7 @@ class gradepenalty extends base {
         return $plugins ? array_flip(explode(',', $plugins)) : [];
     }
 
-    /**
-     * Enable or disable a plugin.
-     *
-     * @param string $pluginname The name of the plugin.
-     * @param int $enabled Whether to enable or disable the plugin.
-     * @return bool
-     */
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         // Current enabled plugins.
         $enabledplugins = self::get_enabled_plugins();
@@ -98,11 +72,7 @@ class gradepenalty extends base {
         return true;
     }
 
-    /**
-     * Check if the plugin is enabled.
-     *
-     * @return bool
-     */
+    #[\Override]
     public function is_enabled(): bool {
         return self::is_plugin_enabled($this->name);
     }
@@ -120,21 +90,13 @@ class gradepenalty extends base {
         return key_exists($pluginname, self::get_enabled_plugins());
     }
 
-    /**
-     * Get the settings section name.
-     * Required for the settings page.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_settings_section_name(): string {
         return $this->component;
     }
 
-    /**
-     * Setting url for the plugin.
-     *
-     */
-    public function get_settings_url(): url {
+    #[\Override]
+    public function get_settings_url(): ?url {
         $plugins = get_plugin_list_with_function('gradepenalty', 'get_settings_url');
         if (isset($plugins[$this->component])) {
             return component_callback($this->component, 'get_settings_url');

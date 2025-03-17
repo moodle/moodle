@@ -16,10 +16,6 @@
 
 namespace gradepenalty_duedate;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/../lib.php');
-
 use context;
 use context_system;
 use core\lang_string;

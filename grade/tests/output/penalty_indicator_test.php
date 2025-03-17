@@ -25,10 +25,12 @@ use grade_grade;
  * @package   core_grades
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_grades\output\penalty_indicator
  */
 final class penalty_indicator_test extends advanced_testcase {
     /**
-     * Data provider for test_export_for_template
+     * Data provider for test_export_for_template.
+     *
      * @return array
      */
     public static function export_for_template_provider(): array {
@@ -98,8 +100,6 @@ final class penalty_indicator_test extends advanced_testcase {
      * Test penalty_indicator
      *
      * @dataProvider export_for_template_provider
-     *
-     * @covers \core_grades\output\penalty_indicator
      *
      * @param array $expectedexport The expected export data
      * @param array $icon icon to display before the penalty

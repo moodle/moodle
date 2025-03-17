@@ -49,21 +49,12 @@ class view_penalty_rule_action_bar extends action_bar {
         $this->url = $url;
     }
 
-    /**
-     * Returns the template for the action bar.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_template(): string {
         return 'gradepenalty_duedate/view_penalty_rule_action_bar';
     }
 
-    /**
-     * Export the data for the mustache template.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
+    #[\Override]
     public function export_for_template(\renderer_base $output): array {
          $data = [];
 
@@ -75,8 +66,10 @@ class view_penalty_rule_action_bar extends action_bar {
         // If the context is not system context, show the reset button when rules are overridden.
         if (penalty_rule::is_overridden($contextid)) {
             // Show information about the overridden rules.
-            $info = new notification(get_string('penaltyrule_overridden', 'gradepenalty_duedate'),
-                notification::NOTIFY_INFO);
+            $info = new notification(
+                get_string('penaltyrule_overridden', 'gradepenalty_duedate'),
+                notification::NOTIFY_INFO,
+            );
             $data['info'] = $info->export_for_template($output);
 
             // Reset button.
@@ -89,13 +82,17 @@ class view_penalty_rule_action_bar extends action_bar {
         } else {
             if (penalty_rule::is_inherited($contextid)) {
                 // Show information about the inherited rules.
-                $info = new notification(get_string('penaltyrule_inherited', 'gradepenalty_duedate'),
-                    notification::NOTIFY_INFO);
+                $info = new notification(
+                    get_string('penaltyrule_inherited', 'gradepenalty_duedate'),
+                    notification::NOTIFY_INFO,
+                );
                 $data['info'] = $info->export_for_template($output);
             } else {
                 // No rules from parent context.
-                $info = new notification(get_string('penaltyrule_not_inherited', 'gradepenalty_duedate'),
-                    notification::NOTIFY_INFO);
+                $info = new notification(
+                    get_string('penaltyrule_not_inherited', 'gradepenalty_duedate'),
+                    notification::NOTIFY_INFO,
+                );
                 $data['info'] = $info->export_for_template($output);
             }
         }

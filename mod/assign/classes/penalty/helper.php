@@ -17,7 +17,7 @@
 namespace mod_assign\penalty;
 
 use assign;
-use context_module;
+use core\context\module as context_module;
 use core_grades\penalty_manager;
 use grade_item;
 
@@ -100,8 +100,9 @@ class helper {
 
         // Check if the submission is null.
         if ($submission === null) {
-            debugging('Submission not found for user ' . $userid . ' in assignment ' . $assignid
-                . ' attempt ' . $assigngrade->attemptnumber);
+            debugging(
+                "Submission not found for user {$userid} in assignment {$assignid} attempt {$assigngrade->attemptnumber}",
+            );
             return;
         }
 
@@ -110,8 +111,9 @@ class helper {
 
         // Check if we have valid submission date.
         if (empty($submissiondate)) {
-            debugging('Invalid submission date for user ' . $userid . ' in assignment ' . $assignid
-                . ' attempt ' . $assigngrade->attemptnumber);
+            debugging(
+                "Invalid submission date for user {$userid} in assignment {$assignid} attempt {$assigngrade->attemptnumber}",
+            );
             return;
         }
 
@@ -143,6 +145,7 @@ class helper {
             'penalty',
             $deductedpercentage,
             'assignment = :assignid AND userid = :userid AND attemptnumber = :attemptnumber',
-            ['assignid' => $assignid, 'userid' => $userid, 'attemptnumber' => $assigngrade->attemptnumber]);
+            ['assignid' => $assignid, 'userid' => $userid, 'attemptnumber' => $assigngrade->attemptnumber],
+        );
     }
 }

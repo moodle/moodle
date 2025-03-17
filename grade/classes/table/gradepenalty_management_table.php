@@ -27,22 +27,12 @@ use core\url;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradepenalty_management_table extends plugin_management_table {
-
-    /**
-     * Return the penalty plugin type.
-     *
-     * @return string
-     */
+    #[\Override]
     protected function get_plugintype(): string {
         return 'gradepenalty';
     }
 
-    /**
-     * Get the URL to manage the penalty plugin.
-     *
-     * @param array $params
-     * @return url
-     */
+    #[\Override]
     protected function get_action_url(array $params = []): url {
         return new url('/grade/penalty/manage_penalty_plugins.php', $params);
     }

@@ -68,10 +68,6 @@ final class penalty_calculator_test extends penalty_testcase {
      *
      * @dataProvider calculate_penalty_provider
      *
-     * @covers \gradepenalty_duedate\penalty_calculator::find_effective_penalty_rules
-     * @covers \gradepenalty_duedate\penalty_calculator::calculate_penalty
-     * @covers \gradepenalty_duedate\penalty_calculator::get_penalty_from_rules
-     *
      * @param int $submissiondate The submission date.
      * @param int $duedate The due date.
      * @param int $expectedgrade The expected grade.
@@ -92,8 +88,15 @@ final class penalty_calculator_test extends penalty_testcase {
         gradepenalty::enable_plugin('duedate', true);
 
         // Add a grade.
-        grade_update('mod/assign', $course->id, 'mod', 'assign', $assignment->id, 0,
-            ['userid' => $user->id, 'rawgrade' => 100]);
+        grade_update(
+            'mod/assign',
+            $course->id,
+            'mod',
+            'assign',
+            $assignment->id
+            0,
+            ['userid' => $user->id, 'rawgrade' => 100],
+        );
 
         // Get grade item.
         $gradeitemparams = [
@@ -114,9 +117,6 @@ final class penalty_calculator_test extends penalty_testcase {
 
     /**
      * Rules set at different contexts.
-     *
-     * @covers \gradepenalty_duedate\penalty_calculator::find_effective_penalty_rules
-     * @covers \gradepenalty_duedate\penalty_calculator::get_penalty_from_rules
      */
     public function test_find_effective_penalty_rules(): void {
         global $DB;

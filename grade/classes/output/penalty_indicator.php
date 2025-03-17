@@ -28,7 +28,7 @@ use grade_grade;
  * @copyright  2024 Catalyst IT Australia Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class penalty_indicator implements templatable, renderable {
+class penalty_indicator implements renderable, templatable {
     /**
      * The class constructor.
      *
@@ -65,12 +65,7 @@ class penalty_indicator implements templatable, renderable {
         return 'core_grades/penalty_indicator';
     }
 
-    /**
-     * Export the data for the mustache template.
-     *
-     * @param \renderer_base $output renderer to be used to render the penalty indicator.
-     * @return array
-     */
+    #[\Override]
     public function export_for_template(renderer_base $output): array {
         $penalty = format_float($this->grade->deductedmark, $this->decimals);
         $finalgrade = $this->showfinalgrade ? format_float($this->grade->finalgrade , $this->decimals) : null;

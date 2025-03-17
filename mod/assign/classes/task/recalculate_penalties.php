@@ -16,7 +16,6 @@
 
 namespace mod_assign\task;
 
-use core\exception\moodle_exception;
 use core\task\adhoc_task;
 
 /**
@@ -27,10 +26,7 @@ use core\task\adhoc_task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class recalculate_penalties extends adhoc_task {
-
-    /**
-     * Execute the task.
-     */
+    #[\Override]
     public function execute(): void {
         global $CFG, $DB;
 

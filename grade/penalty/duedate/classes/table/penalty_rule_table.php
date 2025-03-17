@@ -28,7 +28,6 @@ use core_table\sql_table;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class penalty_rule_table extends sql_table {
-
     /** @var context context */
     protected context $context;
 
@@ -62,12 +61,7 @@ class penalty_rule_table extends sql_table {
         $this->collapsible(false);
     }
 
-    /**
-     * Query the DB.
-     *
-     * @param int $pagesize size of page for paginated displayed table.
-     * @param bool $useinitialsbar do you want to use the initials bar.
-     */
+    #[\Override]
     public function query_db($pagesize, $useinitialsbar = true): void {
         global $DB;
         // Contexts to find the penalty rules.

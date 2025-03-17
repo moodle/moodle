@@ -27,14 +27,7 @@ use mod_assign\task\recalculate_penalties;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class penalty_recalculator extends \core_grades\penalty_recalculator {
-
-    /**
-     * Recalculate penalties for the assignment.
-     *
-     * @param context $context the context where the penalty is being recalculated.
-     * @param int $usermodified the user who triggered the recalculation.
-     * @return void
-     */
+    #[\Override]
     public static function recalculate_penalty(context $context, int $usermodified): void {
         global $CFG, $DB;
 

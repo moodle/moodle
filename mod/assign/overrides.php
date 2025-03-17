@@ -233,13 +233,14 @@ foreach ($overrides as $override) {
             $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
 
     // Delete.
-    $deletelink = html_writer::link("#",
+    $deletelink = html_writer::link(
+        "#",
         $OUTPUT->pix_icon('t/delete', get_string('delete')),
         [
             'class' => 'delete-override',
             'data-overrideid' => $override->id,
             'data-sesskey' => sesskey(),
-        ]
+        ],
     );
     $iconstr .= $deletelink;
 
@@ -247,7 +248,7 @@ foreach ($overrides as $override) {
         $usergroupstr = html_writer::link(
             $groupurl->out(true, ['group' => $override->groupid]),
             format_string($override->name, true, ['context' => $context]),
-            ['class' => 'usergroupname']
+            ['class' => 'usergroupname'],
         );
 
         // Move up.
@@ -273,7 +274,7 @@ foreach ($overrides as $override) {
         $usergroupstr = html_writer::link(
             $userurl->out(false, ['id' => $override->userid, 'course' => $course->id]),
             fullname($override),
-            ['class' => 'usergroupname']
+            ['class' => 'usergroupname'],
         );
     }
 
