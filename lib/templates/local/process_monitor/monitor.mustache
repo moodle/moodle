@@ -32,21 +32,23 @@
 }}
 <div
     id="process-monitor-{{uniqid}}"
-    class="popover-process-monitor d-none shadow"
+    class="popover-process-monitor modal shadow"
 >
-    <div class="modal-header " data-region="header">
-        <h5 class="modal-title" data-region="title">
-            {{#title}} {{title}} {{/title}}
-            {{^title}} {{#str}} progress, core {{/str}} {{/title}}
-        </h5>
-        <button
-            type="button"
-            class="btn-close"
-            data-action="hide"
-            aria-label="{{#str}}closebuttontitle, core{{/str}}"
-        ></button>
+    <div class="modal-content">
+        <div class="modal-header " data-region="header">
+            <h5 class="modal-title" data-region="title">
+                {{#title}} {{title}} {{/title}}
+                {{^title}} {{#str}} progress, core {{/str}} {{/title}}
+            </h5>
+            <button
+                type="button"
+                class="btn-close"
+                data-action="hide"
+                aria-label="{{#str}}closebuttontitle, core{{/str}}"
+            ></button>
+        </div>
+        <div data-for="process-list" class="process-list modal-body"></div>
     </div>
-    <div data-for="process-list" class="process-list"></div>
 </div>
 {{#js}}
 require(['core/local/process_monitor/monitor'], function(component) {

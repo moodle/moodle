@@ -9,10 +9,10 @@ $popover-process-monitor-scroll-bg: $gray-100 !default;
     position: fixed;
     right: $popover-process-monitor-right;
     bottom: $popover-process-monitor-bottom;
+    left: initial;
+    top: initial;
     width: $popover-process-monitor-width;
-    background-color: $white;
-    @include border-radius();
-    border: $border-width solid $border-color;
+    height: auto;
 
     .process-list {
         max-height: $popover-process-monitor-max-height;
