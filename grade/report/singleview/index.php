@@ -107,6 +107,7 @@ switch ($itemtype) {
         // display the user select zero state.
         if (is_null($itemid) || !array_key_exists($itemid, grade_report::get_gradable_users($courseid, $currentgroup))) {
             $itemtype = 'user_select';
+            unset($SESSION->gradereport_singleview["useritem-{$context->id}"]);
         }
         break;
     case 'grade_select':
@@ -129,6 +130,7 @@ switch ($itemtype) {
         // The item id (grade item id) cannot be defined, display the grade select zero state.
         if (is_null($itemid) || !array_key_exists($itemid, $gtree->get_items())) {
             $itemtype = 'grade_select';
+            unset($SESSION->gradereport_singleview["gradeitem-{$context->id}"]);
         }
         break;
 }
