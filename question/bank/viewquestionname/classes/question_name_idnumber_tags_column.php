@@ -63,7 +63,7 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
         echo \html_writer::end_tag('div');
 
         // If the question is invalid, show a warning badge.
-        if (!\question_bank::is_question_valid($question)) {
+        if (!\question_bank::is_qtype_usable($question->qtype)) {
             echo \html_writer::span(get_string('invalidquestiontype', 'question', $question->qtype),
                 'badge bg-danger text-white');
         }

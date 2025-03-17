@@ -84,6 +84,23 @@ abstract class question_bank {
     }
 
     /**
+     * Check if a given question type is one that is installed and usable.
+     *
+     * Use this before doing things like rendering buttons/options which will only work for
+     * installed question types.
+     *
+     * When loaded through most of the core_question areas, qtype will still be the uninstalled type, e.g. 'mytype',
+     * but when we get to the quiz pages, it will have been converted to 'missingtype'. So we need to check that
+     * as well here.
+     *
+     * @param string $qtypename e.g. 'multichoice'.
+     * @return bool
+     */
+    public static function is_qtype_usable(string $qtypename): bool {
+        return self::is_qtype_installed($qtypename) && $qtypename !== 'missingtype';
+    }
+
+    /**
      * Get the question type class for a particular question type.
      * @param string $qtypename the question type name. For example 'multichoice' or 'shortanswer'.
      * @param bool $mustexist if false, the missing question type is returned when
@@ -506,23 +523,6 @@ abstract class question_bank {
         $qtypes = $DB->get_fieldset_sql($sql, $params);
         return $qtypes;
     }
-
-    /**
-     * Check if a given question is valid.
-     * This is used in places where we want to do things like render buttons/options which will only work for
-     * valid, installed question types.
-     *
-     * When loaded through most of the core_question areas, qtype will still be the uninstalled type, e.g. 'mytype',
-     * but when we get to the quiz pages, it will have been converted to 'missingtype'. So we need to check that
-     * as well here.
-     *
-     * @param stdClass $questiondata
-     * @return bool
-     */
-    public static function is_question_valid(stdClass $questiondata): bool {
-        return (self::is_qtype_installed($questiondata->qtype) && $questiondata->qtype !== 'missingtype');
-    }
-
 }
 
 

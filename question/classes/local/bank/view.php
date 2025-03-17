@@ -1532,7 +1532,7 @@ class view {
         $attributes = [];
 
         // If the question type is invalid we highlight it red.
-        if (!\question_bank::is_question_valid($question)) {
+        if (!\question_bank::is_qtype_usable($question->qtype)) {
             $rowclasses .= ' table-danger';
         }
         if ($rowclasses) {

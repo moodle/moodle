@@ -924,7 +924,7 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null, $restartversion = null) {
         $question = clone($questiondata);
 
-        if (!\question_bank::is_question_valid($question)) {
+        if (!\question_bank::is_qtype_usable($question->qtype)) {
             return '';
         }
 
