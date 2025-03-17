@@ -143,4 +143,50 @@ final class missingtype_test extends \question_testcase {
         $qtype = new qtype_missingtype();
         $this->assertEquals(array(), $qtype->get_possible_responses(null));
     }
+
+    /**
+     * Test moving a question category from one context to another when it contains questions of an invalid type
+     *
+     * @covers ::question_move_category_to_context
+     */
+    public function test_move_question_category_with_missing_question_types(): void {
+
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course we can move the category to.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a quiz module to attach the question category to.
+        $module1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+
+        // And another one to move things to.
+        $module2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+
+        // Create a question category on the system context.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category([
+            'contextid' => \core\context\module::instance($module1->cmid)->id,
+        ]);
+
+        // Create a question of an invalid type and put it in the category.
+        $question = $generator->create_question('missingtype', null, ['category' => $category->id]);
+
+        // Update the question to set an invalid qtype, as "missingtype" is actually installed and won't fail.
+        $question->qtype = 'invalid';
+        $DB->update_record('question', $question);
+
+        // We just want to assert that no exception is thrown.
+        $this->expectNotToPerformAssertions();
+
+        // Try and move the categories.
+        question_move_category_to_context(
+            $category->id,
+            \core\context\module::instance($module1->cmid)->id,
+            \core\context\module::instance($module2->cmid)->id,
+        );
+
+    }
+
 }

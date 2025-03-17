@@ -705,6 +705,12 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 
     $questionids = $DB->get_records_sql_menu($sql, [$categoryid]);
     foreach ($questionids as $questionid => $qtype) {
+
+        // If the question type is invalid, use "missingtype" so we have a valid qtype to call move_files() on.
+        if (!\question_bank::is_qtype_installed($qtype)) {
+            $qtype = 'missingtype';
+        }
+
         question_bank::get_qtype($qtype)->move_files($questionid, $oldcontextid, $newcontextid);
         // Purge this question from the cache.
         question_bank::notify_question_edited($questionid);
