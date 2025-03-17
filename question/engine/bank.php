@@ -27,12 +27,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\notification;
 use core_cache\application_cache;
 use core_cache\data_source_interface;
 use core_cache\definition;
 use core_question\local\bank\question_version_status;
 use core_question\output\question_version_info;
-
+use qbank_previewquestion\question_preview_options;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -311,6 +312,49 @@ abstract class question_bank {
         $definition = self::get_qtype($questiondata->qtype, false)->make_question($questiondata, false);
         question_version_info::$pendingdefinitions[$definition->id] = $definition;
         return $definition;
+    }
+
+    /**
+     * Render a throw-away preview of a question.
+     *
+     * If the question cannot be rendered (e.g. because it is not installed)
+     * then display a message instead.
+     *
+     * @param question_definition $question a question.
+     * @return string HTML to output.
+     */
+    public static function render_preview_of_question(question_definition $question): string {
+        global $DB, $OUTPUT, $USER;
+
+        if (!self::is_qtype_usable($question->qtype->name())) {
+            // TODO MDL-84902 ideally this would be changed to render at least the qeuestion text.
+            // See, for example, test_render_missing in question/type/missingtype/tests/missingtype_test.php.
+            return $OUTPUT->notification(
+                get_string('invalidquestiontype', 'question', $question->qtype->name()),
+                notification::NOTIFY_WARNING,
+                closebutton: false);
+        }
+
+        // TODO MDL-84902 remove this dependency on a class from qbank_previewquestion plugin.
+        if (!class_exists(question_preview_options::class)) {
+            debugging('Preview cannot be rendered. The standard plugin ' .
+                'qbank_previewquestion plugin has been removed.', DEBUG_DEVELOPER);
+            return '';
+        }
+
+        $quba = question_engine::make_questions_usage_by_activity(
+            'core_question_preview', context_user::instance($USER->id));
+        $options = new question_preview_options($question);
+        $quba->set_preferred_behaviour($options->behaviour);
+
+        $slot = $quba->add_question($question, $options->maxmark);
+        $quba->start_question($slot, $options->variant);
+
+        $transaction = $DB->start_delegated_transaction();
+        question_engine::save_questions_usage_by_activity($quba);
+        $transaction->allow_commit();
+
+        return $quba->render_question($slot, $options, '1');
     }
 
     /**

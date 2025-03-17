@@ -32,23 +32,13 @@ defined('MOODLE_INTERNAL') || die();
  * @return string rendered output
  */
 function qbank_usage_output_fragment_question_usage(array $args): string {
-    global $USER, $PAGE, $CFG, $DB;
+    global $PAGE, $CFG;
     require_once($CFG->dirroot . '/question/engine/bank.php');
     $displaydata = [];
 
     $question = question_bank::load_question($args['questionid']);
-    $quba = question_engine::make_questions_usage_by_activity('core_question_preview', context_user::instance($USER->id));
+    $displaydata['question'] = question_bank::render_preview_of_question($question);
 
-    $options = new \qbank_previewquestion\question_preview_options($question);
-    $quba->set_preferred_behaviour($options->behaviour);
-    $slot = $quba->add_question($question, $options->maxmark);
-    if (get_class($question->qtype) !== qtype_missingtype::class) {
-        $quba->start_question($slot, $options->variant);
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
-        $displaydata['question'] = $quba->render_question($slot, $options, '1');
-    }
     $specificversion = clean_param($args['specificversion'] ?? false, PARAM_BOOL);
     $questionusagetable = new \qbank_usage\tables\question_usage_table('question_usage_table', $question, $specificversion);
     $questionusagetable->baseurl = new moodle_url('');
