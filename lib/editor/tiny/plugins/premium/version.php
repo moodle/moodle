@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2025021401;
+$plugin->version = 2025021402;
 $plugin->requires = 2024100100;
 $plugin->component = 'tiny_premium';

@@ -152,13 +152,6 @@ $capabilities = [
             'user' => CAP_ALLOW,
         ],
     ],
-    'tiny/premium:useaccessibilitychecker' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
-        'archetypes' => [
-            'user' => CAP_ALLOW,
-        ],
-    ],
 ];
 
 $deprecatedcapabilities = [
