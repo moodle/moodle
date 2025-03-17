@@ -32,5 +32,6 @@ $functions = [
         'type'            => 'read',
         'capabilities'    => '',
         'ajax'            => true,
+        'services'        => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];
