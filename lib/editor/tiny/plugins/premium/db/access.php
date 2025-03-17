@@ -33,6 +33,13 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'tiny/premium:accesspremium',
     ],
+    'tiny/premium:usea11ychecker' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
     'tiny/premium:useadvtable' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,

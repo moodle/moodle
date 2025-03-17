@@ -20,6 +20,7 @@ use context;
 use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_configuration;
+use editor_tiny\plugin_with_configuration_for_external;
 use tiny_premium\manager;
 
 /**
@@ -29,7 +30,7 @@ use tiny_premium\manager;
  * @copyright   2023 David Woloszyn <david.woloszyn@moodle.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugininfo extends plugin implements plugin_with_configuration {
+class plugininfo extends plugin implements plugin_with_configuration, plugin_with_configuration_for_external {
 
     #[\Override]
     public static function is_enabled(
@@ -66,6 +67,14 @@ class plugininfo extends plugin implements plugin_with_configuration {
 
         return [
             'premiumplugins' => implode(',', $allowedplugins),
+        ];
+    }
+
+    #[\Override]
+    public static function get_plugin_configuration_for_external(context $context): array {
+        $settings = self::get_plugin_configuration_for_context($context, [], []);
+        return [
+            'premiumplugins' => $settings['premiumplugins'],
         ];
     }
 }

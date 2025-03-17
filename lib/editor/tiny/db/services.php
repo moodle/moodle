@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny text editor version file.
+ * Tiny text editor webservice definitions.
  *
  * @package    editor_tiny
- * @copyright  2021 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright  2025 Moodle Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024121801;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100100;
-$plugin->component = 'editor_tiny';     // Full name of the plugin (used for diagnostics).
+$functions = [
+    'editor_tiny_get_configuration' => [
+        'classname' => \editor_tiny\external\get_configuration::class,
+        'description' => 'Returns the TinyMCE configuration for a context.',
+        'type' => 'read',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+];

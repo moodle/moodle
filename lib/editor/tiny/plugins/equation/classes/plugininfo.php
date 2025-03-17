@@ -30,6 +30,7 @@ use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
 use editor_tiny\plugin_with_configuration;
+use editor_tiny\plugin_with_configuration_for_external;
 use editor_tiny\plugin_with_menuitems;
 use filter_manager;
 
@@ -40,7 +41,11 @@ use filter_manager;
  * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menuitems, plugin_with_configuration {
+class plugininfo extends plugin implements
+    plugin_with_buttons,
+    plugin_with_menuitems,
+    plugin_with_configuration,
+    plugin_with_configuration_for_external {
 
     public static function get_available_buttons(): array {
         return [
@@ -101,6 +106,16 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
             'contextid' => $context->id,
             'libraries' => $libraries,
             'texdocsurl' => get_docs_url('Using_TeX_Notation'),
+        ];
+    }
+
+    #[\Override]
+    public static function get_plugin_configuration_for_external(context $context): array {
+        $settings = self::get_plugin_configuration_for_context($context, [], []);
+        return [
+            'texfilter' => $settings['texfilter'] ? '1' : '0',
+            'libraries' => json_encode($settings['libraries']),
+            'texdocsurl' => $settings['texdocsurl'],
         ];
     }
 }
