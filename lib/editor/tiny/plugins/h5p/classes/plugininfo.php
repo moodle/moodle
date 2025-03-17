@@ -21,6 +21,7 @@ use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
 use editor_tiny\plugin_with_menuitems;
 use editor_tiny\plugin_with_configuration;
+use editor_tiny\plugin_with_configuration_for_external;
 
 /**
  * Tiny H5P plugin for Moodle.
@@ -32,7 +33,8 @@ use editor_tiny\plugin_with_configuration;
 class plugininfo extends plugin implements
     plugin_with_buttons,
     plugin_with_menuitems,
-    plugin_with_configuration {
+    plugin_with_configuration,
+    plugin_with_configuration_for_external {
 
     public static function get_available_buttons(): array {
         return [
@@ -61,6 +63,15 @@ class plugininfo extends plugin implements
         return [
             'permissions' => $permissions,
             'storeinrepo' => true,
+        ];
+    }
+
+    #[\Override]
+    public static function get_plugin_configuration_for_external(context $context): array {
+        $settings = self::get_plugin_configuration_for_context($context, [], []);
+        return [
+            'embedallowed' => $settings['permissions']['embed'] ? '1' : '0',
+            'uploadallowed' => $settings['permissions']['upload'] ? '1' : '0',
         ];
     }
 }

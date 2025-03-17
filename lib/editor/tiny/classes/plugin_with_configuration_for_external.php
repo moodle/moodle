@@ -14,16 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace editor_tiny;
+
+use context;
+
 /**
- * Tiny text editor version file.
+ * An interface representing a plugin with configuration for external functions.
  *
  * @package    editor_tiny
- * @copyright  2021 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright  2025 Moodle Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2024121801;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100100;
-$plugin->component = 'editor_tiny';     // Full name of the plugin (used for diagnostics).
+interface plugin_with_configuration_for_external {
+    /**
+     * Get the configuration for external functions provided by this plugin.
+     *
+     * @param context $context The context that the editor is used within.
+     * @return array
+     */
+    public static function get_plugin_configuration_for_external(context $context): array;
+}

@@ -63,6 +63,18 @@ abstract class plugin {
     }
 
     /**
+     * Whether the plugin is enabled and accessible for external functions.
+     *
+     * @param context $context The context that the editor is used within.
+     * @param array $options Additional options:
+     *    - pluginname: Name of the plugin, without the "tiny_" prefix.
+     * @return bool
+     */
+    public static function is_enabled_for_external(context $context, array $options): bool {
+        return static::is_enabled($context, $options, []);
+    }
+
+    /**
      * Get the plugin information for the plugin.
      *
      * @param context $context The context that the editor is used within

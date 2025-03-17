@@ -51,6 +51,13 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
                 has_capability('tiny/media:use', $context);
     }
 
+    #[\Override]
+    public static function is_enabled_for_external(context $context, array $options): bool {
+        // Assume files are allowed.
+        $options['maxfiles'] = 1;
+        return self::is_enabled($context, $options, []);
+    }
+
     public static function get_available_buttons(): array {
         return [
             'tiny_media/tiny_media_image',

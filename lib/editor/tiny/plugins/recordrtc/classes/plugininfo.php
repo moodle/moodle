@@ -21,6 +21,7 @@ use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
 use editor_tiny\plugin_with_configuration;
+use editor_tiny\plugin_with_configuration_for_external;
 use editor_tiny\plugin_with_menuitems;
 
 /**
@@ -30,7 +31,11 @@ use editor_tiny\plugin_with_menuitems;
  * @copyright  2022 Stevani Andolo <stevani@hotmail.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menuitems, plugin_with_configuration {
+class plugininfo extends plugin implements
+    plugin_with_buttons,
+    plugin_with_menuitems,
+    plugin_with_configuration,
+    plugin_with_configuration_for_external {
 
     #[\Override]
     public static function is_enabled(
@@ -45,6 +50,13 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         // - Doesn't have the correct capability.
         $canhavefiles = !empty($options['maxfiles']);
         return isloggedin() && !isguestuser() && $canhavefiles && has_capability('tiny/recordrtc:use', $context);
+    }
+
+    #[\Override]
+    public static function is_enabled_for_external(context $context, array $options): bool {
+        // Assume files are allowed.
+        $options['maxfiles'] = 1;
+        return self::is_enabled($context, $options, []);
     }
 
     public static function get_available_buttons(): array {
@@ -134,6 +146,28 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
             'audioAllowed' => $audioallowed,
             'screenAllowed' => $screenallowed,
             'pausingAllowed' => $allowedpausing,
+        ];
+    }
+
+    #[\Override]
+    public static function get_plugin_configuration_for_external(context $context): array {
+        $settings = self::get_plugin_configuration_for_context($context, [], []);
+        return [
+            'videoallowed' => $settings['videoAllowed'] ? '1' : '0',
+            'audioallowed' => $settings['audioAllowed'] ? '1' : '0',
+            'screenallowed' => $settings['screenAllowed'] ? '1' : '0',
+            'pausingallowed' => $settings['pausingAllowed'] ? '1' : '0',
+            'allowedtypes' => implode(',', $settings['data']['params']['allowedtypes']),
+            'audiobitrate' => $settings['data']['params']['audiobitrate'],
+            'videobitrate' => $settings['data']['params']['videobitrate'],
+            'screenbitrate' => $settings['data']['params']['screenbitrate'],
+            'audiotimelimit' => $settings['data']['params']['audiotimelimit'],
+            'videotimelimit' => $settings['data']['params']['videotimelimit'],
+            'screentimelimit' => $settings['data']['params']['screentimelimit'],
+            'maxrecsize' => (string) $settings['data']['params']['maxrecsize'],
+            'videoscreenwidth' => $settings['data']['params']['videoscreenwidth'],
+            'videoscreenheight' => $settings['data']['params']['videoscreenheight'],
+            'audiortcformat' => (string) $settings['data']['params']['audiortcformat'],
         ];
     }
 }
