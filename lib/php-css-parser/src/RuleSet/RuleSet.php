@@ -12,8 +12,13 @@ use Sabberworm\CSS\Renderable;
 use Sabberworm\CSS\Rule\Rule;
 
 /**
- * RuleSet is a generic superclass denoting rules. The typical example for rule sets are declaration block.
- * However, unknown At-Rules (like `@font-face`) are also rule sets.
+ * This class is a container for individual 'Rule's.
+ *
+ * The most common form of a rule set is one constrained by a selector, i.e., a `DeclarationBlock`.
+ * However, unknown `AtRule`s (like `@font-face`) are rule sets as well.
+ *
+ * If you want to manipulate a `RuleSet`, use the methods `addRule(Rule $rule)`, `getRules()` and `removeRule($rule)`
+ * (which accepts either a `Rule` or a rule name; optionally suffixed by a dash to remove all related rules).
  */
 abstract class RuleSet implements Renderable, Commentable
 {
@@ -97,7 +102,7 @@ abstract class RuleSet implements Renderable, Commentable
      *
      * @return void
      */
-    public function addRule(Rule $oRule, Rule $oSibling = null)
+    public function addRule(Rule $oRule, $oSibling = null)
     {
         $sRule = $oRule->getRule();
         if (!isset($this->aRules[$sRule])) {
@@ -266,23 +271,24 @@ abstract class RuleSet implements Renderable, Commentable
     /**
      * @return string
      */
-    public function render(OutputFormat $oOutputFormat)
+    protected function renderRules(OutputFormat $oOutputFormat)
     {
         $sResult = '';
         $bIsFirst = true;
+        $oNextLevel = $oOutputFormat->nextLevel();
         foreach ($this->aRules as $aRules) {
             foreach ($aRules as $oRule) {
-                $sRendered = $oOutputFormat->safely(function () use ($oRule, $oOutputFormat) {
-                    return $oRule->render($oOutputFormat->nextLevel());
+                $sRendered = $oNextLevel->safely(function () use ($oRule, $oNextLevel) {
+                    return $oRule->render($oNextLevel);
                 });
                 if ($sRendered === null) {
                     continue;
                 }
                 if ($bIsFirst) {
                     $bIsFirst = false;
-                    $sResult .= $oOutputFormat->nextLevel()->spaceBeforeRules();
+                    $sResult .= $oNextLevel->spaceBeforeRules();
                 } else {
-                    $sResult .= $oOutputFormat->nextLevel()->spaceBetweenRules();
+                    $sResult .= $oNextLevel->spaceBetweenRules();
                 }
                 $sResult .= $sRendered;
             }

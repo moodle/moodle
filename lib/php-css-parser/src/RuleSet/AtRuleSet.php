@@ -6,7 +6,10 @@ use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Property\AtRule;
 
 /**
- * A RuleSet constructed by an unknown at-rule. `@font-face` rules are rendered into AtRuleSet objects.
+ * This class represents rule sets for generic at-rules which are not covered by specific classes, i.e., not
+ * `@import`, `@charset` or `@media`.
+ *
+ * A common example for this is `@font-face`.
  */
 class AtRuleSet extends RuleSet implements AtRule
 {
@@ -57,16 +60,19 @@ class AtRuleSet extends RuleSet implements AtRule
     }
 
     /**
+     * @param OutputFormat|null $oOutputFormat
+     *
      * @return string
      */
-    public function render(OutputFormat $oOutputFormat)
+    public function render($oOutputFormat)
     {
+        $sResult = $oOutputFormat->comments($this);
         $sArgs = $this->sArgs;
         if ($sArgs) {
             $sArgs = ' ' . $sArgs;
         }
-        $sResult = "@{$this->sType}$sArgs{$oOutputFormat->spaceBeforeOpeningBrace()}{";
-        $sResult .= parent::render($oOutputFormat);
+        $sResult .= "@{$this->sType}$sArgs{$oOutputFormat->spaceBeforeOpeningBrace()}{";
+        $sResult .= $this->renderRules($oOutputFormat);
         $sResult .= '}';
         return $sResult;
     }

@@ -12,15 +12,22 @@
     "authors": [
         {
             "name": "Raphael Schweikert"
+        },
+        {
+            "name": "Oliver Klee",
+            "email": "github@oliverklee.de"
+        },
+        {
+            "name": "Jake Hotson",
+            "email": "jake.github@qzdesign.co.uk"
         }
     ],
     "require": {
-        "php": ">=5.6.20",
+        "php": "^5.6.20 || ^7.0.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
         "ext-iconv": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.36",
-        "codacy/coverage": "^1.4"
+        "phpunit/phpunit": "5.7.27 || 6.5.14 || 7.5.20 || 8.5.40"
     },
     "suggest": {
         "ext-mbstring": "for parsing UTF-8 CSS"
@@ -33,6 +40,11 @@
     "autoload-dev": {
         "psr-4": {
             "Sabberworm\\CSS\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "9.0.x-dev"
         }
     },
     "scripts": {
