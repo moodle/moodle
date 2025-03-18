@@ -75,7 +75,21 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         $output .= html_writer::img(self::get_url_for_image($qa, 'bgimage'), get_string('dropbackground', 'qtype_ddmarker'),
                 ['class' => 'dropbackground img-fluid w-100']);
 
-        $output .= html_writer::div('', 'dropzones');
+        // Note, the mobile app implementation of ddimageortext relies on extracting the
+        // blob of places data out of the rendered HTML, which makes it impossible
+        // to clean up this structure of otherwise unnecessary stuff.
+        $placeinfoforjsandmobileapp = [];
+        foreach ($question->places as $placeno => $place) {
+            $varname = $question->field($placeno);
+            [$fieldname, $html] = $this->hidden_field_for_qt_var($qa, $varname, null,
+                ['placeinput', 'place' . $placeno, 'group' . $place->group]);
+            $output .= $html;
+            $placeinfo = (object) (array) $place;
+            $placeinfo->fieldname = $fieldname;
+            $placeinfoforjsandmobileapp[$placeno] = $placeinfo;
+        }
+
+        $output .= html_writer::div('', 'dropzones', ['data-place-info' => json_encode($placeinfoforjsandmobileapp)]);
         $output .= html_writer::end_div();
         $output .= html_writer::start_div($draghomesclass);
 
@@ -107,26 +121,11 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         $output .= $dragimagehomes;
         $output .= html_writer::end_div();
 
-        // Note, the mobile app implementation of ddimageortext relies on extracting the
-        // blob of places data out of the rendered HTML, which makes it impossible
-        // to clean up this structure of otherwise unnecessary stuff.
-        $placeinfoforjsandmobileapp = [];
-        foreach ($question->places as $placeno => $place) {
-            $varname = $question->field($placeno);
-            [$fieldname, $html] = $this->hidden_field_for_qt_var($qa, $varname, null,
-                    ['placeinput', 'place' . $placeno, 'group' . $place->group]);
-            $output .= $html;
-            $placeinfo = (object) (array) $place;
-            $placeinfo->fieldname = $fieldname;
-            $placeinfo->text = format_string($placeinfo->text);
-            $placeinfoforjsandmobileapp[$placeno] = $placeinfo;
-        }
-
         $output .= html_writer::end_div();
 
         $this->page->requires->string_for_js('blank', 'qtype_ddimageortext');
         $this->page->requires->js_call_amd('qtype_ddimageortext/question', 'init',
-                [$qa->get_outer_question_div_unique_id(), $options->readonly, $placeinfoforjsandmobileapp]);
+                [$qa->get_outer_question_div_unique_id(), $options->readonly]);
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::div($question->get_validation_error($qa->get_last_qt_data()), 'validationerror');

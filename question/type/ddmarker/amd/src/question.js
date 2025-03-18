@@ -908,9 +908,10 @@ define([
          *
          * @param {String} containerId the id of the div.que that contains this question.
          * @param {boolean} readOnly whether the question is read-only.
-         * @param {Object[]} visibleDropZones data on any drop zones to draw as part of the feedback.
          */
-        init: function(containerId, readOnly, visibleDropZones) {
+        init: function(containerId, readOnly) {
+            const visibleDropZones = JSON.parse(document.querySelector('#' + containerId + ' .dropzones')
+                .dataset.visibledDropzones);
             questionManager.questions[containerId] =
                 new DragDropMarkersQuestion(containerId, readOnly, visibleDropZones);
             if (!questionManager.eventHandlersInitialised) {
