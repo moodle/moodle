@@ -90,6 +90,13 @@ $USER->grade_last_report[$course->id] = 'overview';
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
 
+$taskindicator = new \core\output\task_indicator(
+    \core_course\task\regrade_final_grades::create($courseid),
+    get_string('recalculatinggrades', 'grades'),
+    get_string('recalculatinggradesadhoc', 'grades'),
+    $PAGE->url,
+);
+
 if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Please note this would be extremely slow if we wanted to implement this properly for all teachers.
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
@@ -115,6 +122,12 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
+        if ($taskindicator->has_task_record()) {
+            echo $OUTPUT->render($taskindicator);
+            echo $OUTPUT->footer();
+            exit;
+        }
+
         if ($user_selector) {
             $renderer = $PAGE->get_renderer('gradereport_overview');
             echo $renderer->graded_users_selector('overview', $course, $userid, $currentgroup, false);
@@ -130,6 +143,12 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
             ' - ' . fullname($report->user), false, false, true, null, null,
             $report->user, $actionbar);
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
+
+        if ($taskindicator->has_task_record()) {
+            echo $OUTPUT->render($taskindicator);
+            echo $OUTPUT->footer();
+            exit;
+        }
 
         if ($user_selector) {
             $renderer = $PAGE->get_renderer('gradereport_overview');
@@ -168,6 +187,11 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
             }
 
             echo $OUTPUT->header();
+            if ($taskindicator->has_task_record()) {
+                echo $OUTPUT->render($taskindicator);
+                echo $OUTPUT->footer();
+                exit;
+            }
             if ($report->fill_table(true, true)) {
                 echo html_writer::tag('h3', get_string('coursesiamtaking', 'grades'));
                 echo '<br />' . $report->print_table(true);
@@ -176,6 +200,11 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
             print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
                 . ' - ' . fullname($report->user), false, false, true, null, null,
                 $report->user, $actionbar);
+            if ($taskindicator->has_task_record()) {
+                echo $OUTPUT->render($taskindicator);
+                echo $OUTPUT->footer();
+                exit;
+            }
             if ($report->fill_table()) {
                 echo '<br />' . $report->print_table(true);
             }
@@ -189,6 +218,11 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     }
 
     if (count($report->teachercourses)) {
+        if ($taskindicator->has_task_record()) {
+            echo $OUTPUT->render($taskindicator);
+            echo $OUTPUT->footer();
+            exit;
+        }
         echo html_writer::tag('h3', get_string('coursesiamteaching', 'grades'));
         $report->print_teacher_table();
     }

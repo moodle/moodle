@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/task_indicator
+
+    Display the stored progress of a background task and optionally redirect when it is complete.
+
+    Example context (json):
+    {
+        "heading": "Regrade in progress",
+        "icon": {
+            "attributes": [
+                {"name": "src", "value": "/pix/i/timer.svg"},
+                {"name": "alt", "value": ""}
+            ]
+        },
+        "message": "Grades are being recalculated due to recent changes.",
+        "progress": {
+            "id": "progressbar_test",
+            "message": "Recalculating grades",
+            "idnumber": "progressbar_test",
+            "class": "stored-progress-bar",
+            "width": "500",
+            "value": "50"
+        }
+    }
+}}
+<div class="task-indicator {{extraclasses}}">
+    <div class="text-center">
+        {{#icon}}
+            <div>
+                {{>core/pix_icon}}
+            </div>
+        {{/icon}}
+        <h2>{{heading}}</h2>
+        <p>{{message}}</p>
+    </div>
+    {{#runurl}}
+        <p class="text-center">
+            <a class="runlink btn btn-primary" href="{{runurl}}" data-idnumber="{{progress.idnumber}}">{{runlabel}}</a>
+        </p>
+    {{/runurl}}
+    {{#progress}}
+        {{>core/progress_bar}}
+    {{/progress}}
+
+
+</div>
+
+{{#js}}
+    require(['core/task_indicator'], function(TaskIndicator) {
+        TaskIndicator.init('{{progress.idnumber}}', '{{redirecturl}}');
+    });
+{{/js}}

@@ -45,6 +45,7 @@ Feature: Teacher can reset H5P activity grades
     And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     Then I should see "Done" in the "Gradebook" "table_row"
     And I press "Continue"
+    And I run all adhoc tasks
     # Confirm that previously saved grades are gone
     And I navigate to "View > Grader report" in the course gradebook
     And I should not see "7.00" in the "First Student" "table_row"

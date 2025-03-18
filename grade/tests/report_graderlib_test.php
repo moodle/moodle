@@ -480,6 +480,9 @@ final class report_graderlib_test extends \advanced_testcase {
         // Set the grade for the second one to 0 (note, you have to do this after creating it,
         // otherwise it doesn't create an ungraded grade item).
         quiz_settings::create($ungradedquiz->id)->get_grade_calculator()->update_quiz_maximum_grade(0);
+        ob_start();
+        $this->run_all_adhoc_tasks();
+        ob_end_clean();
 
         // Set current user.
         $this->setUser($manager);

@@ -204,13 +204,6 @@ if ($mform->is_cancelled()) {
         $url = course_get_url($course, $cw->section, $options);
     }
 
-    // If we need to regrade the course with a progress bar as a result of updating this module,
-    // redirect first to the page that will do this.
-    if (isset($fromform->needsfrontendregrade)) {
-        $url = new moodle_url('/course/modregrade.php', ['id' => $fromform->coursemodule,
-                'url' => $url->out_as_local_url(false)]);
-    }
-
     redirect($url);
     exit;
 

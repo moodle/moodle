@@ -444,7 +444,7 @@ final class grade_category_test extends \grade_base_testcase {
         $category_grade_item = $grade_category->get_grade_item();
 
         // This creates all the grade_grades we need.
-        grade_regrade_final_grades($this->courseid);
+        grade_regrade_final_grades($this->courseid, async: true);
 
         $grade = $DB->get_record('grade_grades', array('itemid'=>$category_grade_item->id, 'userid'=>$this->userid));
         $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
