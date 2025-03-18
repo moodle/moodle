@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'grades', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'core_grades', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   core_grades
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -884,35 +884,6 @@ $string['writinggradebookinfo'] = 'Writing gradebook settings';
 $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
-
-// Deprecated since Moodle 4.2.
-$string['showanalysisicon'] = 'Show grade analysis icon';
-$string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['showanalysisicon_help'] = 'If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['showlocks'] = 'Show locks';
-$string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
-$string['showeyecons'] = 'Show show/hide icons';
-$string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
-$string['showquickfeedback'] = 'Show quick feedback';
-$string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
-
-Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';
-$string['enableajax'] = 'Enable AJAX';
-$string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
-$string['controls'] = 'Controls';
-$string['showactivityicons'] = 'Show activity icons';
-$string['showactivityicons_help'] = 'If enabled, activity icons are shown next to activity names.';
-$string['showcalculations'] = 'Show calculations';
-$string['showcalculations_help'] = 'If enabled, when editing, a calculator icon is shown for each grade item and category with a visual indicator that a grade item is calculated.';
-$string['studentsperpage'] = 'Students per page';
-$string['studentsperpage_help'] = 'This setting determines the number of students displayed per page in the grader report.';
-
-// Deprecated since Moodle 4.4.
-$string['grade'] = 'Grade';
-$string['gradeitemadvanced'] = 'Advanced grade item options';
-$string['gradeitemadvanced_help'] = 'Select all elements that should be displayed as advanced when editing grade items.';
-$string['aria-toggledropdown'] = 'Toggle the following dropdown';
-$string['aria:dropdowngrades'] = 'Grade items found';
 
 // Deprecated since Moodle 4.5.
 $string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';

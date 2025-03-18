@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the strings used by backup
+ * Strings for component 'core_backup', language 'en'.
  *
  * @package   core
  * @copyright 2010 Eloy
@@ -434,10 +434,6 @@ $string['userinfo'] = 'Userinfo';
 $string['module'] = 'Module';
 $string['morecoursesearchresults'] = 'More than {$a} courses found, showing first {$a} results';
 $string['recyclebin_desc'] = 'Note that these settings will also be used for the recycle bin.';
-
-// Deprecated since Moodle 4.4.
-$string['copycourseheading'] = 'Copy a course';
-$string['backupcourse'] = 'Backup course: {$a}';
 
 // Deprecated since Moodle 5.0.
 $string['configgeneralquestionbank'] = 'If enabled the question bank will be included in backups by default. PLEASE NOTE: Disabling this setting will disable the backup of activities which use the question bank, such as the quiz.';

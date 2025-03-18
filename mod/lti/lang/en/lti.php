@@ -33,7 +33,7 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
- * This file contains en_utf8 translation of the Basic LTI module
+ * Strings for component 'mod_lti', language 'en'.
  *
  * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
@@ -604,25 +604,6 @@ $string['useraccountinformation'] = 'User account information';
 $string['userpersonalinformation'] = 'User personal information';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
-
-// Deprecated since Moodle 4.3.
-$string['lti:addmanualinstance'] = 'Add a manually-configured tool';
-$string['edittype'] = 'Edit preconfigured tool';
-$string['deletetype'] = 'Delete preconfigured tool';
-$string['cannot_delete'] = 'You may not delete this tool configuration.';
-$string['cannot_edit'] = 'You may not edit this tool configuration.';
-$string['global_tool_types'] = 'Preconfigured tools';
-$string['course_tool_types'] = 'Course tools';
-$string['using_tool_cartridge'] = 'Using tool cartridge';
-$string['using_tool_configuration'] = 'Using tool configuration: ';
-$string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configuration.';
-$string['custom_config'] = 'Using custom tool configuration.';
-$string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
-$string['tooltypeadded'] = 'Preconfigured tool added';
-$string['tooltypedeleted'] = 'Preconfigured tool deleted';
-$string['tooltypenotdeleted'] = 'Could not delete preconfigured tool';
-$string['tooltypeupdated'] = 'Preconfigured tool updated';
-$string['forced_help'] = 'This setting has been forced in a course or site level tool configuration. You may not change it from this interface.';
 
 // Deprecated since Moodle 4.5.
 $string['selectcontentvalidationerror'] = 'You need to select content for this activity.';

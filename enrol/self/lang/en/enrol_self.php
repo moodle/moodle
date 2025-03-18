@@ -118,22 +118,3 @@ $string['unenrolusers'] = 'Unenrol users';
 $string['usepasswordpolicy'] = 'Use password policy';
 $string['usepasswordpolicy_desc'] = 'Use standard password policy for enrolment keys.';
 $string['privacy:metadata'] = 'The Self enrolment plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.4.
-$string['customwelcomemessage'] = 'Custom welcome message';
-$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
-<ul>
-<li>Course name {$a->coursename}</li>
-<li>Link to user\'s profile page {$a->profileurl}</li>
-<li>User email {$a->email}</li>
-<li>User fullname {$a->fullname}</li>
-<li>User first name {$a->firstname}</li>
-<li>User last name {$a->lastname}</li>
-<li>User course role {$a->courserole}</li>
-</ul>';
-$string['welcometocourse'] = 'Welcome to {$a}';
-$string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
-
-If you have not done so already, you should edit your profile page so that we can learn more about you:
-
-  {$a->profileurl}';

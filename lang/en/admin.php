@@ -1621,40 +1621,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 4.2.
-$string['blockunprotect'] = 'Unprotect';
-
-// Deprecated since Moodle 4.3.
-$string['configenabledevicedetection'] = 'Enables detection of mobiles, smartphones, tablets or default devices (desktop PCs, laptops, etc) for the application of themes and other features.';
-$string['devicedetectregex'] = 'Device detection regular expressions';
-$string['devicedetectregex_desc'] = '<p>By default, Moodle can detect devices of the type default (desktop PCs, laptops, etc), mobile (phones and small hand held devices), tablet (iPads, Android tablets) and legacy (Internet Explorer 6 users).  The theme selector can be used to apply separate themes to all of these.  This setting allows regular expressions that allow the detection of extra device types (these take precedence over the default types).</p>
-<p>For example, you could enter the regular expression \'/(MIDP-1.0|Maemo|Windows CE)/\' to detect some commonly used feature phones add the return value \'featurephone\'.  This adds \'featurephone\' on the theme selector that would allow you to add a theme that would be used on these devices.  Other phones would still use the theme selected for the mobile device type.</p>';
-$string['devicedetectregexexpression'] = 'Regular expression';
-$string['devicedetectregexvalue'] = 'Return value';
-$string['enabledevicedetection'] = 'Enable device detection';
-$string['selectdevice'] = 'Select device';
-$string['selecttheme'] = 'Select theme for {$a} device';
-$string['themenoselected'] = 'No theme selected';
-$string['unsettheme'] = 'Unset theme';
-
-// Deprecated since Moodle 4.4.
-$string['taskdeletecachetext'] = 'Delete old text cache records';
-$string['themesettings'] = 'Theme settings';
-$string['linkcoursesections'] = 'Always link course sections';
-$string['linkcoursesections_help'] = 'Always try to provide a link for course sections. Course sections are usually only shown as links if the course format displays a single section per page. If this setting is enabled a link will always be provided.';
-$string['moodleapp'] = 'Moodle app';
-$string['moodleapp_help'] = '<p>The free Moodle app enables users to access their courses on mobile devices. Additional app features are available with a Pro or Premium app plan.</p>
-<a href="https://moodle.com/mobile-app">Get the Moodle app</a><br />
-<a href="https://apps.moodle.com">Moodle Apps Portal</a>';
-$string['moodlebrandedapp_help'] = '<p>The Branded Moodle app has all the functionality of our free mobile app for Moodle combined with your own custom branding.</p>
-<a href="https://moodle.com/branded-app">About the Branded Moodle app</a>';
-$string['moodlepartners'] = 'Moodle Partners';
-$string['moodlepartners_help'] = '<p>Moodle Partners are services providers that are certified by Moodle HQ to provide high quality Moodle services for your organisation\'s online learning environment.</p>
-<a href="https://moodle.com/about-partners/">About our Partners</a><br />
-<a href="https://moodle.com/partners">Find a Partner</a>';
-$string['moodleservices'] = 'Moodle services';
-$string['moodleservices_help'] = 'Make sure you get the best from your Moodle learning environment by using these Moodle services:';
-
 // Deprecated since Moodle 4.5.
 $string['registration_help'] = 'By registering:
 

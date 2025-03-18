@@ -2453,58 +2453,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 4.3.
-$string['clicktochangeinbrackets'] = '{$a} (Click to change)';
-$string['modshowcmtitle'] = 'Show activity';
-$string['makeavailablecmtitle'] = 'Make activity available';
-$string['moodlenet:sharetyperesource'] = 'resource';
-
-// Deprecated since Moodle 4.4.
-$string['emailpasswordsent'] = 'Thank you for confirming the change of password.
-An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
-The new password was automatically generated - you might like to
-<a href="{$a->link}">change your password</a> to something easier to remember.';
-$string['passwordsenttext'] = '<p>An email has been sent to your address at {$a->email}.</p>
-   <p><b>Please check your email for your new password</b></p>
-   <p>The new password was automatically generated, so you might like to
-   <a href="{$a->link}">change it to something easier to remember</a>.</p>';
-$string['passwordsent'] = 'Password has been sent';
-$string['passwordrecovery'] = 'Yes, help me log in';
-$string['passwordconfirmchange'] = 'Confirm password change';
-$string['passwordnohelp'] = 'No help is available to find your lost password. Please contact your Moodle administrator.';
-$string['showallusers'] = 'Show all users';
-$string['markedthistopic'] = 'This section is highlighted as the current section';
-$string['markthistopic'] = 'Highlight this section as the current section';
-$string['socialheadline'] = 'Social forum - latest topics';
-$string['weekhide'] = 'Hide this week from {$a}';
-$string['weeklyoutline'] = 'Weekly outline';
-$string['weekshow'] = 'Show this week to {$a}';
-$string['topicoutline'] = 'Topic outline';
-$string['topicshow'] = 'Show this topic to {$a}';
-$string['topichide'] = 'Hide this topic from {$a}';
-$string['summary_help'] = 'The idea of a summary is a short text to prepare students for the activities within the topic or week. The text is shown on the course page under the section name.';
-$string['editsummary'] = 'Edit summary';
-$string['format_help'] = 'The course format determines the layout of the course page.
-
-* Single activity - The course contains only one activity or resource.
-* Social - The course is centred around a main forum on the course page. Additional activities and resources can be added using the Social activities block.
-* Custom sections - The course is divided into customisable sections.
-* Weekly sections - The course is divided into sections corresponding to each week, beginning from the course start date.';
-$string['addinganewto'] = 'Adding a new {$a->what} to {$a->to}';
-$string['editinga'] = 'Editing {$a}';
-$string['updatinga'] = 'Updating: {$a}';
-$string['updatingain'] = 'Updating {$a->what} in {$a->in}';
-$string['summaryof'] = 'Summary of {$a}';
-$string['from'] = 'From';
-$string['to'] = 'To';
-$string['viewresults'] = 'View results for {$a}';
-$string['coursesearch'] = 'Search courses';
-$string['coursesearch_help'] = 'You can search for multiple words at once and can refine your search as follows:
-
-* word - find any match of this word within the text
-* +word - only exact matching words will be found
-* -word - don\'t include results containing this word.';
-
 // Deprecated since Moodle 4.5.
 $string['commentscount'] = 'Comments ({$a})';
 $string['datechanged'] = 'Date changed';

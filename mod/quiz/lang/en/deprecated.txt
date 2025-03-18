@@ -1,6 +1,3 @@
-completionminattemptsgroup,mod_quiz
-grade,mod_quiz
-timetaken,mod_quiz
 attemptsdeleted,mod_quiz
 gradesdeleted,mod_quiz
 useroverridesdeleted,mod_quiz

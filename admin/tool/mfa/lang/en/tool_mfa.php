@@ -172,13 +172,6 @@ $string['weight'] = 'Weight';
 $string['yesremove'] = 'Yes, remove';
 $string['yesreplace'] = 'Yes, replace';
 
-// Deprecated since Moodle 4.4.
-$string['created'] = 'Created';
-$string['createdfromip'] = 'Created from IP';
-$string['lastverified'] = 'Last verified';
-$string['revoke'] = 'Revoke';
-$string['setup'] = 'Setup';
-
 // Deprecated since Moodle 5.0.
 $string['inputrequired'] = 'User input';
 $string['setuprequired'] = 'User setup';

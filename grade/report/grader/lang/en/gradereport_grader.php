@@ -53,18 +53,3 @@ $string['useractivitygrade'] = '{$a} grade';
 $string['overriddengrade'] = 'Overridden grade';
 $string['advancedgrading'] = 'View {$a} results';
 $string['cellactions'] = 'Cell actions';
-
-// Deprecated since Moodle 4.2.
-$string['privacy:metadata:preference:grade_report_showanalysisicon'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['privacy:metadata:preference:grade_report_showeyecons'] = 'Whether to display the show/hide icon for each grade for controlling its visibility to the student';
-$string['privacy:metadata:preference:grade_report_showlocks'] = 'Whether to display a lock/unlock icon for each grade for controlling if the grade can be automatically updated by the related activity when editing is turned on';
-$string['privacy:metadata:preference:grade_report_showquickfeedback'] = 'Whether to display a feedback text input box with a dotted border for each grade, allowing the feedback for many grades to be edited at the same time';
-$string['privacy:metadata:preference:grade_report_enableajax'] = 'Whether to add a layer of AJAX functionality to the grader report, simplifying and speeding up common operations';
-$string['useractivityfeedback'] = '{$a} feedback';
-$string['ajaxclicktoclose'] = 'Click this box to remove it';
-$string['ajaxerror'] = 'Error';
-$string['ajaxfailedupdate'] = 'Unable to update [1] for [2]';
-$string['ajaxfieldchanged'] = 'The field you are currently editing has changed, would you like to use the updated value?';
-$string['ajaxchoosescale'] = 'Choose';
-$string['privacy:metadata:preference:grade_report_showactivityicons'] = 'Whether to show the activity icons next to activity names';
-$string['privacy:metadata:preference:grade_report_showcalculations'] = 'Whether a calculator icon for each grade item and category with a visual indicator that a grade item is calculated is displayed or not when editing is turned on';

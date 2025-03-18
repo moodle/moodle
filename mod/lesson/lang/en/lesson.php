@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'lesson', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'mod_lesson', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package mod_lesson
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -605,12 +605,6 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
-
-// Deprecated since 4.3.
-$string['completiontimespent'] = 'Student must do this activity at least for';
-
-// Deprecated since Moodle 4.4.
-$string['grade'] = 'Grade';
 
 // Deprecated since Moodle 4.5.
 $string['useroverridesdeleted'] = 'User overrides deleted';

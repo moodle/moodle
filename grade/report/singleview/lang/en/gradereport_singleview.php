@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Single view
+ * Strings for component 'gradereport_singleview', language 'en'.
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
@@ -85,6 +85,3 @@ $string['selectagrade'] = 'Select a grade item';
 $string['selectgradeitemlink'] = 'Select a grade item';
 $string['singleviewdescription'] = 'In single view you can override or exclude selected grades and bulk insert grades.';
 $string['unsaveddatawarning'] = 'Unsaved data warning';
-
-// Deprecated since Moodle 4.3.
-$string['viewsingleuserorgradeitem'] = 'View all the grades of a single user or grade item.';

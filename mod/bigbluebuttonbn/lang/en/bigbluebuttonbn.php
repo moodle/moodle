@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language File.
+ * Strings for component 'mod_bigbluebuttonbn', language 'en'.
  *
  * @package   mod_bigbluebuttonbn
  * @copyright 2010 onwards, Blindside Networks Inc
@@ -651,26 +651,6 @@ $string['recordingurlnotfound'] = 'The recording URL is invalid.';
 $string['subplugintype_bbbext'] = 'BigBlueButton activity extension';
 $string['subplugintype_bbbext_plural'] = 'BigBlueButton activity extensions';
 
-// Deprecated since Moodle 4.3.
-$string['completionview'] = 'Require view';
-$string['completionview_desc'] = 'View the room';
-$string['completionattendancegroup_help'] = 'Attending the meeting for (n) minutes is required for completion.';
-$string['completionengagementgroup_help'] = 'Active participation during the session is required for completion.';
-// Deprecated since Moodle 4.4.
-$string['acceptdpa'] = 'I understand and accept the data processing agreement';
-$string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity module disabled.';
-$string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
-$string['enablingbigbluebutton'] = 'Enabling BigBlueButton activity';
-$string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">Blindside Networks data processing agreement</a>. Please consult with your own privacy professionals for advice.';
-$string['dpainfonotsigned'] = 'Before enabling this plugin, you must confirm that you have read and accepted the <a href="{$a}">Blindside Networks data processing agreement</a>.';
-$string['config_dpa_note'] = 'Note: In order to meet your data protection obligations, before using a service provider for this plugin, you must ensure that you have read and accepted the service provider\'s data processing agreement. For the default free BigBlueButton service, this is the <a href="{$a}" target="_blank">Blindside Networks data processing agreement</a>. Please consult with your own privacy professionals for advice.';
-$string['view_warning_default_server'] = 'This site is using a <a href="https://bigbluebutton.org/free-bigbluebutton-service-for-moodle/" target="_blank">free BigBlueButton service for Moodle (opens in new window)</a> provided by Blindside Networks with restrictions as follows:
-<ol>
-<li>The maximum length for each session is 60 minutes</li>
-<li>The maximum number of concurrent users per session is 25</li>
-<li>Recordings expire after seven (7) days and are not downloadable</li>
-<li>Student webcams are only visible to the moderator.</li>
-</ol>';
 // Deprecated since Moodle 4.5.
 $string['view_mobile_message_reload_page_creation_time_meeting'] = 'You exceeded 45 seconds on this page. Please refresh the page to join the session.';
 $string['view_mobile_message_groups_not_supported'] = 'This instance is enabled to work with groups but the mobile app doesn\'t yet support it. Please use the web version.';

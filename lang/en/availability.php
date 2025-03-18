@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for availability system.
+ * Strings for component 'core_availability', language 'en'.
  *
  * @package core_availability
  * @copyright 2014 The Open University
@@ -68,6 +68,3 @@ $string['restrictaccess'] = 'Restrict access';
 $string['restrictbygroup'] = 'Add group/grouping access restriction';
 $string['setheading'] = '{$a->number} Set of {$a->count} restriction(s)';
 $string['unknowncondition'] = 'Unknown condition (deleted condition plugin)';
-
-// Deprecated since Moodle 4.3.
-$string['showmore'] = 'Show more';

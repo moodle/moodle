@@ -124,6 +124,3 @@ $string['userfieldinternalfield'] = 'Internal field name';
 $string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
 $string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.3.
-$string['imsobv2p1_service'] = 'Open Badges';

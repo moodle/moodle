@@ -36,7 +36,3 @@ $string['matrixuserid'] = 'Matrix user ID';
 $string['matrix:moderator'] = 'Matrix moderator';
 $string['pluginname'] = 'Matrix';
 $string['privacy:metadata'] = 'The Matrix communication plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.4.
-$string['matrixrefreshtoken'] = 'Refresh token';
-$string['matrixrefreshtoken_desc'] = 'Admin refresh token to be associated with the access token.';

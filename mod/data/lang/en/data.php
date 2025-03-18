@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'data', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'mod_data', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   mod_data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -470,12 +470,6 @@ $string['viewtemplates'] = 'View templates';
 $string['viewtodate'] = 'Read only to';
 $string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data ID provided';
-
-// Deprecated since Moodle 4.2.
-$string['fieldids'] = 'Field ids';
-
-// Deprecated since Moodle 4.3.
-$string['completionentries'] = 'Require entries';
 
 // Deprecated since Moodle 4.5.
 $string['tagsdeleted'] = 'Database tags have been deleted';

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'course', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'core_course', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   core_course
  * @copyright 2018 Adrian Greeve <adriangreeve.com>
@@ -173,9 +173,6 @@ $string['targetlabelteachingyes'] = 'Users with teaching capabilities who have a
 $string['targetlabelteachingno'] = 'Courses at risk of not starting';
 $string['totalactivities'] = 'Activities: {$a}';
 $string['gotosection'] = 'Go to section {$a}';
-
-// Deprecated since Moodle 4.3.
-$string['aria:courseimage'] = 'Course image';
 
 // Deprecated since Moodle 4.5.
 $string['daystakingcourse'] = 'Days taking course';
