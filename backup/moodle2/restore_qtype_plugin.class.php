@@ -197,8 +197,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
                 $this->questionanswercacheid = $newquestionid;
                 // Cache all cleaned answers for a simple text match.
                 foreach ($answers as $answer) {
-                    // MDL-30018: Clean in the same way as {@link xml_writer::xml_safe_utf8()}.
-                    $clean = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is','', $answer->answer); // Clean CTRL chars.
+                    $clean = core_text::trim_ctrl_chars($answer->answer); // Clean CTRL chars.
                     $clean = preg_replace("/\r\n|\r/", "\n", $clean); // Normalize line ending.
                     $this->questionanswercache[$clean] = $answer->id;
                 }
