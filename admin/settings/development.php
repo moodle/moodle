@@ -2,10 +2,10 @@
 
 // * Miscellaneous settings
 
-if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
+// Experimental settings page.
+$ADMIN->add('development', new admin_category('experimental', new lang_string('experimental', 'admin')));
 
-    // Experimental settings page
-    $ADMIN->add('development', new admin_category('experimental', new lang_string('experimental','admin')));
+if ($hassiteconfig) { // Speedup for non-admins, add all caps used on this page.
 
     $temp = new admin_settingpage('experimentalsettings', new lang_string('experimentalsettings', 'admin'));
     //TODO: Re-enable cc-import once re-implemented in 2.0.x

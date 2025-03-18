@@ -6,14 +6,20 @@ $ADMIN->add('users', new admin_category('accounts', new lang_string('accounts', 
 $ADMIN->add('users', new admin_category('roles', new lang_string('permissions', 'role')));
 $ADMIN->add('users', new admin_category('privacy', new lang_string('privacyandpolicies', 'admin')));
 
-if ($hassiteconfig
- or has_capability('moodle/user:create', $systemcontext)
- or has_capability('moodle/user:update', $systemcontext)
- or has_capability('moodle/user:delete', $systemcontext)
- or has_capability('moodle/role:manage', $systemcontext)
- or has_capability('moodle/role:assign', $systemcontext)
- or has_capability('moodle/cohort:manage', $systemcontext)
- or has_capability('moodle/cohort:view', $systemcontext)) { // Speedup for non-admins, add all caps used on this page.
+$capabilities = [
+    'moodle/user:create',
+    'moodle/user:update',
+    'moodle/user:delete',
+    'moodle/role:manage',
+    'moodle/role:assign',
+    'moodle/cohort:manage',
+    'moodle/cohort:view',
+    'moodle/cohort:configurecustomfields',
+    'moodle/role:safeoverride',
+    'moodle/role:override',
+];
+
+if ($hassiteconfig || has_any_capability($capabilities, $systemcontext)) { // Speedup for non-admins, all caps used on this page.
 
 
     // Stuff under the "accounts" subcategory.

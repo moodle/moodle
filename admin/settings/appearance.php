@@ -2,6 +2,8 @@
 
 // This file defines settingpages and externalpages under the "appearance" category
 
+$ADMIN->add('appearance', new admin_category('themes', new lang_string('themesettingscustom', 'admin')));
+
 $capabilities = array(
     'moodle/my:configsyspages',
     'moodle/tag:manage'
@@ -359,7 +361,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         new lang_string('themeselector', 'admin'), $CFG->wwwroot . '/admin/themeselector.php'));
 
     // Settings page for each theme.
-    $ADMIN->add('appearance', new admin_category('themes', new lang_string('themesettingscustom', 'admin')));
     foreach (core_component::get_plugin_list('theme') as $theme => $themedir) {
         $settingspath = "$themedir/settings.php";
         if (file_exists($settingspath)) {
