@@ -5356,8 +5356,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 $potentialhints = $DB->get_records('question_hints',
                         array('questionid' => $newquestionid), '', 'id, hint');
                 foreach ($potentialhints as $potentialhint) {
-                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
-                    $cleanhint = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is','', $potentialhint->hint); // Clean CTRL chars.
+                    $cleanhint = core_text::trim_ctrl_chars($potentialhint->hint); // Clean CTRL chars.
                     $cleanhint = preg_replace("/\r\n|\r/", "\n", $cleanhint); // Normalize line ending.
                     if ($cleanhint === $data->hint) {
                         $newitemid = $data->id;
