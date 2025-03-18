@@ -2063,7 +2063,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'leftalign plugin', 'centeralign status');
-        $servertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
+        $servertable->attributes['class'] = 'table table-striped admintable environmenttable generaltable table-sm';
         $servertable->id = 'serverstatus';
 
         $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -2076,7 +2076,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $othertable->colclasses = array('aligncenter info', 'alignleft report', 'alignleft plugin', 'aligncenter status');
-        $othertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
+        $othertable->attributes['class'] = 'table table-striped admintable environmenttable generaltable table-sm';
         $othertable->id = 'otherserverstatus';
 
         $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -2196,11 +2196,14 @@ class core_admin_renderer extends plugin_renderer_base {
                 // Here we'll store all the feedback found
                 $feedbacktext = '';
                 // Append the feedback if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), "alert {$feedbackclass}");
+                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(),
+                    "alert {$feedbackclass} px-2 py-1 m-1");
                 //Append the bypass if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'alert alert-warning');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(),
+                    'alert alert-warning px-2 py-1 m-1');
                 //Append the restrict if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'alert alert-danger');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(),
+                    'alert alert-danger px-2 py-1 m-1');
 
                 $report .= $feedbacktext;
 
