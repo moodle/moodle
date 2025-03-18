@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.4.8 ===
+* A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text.
+  This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+
 === 4.4.6 ===
 
 * A new core\ip_utils::normalize_internet_address() method is created to
