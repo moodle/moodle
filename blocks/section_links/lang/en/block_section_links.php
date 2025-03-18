@@ -35,5 +35,5 @@ $string['numsections2_help'] = 'Once the number of sections in the course reache
 $string['pluginname'] = 'Section links';
 $string['section_links:addinstance'] = 'Add a new section links block';
 $string['showsectionname'] = 'Display section name';
-$string['showsectionname_help'] = 'Display section name in addition to section number';
+$string['showsectionname_help'] = 'If set to "yes", only the section name is shown, if set to "no", only the section number is shown.';
 $string['privacy:metadata'] = 'The Section links block only shows data stored in other locations.';
