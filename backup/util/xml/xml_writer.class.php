@@ -253,14 +253,14 @@ class xml_writer {
     }
 
     /**
-     * Perform some UTF-8 cleaning, stripping the control chars (\x0-\x1f)
-     * but tabs (\x9), newlines (\xa) and returns (\xd). The delete control
+     * Perform some UTF-8 cleaning, stripping the control chars (\x00-\x1f)
+     * but tabs (\x09), newlines (\xa) and returns (\xd). The delete control
      * char (\x7f) is also included. All them are forbiden in XML 1.0 specs.
      * The expression below seems to be UTF-8 safe too because it simply
      * ignores the rest of characters. Also normalize linefeeds and return chars.
      */
     protected function xml_safe_utf8($content) {
-        $content = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $content ?? ''); // clean CTRL chars.
+        $content = core_text::trim_ctrl_chars($content ?? '');
         $content = preg_replace("/\r\n|\r/", "\n", $content); // Normalize line&return=>line
         return fix_utf8($content);
     }
