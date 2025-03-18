@@ -18,8 +18,9 @@ Feature: Preview a drag-drop onto image question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype         | name            | template |
-      | Test questions   | ddimageortext | Drag onto image | xsection |
+      | questioncategory | qtype         | name                     | template |
+      | Test questions   | ddimageortext | Drag onto image          | xsection |
+      | Test questions   | ddimageortext | Drag to mathjax equation | mathjax  |
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
