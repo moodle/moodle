@@ -1,5 +1,14 @@
 # editor_tiny Upgrade notes
 
+## 5.0dev+
+
+### Added
+
+- New external function `editor_tiny_get_configuration`.
+  TinyMCE subplugins can provide configuration to the new external function by implementing the `plugin_with_configuration_for_external` interface and/or overriding the `is_enabled_for_external` method.
+
+  For more information see [MDL-84353](https://tracker.moodle.org/browse/MDL-84353)
+
 ## 4.5
 
 ### Changed

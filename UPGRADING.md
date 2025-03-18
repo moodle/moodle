@@ -30,6 +30,19 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Also a new core\ip_utils::normalize_internet_address_list() method is created. Based on core\ip_utils::normalize_internet_address(), this method normalizes a string containing a series of Internet addresses.
 
   For more information see [MDL-79121](https://tracker.moodle.org/browse/MDL-79121)
+- The stored progress API has been updated. The `\core\output\stored_progress_bar` class has
+  now has a `store_pending()` method, which will create a record for the stored process, but
+  without a start time or progress percentage.
+  `\core\task\stored_progress_task_trait` has been updated with a new `initialise_stored_progress()` method,
+  which will call `store_pending()` for the task's progress bar. This allows the progress bar to be displayed
+  in a "pending" state, to show that a process has been queued but not started.
+
+  For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+- A new `\core\output\task_indicator` component has been added to display a progress bar and message
+  for a background task using `\core\task\stored_progress_task_trait`. See the "Task indicator"
+  page in the component library for usage details.
+
+  For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
 - The deprecated implementation in course/view.php, which uses the extern_server_course function to handle routing between internal and external courses, can be improved by utilizing the Hook API. This enhancement is essential for a project involving multiple universities, as the Hook API provides a more generalized and flexible approach to route users to external courses from within other plugins.
 
   For more information see [MDL-83473](https://tracker.moodle.org/browse/MDL-83473)
@@ -154,6 +167,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of core_renderer\activity_information()
 
   For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
+- Final removal of `share_activity()` in `core\moodlenet\activity_sender`, please use `share_resource()` instead.
+
+  For more information see [MDL-79086](https://tracker.moodle.org/browse/MDL-79086)
 - Final deprecation of methods `task_base::is_blocking` and `task_base::set_blocking`.
 
   For more information see [MDL-81509](https://tracker.moodle.org/browse/MDL-81509)
@@ -473,6 +489,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_grades
 
+#### Added
+
+- `grade_regrade_final_grades()` now has an additional `async` parameter, which allows full course
+  regrades to be performed in the background. This avoids blocking the user for long periods and
+  while making changes to a large course. The actual regrade is performed using the
+  `\core_course\task\regrade_final_grades` adhoc task, which calls `grade_regrade_final_grades()`
+  with `async: false`.
+
+  For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
 #### Removed
 
 - Removed unused grade_edit_tree_column_select class
@@ -708,6 +734,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - 'Activity' selector in social_activities block has been deleted.
 
   For more information see [MDL-83733](https://tracker.moodle.org/browse/MDL-83733)
+
+### editor_tiny
+
+#### Added
+
+- New external function `editor_tiny_get_configuration`.
+  TinyMCE subplugins can provide configuration to the new external function by implementing the `plugin_with_configuration_for_external` interface and/or overriding the `is_enabled_for_external` method.
+
+  For more information see [MDL-84353](https://tracker.moodle.org/browse/MDL-84353)
 
 ### enrol_guest
 

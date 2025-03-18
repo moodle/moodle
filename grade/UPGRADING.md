@@ -2,6 +2,16 @@
 
 ## 5.0dev+
 
+### Added
+
+- `grade_regrade_final_grades()` now has an additional `async` parameter, which allows full course
+  regrades to be performed in the background. This avoids blocking the user for long periods and
+  while making changes to a large course. The actual regrade is performed using the
+  `\core_course\task\regrade_final_grades` adhoc task, which calls `grade_regrade_final_grades()`
+  with `async: false`.
+
+  For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
 ### Removed
 
 - Removed unused grade_edit_tree_column_select class
