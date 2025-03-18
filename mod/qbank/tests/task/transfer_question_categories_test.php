@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_qbank;
+namespace mod_qbank\task;
 
+use context;
 use context_course;
 use context_coursecat;
 use context_module;
@@ -371,7 +372,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setup_pre_install_data();
 
-        $task = new \mod_qbank\task\transfer_question_categories();
+        $task = new transfer_question_categories();
         $task->execute();
 
         // Site context checks.
@@ -421,10 +422,10 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $coursecat = $DB->get_record('course_categories', ['id' => $newcourse->category]);
 
         // Make sure the new course shortname is a unique name based on the category name and id.
-        $this->assertEquals("{$coursecat->name}-{$coursecat->id}", $newcourse->shortname);
+        $this->assertEquals("$coursecat->name-$coursecat->id", $newcourse->shortname);
 
         // Make sure the new course fullname is based on the category name.
-        $this->assertEquals("Shared teaching resources for category: {$coursecat->name}", $newcourse->fullname);
+        $this->assertEquals("Shared teaching resources for category: $coursecat->name", $newcourse->fullname);
 
         $coursemodinfo = get_fast_modinfo($newcourse);
         $coursecatqbanks = $coursemodinfo->get_instances_of('qbank');
@@ -434,7 +435,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $coursecatqbank = reset($coursecatqbanks);
 
         // Make sure the new module name is what we expect.
-        $this->assertEquals("{$coursecat->name} shared question bank", $coursecatqbank->name);
+        $this->assertEquals("$coursecat->name shared question bank", $coursecatqbank->name);
 
         $coursecatqcats = $DB->get_records('question_categories', ['contextid' => $coursecatqbank->context->id], 'parent ASC');
 
@@ -460,7 +461,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
 
         // The module name should be what we expect.
         $courseqbank = reset($courseqbanks);
-        $this->assertEquals("{$course->shortname} shared question bank", $courseqbank->name);
+        $this->assertEquals("$course->shortname shared question bank", $courseqbank->name);
 
         // Make sure the question categories still exist and that we have a new top one at the new module context.
         $topcat = question_get_top_category($courseqbank->context->id);
@@ -507,7 +508,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $usedunusedcourse = $usedunusedmodinfo->get_course();
         $usedunusedqbanks = $usedunusedmodinfo->get_instances_of('qbank');
         $usedunusedqbank = reset($usedunusedqbanks);
-        $this->assertEquals("{$usedunusedcourse->shortname} shared question bank", $usedunusedqbank->name);
+        $this->assertEquals("$usedunusedcourse->shortname shared question bank", $usedunusedqbank->name);
 
         // We should now only have 3 categories. Top, used and unused.
         $usedunusedcats = $DB->get_records(
@@ -516,13 +517,106 @@ final class transfer_question_categories_test extends \advanced_testcase {
             fields: 'name, id',
         );
         $this->assertCount(3, $usedunusedcats);
-        $this->assertTrue(array_key_exists('top', $usedunusedcats));
-        $this->assertTrue(array_key_exists('Used Question Cat', $usedunusedcats));
-        $this->assertTrue(array_key_exists('Unused Question Cat', $usedunusedcats));
-        $this->assertFalse(array_key_exists('Empty Question Cat', $usedunusedcats));
+        $this->assertArrayHasKey('top', $usedunusedcats);
+        $this->assertArrayHasKey('Used Question Cat', $usedunusedcats);
+        $this->assertArrayHasKey('Unused Question Cat', $usedunusedcats);
+        $this->assertArrayNotHasKey('Empty Question Cat', $usedunusedcats);
 
         $this->assertEmpty($this->get_question_data([$usedunusedcats['top']->id]));
         $this->assertCount(2, $this->get_question_data([$usedunusedcats['Used Question Cat']->id]));
         $this->assertCount(2, $this->get_question_data([$usedunusedcats['Unused Question Cat']->id]));
+    }
+
+    public function test_fix_wrong_parents(): void {
+        $this->resetAfterTest();
+        $this->setup_pre_install_data();
+
+        // Create a second course.
+        $course2 = self::getDataGenerator()->create_course();
+        $course2context = context_course::instance($course2->id);
+
+        // In course2 we build this category structure:
+        // - $course2parentcat -- context $course2context
+        // - - $wrongchild1 -- context $this->coursecontext (wrong)
+        // - - - $wronggrandchild1 -- context $this->coursecontext (same wrong)
+        // - - - $doublywronggrandchild1 -- context $course2context (back right, but not matching its parent)
+        // - - $wrongchild2 -- context non-existant A
+        // - - - $wronggrandchild2 -- context non-existent A
+        // - - - $doublywronggrandchild2 -- context non-existent B.
+        $course2parentcat = $this->create_question_category(
+            'Course2 parent cat', $course2context->id);
+
+        $wrongchild1 = $this->create_question_category(
+            'Child cat with wrong context', $this->coursecontext->id, $course2parentcat->id);
+        $wronggrandchild1 = $this->create_question_category(
+            'Grandchild of child1 in same wrong context', $this->coursecontext->id, $wrongchild1->id);
+        $doublywronggrandchild1 = $this->create_question_category(
+            'Grandchild of child1 back in the right context', $course2context->id, $wrongchild1->id);
+
+        $wrongchild2 = $this->create_question_category(
+            'Child cat with non-existent context', $course2context->id + 1000, $course2parentcat->id);
+        $wronggrandchild2 = $this->create_question_category(
+            'Grandchild of child2 with same non-existent context', $course2context->id + 1000, $wrongchild2->id);
+        $doublywronggrandchild2 = $this->create_question_category(
+            'Grandchild of child2 with different non-existent context', $course2context->id + 2000, $wrongchild2->id);
+
+        // Before we clean up, check that the expected categories are picked up.
+        // $wronggrandchild1 & $wronggrandchild2 are not seen, because their contexts match
+        // their parent's even though both are wrong. They should still get fixed.
+        $task = new transfer_question_categories();
+        $this->assertEquals(
+            [
+                $wrongchild1->id => $wrongchild1->contextid,
+                $doublywronggrandchild1->id => $course2context->id,
+                $wrongchild2->id => $wrongchild2->contextid,
+                $doublywronggrandchild2->id => $doublywronggrandchild2->contextid,
+            ],
+            $task->get_categories_in_a_different_context_to_their_parent(),
+        );
+
+        // Call the cleanup method.
+        $task->fix_wrong_parents();
+
+        // Now we expect no mismatches.
+        $this->assertEmpty($task->get_categories_in_a_different_context_to_their_parent());
+
+        // Assert that the child categories have been moved to the locations they should have been.
+        $this->assert_category_is_in_context_with_parent($this->coursecontext, null, $wrongchild1->id);
+        $this->assert_category_is_in_context_with_parent($this->coursecontext, $wrongchild1, $wronggrandchild1->id);
+        $this->assert_category_is_in_context_with_parent($course2context, null, $doublywronggrandchild1->id);
+        $this->assert_category_is_in_context_with_parent($course2context, $course2parentcat, $wrongchild2->id);
+        $this->assert_category_is_in_context_with_parent($course2context, $wrongchild2, $wronggrandchild2->id);
+        $this->assert_category_is_in_context_with_parent($course2context, $wrongchild2, $doublywronggrandchild2->id);
+    }
+
+    /**
+     * Assert that the category with id $categoryid is in context $expectedcontext, with the given parent.
+     *
+     * @param context $expectedcontext the expected context for the category with id $categoryid.
+     * @param stdClass|null $expectedparent the expected parent category.
+     *      null means the Top category in $expectedcontext.
+     * @param int $categoryid the id of the category to check.
+     */
+    protected function assert_category_is_in_context_with_parent(
+        context $expectedcontext,
+        ?stdClass $expectedparent,
+        int $categoryid,
+    ): void {
+        global $DB;
+
+        if ($expectedparent === null) {
+            $expectedparent = $DB->get_record(
+                'question_categories',
+                ['contextid' => $expectedcontext->id, 'parent' => 0],
+                '*',
+                MUST_EXIST,
+            );
+        }
+
+        $actualcategory = $DB->get_record('question_categories', ['id' => $categoryid]);
+        $this->assertEquals($expectedparent->id, $actualcategory->parent,
+            "Checking parent of category $actualcategory->name.");
+        $this->assertEquals($expectedcontext->id, $actualcategory->contextid,
+            "Checking context of category $actualcategory->name.");
     }
 }
