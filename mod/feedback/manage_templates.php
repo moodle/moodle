@@ -54,7 +54,13 @@ $PAGE->set_url($url);
 $actionbar = new \mod_feedback\output\edit_action_bar($cm->id, $url);
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+
+/** @var \mod_feedback\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_feedback');
+$renderer->set_title(
+        [format_string($feedback->name), format_string($course->fullname)],
+        get_string('templates', 'feedback')
+);
 
 // Process template deletion.
 if ($templateid) {
@@ -76,8 +82,6 @@ $PAGE->activityheader->set_attrs([
     "description" => ''
 ]);
 echo $OUTPUT->header();
-/** @var \mod_feedback\output\renderer $renderer */
-$renderer = $PAGE->get_renderer('mod_feedback');
 if (!$mode) {
     echo $renderer->main_action_bar($actionbar);
 }

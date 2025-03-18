@@ -47,4 +47,18 @@ class renderer extends plugin_renderer_base {
     public function create_template_form(int $id) {
         return $this->render_from_template('mod_feedback/create_template', ['id' => $id]);
     }
+
+    /**
+     * Builds the feedback page title.
+     *
+     * @param array $titleparts the different parts to add to the title.
+     * @param string $pagetitle the page title to add to the rest of the parts. Empty by default.
+     */
+    public function set_title(array $titleparts, string $pagetitle = '') {
+        $title = implode(\moodle_page::TITLE_SEPARATOR, $titleparts);
+        if (!empty($pagetitle)) {
+            $title = $pagetitle . ': ' . $title;
+        }
+        $this->page->set_title($title);
+    }
 }
