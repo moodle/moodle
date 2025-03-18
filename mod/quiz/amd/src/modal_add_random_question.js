@@ -323,13 +323,13 @@ export default class ModalAddRandomQuestion extends Modal {
                                         'addOnPage': ModalQuizQuestionBank.getAddOnPageId(),
                                         'templateContext': {hidden: ModalQuizQuestionBank.showNewCategory},
                                         'showNewCategory': ModalQuizQuestionBank.showNewCategory,
-                                    }).catch(Notification.exception);
-
-                                    return ModalQuizQuestionBank;
+                                    })
+                                    .then(ModalQuizQuestionBank.destroy())
+                                    .catch(Notification.exception);
                                 }
                             });
-                        })
-                        .then((ModalQuizQuestionBank) => ModalQuizQuestionBank.destroy());
+                            return ModalQuizQuestionBank;
+                        });
                 });
 
                 this.getModal().on('click', SELECTORS.GO_BACK_BUTTON, (e) => {
