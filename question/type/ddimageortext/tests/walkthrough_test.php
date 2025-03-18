@@ -68,6 +68,8 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(null);
 
         $this->check_current_output(
+            new \question_pattern_expectation(
+                '~<div class="dropzones" data-place-info=~'),
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
             $this->get_contains_drag_image_home_expectation(3, 1, 2),
