@@ -260,6 +260,8 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     // Get record from sql_internal_table_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
+        $anonymoussql = !has_capability('moodle/site:viewanonymousevents', $context) ? 'AND l.anonymous = 0' : '';
+
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(DISTINCT l.timecreated) AS count
                   FROM {user} u
                   JOIN {role_assignments} ra ON u.id = ra.userid AND ra.contextid $relatedctxsql AND ra.roleid = :roleid
@@ -268,7 +270,7 @@ if (!empty($instanceid) && !empty($roleid)) {
                      ON l.contextinstanceid = :instanceid
                        AND l.timecreated > :timefrom" . $crudsql ."
                        AND l.edulevel = :edulevel
-                       AND l.anonymous = 0
+                       " . $anonymoussql . "
                        AND l.contextlevel = :contextlevel
                        AND (l.origin = 'web' OR l.origin = 'ws')
                        AND l.userid = ra.userid";
