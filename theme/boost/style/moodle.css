@@ -39094,6 +39094,7 @@ div.editor_atto_toolbar button .icon {
   display: flex;
 }
 .moodlenet-share-dialog .modal-header .moodlenet-share-moodlenetinfo .moodlenet-logo .icon {
+  max-width: initial;
   width: auto;
   height: 1.3rem;
 }
@@ -39155,7 +39156,7 @@ div.editor_atto_toolbar button .icon {
 }
 .moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status span.status-icon .icon {
   font-size: 8rem;
-  width: auto;
+  max-width: initial;
   margin: 0;
 }
 .moodlenet-share-dialog .modal-footer .moodlenet-share-to {
