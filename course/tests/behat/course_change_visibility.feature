@@ -85,6 +85,7 @@ Feature: We can change the visibility of courses in the management interface.
     And category in management listing should be visible "CAT1"
     And course in management listing should be dimmed "C1"
     And I toggle visibility of category "CAT1" in management listing
+    And I click on "Hide" "button" in the "Hide category?" "dialogue"
     And a new page should not have loaded since I started watching
     And category in management listing should be dimmed "CAT1"
     And course in management listing should be dimmed "C1"
@@ -93,6 +94,7 @@ Feature: We can change the visibility of courses in the management interface.
     And category in management listing should be visible "CAT1"
     And course in management listing should be dimmed "C1"
     And I toggle visibility of category "CAT1" in management listing
+    And I click on "Hide" "button" in the "Hide category?" "dialogue"
     And I toggle visibility of course "C1" in management listing
     And I select "Courses" from the "Viewing" singleselect
     And a new page should have loaded since I started watching
