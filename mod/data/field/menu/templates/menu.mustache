@@ -43,11 +43,9 @@
 <fieldset>
     {{> mod_data/fields/basicfields }}
     {{> mod_data/fields/requiredfield }}
-    <div class="form-group row fitem">
-        <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
-            <label for="param1">{{#str}}fieldoptions, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
+    <div class="row mb-2 fitem">
+        <label class="col-md-3 col-form-label" for="param1">{{#str}}fieldoptions, data{{/str}}</label>
+        <div class="col-md-9 felement">
             <textarea class="optionstextarea form-control" name="param1" id="param1" cols="80" rows="10">{{param1}}</textarea>
         </div>
     </div>

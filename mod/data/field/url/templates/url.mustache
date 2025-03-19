@@ -46,31 +46,23 @@
 
 <fieldset>
     {{> mod_data/fields/basicfields }}
-    <div class="form-group row fitem">
-        <div class="col-md-3 d-flex pb-0 pe-md-0">
-            <label for="required" class="mb-0">{{#str}}autolinkurl, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
-            <input class="requiredfield form-check-input" type="checkbox" name="param1" id="param1" {{#param1}}
-                   checked="checked" {{/param1}}>
+    <div class="row mb-2 fitem">
+        <label for="required" class="col-auto col-md-3 col-form-label">{{#str}}autolinkurl, data{{/str}}</label>
+        <div class="col col-md-9 align-self-center felement">
+            <input class="requiredfield form-check" type="checkbox" name="param1" id="param1" {{#param1}} checked="checked" {{/param1}}>
         </div>
     </div>
     {{> mod_data/fields/requiredfield }}
-    <div class="form-group row fitem">
-        <div class="col-md-3 d-flex pb-0 pe-md-0">
-            <label for="param3">{{#str}}openlinkinnewwindow, datafield_url{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
-            <input class="requiredfield form-check-input" type="checkbox" name="param3" id="param3" {{#param3}}
-                   checked="checked" {{/param3}}>
+    <div class="row mb-2 fitem">
+        <label for="param3" class="col-auto col-md-3 col-form-label">{{#str}}openlinkinnewwindow, datafield_url{{/str}}</label>
+        <div class="col col-md-9 align-self-center felement">
+            <input class="requiredfield form-check" type="checkbox" name="param3" id="param3" {{#param3}} checked="checked" {{/param3}}>
         </div>
     </div>
-    <div class="form-group row fitem">
-        <div class="col-md-3 col-form-label">
-            <label for="forcelinkname">{{#str}}forcelinkname, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
-            <input class="forcelinkname form-control" type="text" name="param2" id="forcelinkname" value="{{param2}}">
+    <div class="row mb-2 fitem">
+        <label for="forcelinkname" class="col-md-3 col-form-label">{{#str}}forcelinkname, data{{/str}}</label>
+        <div class="col-md-9 felement">
+            <input class="fieldname form-control" type="text" name="param2" id="forcelinkname" value="{{param2}}">
         </div>
     </div>
 </fieldset>

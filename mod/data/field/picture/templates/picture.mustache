@@ -54,40 +54,34 @@
 <fieldset>
     {{> mod_data/fields/basicfields }}
     {{> mod_data/fields/requiredfield }}
-    <div class="form-group row fitem">
-        <div class="col-md-3">
-            <label for="param1">{{#str}}fieldwidthsingleview, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
+    <div class="row mb-2 fitem">
+        <label for="param1" class="col-md-3 col-form-label">{{#str}}fieldwidthsingleview, data{{/str}}</label>
+        <div class="col-md-9 felement">
             <input class="picturefieldsize form-control" type="text" name="param1" id="param1" value="{{param1}}">
         </div>
     </div>
-    <div class="form-group row fitem">
-        <div class="col-md-3"><label for="param2">{{#str}}fieldheightsingleview, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
+    <div class="row mb-2 fitem">
+        <label for="param2" class="col-md-3 col-form-label">{{#str}}fieldheightsingleview, data{{/str}}</label>
+        <div class="col-md-9 felement">
             <input class="picturefieldsize form-control" type="text" name="param2" id="param2" value="{{param2}}">
         </div>
     </div>
-    <div class="form-group row fitem">
-        <div class="col-md-3"><label for="param4">{{#str}}fieldwidthlistview, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
+    <div class="row mb-2 fitem">
+        <label for="param4" class="col-md-3 col-form-label">{{#str}}fieldwidthlistview, data{{/str}}</label>
+        <div class="col-md-9 felement">
             <input class="picturefieldsize form-control" type="text" name="param4" id="param4" value="{{param4}}">
         </div>
     </div>
-    <div class="form-group row fitem">
-        <div class="col-md-3"><label for="param5">{{#str}}fieldheightlistview, data{{/str}}</label>
-        </div>
-        <div class="col-md-9 form-inline align-items-start felement">
+    <div class="row mb-2 fitem">
+        <label for="param5" class="col-md-3 col-form-label">{{#str}}fieldheightlistview, data{{/str}}</label>
+        <div class="col-md-9 felement">
             <input class="picturefieldsize form-control" type="text" name="param5" id="param5" value="{{param5}}">
         </div>
     </div>
-    <div class="form-group row fitem">
-        <div class="col-md-3"><label for="param3" class="mb-0">
-            {{#str}}maxsize, data{{/str}}</label></div>
-        <div class="col-md-9 form-inline align-items-start felement">
-            <select id="param3" class="select form-select form-control" name="param3">
+    <div class="row mb-2 fitem">
+        <label for="param3"  class="col-md-3 col-form-label">{{#str}}maxsize, data{{/str}}</label>
+        <div class="col-md-9 felement">
+            <select id="param3" class="select form-select" name="param3">
                 {{#options}}
                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                 {{/options}}

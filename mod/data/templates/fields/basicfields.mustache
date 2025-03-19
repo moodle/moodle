@@ -36,19 +36,15 @@
     }
 }}
 
-<div class="form-group row fitem">
-    <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
-        <label for="name" class="mb-0">{{#str}}fieldname, data{{/str}}</label>
-    </div>
-    <div class="col-md-9 form-inline align-items-start felement">
+<div class="row mb-2 fitem">
+    <label for="name" class="col-md-3 col-form-label">{{#str}}fieldname, data{{/str}}</label>
+    <div class="col-md-9 felement">
         <input class="fieldname form-control" type="text" name="name" id="name" value="{{name}}">
     </div>
 </div>
-<div class="form-group row fitem">
-    <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
-        <label for="description" class="mb-0">{{#str}}fielddescription, data{{/str}}</label>
-    </div>
-    <div class="col-md-9 form-inline align-items-start felement">
+<div class="row mb-2 fitem">
+    <label for="description" class="col-md-3 col-form-label">{{#str}}fielddescription, data{{/str}}</label>
+    <div class="col-md-9 felement">
         <input class="fielddescription form-control" type="text" name="description" id="description" value="{{description}}">
     </div>
 </div>

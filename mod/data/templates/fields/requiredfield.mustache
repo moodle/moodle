@@ -34,12 +34,10 @@
     }
 }}
 
-<div class="form-group row fitem">
-    <div class="col-md-3 d-flex pb-0 pe-md-0">
-        <label for="required" class="mb-0">{{#str}}requiredfield, data{{/str}}</label>
-    </div>
-    <div class="col-md-9 form-inline align-items-start felement">
-        <input class="requiredfield form-check-input" type="checkbox" name="required" id="required" {{#required}}
-               checked="checked" {{/required}}>
+<div class="row mb-2 fitem">
+    <label for="required" class="col-auto col-md-3 col-form-label">{{#str}}requiredfield, data{{/str}}</label>
+    <div class="col col-md-9 align-self-center felement">
+        <input class="requiredfield form-check" type="checkbox" name="required" id="required" {{#required}}
+            checked="checked" {{/required}}>
     </div>
 </div>
