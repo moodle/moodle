@@ -95,6 +95,7 @@ require_once $__dir . '/HTMLPurifier/AttrDef/CSS/Length.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/CSS/ListStyle.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/CSS/Multiple.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/CSS/Percentage.php';
+require_once $__dir . '/HTMLPurifier/AttrDef/CSS/Ratio.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/CSS/TextDecoration.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/CSS/URI.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Bool.php';

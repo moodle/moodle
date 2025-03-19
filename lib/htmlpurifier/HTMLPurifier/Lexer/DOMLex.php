@@ -72,6 +72,9 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         if ($config->get('Core.AllowParseManyTags') && defined('LIBXML_PARSEHUGE')) {
             $options |= LIBXML_PARSEHUGE;
         }
+        if ($config->get('Core.RemoveBlanks') && defined('LIBXML_NOBLANKS')) {
+            $options |= LIBXML_NOBLANKS;
+        }
 
         set_error_handler(array($this, 'muteErrorHandler'));
         // loadHTML() fails on PHP 5.3 when second parameter is given
