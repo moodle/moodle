@@ -75,7 +75,7 @@ class question_bank_helper {
     /**
      * Maximum length for the question bank name database field.
      */
-    public const BANK_NAME_MAX_LENGTH = 255;
+    public const BANK_NAME_MAX_LENGTH = 1333;
 
     /**
      * Modules that share questions via FEATURE_PUBLISHES_QUESTIONS.
