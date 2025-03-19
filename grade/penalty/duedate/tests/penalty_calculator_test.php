@@ -93,7 +93,7 @@ final class penalty_calculator_test extends penalty_testcase {
             $course->id,
             'mod',
             'assign',
-            $assignment->id
+            $assignment->id,
             0,
             ['userid' => $user->id, 'rawgrade' => 100],
         );
