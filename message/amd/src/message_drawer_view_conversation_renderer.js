@@ -35,6 +35,7 @@ define(
     'core/user_date',
     'core_message/message_drawer_view_conversation_constants',
     'core/aria',
+    'core/truncate',
 ],
 function(
     $,
@@ -43,7 +44,8 @@ function(
     Templates,
     UserDate,
     Constants,
-    Aria
+    Aria,
+    Truncate,
 ) {
     var SELECTORS = Constants.SELECTORS;
     var TEMPLATES = Constants.TEMPLATES;
@@ -1153,13 +1155,14 @@ function(
      */
     var renderConfirmBlockUser = function(header, body, footer, user) {
         if (user) {
+            const username = truncateUsername(user.fullname);
             if (user.canmessageevenifblocked) {
-                return Str.get_string('cantblockuser', 'core_message', user.fullname)
+                return Str.get_string('cantblockuser', 'core_message', username)
                     .then(function(string) {
                         return showConfirmDialogue(header, body, footer, [], string, '', false, false, true);
                     });
             } else {
-                return Str.get_string('blockuserconfirm', 'core_message', user.fullname)
+                return Str.get_string('blockuserconfirm', 'core_message', username)
                     .then(function(string) {
                         return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_BLOCK], string, '', true, false);
                     });
@@ -1180,7 +1183,7 @@ function(
      */
     var renderConfirmUnblockUser = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('unblockuserconfirm', 'core_message', user.fullname)
+            return Str.get_string('unblockuserconfirm', 'core_message', truncateUsername(user.fullname))
                 .then(function(string) {
                     return showConfirmDialogue(header, body, footer, [SELECTORS.ACTION_CONFIRM_UNBLOCK], string, '', true, false);
                 });
@@ -1200,7 +1203,13 @@ function(
      */
     var renderConfirmAddContact = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('addcontactconfirm', 'core_message', user.fullname)
+            // Truncate long usernames.
+            const userFullName = Truncate.truncate(user.fullname, {
+                length: 30,
+                words: true,
+                ellipsis: '...'
+            });
+            return Str.get_string('addcontactconfirm', 'core_message', userFullName)
                 .then(function(string) {
                     return showConfirmDialogue(
                         header,
@@ -1229,7 +1238,7 @@ function(
      */
     var renderConfirmRemoveContact = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('removecontactconfirm', 'core_message', user.fullname)
+            return Str.get_string('removecontactconfirm', 'core_message', truncateUsername(user.fullname))
                 .then(function(string) {
                     return showConfirmDialogue(
                         header,
@@ -1334,12 +1343,12 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {Bool} user The other user object.
+     * @param {Object} user The other user object.
      * @return {Object} jQuery promise
      */
     var renderConfirmContactRequest = function(header, body, footer, user) {
         if (user) {
-            return Str.get_string('userwouldliketocontactyou', 'core_message', user.fullname)
+            return Str.get_string('userwouldliketocontactyou', 'core_message', truncateUsername(user.fullname))
                 .then(function(string) {
                     var buttonSelectors = [
                         SELECTORS.ACTION_ACCEPT_CONTACT_REQUEST,
@@ -1641,13 +1650,13 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {Object} userFullName Full name of the other user.
+     * @param {String} userFullName Full name of the other user.
      * @return {Object|true} jQuery promise
      */
     var renderContactRequestSent = function(header, body, footer, userFullName) {
         var container = getContactRequestSentContainer(body);
         if (userFullName) {
-            return Str.get_string('yourcontactrequestpending', 'core_message', userFullName)
+            return Str.get_string('yourcontactrequestpending', 'core_message', truncateUsername(userFullName))
                 .then(function(string) {
                     container.find(SELECTORS.TEXT).text(string);
                     container.removeClass('hidden');
@@ -1752,6 +1761,20 @@ function(
                 return;
             })
             .catch(Notification.exception);
+    };
+
+    /**
+     * Truncate long usernames.
+     *
+     * @param {String} username Text to truncate.
+     * @return {String} Truncated string.
+     */
+    var truncateUsername = function(username) {
+        return Truncate.truncate(username, {
+            length: 30,
+            words: true,
+            ellipsis: '...'
+        });
     };
 
     return {
