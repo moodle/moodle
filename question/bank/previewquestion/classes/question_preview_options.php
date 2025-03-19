@@ -47,7 +47,8 @@ class question_preview_options extends question_display_options {
 
     /**
      * Constructor.
-     * @param \stdClass $question
+     *
+     * @param \stdClass|\question_definition $question only the ->defaultmark field is used.
      */
     public function __construct($question) {
         $this->behaviour = 'deferredfeedback';

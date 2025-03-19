@@ -218,6 +218,7 @@ $string['invalidcontextinhasanyquestions'] = 'Invalid context passed to question
 $string['invalidgrade'] = 'Grades ({$a}) do not match grade options - question skipped.';
 $string['invalidgradequestion'] = 'Grades ({$a->grades}) do not match grade options - question \'{$a->question}\' skipped.';
 $string['invalidpenalty'] = 'Invalid penalty';
+$string['invalidquestiontype'] = 'Invalid question type: {$a}';
 $string['invalidwizardpage'] = 'Incorrect or no wizard page specified!';
 $string['lastmodifiedby'] = 'Last modified by';
 $string['lasttry'] = 'Last try';
