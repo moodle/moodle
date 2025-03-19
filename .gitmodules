@@ -59,6 +59,10 @@
 	path = question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_405_STABLE
+[submodule "question/type/oumultiresponse"]
+	path = question/type/oumultiresponse
+	url = https://github.com/moodleou/moodle-qtype_oumultiresponse
+	branch = main
 [submodule "question/type/wordselect"]
 	path = question/type/wordselect
 	url = https://github.com/marcusgreen/moodle-qtype_wordselect
