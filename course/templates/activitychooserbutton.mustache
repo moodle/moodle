@@ -23,6 +23,7 @@
     {
         "hasactionlinks": false,
         "sectionnum": 0,
+        "sectionname": "Section example",
         "modid": 1,
         "activityname": "Activity example",
         "sectionreturn": 0
@@ -43,7 +44,12 @@
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
+            {{#modid}}
             aria-label="{{#str}}insertcontentbefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
+            {{/modid}}
+            {{^modid}}
+            aria-label="{{#str}}insertcontentsection, core, { "sectionname": {{#quote}} {{sectionname}} {{/quote}} } {{/str}}"
+            {{/modid}}
             tabindex="0"
             title="{{#str}}addcontent, core{{/str}}"
     >
