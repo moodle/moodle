@@ -16,8 +16,8 @@
 
 namespace core\session;
 
-use context_course;
-use context_system;
+use core\context\course as context_course;
+use core\context\system as context_system;
 
 /**
  * Unit tests for loginas_helper class.
@@ -29,7 +29,6 @@ use context_system;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class loginas_helper_test extends \advanced_testcase {
-
     /**
      * Tests various users wanting to login as other users of the same role.
      */

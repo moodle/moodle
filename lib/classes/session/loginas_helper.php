@@ -16,11 +16,11 @@
 
 namespace core\session;
 
-use context;
-use stdClass;
-use context_course;
-use context_system;
+use core\context;
+use core\context\course as context_course;
+use core\context\system as context_system;
 use core\session\manager as sessionmanager;
+use stdClass;
 
 /**
  * Helper functions for the 'login as' feature.
@@ -31,7 +31,6 @@ use core\session\manager as sessionmanager;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class loginas_helper {
-
     /**
      * Determine which context a user can login as another user for, given the requested target user and course. If the
      * person cannot login at all, then null will be returned.
@@ -47,7 +46,6 @@ class loginas_helper {
         stdClass $loginasuser,
         ?stdClass $course = null
     ): ?context {
-
         $systemcontext = context_system::instance();
 
         if (
