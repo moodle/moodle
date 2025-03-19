@@ -19,9 +19,9 @@ class Mustache_Exception_SyntaxException extends LogicException implements Musta
     /**
      * @param string    $msg
      * @param array     $token
-     * @param Exception $previous
+     * @param ?Exception $previous
      */
-    public function __construct($msg, array $token, Exception $previous = null)
+    public function __construct($msg, array $token, ?Exception $previous = null)
     {
         $this->token = $token;
         if (version_compare(PHP_VERSION, '5.3.0', '>=')) {

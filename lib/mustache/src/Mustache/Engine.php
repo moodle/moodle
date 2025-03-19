@@ -731,11 +731,11 @@ class Mustache_Engine
      * @see Mustache_Engine::loadLambda
      *
      * @param string|Mustache_Source $source
-     * @param Mustache_Cache         $cache  (default: null)
+     * @param ?Mustache_Cache         $cache  (default: null)
      *
      * @return Mustache_Template
      */
-    private function loadSource($source, Mustache_Cache $cache = null)
+    private function loadSource($source, ?Mustache_Cache $cache = null)
     {
         $className = $this->getTemplateClassName($source);
 
