@@ -14,20 +14,6 @@
     text-align: left;
 }
 
-.environmenttable {
-    .warn {
-        @extend .alert-warning;
-    }
-
-    .error {
-        @extend .alert-danger;
-    }
-
-    .ok {
-        @extend .alert-success;
-    }
-}
-
 .path-admin .admintable.environmenttable .name,
 .path-admin .admintable.environmenttable .info,
 .path-admin #assignrole .admintable .role,

@@ -18152,7 +18152,7 @@ textarea.form-control-lg {
   --bs-alert-link-color: var(--bs-secondary-text-emphasis);
 }
 
-.alert-success, .environmenttable .ok {
+.alert-success {
   --bs-alert-color: var(--bs-success-text-emphasis);
   --bs-alert-bg: var(--bs-success-bg-subtle);
   --bs-alert-border-color: var(--bs-success-border-subtle);
@@ -18166,14 +18166,14 @@ textarea.form-control-lg {
   --bs-alert-link-color: var(--bs-info-text-emphasis);
 }
 
-.alert-warning, .environmenttable .warn {
+.alert-warning {
   --bs-alert-color: var(--bs-warning-text-emphasis);
   --bs-alert-bg: var(--bs-warning-bg-subtle);
   --bs-alert-border-color: var(--bs-warning-border-subtle);
   --bs-alert-link-color: var(--bs-warning-text-emphasis);
 }
 
-.alert-danger, .environmenttable .error {
+.alert-danger {
   --bs-alert-color: var(--bs-danger-text-emphasis);
   --bs-alert-bg: var(--bs-danger-bg-subtle);
   --bs-alert-border-color: var(--bs-danger-border-subtle);
@@ -28100,10 +28100,10 @@ input[disabled] {
   opacity: 0.6;
 }
 
-.alert-success a, .environmenttable .ok a {
+.alert-success a {
   color: #10250f;
 }
-.alert-success .btn-close, .environmenttable .ok .btn-close {
+.alert-success .btn-close {
   color: #000100;
   opacity: 0.6;
 }
@@ -28116,18 +28116,18 @@ input[disabled] {
   opacity: 0.6;
 }
 
-.alert-warning a, .environmenttable .warn a {
+.alert-warning a {
   color: #6a4c22;
 }
-.alert-warning .btn-close, .environmenttable .warn .btn-close {
+.alert-warning .btn-close {
   color: #433016;
   opacity: 0.6;
 }
 
-.alert-danger a, .environmenttable .error a {
+.alert-danger a {
   color: #4d120c;
 }
-.alert-danger .btn-close, .environmenttable .error .btn-close {
+.alert-danger .btn-close {
   color: #210805;
   opacity: 0.6;
 }

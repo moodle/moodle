@@ -2063,7 +2063,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'leftalign plugin', 'centeralign status');
-        $servertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
+        $servertable->attributes['class'] = 'table table-striped admintable environmenttable generaltable table-sm';
         $servertable->id = 'serverstatus';
 
         $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -2076,7 +2076,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('status'),
         );
         $othertable->colclasses = array('aligncenter info', 'alignleft report', 'alignleft plugin', 'aligncenter status');
-        $othertable->attributes['class'] = 'admintable environmenttable generaltable table-sm';
+        $othertable->attributes['class'] = 'table table-striped admintable environmenttable generaltable table-sm';
         $othertable->id = 'otherserverstatus';
 
         $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
@@ -2177,29 +2177,33 @@ class core_admin_renderer extends plugin_renderer_base {
                 } else {
                     $report = $this->doc_link(join('/', $linkparts), get_string($stringtouse, 'admin', $rec), true);
                 }
-                // Enclose report text in div so feedback text will be displayed underneath it.
-                $report = html_writer::div($report);
 
                 // Format error or warning line
                 if ($errorline) {
                     $messagetype = 'error';
                     $statusclass = 'bg-danger text-white';
+                    $feedbackclass = 'alert-danger';
                 } else if ($warningline) {
                     $messagetype = 'warn';
                     $statusclass = 'bg-warning text-dark';
+                    $feedbackclass = 'alert-warning';
                 } else {
                     $messagetype = 'ok';
                     $statusclass = 'bg-success text-white';
+                    $feedbackclass = 'alert-success';
                 }
                 $status = html_writer::span($status, 'badge ' . $statusclass);
                 // Here we'll store all the feedback found
                 $feedbacktext = '';
                 // Append the feedback if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), $messagetype);
+                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(),
+                    "alert {$feedbackclass} px-2 py-1 m-1");
                 //Append the bypass if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'warn');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(),
+                    'alert alert-warning px-2 py-1 m-1');
                 //Append the restrict if there is some
-                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
+                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(),
+                    'alert alert-danger px-2 py-1 m-1');
 
                 $report .= $feedbacktext;
 
