@@ -221,6 +221,9 @@
             "direct",
             "xml"
         ],
+        "gradepenalty": [
+            "duedate"
+        ],
         "gradereport": [
             "grader",
             "history",
