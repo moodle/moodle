@@ -30,7 +30,6 @@ use GuzzleHttp\Exception\GuzzleException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gateway extends \core_sms\gateway {
-
     /**
      * @var string MODICA_DEFAULT_API The default api gateway for modica.
      */
@@ -56,8 +55,7 @@ class gateway extends \core_sms\gateway {
         try {
             $response = $client->post(
                 uri: $config->modica_url ?? self::MODICA_DEFAULT_API,
-                options:
-                [
+                options: [
                     'auth' => [
                         $this->config->modica_application_name,
                         $this->config->modica_application_password,

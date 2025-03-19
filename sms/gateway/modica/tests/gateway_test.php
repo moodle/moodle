@@ -30,14 +30,14 @@ use GuzzleHttp\Psr7\Response;
  * @covers     \smsgateway_modica\gateway
  */
 final class gateway_test extends \advanced_testcase {
-
     public function test_send(): void {
         $this->resetAfterTest();
 
-        $config = new \stdClass();
-        $config->modica_url = gateway::MODICA_DEFAULT_API;
-        $config->modica_application_name = 'test_application';
-        $config->modica_application_password = 'test_password';
+        $config = (object) [
+            'modica_url' => gateway::MODICA_DEFAULT_API,
+            'modica_application_name' => 'test_application',
+            'modica_application_password' => 'test_password',
+        ];
 
         $manager = \core\di::get(\core_sms\manager::class);
         $gw = $manager->create_gateway_instance(

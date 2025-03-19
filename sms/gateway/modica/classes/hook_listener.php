@@ -26,7 +26,6 @@ use core_sms\hook\after_sms_gateway_form_hook;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_listener {
-
     /**
      * Hook listener for the sms gateway setup form.
      *
