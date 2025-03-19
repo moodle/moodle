@@ -238,6 +238,22 @@ if ($mform->is_cancelled()) {
         $event->trigger();
     }
 
+    // Check if we need to recalculate penalty for existing grades.
+    if (!empty($fromform->recalculatepenalty) && $fromform->recalculatepenalty === 'yes') {
+        $assignintance = clone $assign->get_instance();
+        $assignintance->cmidnumber = $assign->get_course_module()->idnumber;
+        // If it is user mode.
+        if (!$groupmode) {
+            assign_update_grades($assignintance, $fromform->userid);
+        } else {
+            // If it is group mode.
+            $groupmembers = groups_get_members($fromform->groupid);
+            foreach ($groupmembers as $groupmember) {
+                assign_update_grades($assignintance, $groupmember->id);
+            }
+        }
+    }
+
     assign_update_events($assign, $fromform);
 
     if (!empty($fromform->submitbutton)) {

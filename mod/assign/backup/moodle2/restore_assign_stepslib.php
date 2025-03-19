@@ -142,6 +142,11 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
         }
 
+        // Grade penalty.
+        if (!isset($data->gradepenalty)) {
+            $data->gradepenalty = 0;
+        }
+
         $newitemid = $DB->insert_record('assign', $data);
 
         $this->apply_activity_instance($newitemid);

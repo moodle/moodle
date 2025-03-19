@@ -71,4 +71,19 @@ class behat_mod_assign extends behat_base {
             $criteriacheck++;
         }
     }
+
+    /**
+     * Enable grade penalty.
+     *
+     * @Given I enable grade penalties for assignment
+     */
+    public function i_enable_grade_penalties_for_assignment(): void {
+        global $DB;
+
+        \core_grades\penalty_manager::enable_module('assign');
+        \core\plugininfo\gradepenalty::enable_plugin('duedate', true);
+
+        $rule = ['contextid' => 1, 'overdueby' => DAYSECS, 'penalty' => 10, 'sortorder' => 0];
+        $DB->insert_record('gradepenalty_duedate_rule', (object) $rule);
+    }
 }

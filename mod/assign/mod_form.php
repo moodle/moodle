@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $OUTPUT;;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -83,9 +83,26 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'allowsubmissionsfromdate', $name, $options);
         $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'assign');
 
+        // Add the option to recalculate the penalty if there is existing grade.
+        $penaltysettingmessage = '';
+        if ($assignment->has_instance()
+            && \mod_assign\penalty\helper::is_penalty_enabled($assignment->get_instance()->id)
+            && $assignment->count_grades() > 0) {
+            // Create notification.
+            $penaltysettingmessage = $OUTPUT->notification(get_string('penaltyduedatechangemessage', 'assign'), 'warning', false);
+            $mform->addElement('html', $penaltysettingmessage);
+            $mform->addElement('select', 'recalculatepenalty', get_string('modgraderecalculatepenalty', 'grades'), [
+                '' => get_string('choose'),
+                'no' => get_string('no'),
+                'yes' => get_string('yes'),
+            ]);
+            $mform->addHelpButton('recalculatepenalty', 'modgraderecalculatepenalty', 'grades');
+        }
+
         $name = get_string('duedate', 'assign');
         $mform->addElement('date_time_selector', 'duedate', $name, array('optional'=>true));
         $mform->addHelpButton('duedate', 'duedate', 'assign');
+        $mform->disabledIf('duedate', 'recalculatepenalty', 'eq', '');
 
         $name = get_string('cutoffdate', 'assign');
         $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional'=>true));
@@ -232,10 +249,51 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->hideIf('markinganonymous', 'markingworkflow', 'eq', 0);
         $mform->hideIf('markinganonymous', 'blindmarking', 'eq', 0);
 
+        // Add Penalty settings if the module supports it.
+        if (\core_grades\penalty_manager::is_penalty_enabled_for_module('assign')) {
+            // Show the message if we need to change the penalty settings.
+            if (!empty($penaltysettingmessage)) {
+                $mform->addElement('html', $penaltysettingmessage);
+            }
+
+            // Enable or disable the penalty settings.
+            $mform->addElement('selectyesno', 'gradepenalty', get_string('gradepenalty', 'mod_assign'));
+            $mform->addHelpButton('gradepenalty', 'gradepenalty', 'mod_assign');
+            $mform->setDefault('gradepenalty', 0);
+
+            // Hide if the due date is not enabled.
+            $mform->hideIf('gradepenalty', 'duedate[enabled]');
+
+            // Hide if the grade type is not set to point.
+            $mform->hideIf('gradepenalty', 'grade[modgrade_type]', 'neq', 'point');
+
+            // Disable if the recalculate penalty is not set.
+            $mform->disabledIf('gradepenalty', 'recalculatepenalty', 'eq', '');
+        }
+
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Override definition after data has been set.
+     *
+     * The value of date time selector will be lost in a POST request, if the selector is disabled.
+     * So, we need to set the value again.
+     *
+     * return void
+     */
+    public function definition_after_data() {
+        parent::definition_after_data();
+        $mform = $this->_form;
+
+        // The value of date time selector will be lost in a POST request.
+        $recalculatepenalty = optional_param('recalculatepenalty', null, PARAM_TEXT);
+        if ($recalculatepenalty === '') {
+            $mform->setConstant('duedate', $mform->_defaultValues['duedate']);
+        }
     }
 
     /**

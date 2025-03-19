@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @assign_grade
 Feature: Check that the assignment grade can be updated correctly
   In order to ensure that the grade is shown correctly in the grading table
   As a teacher
@@ -70,3 +70,45 @@ Feature: Check that the assignment grade can be updated correctly
     And I press "Save changes"
     And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
+
+  @javascript
+  Scenario: Update the grade for an assignment with penalty
+    Given the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student10@example.com |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And the following "groups" exist:
+      | name     | course  | idnumber  |
+      | Group 1  | C1      | G1        |
+    And I enable grade penalties for assignment
+    And the following "activity" exists:
+      | activity                             | assign                      |
+      | course                               | C1                          |
+      | name                                 | Test assignment name        |
+      | intro                                | Test assignment description |
+      | grade                                | 100                         |
+      | duedate                              | ##yesterday##               |
+      | gradepenalty                         | 1                           |
+      | assignsubmission_onlinetext_enabled  | 1                           |
+      | submissiondrafts                     | 0                           |
+    # Add a submission.
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                        |
+      | Test assignment name  | student1  | I'm the student first submission  |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
+    When I change window size to "large"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    And I set the field "Grade out of 100" to "100"
+    And I set the field "Notify student" to "0"
+    And I press "Save changes"
+    And I follow "View all submissions"
+    And "Student 1" row "Grade" column of "generaltable" table should contain "100.00"
+    And "Student 1" row "Final grade" column of "generaltable" table should contain "90.00"
+    And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"

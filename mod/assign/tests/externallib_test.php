@@ -189,6 +189,7 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
             'markingallocation' => 1,
             'blindmarking' => 1,
             'markinganonymous' => 1,
+            'gradepenalty' => 1,
             'activityeditor' => [
                 'text' => 'Test activity',
                 'format' => 1,
@@ -253,6 +254,7 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertEquals(1, $assignment['markingallocation']);
         $this->assertEquals(1, $assignment['blindmarking']);
         $this->assertEquals(1, $assignment['markinganonymous']);
+        $this->assertEquals(1, $assignment['gradepenalty']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
         $this->assertEquals(0, $assignment['timelimit']);
         $this->assertEquals(0, $assignment['submissionattachments']);
@@ -286,6 +288,7 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertEquals(1, $assignment['markingallocation']);
         $this->assertEquals(1, $assignment['blindmarking']);
         $this->assertEquals(1, $assignment['markinganonymous']);
+        $this->assertEquals(1, $assignment['gradepenalty']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));

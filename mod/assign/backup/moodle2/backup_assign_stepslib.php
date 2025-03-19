@@ -96,7 +96,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'activity',
                                                   'activityformat',
                                                   'timelimit',
-                                                  'submissionattachments'));
+                                                  'submissionattachments',
+                                                  'gradepenalty'));
 
         $userflags = new backup_nested_element('userflags');
 
@@ -129,6 +130,7 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                  'timemodified',
                                                  'grader',
                                                  'grade',
+                                                 'penalty',
                                                  'attemptnumber'));
 
         $pluginconfigs = new backup_nested_element('plugin_configs');

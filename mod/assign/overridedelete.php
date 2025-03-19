@@ -30,6 +30,7 @@ require_once($CFG->dirroot.'/mod/assign/override_form.php');
 
 $overrideid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
+$recalculate = optional_param('recalculate', false, PARAM_BOOL);
 
 if (! $override = $DB->get_record('assign_overrides', array('id' => $overrideid))) {
     throw new \moodle_exception('invalidoverrideid', 'assign');
@@ -65,6 +66,20 @@ if (!empty($override->userid)) {
 // If confirm is set (PARAM_BOOL) then we have confirmation of intention to delete.
 if ($confirm) {
     require_sesskey();
+
+    if ($recalculate) {
+        $assignintance = clone $assign->get_instance();
+        $assignintance->cmidnumber = $assign->get_course_module()->idnumber;
+        if (!$override->groupid) {
+            assign_update_grades($assignintance, $override->userid);
+        } else {
+            // If it is group mode.
+            $groupmembers = groups_get_members($override->groupid);
+            foreach ($groupmembers as $groupmember) {
+                assign_update_grades($assignintance, $groupmember->id);
+            }
+        }
+    }
 
     $assign->delete_override($override->id);
 

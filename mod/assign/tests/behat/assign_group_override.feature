@@ -33,6 +33,7 @@ Feature: Assign group override
       | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled |
       | assign   | Test assignment name | Submit your online text | C1     | 1                                   |
 
+  @javascript
   Scenario: Add, modify then delete a group override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration

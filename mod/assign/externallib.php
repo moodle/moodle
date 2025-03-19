@@ -343,6 +343,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                      'm.duedate, ' .
                      'm.allowsubmissionsfromdate, '.
                      'm.grade, ' .
+                     'm.gradepenalty, ' .
                      'm.timemodified, '.
                      'm.completionsubmit, ' .
                      'm.cutoffdate, ' .
@@ -422,6 +423,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                         'duedate' => $assign->get_instance()->duedate,
                         'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
                         'grade' => $module->grade,
+                        'gradepenalty' => $module->gradepenalty,
                         'timemodified' => $module->timemodified,
                         'completionsubmit' => $module->completionsubmit,
                         'cutoffdate' => $assign->get_instance()->cutoffdate,
@@ -541,6 +543,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 'duedate' => new external_value(PARAM_INT, 'assignment due date'),
                 'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
                 'grade' => new external_value(PARAM_INT, 'grade type'),
+                'gradepenalty' => new external_value(PARAM_INT, 'if enabled, penalty will be applied to late submissions'),
                 'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
                 'completionsubmit' => new external_value(PARAM_INT, 'if enabled, set activity as complete following submission'),
                 'cutoffdate' => new external_value(PARAM_INT, 'date after which submission is not accepted without an extension'),

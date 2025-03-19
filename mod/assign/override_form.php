@@ -251,8 +251,22 @@ class assign_override_form extends moodleform {
             get_string('allowsubmissionsfromdate', 'assign'), array('optional' => true));
         $mform->setDefault('allowsubmissionsfromdate', $assigninstance->allowsubmissionsfromdate);
 
+        // Add the option to recalculate the penalty if there is existing grade.
+        if (\mod_assign\penalty\helper::is_penalty_enabled($assigninstance->id) && $this->assign->count_grades() > 0) {
+            // Create notification.
+            $notice = $OUTPUT->notification(get_string('penaltyduedatechangemessage', 'assign'), 'warning', false);
+            $mform->addElement('html', $notice);
+            $mform->addElement('select', 'recalculatepenalty', get_string('modgraderecalculatepenalty', 'grades'), [
+                '' => get_string('choose'),
+                'no' => get_string('no'),
+                'yes' => get_string('yes'),
+            ]);
+            $mform->addHelpButton('recalculatepenalty', 'modgraderecalculatepenalty', 'grades');
+        }
+
         $mform->addElement('date_time_selector', 'duedate', get_string('duedate', 'assign'), array('optional' => true));
         $mform->setDefault('duedate', $assigninstance->duedate);
+        $mform->disabledIf('duedate', 'recalculatepenalty', 'eq', '');
 
         $mform->addElement('date_time_selector', 'cutoffdate', get_string('cutoffdate', 'assign'), array('optional' => true));
         $mform->setDefault('cutoffdate', $assigninstance->cutoffdate);
@@ -284,6 +298,24 @@ class assign_override_form extends moodleform {
         $mform->addGroup($buttonarray, 'buttonbar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonbar');
 
+    }
+
+    /**
+     * Override definition after data has been set.
+     *
+     * The value of date time selector will be lost in a POST request, if the selector is disabled.
+     * So, we need to set the value again.
+     *
+     * return void
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
+
+        // The value of date time selector will be lost in a POST request.
+        $recalculatepenalty = optional_param('recalculatepenalty', null, PARAM_TEXT);
+        if ($recalculatepenalty === '') {
+            $mform->setConstant('duedate', $mform->_defaultValues['duedate']);
+        }
     }
 
     /**
