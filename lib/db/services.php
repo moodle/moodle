@@ -590,6 +590,14 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
     ],
+    'core_courseformat_new_module' => [
+        'classname'     => 'core_courseformat\external\new_module',
+        'methodname'    => 'execute',
+        'description'   => 'Create a new module to course.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'capabilities'  => 'moodle/course:manageactivities',
+    ],
     'core_courseformat_update_course' => [
         'classname'     => 'core_courseformat\external\update_course',
         'methodname'    => 'execute',
