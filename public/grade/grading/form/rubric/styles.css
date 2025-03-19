@@ -151,6 +151,7 @@
 .gradingform_rubric.editor .duplicate input,
 .gradingform_rubric.editor .moveup input,
 .gradingform_rubric.editor .movedown input {
+    background: none 2px 4px / 16px 16px no-repeat;
     text-indent: -1000em;
     cursor: pointer;
     border: none;
@@ -159,40 +160,40 @@
 .gradingform_rubric.editor .criterion .controls .delete input {
     width: 24px;
     height: 24px;
-    background: transparent url([[pix:t/delete]]) no-repeat center;
+    background-image: url([[pix:t/delete]]);
     margin: .3em .3em 0 .3em;
 }
 
 .gradingform_rubric.editor .criterion .controls .duplicate input {
     width: 24px;
     height: 24px;
-    background: transparent url([[pix:t/copy]]) no-repeat center;
+    background-image: url([[pix:t/copy]]);
     margin: .3em .3em 0 .3em;
 }
 
 .gradingform_rubric.editor .levels .level .delete input {
     width: 24px;
     height: 24px;
-    background: transparent url([[pix:t/delete]]) no-repeat center;
+    background-image: url([[pix:t/delete]]);
 }
 
 .gradingform_rubric.editor .moveup input {
     width: 24px;
     height: 24px;
-    background: transparent url([[pix:t/up]]) no-repeat center;
+    background-image: url([[pix:t/up]]);
     margin: .3em .3em 0 .3em;
 }
 
 .gradingform_rubric.editor .movedown input {
     width: 24px;
     height: 24px;
-    background: transparent url([[pix:t/down]]) no-repeat center;
+    background-image: url([[pix:t/down]]);
     margin: .3em .3em 0 .3em;
 }
 
 .gradingform_rubric.editor .addcriterion input,
 .gradingform_rubric.editor .addlevel input {
-    background: #fff url([[pix:t/add]]) no-repeat 7px 8px;
+    background: #fff url([[pix:t/add]]) 4px 6px / 16px 16px no-repeat;
     display: block;
     color: #555;
     font-weight: bold;
