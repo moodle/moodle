@@ -1178,6 +1178,7 @@ $string['indicator:userforumstracking_help'] = 'This indicator represents whethe
 $string['info'] = 'Information';
 $string['inprogress'] = 'In progress';
 $string['insertcontentbefore'] = 'Insert content before \'{$a->activityname}\'';
+$string['insertcontentsection'] = 'Insert content in section \'{$a->sectionname}\'';
 $string['insertresourceoractivitybefore'] = 'Insert an activity or resource before \'{$a->activityname}\'';
 $string['institution'] = 'Institution';
 $string['instudentview'] = 'in student view';
