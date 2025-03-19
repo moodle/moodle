@@ -64,11 +64,13 @@ class switch_question_bank implements \renderable, \templatable {
 
         $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
             notincourseids: [$this->courseid],
-            havingcap: ['moodle/question:managecategory']
+            havingcap: ['moodle/question:managecategory'],
+            filtercontext:  $cminfo->context,
         );
         $coursesharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
             incourseids: [$this->courseid],
-            havingcap: ['moodle/question:managecategory']
+            havingcap: ['moodle/question:managecategory'],
+            filtercontext:  $cminfo->context,
         );
         $recentlyviewedbanks = question_bank_helper::get_recently_used_open_banks($this->userid);
 
