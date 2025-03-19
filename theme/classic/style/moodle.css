@@ -40615,10 +40615,10 @@ div.editor_atto_toolbar button .icon {
   position: fixed;
   right: 2rem;
   bottom: 5rem;
+  left: initial;
+  top: initial;
   width: 350px;
-  background-color: #fff;
-  border-radius: 0.375rem;
-  border: 1px solid #dee2e6;
+  height: auto;
 }
 .popover-process-monitor .process-list {
   max-height: 30vh;
