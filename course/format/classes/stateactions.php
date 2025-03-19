@@ -146,11 +146,17 @@ class stateactions {
      */
     #[\core\attribute\deprecated(
         replacement: 'stateactions::section_move_after',
-        since: '5.0',
+        since: '4.4',
         mdl: 'MDL-77038',
         final: true,
     )]
-    public function section_move(): void {
+    public function section_move(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
