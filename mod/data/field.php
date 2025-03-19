@@ -425,7 +425,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
 
     echo '<div class="sortdefault">';
     echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
-    echo '<div>';
+    echo '<div class="d-flex flex-column flex-md-row flex-wrap align-items-md-center gap-2">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<input type="hidden" name="mode" value="sort" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -466,7 +466,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
                      1 => get_string('descending', 'data'));
     echo html_writer::label(get_string('sortby'), 'menudefaultsortdir', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'defaultsortdir', $data->defaultsortdir, false, ['class' => 'form-select']);
-    echo '<input type="submit" class="btn btn-secondary ms-1" value="'.get_string('save', 'data').'" />';
+    echo '<input type="submit" class="btn btn-secondary" value="'.get_string('save', 'data').'" />';
     echo '</div>';
     echo '</form>';
 

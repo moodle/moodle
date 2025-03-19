@@ -60,10 +60,6 @@
     margin: 1em 0;
 }
 
-.path-mod-data-field .sortdefault select {
-    margin-left: 1em;
-}
-
 .path-mod-data-field .fieldname,
 .path-mod-data-field .fielddescription {
     width: 300px;
