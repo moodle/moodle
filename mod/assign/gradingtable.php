@@ -323,8 +323,7 @@ class assign_grading_table extends table_sql implements renderable {
 
             } else if ($filter == ASSIGN_FILTER_GRADED) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
-                                 s.status = :submitted AND
-                                 (s.timemodified < g.timemodified AND g.grade IS NOT NULL))';
+                                 s.timemodified < g.timemodified AND g.grade IS NOT NULL)';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if ($filter == ASSIGN_FILTER_GRANTED_EXTENSION) {
