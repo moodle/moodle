@@ -175,6 +175,12 @@
             visibility: hidden;
         }
     }
+    .hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
+        right: 2rem;
+    }
+    .hasstickyfooter:has(.drawer-left-toggle) .maintenancewarning {
+        margin-left: 3.5rem;
+    }
 }
 
 @include media-breakpoint-up(sm) {
@@ -232,6 +238,9 @@
             .jsenabled & .btn-footer-popover,
             .jsenabled & .btn-footer-communication {
                 right: calc(#{$drawer-right-width} + 2rem);
+            }
+            .jsenabled:has(&) .maintenancewarning {
+                right: calc(#{$drawer-right-width} + 5rem);
             }
         }
         &.show-drawer-left.show-drawer-right {
