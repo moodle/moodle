@@ -140,6 +140,7 @@ class action_form extends action_settings_form {
         global $PAGE;
         $PAGE->requires->js_call_amd('aiprovider_openai/modelchooser', 'init');
         $mform = $this->_form;
+        $actionname = $this->actionname;
 
         // Action model to use.
         $mform->addElement(
@@ -155,13 +156,15 @@ class action_form extends action_settings_form {
                 (!array_key_exists($this->actionconfig['model'], $this->get_model_list($modeltype)) ||
                 !empty($this->actionconfig['modelextraparams']))) {
             $defaultmodel = 'custom';
+        } else if (empty($this->actionconfig['model'])) {
+            $defaultmodel = ($actionname === 'generate_image') ? 'dall-e-3' : 'gpt-4o';
         } else {
-            $defaultmodel = $this->actionconfig['model'] ?? 'gpt-4o';
+            $defaultmodel = $this->actionconfig['model'];
         }
         $mform->setDefault('modeltemplate', $defaultmodel);
         $mform->addHelpButton('modeltemplate', "action:{$this->actionname}:model", 'aiprovider_openai');
 
-        $mform->addElement('hidden', 'model', $this->actionconfig['model'] ?? 'gpt-4o');
+        $mform->addElement('hidden', 'model', $defaultmodel);
         $mform->setType('model', PARAM_TEXT);
 
         $mform->addElement('text', 'custommodel', get_string('custom_model_name', 'aiprovider_openai'));
