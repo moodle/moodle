@@ -4737,11 +4737,12 @@ function delete_course($courseorid, $showfeedback = true) {
  * @param int $courseid The id of the course that is being deleted
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @param array $options extra options
+ * @param bool $coursedeletion Are we calling this as part of deleting the course?
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function remove_course_contents($courseid, $showfeedback = true, ?array $options = null) {
+function remove_course_contents($courseid, $showfeedback = true, ?array $options = null, bool $coursedeletion = true) {
     global $CFG, $DB, $OUTPUT;
 
     require_once($CFG->libdir.'/badgeslib.php');
@@ -4824,7 +4825,7 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
                 foreach ($instances as $cm) {
                     if ($cm->id) {
                         // Delete activity context questions and question categories.
-                        question_delete_activity($cm);
+                        question_delete_activity($cm, coursedeletion: $coursedeletion);
                         // Notify the competency subsystem.
                         \core_competency\api::hook_course_module_deleted($cm);
 
