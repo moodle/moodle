@@ -1714,6 +1714,12 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         );
     }
 
+    // If the question type is invalid, we cannot add it to the quiz. It shouldn't be possible to get to this
+    // point without fiddling with the DOM so we can just throw an exception.
+    if (!\question_bank::is_qtype_installed($questiontype)) {
+        throw new coding_exception('Invalid question type: ' . $questiontype);
+    }
+
     $trans = $DB->start_delegated_transaction();
 
     $sql = "SELECT qbe.id

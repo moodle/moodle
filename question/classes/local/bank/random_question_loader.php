@@ -46,8 +46,10 @@ class random_question_loader {
     /** @var \qubaid_condition which usages to consider previous attempts from. */
     protected $qubaids;
 
-    /** @var array qtypes that cannot be used by random questions. */
-    protected $excludedqtypes;
+    /**
+     * @var array Array of question types to include in random questions.
+     */
+    protected $includedqtypes = [];
 
     /** @var array categoryid & include subcategories => num previous uses => questionid => 1. */
     protected $availablequestionscache = [];
@@ -69,9 +71,10 @@ class random_question_loader {
         $this->qubaids = $qubaids;
         $this->recentlyusedquestions = $usedquestions;
 
+        // Load the possible question types we can select from.
         foreach (\question_bank::get_all_qtypes() as $qtype) {
-            if (!$qtype->is_usable_by_random()) {
-                $this->excludedqtypes[] = $qtype->name();
+            if ($qtype->is_usable_by_random()) {
+                $this->includedqtypes[] = $qtype->name();
             }
         }
     }
@@ -213,8 +216,8 @@ class random_question_loader {
         $filtercondition = $filterconditions ? 'AND ' . implode(' AND ', $filterconditions) : '';
 
         // Prepare qtype check.
-        [$qtypecondition, $qtypeparams] = $DB->get_in_or_equal($this->excludedqtypes,
-            SQL_PARAMS_NAMED, 'excludedqtype', false);
+        [$qtypecondition, $qtypeparams] = $DB->get_in_or_equal($this->includedqtypes,
+            SQL_PARAMS_NAMED, 'includedqtype');
         if ($qtypecondition) {
             $qtypecondition = 'AND q.qtype ' . $qtypecondition;
         }
