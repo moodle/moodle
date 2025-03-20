@@ -24,7 +24,8 @@
         "elementid": "id",
         "isInsertThumbnail": false,
         "showDropzone": true,
-        "showFilePicker": true
+        "showFilePicker": true,
+        "showImageFilePicker": true
     }
 
 }}
@@ -51,5 +52,8 @@
         {{#showFilePicker}}
             <button class="openmediabrowser btn btn-secondary" type="button">{{#str}} browseembedimagerepositories, tiny_media {{/str}}</button>
         {{/showFilePicker}}
+        {{#showImageFilePicker}}
+            <button class="openimagebrowser btn btn-secondary" type="button">{{#str}} browseembedimagerepositories, tiny_media {{/str}}</button>
+        {{/showImageFilePicker}}
     </div>
 </div>
