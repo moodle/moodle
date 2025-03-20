@@ -312,7 +312,6 @@ $string['error:invalidparambadge'] = 'Badge does not exist. ';
 $string['error:noactivities'] = 'There are no activities with completion criteria enabled in this course.';
 $string['error:nobadges'] = 'There are currently no badges with access enabled to be added as criteria. A site badge can only have other site badges as criteria. A course badge can have other course badges or site badges as criteria.';
 $string['error:invalidparamcohort'] = 'Cohort does not exist. ';
-$string['error:noactivities'] = 'There are no activities with completion criteria enabled in this course.';
 $string['error:nocohorts'] = 'No cohorts';
 $string['error:nocourses'] = 'Course completion is not enabled for any of the courses in this site, so none can be displayed. Course completion may be enabled in the course settings.';
 $string['error:nogroupssummary'] = '<p>There are no public collections of badges available in your backpack. </p>';
