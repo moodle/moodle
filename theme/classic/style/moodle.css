@@ -25199,6 +25199,10 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   bottom: calc(4rem + max(80px, 0.9375rem * 3));
 }
 
+.hasstickyfooter .maintenancewarning {
+  bottom: max(80px, 0.9375rem * 3);
+}
+
 .popover.footer .popover-body {
   padding: 0;
 }
@@ -25225,6 +25229,10 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   .jsenabled .btn-footer-communication {
     display: block;
     z-index: 1000;
+  }
+  .jsenabled .maintenancewarning,
+  .jsenabled.hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
+    right: 5rem;
   }
 }
 .bg-inverse a {
@@ -26943,8 +26951,18 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   position: fixed;
   bottom: 0;
   right: 0;
+  margin: 1rem;
   overflow: hidden;
   z-index: 1000;
+}
+
+.jsenabled .maintenancewarning {
+  transition: 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .jsenabled .maintenancewarning {
+    transition: none;
+  }
 }
 
 .modal.modal-in-page {
@@ -36937,6 +36955,12 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
     pointer-events: auto;
     visibility: hidden;
   }
+  .hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
+    right: 2rem;
+  }
+  .hasstickyfooter:has(.drawer-left-toggle) .maintenancewarning {
+    margin-left: 3.5rem;
+  }
 }
 @media (min-width: 576px) {
   #page.drawers .main-inner {
@@ -36995,6 +37019,9 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   }
   .jsenabled #page.drawers.show-drawer-right .popover-process-monitor, .jsenabled #page.drawers.show-drawer-right .btn-footer-popover, .jsenabled #page.drawers.show-drawer-right .btn-footer-communication {
     right: calc(315px + 2rem);
+  }
+  .jsenabled:has(#page.drawers.show-drawer-right) .maintenancewarning {
+    right: calc(315px + 5rem);
   }
 }
 @media (min-width: 992px) {
