@@ -6519,6 +6519,7 @@ class assign {
      * @param string $assignmentname
      * @param bool $blindmarking
      * @param int $uniqueidforuser
+     * @param array $extrainfo extra values to pass to any language strings or templates used in preparing the message.
      * @return void
      */
     public static function send_assignment_notification($userfrom,
@@ -6532,7 +6533,8 @@ class assign {
                                                         $modulename,
                                                         $assignmentname,
                                                         $blindmarking,
-                                                        $uniqueidforuser) {
+                                                        $uniqueidforuser,
+                                                        $extrainfo = []) {
         global $CFG, $PAGE;
 
         $info = new stdClass();
@@ -6548,6 +6550,7 @@ class assign {
         $info->assignment = format_string($assignmentname, true, array('context'=>$context));
         $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
         $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
+        $info = (object) array_merge((array) $info, $extrainfo);
 
         $postsubject = get_string($messagetype . 'small', 'assign', $info);
         $posttext = self::format_notification_message_text($messagetype,
@@ -6610,9 +6613,10 @@ class assign {
      * @param string $messagetype
      * @param string $eventtype
      * @param int $updatetime
+     * @param array $extrainfo extra values to pass to any language strings or templates used in preparing the message.
      * @return void
      */
-    public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime) {
+    public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime, $extrainfo = []) {
         global $USER;
         $userid = core_user::is_real_user($userfrom->id) ? $userfrom->id : $USER->id;
         $uniqueid = $this->get_uniqueid_for_user($userid);
@@ -6627,7 +6631,8 @@ class assign {
                                            $this->get_module_name(),
                                            $this->get_instance()->name,
                                            $this->is_blind_marking(),
-                                           $uniqueid);
+                                           $uniqueid,
+                                           $extrainfo);
     }
 
     /**
@@ -6675,19 +6680,68 @@ class assign {
         } else {
             $user = $USER;
         }
+        // Prepare extra data for submission receipt notification.
+        $extrainfo = $this->get_submission_summaries_for_messages($submission);
         if ($submission->userid == $USER->id) {
             $this->send_notification(core_user::get_noreply_user(),
                                      $user,
                                      'submissionreceipt',
                                      'assign_notification',
-                                     $submission->timemodified);
+                                     $submission->timemodified,
+                                     $extrainfo);
         } else {
             $this->send_notification($USER,
                                      $user,
                                      'submissionreceiptother',
                                      'assign_notification',
-                                     $submission->timemodified);
+                                     $submission->timemodified,
+                                     $extrainfo);
         }
+    }
+
+    /**
+     * Produce a summary of a submission that can be used in messages.
+     *
+     * This function iterates through all enabled submission plugins and calls their
+     * `get_submission_summary` method (if implemented). It aggregates the results
+     * into a formatted summary string.
+     *
+     * @param stdClass $submission the submission the message is about. Row from assign_submission table.
+     * @return string[] with two elements:
+     *      'submissionsummarytext' => a plain text summary,
+     *      'submissionsummaryhtml' => an HTML summary.
+     */
+    protected function get_submission_summaries_for_messages(stdClass $submission): array {
+        $textsummaries = [];
+        $htmlsummaries = [];
+        foreach ($this->submissionplugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                [$textsummary, $htmlsummary] = $plugin->submission_summary_for_messages($submission);
+                if ($textsummary) {
+                    $textsummaries[] = $textsummary;
+                }
+                if ($htmlsummary) {
+                    $htmlsummaries[] = $htmlsummary;
+                }
+            }
+        }
+
+        $textsummary = '';
+        if ($textsummaries) {
+            $textsummary = get_string('submissioncontains', 'assign') . "\n\n" .
+                implode("\n", $textsummaries);
+        }
+
+        $htmlsummary = '';
+        if ($htmlsummaries) {
+            $htmlsummary = html_writer::tag('h2', get_string('submissioncontains', 'assign')) .
+                implode('', $htmlsummaries);
+        }
+
+        return [
+            'submissionsummarytext' => $textsummary,
+            'submissionsummaryhtml' => $htmlsummary,
+        ];
     }
 
     /**

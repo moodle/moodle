@@ -782,4 +782,98 @@ final class notification_helper_test extends \advanced_testcase {
         // Clear sink.
         $sink->clear();
     }
+
+    /**
+     * Test sending the assignment notification to a user with a list of the submitted files.
+     */
+    public function test_send_notification_with_summary_to_user(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $sink = $this->redirectMessages();
+
+        // Create a course and enrol a user.
+        $course = $generator->create_course(['shortname' => 'A100']);
+        $user1 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create activity.
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'name' => 'Assignment 1',
+            'submissiondrafts' => 0,
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 12,
+            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+
+        $filename1 = 'submissionsample01.txt';
+        $filename2 = 'submissionsample02.txt';
+        $files = [
+            "mod/assign/tests/fixtures/" . $filename1,
+            "mod/assign/tests/fixtures/" . $filename2,
+        ];
+
+        // Generate submissions.
+        $assignmentgenerator->create_submission([
+            'userid' => $user1->id,
+            'cmid' => $assignment->cmid,
+            'status' => 'submitted',
+            'file' => implode(',', $files),
+            'onlinetext' => 'Some text example',
+        ]);
+
+        // Get the notifications.
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $this->assertCount(1, $messages);
+        $message = reset($messages);
+
+        // Check the subject line and short message.
+        $this->assertEquals('Assignment Submission Confirmation - Assignment 1', $message->subject);
+        $this->assertEquals('Assignment Submission Confirmation - Assignment 1', $message->smallmessage);
+
+        // Check the plain text message.
+        $this->assertEquals('A100 -> Assignment -> Assignment 1
+---------------------------------------------------------------------
+You have submitted an assignment submission for \'Assignment 1\'.
+
+You can see the status of your assignment submission:
+
+    https://www.example.com/moodle/mod/assign/view.php?id=' . $assignment->cmid . '
+
+Your submission contains:
+
+Online text
+(3 words)
+
+File submissions
+* submissionsample01.txt (42 bytes)
+* submissionsample02.txt (42 bytes)
+
+
+---------------------------------------------------------------------
+', $message->fullmessage);
+
+        $expectedfragments = [
+            '<p>Your assignment for <strong>Assignment 1</strong> has been successfully submitted.</p>',
+            '<p>You can view your submission and check its status on the <a href="' .
+                'https://www.example.com/moodle/mod/assign/view.php?id=' .
+                $assignment->cmid . '">assignment page</a>.</p>',
+            '<h2>Your submission contains:</h2>',
+            '<h3>Online text</h3>',
+            '<p>(3 words)</p>',
+            '<h3>File submissions</h3>',
+            '<li>submissionsample01.txt (42 bytes)</li>',
+            '<li>submissionsample02.txt (42 bytes)</li>',
+        ];
+        foreach ($expectedfragments as $html) {
+            $this->assertStringContainsString($html, $message->fullmessagehtml);
+        }
+
+        // Clear sink.
+        $sink->clear();
+    }
 }

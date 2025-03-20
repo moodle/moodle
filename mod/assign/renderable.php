@@ -701,7 +701,7 @@ class assign_course_index_summary implements renderable {
 class assign_files implements renderable {
     /** @var context $context */
     public $context;
-    /** @var string $context */
+    /** @var array $dir as returned by {@see file_storage::get_area_tree()}. */
     public $dir;
     /** @var MoodleQuickForm $portfolioform */
     public $portfolioform;
@@ -799,4 +799,6 @@ class assign_files implements renderable {
             true,
         );
     }
+
+
 }
