@@ -60,3 +60,17 @@ Feature: The section links block allows users to quickly navigate around a moodl
     And I should see "5" in the "Section links" "block"
     When I follow "5"
     Then I should see "Test assignment 1"
+
+  Scenario: Subsections numbers are not displayed in the Section links block
+    Given I enable "subsection" "mod" plugin
+    And the following "activity" exists:
+      | activity | subsection  |
+      | name     | Subsection1 |
+      | course   | C1          |
+      | idnumber | subsection1 |
+      | section  | 1           |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | section_links | Course       | C1        | course-view-*   | side-pre      |
+    When I am on "Course 1" course homepage
+    Then "21" "link" should not exist in the "Section links" "block"
