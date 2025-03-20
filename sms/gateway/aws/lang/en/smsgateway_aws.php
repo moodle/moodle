@@ -28,7 +28,6 @@ $string['api_secret'] = 'Secret access key';
 $string['aws_information'] = 'Complete the following fields using the information provided by AWS';
 $string['aws_sns'] = 'AWS SNS';
 $string['gateway'] = 'AWS service';
-$string['aws_information'] = 'Complete the following fields using the information provided by AWS';
 $string['pluginname'] = 'AWS';
 $string['privacy:metadata'] = 'The AWS SMS gateway plugin does not store any personal data.';
 $string['usecredchain'] = 'Find AWS credentials using the default provider chain';
