@@ -111,7 +111,6 @@ $string['messagedrawerviewgroupinfo'] = 'Group details for {$a}';
 $string['messagedrawerviewoverview'] = 'Messages overview';
 $string['messagedrawerviewsearch'] = 'Messages search results for {$a}';
 $string['messagedrawerviewsettings'] = 'Message settings';
-$string['messagepreferences'] = 'Message preferences';
 $string['messages'] = 'Messages';
 $string['messagesselected:'] = 'Messages selected:';
 $string['messagetextrequired'] = 'Please enter message text';

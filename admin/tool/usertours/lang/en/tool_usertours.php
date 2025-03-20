@@ -102,7 +102,6 @@ $string['name'] = 'Name';
 $string['name_help'] = 'The name of a tour may be added as plain text, enclosed in multilang tags (for use with the multi-language content filter) if required.
 
 Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
-$string['newstep'] = 'Create step';
 $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
 $string['next'] = 'Next';
