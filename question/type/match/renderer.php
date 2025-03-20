@@ -83,7 +83,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                             'menu' . $qa->get_qt_field_name('sub' . $key), false,
                             array('class' => 'accesshide')) .
                     html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
-                            ['0' => 'choose'], ['disabled' => $options->readonly, 'class' => 'form-select ms-1']) .
+                            ['0' => 'choose'], ['disabled' => $options->readonly, 'class' => 'form-select d-inline-block ms-1']) .
                     ' ' . $feedbackimage, array('class' => $classes));
 
             $result .= html_writer::end_tag('tr');

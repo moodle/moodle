@@ -377,6 +377,7 @@ class qtype_multianswer_multichoice_inline_renderer
 
         $inputattributes = array(
             'id' => $qa->get_qt_field_name($fieldname),
+            'class' => 'form-select d-inline-block mb-1',
         );
         if ($options->readonly) {
             $inputattributes['disabled'] = 'disabled';
