@@ -431,7 +431,7 @@ class assign_submission_file extends assign_submission_plugin {
         }
 
         foreach ($dir['subdirs'] as $subdir) {
-            $files = $this->format_submission_files($subdir);
+            $files = $this->flatten_list_of_files($subdir);
             $filessummary = array_merge($filessummary, $files);
         }
 
