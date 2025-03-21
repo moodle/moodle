@@ -1038,14 +1038,25 @@ EOF;
             return;
         }
 
-        // Look for any DOM element with deprecated message in before pseudo-element.
+        // Look for DOM elements with deprecated message in before pseudo-element.
         $js = <<<EOF
-            [...document.querySelectorAll('*')].some(
-                el => window.getComputedStyle(el, ':before').content === '"Deprecated style in use"'
-            );
+            [...document.querySelectorAll('*')].flatMap(el => {
+                const beforeContent = window.getComputedStyle(el, ':before').content;
+                if (beforeContent.startsWith('"Deprecated style in use')) {
+                    const deprecatedClass = beforeContent.match(/\(([^)]+)\)/)?.[1] ?? 'unknown';
+                    return [deprecatedClass + ' (found in: ' + el.classList + ')'];
+                }
+                return [];
+            });
         EOF;
-        if ($this->evaluate_script($js)) {
-            throw new \Exception(html_entity_decode("Deprecated style in use", ENT_COMPAT));
+
+        $deprecations = $this->evaluate_script($js);
+        if ($deprecations) {
+            $deprecationdata = "Deprecated styles found:\n";
+            foreach ($deprecations as $deprecation) {
+                $deprecationdata .= "  {$deprecation}\n";
+            }
+            throw new \Exception(html_entity_decode($deprecationdata, ENT_COMPAT));
         }
     }
 
