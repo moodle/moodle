@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core\exception\coding_exception;
+
 /**
  * Unit tests for our locking implementations.
  *
@@ -23,6 +25,9 @@ namespace core;
  * @category   test
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core\lock\db_record_lock_factory
+ * @covers \core\lock\file_lock_factory
+ * @covers \core\lock\lock
  */
 final class lock_test extends \advanced_testcase {
 
@@ -37,9 +42,9 @@ final class lock_test extends \advanced_testcase {
     /**
      * Run a suite of tests on a lock factory class.
      *
-     * @param class $lockfactoryclass - A lock factory class to test
+     * @param string $lockfactoryclass - name of a lock factory class to test.
      */
-    protected function run_on_lock_factory($lockfactoryclass) {
+    protected function run_on_lock_factory(string $lockfactoryclass): void {
 
         $modassignfactory = new $lockfactoryclass('mod_assign');
         $tooltaskfactory = new $lockfactoryclass('tool_task');
@@ -127,8 +132,24 @@ final class lock_test extends \advanced_testcase {
         // Manually create the core no-configuration factories.
         $this->run_on_lock_factory(\core\lock\db_record_lock_factory::class);
         $this->run_on_lock_factory(\core\lock\file_lock_factory::class);
-
     }
 
+    public function test_exception_for_unreleased_locks(): void {
+        $factory = new \core\lock\db_record_lock_factory('mod_assign');
+        $lock = $factory->get_lock('abc', 0);
+
+        // Using try/catch, not expectException, because I want to verify a few things.
+        try {
+            $lock->release_if_not_released(true);
+        } catch (coding_exception $e) {
+            $this->assertStringContainsString('A lock was created but not released at:', $e->getMessage());
+            $this->assertStringContainsString('call to core\lock\db_record_lock_factory->get_lock()', $e->getMessage());
+            $this->assertStringContainsString('call to core\lock_test->test_exception_for_unreleased_locks()', $e->getMessage());
+            return;
+        }
+
+        // Now use expectException to get the standard failure message.
+        $this->expectException(coding_exception::class);
+    }
 }
 
