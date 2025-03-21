@@ -6482,18 +6482,20 @@ class assign {
             $info->username = core_user::get_fullname($userfrom, $context, ['override' => true]);
         }
 
-        // Information about the recipient (for greeting, etc).
+        // Information about the recipient (for greeting, etc.).
         $info->recipentname = core_user::get_fullname($userto, $context, ['override' => true]);
 
         // Information about the assignment.
         $info->assignment = format_string($assignmentname, true, ['context' => $context]);
         $info->url = $CFG->wwwroot . '/mod/assign/view.php?id=' . $coursemodule->id;
+        // Note: URLs here avoid the & character to avoid escaping issues between text and HTML messages.
         $info->assignmentlink  = '<a href="' . $info->url . '">' . s($info->assignment) . ' report</a>';
         $info->assigncmid = $coursemodule->id;
 
         // Information about the course.
         $info->courseshortname = format_string($course->shortname, true, ['context' => $context]);
         $info->coursefullname = format_string($course->fullname, true, ['context' => $context]);
+        // Note: URLs here avoid the & character to avoid escaping issues between text and HTML messages.
         $info->courseurl = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
         $info->courseassignsurl = $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id;
 
@@ -6503,12 +6505,20 @@ class assign {
         // Other data passed in.
         $info = (object) array_merge((array) $info, $extrainfo);
 
+        // Since format_string returns text with HTML characters escaped,
+        // we need to un-escape before including in the plain text email and subject line.
+        // (Test with a course or assignment called "Escaping & unescaping" to understand).
+        $plaintextinfo = clone $info;
+        $plaintextinfo->assignment = html_entity_decode($info->assignment);
+        $plaintextinfo->courseshortname = html_entity_decode($info->courseshortname);
+        $plaintextinfo->coursefullname = html_entity_decode($info->coursefullname);
+
         // Prepare the message subject and bodies.
-        $postsubject = get_string($messagetype . 'small', 'assign', $info);
+        $postsubject = get_string($messagetype . 'small', 'assign', $plaintextinfo);
 
         $renderer = $PAGE->get_renderer('mod_assign');
-        $context = clone $info;
-        $context->messagetext = get_string($messagetype . 'text', 'assign', $info);
+        $context = clone $plaintextinfo;
+        $context->messagetext = get_string($messagetype . 'text', 'assign', $plaintextinfo);
         // Mustache strips off all training whitespace, but we want a newline at the end.
         $posttext = $renderer->render_from_template(
             'mod_assign/messages/notification_text', $context) . "\n";
