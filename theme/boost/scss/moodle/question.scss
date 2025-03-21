@@ -141,6 +141,12 @@
     display: block;
 }
 
+.chooserdialogue-questionchooser .modicon img.icon,
+#categoryquestions .qtype img.icon {
+    /* Override default icon width set for fontawesome icons */
+    width: 16px;
+}
+
 table.question-bank-table {
     margin: 0;
     background-color: $white;
