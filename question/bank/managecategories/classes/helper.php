@@ -380,7 +380,7 @@ class helper {
             foreach ($categories as $category) {
                 if ($category->contextid == $contextid) {
                     $cid = $category->id;
-                    if ($currentcat != $cid || $currentcat == 0) {
+                    if ("{$currentcat},{$contextid}" != $cid || $currentcat == 0) {
                         $a = new \stdClass();
                         $a->name = format_string(
                             $category->indentedname,
