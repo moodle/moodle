@@ -1710,6 +1710,14 @@ function xmldb_main_upgrade($oldversion) {
         // Launch change of precision for field name.
         $dbman->change_field_precision($table, $field);
 
+        // Changing precision of field itemname on table grade_items to (1333).
+
+        $table = new xmldb_table('grade_items');
+        $field = new xmldb_field('itemname', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'categoryid');
+
+        // Launch change of precision for field itemname.
+        $dbman->change_field_precision($table, $field);
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2025051600.01);
     }

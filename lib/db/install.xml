@@ -1991,7 +1991,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The course this item is part of"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="(optional) the category group this item belongs to"/>
-        <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The name of this item (pushed in by the module)"/>
+        <FIELD NAME="itemname" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The name of this item (pushed in by the module)"/>
         <FIELD NAME="itemtype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="'mod', 'blocks', 'import', 'calculated' etc"/>
         <FIELD NAME="itemmodule" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="'forum', 'quiz', 'csv', etc"/>
         <FIELD NAME="iteminstance" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id of the item module"/>
