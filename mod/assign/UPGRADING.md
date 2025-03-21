@@ -7,6 +7,9 @@
 - Assign sub-plugins have a new method `assign_plugin::settings_validation` which can be overridden to validate the data when the assignments form is saved.
 
   For more information see [MDL-83440](https://tracker.moodle.org/browse/MDL-83440)
+- There is a new method `submission_summary_for_messages()` for submission sub-plugins to summarise what has been submitted for inclusion in confirmation messages to students.
+
+  For more information see [MDL-84387](https://tracker.moodle.org/browse/MDL-84387)
 
 ### Deprecated
 

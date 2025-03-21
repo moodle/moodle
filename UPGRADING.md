@@ -570,6 +570,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79122](https://tracker.moodle.org/browse/MDL-79122)
 
+#### Removed
+
+- Final deprecation of:
+    - core_question\local\bank\action_column_base::class
+    - core_question\local\bank\menu_action_column_base::class
+    - core_question\local\bank\menuable_action::interface
+    - core_question\local\bank\view::print_choose_category_message()
+    - core_question\local\bank\view::display_advanced_search_form()
+    - core_question\local\bank\view::display_showtext_checkbox()
+    - core_question\local\bank\view::init_search_conditions()
+    - core_question\local\bank\view::get_current_category()
+    - core_question\local\bank\view::display_options_form()
+    - core_question\local\bank\view::start_table()
+    - core_question\local\bank\view::end_table()
+    - core_question\statistics\questions\all_calculated_for_qubaid_condition::TIME_TO_CACHE
+    - core_question\statistics\responses\analyser::TIME_TO_CACHE
+    - core_question_bank_renderer::render_category_condition_advanced()
+    - core_question_bank_renderer::render_hidden_condition_advanced()
+    - core_question_bank_renderer::render_category_condition()
+
+  For more information see [MDL-78090](https://tracker.moodle.org/browse/MDL-78090)
+
 #### Fixed
 
 - Duplication or multiple restores of questions has been modified to avoid errors where a question with the same stamp already exists in the target category.
@@ -841,6 +863,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Assign sub-plugins have a new method `assign_plugin::settings_validation` which can be overridden to validate the data when the assignments form is saved.
 
   For more information see [MDL-83440](https://tracker.moodle.org/browse/MDL-83440)
+- There is a new method `submission_summary_for_messages()` for submission sub-plugins to summarise what has been submitted for inclusion in confirmation messages to students.
+
+  For more information see [MDL-84387](https://tracker.moodle.org/browse/MDL-84387)
 
 #### Deprecated
 
@@ -988,6 +1013,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final deprecation of mod_wiki_renderer\wiki_info()
 
   For more information see [MDL-78926](https://tracker.moodle.org/browse/MDL-78926)
+
+### qbank
+
+#### Removed
+
+- Final deprecation of:
+    - qbank_managecategories\output\renderer::class
+    - qbank_statistics\helper::calculate_average_question_discriminative_efficiency()
+    - qbank_statistics\helper::calculate_average_question_discrimination_index()
+    - qbank_statistics\helper::get_all_places_where_questions_were_attempted()
+    - qbank_statistics\helper::calculate_average_question_stats_item()
+    - qbank_statistics\helper::calculate_average_question_facility()
+    - qbank_statistics\helper::load_statistics_for_place()
+    - qbank_statistics\helper::extract_item_value()
+    - template qbank_managecategories/category_condition_advanced
+    - template qbank_managecategories/category_condition
+    - template qbank_managecategories/listitem
+
+  For more information see [MDL-78090](https://tracker.moodle.org/browse/MDL-78090)
 
 ### qbank_bulkmove
 
