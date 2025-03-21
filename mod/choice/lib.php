@@ -62,8 +62,6 @@ global $CHOICE_DISPLAY;
 $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
                          CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
 
-require_once(__DIR__ . '/deprecatedlib.php');
-
 /// Standard functions /////////////////////////////////////////////////////////
 
 /**
@@ -892,14 +890,6 @@ function choice_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-choice-*'=>get_string('page-mod-choice-x', 'choice'));
     return $module_pagetype;
 }
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function choice_print_overview() {
-    throw new coding_exception('choice_print_overview() can not be used any more and is obsolete.');
-}
-
 
 /**
  * Get responses of a given user on a given choice.

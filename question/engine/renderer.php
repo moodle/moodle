@@ -39,13 +39,6 @@ defined('MOODLE_INTERNAL') || die();
 class core_question_renderer extends plugin_renderer_base {
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    public function question_preview_link() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Generate the display of a question in a particular state, and with certain
      * display options. Normally you do not call this method directly. Intsead
      * you call {@link question_usage_by_activity::render_question()} which will

@@ -25,8 +25,6 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/deprecatedlib.php');
-
 /**
  * Adds an assignment instance
  *

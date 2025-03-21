@@ -154,13 +154,6 @@ abstract class core_media_player {
     abstract public function get_rank();
 
     /**
-     * @deprecated since Moodle 3.2
-     */
-    public function is_enabled() {
-        throw new coding_exception('core_media_player::is_enabled() can not be used anymore.');
-    }
-
-    /**
      * Given a list of URLs, returns a reduced array containing only those URLs
      * which are supported by this player. (Empty if none.)
      * @param array $urls Array of moodle_url
@@ -203,13 +196,6 @@ abstract class core_media_player {
         }
 
         return $name;
-    }
-
-    /**
-     * @deprecated since Moodle 3.2
-     */
-    public static function compare_by_rank() {
-        throw new coding_exception('core_media_player::compare_by_rank() can not be used anymore.');
     }
 
     /**

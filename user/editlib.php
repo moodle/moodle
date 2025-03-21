@@ -187,15 +187,6 @@ function useredit_update_user_preference($usernew) {
 }
 
 /**
- * @deprecated since Moodle 3.2
- * @see core_user::update_picture()
- */
-function useredit_update_picture() {
-    throw new coding_exception('useredit_update_picture() can not be used anymore. Please use ' .
-        'core_user::update_picture() instead.');
-}
-
-/**
  * Updates the user email bounce + send counts when the user is edited.
  *
  * @param stdClass $user The current user object.

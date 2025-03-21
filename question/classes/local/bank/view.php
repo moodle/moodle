@@ -878,13 +878,6 @@ class view {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    public function preview_question_url() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Get fields from the pagevars array.
      *
      * If a field is specified, that particlar pagevars field will be returned. Otherwise the entire array will be returned.
@@ -1546,20 +1539,6 @@ class view {
         foreach ($this->extrarows as $row) {
             $row->display($question, $rowclasses);
         }
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    public function process_actions(): void {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    public function process_actions_needing_ui() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**

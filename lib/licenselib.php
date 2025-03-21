@@ -93,13 +93,6 @@ class license_manager {
     }
 
     /**
-     * @deprecated Since Moodle 3.9, MDL-45184.
-     */
-    public function add() {
-        throw new coding_exception('license_manager::add() is deprecated. Please use license_manager::save() instead.');
-    }
-
-    /**
      * Create a license record.
      *
      * @param object $license the license to create record for.

@@ -2138,15 +2138,6 @@ class core_renderer extends renderer_base {
     /**
      * Returns HTML to display a help icon.
      *
-     * @deprecated since Moodle 2.0
-     */
-    public function old_help_icon($helpidentifier, $title, $component = 'moodle', $linktext = '') {
-        throw new coding_exception('old_help_icon() can not be used any more, please see help_icon().');
-    }
-
-    /**
-     * Returns HTML to display a help icon.
-     *
      * Theme developers: DO NOT OVERRIDE! Please override function
      * {@see core_renderer::render_help_icon()} instead.
      *
@@ -2487,15 +2478,6 @@ EOD;
     }
 
     /**
-     * @deprecated since Moodle 3.2
-     */
-    public function update_module_button() {
-        throw new coding_exception('core_renderer::update_module_button() can not be used anymore. Activity ' .
-            'modules should not add the edit module button, the link is already available in the Administration block. ' .
-            'Themes can choose to display the link in the buttons row consistently for all module types.');
-    }
-
-    /**
      * Returns HTML to display a "Turn editing on/off" button in a form.
      *
      * @param moodle_url $url The URL + params to send through when clicking the button
@@ -2736,38 +2718,6 @@ EOD;
 
         // Return the rendered template.
         return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
-    }
-
-    /**
-     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
-     */
-    public function notify_problem() {
-        throw new coding_exception('core_renderer::notify_problem() can not be used any more, ' .
-            'please use \core\notification::add(), or \core\output\notification as required.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
-     */
-    public function notify_success() {
-        throw new coding_exception('core_renderer::notify_success() can not be used any more, ' .
-            'please use \core\notification::add(), or \core\output\notification as required.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
-     */
-    public function notify_message() {
-        throw new coding_exception('core_renderer::notify_message() can not be used any more, ' .
-            'please use \core\notification::add(), or \core\output\notification as required.');
-    }
-
-    /**
-     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
-     */
-    public function notify_redirect() {
-        throw new coding_exception('core_renderer::notify_redirect() can not be used any more, ' .
-            'please use \core\notification::add(), or \core\output\notification as required.');
     }
 
     /**

@@ -48,13 +48,6 @@ class field_controller extends \core_customfield\field_controller {
     }
 
     /**
-     * @deprecated since Moodle 3.10 - MDL-68569 please use $field->get_options
-     */
-    public static function get_options_array(): void {
-        throw new coding_exception('get_options_array() is deprecated, please use $field->get_options() instead');
-    }
-
-    /**
      * Return configured field options
      *
      * @return array

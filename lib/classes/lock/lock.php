@@ -82,13 +82,6 @@ class lock {
     }
 
     /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function extend() {
-        throw new coding_exception('The function extend() has been removed, please do not use it anymore.');
-    }
-
-    /**
      * Release this lock
      * @return bool
      */

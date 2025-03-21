@@ -199,15 +199,6 @@ abstract class store implements store_interface {
     abstract public function purge();
 
     /**
-     * @deprecated since 2.5
-     * @see store::instance_deleted()
-     */
-    public function cleanup() {
-        throw new coding_exception('store::cleanup() can not be used anymore.' .
-            ' Please use store::instance_deleted() instead.');
-    }
-
-    /**
      * Performs any necessary operation when the store instance has been created.
      *
      * @since Moodle 2.5

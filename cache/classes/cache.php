@@ -1309,30 +1309,12 @@ class cache implements loader_interface {
     }
 
     /**
-     * @deprecated since 2.6
-     * @see cache::use_static_acceleration()
-     */
-    protected function is_using_persist_cache() {
-        throw new coding_exception('cache::is_using_persist_cache() can not be used anymore.' .
-            ' Please use cache::use_static_acceleration() instead.');
-    }
-
-    /**
      * Returns true if this cache is making use of the static acceleration array.
      *
      * @return bool
      */
     protected function use_static_acceleration() {
         return $this->staticacceleration;
-    }
-
-    /**
-     * @see cache::static_acceleration_has
-     * @deprecated since 2.6
-     */
-    protected function is_in_persist_cache() {
-        throw new coding_exception('cache::is_in_persist_cache() can not be used anymore.' .
-            ' Please use cache::static_acceleration_has() instead.');
     }
 
     /**
@@ -1348,15 +1330,6 @@ class cache implements loader_interface {
             return false;
         }
         return true;
-    }
-
-    /**
-     * @deprecated since 2.6
-     * @see cache::static_acceleration_get
-     */
-    protected function get_from_persist_cache() {
-        throw new coding_exception('cache::get_from_persist_cache() can not be used anymore.' .
-            ' Please use cache::static_acceleration_get() instead.');
     }
 
     /**
@@ -1402,15 +1375,6 @@ class cache implements loader_interface {
     }
 
     /**
-     * @deprecated since 2.6
-     * @see cache::static_acceleration_set
-     */
-    protected function set_in_persist_cache() {
-        throw new coding_exception('cache::set_in_persist_cache() can not be used anymore.' .
-            ' Please use cache::static_acceleration_set() instead.');
-    }
-
-    /**
      * Sets a key value pair into the static acceleration array.
      *
      * @param string $key The parsed key
@@ -1447,15 +1411,6 @@ class cache implements loader_interface {
             }
         }
         return true;
-    }
-
-    /**
-     * @deprecated since 2.6
-     * @see cache::static_acceleration_delete()
-     */
-    protected function delete_from_persist_cache() {
-        throw new coding_exception('cache::delete_from_persist_cache() can not be used anymore.' .
-            ' Please use cache::static_acceleration_delete() instead.');
     }
 
     /**

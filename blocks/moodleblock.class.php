@@ -389,16 +389,6 @@ class block_base {
     }
 
     /**
-     * Default behavior: save all variables as $CFG properties
-     * You don't need to override this if you 're satisfied with the above
-     *
-     * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
-     */
-    function config_save($data) {
-        throw new coding_exception('config_save() can not be used any more, use Admin Settings functionality to save block configuration.');
-    }
-
-    /**
      * Which page types this block may appear on.
      *
      * The information returned here is processed by the

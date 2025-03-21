@@ -814,17 +814,6 @@ class definition {
     }
 
     /**
-     * Please call {@link definition::use_static_acceleration()} instead.
-     *
-     * @see definition::use_static_acceleration()
-     * @deprecated since 2.6
-     */
-    public function should_be_persistent() {
-        throw new coding_exception('definition::should_be_persistent() can not be used anymore.' .
-            ' Please use definition::use_static_acceleration() instead.');
-    }
-
-    /**
      * Returns true if we should hold onto the data flowing through the cache.
      *
      * If set to true data flowing through the cache will be stored in a static variable
@@ -838,17 +827,6 @@ class definition {
             return false;
         }
         return $this->staticacceleration;
-    }
-
-    /**
-     * Please call {@link definition::get_static_acceleration_size()} instead.
-     *
-     * @see definition::get_static_acceleration_size()
-     * @deprecated since 2.6
-     */
-    public function get_persistent_max_size() {
-        throw new coding_exception('definition::get_persistent_max_size() can not be used anymore.' .
-            ' Please use definition::get_static_acceleration_size() instead.');
     }
 
     /**

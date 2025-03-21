@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 define('LESSON_EVENT_TYPE_OPEN', 'open');
 define('LESSON_EVENT_TYPE_CLOSE', 'close');
 
-require_once(__DIR__ . '/deprecatedlib.php');
 /* Do not include any libraries here! */
 
 /**
@@ -545,13 +544,6 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
     }
 
     return true;
-}
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function lesson_print_overview() {
-    throw new coding_exception('lesson_print_overview() can not be used any more and is obsolete.');
 }
 
 /**

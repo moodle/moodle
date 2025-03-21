@@ -114,13 +114,6 @@ class postgres_lock_factory implements lock_factory {
     }
 
     /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function supports_recursion() {
-        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
-    }
-
-    /**
      * This function generates the unique index for a specific lock key using
      * a sha1 prefix converted to decimal.
      *
@@ -222,13 +215,6 @@ class postgres_lock_factory implements lock_factory {
             unset(self::$locksbytoken[$dbid][$token]);
         }
         return $result;
-    }
-
-    /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function extend_lock() {
-        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
     }
 
     /**

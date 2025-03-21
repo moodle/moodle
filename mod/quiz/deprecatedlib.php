@@ -27,21 +27,6 @@ use mod_quiz\quiz_settings;
 use mod_quiz\task\update_overdue_attempts;
 
 /**
- * @deprecated since Moodle 3.11
- */
-function quiz_get_completion_state() {
-    $completionclass = \mod_quiz\completion\custom_completion::class;
-    throw new coding_exception(__FUNCTION__ . "() has been removed, please use the '{$completionclass}' class instead");
-}
-
-/**
- * @deprecated since Moodle 4.0
- */
-function quiz_retrieve_tags_for_slot_ids() {
-    throw new coding_exception(__FUNCTION__ . '() has been removed.');
-}
-
-/**
  * Verify that the question exists, and the user has permission to use it.
  *
  * @deprecated in 4.1 use mod_quiz\structure::has_use_capability(...) instead.

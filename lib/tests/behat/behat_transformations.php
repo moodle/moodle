@@ -45,14 +45,6 @@ use Behat\Gherkin\Node\TableNode;
 class behat_transformations extends behat_base {
 
     /**
-     * @deprecated since Moodle 3.2
-     */
-    public function prefixed_tablenode_transformations() {
-        throw new coding_exception('prefixed_tablenode_transformations() can not be used anymore. ' .
-            'Please use tablenode_transformations() instead.');
-    }
-
-    /**
      * Removes escaped argument delimiters.
      *
      * We use double quotes as arguments delimiters and

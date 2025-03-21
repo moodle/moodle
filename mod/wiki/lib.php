@@ -384,14 +384,6 @@ function wiki_grades($wikiid) {
 }
 
 /**
- * @deprecated since Moodle 3.8
- */
-function wiki_scale_used() {
-    throw new coding_exception('wiki_scale_used() can not be used anymore. Plugins can implement ' .
-        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
-}
-
-/**
  * Checks if scale is being used by any instance of wiki.
  * This function was added in 1.9
  *

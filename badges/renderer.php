@@ -447,13 +447,6 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.0 - Use the manage_badge_action_bar tertiary navigation instead.
-     */
-    public function print_badge_tabs() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Prints badge status box.
      *
      * @param badge $badge

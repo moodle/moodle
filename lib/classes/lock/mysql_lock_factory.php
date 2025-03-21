@@ -92,13 +92,6 @@ class mysql_lock_factory implements lock_factory {
     }
 
     /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function supports_recursion() {
-        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
-    }
-
-    /**
      * Create and get a lock
      * @param string $resource - The identifier for the lock. Should use frankenstyle prefix.
      * @param int $timeout - The number of seconds to wait for a lock before giving up.
@@ -147,13 +140,6 @@ class mysql_lock_factory implements lock_factory {
             unset($this->openlocks[$lock->get_key()]);
         }
         return $result;
-    }
-
-    /**
-     * @deprecated since Moodle 3.10.
-     */
-    public function extend_lock() {
-        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
     }
 
     /**

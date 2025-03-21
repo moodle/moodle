@@ -30,13 +30,6 @@ require_once($CFG->dirroot.'/course/renderer.php');
 class core_course_bulk_activity_completion_renderer extends plugin_renderer_base {
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    public function navigation() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Render the bulk completion tab.
      *
      * @param Array|stdClass $data the context data to pass to the template.

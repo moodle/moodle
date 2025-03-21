@@ -321,20 +321,6 @@ class completion_info {
     }
 
     /**
-     * @deprecated since Moodle 2.0 - Use display_help_icon instead.
-     */
-    public function print_help_icon() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0 - The 'Your progress' info isn't displayed any more.
-     */
-    public function display_help_icon() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Get a course completion for a user
      *
      * @param int $user_id User id
@@ -488,13 +474,6 @@ class completion_info {
         }
 
         return $aggregation->method;
-    }
-
-    /**
-     * @deprecated since Moodle 2.8 MDL-46290.
-     */
-    public function get_incomplete_criteria() {
-        throw new coding_exception('completion_info->get_incomplete_criteria() is removed.');
     }
 
     /**

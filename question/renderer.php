@@ -92,13 +92,6 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    public function render_qbank_chooser() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
      * Render category condition.
      *
      * @param array $displaydata
@@ -182,33 +175,4 @@ class core_question_bank_renderer extends plugin_renderer_base {
     public function render_bulk_actions_ui($displaydata) {
         return $this->render_from_template('core_question/bulk_actions_ui', $displaydata);
     }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    public function qbank_chooser() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    protected function qbank_chooser_types() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    protected function qbank_chooser_qtype() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    protected function qbank_chooser_title() {
-        throw new coding_exception(__FUNCTION__ . '() has been removed.');
-    }
-
 }

@@ -62,19 +62,6 @@ class core_course_management_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.0. This is now handled/replaced with the tertiary navigation
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'manage_categories_action_bar',
-        since: '4.0',
-        mdl: 'MDL-73462',
-        final: true,
-    )]
-    public function management_heading() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Prepares the form element for the course category listing bulk actions.
      *
      * @return string
@@ -1276,19 +1263,6 @@ class core_course_management_renderer extends plugin_renderer_base {
             return '';
         }
         return html_writer::span(join('', $actions), 'course-item-actions item-actions');
-    }
-
-    /**
-     * @deprecated since Moodle 4.0. This is now handled within manage_categories_action_bar
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'manage_categories_action_bar',
-        since: '4.0',
-        mdl: 'MDL-73462',
-        final: true,
-    )]
-    public function course_search_form() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
