@@ -13,7 +13,7 @@
         "symfony/process": "^4.4 || ^5.0 || ^6.0 || ^7.0",
         "symfony/http-client": "^4.4 || ^5.0 || ^6.0 || ^7.0",
         "symfony/mime": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "behat/behat": "3.14.*",
+        "behat/behat": "^3",
         "oleg-andreyev/mink-phpwebdriver": "1.3.*",
         "filp/whoops": "^2.15"
     },

@@ -17,6 +17,7 @@
 namespace Moodle\BehatExtension\Definition\Printer;
 
 use Behat\Behat\Definition\Printer\ConsoleDefinitionPrinter;
+use Behat\Behat\Definition\Printer\UnusedDefinitionPrinter;
 use Behat\Testwork\Suite\Suite;
 
 // phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
@@ -27,10 +28,10 @@ use Behat\Testwork\Suite\Suite;
  * Used in moodle for definition printing.
  *
  * @package    core
- * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
+ * @copyright  Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter {
+final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter implements UnusedDefinitionPrinter {
     /** @var null|string */
     private $searchcriterion;
 
@@ -43,29 +44,51 @@ final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter
         $this->searchcriterion = $criterion;
     }
 
-    /**
-     * Prints definition.
-     *
-     * @param Suite        $suite
-     * @param Definition[] $definitions
-     */
+    #[\Override]
     public function printDefinitions(Suite $suite, $definitions) {
+        $this->print_definitions_with_optional_suite($definitions, $suite);
+    }
+
+    #[\Override]
+    public function printUnusedDefinitions(array $definitions): void {
+        $unusedtext = $this->translateInfoText(
+            'unused_definitions',
+            ['%count%' => count($definitions)]
+        );
+        $this->write('--- ' . $unusedtext, true);
+        if (count($definitions) !== 0) {
+            $this->print_definitions_with_optional_suite($definitions);
+        }
+    }
+
+    /**
+     * Print definitions with optional suite.
+     *
+     * @param array $definitions
+     * @param null|Suite $suite
+     */
+    protected function print_definitions_with_optional_suite(
+        array $definitions,
+        ?Suite $suite = null
+    ): void {
         $template = <<<TPL
-<div class="step"><div class="stepdescription">{description}</div>
-<div class="stepcontent"><span class="steptype">{type}</span><span class="stepregex">{regex}</span></div>
-<div class="stepapipath">{apipath}</div>
-</div>
-TPL;
+        <div class="step"><div class="stepdescription">{description}</div>
+        <div class="stepcontent"><span class="steptype">{type}</span><span class="stepregex">{regex}</span></div>
+        <div class="stepapipath">{apipath}</div>
+        </div>
+        TPL;
 
         $search = $this->searchcriterion;
 
         // If there is a specific type (given, when or then) required.
         if ($search && strpos($search, '&&') !== false) {
-            list($search, $type) = explode('&&', $search);
+            [$search, $type] = explode('&&', $search);
         }
 
         foreach ($definitions as $definition) {
-            $definition = $this->translateDefinition($suite, $definition);
+            if ($suite) {
+                $definition = $this->translateDefinition($suite, $definition);
+            }
 
             if (!empty($type) && strtolower($definition->getType()) != $type) {
                 continue;
@@ -85,9 +108,7 @@ TPL;
             // Replacing inline regex for expected info string.
             $pattern = preg_replace_callback(
                 '/"\(\?P<([^>]*)>(.*?)"( |$)/',
-                function ($matches) {
-                    return '"' . strtoupper($matches[1]) . '" ';
-                },
+                fn ($matches): string => '"' . strtoupper($matches[1]) . '" ',
                 $pattern
             );
 
@@ -95,7 +116,7 @@ TPL;
                 '{regex}'       => $pattern,
                 '{type}'        => str_pad($definition->getType(), 5, ' ', STR_PAD_LEFT),
                 '{description}' => $description ? $description : '',
-                '{apipath}'     => $definition->getPath()
+                '{apipath}'     => $definition->getPath(),
             ]);
 
             $this->write(implode("\n", $definitiontoprint));

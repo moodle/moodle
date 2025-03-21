@@ -151,7 +151,7 @@ if (empty($options['parallel'])) {
     $processes = cli_execute_parallel(array($cmd), __DIR__);
     $status = print_sequential_output($processes, false);
     chdir($cwd);
-    exit($status);
+    exit((int) $status);
 }
 
 // Default torun is maximum parallel runs.
