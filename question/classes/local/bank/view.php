@@ -954,7 +954,7 @@ class view {
         mdl: 'MDL-72321',
         final: true
     )]
-    protected function get_current_category(): void {
+    protected function get_current_category($categoryandcontext) {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -962,7 +962,7 @@ class view {
      * @deprecated since Moodle 4.3 MDL-72321
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_options_form(): void {
+    protected function display_options_form($showquestiontext): void {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -970,7 +970,7 @@ class view {
      * @deprecated since Moodle 4.3 MDL-72321
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_advanced_search_form(): void {
+    protected function display_advanced_search_form($advancedsearch): void {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -978,7 +978,7 @@ class view {
      * @deprecated since Moodle 4.3 MDL-72321
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_showtext_checkbox(): void {
+    protected function display_showtext_checkbox($showquestiontext): void {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 

@@ -112,7 +112,7 @@ class category_condition extends condition {
      * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_options(): void {
+    public function display_options() {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -120,7 +120,7 @@ class category_condition extends condition {
      * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
      */
     #[\core\attribute\deprecated('foobar::blah()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_options_adv(): void {
+    public function display_options_adv() {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -128,7 +128,7 @@ class category_condition extends condition {
      * @deprecated since Moodle 4.3
      */
     #[\core\attribute\deprecated('core_question renderer', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_category_form(): void {
+    protected function display_category_form($contexts, $pageurl, $current) {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
@@ -182,7 +182,7 @@ class category_condition extends condition {
      * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function print_category_info(): void {
+    protected function print_category_info($category): string {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
