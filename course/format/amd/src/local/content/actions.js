@@ -282,8 +282,8 @@ export default class extends BaseComponent {
 
         // Capture click.
         modalBody.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!target.matches('a') || target.dataset.for != 'section' || target.dataset.id === undefined) {
+            const target = event.target.closest('a');
+            if (!target || target.dataset.for != 'section' || target.dataset.id === undefined) {
                 return;
             }
             if (target.getAttribute('aria-disabled')) {
@@ -378,8 +378,8 @@ export default class extends BaseComponent {
         });
 
         modalBody.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!target.matches('a') || target.dataset.for === undefined || target.dataset.id === undefined) {
+            const target = event.target.closest('a');
+            if (!target || target.dataset.for === undefined || target.dataset.id === undefined) {
                 return;
             }
             if (target.getAttribute('aria-disabled')) {
