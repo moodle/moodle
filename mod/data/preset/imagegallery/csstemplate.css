@@ -28,11 +28,3 @@
     max-width: 100%;
     height: auto;
 }
-
-/*****  Add entry CSS *****/
-
-.imagegallery-addentry .form-group label,
-.imagegallery-asearch .form-group label {
-    font-weight: bold;
-    padding-top: 20px;
-}

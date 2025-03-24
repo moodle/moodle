@@ -188,7 +188,7 @@ class data_field_textarea extends data_field_base {
             'data-fieldtype="editor" ' .
             'cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
-        $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1">';
+        $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1" class="form-select mt-2">';
         foreach ($formats as $key=>$desc) {
             $selected = ($format == $key) ? 'selected="selected"' : '';
             $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';

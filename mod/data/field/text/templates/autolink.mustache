@@ -34,13 +34,9 @@
         "param1": false
     }
 }}
-<div class="form-group row fitem">
-    <div class="col-md-3 d-flex pb-0 pe-md-0">
-        <label for="param1" class="mb-0">{{#str}}fieldallowautolink, data{{/str}}</label>
-    </div>
-    <div class="col-md-9 form-inline align-items-start felement">
-        <input class="form-check-input" type="checkbox" name="param1" id="param1"
-            {{#param1}}checked="checked"{{/param1}}
-            value="1">
+<div class="row mb-2 fitem">
+    <label for="param1" class="col-auto col-md-3 col-form-label">{{#str}}fieldallowautolink, data{{/str}}</label>
+    <div class="col col-md-9 align-self-center felement">
+        <input class="form-check" type="checkbox" name="param1" id="param1" {{#param1}}checked="checked"{{/param1}} value="1">
     </div>
 </div>

@@ -44,11 +44,10 @@
 <fieldset>
     {{> mod_data/fields/basicfields }}
     {{> mod_data/fields/requiredfield }}
-    <div class="form-group row fitem">
-        <div class="col-md-3"><label for="param3" class="mb-0">
-            {{#str}}maxsize, data{{/str}}</label></div>
-        <div class="col-md-9 form-inline align-items-start felement">
-            <select id="param3" class="select form-select form-control" name="param3">
+    <div class="row mb-2 fitem">
+        <label for="param3" class="col-md-3 col-form-label">{{#str}}maxsize, data{{/str}}</label>
+        <div class="col-md-9 felement">
+            <select id="param3" class="select form-select" name="param3">
                 {{#filesizes}}
                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                 {{/filesizes}}
