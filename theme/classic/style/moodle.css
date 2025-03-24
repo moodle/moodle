@@ -15194,7 +15194,7 @@ progress {
   --bs-table-border-color: var(--bs-border-color);
   --bs-table-accent-bg: transparent;
   --bs-table-striped-color: var(--bs-emphasis-color);
-  --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.05);
+  --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.03);
   --bs-table-active-color: var(--bs-emphasis-color);
   --bs-table-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.1);
   --bs-table-hover-color: var(--bs-emphasis-color);
@@ -15268,7 +15268,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #cfe2f2;
   --bs-table-border-color: #a6b5c2;
-  --bs-table-striped-bg: #c5d7e6;
+  --bs-table-striped-bg: #c9dbeb;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #bacbda;
   --bs-table-active-color: #000;
@@ -15282,7 +15282,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #f5f6f8;
   --bs-table-border-color: #c4c5c6;
-  --bs-table-striped-bg: #e9eaec;
+  --bs-table-striped-bg: #eeeff1;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #dddddf;
   --bs-table-active-color: #000;
@@ -15296,7 +15296,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #d7e4d6;
   --bs-table-border-color: #acb6ab;
-  --bs-table-striped-bg: #ccd9cb;
+  --bs-table-striped-bg: #d1ddd0;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #c2cdc1;
   --bs-table-active-color: #000;
@@ -15310,7 +15310,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #cce6ea;
   --bs-table-border-color: #a3b8bb;
-  --bs-table-striped-bg: #c2dbde;
+  --bs-table-striped-bg: #c6dfe3;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #b8cfd3;
   --bs-table-active-color: #000;
@@ -15324,7 +15324,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #fcefdc;
   --bs-table-border-color: #cabfb0;
-  --bs-table-striped-bg: #efe3d1;
+  --bs-table-striped-bg: #f4e8d5;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #e3d7c6;
   --bs-table-active-color: #000;
@@ -15338,7 +15338,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #f4d6d2;
   --bs-table-border-color: #c3aba8;
-  --bs-table-striped-bg: #e8cbc8;
+  --bs-table-striped-bg: #edd0cc;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #dcc1bd;
   --bs-table-active-color: #000;
@@ -15352,7 +15352,7 @@ progress {
   --bs-table-color: #000;
   --bs-table-bg: #f8f9fa;
   --bs-table-border-color: #c6c7c8;
-  --bs-table-striped-bg: #ecedee;
+  --bs-table-striped-bg: #f1f2f3;
   --bs-table-striped-color: #000;
   --bs-table-active-bg: #dfe0e1;
   --bs-table-active-color: #000;
@@ -15366,7 +15366,7 @@ progress {
   --bs-table-color: #fff;
   --bs-table-bg: #1d2125;
   --bs-table-border-color: #4a4d51;
-  --bs-table-striped-bg: #282c30;
+  --bs-table-striped-bg: #24282c;
   --bs-table-striped-color: #fff;
   --bs-table-active-bg: #34373b;
   --bs-table-active-color: #fff;
@@ -36913,7 +36913,7 @@ img.userpicture {
   /* Striped rows like a table */
 }
 .path-backup .mform .grouped_settings.activity_level:nth-of-type(odd) {
-  background-color: rgba(var(--bs-emphasis-color-rgb), 0.05);
+  background-color: rgba(var(--bs-emphasis-color-rgb), 0.03);
 }
 .path-backup .mform .grouped_settings.activity_level:nth-of-type(even) {
   background-color: transparent;
@@ -37089,23 +37089,9 @@ img.userpicture {
 .generaltable tbody + tbody {
   border-top: calc(2 * var(--bs-border-width)) solid var(--bs-border-color);
 }
-.generaltable tbody tr:nth-of-type(odd) {
-  background-color: transparent;
-}
-.generaltable thead .sticky-column,
-.generaltable tbody tr:nth-of-type(even) {
-  background-color: #fff;
-}
-.generaltable tbody tr:nth-of-type(odd) .sticky-column {
-  background-color: transparent;
-}
 .generaltable.table-sm th,
 .generaltable.table-sm td {
   padding: 0.3rem;
-}
-.generaltable tbody tr:hover {
-  color: var(--bs-emphasis-color);
-  background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
 }
 .generaltable tbody tr:hover.dimmed_text a:not(.menu-action) {
   color: var(--bs-emphasis-color);
@@ -37113,7 +37099,8 @@ img.userpicture {
 .generaltable tbody tr:hover td.sticky-column {
   background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
 }
-.generaltable tbody td {
+.generaltable tbody td,
+.generaltable tbody th {
   color: inherit;
   background-color: inherit;
 }

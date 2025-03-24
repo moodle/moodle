@@ -24,16 +24,6 @@
         border-top: calc(2 * #{$table-border-width}) solid $table-border-color;
     }
 
-    tbody tr:nth-of-type(#{$table-striped-order}) {
-        background-color: $table-accent-bg;
-    }
-    thead .sticky-column,
-    tbody tr:nth-of-type(even) {
-        background-color: $white;
-    }
-    tbody tr:nth-of-type(#{$table-striped-order}) .sticky-column {
-        background-color: $table-accent-bg;
-    }
     &.table-sm {
         th,
         td {
@@ -42,8 +32,6 @@
     }
     tbody tr {
         &:hover {
-            color: $table-hover-color;
-            background-color: $table-hover-bg;
             &.dimmed_text {
                 a:not(.menu-action) {
                     color: $table-hover-color;
@@ -55,9 +43,12 @@
         }
     }
     // Allow table cells to inherit text color and background color from table rows.
-    tbody td {
-        color: inherit;
-        background-color: inherit;
+    tbody {
+        td,
+        th {
+            color: inherit;
+            background-color: inherit;
+        }
     }
 }
 
