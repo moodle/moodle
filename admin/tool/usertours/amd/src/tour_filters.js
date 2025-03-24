@@ -106,10 +106,15 @@ const updateExcludeCategories = (categorySelect, excludeSelect, excludeCategorie
 
         // Adjust the height of the select elements.
         adjustHeight(excludeSelect);
-        excludeCategoriesContainer.classList.toggle('d-none', false);
+        // Show the exclude categories container if it was hidden.
+        if (excludeCategoriesContainer.classList.contains('d-none')) {
+            excludeCategoriesContainer.classList.remove('d-none');
+        }
     } else {
         // Hide the exclude categories container when no child categories exist.
-        excludeCategoriesContainer.classList.toggle('d-none');
+        if (!excludeCategoriesContainer.classList.contains('d-none')) {
+            excludeCategoriesContainer.classList.add('d-none');
+        }
         // Clear selections to prevent submitting excluded categories when container is hidden.
         excludeSelect.innerHTML = '';
     }
