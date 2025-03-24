@@ -67,6 +67,7 @@ class report_action_exporter extends exporter {
                         'optional' => true,
                     ],
                 ],
+                'multiple' => true,
             ],
         ];
     }
