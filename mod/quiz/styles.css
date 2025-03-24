@@ -773,7 +773,6 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots .activityinstance span.instancename {
     overflow-x: hidden;
     overflow-y: hidden;
-    white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
     height: 20px;
@@ -789,11 +788,14 @@ table.quizreviewsummary td.cell {
     color: #555;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questiontext {
     color: #555;
+}
+
+#page-mod-quiz-edit .sharedbank .badge {
+    white-space: initial;
 }
 
 #page-mod-quiz-edit .section .activity .editing_move {
@@ -1132,17 +1134,15 @@ table.quizreviewsummary td.cell {
 }
 
 @media (max-width: 576px) {
-    #page-mod-quiz-edit ul.slots li.section li.activity {
-        padding-top: 30px;
+    #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent {
+        display: none;
     }
-    #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
-        top: -30px;
-        left: 0;
-        padding-right: 0;
-        overflow: hidden;
-        align-items: center;
-        position: absolute;
-        width: 100%;
+    #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer,
+    #page-mod-quiz-edit li.section .slotnumber.unshuffled,
+    #page-mod-quiz-edit li.section.shuffled .slotnumber.shuffled,
+    #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance,
+    #page-mod-quiz-edit ul.slots li.section li.activity .actions {
+        display: block;
     }
 }
 
