@@ -26,3 +26,5 @@ defined('MOODLE_INTERNAL') || die;
 
 $string['fullfeatured:fakecapability'] = 'Fullfeatured capability description';
 $string['pluginname'] = 'Fake full featured plugin';
+$string['subplugintype_fulldeprecatedsubtype'] = 'Full Sub Fake';
+$string['subplugintype_fulldeprecatedsubtype_plural'] = 'Full Sub Fakes';

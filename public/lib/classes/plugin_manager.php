@@ -629,44 +629,36 @@ class plugin_manager {
     /**
      * Returns a localized name of a plugin typed in singular form
      *
-     * Most plugin types define their names in core_plugin lang file. In case of subplugins,
-     * we try to ask the parent plugin for the name. In the worst case, we will return
-     * the value of the passed $type parameter.
+     * Plugin types define their names in core_plugin lang file. In the case of subplugins,
+     * we ask the parent plugin for the name
      *
      * @param string $type the type of the plugin, e.g. mod or workshopform
      * @return string
      */
     public function plugintype_name($type) {
-        if (get_string_manager()->string_exists('type_' . $type, 'core_plugin')) {
-            // For most plugin types, their names are defined in core_plugin lang file.
-            return get_string('type_' . $type, 'core_plugin');
-        } else if ($parent = $this->get_parent_of_subplugin($type)) {
+        if ($parent = $this->get_parent_of_subplugin($type, true)) {
             // If this is a subplugin, try to ask the parent plugin for the name.
             return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type, $parent);
         } else {
-            return $type;
+            return get_string('type_' . $type, 'core_plugin');
         }
     }
 
     /**
      * Returns a localized name of a plugin type in plural form
      *
-     * Most plugin types define their names in core_plugin lang file. In case of subplugins,
-     * we try to ask the parent plugin for the name. In the worst case, we will return
-     * the value of the passed $type parameter.
+     * Plugin types define their names in core_plugin lang file. In the case of subplugins,
+     * we ask the parent plugin for the name
      *
      * @param string $type the type of the plugin, e.g. mod or workshopform
      * @return string
      */
     public function plugintype_name_plural($type) {
-        if (get_string_manager()->string_exists('type_' . $type . '_plural', 'core_plugin')) {
-            // For most plugin types, their names are defined in core_plugin lang file.
-            return get_string('type_' . $type . '_plural', 'core_plugin');
-        } else if ($parent = $this->get_parent_of_subplugin($type)) {
+        if ($parent = $this->get_parent_of_subplugin($type, true)) {
             // If this is a subplugin, try to ask the parent plugin for the name.
             return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type . '_plural', $parent);
         } else {
-            return $type;
+            return get_string('type_' . $type . '_plural', 'core_plugin');
         }
     }
 

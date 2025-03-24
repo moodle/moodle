@@ -1,0 +1,8 @@
+issueNumber: MDL-84948
+notes:
+  core:
+    - message: >-
+        The `core_plugin_manager::plugintype_name[_plural]` methods now require
+        language strings for plugin types always be defined via `type_<type>`
+        and `type_<type>_plural` language strings
+      type: changed
