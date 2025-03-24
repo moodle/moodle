@@ -106,10 +106,10 @@ const updateExcludeCategories = (categorySelect, excludeSelect, excludeCategorie
 
         // Adjust the height of the select elements.
         adjustHeight(excludeSelect);
-        excludeCategoriesContainer.style.display = 'flex';
+        excludeCategoriesContainer.classList.toggle('d-none', false);
     } else {
         // Hide the exclude categories container when no child categories exist.
-        excludeCategoriesContainer.style.display = 'none';
+        excludeCategoriesContainer.classList.toggle('d-none');
         // Clear selections to prevent submitting excluded categories when container is hidden.
         excludeSelect.innerHTML = '';
     }
