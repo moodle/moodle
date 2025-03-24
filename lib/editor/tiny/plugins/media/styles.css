@@ -34,46 +34,102 @@ iframe.mm_iframe {
     color: red;
 }
 
-.tiny_image_form .tiny_image_dropzone_container {
+.tiny_image_form .tiny_image_dropzone_container,
+.tiny_media_form .tiny_media_dropzone_container {
     height: 200px;
 }
 
-.tiny_image_form .tiny_image_dropzone_container .dropzone-label {
+.tiny_image_form .tiny_image_dropzone_container .dropzone-label,
+.tiny_media_form .tiny_media_dropzone_container .dropzone-label {
     font-size: 1.25rem;
 }
 
-.tiny_image_form .tiny_image_loader_container {
+.tiny_image_form .tiny_image_loader_container,
+.tiny_media_form .tiny_media_loader_container {
     height: 200px;
 }
 
 .tiny_image_form  .tiny_image_preview_box {
     height: 300px;
+}
+
+.tiny_media_form  .tiny_media_preview_box {
+    height: 100%;
+}
+
+.tiny_image_form  .tiny_image_preview_box,
+.tiny_media_form  .tiny_media_preview_box {
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
 
-.tiny_image_form .tiny_image_deleteicon {
+.tiny_media_form .tiny_media_preview_box {
+    position: relative;
+}
+
+.tiny_media_form .tiny_media_preview_box img {
+    max-height: 300px;
+}
+
+.tiny_image_form .tiny_image_deleteicon,
+.tiny_media_form .tiny_media_delete_icon {
     position: absolute;
     top: 5px;
     right: 5px;
     cursor: pointer;
     z-index: 1;
-    width: 30px;
-    height: 30px;
     background: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    padding: 4px 5px 5px 9px;
+    padding: 5px 10px;
 }
 
-.tiny_image_form .tiny_image_deleteicon .fa-trash {
+.tiny_image_form .tiny_image_deleteicon .fa-trash,
+.tiny_media_form .tiny_media_delete_icon .fa-trash {
     color: #1d2125;
 }
 
 
 @media (max-width: 767px) {
-    .tiny_image_form .tiny_image_properties_col {
+    .tiny_image_form .tiny_image_properties_col,
+    .tiny_media_form .tiny_media_properties_col {
         padding: 0;
     }
+}
+
+.subtitle-caption {
+    text-decoration: underline;
+}
+
+.upload-custom-thumbnail,
+.delete-custom-thumbnail {
+    width: 100%;
+}
+
+.cs-link {
+    margin-left: -23px;
+}
+
+.dropzone-container .dropzone-icon img.icon {
+    height: .83em;
+    opacity: .4;
+}
+
+.tiny_media_preview_tag {
+    max-height: 500px;
+}
+
+.link_as_audio i,
+.link_as_video i {
+    font-size: 5em;
+    color: #bdc6cd;
+}
+
+.link_as_audio:hover i,
+.link_as_video:hover i {
+    color: rgb(97, 97, 97);
+}
+
+#media-filter-preview-container > video {
+    width: 100%;
 }

@@ -1,0 +1,145 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/embed/metadata/captions
+
+    Insert media captions template.
+
+    Example context (json):
+    {
+        "media": {
+            "tracks": {
+                "captions": "captions"
+            }
+        },
+        "showFilePickerTrack": true,
+        "langsInstalled": "installed langs",
+        "src": "http://moodle.com/link/to/source",
+        "srclang": "selected lang",
+        "default": true,
+        "langsAvailable": "avalialbe langs",
+        "defaultTrack": true,
+        "label": "selected track",
+        "code": "lang code",
+        "lang": "lang name"
+    }
+
+}}
+{{#media.tracks.captions}}
+    <div class="mb-1 tiny_media_track">
+        <div class="tiny_media_source tiny_media_track_source">
+            <div class="mb-1">
+                <label for="caption-video-url-input">
+                    {{#str}} captionssourcelabel, tiny_media {{/str}}
+                </label>
+                <div class="input-group input-append w-100">
+                    <input id="caption-video-url-input" class="form-control tiny_media_source_url_entry" type="url" size="32" value="{{src}}">
+                    {{#showFilePickerTrack}}
+                    <span class="input-group-append">
+                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                    </span>
+                    {{/showFilePickerTrack}}
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="w-100" for="caption-video-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+            <select id="caption-video-lang-input" class="form-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                    {{#langsInstalled}}
+                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                    {{/langsInstalled}}
+                </optgroup>
+                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                    {{#langsAvailable}}
+                        <option value="{{code}}">{{lang}}</option>
+                    {{/langsAvailable}}
+                </optgroup>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="w-100" for="caption-video-track-input">{{#str}} label, tiny_media {{/str}}</label>
+            <input id="caption-video-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}">
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input tiny_media_track_default" {{#defaultTrack }}checked{{/defaultTrack }}>
+            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+        </div>
+        <div class="addcomponent-wrapper">
+            <a href="#" class="addcomponent">
+                {{#str}} addcaptionstrack, tiny_media {{/str}}
+            </a>
+        </div>
+        <div class="removecomponent-wrapper hidden">
+            <a href="#" class="removecomponent">
+                {{#str}} remove, tiny_media {{/str}}
+            </a>
+        </div>
+    </div>
+{{/media.tracks.captions}}
+{{^media.tracks.captions}}
+    <div class="mb-1 tiny_media_track">
+        <div class="tiny_media_source tiny_media_track_source">
+            <div class="mb-1">
+                <label for="caption-video-url-input">
+                    {{#str}} captionssourcelabel, tiny_media {{/str}}
+                </label>
+                <div class="input-group input-append w-100">
+                    <input id="caption-video-url-input" class="form-control tiny_media_source_url_entry" type="url" size="32">
+                    {{#showFilePickerTrack}}
+                    <span class="input-group-append">
+                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                    </span>
+                    {{/showFilePickerTrack}}
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="w-100" for="caption-video-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+            <select id="caption-video-lang-input" class="form-select tiny_media_track_lang_entry">
+                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                    {{#langsInstalled}}
+                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                    {{/langsInstalled}}
+                </optgroup>
+                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                    {{#langsAvailable}}
+                        <option value="{{code}}">{{lang}}</option>
+                    {{/langsAvailable}}
+                </optgroup>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="w-100" for="caption-video-track-input">{{#str}} label, tiny_media {{/str}}</label>
+            <input id="caption-video-track-input" class="form-control tiny_media_track_label_entry" type="text">
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input tiny_media_track_default">
+            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+        </div>
+        <div class="addcomponent-wrapper">
+            <a href="#" class="addcomponent">
+                {{#str}} addcaptionstrack, tiny_media {{/str}}
+            </a>
+        </div>
+        <div class="removecomponent-wrapper hidden">
+            <a href="#" class="removecomponent">
+                {{#str}} remove, tiny_media {{/str}}
+            </a>
+        </div>
+    </div>
+{{/media.tracks.captions}}

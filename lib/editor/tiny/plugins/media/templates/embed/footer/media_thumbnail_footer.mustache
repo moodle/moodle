@@ -15,19 +15,22 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_media/embed_media_link
+    @template tiny_media/embed/footer/media_thumbnail_footer
 
-    Embed media link template.
+    Media thumbnail preview footer template.
 
     Example context (json):
     {
 
     }
+
 }}
-<a href="{{url}}"{{!
-    }}{{#width}} data-width="{{.}}"{{/width}}{{!
-    }}{{#height}} data-height="{{.}}"{{/height}}{{!
-}}>{{!
-    }}{{#name}}{{.}}{{/name}}{{!
-    }}{{^name}}{{url}}{{/name}}{{!
-}}</a>
+<div class="row" id="tiny-media-thumbnail-preview-footer">
+    <div class="col-md-6 d-flex align-items-center p-0">
+        <span class="tiny_media_filename text-truncate me-1"></span>
+    </div>
+    <div class="col-md-6 text-end mt-2 md-0 p-0">
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel, moodle {{/str}}</button>
+        <button class="btn btn-primary" data-action="set-poster">{{#str}} next, tiny_media {{/str}}</button>
+    </div>
+</div>

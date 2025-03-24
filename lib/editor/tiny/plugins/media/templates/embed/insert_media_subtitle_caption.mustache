@@ -1,0 +1,107 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/embed/insert_media_subtitle_caption
+
+    Insert media subtitles, captions, chapters, descriptions and metadata template.
+
+    Example context (json):
+    {
+        "elementid": "id",
+        "subtitleshelpicon": "subtitle help icon",
+        "captionshelpicon": "caption help icon",
+        "descriptionshelpicon": "description help icon",
+        "chaptershelpicon": "chapter help icon",
+        "metadatahelpicon": "metadata help icon",
+        "helpStrings": {
+            "metadata": "metadata"
+        }
+    }
+
+}}
+<div id="vtracks" class="fcontainer px-1">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li data-track-kind="subtitles" class="nav-item">
+            <a class="nav-link active" href="#{{elementid}}_vtracks_subtitles" role="tab" data-bs-toggle="tab">
+                {{#str}} subtitles, tiny_media {{/str}}
+            </a>
+        </li>
+        <li data-track-kind="captions" class="nav-item">
+            <a class="nav-link" href="#{{elementid}}_vtracks_captions" role="tab" data-bs-toggle="tab">
+                {{#str}} captions, tiny_media {{/str}}
+            </a>
+        </li>
+        <li data-track-kind="descriptions" class="nav-item">
+            <a class="nav-link" href="#{{elementid}}_vtracks_descriptions" role="tab" data-bs-toggle="tab">
+                {{#str}} descriptions, tiny_media {{/str}}
+            </a>
+        </li>
+        <li data-track-kind="chapters" class="nav-item">
+            <a class="nav-link" href="#{{elementid}}_vtracks_chapters" role="tab" data-bs-toggle="tab">
+                {{#str}} chapters, tiny_media {{/str}}
+            </a>
+        </li>
+        <li data-track-kind="metadata" class="nav-item">
+            <a class="nav-link" href="#{{elementid}}_vtracks_metadata" role="tab" data-bs-toggle="tab">
+                {{#str}} metadata, tiny_media {{/str}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div data-track-kind="subtitles" class="tab-pane active tab-pane-media-metadata" id="{{elementid}}_vtracks_subtitles">
+            <div class="trackhelp">
+                {{#subtitleshelpicon}}
+                    {{> core/help_icon }}
+                {{/subtitleshelpicon}}
+            </div>
+            {{> tiny_media/embed/metadata/subtitles }}
+        </div>
+        <div data-track-kind="captions" class="tab-pane tab-pane-media-metadata" id="{{elementid}}_vtracks_captions">
+            <div class="trackhelp">
+                {{#captionshelpicon}}
+                    {{> core/help_icon }}
+                {{/captionshelpicon}}
+            </div>
+            {{> tiny_media/embed/metadata/captions }}
+        </div>
+        <div data-track-kind="descriptions" class="tab-pane tab-pane-media-metadata" id="{{elementid}}_vtracks_descriptions">
+            <div class="trackhelp">
+                {{#descriptionshelpicon}}
+                    {{> core/help_icon }}
+                {{/descriptionshelpicon}}
+            </div>
+            {{> tiny_media/embed/metadata/descriptions }}
+        </div>
+        <div data-track-kind="chapters" class="tab-pane tab-pane-media-metadata" id="{{elementid}}_vtracks_chapters">
+            <div class="trackhelp">
+                {{#chaptershelpicon}}
+                    {{> core/help_icon }}
+                {{/chaptershelpicon}}
+            </div>
+            {{> tiny_media/embed/metadata/chapters }}
+        </div>
+        <div data-track-kind="metadata" class="tab-pane tab-pane-media-metadata" id="{{elementid}}_vtracks_metadata">
+            <div class="trackhelp">{{{helpStrings.metadata}}}</div>
+            <div class="trackhelp">
+                {{#metadatahelpicon}}
+                    {{> core/help_icon }}
+                {{/metadatahelpicon}}
+            </div>
+            {{> tiny_media/embed/metadata/metadata }}
+        </div>
+    </div>
+</div>

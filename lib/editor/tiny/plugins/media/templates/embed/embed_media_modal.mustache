@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/embed_media_modal
+
+    Embed media modal template.
+
+    Example context (json):
+    {
+
+    }
+}}
+{{< core/modal }}
+
+    {{$body}}
+        <form class="tiny_media_form" id="{{elementid}}_tiny_media_form">
+            <div role="alert" class="d-none alert alert-warning mb-1 tiny_media_url_warning">
+                <label>
+                    {{#str}} mediaurlrequired, tiny_media {{/str}}
+                </label>
+            </div>
+            <div role="progressbar" class="d-none tiny_media_loader lead border rounded text-center">
+                <div class="tiny_media_loader_container d-flex flex-column justify-content-center">
+                    <span data-region="loading-icon-container">
+                        {{> core/loading }}
+                    </span>
+                    <div>{{#str}} loadingmedia, tiny_media {{/str}}</div>
+                </div>
+            </div>
+            <div class="tiny_media_body_template"></div>
+        </form>
+    {{/body}}
+
+    {{$footer}}
+        <div class="tiny_media_footer_template container">
+            <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-6 text-end p-0">
+                    <button type="button" class="btn btn-secondary" data-action="cancel">
+                        {{#str}} cancel, moodle {{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    {{/footer}}
+
+{{/ core/modal }}
