@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace aiprovider_openai;
+namespace aiprovider_ollama;
 
 use core_ai\form\action_settings_form;
 use Psr\Http\Message\RequestInterface;
@@ -22,34 +22,19 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Class provider.
  *
- * @package    aiprovider_openai
+ * @package    aiprovider_ollama
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider extends \core_ai\provider {
-    /**
-     * Get the list of actions that this provider supports.
-     *
-     * @return array An array of action class names.
-     */
+
+    #[\Override]
     public static function get_action_list(): array {
         return [
             \core_ai\aiactions\generate_text::class,
-            \core_ai\aiactions\generate_image::class,
             \core_ai\aiactions\summarise_text::class,
             \core_ai\aiactions\explain_text::class,
         ];
-    }
-
-    #[\Override]
-    public function add_authentication_headers(RequestInterface $request): RequestInterface {
-        if (isset($this->config['orgid'])) {
-            return $request
-                ->withAddedHeader('Authorization', "Bearer {$this->config['apikey']}")
-                ->withAddedHeader('OpenAI-Organization', $this->config['orgid']);
-        } else {
-            return $request->withAddedHeader('Authorization', "Bearer {$this->config['apikey']}");
-        }
     }
 
     #[\Override]
@@ -60,13 +45,23 @@ class provider extends \core_ai\provider {
         $actionname = substr($action, (strrpos($action, '\\') + 1));
         $customdata['actionname'] = $actionname;
         $customdata['action'] = $action;
+        $customdata['providername'] = 'aiprovider_ollama';
         if ($actionname === 'generate_text' || $actionname === 'summarise_text' || $actionname === 'explain_text') {
             return new form\action_generate_text_form(customdata: $customdata);
-        } else if ($actionname === 'generate_image') {
-            return new form\action_generate_image_form(customdata: $customdata);
         }
 
         return false;
+    }
+
+    #[\Override]
+    public function add_authentication_headers(RequestInterface $request): RequestInterface {
+        if (empty($this->config['basicauthenabled'])) {
+            return $request;
+        } else {
+            // Add the Authorization header for basic auth.
+            $authheader = 'Basic ' . base64_encode($this->config['username'] . ':' . $this->config['password']);
+            return $request->withAddedHeader('Authorization', $authheader);
+        }
     }
 
     #[\Override]
@@ -75,25 +70,18 @@ class provider extends \core_ai\provider {
         $customdata = [
             'actionname' => $actionname,
             'action' => $action,
-            'providername' => 'aiprovider_openai',
+            'providername' => 'aiprovider_ollama',
         ];
         if ($actionname === 'generate_text' || $actionname === 'summarise_text' || $actionname === 'explain_text') {
             $mform = new form\action_generate_text_form(customdata: $customdata);
-            return $mform->get_defaults();
-        } else if ($actionname === 'generate_image') {
-            $mform = new form\action_generate_image_form(customdata: $customdata);
             return $mform->get_defaults();
         }
 
         return [];
     }
 
-    /**
-     * Check this provider has the minimal configuration to work.
-     *
-     * @return bool Return true if configured.
-     */
+    #[\Override]
     public function is_provider_configured(): bool {
-        return !empty($this->config['apikey']);
+        return !empty($this->config['endpoint']);
     }
 }

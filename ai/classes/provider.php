@@ -17,6 +17,7 @@
 namespace core_ai;
 
 use core_ai\form\action_settings_form;
+use Psr\Http\Message\RequestInterface;
 use Spatie\Cloneable\Cloneable;
 
 /**
@@ -185,6 +186,32 @@ abstract class provider {
      */
     public function is_provider_configured(): bool {
         return false;
+    }
+
+    /**
+     * Update a request to add any headers required by the provider (if needed).
+     * AI providers will need to override this method to add their own headers.
+     *
+     * @param RequestInterface $request
+     * @return RequestInterface
+     */
+    public function add_authentication_headers(RequestInterface $request): RequestInterface {
+        return $request;
+    }
+
+    /**
+     * Generate a user id.
+     *
+     * This is a hash of the site id and user id,
+     * this means we can determine who made the request
+     * but don't pass any personal data to the AI provider.
+     *
+     * @param string $userid The user id.
+     * @return string The generated user id.
+     */
+    public function generate_userid(string $userid): string {
+        global $CFG;
+        return hash('sha256', $CFG->siteidentifier . $userid);
     }
 
     /**
