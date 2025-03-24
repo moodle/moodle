@@ -966,11 +966,11 @@ abstract class base {
             }
         }
 
-        if ($targetsectionid) {
-            $params['sectionid'] = $targetsectionid;
+        if (isset($targetsectionid)) {
+            $params['targetsectionid'] = $targetsectionid;
         }
-        if ($targetcmid) {
-            $params['cmid'] = $targetcmid;
+        if (isset($targetcmid)) {
+            $params['targetcmid'] = $targetcmid;
         }
         if ($returnurl) {
             $params['returnurl'] = $returnurl->out_as_local_url();
