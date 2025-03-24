@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/messages/notification_text
+
+    This template is used for the plain text version of messages sent from the assignment module.
+
+    Note: much more is passed to this template than might be needed, but this is to give
+    flexibility to themes.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * messagetext - the main content of the message. Normally comes from a lang string.
+    * username - full name of the user who performed the action leading to the message, but will be changed to 'Participant 123' if blink marking is in use.
+    * recipentname - full name of the user the email is being sent to. (Never anonymised.)
+    * assignment - The name of this assignment.
+    * url - The URL of this assignment activity.
+    * assigncmid - Course-module id of this assignment.
+    * courseshortname - short name of the course this assignment is in.
+    * coursefullname - full name of the course this assignment is in.
+    * courseurl - URL of the course page.
+    * courseassignsurl - URL of the paeg listing all assignments in the course.
+    * timeupdated - Time the action that triggered this message was performed, formatted for display.
+
+    Example context (json):
+    {
+        "messagehtml": "Your assignment for Assignment 1 has been submitted. You can check its status at https://qa.moodledemo.net/mod/assign/view.php?id=5.",
+        "username": "Trusty Teacher",
+        "recipientname": "Smart Student",
+        "assignment": "Assignment 1",
+        "url": "https://qa.moodledemo.net/mod/assign/view.php?id=5",
+        "assigncmid": 5,
+        "courseshortname": "A100",
+        "coursefullname": "Assessment for beginners",
+        "courseurl": "https://qa.moodledemo.net/course/view.php?id=2",
+        "courseassignsurl": "https://qa.moodledemo.net/mod/assign/index.php?id=2",
+        "timeupdated": "Fri, 14 Mar 2025, 11:08 PM"
+    }
+}}
+{{{courseshortname}}} -> {{#str}}modulename, mod_assign{{/str}} -> {{{assignment}}}
+---------------------------------------------------------------------
+{{{messagetext}}}
+
+---------------------------------------------------------------------

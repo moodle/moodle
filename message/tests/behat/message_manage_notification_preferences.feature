@@ -143,14 +143,14 @@ Feature: Manage notification preferences - Email
     # Open the popover.
     And I open the notification popover
     # Confirm the submission notification is NOT visible.
-    And I should not see "You have submitted your assignment submission for Test assignment name" in the "#nav-notification-popover-container" "css_element"
+    And I should not see "Assignment Submission Confirmation" in the "#nav-notification-popover-container" "css_element"
     And I log in as "student2"
     # Confirm the popover is showing the unread notifications.
     Then I should see "1" in the "#nav-notification-popover-container [data-region='count-container']" "css_element"
     # Open the popover.
     And I open the notification popover
     # Confirm the submission notification is visible.
-    And I should see "Assignment Submission Confirmation - Test assignment name" in the "#nav-notification-popover-container" "css_element"
+    And I should see "Assignment Submission Confirmation" in the "#nav-notification-popover-container" "css_element"
 
   Scenario: User cannot disable forced notification preferences
     Given the following "courses" exist:
@@ -182,7 +182,7 @@ Feature: Manage notification preferences - Email
     # Open the popover.
     And I open the notification popover
     # Confirm the submission notification is visible.
-    And I should see "Assignment Submission Confirmation - Test assignment name" in the "#nav-notification-popover-container" "css_element"
+    And I should see "Assignment Submission Confirmation" in the "#nav-notification-popover-container" "css_element"
 
   Scenario: User cannot disable disallowed notification preferences
     Given the following "courses" exist:
@@ -214,7 +214,7 @@ Feature: Manage notification preferences - Email
     # Open the popover.
     And I open the notification popover
     # Confirm the submission notification is NOT visible.
-    And I should not see "Assignment Submission Confirmation - Test assignment name" in the "#nav-notification-popover-container" "css_element"
+    And I should not see "Assignment Submission Confirmation" in the "#nav-notification-popover-container" "css_element"
 
   Scenario: Toggle notification preferences hides/displays options
     Given I log in as "admin"

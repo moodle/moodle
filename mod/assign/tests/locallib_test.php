@@ -1724,13 +1724,14 @@ final class locallib_test extends \advanced_testcase {
         \core\cron::setup_user();
         \assign::cron();
 
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(['shortname' => 'E&U']);
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         // Now create an assignment and add some feedback.
         $this->setUser($teacher);
         $assign = $this->create_instance($course, [
+            'name' => 'Escaping & Unescaping',
             'sendstudentnotifications' => 1,
             'markingworkflow' => 1,
         ]);
@@ -1765,8 +1766,45 @@ final class locallib_test extends \advanced_testcase {
         $messages = $sink->get_messages();
 
         $this->assertEquals(1, count($messages));
-        $this->assertEquals(1, $messages[0]->notification);
-        $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+
+        // Get some bits we will need to verify the content of the message.
+        $assignname = $assign->get_instance()->name;
+        $assignurl = (new \moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]))->out();
+        $teachername = fullname($teacher);
+        $assignsurl = (new \moodle_url('/mod/assign/index.php', ['id' => $course->id]))->out();
+        $courseurl = (new \moodle_url('/course/view.php', ['id' => $course->id]))->out();
+
+        $message = $messages[0];
+        $this->assertEquals(1, $message->notification);
+        $this->assertEquals(format_string($assign->get_instance()->name), $message->contexturlname);
+        $this->assertEquals("$teachername has given feedback for assignment $assignname", $message->subject, );
+        $this->assertEquals("E&U -> Assignment -> Escaping & Unescaping
+---------------------------------------------------------------------
+$teachername has posted some feedback on your
+assignment submission for 'Escaping & Unescaping'
+
+You can see it appended to your assignment submission:
+
+    $assignurl
+
+---------------------------------------------------------------------
+",
+            $message->fullmessage,
+        );
+        $this->assertEquals(
+            '<p><font face="sans-serif">
+    <a href="' . $courseurl . '">E&amp;U</a> ->
+    <a href="' . $assignsurl . '">Assignment</a> ->
+    <a href="' . $assignurl . '">Escaping &amp; Unescaping</a>
+</font></p>
+<hr>
+<font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
+            'assignment submission for \'<i>Escaping &amp; Unescaping</i>\'<br /><br />
+You can see it appended to your <a href="' . $assignurl .
+            '">assignment submission</a>.</p></font>
+<hr>',
+            $message->fullmessagehtml
+        );
     }
 
     public function test_cron_message_includes_courseid(): void {

@@ -6434,70 +6434,6 @@ class assign {
     }
 
     /**
-     * Format a notification for plain text.
-     *
-     * @param string $messagetype
-     * @param stdClass $info
-     * @param stdClass $course
-     * @param stdClass $context
-     * @param string $modulename
-     * @param string $assignmentname
-     */
-    protected static function format_notification_message_text($messagetype,
-                                                             $info,
-                                                             $course,
-                                                             $context,
-                                                             $modulename,
-                                                             $assignmentname) {
-        $formatparams = array('context' => $context->get_course_context());
-        $posttext  = format_string($course->shortname, true, $formatparams) .
-                     ' -> ' .
-                     $modulename .
-                     ' -> ' .
-                     format_string($assignmentname, true, $formatparams) . "\n";
-        $posttext .= '---------------------------------------------------------------------' . "\n";
-        $posttext .= get_string($messagetype . 'text', 'assign', $info)."\n";
-        $posttext .= "\n---------------------------------------------------------------------\n";
-        return $posttext;
-    }
-
-    /**
-     * Format a notification for HTML.
-     *
-     * @param string $messagetype
-     * @param stdClass $info
-     * @param stdClass $course
-     * @param stdClass $context
-     * @param string $modulename
-     * @param stdClass $coursemodule
-     * @param string $assignmentname
-     */
-    protected static function format_notification_message_html($messagetype,
-                                                             $info,
-                                                             $course,
-                                                             $context,
-                                                             $modulename,
-                                                             $coursemodule,
-                                                             $assignmentname) {
-        global $CFG;
-        $formatparams = array('context' => $context->get_course_context());
-        $posthtml  = '<p><font face="sans-serif">' .
-                     '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' .
-                     format_string($course->shortname, true, $formatparams) .
-                     '</a> ->' .
-                     '<a href="' . $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id . '">' .
-                     $modulename .
-                     '</a> ->' .
-                     '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $coursemodule->id . '">' .
-                     format_string($assignmentname, true, $formatparams) .
-                     '</a></font></p>';
-        $posthtml .= '<hr /><font face="sans-serif">';
-        $posthtml .= '<p>' . get_string($messagetype . 'html', 'assign', $info) . '</p>';
-        $posthtml .= '</font><hr />';
-        return $posthtml;
-    }
-
-    /**
      * Message someone about something (static so it can be called from cron).
      *
      * @param stdClass $userfrom
@@ -6506,9 +6442,9 @@ class assign {
      * @param string $eventtype
      * @param int $updatetime
      * @param stdClass $coursemodule
-     * @param stdClass $context
+     * @param context $context
      * @param stdClass $course
-     * @param string $modulename
+     * @param string $modulename - no longer used.
      * @param string $assignmentname
      * @param bool $blindmarking
      * @param int $uniqueidforuser
@@ -6530,6 +6466,11 @@ class assign {
                                                         $extrainfo = []) {
         global $CFG, $PAGE;
 
+        // We put more data into info that is used by the default language strings,
+        // so that there is more flexibility for organisations that want to use
+        // Language Customisation to customise the messages.
+
+        // Information about the sender - normally the user who performed the action.
         $info = new stdClass();
         if ($blindmarking) {
             $userfrom = clone($userfrom);
@@ -6538,31 +6479,59 @@ class assign {
             $userfrom->lastname = $uniqueidforuser;
             $userfrom->email = $CFG->noreplyaddress;
         } else {
-            $info->username = fullname($userfrom, true);
+            $info->username = core_user::get_fullname($userfrom, $context, ['override' => true]);
         }
-        $info->assignment = format_string($assignmentname, true, array('context'=>$context));
-        $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
+
+        // Information about the recipient (for greeting, etc.).
+        $info->recipentname = core_user::get_fullname($userto, $context, ['override' => true]);
+
+        // Information about the assignment.
+        $info->assignment = format_string($assignmentname, true, ['context' => $context]);
+        $info->url = $CFG->wwwroot . '/mod/assign/view.php?id=' . $coursemodule->id;
+        // Note: URLs here avoid the & character to avoid escaping issues between text and HTML messages.
+        $info->assignmentlink  = '<a href="' . $info->url . '">' . s($info->assignment) . ' report</a>';
+        $info->assigncmid = $coursemodule->id;
+
+        // Information about the course.
+        $info->courseshortname = format_string($course->shortname, true, ['context' => $context]);
+        $info->coursefullname = format_string($course->fullname, true, ['context' => $context]);
+        // Note: URLs here avoid the & character to avoid escaping issues between text and HTML messages.
+        $info->courseurl = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
+        $info->courseassignsurl = $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id;
+
+        // Time of the action.
         $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
+
+        // Other data passed in.
         $info = (object) array_merge((array) $info, $extrainfo);
 
-        $postsubject = get_string($messagetype . 'small', 'assign', $info);
-        $posttext = self::format_notification_message_text($messagetype,
-                                                           $info,
-                                                           $course,
-                                                           $context,
-                                                           $modulename,
-                                                           $assignmentname);
+        // Since format_string returns text with HTML characters escaped,
+        // we need to un-escape before including in the plain text email and subject line.
+        // (Test with a course or assignment called "Escaping & unescaping" to understand).
+        $plaintextinfo = clone $info;
+        $plaintextinfo->assignment = html_entity_decode($info->assignment);
+        $plaintextinfo->courseshortname = html_entity_decode($info->courseshortname);
+        $plaintextinfo->coursefullname = html_entity_decode($info->coursefullname);
+
+        // Prepare the message subject and bodies.
+        $postsubject = get_string($messagetype . 'small', 'assign', $plaintextinfo);
+
+        $renderer = $PAGE->get_renderer('mod_assign');
+        $context = clone $plaintextinfo;
+        $context->messagetext = get_string($messagetype . 'text', 'assign', $plaintextinfo);
+        // Mustache strips off all training whitespace, but we want a newline at the end.
+        $posttext = $renderer->render_from_template(
+            'mod_assign/messages/notification_text', $context) . "\n";
+
         $posthtml = '';
         if ($userto->mailformat == 1) {
-            $posthtml = self::format_notification_message_html($messagetype,
-                                                               $info,
-                                                               $course,
-                                                               $context,
-                                                               $modulename,
-                                                               $coursemodule,
-                                                               $assignmentname);
+            $context = clone $info;
+            $context->messagehtml = get_string($messagetype . 'html', 'assign', $info);
+            $posthtml = $renderer->render_from_template(
+                'mod_assign/messages/notification_html', $context);
         }
 
+        // Build the message object.
         $eventdata = new \core\message\message();
         $eventdata->courseid         = $course->id;
         $eventdata->modulename       = 'assign';
