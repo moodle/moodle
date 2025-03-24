@@ -44,3 +44,14 @@ Feature: The Section links block can be configured to display section name in ad
     And I should see "7" in the "Section links" "block"
     And I follow "7"
     And I should see "First assignment"
+
+  Scenario: Subsections names are not displayed in the Section links block
+    Given I enable "subsection" "mod" plugin
+    And the following "activity" exists:
+      | activity | subsection  |
+      | name     | Subsection1 |
+      | course   | C1          |
+      | idnumber | subsection1 |
+      | section  | 1           |
+    When I am on the "Course 1" course page logged in as student1
+    Then I should not see "Subsection1" in the "Section links" "block"
