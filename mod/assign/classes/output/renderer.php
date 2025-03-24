@@ -303,7 +303,7 @@ class renderer extends \plugin_renderer_base {
 
         $o .= $this->output->box_start('boxaligncenter gradingsummarytable');
         $t = new \html_table();
-        $t->attributes['class'] = 'generaltable table-bordered';
+        $t->attributes['class'] = 'generaltable table table-striped table-bordered';
 
         // Visibility Status.
         $cell1content = get_string('hiddenfromstudents');
@@ -649,7 +649,7 @@ class renderer extends \plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter submissionsummarytable');
 
         $t = new \html_table();
-        $t->attributes['class'] = 'generaltable table-bordered';
+        $t->attributes['class'] = 'generaltable table table-striped table-bordered';
 
         $warningmsg = '';
         if ($status->teamsubmissionenabled) {
