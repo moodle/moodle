@@ -102,14 +102,18 @@ sed -i "/string\['tiny:/d" "${MOODLEDIR}/lang/en/editor_tiny.php"
 cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
  ```
 
-7. Commit changes. Note: You may need to review individual language changes which do not meet Moodle's guidelines.
-8. If required, the remaining language strings can be fed into AMOS.
+7. Review the changes to the language strings file carefully. You may need to:
+
+    * Edit new strings so they meet [Moodle's guidelines for language strings](https://moodledev.io/general/development/policies/codingstyle#language-strings).
+    * Revert changes to any Moodle-updated language strings that were fixed for spelling, grammar, and consistency in past releases to meet Moodle's guidelines. For example, from the [`en_fix` issues](https://tracker.moodle.org/issues/?jql=summary%20~%20%22en_fix%22%20order%20by%20createdDate%20desc). Review the `git` history of the language strings file to verify.
+
+8. Commit the changes.
+
+9. If required, the remaining language strings can be fed into AMOS.
 
 ---
 
 **Note:** A set of language files are also generated for all supported translations and may be submitted to AMOS if desired.
-
-**Note:** You will need to manually check for any Moodle-updated language strings as part of this change (for example any from the en_fixes).
 
 ---
 
