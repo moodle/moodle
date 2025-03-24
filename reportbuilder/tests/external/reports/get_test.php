@@ -54,7 +54,7 @@ final class get_test extends externallib_advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
 
         $instance = manager::get_report_from_persistent($report);
-        $instance->set_report_action(new report_action('Add', []));
+        $instance->set_report_action(new report_action('Add', ['class' => 'btn', 'data-action' => 'action']));
         $instance->set_report_info_container('Hello');
 
         // Add two filters.
@@ -100,7 +100,7 @@ final class get_test extends externallib_advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
 
         $instance = manager::get_report_from_persistent($report);
-        $instance->set_report_action(new report_action('Add', []));
+        $instance->set_report_action(new report_action('Add', ['class' => 'btn', 'data-action' => 'action']));
         $instance->set_report_info_container('Hello');
 
         // Add two filters.
@@ -118,7 +118,10 @@ final class get_test extends externallib_advanced_testcase {
         $this->assertEquals([
             'tag' => 'button',
             'title' => 'Add',
-            'attributes' => [],
+            'attributes' => [
+                ['name' => 'class', 'value' => 'btn'],
+                ['name' => 'data-action', 'value' => 'action'],
+            ],
         ], $result['button']);
         $this->assertEquals('Hello', $result['infocontainer']);
         $this->assertTrue($result['filterspresent']);
