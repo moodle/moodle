@@ -139,6 +139,7 @@ $string['notificationimage'] = 'Notification image';
 $string['notifications'] = 'Notifications';
 $string['notincontactsheading'] = '{$a} is not in your contacts';
 $string['notincontacts'] = 'You need to add {$a} to your contacts to be able to send them messages.';
+$string['notsupported'] = 'Not supported';
 $string['numparticipants'] = '{$a} participants';
 $string['off'] = 'Off';
 $string['offline'] = 'Offline';

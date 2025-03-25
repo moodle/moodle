@@ -6541,6 +6541,7 @@ class assign {
         $eventdata->fullmessage      = $posttext;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml  = $posthtml;
+        $eventdata->fullmessagesms   = $smsmessage;
         $eventdata->smallmessage     = $postsubject;
 
         $eventdata->name            = $eventtype;

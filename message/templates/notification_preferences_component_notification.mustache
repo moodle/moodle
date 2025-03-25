@@ -41,7 +41,8 @@
                 "locked": 0,
                 "userconfigured": 1,
                 "enabled": 1,
-                "enabledlabel": "Sending Assignment enabled status"
+                "enabledlabel": "Sending Assignment enabled status",
+                "supportsprocessor": true
             }
         ]
     }
@@ -50,27 +51,34 @@
     <td class="preference-name">{{{displayname}}}</td>
     {{#processors}}
         <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
-            {{#locked}}
-                <div class="dimmed_text" title="{{lockedlabel}}">{{{lockedmessage}}}</div>
-            {{/locked}}
-            {{^locked}}
-                <form>
-                    <div class="preference-state" data-preference="{{{preferencekey}}}_{{{name}}}">
-                        <div class="form-check form-switch">
-                            <input type="checkbox"
-                                id="{{{preferencekey}}}_{{{name}}}"
-                                name="{{{preferencekey}}}_{{{name}}}"
-                                class="form-check-input notification_enabled{{#disableall}} disabled{{/disableall}}"
-                                {{#disableall}} disabled="true" {{/disableall}}
-                                {{#enabled}}checked{{/enabled}}
-                            >
-                            <label for="{{{preferencekey}}}_{{{name}}}" class="form-check-label"
-                                title="{{enabledlabel}}" >
-                            </label>
+            {{#supportsprocessor}}
+                {{#locked}}
+                    <div class="dimmed_text" title="{{lockedlabel}}">{{{lockedmessage}}}</div>
+                {{/locked}}
+                {{^locked}}
+                    <form>
+                        <div class="preference-state" data-preference="{{{preferencekey}}}_{{{name}}}">
+                            <div class="form-check form-switch">
+                                <input type="checkbox"
+                                       id="{{{preferencekey}}}_{{{name}}}"
+                                       name="{{{preferencekey}}}_{{{name}}}"
+                                       class="form-check-input notification_enabled{{#disableall}} disabled{{/disableall}}"
+                                    {{#disableall}} disabled="true" {{/disableall}}
+                                    {{#enabled}}checked{{/enabled}}
+                                >
+                                <label for="{{{preferencekey}}}_{{{name}}}" class="form-check-label"
+                                       title="{{enabledlabel}}" >
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            {{/locked}}
+                    </form>
+                {{/locked}}
+            {{/supportsprocessor}}
+            {{^supportsprocessor}}
+                <div class="text-center">
+                    {{#str}} notsupported, core_message {{/str}}
+                </div>
+            {{/supportsprocessor}}
         </td>
     {{/processors}}
 </tr>

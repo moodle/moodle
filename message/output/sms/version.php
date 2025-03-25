@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * SMS notification processor version information.
  *
- * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @package    message_sms
+ * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2025010600;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2024100100;    // Requires this Moodle version.
+$plugin->version   = 2024121700;       // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2024112900;       // Requires this Moodle version.
+$plugin->component = 'message_sms';    // Full name of the plugin (used for diagnostics).

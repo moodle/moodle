@@ -15,15 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Installation code for the SMS message processor.
  *
- * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @package    message_sms
+ * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Add the records for SMS message processor.
+ *
+ * @return bool
+ */
+function xmldb_message_sms_install(): bool {
+    // Insert the processor record for sms.
+    global $DB;
+    $provider = new stdClass();
+    $provider->name  = 'sms';
+    $DB->insert_record('message_processors', $provider);
 
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2025010600;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2024100100;    // Requires this Moodle version.
+    // Keep the plugin disabled by default.
+    $class = \core_plugin_manager::resolve_plugininfo_class('message');
+    $class::enable_plugin($provider->name, 0);
+
+    return true;
+}

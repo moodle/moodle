@@ -881,8 +881,11 @@ $CFG->admin = 'admin';
 // $CFG->langstringcache = false; // NOT FOR PRODUCTION SERVERS!
 //
 // When working with production data on test servers, no emails or other messages
-// should ever be send to real users
+// should ever be sent to real users
 // $CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
+//
+// To stop sending SMS to users in test servers
+// $CFG->nosmsever = true;    // NOT FOR PRODUCTION SERVERS!
 //
 // Divert all outgoing emails to this address to test and debug emailing features
 // $CFG->divertallemailsto = 'root@localhost.local'; // NOT FOR PRODUCTION SERVERS!

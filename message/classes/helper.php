@@ -24,6 +24,7 @@
 
 namespace core_message;
 use DOMDocument;
+use stdclass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -137,7 +138,7 @@ class helper {
 
         foreach ($messages as $message) {
             // Store the message information.
-            $msg = new \stdClass();
+            $msg = new stdClass();
             $msg->id = $message->id;
             $msg->useridfrom = $message->useridfrom;
             $msg->text = message_format_message_text($message);
@@ -172,16 +173,16 @@ class helper {
     /**
      * Helper function for creating a contact object.
      *
-     * @param \stdClass $contact
+     * @param stdClass $contact
      * @param string $prefix
-     * @return \stdClass
+     * @return stdClass
      */
     public static function create_contact($contact, $prefix = '') {
         global $PAGE;
 
         // Create the data we are going to pass to the renderable.
         $userfields = \user_picture::unalias($contact, array('lastaccess'), $prefix . 'id', $prefix);
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->userid = $userfields->id;
         $data->useridfrom = null;
         $data->fullname = fullname($userfields);
@@ -222,7 +223,7 @@ class helper {
     /**
      * Helper function for checking if we should show the user's online status.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
      * @return boolean
      */
     public static function show_online_status($user) {
@@ -263,10 +264,10 @@ class helper {
      *
      * @param array $providers
      * @param int $userid
-     * @return \stdClass
+     * @return stdClass
      */
     public static function get_providers_preferences($providers, $userid) {
-        $preferences = new \stdClass();
+        $preferences = new stdClass();
 
         // Get providers preferences.
         foreach ($providers as $provider) {
@@ -453,7 +454,7 @@ class helper {
         $members = [];
         foreach ($otherusers as $member) {
             // Set basic data.
-            $data = new \stdClass();
+            $data = new stdClass();
             $data->id = $member->id;
             $data->fullname = fullname($member);
 
@@ -668,12 +669,12 @@ class helper {
      *  * deleted
      *  * all potential fullname fields
      *
-     * @param \stdClass $user
+     * @param stdClass $user
      * @param array $userfields An array of userfields to be returned, the values must be a
      *                          subset of user_get_default_fields (optional)
      * @return array the array of userdetails, if visible, or an empty array otherwise.
      */
-    public static function search_get_user_details(\stdClass $user, array $userfields = []): array {
+    public static function search_get_user_details(stdClass $user, array $userfields = []): array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/user/lib.php');
 
@@ -720,5 +721,32 @@ class helper {
         }
 
         return $html;
+    }
+
+    /**
+     * Check the support for SMS in different components.
+     *
+     * At the moment, SMS is not supported for all the components.
+     * Components that supports SMS, can implement the callback to let the notification API support them.
+     *
+     * @param stdclass $messagedata The message data
+     * @return bool
+     */
+    public static function supports_sms_notifications(stdclass $messagedata): bool {
+        // Notification API assigns system ones as component 'moodle'.
+        // We need a special mechanism to handle that as component callback will throw errors.
+        if ($messagedata->component === 'moodle') {
+            return false;
+        }
+
+        $smssupport = component_callback(
+            $messagedata->component,
+            'supports_sms_notifications'
+        );
+
+        if (empty($smssupport)) {
+            return false;
+        }
+        return true;
     }
 }

@@ -14,16 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace message_sms\privacy;
+
 /**
- * Version information
+ * Privacy provider for SMS processor.
  *
- * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @package    message_sms
+ * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class provider implements \core_privacy\local\metadata\null_provider {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2025010600;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2024100100;    // Requires this Moodle version.
+    #[\Override]
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}
