@@ -838,6 +838,10 @@ abstract class question_graded_automatically extends question_with_responses
             return false;
         }
         $hint = $qa->get_applicable_hint();
+        // If there is no applicable hint, that means access should not be granted.
+        if (is_null($hint)) {
+            return false;
+        }
         $hintid = reset($args); // Itemid is hint id.
         return $hintid == $hint->id;
     }
