@@ -1141,12 +1141,19 @@ class stateactions {
     /**
      * Create a course module.
      *
+     * @deprecated since Moodle 5.0, use new_module instead.
+     * @todo MDL-83851: final deprecation of this method in Moodle 6.0.
      * @param stateupdates $updates the affected course elements track
      * @param stdClass $course the course object
      * @param string $modname the module name
      * @param int $targetsectionnum target section number
      * @param int|null $targetcmid optional target cm id
      */
+    #[\core\attribute\deprecated(
+        replacement: 'new_module',
+        since: '5.0',
+        mdl: 'MDL-83469',
+    )]
     public function create_module(
         stateupdates $updates,
         stdClass $course,
@@ -1157,11 +1164,47 @@ class stateactions {
         global $CFG;
         require_once($CFG->dirroot . '/course/modlib.php');
 
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $coursecontext = context_course::instance($course->id);
         require_capability('moodle/course:update', $coursecontext);
 
         // Method "can_add_moduleinfo" called in "prepare_new_moduleinfo_data" will handle the capability checks.
         [, , , , $moduleinfo] = prepare_new_moduleinfo_data($course, $modname, $targetsectionnum);
+        $moduleinfo->beforemod = $targetcmid;
+        create_module((object) $moduleinfo);
+
+        // Adding module affects section structure, and if the module has a delegated section even the course structure.
+        $this->course_state($updates, $course);
+    }
+
+    /**
+     * Create a new course module.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param string $modname the module name
+     * @param int $targetsectionid target section id
+     * @param int|null $targetcmid optional target cm id
+     */
+    public function new_module(
+        stateupdates $updates,
+        stdClass $course,
+        string $modname,
+        int $targetsectionid,
+        ?int $targetcmid = null
+    ): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:update', $coursecontext);
+
+        $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+
+        // Method "can_add_moduleinfo" called in "prepare_new_moduleinfo_data" will handle the capability checks.
+        [, , , , $moduleinfo] = prepare_new_moduleinfo_data($course, $modname, $section->sectionnum);
         $moduleinfo->beforemod = $targetcmid;
         create_module((object) $moduleinfo);
 

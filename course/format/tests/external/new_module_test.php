@@ -27,15 +27,15 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
- * Tests for the create_module class.
+ * Tests for the new_module class.
  *
  * @package    core_courseformat
  * @category   test
  * @copyright  2024 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\external\create_module
+ * @coversDefaultClass \core_courseformat\external\new_module
  */
-final class create_module_test extends \externallib_advanced_testcase {
+final class new_module_test extends \externallib_advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -49,7 +49,7 @@ final class create_module_test extends \externallib_advanced_testcase {
     }
 
     /**
-     * Test the webservice can execute the create_module action.
+     * Test the webservice can execute the new_module action.
      *
      * @covers ::execute
      */
@@ -68,23 +68,28 @@ final class create_module_test extends \externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Execute course action.
-        $results = json_decode(create_module::execute((int)$course->id, $modname, (int)$targetsection->id, (int)$activity->id));
-        $this->assertDebuggingCalled();
+        $results = json_decode(
+            new_module::execute((int)$course->id, $modname, (int)$targetsection->id, (int)$activity->id),
+        );
 
         // Check result.
         $cmupdate = $this->find_update_by_fieldname($results, 'put', 'cm', get_string('quickcreatename', 'mod_' . $modname));
         $this->assertNotEmpty($cmupdate);
         $this->assertEquals($modname, $cmupdate->fields->module);
-        $this->assertEquals($targetsection->id, $cmupdate->fields->sectionnumber);
+        $this->assertEquals($targetsection->id, $cmupdate->fields->sectionid);
+        $this->assertEquals(1, $cmupdate->fields->sectionnumber);
     }
 
     /**
-     * Test the webservice can execute the create_module action with a format override.
+     * Test the webservice can execute the new_module action with a format override.
      *
      * @covers ::execute
      */
     public function test_execute_with_format_override(): void {
         $this->resetAfterTest();
+
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('subsection', 1);
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['format' => 'theunittest', 'numsections' => 1, 'initsections' => 1]);
@@ -94,7 +99,9 @@ final class create_module_test extends \externallib_advanced_testcase {
 
         // Execute course action.
         $modname = 'subsection';
-        $results = json_decode(create_module::execute((int)$course->id, $modname, (int)$targetsection->id));
+        $results = json_decode(
+            new_module::execute((int)$course->id, $modname, (int)$targetsection->id),
+        );
 
         // Some course formats doesn't have the renderer file, so a debugging message will be displayed.
         $this->assertDebuggingCalled();
@@ -104,7 +111,7 @@ final class create_module_test extends \externallib_advanced_testcase {
     }
 
     /**
-     * Test the webservice can execute the create_module action with an invalid module.
+     * Test the webservice can execute the new_module action with an invalid module.
      *
      * @covers ::execute
      */
@@ -122,8 +129,7 @@ final class create_module_test extends \externallib_advanced_testcase {
 
         // Execute course action.
         $modname = 'book';
-        create_module::execute((int)$course->id, $modname, (int)$targetsection->id);
-        $this->assertDebuggingCalled();
+        new_module::execute((int)$course->id, $modname, (int)$targetsection->id);
     }
 
     /**

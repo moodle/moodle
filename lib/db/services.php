@@ -593,6 +593,14 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
     ],
+    'core_courseformat_new_module' => [
+        'classname'     => 'core_courseformat\external\new_module',
+        'methodname'    => 'execute',
+        'description'   => 'Create a new module to course.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'capabilities'  => 'moodle/course:manageactivities',
+    ],
     'core_courseformat_update_course' => [
         'classname'     => 'core_courseformat\external\update_course',
         'methodname'    => 'execute',
@@ -604,7 +612,9 @@ $functions = array(
     'core_courseformat_create_module' => [
         'classname'     => 'core_courseformat\external\create_module',
         'methodname'    => 'execute',
-        'description'   => 'Add module to course.',
+        'description'   => '** DEPRECATED ** Please do not call this function any more. ' .
+            'Use core_courseformat_new_module instead. ' .
+            'Add module to course.',
         'type'          => 'write',
         'ajax'          => true,
         'capabilities'  => 'moodle/course:manageactivities',

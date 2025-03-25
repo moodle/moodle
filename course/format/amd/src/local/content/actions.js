@@ -28,6 +28,7 @@
 import {BaseComponent} from 'core/reactive';
 import {eventTypes} from 'core/local/inplace_editable/events';
 import Collapse from 'theme_boost/bootstrap/collapse';
+import log from 'core/log';
 import Modal from 'core/modal';
 import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalDeleteCancel from 'core/modal_delete_cancel';
@@ -488,12 +489,26 @@ export default class extends BaseComponent {
     /**
      * Handle a create subsection request.
      *
+     * @deprecated since Moodle 5.0 MDL-83469.
+     * @todo MDL-83851 This will be deleted in Moodle 6.0.
      * @param {Element} target the dispatch action element
      * @param {Event} event the triggered event
      */
     async _requestAddModule(target, event) {
+        log.debug('AddModule action is deprecated. Use newModule instead');
         event.preventDefault();
         this.reactive.dispatch('addModule', target.dataset.modname, target.dataset.sectionnum, target.dataset.beforemod);
+    }
+
+    /**
+     * Handle a new create subsection request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestNewModule(target, event) {
+        event.preventDefault();
+        this.reactive.dispatch('newModule', target.dataset.modname, target.dataset.sectionid, target.dataset.beforemod);
     }
 
     /**

@@ -46,9 +46,10 @@ class before_activitychooserbutton_exported_handler {
 
         $attributes = [
             'class' => 'dropdown-item',
-            'data-action' => 'addModule',
+            'data-action' => 'newModule',
             'data-modname' => 'subsection',
             'data-sectionnum' => $section->sectionnum,
+            'data-sectionid' => $section->id,
         ];
         if ($hook->get_cm()) {
             $attributes['data-beforemod'] = $hook->get_cm()->id;
