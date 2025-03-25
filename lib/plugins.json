@@ -5,8 +5,9 @@
             "editor"
         ],
         "aiprovider": [
-            "openai",
-            "azureai"
+            "azureai",
+            "ollama",
+            "openai"
         ],
         "antivirus": [
             "clamav"
