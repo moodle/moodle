@@ -2,6 +2,10 @@
 	path = admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_405_STABLE
+[submodule "blocks/course_recent"]
+	path = blocks/course_recent
+	url = https://github.com/ucsf-education/moodle-block-course_recent
+	branch = MOODLE_405_STABLE
 [submodule "blocks/massaction"]
 	path = blocks/massaction
 	url = https://github.com/Syxton/moodle-block_massaction
@@ -55,14 +59,28 @@
 	path = mod/questionnaire
 	url = https://github.com/PoetOS/moodle-mod_questionnaire
 	branch = MOODLE_404_STABLE
+[submodule "mod/quiz/report/archive"]
+	path = mod/quiz/report/archive
+	url = https://github.com/bfh/moodle-quiz_archive
+	branch = main
+	tag = v4.5-r2
 [submodule "mod/turnitintooltwo"]
 	path = mod/turnitintooltwo
 	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
 	branch = UCSFCLE_404_STABLE
+[submodule "plagiarism/turnitin"]
+	path = plagiarism/turnitin
+	url = https://github.com/turnitin/moodle-plagiarism_turnitin
+	branch = master
+	tag = v2025030501
 [submodule "question/type/knowledgecheck"]
 	path = question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_405_STABLE
+[submodule "question/type/oumultiresponse"]
+	path = question/type/oumultiresponse
+	url = https://github.com/moodleou/moodle-qtype_oumultiresponse
+	branch = main
 [submodule "question/type/wordselect"]
 	path = question/type/wordselect
 	url = https://github.com/marcusgreen/moodle-qtype_wordselect
