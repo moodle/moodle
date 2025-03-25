@@ -48,7 +48,9 @@
             {{#canmanage}}
             {{<core/local/collapsable_section}}
                 {{$titlecontent}}
-                    <img class="activityicon ms-2" src="{{icon}}" alt="" aria-hidden="true">
+                    {{#activityicon}}
+                        {{>core_course/activity_icon}}
+                    {{/activityicon}}
                     <span class="activityname ms-3 mb-0">{{{formattedname}}}</span>
                 {{/titlecontent}}
                 {{$elementid}}activitycompletioncollapse-{{id}}{{/elementid}}

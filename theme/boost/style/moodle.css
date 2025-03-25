@@ -28846,13 +28846,10 @@ img.icon {
 }
 
 .activityiconcontainer {
-  width: 52px;
-  height: 52px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  padding: 0.7rem;
 }
 .activityiconcontainer .activityicon,
 .activityiconcontainer .icon {

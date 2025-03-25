@@ -26,13 +26,12 @@
 namespace core_completion;
 
 use core\context;
+use core\output\local\properties\iconsize;
+use core_course\output\activity_icon;
 use stdClass;
 use context_course;
 use cm_info;
-use tabobject;
-use lang_string;
 use moodle_url;
-defined('MOODLE_INTERNAL') || die;
 
 /**
  * Bulk activity completion manager class
@@ -105,6 +104,7 @@ class manager {
      * @return array
      */
     public function get_activities($cmids, $withcompletiondetails = false) {
+        $output = \core\di::get(\core\output\renderer_helper::class)->get_core_renderer();
         $moduleinfo = get_fast_modinfo($this->courseid);
         $activities = [];
         foreach ($cmids as $cmid) {
@@ -112,11 +112,16 @@ class manager {
             if (!$mod->uservisible) {
                 continue;
             }
+
+            $icon = activity_icon::from_cm_info($mod)
+                ->set_icon_size(iconsize::SIZE5);
+
             $moduleobject = new stdClass();
             $moduleobject->cmid = $cmid;
             $moduleobject->modname = $mod->get_formatted_name();
             $moduleobject->icon = $mod->get_icon_url()->out();
             $moduleobject->url = $mod->url;
+            $moduleobject->activityicon = $icon->export_for_template($output);
             $moduleobject->canmanage = $withcompletiondetails && self::can_edit_bulk_completion($this->courseid, $mod);
 
             // Get activity completion information.

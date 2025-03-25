@@ -195,13 +195,10 @@ img.icon {
 // Revisit these styles when MDL-78284 lands with new icons.
 // Icon container will be removed and icons will be used directly.
 .activityiconcontainer {
-    width: $activity-iconcontainer-width;
-    height: $activity-iconcontainer-height;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    padding: 0.7rem;
     .activityicon,
     .icon {
         margin: 0;

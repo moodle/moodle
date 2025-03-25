@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use core_completion\manager;
+use core_course\output\activity_icon;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -32,7 +33,7 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     /**
      * Render the bulk completion tab.
      *
-     * @param Array|stdClass $data the context data to pass to the template.
+     * @param array|stdClass $data the context data to pass to the template.
      * @return bool|string
      */
     public function bulkcompletion($data) {
@@ -70,6 +71,8 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                     );
                     $module->open = false;
                 }
+
+                $module->activityicon = activity_icon::from_modname($module->name)->export_for_template($this);
 
                 $moduleform = manager::get_module_form($module->name, $course);
                 if ($moduleform) {

@@ -19,9 +19,8 @@ namespace core_courseformat\output\local\overview;
 use core\context\course as context_course;
 use core\output\named_templatable;
 use core\output\renderable;
-use core\output\notification;
-use core\plugin_manager;
 use core\url;
+use core_course\output\activity_icon;
 use core_collator;
 use stdClass;
 
@@ -155,10 +154,12 @@ class overviewpage implements renderable, named_templatable {
      * @return string The HTML string for the activity overview icon.
      */
     private function get_activity_overview_icon(\renderer_base $output, string $modname): string {
+        // Resource is a generic term for all modules with MOD_ARCHETYPE_RESOURCE.
+        // We group all of them under the mod_page icon.
         if ($modname === 'resource') {
-            return $output->pix_icon('monologo', '', 'mod_page', ['class' => 'icon iconsize-medium']);
+            $modname = 'page';
         }
-        return $output->pix_icon('monologo', '', "mod_$modname", ['class' => 'icon iconsize-medium']);
+        return $output->render(activity_icon::from_modname($modname));
     }
 
     /**
