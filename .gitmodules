@@ -55,6 +55,11 @@
 	path = mod/turnitintooltwo
 	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
 	branch = UCSFCLE_404_STABLE
+[submodule "plagiarism/turnitin"]
+	path = plagiarism/turnitin
+	url = https://github.com/turnitin/moodle-plagiarism_turnitin
+	branch = master
+	tag = v2025030501
 [submodule "question/type/knowledgecheck"]
 	path = question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
