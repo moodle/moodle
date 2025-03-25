@@ -1712,8 +1712,6 @@ final class stateactions_test extends \advanced_testcase {
 
         // Create a course with 1 section and 1 student.
         $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
-        $student = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
         $courseformat = course_get_format($course->id);
         $targetsection = $courseformat->get_modinfo()->get_section_info(1);
 
@@ -1734,11 +1732,39 @@ final class stateactions_test extends \advanced_testcase {
         $this->assertEquals($modname, $cmupdate->module);
         $this->assertEquals($targetsection->id, $cmupdate->sectionid);
         $this->assertEquals(get_string('quickcreatename', 'mod_' . $modname), $cmupdate->name);
+    }
+
+    /**
+     * Test for create_module public method with no capabilities.
+     *
+     * @covers ::create_module
+     */
+    public function test_create_module_no_capabilities(): void {
+        $this->resetAfterTest();
+
+        $modname = 'subsection';
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin($modname, 1);
+
+        // Create a course with 1 section and 1 student.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $courseformat = course_get_format($course->id);
+        $targetsection = $courseformat->get_modinfo()->get_section_info(1);
+
+        $this->setAdminUser();
+
+        // Sanity check.
+        $this->assertEmpty($courseformat->get_modinfo()->get_cms());
 
         // Change to a user without permission.
         $this->setUser($student);
 
         // Validate that the method throws an exception.
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+
         $this->expectException(moodle_exception::class);
         $actions->create_module($updates, $course, $modname, $targetsection->sectionnum);
     }
@@ -1773,6 +1799,127 @@ final class stateactions_test extends \advanced_testcase {
         $actions = new stateactions();
         $updates = new stateupdates($courseformat);
         $actions->create_module($updates, $course, $modname, $targetsection->sectionnum, $page->cmid);
+
+        $modinfo = $courseformat->get_modinfo();
+        $cms = $modinfo->get_cms();
+        $results = $this->summarize_updates($updates);
+        $cmupdate = reset($results['put']['cm']);
+
+        // Validate updates were generated.
+        $this->assertEquals($modname, $cmupdate->module);
+        $this->assertEquals($targetsection->id, $cmupdate->sectionid);
+        $this->assertEquals(get_string('quickcreatename', 'mod_' . $modname), $cmupdate->name);
+
+        // Validate that the new module was created between both modules.
+        $this->assertCount(3, $cms);
+        $this->assertArrayHasKey($cmupdate->id, $cms);
+        $this->assertEquals(
+            implode(',', [$forum->cmid, $cmupdate->id, $page->cmid]),
+            $modinfo->get_section_info(1)->sequence
+        );
+    }
+
+    /**
+     * Test for new_module public method.
+     *
+     * @covers ::new_module
+     */
+    public function test_new_module(): void {
+        $this->resetAfterTest();
+
+        $modname = 'subsection';
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin($modname, 1);
+
+        // Create a course with 1 section and 1 student.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $courseformat = course_get_format($course->id);
+        $targetsection = $courseformat->get_modinfo()->get_section_info(1);
+
+        $this->setAdminUser();
+
+        // Sanity check.
+        $this->assertEmpty($courseformat->get_modinfo()->get_cms());
+
+        // Execute given method.
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+        $actions->new_module($updates, $course, $modname, $targetsection->id);
+
+        // Validate cm was created and updates were generated.
+        $results = $this->summarize_updates($updates);
+        $cmupdate = reset($results['put']['cm']);
+        $this->assertCount(1, $courseformat->get_modinfo()->get_cms());
+        $this->assertEquals($modname, $cmupdate->module);
+        $this->assertEquals($targetsection->id, $cmupdate->sectionid);
+        $this->assertEquals(get_string('quickcreatename', 'mod_' . $modname), $cmupdate->name);
+    }
+
+    /**
+     * Test for new_module public method with no capabilities.
+     *
+     * @covers ::new_module
+     */
+    public function test_new_module_no_capabilities(): void {
+        $this->resetAfterTest();
+
+        $modname = 'subsection';
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin($modname, 1);
+
+        // Create a course with 1 section and 1 student.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $courseformat = course_get_format($course->id);
+        $targetsection = $courseformat->get_modinfo()->get_section_info(1);
+
+        $this->setAdminUser();
+
+        // Sanity check.
+        $this->assertEmpty($courseformat->get_modinfo()->get_cms());
+
+        // Change to a user without permission.
+        $this->setUser($student);
+
+        // Validate that the method throws an exception.
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+
+        $this->expectException(moodle_exception::class);
+        $actions->new_module($updates, $course, $modname, $targetsection->id);
+    }
+
+    /**
+     * Test for new_module public method with targetcmid parameter.
+     *
+     * @covers ::new_module
+     */
+    public function test_new_module_with_targetcmid(): void {
+        $this->resetAfterTest();
+
+        $modname = 'subsection';
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin($modname, 1);
+
+        // Create a course with 1 section, 2 modules (forum and page) and 1 student.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 1]);
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $courseformat = course_get_format($course->id);
+        $targetsection = $courseformat->get_modinfo()->get_section_info(1);
+
+        $this->setAdminUser();
+
+        // Sanity check.
+        $this->assertCount(2, $courseformat->get_modinfo()->get_cms());
+
+        // Execute given method.
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+        $actions->new_module($updates, $course, $modname, $targetsection->id, $page->cmid);
 
         $modinfo = $courseformat->get_modinfo();
         $cms = $modinfo->get_cms();

@@ -470,6 +470,17 @@ export default class extends BaseComponent {
     }
 
     /**
+     * Handle a new create subsection request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestNewModule(target, event) {
+        event.preventDefault();
+        this.reactive.dispatch('newModule', target.dataset.modname, target.dataset.sectionid, target.dataset.beforemod);
+    }
+
+    /**
      * Handle a delete section request.
      *
      * @param {Element} target the dispatch action element
