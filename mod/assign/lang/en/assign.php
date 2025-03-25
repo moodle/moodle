@@ -300,6 +300,7 @@ You can see it appended to your assignment submission:
 $string['feedbackavailableanonhtml'] = 'You have new feedback on your assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['feedbackavailableanonsmall'] = 'New feedback for assignment {$a->assignment}';
+$string['feedbackavailableanonsms'] = 'You have feedback on {$a->assignment}: {$a->url}';
 $string['feedbackavailablesms'] = '{$a->username} gave feedback on {$a->assignment}: {$a->url}';
 $string['feedbackplugins'] = 'Feedback plugins';
 $string['feedbackpluginforgradebook'] = 'Feedback plugin that will push comments to the gradebook';
@@ -584,6 +585,7 @@ You can see the status of your assignment submission:
 $string['submissioncopiedhtml'] = '<p>You have made a copy of your previous assignment submission for \'<i>{$a->assignment}</i>\'.</p>
 <p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissioncopiedsmall'] = 'You have copied your previous assignment submission for {$a->assignment}';
+$string['submissioncopiedsms'] = 'You have copied your previous assignment submission for {$a->assignment}: {$a->url}';
 $string['submissiondrafts'] = 'Require students to click the submit button';
 $string['submissiondrafts_help'] = 'If enabled, students will have to click a submit button to declare their submission as final. This allows students to keep a draft version of the submission on the system. If this setting is changed from "No" to "Yes" after students have already submitted, those submissions will be regarded as final.';
 $string['submissioneditable'] = 'Student can edit this submission';
