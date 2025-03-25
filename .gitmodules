@@ -55,6 +55,10 @@
 	path = mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
 	branch = MOODLE_404_STABLE
+[submodule "mod/questionnaire"]
+	path = mod/questionnaire
+	url = https://github.com/PoetOS/moodle-mod_questionnaire
+	branch = MOODLE_404_STABLE
 [submodule "mod/quiz/report/archive"]
 	path = mod/quiz/report/archive
 	url = https://github.com/bfh/moodle-quiz_archive
