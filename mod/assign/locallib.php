@@ -6515,6 +6515,7 @@ class assign {
 
         // Prepare the message subject and bodies.
         $postsubject = get_string($messagetype . 'small', 'assign', $plaintextinfo);
+        $smsmessage = get_string($messagetype . 'sms', 'assign', $plaintextinfo);
 
         $renderer = $PAGE->get_renderer('mod_assign');
         $context = clone $plaintextinfo;
