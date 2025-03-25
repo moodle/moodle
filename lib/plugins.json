@@ -263,7 +263,8 @@
         "message": [
             "airnotifier",
             "email",
-            "popup"
+            "popup",
+            "sms"
         ],
         "mlbackend": [
             "php",
