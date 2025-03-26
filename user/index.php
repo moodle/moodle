@@ -83,25 +83,27 @@ if ($isfrontpage) {
 
 // Trigger events.
 user_list_view($course, $context);
+//added restriction to show participants only to admin 
+if ($roleid == 'admin') {
+        $PAGE->set_title("$course->shortname: ".get_string('participants'));
+        $PAGE->set_heading($course->fullname);
+        $PAGE->set_pagetype('course-view-participants');
 
-$PAGE->set_title("$course->shortname: ".get_string('participants'));
-$PAGE->set_heading($course->fullname);
-$PAGE->set_pagetype('course-view-participants');
-$PAGE->set_docs_path('enrol/users');
-$PAGE->add_body_class('path-user');                     // So we can style it independently.
-$PAGE->set_other_editing_capability('moodle/course:manageactivities');
-
-// Expand the users node in the settings navigation when it exists because those pages
-// are related to this one.
-$node = $PAGE->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
-if ($node) {
-    $node->force_open();
+        $PAGE->set_docs_path('enrol/users');
+        $PAGE->add_body_class('path-user');                     // So we can style it independently.
+        $PAGE->set_other_editing_capability('moodle/course:manageactivities');
+        
+        // Expand the users node in the settings navigation when it exists because those pages
+        // are related to this one.
+        $node = $PAGE->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+        if ($node) {
+            $node->force_open();
+        }
+        
+        echo $OUTPUT->header();
+        
+        $participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
 }
-
-echo $OUTPUT->header();
-
-$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
-
 // Manage enrolments.
 $manager = new course_enrolment_manager($PAGE, $course);
 $enrolbuttons = $manager->get_manual_enrol_buttons();
