@@ -169,6 +169,17 @@ switch ($action) {
         echo $OUTPUT->heading(get_string('managefactor', 'factor_' . $factorobject->name));
         echo $OUTPUT->active_factors($factor);
         echo $OUTPUT->single_button($returnurl, get_string('back'));
+
+        // Displays a setup additional button in case it is needed.
+        if ($factorobject->show_additional_setup_button()) {
+            echo $OUTPUT->single_button(
+                url: new \moodle_url('action.php', ['action' => 'setup', 'factor' => $factor]),
+                label:  $factorobject->get_additional_setup_string(),
+                method: 'post',
+                options: ['type' => 'primary'],
+            );
+        }
+
         // JS for modal confirming replace and revoke actions.
         $PAGE->requires->js_call_amd('tool_mfa/confirmation_modal', 'init', [$context->id]);
 
