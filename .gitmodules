@@ -27,6 +27,11 @@
 	path = filter/ucsfezproxy
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
 	branch = MOODLE_405_STABLE
+[submodule "local/bulkenrol"]
+	path = local/bulkenrol
+	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
+	branch = MOODLE_405_STABLE
+	tag = v4.5-r1
 [submodule "local/staticpage"]
 	path = local/staticpage
 	url = https://github.com/moodle-an-hochschulen/moodle-local_staticpage
