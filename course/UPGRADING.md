@@ -7,6 +7,9 @@
 - Now the core_courseformat\local\content\cm\completion output is more reusable. All the HTML has been moved to its own mustache file, and the output class has a new set_smallbutton method to decide wether to rendered it as a small button (like in the course page) or as a normal one (for other types of pages).
 
   For more information see [MDL-83872](https://tracker.moodle.org/browse/MDL-83872)
+- New core_course\output\activity_icon class to render activity icons with or without purpose color. This output will centralize the way Moodle renders activity icons
+
+  For more information see [MDL-84555](https://tracker.moodle.org/browse/MDL-84555)
 
 ### Deprecated
 

@@ -58,6 +58,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
 
   For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
+- The new PHP enum core\output\local\properties\iconsize can be used to limit the amount of icons sizes an output component can use. The enum has the same values available in the theme_boost scss.
+
+  For more information see [MDL-84555](https://tracker.moodle.org/browse/MDL-84555)
 
 #### Changed
 
@@ -345,6 +348,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Now the core_courseformat\local\content\cm\completion output is more reusable. All the HTML has been moved to its own mustache file, and the output class has a new set_smallbutton method to decide wether to rendered it as a small button (like in the course page) or as a normal one (for other types of pages).
 
   For more information see [MDL-83872](https://tracker.moodle.org/browse/MDL-83872)
+- New core_course\output\activity_icon class to render activity icons with or without purpose color. This output will centralize the way Moodle renders activity icons
+
+  For more information see [MDL-84555](https://tracker.moodle.org/browse/MDL-84555)
 
 #### Deprecated
 
@@ -416,6 +422,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Deprecate the use of element ID selectors in favor of querySelector for Reactive component initialisation. We will use '#id' instead of 'id' for example.
 
   For more information see [MDL-83339](https://tracker.moodle.org/browse/MDL-83339)
+- The core_courseformat_create_module web service has been deprecated. Please use core_courseformat_new_module as its replacement.
+
+  For more information see [MDL-83469](https://tracker.moodle.org/browse/MDL-83469)
+- The state mutation addModule, primarily used for creating mod_subsection instances, has been deprecated. Replace it with newModule. Additionally, all course formats using links with data-action="addModule" must be updated to use data-action="newModule" and include a data-sectionid attribute specifying the target section ID.
+
+  For more information see [MDL-83469](https://tracker.moodle.org/browse/MDL-83469)
 - Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)
@@ -866,6 +878,10 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - There is a new method `submission_summary_for_messages()` for submission sub-plugins to summarise what has been submitted for inclusion in confirmation messages to students.
 
   For more information see [MDL-84387](https://tracker.moodle.org/browse/MDL-84387)
+- When the assignment activity sends notifications, it now sets more information in the $a object passed to the languages strings for the message subject and body. This is to give more flexibility to people using Language Customisation. The avaiable information is the same as the template context for the two templates in the next paragraph, but without the messagetext/html.
+  Also, the overall structure of these messages is now rendered using templates mod_assign/messages/notification_html and mod_assign/messages/notification_html, so they can be overridden by themes. As a result of this, the methods format_notification_message_text and format_notification_message_html (which should have been private to mod_assign and not used anywhere else) have been removed.
+
+  For more information see [MDL-84733](https://tracker.moodle.org/browse/MDL-84733)
 
 #### Deprecated
 

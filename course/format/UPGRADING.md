@@ -43,6 +43,12 @@
 - Deprecate the use of element ID selectors in favor of querySelector for Reactive component initialisation. We will use '#id' instead of 'id' for example.
 
   For more information see [MDL-83339](https://tracker.moodle.org/browse/MDL-83339)
+- The core_courseformat_create_module web service has been deprecated. Please use core_courseformat_new_module as its replacement.
+
+  For more information see [MDL-83469](https://tracker.moodle.org/browse/MDL-83469)
+- The state mutation addModule, primarily used for creating mod_subsection instances, has been deprecated. Replace it with newModule. Additionally, all course formats using links with data-action="addModule" must be updated to use data-action="newModule" and include a data-sectionid attribute specifying the target section ID.
+
+  For more information see [MDL-83469](https://tracker.moodle.org/browse/MDL-83469)
 - Using arrays to define course menu items is deprecated. All course formats that extend the section or activity control menus (format_NAME\output\courseformat\content\section\controlmenu or format_NAME\output\courseformat\cm\section\controlmenu) should return standard action_menu_link objects instead.
 
   For more information see [MDL-83527](https://tracker.moodle.org/browse/MDL-83527)

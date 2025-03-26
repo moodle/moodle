@@ -18,4 +18,3 @@
     - template qbank_managecategories/listitem
 
   For more information see [MDL-78090](https://tracker.moodle.org/browse/MDL-78090)
-
