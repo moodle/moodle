@@ -1595,13 +1595,8 @@ $popout-header-height: 4rem;
             }
             .itemactions {
                 position: absolute;
-                top: 0;
-                right: 0;
-                .dropdown-toggle {
-                    @include border-radius(.5rem);
-                    width: $icon-medium-width;
-                    height: $icon-medium-height;
-                }
+                top: map-get($spacers, 3);
+                right: map-get($spacers, 3);
             }
             &.sortable-list-current-position {
                 background-color: $light;

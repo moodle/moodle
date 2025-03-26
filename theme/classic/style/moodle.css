@@ -36716,14 +36716,8 @@ img.userpicture {
 .path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist .itemactions,
 .path-mod-feedback #feedback_edit_form .feedback_itemlist.sortable-list-is-dragged .itemactions {
   position: absolute;
-  top: 0;
-  right: 0;
-}
-.path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist .itemactions .dropdown-toggle,
-.path-mod-feedback #feedback_edit_form .feedback_itemlist.sortable-list-is-dragged .itemactions .dropdown-toggle {
-  border-radius: 0.5rem;
-  width: 40px;
-  height: 32px;
+  top: 1rem;
+  right: 1rem;
 }
 .path-mod-feedback #feedback_edit_form [id*=_feedback_item_].feedback_itemlist.sortable-list-current-position,
 .path-mod-feedback #feedback_edit_form .feedback_itemlist.sortable-list-is-dragged.sortable-list-current-position {
