@@ -34,6 +34,9 @@ require_once($CFG->dirroot  . '/mod/quiz/accessrule/seb/lib.php');
  * @return bool Result.
  */
 function xmldb_quizaccess_seb_upgrade($oldversion) {
+    global $DB;
+    $dbman = $DB->get_manager();
+
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -48,6 +51,29 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2024100701) {
+
+        // Define field allowcapturecamera to be added to quizaccess_seb_quizsettings.
+        $table = new xmldb_table('quizaccess_seb_quizsettings');
+        $field = new xmldb_field('allowcapturecamera', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'muteonstartup');
+
+        // Conditionally launch add field allowcapturecamera.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field allowcapturemicrophone to be added to quizaccess_seb_quizsettings.
+        $field = new xmldb_field('allowcapturemicrophone', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'allowcapturecamera');
+
+        // Conditionally launch add field allowcapturemicrophone.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Seb savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100701, 'quizaccess', 'seb');
+    }
 
     return true;
 }
