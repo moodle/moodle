@@ -41,7 +41,8 @@ class factor_email_renderer extends plugin_renderer_base {
         $authurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
             ['instance' => $instance->id, 'pass' => 1, 'secret' => $instance->secret]);
         $authurlstring = \html_writer::link($authurl, get_string('email:link', 'factor_email'));
-        $blockurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php', ['instance' => $instanceid]);
+        $blockurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
+            ['instance' => $instance->id, 'secret' => $instance->secret]);
         $blockurlstring = \html_writer::link($blockurl, get_string('email:stoploginlink', 'factor_email'));
         $geoinfo = iplookup_find_location($instance->createdfromip);
 
