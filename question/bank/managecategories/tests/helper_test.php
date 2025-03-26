@@ -254,6 +254,39 @@ final class helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test that question_category_options function does not include the current category.
+     *
+     * @covers ::question_category_options
+     */
+    public function test_question_category_options_exclude_current(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Create categories.
+        $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+        $qcategory2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory1->id]);
+        $qcategory3 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
+
+        $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'));
+        // We get all categories without the currentcat parameter.
+        $categorycontext = $categorycontexts['Quiz: Quiz 1'];
+        $this->assertCount(3, $categorycontext);
+
+        // The currentcat category is excluded.
+        $newcategorycontexts = helper::question_category_options(
+            $contexts->having_cap('moodle/question:add'),
+            currentcat: $qcategory2->id,
+        );
+        $newcategorycontext = $newcategorycontexts['Quiz: Quiz 1'];
+        $this->assertCount(2, $newcategorycontext);
+        $this->assertContains($qcategory1->name, $newcategorycontext);
+        $this->assertNotContains($qcategory2->name, $newcategorycontext);
+        $this->assertContains($qcategory3->name, $newcategorycontext);
+    }
+
+    /**
      * Test that get_categories_for_contexts function returns the correct question count number.
      *
      * @covers ::get_categories_for_contexts
