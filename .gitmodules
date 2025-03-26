@@ -72,6 +72,11 @@
 	path = mod/turnitintooltwo
 	url = https://github.com/ucsf-education/moodle-mod_turnitintooltwo
 	branch = UCSFCLE_404_STABLE
+[submodule "mod/zoom"]
+	path = mod/zoom
+	url = https://github.com/ncstate-delta/moodle-mod_zoom
+	branch = main
+	tag = v5.3.1
 [submodule "plagiarism/turnitin"]
 	path = plagiarism/turnitin
 	url = https://github.com/turnitin/moodle-plagiarism_turnitin
