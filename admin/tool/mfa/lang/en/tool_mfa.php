@@ -151,6 +151,7 @@ $string['settings:redir_exclusions_help'] = 'Each new line is a relative URL fro
 $string['settings:weight'] = 'Factor weight';
 $string['settings:weight_help'] = 'The weight of this factor if passed. A user needs at least 100 points to log in.';
 $string['setupfactor'] = 'Set up factor';
+$string['setupfactorbuttonadditional'] = 'Add additional factor';
 $string['setuprequired'] = 'User setup';
 $string['state:fail'] = 'Fail';
 $string['state:locked'] = 'Locked';
