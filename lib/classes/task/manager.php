@@ -650,15 +650,17 @@ class manager {
         foreach ($records as $record) {
             $task = self::scheduled_task_from_record($record);
 
+            // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
+            if (!$task) {
+                continue;
+            }
+
             // Tasks belonging to deprecated plugin types are excluded.
             if (self::task_component_is_deprecated($task)) {
                 continue;
             }
 
-            // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
-            if ($task) {
-                $tasks[] = $task;
-            }
+            $tasks[] = $task;
         }
 
         return $tasks;
