@@ -252,6 +252,8 @@ class quizaccess_seb extends access_rule_base {
                 . 'seb.userconfirmquit AS seb_userconfirmquit, '
                 . 'seb.enableaudiocontrol AS seb_enableaudiocontrol, '
                 . 'seb.muteonstartup AS seb_muteonstartup, '
+                . 'seb.allowcapturecamera AS seb_allowcapturecamera, '
+                . 'seb.allowcapturemicrophone AS seb_allowcapturemicrophone, '
                 . 'seb.allowspellchecking AS seb_allowspellchecking, '
                 . 'seb.allowreloadinexam AS seb_allowreloadinexam, '
                 . 'seb.activateurlfiltering AS seb_activateurlfiltering, '
