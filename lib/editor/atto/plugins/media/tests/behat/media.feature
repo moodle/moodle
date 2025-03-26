@@ -29,8 +29,11 @@ Feature: Add media to Atto
     And the field "Enter name" matches value "moodle-logo.webm"
     And I wait until the page is ready
     And I click on "Insert media" "button"
-    When I click on "Save changes" "button"
-    Then "//a[. = 'moodle-logo.webm']" "xpath_element" should exist
+    And I click on "Show more buttons" "button"
+    When I click on "HTML" "button"
+    Then I should see "moodle-logo.webm\">moodle-logo.webm</a>"
+    And I click on "Save changes" "button"
+    And ".video-js" "css_element" should exist
 
   @javascript @atto_media_video
   Scenario: Insert some media as a plain video
