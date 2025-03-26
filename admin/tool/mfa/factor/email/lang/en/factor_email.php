@@ -33,7 +33,7 @@ $string['email:loginlink'] = 'Or, if you\'re on the same device, use this {$a}.'
 $string['email:message'] = 'Here\'s your verification code for {$a->sitename} ({$a->siteurl}).';
 $string['email:originatingip'] = 'This login request was made from \'{$a}\'';
 $string['email:revokelink'] = 'If this wasn\'t you, you can {$a}.';
-$string['email:revokesuccess'] = 'This code has been successfully revoked. All sessions for {$a} have been ended.
+$string['email:revokesuccess'] = 'This code has been successfully revoked. All sessions for this user have been ended.
     Email will not be usable as a factor until account security has been verified.';
 $string['email:subject'] = 'Here\'s your verification code';
 $string['email:stoploginlink'] = 'stop this login attempt';
