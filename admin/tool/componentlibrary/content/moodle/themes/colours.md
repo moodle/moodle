@@ -48,7 +48,7 @@ These colours are used throughout Moodle in text, buttons
 
 {{< example show_markup=false >}}
 <p>
-<span class="badge badge-success">Badges</span>
+<span class="badge text-bg-success">Badges</span>
 </p>
 <p>
 <button class="btn btn-success">Buttons</button>

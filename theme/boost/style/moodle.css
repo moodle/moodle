@@ -33589,10 +33589,6 @@ a.ygtvspacer:hover {
   color: #fff;
   background-color: #0f6cbf;
 }
-.message-app .list-group .list-group-item:hover .badge-primary {
-  background-color: #fff;
-  color: #0f6cbf;
-}
 .message-app .list-group .list-group-item:first-child {
   border-top: 0;
 }
