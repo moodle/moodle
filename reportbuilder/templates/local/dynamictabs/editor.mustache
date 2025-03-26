@@ -95,10 +95,11 @@
 }}
 <h2 class="sr-only">{{#str}} editor, core_reportbuilder {{/str}}</h2>
 <div class="reportbuilder-report"
+     id="reportbuilder-report-{{uniqid}}"
      data-region="core_reportbuilder/report"
      data-report-id="{{id}}"
      data-report-type="{{type}}"
-     data-parameter="[]"
+     data-report-parameters=""
      {{#editmode}}data-editing{{/editmode}}
      {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
     <div class="reportbuilder-wrapper d-flex flex-column flex-lg-row">
