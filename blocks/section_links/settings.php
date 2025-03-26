@@ -49,8 +49,10 @@ if ($ADMIN->fulltree) {
                             $selected[$i][1], $increments));
     }
 
-    $settings->add(new admin_setting_configcheckbox('block_section_links/showsectionname',
+    $settings->add(
+        new admin_setting_configcheckbox('block_section_links/showsectionname',
         get_string('showsectionname', 'block_section_links'),
         get_string('showsectionname_help', 'block_section_links'),
-        0));
+        1),
+    );
 }

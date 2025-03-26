@@ -43,16 +43,17 @@ class block_section_links_renderer extends plugin_renderer_base {
      */
     public function render_section_links(stdClass $course, array $sections, $jumptosection = false, $showsectionname = false) {
         $olparams = $showsectionname ? ['class' => 'unlist'] : ['class' => 'inline-list'];
+        $liparams = $showsectionname ? ['class' => 'mb-2'] : [];
         $html = html_writer::start_tag('ol', $olparams);
         foreach ($sections as $section) {
             $attributes = array();
             if (!$section->visible) {
                 $attributes['class'] = 'dimmed';
             }
-            $html .= html_writer::start_tag('li');
+            $html .= html_writer::start_tag('li', $liparams);
             $sectiontext = $section->section;
             if ($showsectionname) {
-                $sectiontext .= ': ' . $section->name;
+                $sectiontext = $section->name;
             }
             if ($section->highlight) {
                 $sectiontext = html_writer::tag('strong', $sectiontext);

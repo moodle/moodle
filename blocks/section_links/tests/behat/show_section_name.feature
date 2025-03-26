@@ -29,8 +29,9 @@ Feature: The Section links block can be configured to display section name in ad
 
   Scenario: Student can see section name under the Section links block
     When I am on the "Course 1" course page logged in as student1
-    Then I should see "7: Section 7" in the "Section links" "block"
-    And I follow "7: Section 7"
+    Then I should see "Section 7" in the "Section links" "block"
+    And I should not see "7: Section 7" in the "Section links" "block"
+    And I follow "Section 7"
     And I should see "First assignment"
 
   Scenario: Teacher can configure existing Section links block to display section number or section name
@@ -41,6 +42,7 @@ Feature: The Section links block can be configured to display section name in ad
       | Display section name | No |
     And I click on "Save changes" "button"
     Then I should not see "7: Section 7" in the "Section links" "block"
+    And I should not see "Section 7" in the "Section links" "block"
     And I should see "7" in the "Section links" "block"
     And I follow "7"
     And I should see "First assignment"
