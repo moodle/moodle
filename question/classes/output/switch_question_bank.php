@@ -62,11 +62,6 @@ class switch_question_bank implements \renderable, \templatable {
         [, $cm] = get_module_from_cmid($this->quizcmid);
         $cminfo = cm_info::create($cm);
 
-        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
-            notincourseids: [$this->courseid],
-            havingcap: ['moodle/question:managecategory'],
-            filtercontext:  $cminfo->context,
-        );
         $coursesharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
             incourseids: [$this->courseid],
             havingcap: ['moodle/question:managecategory'],
@@ -77,12 +72,11 @@ class switch_question_bank implements \renderable, \templatable {
         return [
             'quizname' => $cminfo->get_formatted_name(),
             'quizcmid' => $this->quizcmid,
+            'quizcontextid' => $cminfo->context->id,
             'hascoursesharedbanks' => !empty($coursesharedbanks),
             'coursesharedbanks' => $coursesharedbanks,
             'hasrecentlyviewedbanks' => !empty($recentlyviewedbanks),
             'recentlyviewedbanks' => $recentlyviewedbanks,
-            'hassharedbanks' => !empty($sharedbanks),
-            'sharedbanks' => $sharedbanks,
         ];
     }
 }

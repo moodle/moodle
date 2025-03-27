@@ -129,6 +129,8 @@ class question_bank_helper {
      * it will only be included if the other parameters allow it.
      * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
      *      parameters that will get banks across multiple contexts.
+     * @param string $search Optional term to search question bank instances by name
+     * @param int $limit The number of results to return (default 0 = no limit)
      * @return stdClass[]
      */
     public static function get_activity_instances_with_shareable_questions(
@@ -137,7 +139,9 @@ class question_bank_helper {
         array $havingcap = [],
         bool $getcategories = false,
         int $currentbankid = 0,
-        context $filtercontext = null,
+        ?context $filtercontext = null,
+        string $search = '',
+        int $limit = 0,
     ): array {
         return self::get_bank_instances(true,
             $incourseids,
@@ -146,6 +150,8 @@ class question_bank_helper {
             $currentbankid,
             $havingcap,
             $filtercontext,
+            $search,
+            $limit,
         );
     }
 
@@ -168,7 +174,7 @@ class question_bank_helper {
         array $havingcap = [],
         bool $getcategories = false,
         int $currentbankid = 0,
-        context $filtercontext = null,
+        ?context $filtercontext = null,
     ): array {
         return self::get_bank_instances(false,
             $incourseids,
@@ -194,6 +200,8 @@ class question_bank_helper {
      * @param array $havingcap current user must have these capabilities on each bank context.
      * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
      *     parameters that will get banks across multiple contexts.
+     * @param string $search Optional term to search question bank instances by name
+     * @param int $limit The number of results to return (default 0 = no limit)
      * @return stdClass[]
      */
     private static function get_bank_instances(
@@ -204,6 +212,8 @@ class question_bank_helper {
         int $currentbankid = 0,
         array $havingcap = [],
         ?context $filtercontext = null,
+        string $search = '',
+        int $limit = 0,
     ): array {
         global $DB;
 
@@ -245,13 +255,17 @@ class question_bank_helper {
             if ($plugin === self::get_default_question_bank_activity_name()) {
                 $sql .= " AND p{$key}.type <> '" . self::TYPE_PREVIEW . "'";
             }
+            if (!empty($search)) {
+                $sql .= " AND " . $DB->sql_like("p{$key}.name", ":search{$key}", false);
+                $params["search{$key}"] = "%{$search}%";
+            }
             $pluginssql[] = $sql;
         }
         $pluginssql = implode(' ', $pluginssql);
 
         // Build the SQL to filter out any requested course ids.
         if (!empty($notincourseids)) {
-            [$notincoursesql, $notincourseparams] = $DB->get_in_or_equal($notincourseids, SQL_PARAMS_QM, 'param', false);
+            [$notincoursesql, $notincourseparams] = $DB->get_in_or_equal($notincourseids, SQL_PARAMS_NAMED, 'param', false);
             $notincoursesql = "AND cm.course {$notincoursesql}";
             $params = array_merge($params, $notincourseparams);
         } else {
@@ -260,7 +274,7 @@ class question_bank_helper {
 
         // Build the SQL to include ONLY records belonging to the requested courses.
         if (!empty($incourseids)) {
-            [$incoursesql, $incourseparams] = $DB->get_in_or_equal($incourseids);
+            [$incoursesql, $incourseparams] = $DB->get_in_or_equal($incourseids, SQL_PARAMS_NAMED);
             $incoursesql = " AND cm.course {$incoursesql}";
             $params = array_merge($params, $incourseparams);
         } else {
@@ -269,8 +283,8 @@ class question_bank_helper {
 
         // Optionally order the results by the requested bank id.
         if (!empty($currentbankid)) {
-            $orderbysql = " ORDER BY CASE WHEN cm.id = ? THEN 0 ELSE 1 END ASC, cm.id DESC ";
-            $params[] = $currentbankid;
+            $orderbysql = " ORDER BY CASE WHEN cm.id = :currentbankid THEN 0 ELSE 1 END ASC, cm.id DESC ";
+            $params['currentbankid'] = $currentbankid;
         } else {
             $orderbysql = '';
         }
@@ -284,7 +298,7 @@ class question_bank_helper {
                 GROUP BY cm.id, cm.course
                 {$orderbysql}";
 
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, $params, limitnum: $limit);
         $banks = [];
 
         foreach ($rs as $cm) {
