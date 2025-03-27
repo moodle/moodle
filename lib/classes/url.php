@@ -153,7 +153,9 @@ class url {
             }
             if (isset($parts['query'])) {
                 // Note: the values may not be correctly decoded, url parameters should be always passed as array.
-                parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
+                $out = [];
+                parse_str(str_replace('&amp;', '&', $parts['query']), $out);
+                $this->params($out);
             }
             unset($parts['query']);
             foreach ($parts as $key => $value) {
@@ -179,28 +181,36 @@ class url {
      *
      * The added params override existing ones if they have the same name.
      *
-     * @param null|array $params Defaults to null. If null then returns all params.
+     * @param null|array $params Array of parameters to add. Note all values that are not arrays are cast to strings.
      * @return array Array of Params for url.
      * @throws coding_exception
      */
     public function params(?array $params = null) {
         $params = (array)$params;
-
-        foreach ($params as $key => $value) {
-            if (is_int($key)) {
-                throw new coding_exception('Url parameters can not have numeric keys!');
-            }
-            if (!is_string($value)) {
-                if (is_array($value)) {
-                    throw new coding_exception('Url parameters values can not be arrays!');
-                }
-                if (is_object($value) && !method_exists($value, '__toString')) {
-                    throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
-                }
-            }
-            $this->params[$key] = (string)$value;
-        }
+        $params = $this->clean_url_params($params);
+        $this->params = array_merge($this->params, $params);
         return $this->params;
+    }
+
+    /**
+     * Converts given URL parameter values that are not arrays into strings.
+     *
+     * This is to maintain the same behaviour as the original params() function.
+     *
+     * @param array $params
+     * @return array
+     */
+    private function clean_url_params(array $params): array {
+        // Convert all values to strings.
+        // This was the original implementation of the params function,
+        // which we have kept for backwards compatibility.
+        array_walk_recursive($params, function (&$value) {
+            if (is_object($value) && !is_a($value, \Stringable::class)) {
+                throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
+            }
+            $value = (string) $value;
+        });
+        return $params;
     }
 
     /**
@@ -246,7 +256,7 @@ class url {
      *
      * @param string $paramname name
      * @param string $newvalue Param value. If new value specified current value is overriden or parameter is added
-     * @return mixed string parameter value, null if parameter does not exist
+     * @return array|string|null parameter value, null if parameter does not exist.
      */
     public function param($paramname, $newvalue = '') {
         if (func_num_args() > 1) {
@@ -261,28 +271,65 @@ class url {
     }
 
     /**
-     * Merges parameters and validates them
+     * Merges parameters.
      *
      * @param null|array $overrideparams
      * @return array merged parameters
-     * @throws coding_exception
      */
     protected function merge_overrideparams(?array $overrideparams = null) {
-        $overrideparams = (array)$overrideparams;
-        $params = $this->params;
-        foreach ($overrideparams as $key => $value) {
-            if (is_int($key)) {
-                throw new coding_exception('Overridden parameters can not have numeric keys!');
+        $overrideparams = (array) $overrideparams;
+        $overrideparams = $this->clean_url_params($overrideparams);
+        return array_merge($this->params, $overrideparams);
+    }
+
+    /**
+     * Recursively transforms the given array of values to query string parts.
+     *
+     * Example query string parts: a=2, a[0]=2
+     *
+     * @param array $data Data to encode into query string parts. Can be a multi level array. All end values must be strings.
+     * @return array array of query string parts. All parts are rawurlencoded.
+     */
+    private function recursively_transform_params_to_query_string_parts(array $data): array {
+        $stringparams = [];
+
+        // Define a recursive function to encode the array into a set of string params.
+        // We need to do this recursively, so that multi level array parameters are properly supported.
+        $parsestringparams = function (array $data) use (&$stringparams, &$parsestringparams) {
+            foreach ($data as $key => $value) {
+                // If this is an array, rewrite the $value keys to track the position in the array.
+                // and pass back to this function recursively until the values are no longer arrays.
+                // E.g. if $key is 'a' and $value was [0 => true, 1 => false]
+                // the new array becomes ['a[0]' => true, 'a[1]' => false].
+                if (is_array($value)) {
+                    $newvalue = [];
+                    foreach ($value as $innerkey => $innervalue) {
+                        $newkey = $key . '[' . $innerkey . ']';
+                        $newvalue[$newkey] = $innervalue;
+                    }
+                    $parsestringparams($newvalue);
+                } else {
+                    // Else no more arrays to traverse - build the final query string part.
+                    // We enforce that all end values are strings for consistency.
+                    // When params() is used, it will convert all params given to strings.
+                    // This will catch out anyone setting the params property directly.
+                    if (!is_string($value)) {
+                        throw new coding_exception('Unexpected query string value type.
+All values that are not arrays should be a string.');
+                    }
+
+                    if (isset($value) && $value !== '') {
+                        $stringparams[] = rawurlencode($key) . '=' . rawurlencode($value);
+                    } else {
+                        $stringparams[] = rawurlencode($key);
+                    }
+                }
             }
-            if (is_array($value)) {
-                throw new coding_exception('Overridden parameters values can not be arrays!');
-            }
-            if (is_object($value) && !method_exists($value, '__toString')) {
-                throw new coding_exception('Overridden parameters values can not be objects, unless __toString() is defined!');
-            }
-            $params[$key] = (string)$value;
-        }
-        return $params;
+        };
+
+        $parsestringparams($data);
+
+        return $stringparams;
     }
 
     /**
@@ -296,29 +343,18 @@ class url {
      * @return string query string that can be added to a url.
      */
     public function get_query_string($escaped = true, ?array $overrideparams = null) {
-        $arr = [];
         if ($overrideparams !== null) {
             $params = $this->merge_overrideparams($overrideparams);
         } else {
             $params = $this->params;
         }
-        foreach ($params as $key => $val) {
-            if (is_array($val)) {
-                foreach ($val as $index => $value) {
-                    $arr[] = rawurlencode($key . '[' . $index . ']') . "=" . rawurlencode($value);
-                }
-            } else {
-                if (isset($val) && $val !== '') {
-                    $arr[] = rawurlencode($key) . "=" . rawurlencode($val);
-                } else {
-                    $arr[] = rawurlencode($key);
-                }
-            }
-        }
+
+        $stringparams = $this->recursively_transform_params_to_query_string_parts($params);
+
         if ($escaped) {
-            return implode('&amp;', $arr);
+            return implode('&amp;', $stringparams);
         } else {
-            return implode('&', $arr);
+            return implode('&', $stringparams);
         }
     }
 
@@ -330,17 +366,28 @@ class url {
      * @return array params array for templates.
      */
     public function export_params_for_template(): array {
-        $data = [];
-        foreach ($this->params as $key => $val) {
-            if (is_array($val)) {
-                foreach ($val as $index => $value) {
-                    $data[] = ['name' => $key . '[' . $index . ']', 'value' => $value];
-                }
-            } else {
-                $data[] = ['name' => $key, 'value' => $val];
+        $querystringparts = $this->recursively_transform_params_to_query_string_parts($this->params);
+
+        return array_map(function ($value) {
+            // First urldecode it, they are encoded by default.
+            $value = rawurldecode($value);
+
+            // Now separate the parts into name and value, splitting only on the first '=' sign.
+            // There may be more = signs (e.g. base64, encoded urls, etc...) that we don't want to split on.
+            $parts = explode('=', $value, 2);
+
+            // Parts must be of length 1 or 2, anything else is an invalid.
+            if (count($parts) !== 1 && count($parts) !== 2) {
+                throw new coding_exception('Invalid query string construction, unexpected number of parts');
             }
-        }
-        return $data;
+
+            // There might not always be a '=' e.g. when the value is an empty string.
+            // in this case, just fallback to an empty string.
+            $name = $parts[0];
+            $value = $parts[1] ?? '';
+
+            return ['name' => $name, 'value' => $value];
+        }, $querystringparts);
     }
 
     /**
@@ -847,7 +894,7 @@ class url {
      * Returns a given parameter value from the URL.
      *
      * @param string $name Name of parameter
-     * @return string Value of parameter or null if not set
+     * @return array|string|null Value of parameter or null if not set.
      */
     public function get_param($name) {
         if (array_key_exists($name, $this->params)) {
