@@ -437,19 +437,28 @@ class post extends db_table_vault {
             'where' => $privatewhere,
             'params' => $privateparams,
         ] = $this->get_private_reply_sql($user, $canseeprivatereplies, "mp");
+        [
+            'where' => $privatewhere2,
+            'params' => $privateparams2,
+        ] = $this->get_private_reply_sql($user, $canseeprivatereplies, "p");
 
         $sql = "
-            SELECT p.*
-            FROM {" . self::TABLE . "} p
+            SELECT posts.*
+            FROM {" . self::TABLE . "} posts
             JOIN (
-                SELECT mp.discussion, mp.created, MAX(mp.id) AS latestpostid
-                FROM {" . self::TABLE . "} mp
-                WHERE mp.discussion {$insql} {$privatewhere}
-                GROUP BY mp.discussion, mp.created
-                HAVING mp.created = MAX(mp.created)
-            ) lp on lp.discussion = p.discussion AND lp.latestpostid = p.id";
+                SELECT p.discussion, MAX(p.id) as latestpostid
+                FROM {" . self::TABLE . "} p
+                JOIN (
+                    SELECT mp.discussion, MAX(mp.created) AS created
+                    FROM {" . self::TABLE . "} mp
+                    WHERE mp.discussion {$insql} {$privatewhere}
+                    GROUP BY mp.discussion
+                ) lp ON lp.discussion = p.discussion AND lp.created = p.created
+                WHERE 1=1 {$privatewhere2}
+                GROUP BY p.discussion
+            ) plp on plp.discussion = posts.discussion AND plp.latestpostid = posts.id";
 
-        $records = $this->get_db()->get_records_sql($sql, array_merge($params, $privateparams));
+        $records = $this->get_db()->get_records_sql($sql, array_merge($params, $privateparams, $privateparams2));
         $entities = $this->transform_db_records_to_entities($records);
 
         return array_reduce($entities, function($carry, $entity) {
@@ -469,10 +478,10 @@ class post extends db_table_vault {
         $params = [];
         $privatewhere = '';
         if (!$canseeprivatereplies) {
-            $privatewhere = " AND ({$posttablealias}.privatereplyto = :privatereplyto OR " .
-                "{$posttablealias}.userid = :privatereplyfrom OR {$posttablealias}.privatereplyto = 0)";
-            $params['privatereplyto'] = $user->id;
-            $params['privatereplyfrom'] = $user->id;
+            $privatewhere = " AND ({$posttablealias}.privatereplyto = :{$posttablealias}_privatereplyto OR " .
+                "{$posttablealias}.userid = :{$posttablealias}_privatereplyfrom OR {$posttablealias}.privatereplyto = 0)";
+            $params[$posttablealias . '_privatereplyto'] = $user->id;
+            $params[$posttablealias . '_privatereplyfrom'] = $user->id;
         }
 
         return [
@@ -496,15 +505,19 @@ class post extends db_table_vault {
         list($insql, $params) = $this->get_db()->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
 
         $sql = "
-            SELECT p.*
-            FROM {" . self::TABLE . "} p
+            SELECT posts.*
+            FROM {" . self::TABLE . "} posts
             JOIN (
-                SELECT mp.discussion, mp.created, MIN(mp.id) AS firstpostid
-                FROM {" . self::TABLE . "} mp
-                WHERE mp.discussion {$insql}
-                GROUP BY mp.discussion, mp.created
-                HAVING mp.created = MIN(mp.created)
-            ) fp ON fp.discussion = p.discussion AND fp.firstpostid = p.id";
+                SELECT p.discussion, MIN(p.id) as firstpostid
+                FROM {" . self::TABLE . "} p
+                JOIN (
+                    SELECT mp.discussion, MIN(mp.created) AS created
+                    FROM {" . self::TABLE . "} mp
+                    WHERE mp.discussion {$insql}
+                    GROUP BY mp.discussion
+                ) lp ON lp.discussion = p.discussion AND lp.created = p.created
+                GROUP BY p.discussion
+            ) plp on plp.discussion = posts.discussion AND plp.firstpostid = posts.id";
 
         $records = $this->get_db()->get_records_sql($sql, $params);
         return $this->transform_db_records_to_entities($records);
