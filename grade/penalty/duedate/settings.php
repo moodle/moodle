@@ -26,9 +26,12 @@ use core\url;
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    // New category for the plugin.
-    $ADMIN->add('gradepenalty', new admin_category('gradepenalty_duedate', new lang_string('pluginname', 'gradepenalty_duedate')));
+// New category for the plugin.
+$ADMIN->add('gradepenalty', new admin_category('gradepenalty_duedate', new lang_string('pluginname', 'gradepenalty_duedate')));
+
+$capabilities = ['gradepenalty/duedate:manage'];
+
+if ($hassiteconfig || has_any_capability($capabilities, core\context\system::instance())) {
 
     // External page to manage the duedate rules.
     $temp = new admin_externalpage(
