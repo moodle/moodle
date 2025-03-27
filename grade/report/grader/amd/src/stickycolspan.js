@@ -42,7 +42,10 @@ export const init = () => {
     document.querySelectorAll(SELECTORS.USERDROPDOWN).forEach((dropdown) => {
         dropdown.addEventListener('show.bs.dropdown', (e) => {
             // The closest heading element has sticky positioning which affects the stacking context in this case.
-            e.target.closest(SELECTORS.TABLEHEADER).classList.toggle('actions-menu-active');
+            e.target.closest(SELECTORS.TABLEHEADER).classList.add('actions-menu-active');
+        });
+        dropdown.addEventListener('hide.bs.dropdown', (e) => {
+            e.target.closest(SELECTORS.TABLEHEADER).classList.remove('actions-menu-active');
         });
     });
 
