@@ -51,6 +51,7 @@ $string['settings:userverification'] = 'User verification';
 $string['settings:userverification_help'] = 'Serves to ensure the person authenticating is in fact who they say they are. User verification can take various forms, such as password, PIN, fingerprint, etc.';
 $string['setupfactor'] = 'Set up security key';
 $string['setupfactorbutton'] = 'Set up';
+$string['setupfactorbuttonadditional'] = 'Add security key';
 $string['setupfactor:instructionsregistersecuritykey'] = '2. Register a security key.';
 $string['setupfactor:instructionssecuritykeyname'] = '1. Give your key a name.';
 $string['setupfactor:intro'] = 'A security key is a physical device that you can use to authenticate yourself. Security keys can be USB tokens, Bluetooth devices, or event built-in fingerprint scanners on your phone or computer.';
