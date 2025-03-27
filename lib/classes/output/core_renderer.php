@@ -2067,7 +2067,7 @@ class core_renderer extends renderer_base {
                 'action' => $rateurl->out_omit_querystring(),
             ];
             $formstart  = html_writer::start_tag('form', $formattrs);
-            $formstart .= html_writer::start_tag('div', ['class' => 'ratingform']);
+            $formstart .= html_writer::start_tag('div', ['class' => 'ratingform hstack gap-2']);
 
             // add the hidden inputs
             foreach ($inputs as $name => $value) {
