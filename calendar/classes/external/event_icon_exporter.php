@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core\external\exporter;
 use \core_calendar\local\event\entities\event_interface;
+use core_course\output\activity_icon;
 
 /**
  * Class for displaying a calendar event's icon.
@@ -63,19 +64,25 @@ class event_icon_exporter extends exporter {
         $isuserevent = ($user && !empty($userid));
         $iconurl = '';
         $iconclass = '';
+        $purpose = '';
 
         if ($isactivityevent) {
             $key = 'monologo';
             $component = $coursemodule->get('modname');
 
-            $iconurl = get_fast_modinfo($courseid)->get_cm($coursemodule->get('id'))->get_icon_url();
-            $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
-            $iconurl = $iconurl->out(false);
             if (get_string_manager()->string_exists($event->get_type(), $component)) {
                 $alttext = get_string($event->get_type(), $component);
             } else {
                 $alttext = get_string('activityevent', 'calendar');
             }
+
+            $renderer = \core\di::get(\core\output\renderer_helper::class)->get_core_renderer();
+            $activityicon = activity_icon::from_cm_info($coursemodule->get_proxied_instance())
+                ->set_title($alttext);
+
+            $iconurl = $activityicon->get_icon_url($renderer)->out(false);
+            $iconclass = $activityicon->get_icon_classes($renderer);
+            $purpose = $activityicon->get_purpose();
         } else if ($event->get_component()) {
             // Guess the icon and the title for the component event. By default display calendar icon and the
             // plugin name as the alttext.
@@ -125,6 +132,7 @@ class event_icon_exporter extends exporter {
         $data->alttext = $alttext;
         $data->iconurl = $iconurl;
         $data->iconclass = $iconclass;
+        $data->purpose = $purpose;
 
         parent::__construct($data, $related);
     }
@@ -141,6 +149,7 @@ class event_icon_exporter extends exporter {
             'alttext' => ['type' => PARAM_TEXT],
             'iconurl' => ['type' => PARAM_TEXT],
             'iconclass' => ['type' => PARAM_TEXT],
+            'purpose' => ['type' => PARAM_TEXT],
         ];
     }
 
