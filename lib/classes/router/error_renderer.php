@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\output;
+namespace core\router;
 
+use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\ErrorRendererInterface;
 use Throwable;
 
@@ -28,7 +29,7 @@ use Throwable;
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class routed_error_handler implements ErrorRendererInterface {
+class error_renderer implements ErrorRendererInterface {
     #[\Override]
     public function __invoke(Throwable $exception, bool $displayErrorDetails): string {
         // @codeCoverageIgnoreStart
@@ -38,8 +39,19 @@ class routed_error_handler implements ErrorRendererInterface {
         }
         // @codeCoverageIgnoreEnd
 
+        if ($exception instanceof HttpNotFoundException) {
+            // This is a 404 error.
+            $controller = \core\di::get(\core\route\controller\page_not_found_controller::class);
+
+            return $controller->page_not_found_handler(
+                $exception->getRequest(),
+            )->getBody();
+        }
+
         if ($whoops = get_whoops()) {
-            $whoops->sendHttpCode($exception->getCode());
+            if ($exception instanceof \Slim\Exception\HttpException) {
+                $whoops->sendHttpCode($exception->getCode());
+            }
             $whoops->handleException($exception);
         } else {
             default_exception_handler($exception);

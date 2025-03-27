@@ -18,6 +18,7 @@ namespace core\router;
 
 use Slim\App;
 use Slim\Interfaces\RouteGroupInterface;
+use Slim\Interfaces\RouteInterface;
 use Slim\Routing\RouteCollectorProxy;
 
 /**
@@ -32,6 +33,8 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
     public function configure_routes(App $app): array {
         return [
             route_loader_interface::ROUTE_GROUP_API => $this->configure_api_routes($app, route_loader_interface::ROUTE_GROUP_API),
+            route_loader_interface::ROUTE_GROUP_PAGE => $this->configure_standard_routes($app),
+            route_loader_interface::ROUTE_GROUP_SHIM => $this->configure_shim_routes($app),
         ];
     }
 
@@ -60,6 +63,36 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
     }
 
     /**
+     * Configure all standard routes.
+     *
+     * @param App $app
+     * @return RouteGroupInterface
+     */
+    protected function configure_standard_routes(App $app): RouteGroupInterface {
+        return $app->group('', function (RouteCollectorProxy $group): void {
+            foreach ($this->get_all_standard_routes() as $moodleroute) {
+                $slimroute = $group->map(...$moodleroute);
+                $this->set_route_name_for_callable($slimroute, $moodleroute['callable']);
+            }
+        });
+    }
+
+    /**
+     * Configure all route shims.
+     *
+     * @param App $app
+     * @return RouteGroupInterface
+     */
+    protected function configure_shim_routes(App $app): RouteGroupInterface {
+        return $app->group('', function (RouteCollectorProxy $group): void {
+            foreach ($this->get_all_shimmed_routes() as $moodleroute) {
+                $slimroute = $group->map(...$moodleroute);
+                $this->set_route_name_for_callable($slimroute, $moodleroute['callable']);
+            }
+        });
+    }
+
+    /**
      * Fetch all API routes.
      *
      * Note: This method caches results in MUC.
@@ -79,5 +112,66 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
         }
 
         return $routes;
+    }
+
+    /**
+     * Fetch all shimmed routes.
+     *
+     * Shimmed routes are routes that are not part of the standard route namespace but allow backwards compatibility with
+     * pages which have been moved to the new routing system.
+     *
+     * Note: This method caches results in MUC.
+     *
+     * @return array|bool|mixed
+     */
+    protected function get_all_shimmed_routes(): array {
+        $cache = \cache::make('core', 'routes');
+
+        if (!($cachedata = $cache->get('shimmed_routes'))) {
+            $cachedata = $this->get_all_routes_in_namespace(
+                namespace: 'route\shim',
+                componentpathcallback: function (string $component): string {
+                    global $CFG;
+                    if ($component === 'core') {
+                        // The core component is a special case.
+                        // It can place routes _anywhere_ in the codebase.
+                        return '';
+                    }
+
+                    // Use the component directory path listed in \core\componnet.
+                    return substr(
+                        \core_component::get_component_directory($component),
+                        strlen($CFG->dirroot) + 1,
+                    );
+                },
+            );
+
+            $cache->set('shimmed_routes', $cachedata);
+        }
+
+        return $cachedata;
+    }
+
+    /**
+     * Fetch all standard routes.
+     *
+     * Note: This method caches results in MUC.
+     *
+     * @return array[]
+     */
+    protected function get_all_standard_routes(): array {
+        $cache = \cache::make('core', 'routes');
+
+        if (!($cachedata = $cache->get('standard_routes'))) {
+            $cachedata = $this->get_all_routes_in_namespace(
+                namespace: 'route\controller',
+                componentpathcallback: $this->normalise_component_path(...),
+                filtercallback: fn(string $classname) => !str_contains($classname, '\\shim\\'),
+            );
+
+            $cache->set('standard_routes', $cachedata);
+        }
+
+        return $cachedata;
     }
 }

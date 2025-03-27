@@ -16,9 +16,10 @@
 
 namespace core;
 
-use core\output\routed_error_handler;
 use core\router\middleware\cors_middleware;
 use core\router\middleware\error_handling_middleware;
+use core\router\middleware\moodle_api_authentication_middleware;
+use core\router\middleware\moodle_authentication_middleware;
 use core\router\middleware\moodle_bootstrap_middleware;
 use core\router\middleware\moodle_route_attribute_middleware;
 use core\router\middleware\uri_normalisation_middleware;
@@ -31,7 +32,10 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Slim\Exception\HttpForbiddenException;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\RouteGroupInterface;
+use Slim\Middleware\ErrorMiddleware;
 
 /**
  * Moodle Router.
@@ -99,17 +103,17 @@ class router {
         );
         // Replace occurrences of backslashes with forward slashes, especially on Windows.
         $scriptfile = str_replace('\\', '/', $scriptfile);
-        $relativeroot = sprintf(
-            '%s%s',
-            $scriptroot,
-            $scriptfile,
-        );
 
         // The server is not configured to rewrite unknown requests to automatically use the router.
+        $userphp = false;
         if ($_SERVER && array_key_exists('REQUEST_URI', $_SERVER)) {
-            if (str_starts_with($_SERVER['REQUEST_URI'], $relativeroot)) {
-                $scriptroot .= '/r.php';
+            if (str_starts_with($_SERVER['REQUEST_URI'], "{$scriptroot}/r.php")) {
+                $userphp = true;
             }
+        }
+
+        if ($CFG->routerconfigured !== true || $userphp) {
+            $scriptroot .= '/r.php';
         }
 
         return $scriptroot;
@@ -186,10 +190,36 @@ class router {
         // This must be done before the Routing Middleware to ensure that the route is matched correctly.
         $this->app->add(di::get(uri_normalisation_middleware::class));
 
+        // Add the Error Handling Middleware to the App.
+        $this->add_error_handler_middleware();
+    }
+
+    /**
+     * Add the Error Handling Middleware to the RouteGroup.
+     */
+    protected function add_error_handler_middleware(): void {
         // Add the Error Handling Middleware and configure it to show Moodle Errors for HTML pages.
-        $errormiddleware = $this->app->addErrorMiddleware(true, true, true);
-        $errorhandler = $errormiddleware->getDefaultErrorHandler();
-        $errorhandler->registerErrorRenderer('text/html', routed_error_handler::class);
+        $errormiddleware = new ErrorMiddleware(
+            $this->app->getCallableResolver(),
+            $this->app->getResponseFactory(),
+            displayErrorDetails: true,
+            logErrors: true,
+            logErrorDetails: true,
+        );
+
+        // Set a custom error handler for the HttpNotFoundException and HttpForbiddenException.
+        // We route these to a custom error handler to ensure that the error is displayed with a feedback form.
+        $errormiddleware->setErrorHandler(
+            [
+                HttpNotFoundException::class,
+                HttpForbiddenException::class,
+            ],
+            new router\error_handler($this->app),
+        );
+
+        $errormiddleware->getDefaultErrorHandler()->registerErrorRenderer('text/html', router\error_renderer::class);
+
+        $this->app->add($errormiddleware);
     }
 
     /**
@@ -200,6 +230,8 @@ class router {
         foreach ($routegroups as $name => $collection) {
             match ($name) {
                 route_loader_interface::ROUTE_GROUP_API => $this->configure_api_route($collection),
+                route_loader_interface::ROUTE_GROUP_PAGE => $this->configure_standard_route($collection),
+                route_loader_interface::ROUTE_GROUP_SHIM => $this->configure_shim_route($collection),
                 default => null,
             };
         }
@@ -215,6 +247,29 @@ class router {
             ->add(di::get(error_handling_middleware::class))
             // Add a Middleware to set the CORS headers for all REST Responses.
             ->add(di::get(cors_middleware::class))
+            ->add(di::get(moodle_api_authentication_middleware::class))
+            ->add(di::get(validation_middleware::class));
+    }
+
+    /**
+     * Configure the Standard page Route Middleware.
+     *
+     * @param RouteGroupInterface $group
+     */
+    protected function configure_standard_route(RouteGroupInterface $group): void {
+        $group
+            ->add(di::get(moodle_authentication_middleware::class))
+            ->add(di::get(validation_middleware::class));
+    }
+
+    /**
+     * Configure the Shim Route Middleware.
+     *
+     * @param RouteGroupInterface $group
+     */
+    protected function configure_shim_route(RouteGroupInterface $group): void {
+        $group
+            // Note: In the future we may wish to add a shim middleware to notify users of updated bookmarks.
             ->add(di::get(validation_middleware::class));
     }
 

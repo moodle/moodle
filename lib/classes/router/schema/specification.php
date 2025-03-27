@@ -23,6 +23,7 @@ use core\router\route;
 use core\router\route_loader_interface;
 use core\router\schema\objects\type_base;
 use core\router\schema\response\response;
+use core\router\util;
 use core\url;
 use stdClass;
 
@@ -263,17 +264,8 @@ class specification implements
         route $route,
     ): self {
         // Compile the final path, complete with component prefix.
-        [$type, $subsystem] = \core_component::normalize_component($component);
-
-        if ($type === 'core') {
-            if ($subsystem) {
-                $path = "/{$subsystem}";
-            } else {
-                $path = "/core";
-            }
-        } else {
-            $path = "/{$component}";
-        }
+        $path = "/";
+        $path .= util::normalise_component_path($component);
         $path .= $route->get_path();
 
         // Helper to add the path to the specification.

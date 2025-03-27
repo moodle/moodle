@@ -37,10 +37,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class error_feedback extends moodleform {
-
-    /**
-     * Error form definition
-     */
+    #[\Override]
     public function definition() {
         global $CFG;
 
@@ -55,4 +52,3 @@ class error_feedback extends moodleform {
         $mform->addElement('submit', 'submitbutton', get_string('sendmessage', 'error'));
     }
 }
-

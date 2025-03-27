@@ -106,8 +106,8 @@ final class router_test extends route_testcase {
     }
 
     public static function basepath_provider(): \Iterator {
-        yield 'Domain' => ['http://example.com', ''];
-        yield 'Subdirectory' => ['http://example.com/moodle', '/moodle'];
+        yield 'Domain' => ['http://example.com', '/r.php'];
+        yield 'Subdirectory' => ['http://example.com/moodle', '/moodle/r.php'];
     }
 
     public function test_basepath_guessed_rphp(): void {
@@ -118,5 +118,115 @@ final class router_test extends route_testcase {
         $router = di::get(router::class);
 
         $this->assertEquals($wwwroot->get_path(), $router->basepath);
+    }
+
+    /**
+     * Test that the basepath is correctly guessed when the router is configured.
+     *
+     * @param string $wwwroot The wwwroot to use.
+     * @param bool|null $configured The value of $CFG->routerconfigured.
+     * @param string $requestedpath The path that was requested.
+     * @param string $expected The expected basepath.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('router_configured_basepath_provider')]
+    public function test_basepath_guessed_rphp_configuration_provided(
+        string $wwwroot,
+        ?bool $configured,
+        string $requestedpath,
+        string $expected,
+    ): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->wwwroot = $wwwroot;
+        $CFG->routerconfigured = $configured;
+        $_SERVER['SCRIPT_FILENAME'] = "{$CFG->dirroot}/r.php";
+        $_SERVER['REQUEST_URI'] = $requestedpath;
+
+        $router = di::get(router::class);
+
+        $this->assertEquals($expected, $router->basepath);
+    }
+
+    /**
+     * Data provider for test_basepath_guessed_rphp_configuration_provided.
+     *
+     * @return \Generator<string, array<bool|string|null>, mixed, void>
+     */
+    public static function router_configured_basepath_provider(): \Iterator {
+        global $CFG;
+
+        yield 'Root domain, Not configured, accessed via r.php' => [
+            'http://example.com',
+            null,
+            '/r.php/example',
+            '/r.php',
+        ];
+        yield 'Root domain, Configured true, accessed via r.php' => [
+            'http://example.com',
+            true,
+            "/r.php/example",
+            '/r.php',
+        ];
+        yield 'Root domain, Configured false, accessed via r.php' => [
+            'http://example.com',
+            false,
+            '/r.php/example',
+            '/r.php',
+        ];
+        yield 'Sub directory, Not configured, accessed via r.php' => [
+            'http://example.com/moodle',
+            null,
+            '/moodle/r.php/example',
+            '/moodle/r.php',
+        ];
+        yield 'Sub directory, Configured true, accessed via r.php' => [
+            'http://example.com/moodle',
+            true,
+            '/moodle/r.php/example',
+            '/moodle/r.php',
+        ];
+        yield 'Sub directory, Configured false, accessed via r.php' => [
+            'http://example.com/moodle',
+            false,
+            '/moodle/r.php/example',
+            '/moodle/r.php',
+        ];
+        yield 'Root domain, Not configured, accessed without r.php' => [
+            'http://example.com',
+            null,
+            '/example',
+            '/r.php',
+        ];
+        yield 'Root domain, Configured true, accessed without r.php' => [
+            'http://example.com',
+            true,
+            '/example',
+            '',
+        ];
+        yield 'Root domain, Configured false, accessed without r.php' => [
+            'http://example.com',
+            false,
+            '/example',
+            '/r.php',
+        ];
+        yield 'Sub directory, Not configured, accessed without r.php' => [
+            'http://example.com/moodle',
+            null,
+            '/example',
+            '/moodle/r.php',
+        ];
+        yield 'Sub directory, Configured true, accessed without r.php' => [
+            'http://example.com/moodle',
+            true,
+            '/example',
+            '/moodle',
+        ];
+        yield 'Sub directory, Configured false, accessed without r.php' => [
+            'http://example.com/moodle',
+            false,
+            '/example',
+            '/moodle/r.php',
+        ];
     }
 }

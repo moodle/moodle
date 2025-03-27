@@ -17,7 +17,6 @@
 namespace core\router;
 
 use moodle_url;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -33,17 +32,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 trait route_controller {
     /**
-     * Constructor for Route Controllers.
-     *
-     * @param ContainerInterface $container
-     */
-    public function __construct(
-        /** @var ContainerInterface The DI Container */
-        protected ContainerInterface $container,
-    ) {
-    }
-
-    /**
      * Generate a Page Not Found result.
      *
      * @param ServerRequestInterface $request
@@ -51,11 +39,11 @@ trait route_controller {
      * @return ResponseInterface
      * @throws \Slim\Exception\HttpNotFoundException
      */
-    protected function page_not_found(
+    public static function page_not_found(
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        throw new \Slim\Exception\HttpNotFoundException($request);
+        return util::throw_page_not_found($request, $response);
     }
 
     /**
@@ -65,13 +53,11 @@ trait route_controller {
      * @param string|moodle_url $url
      * @return ResponseInterface
      */
-    protected function redirect(
+    public static function redirect(
         ResponseInterface $response,
         string|moodle_url $url,
     ): ResponseInterface {
-        return $response
-            ->withStatus(302)
-            ->withHeader('Location', (string) $url);
+        return util::redirect($response, $url);
     }
 
     /**
@@ -85,7 +71,7 @@ trait route_controller {
      * @param null|array $excludeparams A list of any parameters to remove the URI during the redirect
      * @return ResponseInterface
      */
-    protected function redirect_to_callable(
+    public static function redirect_to_callable(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array|callable|string $callable,
@@ -93,25 +79,14 @@ trait route_controller {
         ?array $queryparams = null,
         ?array $excludeparams = null,
     ): ResponseInterface {
-        // Provide defaults for the path and query params if not specified.
-        if ($pathparams === null) {
-            $pathparams = $request->getQueryParams();
-        }
-        if ($queryparams === null) {
-            $queryparams = $request->getQueryParams();
-        }
-
-        // Generate a URI from the callable and the parameters.
-        $url = util::get_path_for_callable(
+        return util::redirect_to_callable(
+            $request,
+            $response,
             $callable,
-            $pathparams ?? [],
-            $queryparams ?? [],
+            $pathparams,
+            $queryparams,
+            $excludeparams,
         );
-
-        // Remove any params.
-        $url->remove_params($excludeparams);
-
-        return $this->redirect($response, $url);
     }
 
     /**

@@ -31,6 +31,12 @@ interface route_loader_interface {
     /** @var string The route path prefix to use for API calls */
     public const ROUTE_GROUP_API = '/api/rest/v2';
 
+    /** @var string The route path prefix to use for API calls */
+    public const ROUTE_GROUP_SHIM = 'shim';
+
+    /** @var string The route path prefix to use for API calls */
+    public const ROUTE_GROUP_PAGE = '/';
+
     /**
      * Configure all routes for the Application.
      *
