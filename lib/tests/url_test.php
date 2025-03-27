@@ -769,8 +769,12 @@ final class url_test extends \advanced_testcase {
      * @param string $expectedurlout unescaped url string that is expected when calling ->out() on the url object.
      * @dataProvider multi_level_query_params_provider
      */
-    public function test_multi_level_array_query_params(string $url, array $extraparams, array $expectedparams,
-        string $expectedurlout): void {
+    public function test_multi_level_array_query_params(
+        string $url,
+        array $extraparams,
+        array $expectedparams,
+        string $expectedurlout,
+    ): void {
         $url = new url($url);
         $url->params($extraparams);
         $this->assertSame($expectedparams, $url->params());
