@@ -202,6 +202,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84593](https://tracker.moodle.org/browse/MDL-84593)
 
+#### Fixed
+
+- url class now correctly supports multi level query parameter parsing and output.
+
+  This was previously supported in some methods such as get_query_string, but not others. This has been fixed to be properly supported.
+
+  For example https://example.moodle.net?test[2]=a&test[0]=b will be parsed as ['test' => [2 => 'a', 0 => 'b']]
+
+  All parameter values that are not arrays are casted to strings.
+
+  For more information see [MDL-77293](https://tracker.moodle.org/browse/MDL-77293)
+
 ### core_adminpresets
 
 #### Removed
