@@ -479,7 +479,7 @@ class mod_feedback_complete_form extends moodleform {
         $name = html_writer::div($draghandle, 'itemhandle', ['data-drag-type' => 'move']) .
                 html_writer::div($element->getLabel(), 'itemname', ['data-region' => 'item-title']) .
                 html_writer::div($editmenu, 'itemactions');
-        $element->setLabel(html_writer::div($name, 'itemtitle d-flex'));
+        $element->setLabel(html_writer::div($name, 'itemtitle d-flex mb-3'));
     }
 
     /**
