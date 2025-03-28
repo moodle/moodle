@@ -160,6 +160,8 @@ function(
 
         if (count > 0) {
             container.removeClass('hidden');
+        } else {
+            container.addClass('hidden');
         }
     };
 
@@ -446,11 +448,8 @@ function(
             var element = getTotalUnreadConversationCountElement(root);
             var count = parseInt(element.text());
             count = count - 1;
-            element.text(count);
-
-            if (count < 1) {
-                element.addClass('hidden');
-            }
+            // Re-render the unread count.
+            renderUnreadCount(root, count);
         }
     };
 
