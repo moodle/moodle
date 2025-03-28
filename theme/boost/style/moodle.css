@@ -28468,7 +28468,10 @@ body.dragging .dragging {
 .select-menu ul[role=group] .dropdown-item {
   padding-left: 2.5rem;
 }
-.select-menu .dropdown-item[aria-selected=true] {
+.select-menu .dropdown-item {
+  padding: 0.25rem 1.5rem;
+}
+.select-menu .dropdown-item [aria-selected=true] {
   font-weight: bold;
 }
 
