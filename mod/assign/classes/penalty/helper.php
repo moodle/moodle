@@ -137,7 +137,12 @@ class helper {
 
         // Apply penalty.
         $container = penalty_manager::apply_grade_penalty_to_user($userid, $gradeitem, $submissiondate, $duedate);
-        $deductedpercentage = $container->get_penalty() / $container->get_grade_before_penalties() * 100;
+        if ($container->get_grade_before_penalties() == 0) {
+            // There is no deduction applied to grade 0.
+            $deductedpercentage = 0;
+        } else {
+            $deductedpercentage = $container->get_penalty() / $container->get_grade_before_penalties() * 100;
+        }
 
         // Store the assign grade penalty.
         $DB->set_field_select(

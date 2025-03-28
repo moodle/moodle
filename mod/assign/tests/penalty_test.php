@@ -101,20 +101,23 @@ final class penalty_test extends \advanced_testcase {
         return [
             // Submission date, Due date, User override, Group override, Extension due date, Expected messages, Expected grade.
             // No overrides.
-            [DAYSECS, DAYSECS, null, null, null, ['Submission date: 86400', 'Due date: 86400'], 50],
-            [DAYSECS + 1, DAYSECS, null, null, null, ['Submission date: 86401', 'Due date: 86400'], 30],
+            [50, DAYSECS, DAYSECS, null, null, null, ['Submission date: 86400', 'Due date: 86400'], 50],
+            [50, DAYSECS + 1, DAYSECS, null, null, null, ['Submission date: 86401', 'Due date: 86400'], 30],
             // User override.
-            [DAYSECS + 1, DAYSECS, DAYSECS + 1, null, null, ['Submission date: 86401', 'Due date: 86401'], 50],
-            [DAYSECS + 2, DAYSECS, DAYSECS + 1, null, null, ['Submission date: 86402', 'Due date: 86401'], 30],
+            [50, DAYSECS + 1, DAYSECS, DAYSECS + 1, null, null, ['Submission date: 86401', 'Due date: 86401'], 50],
+            [50, DAYSECS + 2, DAYSECS, DAYSECS + 1, null, null, ['Submission date: 86402', 'Due date: 86401'], 30],
             // Group override.
-            [DAYSECS + 1, DAYSECS, null, DAYSECS + 1, null, ['Submission date: 86401', 'Due date: 86401'], 50],
-            [DAYSECS + 2, DAYSECS, null, DAYSECS + 1, null, ['Submission date: 86402', 'Due date: 86401'], 30],
+            [50, DAYSECS + 1, DAYSECS, null, DAYSECS + 1, null, ['Submission date: 86401', 'Due date: 86401'], 50],
+            [50, DAYSECS + 2, DAYSECS, null, DAYSECS + 1, null, ['Submission date: 86402', 'Due date: 86401'], 30],
             // User and group override.
-            [DAYSECS + 1, DAYSECS, DAYSECS + 1, DAYSECS + 2, null, ['Submission date: 86401', 'Due date: 86401'], 50],
-            [DAYSECS + 2, DAYSECS, DAYSECS + 1, DAYSECS + 2, null, ['Submission date: 86402', 'Due date: 86401'], 30],
+            [50, DAYSECS + 1, DAYSECS, DAYSECS + 1, DAYSECS + 2, null, ['Submission date: 86401', 'Due date: 86401'], 50],
+            [50, DAYSECS + 2, DAYSECS, DAYSECS + 1, DAYSECS + 2, null, ['Submission date: 86402', 'Due date: 86401'], 30],
             // User, group override and extension.
-            [DAYSECS + 3, DAYSECS, DAYSECS + 1, DAYSECS + 2, DAYSECS + 3, ['Submission date: 86403', 'Due date: 86403'], 50],
-            [DAYSECS + 4, DAYSECS, DAYSECS + 1, DAYSECS + 2, DAYSECS + 3, ['Submission date: 86404', 'Due date: 86403'], 30],
+            [50, DAYSECS + 3, DAYSECS, DAYSECS + 1, DAYSECS + 2, DAYSECS + 3, ['Submission date: 86403', 'Due date: 86403'], 50],
+            [50, DAYSECS + 4, DAYSECS, DAYSECS + 1, DAYSECS + 2, DAYSECS + 3, ['Submission date: 86404', 'Due date: 86403'], 30],
+            // Zero grade.
+            [0, DAYSECS, DAYSECS, null, null, null, [], 0],
+            [0, DAYSECS + 1, DAYSECS, null, null, null, [], 0],
         ];
     }
 
@@ -125,6 +128,7 @@ final class penalty_test extends \advanced_testcase {
      *
      * @covers \mod_assign\penalty\helper::apply_penalty_to_submission
      *
+     * @param float $usergrade the grade given to user.
      * @param int $submissiondate The submission date.
      * @param int $duedate The due date.
      * @param int $useroverrideduedate The user override due date.
@@ -135,6 +139,7 @@ final class penalty_test extends \advanced_testcase {
      *
      */
     public function test_apply_penalty(
+        $usergrade,
         $submissiondate,
         $duedate,
         $useroverrideduedate,
@@ -194,7 +199,7 @@ final class penalty_test extends \advanced_testcase {
         $this->submit_for_grading($student, $assign);
         // Submission date.
         $DB->set_field('assign_submission', 'timemodified', $submissiondate, ['userid' => $student->id]);
-        $assign->testable_apply_grade_to_user((object)['grade' => 50.0], $student->id, 0);
+        $assign->testable_apply_grade_to_user((object)['grade' => $usergrade], $student->id, 0);
 
         // Expect debug messages.
         $this->assertdebuggingcalledcount(count($expectedmessages), $expectedmessages);
