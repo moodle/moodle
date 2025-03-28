@@ -757,6 +757,7 @@ class core_date {
           if ($intltz === null) {
               // Where intl doesn't know about a recent timezone, map it to an equivalent existing zone.
               $intltzname = strtr($tz->getName(), [
+                  'America/Coyhaique' => 'America/Santiago',
                   'America/Ciudad_Juarez' => 'America/Denver',
                   'America/Nuuk' => 'America/Godthab',
                   'Europe/Kyiv' => 'Europe/Kiev',
