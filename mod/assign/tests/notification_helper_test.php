@@ -299,6 +299,65 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test that we do not fail on deleted assignments with due soon notifications to a user.
+     */
+    public function test_not_to_fail_on_deleted_assigment_with_due_soon_notifications_to_user(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create a course and enrol a user.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create an assignment with a due date < 48 hours.
+        $duedate = $clock->time() + DAYSECS;
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+        $clock->bump(5);
+
+        // Run the scheduled and ad-hoc task to queue the notifications.
+        $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_due_soon_notification_tasks::class);
+        $task->execute();
+
+        $clock->bump(5);
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $this->assertInstanceOf(\mod_assign\task\queue_assignment_due_soon_notification_tasks_for_users::class, $adhoctask);
+        $adhoctask->execute();
+        \core\task\manager::adhoc_task_complete($adhoctask);
+
+        // Delete the assignment.
+        $DB->delete_records('assign', ['id' => $assignment->id]);
+
+        // Try to run the ad-hoc task to send the notifications.
+        $clock->bump(5);
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $this->assertInstanceOf(\mod_assign\task\send_assignment_due_soon_notification_to_user::class, $adhoctask);
+
+        ob_start();
+        $adhoctask->execute();
+        $output = ob_get_clean();
+
+        \core\task\manager::adhoc_task_complete($adhoctask);
+
+        // The ad-hoc task should be deleted.
+        $this->assertNull(\core\task\manager::get_next_adhoc_task($clock->time()));
+        $this->assertStringContainsString(
+            needle: "No notification send as the assignment $assignment->id can no longer be found in the database.",
+            haystack: $output
+        );
+    }
+
+    /**
      * Run all the tasks related to the 'overdue' notifications.
      */
     protected function run_overdue_notification_helper_tasks(): void {
@@ -572,6 +631,67 @@ final class notification_helper_test extends \advanced_testcase {
 
         // No new notification should have been sent.
         $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+    }
+
+    /**
+     * Test that we do not fail on deleted assignments with overdue notifications to a user.
+     */
+    public function test_not_to_fail_on_deleted_assigment_with_overdue_notifications_to_user(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create a course and enrol a user.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Create an assignment that is overdue.
+        $duedate = $clock->time() - HOURSECS;
+        $cutoffdate = $clock->time() + DAYSECS;
+        $assignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+            'cutoffdate' => $cutoffdate,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+        $clock->bump(5);
+
+        // Run the scheduled and ad-hoc task to queue the notifications.
+        $task = \core\task\manager::get_scheduled_task(\mod_assign\task\queue_all_assignment_overdue_notification_tasks::class);
+        $task->execute();
+
+        $clock->bump(5);
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $this->assertInstanceOf(\mod_assign\task\queue_assignment_overdue_notification_tasks_for_users::class, $adhoctask);
+        $adhoctask->execute();
+        \core\task\manager::adhoc_task_complete($adhoctask);
+
+        // Delete the assignment.
+        $DB->delete_records('assign', ['id' => $assignment->id]);
+
+        // Try to run the ad-hoc task to send the notifications.
+        $clock->bump(5);
+        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $this->assertInstanceOf(\mod_assign\task\send_assignment_overdue_notification_to_user::class, $adhoctask);
+
+        ob_start();
+        $adhoctask->execute();
+        $output = ob_get_clean();
+
+        \core\task\manager::adhoc_task_complete($adhoctask);
+
+        // The ad-hoc task should be deleted.
+        $this->assertNull(\core\task\manager::get_next_adhoc_task($clock->time()));
+        $this->assertStringContainsString(
+            needle: "No notification send as the assignment $assignment->id can no longer be found in the database.",
+            haystack: $output
+        );
     }
 
     /**
