@@ -86,4 +86,14 @@ class aiprovider extends base {
     public static function get_provider_actions(): array {
         return [self::UP, self::DOWN];
     }
+
+    #[\Override]
+    public function uninstall_cleanup(): void {
+        global $DB;
+
+        $provider = $this->get_settings_section_name() . '\provider';
+        $DB->delete_records('ai_providers', ['provider' => $provider]);
+
+        parent::uninstall_cleanup();
+    }
 }
