@@ -53,7 +53,7 @@ class completion_info_exporter extends \core\external\exporter {
      */
     public function __construct(object $course, object $cm, int $userid, array $related = []) {
         $this->course = $course;
-        $this->cminfo = \cm_info::create($cm);
+        $this->cminfo = \cm_info::create($cm, $userid);
         $this->userid = $userid;
         parent::__construct([], $related);
     }
