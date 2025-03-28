@@ -30847,6 +30847,7 @@ table.calendartable caption {
 }
 .activity-item .activity-name-area .activitybadge.badge-none {
   font-weight: normal;
+  --bs-badge-color: #1d2125;
   font-size: 0.875em;
   padding: 0;
 }
