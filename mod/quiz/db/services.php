@@ -50,10 +50,20 @@ $functions = [
     'mod_quiz_get_user_attempts' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_user_attempts',
-        'description'   => 'Return a list of attempts for the given quiz and user.',
+        'description'   => 'Return a list of attempts for the given quiz and user. ' .
+            '(Deprecated in favour of mod_quiz_get_user_quiz_attempts).',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
+
+    'mod_quiz_get_user_quiz_attempts' => [
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_user_quiz_attempts',
+        'description'   => 'Return a list of attempts for the given quiz and user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'mod_quiz_get_user_best_grade' => [

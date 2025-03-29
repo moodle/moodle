@@ -120,6 +120,18 @@ function xmldb_quiz_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2025011300) {
+        // Define field precreateattempts to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('precreateattempts', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'allowofflineattempts');
+
+        // Conditionally launch add field precreateattempts.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2025011300, 'quiz');
+    }
 
     return true;
 }

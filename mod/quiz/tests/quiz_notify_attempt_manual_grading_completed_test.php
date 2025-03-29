@@ -128,7 +128,8 @@ final class quiz_notify_attempt_manual_grading_completed_test extends advanced_t
         $attemptobj1 = quiz_attempt::create($attempt1->id);
         $tosubmit = [2 => ['answer' => 'Student 1 answer', 'answerformat' => FORMAT_HTML]];
         $attemptobj1->process_submitted_actions($timenow - 30 * MINSECS, false, $tosubmit);
-        $attemptobj1->process_finish($timenow - 20 * MINSECS, false);
+        $attemptobj1->process_submit($timenow - 20 * MINSECS, false);
+        $attemptobj1->process_grade_submission($timenow - 10 * MINSECS);
 
         // Finish the attempt of student (now).
         $attemptobj1->get_question_usage()->manual_grade(2, 'Good!', 1, FORMAT_HTML);
@@ -171,7 +172,8 @@ final class quiz_notify_attempt_manual_grading_completed_test extends advanced_t
         $attemptobj2 = quiz_attempt::create($attempt2->id);
         $tosubmit = [2 => ['answer' => 'Answer of student 2.', 'answerformat' => FORMAT_HTML]];
         $attemptobj2->process_submitted_actions($timenow - 30 * MINSECS, false, $tosubmit);
-        $attemptobj2->process_finish($timenow, false);
+        $attemptobj2->process_submit($timenow, false);
+        $attemptobj2->process_grade_submission($timenow);
 
         // After time to notify, except attempt not graded, so it won't appear.
         $task = new quiz_notify_attempt_manual_grading_completed();
@@ -189,15 +191,19 @@ final class quiz_notify_attempt_manual_grading_completed_test extends advanced_t
 
         // Create an attempt for a user without the capability.
         $timenow = time();
+        $timestart = $timenow - HOURSECS;
+        $timefinish = $timenow - 20 * MINSECS;
+        $gradetime = $timenow - 10 * MINSECS;
         $attempt = quiz_create_attempt($this->quizobj, 3, false, $timenow, false, $this->student->id);
-        quiz_start_new_attempt($this->quizobj, $this->quba, $attempt, 3, $timenow - HOURSECS);
-        quiz_attempt_save_started($this->quizobj, $this->quba, $attempt);
+        quiz_start_new_attempt($this->quizobj, $this->quba, $attempt, 3, $timestart);
+        quiz_attempt_save_started($this->quizobj, $this->quba, $attempt, $timestart);
 
         // Process some responses and submit.
         $attemptobj = quiz_attempt::create($attempt->id);
         $tosubmit = [2 => ['answer' => 'Essay answer.', 'answerformat' => FORMAT_HTML]];
         $attemptobj->process_submitted_actions($timenow - 30 * MINSECS, false, $tosubmit);
-        $attemptobj->process_finish($timenow - 20 * MINSECS, false);
+        $attemptobj->process_submit($timefinish, false);
+        $attemptobj->process_grade_submission($gradetime);
 
         // Grade the attempt.
         $attemptobj->get_question_usage()->manual_grade(2, 'Good!', 1, FORMAT_HTML);
@@ -219,7 +225,7 @@ final class quiz_notify_attempt_manual_grading_completed_test extends advanced_t
         $task->execute();
 
         $attemptobj = quiz_attempt::create($attempt->id);
-        $this->assertEquals($attemptobj->get_attempt()->timefinish, $attemptobj->get_attempt()->gradednotificationsenttime);
+        $this->assertEquals($timefinish, $attemptobj->get_attempt()->gradednotificationsenttime);
     }
 
     /**
@@ -241,7 +247,8 @@ final class quiz_notify_attempt_manual_grading_completed_test extends advanced_t
         $attemptobj = quiz_attempt::create($attempt->id);
         $tosubmit = [2 => ['answer' => 'Answer of student.', 'answerformat' => FORMAT_HTML]];
         $attemptobj->process_submitted_actions($timenow - 30 * MINSECS, false, $tosubmit);
-        $attemptobj->process_finish($timenow - 20 * MINSECS, false);
+        $attemptobj->process_submit($timenow - 20 * MINSECS, false);
+        $attemptobj->process_grade_submission($timenow - 10 * MINSECS);
 
         // Finish the attempt of student.
         $attemptobj->get_question_usage()->manual_grade(2, 'Good!', 1, FORMAT_HTML);

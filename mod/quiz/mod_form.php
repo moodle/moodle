@@ -115,6 +115,25 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('graceperiod', 'graceperiod', 'quiz');
         $mform->hideIf('graceperiod', 'overduehandling', 'neq', 'graceperiod');
 
+        // Pre-create attempts.
+        // This is only shown if "Pre-create period" as been set at site level, and the quiz open time is enabled.
+        $precreateperiod = get_config('quiz', 'precreateperiod');
+        if (!empty($precreateperiod)) {
+            $yesoption = get_string('precreateyes', 'quiz', $precreateperiod / HOURSECS);
+            $precreateoptions = [
+                1 => $yesoption,
+                0 => get_string('no'),
+            ];
+            $mform->addElement(
+                'select',
+                'precreateattempts',
+                get_string('precreateattempts', 'quiz'),
+                $precreateoptions
+            );
+            $mform->hideIf('precreateattempts', 'timeopen[enabled]');
+            $mform->addHelpButton('precreateattempts', 'precreateattempts', 'quiz');
+        }
+
         // -------------------------------------------------------------------------------
         // Grade settings.
         $this->standard_grading_coursemodule_elements();

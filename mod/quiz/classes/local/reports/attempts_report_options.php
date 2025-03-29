@@ -46,8 +46,10 @@ class attempts_report_options {
      * @var array form field name => corresponding quiz_attempt:: state constant.
      */
     protected static $statefields = [
+        'statenotstarted' => quiz_attempt::NOT_STARTED,
         'stateinprogress' => quiz_attempt::IN_PROGRESS,
         'stateoverdue'    => quiz_attempt::OVERDUE,
+        'statesubmitted' => quiz_attempt::SUBMITTED,
         'statefinished'   => quiz_attempt::FINISHED,
         'stateabandoned'  => quiz_attempt::ABANDONED,
     ];
@@ -65,8 +67,14 @@ class attempts_report_options {
      * @var array|null of quiz_attempt::IN_PROGRESS, etc. constants. null means
      *      no restriction.
      */
-    public $states = [quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE,
-            quiz_attempt::FINISHED, quiz_attempt::ABANDONED];
+    public $states = [
+        quiz_attempt::NOT_STARTED,
+        quiz_attempt::IN_PROGRESS,
+        quiz_attempt::OVERDUE,
+        quiz_attempt::SUBMITTED,
+        quiz_attempt::FINISHED,
+        quiz_attempt::ABANDONED,
+    ];
 
     /**
      * @var bool whether to show all finished attmepts, or just the one that gave

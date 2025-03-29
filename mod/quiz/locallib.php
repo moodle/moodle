@@ -128,28 +128,18 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
     }
 
     $attempt->attempt = $attemptnumber;
-    $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
     $attempt->timemodifiedoffline = 0;
-    $attempt->state = quiz_attempt::IN_PROGRESS;
     $attempt->currentpage = 0;
     $attempt->sumgrades = null;
     $attempt->gradednotificationsenttime = null;
+    $attempt->timecheckstate = null;
 
     // If this is a preview, mark it as such.
     if ($ispreview) {
         $attempt->preview = 1;
     }
-
-    $timeclose = $quizobj->get_access_manager($timenow)->get_end_time($attempt);
-    if ($timeclose === false || $ispreview) {
-        $attempt->timecheckstate = null;
-    } else {
-        $attempt->timecheckstate = $timeclose;
-    }
-
-    di::get(hook\manager::class)->dispatch(new attempt_state_changed(null, $attempt));
 
     return $attempt;
 }
@@ -266,7 +256,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             $forcedvariantsbyseed, $variantstrategy);
     }
 
-    $quba->start_all_questions($variantstrategy, $timenow, $attempt->userid);
+    $quba->start_all_questions($variantstrategy, question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $attempt->userid);
 
     // Work out the attempt layout.
     $sections = $quizobj->get_sections();
@@ -354,19 +344,50 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 }
 
 /**
- * The save started question usage and quiz attempt in db and log the started attempt.
+ * Create or update the quiz attempt record, and the question usage.
+ *
+ * If the attempt already exists in the database with the NOT_STARTED state, it will be transitioned
+ * to IN_PROGRESS and the timestart updated. If it does not already exist, a new record will be created
+ * already in the IN_PROGRESS state.
  *
  * @param quiz_settings $quizobj
  * @param question_usage_by_activity $quba
  * @param stdClass                     $attempt
+ * @param ?int $timenow The time to use for the attempt's timestart property. Defaults to time().
  * @return stdClass                    attempt object with uniqueid and id set.
  */
-function quiz_attempt_save_started($quizobj, $quba, $attempt) {
+function quiz_attempt_save_started(
+    quiz_settings $quizobj,
+    question_usage_by_activity $quba,
+    \stdClass $attempt,
+    ?int $timenow = null,
+): stdClass {
     global $DB;
-    // Save the attempt in the database.
-    question_engine::save_questions_usage_by_activity($quba);
-    $attempt->uniqueid = $quba->get_id();
-    $attempt->id = $DB->insert_record('quiz_attempts', $attempt);
+
+    $attempt->timestart = $timenow ?? time();
+
+    $timeclose = $quizobj->get_access_manager($attempt->timestart)->get_end_time($attempt);
+    if ($timeclose === false || $attempt->preview) {
+        $attempt->timecheckstate = null;
+    } else {
+        $attempt->timecheckstate = $timeclose;
+    }
+
+    $originalattempt = null;
+    if (isset($attempt->id) && $attempt->state === quiz_attempt::NOT_STARTED) {
+        $originalattempt = clone $attempt;
+        // In case questions have been edited since attempts were pre-created, update questions now.
+        quiz_attempt::create($attempt->id)->update_questions_to_new_version_if_changed();
+        // Update the attempt's state.
+        $attempt->state = quiz_attempt::IN_PROGRESS;
+        $DB->update_record('quiz_attempts', $attempt);
+    } else {
+        // Save the attempt in the database.
+        question_engine::save_questions_usage_by_activity($quba);
+        $attempt->uniqueid = $quba->get_id();
+        $attempt->state = quiz_attempt::IN_PROGRESS;
+        $attempt->id = $DB->insert_record('quiz_attempts', $attempt);
+    }
 
     // Params used by the events below.
     $params = [
@@ -391,6 +412,29 @@ function quiz_attempt_save_started($quizobj, $quba, $attempt) {
     $event->add_record_snapshot('quiz_attempts', $attempt);
     $event->trigger();
 
+    di::get(hook\manager::class)->dispatch(new attempt_state_changed($originalattempt, $attempt));
+
+    return $attempt;
+}
+
+/**
+ * Create the quiz attempt record, and the question usage.
+ *
+ * This saves an attempt in the NOT_STARTED state, and is designed for use when pre-creating attempts
+ * ahead of the quiz start time to spread out the processing load.
+ *
+ * @param question_usage_by_activity $quba
+ * @param stdClass $attempt
+ * @return stdClass attempt object with uniqueid and id set.
+ */
+function quiz_attempt_save_not_started(question_usage_by_activity $quba, stdClass $attempt): stdClass {
+    global $DB;
+    // Save the attempt in the database.
+    question_engine::save_questions_usage_by_activity($quba);
+    $attempt->uniqueid = $quba->get_id();
+    $attempt->state = quiz_attempt::NOT_STARTED;
+    $attempt->id = $DB->insert_record('quiz_attempts', $attempt);
+    di::get(hook\manager::class)->dispatch(new attempt_state_changed(null, $attempt));
     return $attempt;
 }
 
@@ -971,10 +1015,14 @@ function quiz_questions_per_page_options() {
  */
 function quiz_attempt_state_name($state) {
     switch ($state) {
+        case quiz_attempt::NOT_STARTED:
+            return get_string('statenotstarted', 'quiz');
         case quiz_attempt::IN_PROGRESS:
             return get_string('stateinprogress', 'quiz');
         case quiz_attempt::OVERDUE:
             return get_string('stateoverdue', 'quiz');
+        case quiz_attempt::SUBMITTED:
+            return get_string('statesubmitted', 'quiz');
         case quiz_attempt::FINISHED:
             return get_string('statefinished', 'quiz');
         case quiz_attempt::ABANDONED:
@@ -1969,10 +2017,13 @@ function quiz_validate_new_attempt(quiz_settings $quizobj, access_manager $acces
     $lastattempt = end($attempts);
 
     $attemptnumber = null;
-    // If an in-progress attempt exists, check password then redirect to it.
-    if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
-            $lastattempt->state == quiz_attempt::OVERDUE)) {
+    if (
+        $lastattempt
+        && in_array($lastattempt->state, [quiz_attempt::NOT_STARTED, quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE])
+    ) {
+        // If an in-progress or not-started attempt exists, check password then redirect to it.
         $currentattemptid = $lastattempt->id;
+
         $messages = $accessmanager->prevent_access();
 
         // If the attempt is now overdue, deal with that.
@@ -2047,15 +2098,33 @@ function quiz_prepare_and_start_new_attempt(quiz_settings $quizobj, $attemptnumb
     $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
     $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
-    // Create the new attempt and initialize the question sessions
-    $timenow = time(); // Update time now, in case the server is running really slowly.
-    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $ispreviewuser, $userid);
+    $attempt = $DB->get_record(
+        'quiz_attempts',
+        [
+            'quiz' => $quizobj->get_quizid(),
+            'userid' => $userid,
+            'preview' => 0,
+            'state' => quiz_attempt::NOT_STARTED,
+        ],
+    );
+    if (!$attempt) {
+        // Create the new attempt and initialize the question sessions.
+        $timenow = time(); // Update time now, in case the server is running really slowly.
+        $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $ispreviewuser, $userid);
 
-    if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
-        $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
-                $forcedrandomquestions, $forcedvariants);
-    } else {
-        $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
+        if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
+            $attempt = quiz_start_new_attempt(
+                $quizobj,
+                $quba,
+                $attempt,
+                $attemptnumber,
+                $timenow,
+                $forcedrandomquestions,
+                $forcedvariants,
+            );
+        } else {
+            $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
+        }
     }
 
     $transaction = $DB->start_delegated_transaction();

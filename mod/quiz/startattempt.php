@@ -99,15 +99,14 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     // Pre-flight check passed.
     $accessmanager->notify_preflight_check_passed($currentattemptid);
 }
-if ($currentattemptid) {
-    if ($lastattempt->state == quiz_attempt::OVERDUE) {
-        redirect($quizobj->summary_url($lastattempt->id));
-    } else {
-        redirect($quizobj->attempt_url($currentattemptid, $page));
-    }
+
+if (!$currentattemptid || $lastattempt->state == quiz_attempt::NOT_STARTED) {
+    $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+} else {
+    $attempt = $lastattempt;
 }
-
-$attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
-
-// Redirect to the attempt page.
-redirect($quizobj->attempt_url($attempt->id, $page));
+if ($attempt->state === quiz_attempt::OVERDUE) {
+    redirect($quizobj->summary_url($attempt->id));
+} else {
+    redirect($quizobj->attempt_url($attempt->id, $page));
+}

@@ -321,6 +321,7 @@ final class course_bin_test extends \advanced_testcase {
         $tosubmit = array(1 => array('answer' => '0'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
     }
 }

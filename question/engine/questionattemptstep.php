@@ -70,6 +70,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_attempt_step {
     /**
+     * @var int Indicates that timecreated will be set the first time the attempt is rendered
+     */
+    const TIMECREATED_ON_FIRST_RENDER = -1;
+
+    /**
      * @var integer if this attempts is stored in the question_attempts table,
      * the id of that row.
      */
@@ -107,7 +112,8 @@ class question_attempt_step {
      * normally created by {@see question_attempt} methods like
      * {@see question_attempt::process_action()}.
      * @param array $data the submitted data that defines this step.
-     * @param int|null $timecreated the time to record for the action. (If not given, use now.)
+     * @param int|null $timecreated the time to record for the action. If null, use now. If
+     *     {@see self::TIMECREATED_ON_FIRST_RENDER}, the time will be set the first time the attempt is rendered.
      * @param int|null $userid the user to attribute the aciton to. (If not given, use the current user.)
      * @param int|null $existingstepid if this step is going to replace an existing step
      *      (for example, during a regrade) this is the id of the previous step we are replacing.
@@ -218,6 +224,16 @@ class question_attempt_step {
     /** @return int the timestamp when this step was created. */
     public function get_timecreated() {
         return $this->timecreated;
+    }
+
+    /**
+     * Setter for $this->timecreated.
+     *
+     * @param int $timecreated
+     * @return void
+     */
+    public function set_timecreated(int $timecreated): void {
+        $this->timecreated = $timecreated;
     }
 
     /**

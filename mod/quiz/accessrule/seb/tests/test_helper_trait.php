@@ -217,7 +217,8 @@ trait quizaccess_seb_test_helper_trait {
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($starttime, false);
+        $attemptobj->process_submit($starttime, false);
+        $attemptobj->process_grade_submission($starttime);
 
         $this->setUser();
 

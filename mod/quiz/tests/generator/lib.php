@@ -181,7 +181,8 @@ class mod_quiz_generator extends testing_module_generator {
         }
 
         if ($finishattempt) {
-            $attemptobj->process_finish(time(), false);
+            $attemptobj->process_submit(time(), false);
+            $attemptobj->process_grade_submission(time());
         }
     }
 

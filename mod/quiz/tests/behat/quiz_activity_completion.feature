@@ -50,9 +50,10 @@ Feature: View activity completion in the quiz activity
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
-    And user "student1" has attempted "Test quiz name" with responses:
-      | slot | response |
-      |   1  | False    |
+    And I press "Attempt quiz"
+    And I set the field "False" to "1"
+    And I press "Finish attempt ..."
+    And I press "Submit all and finish"
     And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
@@ -60,6 +61,10 @@ Feature: View activity completion in the quiz activity
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
+    And I run all adhoc tasks
+    And I reload the page
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And I press "Re-attempt quiz"
     And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
