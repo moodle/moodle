@@ -159,7 +159,7 @@ In order to summarize the workshops
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Activities" block
     And I click on "Workshops" "link" in the "Activities" "block"
-    Then I should see "View all the activities in this course"
+    Then I should see "An overview of all activities in the course"
     And I should see "Name" in the "workshop_overview_collapsible" "region"
     And I should see "Phase" in the "workshop_overview_collapsible" "region"
     And I should see "Submissions" in the "workshop_overview_collapsible" "region"

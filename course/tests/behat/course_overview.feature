@@ -24,14 +24,14 @@ Feature: Users can access the course activities overview page
     Given I am on the "C1" "Course" page logged in as "teacher1"
     When I follow "Activities"
     Then I should see "Activities"
-    And I should see "View all the activities in this course" in the "region-main" "region"
+    And I should see "An overview of all activities in the course" in the "region-main" "region"
     And I should see "Assignments" in the "region-main" "region"
 
   Scenario: Student can navigate to the course overview page
     Given I am on the "C1" "Course" page logged in as "student1"
     When I follow "Activities"
     Then I should see "Activities"
-    And I should see "View all the activities in this course" in the "region-main" "region"
+    And I should see "An overview of all activities in the course" in the "region-main" "region"
     And I should see "Assignments" in the "region-main" "region"
 
   Scenario: The activities overview shows only the type of activities present in the course

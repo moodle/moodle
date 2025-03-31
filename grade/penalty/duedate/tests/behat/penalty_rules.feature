@@ -29,7 +29,7 @@ Feature: As an administrator
       | overdueby[1][number]      |  1   |
       | penalty[1]                |  10  |
     And I click on "Save changes" "button"
-    Then I should see "The overdue must be greater than the value of above rule: 1 day. The penalty must be greater than the value of above rule: 10.0%."
+    Then I should see "The overdue amount must be greater than the amount for the rule above (1 day). The penalty must be greater than the penalty for the rule above (10.0%)."
     And I set the following fields to these values:
       | overdueby[1][number]      |  2   |
       | penalty[1]                |  20  |
