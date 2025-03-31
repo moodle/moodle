@@ -2089,9 +2089,6 @@ class grade_item extends grade_object {
         // Default deduction is 0.
         $grade->deductedmark = 0;
 
-        // Default original overridden mark is 0.
-        $grade->overriddenmark = 0;
-
         $gradechanged = false;
         if (empty($grade->id)) {
             $result = (bool)$grade->insert($source, $isbulkupdate);
@@ -2164,21 +2161,6 @@ class grade_item extends grade_object {
                 'userid' => $userid,
             ]);
         $grade->deductedmark = $deductedmark;
-        $grade->update();
-    }
-
-    /**
-     * Update overridden mark for given user
-     *
-     * @param int $userid The graded user
-     * @param float $overriddenmark The mark deducted from final grade
-     */
-    public function update_overridden_mark(int $userid, float $overriddenmark): void {
-        $grade = new grade_grade([
-            'itemid' => $this->id,
-            'userid' => $userid,
-        ]);
-        $grade->overriddenmark = $overriddenmark;
         $grade->update();
     }
 

@@ -243,29 +243,17 @@ class grade_report_grader extends grade_report {
                             continue;
                         }
 
-                        // Detect changes in exemption checkbox.
-                        if ($oldvalue->can_apply_penalty_to_overridden_mark()) {
-                            if (!isset($data->exemption[$userid][$itemid])) {
-                                $newvalue = format_float($postedvalue - $oldvalue->deductedmark,
-                                    $oldvalue->grade_item->get_decimals());
-                            } else {
-                                $newvalue = $postedvalue;
-                            }
-                        } else {
-                            $newvalue = $postedvalue;
-                        }
-
                         // If the grade item uses a custom scale
                         if (!empty($oldvalue->grade_item->scaleid)) {
 
-                            if ((int)$oldvalue->finalgrade === (int)$newvalue) {
+                            if ((int)$oldvalue->finalgrade === (int)$postedvalue) {
                                 continue;
                             }
                         } else {
                             // The grade item uses a numeric scale
 
                             // Format the finalgrade from the DB so that it matches the grade from the client
-                            if ($newvalue === format_float($oldvalue->finalgrade, $oldvalue->grade_item->get_decimals())) {
+                            if ($postedvalue === format_float($oldvalue->finalgrade, $oldvalue->grade_item->get_decimals())) {
                                 continue;
                             }
                         }
@@ -340,19 +328,8 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
-                    // Save final grade, without penalty.
                     $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', false,
                         FORMAT_MOODLE, null, null, true);
-
-                    // Save overridden mark, without penalty.
-                    $gradeitem->update_overridden_mark($userid, $finalgrade);
-
-                    // Apply penalty.
-                    if ($oldvalue->can_apply_penalty_to_overridden_mark() && !isset($data->exemption[$userid][$itemid])) {
-                        // Apply penalty.
-                        $gradeitem->update_final_grade($userid, $newvalue, 'gradepenalty', false,
-                            FORMAT_MOODLE, null, null, true);
-                    }
                 }
             }
         }
@@ -1161,26 +1138,6 @@ class grade_report_grader extends grade_report {
                             $context->extraclasses = 'form-control';
                             if ($context->statusicons) {
                                 $context->extraclasses .= ' statusicons';
-                            }
-
-                            // Show option for user to apply penalty or not.
-                            if ($grade->can_apply_penalty_to_overridden_mark()) {
-                                $context->canapplypenalty = true;
-                                if ($grade->is_penalty_applied_to_final_grade()) {
-                                    // We are editing the original grade value, ie, before applying penalty.
-                                    $context->value = format_float($gradeval + $grade->deductedmark, $decimalpoints);
-                                } else {
-                                    $context->value = $value;
-                                }
-                                // Current grade.
-                                $context->effectivegrade = $value;
-                                $context->deductedmark = format_float($grade->deductedmark, $decimalpoints);
-                                $context->penaltyexempt = !$grade->is_penalty_applied_to_final_grade();
-                                $context->exemptionid = 'exemption' . $userid . '_' . $item->id;
-                                $context->exemptionname = 'exemption[' . $userid . '][' . $item->id .']';
-                                $context->exemptionlabel = $gradelabel . ' ' .
-                                    get_string('applypenaltytext', 'gradereport_grader');
-                                $context->exemptiontooltip = get_string('applypenaltytooltip', 'gradereport_grader');
                             }
                         } else {
                             $context->extraclasses = 'gradevalue' . $hidden . $gradepass;
