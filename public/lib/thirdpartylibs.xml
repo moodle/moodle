@@ -518,30 +518,6 @@ All rights reserved.</copyright>
     </copyrights>
   </library>
   <library>
-    <location>polyfills</location>
-    <name>regenerator-runtime</name>
-    <description>This package implements a fully-functional source transformation that takes the syntax for generators/yield from ECMAScript 2015 or ES2015 and Asynchronous Iteration proposal and spits out efficient JS-of-today (ES5) that behaves the same way.</description>
-    <version>0.13.7</version>
-    <license>MIT</license>
-    <repository>https://github.com/facebook/regenerator/</repository>
-  </library>
-  <library>
-    <location>polyfills</location>
-    <name>core-js-bundle</name>
-    <description>Modular standard library for JavaScript. Includes polyfills for ECMAScript up to 2021: promises, symbols, collections, iterators, typed arrays, many other features, ECMAScript proposals, some cross-platform WHATWG / W3C features and proposals like URL. You can load only required features or use it without global namespace pollution.</description>
-    <version>3.15.0</version>
-    <license>MIT</license>
-    <repository>https://github.com/zloirock/core-js</repository>
-  </library>
-  <library>
-    <location>polyfills</location>
-    <name>mdn-polyfill</name>
-    <description>A collection of side-effect ECMAScript modules. Minimized, mangled and extremely small thanks to Rollup - next-generation ES6 module bundler.</description>
-    <version>5.20.0</version>
-    <license>MIT</license>
-    <repository>https://github.com/msn0/mdn-polyfills</repository>
-  </library>
-  <library>
     <location>emoji-data</location>
     <name>Emoji data</name>
     <description>Library to parse easily data and sprite sheets for emoji.</description>
@@ -552,14 +528,6 @@ All rights reserved.</copyright>
       <copyright>2013 Cal Henderson</copyright>
     </copyrights>
     <customised/>
-  </library>
-  <library>
-    <location>polyfills</location>
-    <name>url-polyfill</name>
-    <description>Polyfill URL and URLSearchParams to match last WHATWG specifications.</description>
-    <version>1.1.14</version>
-    <license>MIT</license>
-    <repository>https://github.com/lifaon74/url-polyfill</repository>
   </library>
   <library>
     <location>plist</location>

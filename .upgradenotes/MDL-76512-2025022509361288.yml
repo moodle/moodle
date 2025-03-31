@@ -1,0 +1,8 @@
+issueNumber: MDL-76512
+notes:
+  core:
+    - message: >-
+        Remove the polyfills in `lib/polyfills`. These were primarily for IE
+        support and can now go, as all browsers now support the features each of
+        the polyfills provided.
+      type: removed
