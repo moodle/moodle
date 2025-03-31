@@ -27,6 +27,7 @@ require_once($CFG->dirroot . '/grade/export/lib.php');
 
 use \core_grades\output\action_bar;
 use \core_grades\output\general_action_bar;
+use \core\output\single_select;
 
 /**
  * This class iterates over all users that are graded in a course.
@@ -412,12 +413,25 @@ class graded_users_iterator {
  * @param int    $includeall bool include all option
  * @param bool   $return If true, will return the HTML, otherwise, will print directly
  * @return null
+ * @todo Final deprecation on Moodle 6.0. See MDL-84680.
  */
+#[\core\attribute\deprecated('grade_get_graded_users_select()', since: '5.0', mdl: 'MDL-84673')]
 function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0, $includeall=true, $return=false) {
-    global $CFG, $USER, $OUTPUT;
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    global $OUTPUT;
     return $OUTPUT->render(grade_get_graded_users_select(substr($actionpage, 0, strpos($actionpage, '/')), $course, $userid, $groupid, $includeall));
 }
 
+/**
+ * Return a selection popup form of the graded users in a course.
+ *
+ * @param string $report name of the report
+ * @param int    $course id of the course
+ * @param int    $userid id of the currently selected user (or 'all' if they are all selected)
+ * @param int    $groupid id of requested group, 0 means all
+ * @param bool   $includeall bool include all option
+ * @return single_select
+ */
 function grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall) {
     global $USER, $CFG;
 
