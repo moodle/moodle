@@ -292,6 +292,8 @@ abstract class core_filetypes {
                     'string' => 'audio'),
             'webm' => array('type' => 'video/webm', 'icon' => 'video', 'groups' => array('html_video', 'video', 'web_video'),
                     'string' => 'video'),
+            'webp' => ['type' => 'image/webp', 'icon' => 'image', 'groups' => ['image', 'web_image', 'optimised_image'],
+                'string' => 'image'],
             'wmv' => array('type' => 'video/x-ms-wmv', 'icon' => 'video', 'groups' => array('video'), 'string' => 'video'),
             'asf' => array('type' => 'video/x-ms-asf', 'icon' => 'video', 'groups' => array('video'), 'string' => 'video'),
             'wma' => array('type' => 'audio/x-ms-wma', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
