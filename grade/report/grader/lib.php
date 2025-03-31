@@ -1309,33 +1309,11 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Builds and return the row of icons for the left side of the report.
-     * It only has one cell that says "Controls"
-     * @param array $rows The Array of rows for the left part of the report
-     * @param int $colspan The number of columns this cell has to span
-     * @return array Array of rows for the left part of the report
-     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
-     * @todo MDL-77307 This will be deleted in Moodle 4.6.
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have {@see core\output\action_menu}.
      */
+    #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     public function get_left_icons_row($rows=array(), $colspan=1) {
-        global $USER;
-
-        debugging('The function get_left_icons_row() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-
-        if (!empty($USER->editing)) {
-            $controlsrow = new html_table_row();
-            $controlsrow->attributes['class'] = 'controls';
-            $controlscell = new html_table_cell();
-            $controlscell->attributes['class'] = 'header controls';
-            $controlscell->header = true;
-            $controlscell->colspan = $colspan;
-            $controlscell->text = get_string('controls', 'grades');
-            $controlsrow->cells[] = $controlscell;
-
-            $rows[] = $controlsrow;
-        }
-        return $rows;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1415,35 +1393,11 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Builds and return the row of icons when editing is on, for the right part of the grader report.
-     * @param array $rows The Array of rows for the right part of the report
-     * @return array Array of rows for the right part of the report
-     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
-     * @todo MDL-77307 This will be deleted in Moodle 4.6.
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have {@see core\output\action_menu}.
      */
+    #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     public function get_right_icons_row($rows=array()) {
-        global $USER;
-        debugging('The function get_right_icons_row() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-
-        if (!empty($USER->editing)) {
-            $iconsrow = new html_table_row();
-            $iconsrow->attributes['class'] = 'controls';
-
-            foreach ($this->gtree->items as $itemid => $unused) {
-                // emulate grade element
-                $item = $this->gtree->get_item($itemid);
-
-                $eid = $this->gtree->get_item_eid($item);
-                $element = $this->gtree->locate_element($eid);
-                $itemcell = new html_table_cell();
-                $itemcell->attributes['class'] = 'controls icons i'.$itemid;
-                $itemcell->text = $this->get_icons($element);
-                $iconsrow->cells[] = $itemcell;
-            }
-            $rows[] = $iconsrow;
-        }
-        return $rows;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1522,58 +1476,11 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Given a grade_category, grade_item or grade_grade, this function
-     * figures out the state of the object and builds then returns a div
-     * with the icons needed for the grader report.
-     *
-     * @param array $element
-     * @return string HTML
      * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
-     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
+    #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     protected function get_icons($element) {
-        global $CFG, $USER, $OUTPUT;
-        debugging('The function get_icons() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-
-        if (empty($USER->editing)) {
-            return '<div class="grade_icons" />';
-        }
-
-        // Init all icons
-        $editicon = '';
-
-        $editable = true;
-
-        if ($element['type'] == 'grade') {
-            $item = $element['object']->grade_item;
-            if ($item->is_course_item() or $item->is_category_item()) {
-                $editable = $this->overridecat;
-            }
-        }
-
-        if ($element['type'] != 'categoryitem' && $element['type'] != 'courseitem' && $editable) {
-            $editicon = $this->gtree->get_edit_icon($element, $this->gpr);
-        }
-
-        $editcalculationicon = '';
-        $showhideicon        = '';
-        $lockunlockicon      = '';
-
-        if (has_capability('moodle/grade:manage', $this->context)) {
-            $editcalculationicon = $this->gtree->get_calculation_icon($element, $this->gpr);
-
-            $showhideicon = $this->gtree->get_hiding_icon($element, $this->gpr);
-
-            $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
-        }
-
-        $gradeanalysisicon = '';
-        if ($element['type'] == 'grade') {
-            $gradeanalysisicon .= $this->gtree->get_grade_analysis_icon($element['object']);
-        }
-
-        return $OUTPUT->container($editicon.$editcalculationicon.$showhideicon.$lockunlockicon.$gradeanalysisicon, 'grade_icons');
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

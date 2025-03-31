@@ -1,0 +1,9 @@
+issueNumber: MDL-77307
+notes:
+  gradereport_grader:
+    - message: |+
+        The previously deprecated methods have been removed:
+          - grade_report_grader::get_left_icons_row
+          - grade_report_grader::get_right_icons_row
+          - grade_report_grader::get_icons
+      type: removed
