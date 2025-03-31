@@ -327,6 +327,13 @@ define([
                     // Reload the grading form "fragment" for this user.
                     var params = {userid: userid, attemptnumber: attemptnumber, jsonformdata: JSON.stringify(submissiondata)};
                     fragment.loadFragment('mod_assign', 'gradingpanel', contextid, params).done(function(html, js) {
+
+                        // Reset whole grading page when there is a failure in retrieving the html
+                        // i.e. user no longer under "requires grading" filter when graded
+                        if (html === '') {
+                            $(document).trigger('reset-table', true);
+                        }
+
                         this._niceReplaceNodeContents(this._region, html, js)
                         .done(function() {
                             checker.saveFormState('[data-region="grade-panel"] .gradeform');
