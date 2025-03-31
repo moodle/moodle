@@ -21,7 +21,7 @@ use core\task\adhoc_task;
 /**
  * Ad-hoc task that performs asynchronous upgrades of a given file type.
  *
- * This ad-hoc taks is used during core upgrades.
+ * This ad-hoc task can be scheduled during core upgrades.
  *
  * @package    core_files
  * @copyright  2025 Daniel Ziegenberg
@@ -37,14 +37,13 @@ class asynchronous_mimetype_upgrade_task extends adhoc_task {
 
         // Upgrade mime type for existing files.
         $customdata = $this->get_custom_data();
-
         foreach ($customdata->extensions as $extension) {
             mtrace("Updating mime type for files with extension *.{$extension} to {$customdata->mimetype}");
 
             $condition = $DB->sql_like('filename', ":extension", false);
             $select = "{$condition} AND mimetype <> :mimetype";
             $params = [
-                'extension' => $DB->sql_like_escape("%.$extension"),
+                'extension' => '%' . $DB->sql_like_escape(".{$extension}"),
                 'mimetype' => $customdata->mimetype,
             ];
 

@@ -23,7 +23,7 @@ namespace core_files\task;
  * @category   test
  * @copyright  2025 Daniel Ziegenberg
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_files\task\asynchronous_mimetype_upgrade_task::execute
+ * @covers     \core_files\task\asynchronous_mimetype_upgrade_task
  */
 final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
 
@@ -104,8 +104,14 @@ final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
      * @param string $mimetype
      * @param array $extensions
      */
-    public function test_upgrade_mimetype(array $files, string $mimetype, array $extensions): void {
+    public function test_execute(
+        array $files,
+        string $mimetype,
+        array $extensions,
+    ): void {
+
         global $DB;
+
         $this->resetAfterTest();
 
         // Create files with different extensions.
@@ -124,30 +130,29 @@ final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
         }
 
         // Create and run the upgrade task.
-        $upgardetask = new asynchronous_mimetype_upgrade_task();
-        $upgardetask->set_custom_data([
+        $task = new asynchronous_mimetype_upgrade_task();
+        $task->set_custom_data([
             'mimetype' => $mimetype,
             'extensions' => $extensions,
         ]);
+
         ob_start();
-        $upgardetask->execute();
+        $task->execute();
         $output = ob_get_clean();
 
         // Check that the task output is correct.
         foreach ($extensions as $extension) {
             $this->assertStringContainsString(
                 "Updating mime type for files with extension *.{$extension} to {$mimetype}",
-                $output
+                $output,
             );
             $countfiles = count(array_filter(
                 array_keys($files),
-                function ($filename) use ($extension) {
-                    return str_ends_with($filename, $extension);
-                }
+                fn($filename) => str_ends_with($filename, $extension),
             ));
             $this->assertStringContainsString(
                 "Updated {$countfiles} files with extension *.{$extension} to {$mimetype}",
-                $output
+                $output,
             );
         }
 
@@ -156,7 +161,7 @@ final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
             $mimetypedb = $DB->get_field(
                 table: 'files',
                 return: 'mimetype',
-                conditions: ['filename' => $filename]
+                conditions: ['filename' => $filename],
             );
             $this->assertEquals(expected: $exptectedmimetype, actual: $mimetypedb);
         }
