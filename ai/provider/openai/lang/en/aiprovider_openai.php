@@ -63,14 +63,14 @@ $string['privacy:metadata:aiprovider_openai:prompttext'] = 'The user entered tex
 $string['privacy:metadata:aiprovider_openai:responseformat'] = 'The format of the response. When generating images.';
 $string['settings'] = 'Settings';
 $string['settings_frequency_penalty'] = 'frequency_penalty';
-$string['settings_frequency_penalty_help'] = 'Penalizes new tokens based on their frequency in the text so far';
-$string['settings_help'] = 'You can adjust the settings below to customize how requests are sent to OpenAI. Update the values as needed, ensuring they align with your requirements.<br><br>';
+$string['settings_frequency_penalty_help'] = 'The frequency penalty adjusts how often words are repeated. The higher the penalty, the less repetitions in the generated text.';
+$string['settings_help'] = 'Adjust the settings below to customise how requests are sent to OpenAI.';
 $string['settings_max_tokens'] = 'max_tokens';
 $string['settings_max_tokens_help'] = 'The maximum number of tokens to generate in the response';
 $string['settings_presence_penalty'] = 'presence_penalty';
-$string['settings_presence_penalty_help'] = 'Penalizes new tokens based on whether they appear in the text so far';
+$string['settings_presence_penalty_help'] = 'The presence penalty encourages the model to use new words by increasing the likelihood of choosing words it hasn\'t used before. A higher value makes the generated text more diverse, while a lower value allows more repetition.';
 $string['settings_top_p'] = 'top_p';
-$string['settings_top_p_help'] = 'Controls nucleus sampling';
+$string['settings_top_p_help'] = 'top_p (nucleus sampling) determines how many possible words to consider. A high value (e.g. 0.9) means the model looks at more words, which makes the generated text more diverse.';
 
 // Deprecated since Moodle 5.0.
 $string['action:generate_image:model_desc'] = 'The model used to generate images from user prompts.';
