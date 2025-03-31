@@ -85,6 +85,11 @@ final class question_bank_helper_test extends \advanced_testcase {
         $sharedmod1context = \context_module::instance($sharedmod1->cmid);
         $sharedmod1qcat1 = $qgen->create_question_category(['contextid' => $sharedmod1context->id]);
         $sharedmod1qcat2 = $qgen->create_question_category(['contextid' => $sharedmod1context->id]);
+        $sharedmod1qcat2child = $qgen->create_question_category([
+            'contextid' => $sharedmod1context->id,
+            'parent' => $sharedmod1qcat2->id,
+            'name' => 'A, B, C',
+        ]);
         $privatemod1 = $privatemodgen->create_instance(['course' => $course1]);
         $privatemod1context = \context_module::instance($privatemod1->cmid);
         $privatemod1qcat1 = $qgen->create_question_category(['contextid' => $privatemod1context->id]);
@@ -95,6 +100,10 @@ final class question_bank_helper_test extends \advanced_testcase {
         $sharedmod2context = \context_module::instance($sharedmod2->cmid);
         $sharedmod2qcat1 = $qgen->create_question_category(['contextid' => $sharedmod2context->id]);
         $sharedmod2qcat2 = $qgen->create_question_category(['contextid' => $sharedmod2context->id]);
+        $sharedmod2qcat2child = $qgen->create_question_category([
+            'contextid' => $sharedmod2context->id,
+            'parent' => $sharedmod2qcat2->id,
+        ]);
         $privatemod2 = $privatemodgen->create_instance(['course' => $course2]);
         $privatemod2context = \context_module::instance($privatemod2->cmid);
         $privatemod1qcat1 = $qgen->create_question_category(['contextid' => $privatemod2context->id]);
@@ -121,7 +130,7 @@ final class question_bank_helper_test extends \advanced_testcase {
             // Must all be mod_qbanks.
             $this->assertEquals('qbank', $courseinstance->cminfo->modname);
             // Must have 2 categories each bank.
-            $this->assertCount(2, $courseinstance->questioncategories);
+            $this->assertCount(3, $courseinstance->questioncategories);
             // Must not include the bank the user does not have access to.
             $this->assertNotEquals($sharedmod3->name, $courseinstance->name);
             $this->assertNotEquals($privatemod3->name, $courseinstance->name);

@@ -61,9 +61,16 @@ class question_bank_helper {
     protected const RECENTLY_VIEWED = 'recently_viewed_open_banks';
 
     /**
-     * Category delimiter used by the SQL to group concatenate question category data.
+     * Category delimiter used by the SQL to group concatenate question category data i.e.
+     * category_id<->category_name<->context_id.
      */
     private const CATEGORY_DELIMITER = '<->';
+
+    /**
+     * Category separator used by the SQL for group concatenation of those category triplets
+     * from above.
+     */
+    private const CATEGORY_SEPARATOR = '<,>';
 
     /**
      * Maximum length for the question bank name database field.
@@ -207,7 +214,7 @@ class question_bank_helper {
                 "'" . self::CATEGORY_DELIMITER . "'",
                 'qc.contextid'
             );
-            $groupconcat = $DB->sql_group_concat($concat, ',');
+            $groupconcat = $DB->sql_group_concat($concat, self::CATEGORY_SEPARATOR);
             $select = "SELECT cm.id, cm.course, {$groupconcat} AS cats";
             $catsql = ' JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = ' . CONTEXT_MODULE .
                 ' JOIN {question_categories} qc ON qc.contextid = c.id AND qc.parent <> 0';
@@ -371,7 +378,7 @@ class question_bank_helper {
     private static function get_formatted_bank(stdClass $cm, int $currentbankid = 0): stdClass {
 
         $cminfo = cm_info::create($cm);
-        $concatedcats = !empty($cm->cats) ? explode(',', $cm->cats) : [];
+        $concatedcats = !empty($cm->cats) ? explode(self::CATEGORY_SEPARATOR, $cm->cats) : [];
         $categories = array_map(static function($concatedcategory) use ($cminfo, $currentbankid) {
             $values = explode(self::CATEGORY_DELIMITER, $concatedcategory);
             $cat = new stdClass();
