@@ -108,7 +108,29 @@ Feature: Check that the assignment grade can be updated correctly
     And I set the field "Grade out of 100" to "100"
     And I set the field "Notify student" to "0"
     And I press "Save changes"
+    And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
     And I follow "View all submissions"
     And "Student 1" row "Grade" column of "generaltable" table should contain "100.00"
     And "Student 1" row "Final grade" column of "generaltable" table should contain "90.00"
     And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
+    # Override the grade.
+    When I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
+    And I turn editing mode off
+    Then the following should exist in the "user-grades" table:
+      | -1-                | -2-                   | -3-       | -4-      |
+      | Student 1          | student10@example.com | 90        | 90      |
+    And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
+    And I turn editing mode on
+    And I set the following fields to these values:
+      | Student 1 Test assignment name grade | 100 |
+    And I click on "Save changes" "button"
+    When I turn editing mode off
+    Then the following should exist in the "user-grades" table:
+      | -1-                | -2-                   | -3-       | -4-      |
+      | Student 1          | student10@example.com | 100       | 100      |
+    And ".penalty-indicator-icon" "css_element" should not exist
+    When I go to "Student 1" "Test assignment name" activity advanced grading page
+    Then ".penalty-indicator-icon" "css_element" should not exist
+    And I follow "View all submissions"
+    Then ".penalty-indicator-icon" "css_element" should not exist
