@@ -630,15 +630,29 @@ abstract class scheduled_task extends task_base {
         $currenthour = (int)date('H', $now);
         $nextvalidhour = $this->next_in_list($currenthour, $validhours);
         if ($nextvalidhour != $currenthour) {
-            if ($nextvalidhour < $currenthour) {
-                $offset = ' +1 day';
-            } else {
-                $offset = '';
+            $keepcurrent = false;
+            $currentdate = new \DateTimeImmutable($currentyear . '-' . $currentmonth . '-' . $currentday . ' ' . $currenthour .
+                ':00');
+            $lasthour = (int)date('H', $currentdate->sub(new \DateInterval('PT1S'))->getTimestamp());
+            $nextafterlast = $this->next_in_list($lasthour, $validhours);
+            // Special case for when the clocks go forward. If the next scheduled time would fall in an hour
+            // that doesn't exist due to the clock change, then we use the next existing hour so that we don't
+            // skip a run. However, the replacement hour may not appear in the valid hours list, so we check
+            // whether we skipped a valid hour here to avoid recursing again and skipping its replacement.
+            if (($lasthour + 1) % 24 <= $nextafterlast && $nextafterlast < $currenthour) {
+                $keepcurrent = true;
             }
-            $newtime = strtotime($currentyear . '-' . $currentmonth . '-' . $currentday . ' ' . $nextvalidhour .
+            if (!$keepcurrent) {
+                if ($nextvalidhour < $currenthour) {
+                    $offset = ' +1 day';
+                } else {
+                    $offset = '';
+                }
+                $newtime = strtotime($currentyear . '-' . $currentmonth . '-' . $currentday . ' ' . $nextvalidhour .
                     ':00' . $offset);
-            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
-                $validdaysofweek, $validmonths, $firstyear);
+                return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                    $validdaysofweek, $validmonths, $firstyear);
+            }
         }
 
         // Round time down to an exact minute because we need to use numeric calculations on it now.
