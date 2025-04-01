@@ -185,6 +185,9 @@ class restore_plan extends base_plan implements loggable {
                 $otherarray['originalcourseid'] = $this->controller->get_info()->original_course_id;
             }
 
+            // Add the settings to the event data.
+            $otherarray['settings'] = $this->get_settings();
+
             // Trigger a course restored event.
             $event = \core\event\course_restored::create(array(
                 'objectid' => $this->get_courseid(),

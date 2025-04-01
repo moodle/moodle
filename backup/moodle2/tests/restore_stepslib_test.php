@@ -17,6 +17,9 @@
 namespace core_backup;
 
 use backup;
+use core\di;
+use core\hook\manager;
+use restore_controller;
 
 /**
  * Tests for Moodle 2 restore steplib classes.
@@ -143,5 +146,58 @@ final class restore_stepslib_test extends \advanced_testcase {
             $this->assertEquals($originalsections[0]->$field, $restoredsections[0]->$field);
             $this->assertEquals($originalsections[1]->$field, $restoredsections[1]->$field);
         }
+    }
+
+    /**
+     * Tests the hooks for restore task  settings definition.
+     *
+     * @covers \restore_root_task::define_settings
+     */
+    public function test_restore_hook(): void {
+        // Load the callback classes.
+        require_once(__DIR__ . '/fixtures/restore_task_hooks.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Replace the version of the manager in the DI container with a phpunit one.
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
+                // Load a list of hooks for `test_plugin1` from the fixture file.
+                'test_plugin1' => __DIR__ .
+                    '/fixtures/restore_task_hooks.php',
+            ]),
+        );
+
+        global $CFG, $USER;
+
+        // Create course to restore into, and a user to do the restore.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $backupid = $this->backup_course($course);
+
+        // Turn off file logging, otherwise it can't delete the file (Windows).
+        $CFG->backup_file_logger_level = backup::LOG_NONE;
+
+        $course = $generator->create_course();
+
+        // Do restore to new course with default settings.
+        $rc = new restore_controller(
+            $backupid,
+            $course->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL,
+            $USER->id,
+            backup::TARGET_EXISTING_DELETING
+        );
+
+        $precheck = $rc->execute_precheck();
+        $this->assertTrue($precheck);
+        $setting = $rc->get_plan()->get_setting('extra_test');
+        $this->assertNotEmpty($setting);
+        $rc->execute_plan();
+        $rc->destroy();
     }
 }

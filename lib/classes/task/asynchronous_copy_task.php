@@ -25,8 +25,11 @@
 
 namespace core\task;
 
+use core\di;
 use async_helper;
 use cache_helper;
+use core\hook\manager;
+use core_backup\hook\before_copy_course_execute;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -124,6 +127,10 @@ class asynchronous_copy_task extends adhoc_task {
         $fullname->set_value($copyinfo->fullname);
         $shortname = $plan->get_setting('course_shortname');
         $shortname->set_value($copyinfo->shortname);
+
+        // Create and dispatch a hook to allow interaction with the task immediately prior to execution.
+        $hook = new before_copy_course_execute($plan, $copyinfo);
+        di::get(manager::class)->dispatch($hook);
 
         // Do some preflight checks on the restore.
         $rc->execute_precheck();
