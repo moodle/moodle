@@ -2086,8 +2086,10 @@ class grade_item extends grade_object {
         }
         // end of hack alert
 
-        // Default deduction is 0.
-        $grade->deductedmark = 0;
+        // Only reset the deducted mark if the grade has changed.
+        if ($grade->timemodified !== $oldgrade->timemodified) {
+            $grade->deductedmark = 0;
+        }
 
         $gradechanged = false;
         if (empty($grade->id)) {

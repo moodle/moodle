@@ -5423,7 +5423,15 @@ class assign {
                     );
                     $gradefordisplay = $gradebookgrade->str_long_grade;
                 } else {
-                    $gradefordisplay = $this->display_grade($gradebookgrade->grade, false, 0, 0, $gradebookgrade->deductedmark);
+                    // This grade info is the grade from gradebook.
+                    // We need user id to determine if the grade is overridden or not.
+                    $gradefordisplay = $this->display_grade(
+                        $gradebookgrade->grade,
+                        false,
+                        $user->id,
+                        0,
+                        $gradebookgrade->deductedmark
+                    );
                 }
                 $gradeddate = $gradebookgrade->dategraded;
 
@@ -5630,6 +5638,8 @@ class assign {
                 }
             }
 
+            // The assign grade for each attempt is not stored in the gradebook.
+            // We need to calculate them from assign_grade records.
             [$penalisedgrade, $deductedmark] = $this->calculate_penalised_grade($grade);
 
             // Now get the gradefordisplay.
@@ -5641,6 +5651,7 @@ class assign {
                                                                      $penalisedgrade,
                                                                      $cangrade);
             } else {
+                // We do not need user id here as the overriden grade should not affect the previous attempts.
                 $grade->gradefordisplay = $this->display_grade($penalisedgrade, false, 0, 0, $deductedmark);
             }
 
