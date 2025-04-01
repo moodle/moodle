@@ -50,13 +50,13 @@ Feature: Message users in the summary report
     Then I should see "Message sent to 2 people"
     And I log out
     And I log in as "student1"
-    And I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should see "1" in the "Toggle messaging drawer" "button"
     And I log out
     And I log in as "student3"
-    And I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should see "1" in the "Toggle messaging drawer" "button"
     And I log out
     And I log in as "student2"
-    And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should not see "1" in the "Toggle messaging drawer" "button"
 
   @javascript
   Scenario: Message all users

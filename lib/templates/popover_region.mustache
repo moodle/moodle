@@ -38,18 +38,19 @@
     data-region="popover-region">
     <div class="popover-region-toggle nav-link icon-no-margin"
         data-region="popover-region-toggle"
-        role="button"
         aria-controls="popover-region-container-{{uniqid}}"
         aria-haspopup="true"
+        aria-expanded="false"
         aria-label="{{$togglelabel}}{{#str}}showpopovermenu{{/str}}{{/togglelabel}}"
-        tabindex="0">
+        title="{{$togglelabel}}{{#str}}showpopovermenu{{/str}}{{/togglelabel}}"
+        tabindex="0"
+        role="button">
         {{$togglecontent}}{{/togglecontent}}
     </div>
     <div {{$containerattributes}}{{/containerattributes}}
         id="popover-region-container-{{uniqid}}"
         class="popover-region-container"
         data-region="popover-region-container"
-        aria-expanded="false"
         aria-hidden="true"
         aria-label="{{$containerlabel}}{{/containerlabel}}"
         role="region">
