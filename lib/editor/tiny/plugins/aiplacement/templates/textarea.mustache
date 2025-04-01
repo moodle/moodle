@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_aiplacement/loading
+    @template tiny_aiplacement/textarea
 
-    Template for the loading spinner.
+    Template for the generated text content within the Tiny Editor.
 
     Classes required for JS:
     * none
@@ -26,19 +26,19 @@
     * none
 
     Context variables required for this template:
-    * ishidden: Whether the spinner should be hidden or not.
+    * elementid - The unique element id
+    * text - The generated text
 
     Example context (json):
     {
         "elementid": "exampleId",
-        "ishidden": true
+        "text": "Example text"
     }
 }}
-<div id="{{elementid}}_tiny_aiplacement_spinner" class="tiny-aiplacement-loading-spinner-container hidden">
-    <div class="tiny-aiplacement-loading-spinner d-flex justify-content-center align-items-center flex-column">
-        <div class="spinner-border tiny-aiplacement-spinner-style" aria-hidden="true"></div>
-        <div id="{{elementid}}_tiny_aiplacement_loading_text" class="text-center tiny-aiplacement-spinner-text-style" role="status">
-            {{#str}} loading, tiny_aiplacement{{/str}}
-        </div>
-    </div>
-</div>
+<textarea
+    class="form-control h-100"
+    id="{{elementid}}_tiny_aiplacement_textresponse"
+    placeholder="{{#str}} textresponse_placeholder, tiny_aiplacement {{/str}}"
+    aria-label="{{#str}} textresponse_label, tiny_aiplacement {{/str}}"
+    autocomplete="off"
+>{{text}}</textarea>
