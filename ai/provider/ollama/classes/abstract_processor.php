@@ -40,7 +40,7 @@ abstract class abstract_processor extends process_base {
      */
     protected function get_endpoint(): UriInterface {
         $url = rtrim($this->provider->config['endpoint'], '/')
-            . '/api/generate/';
+            . '/api/generate';
 
         return new Uri($url);
     }
