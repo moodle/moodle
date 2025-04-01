@@ -301,14 +301,15 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
  * @deprecated since Moodle 4.4 MDL-80300
  */
 #[\core\attribute\deprecated('override_manager::delete_override_by_id', since: '4.4', mdl: '80300', final: true)]
-function quiz_delete_override() {
+function quiz_delete_override($quiz, $overrideid, $log = true) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return true;
 }
 
 /**
  * @deprecated since Moodle 4.4 MDL-80300
  */
 #[\core\attribute\deprecated('override_manager::delete_all_overrides', since: '4.4', mdl: '80300', final: true)]
-function quiz_delete_all_overrides() {
+function quiz_delete_all_overrides($quiz, $log = true) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
