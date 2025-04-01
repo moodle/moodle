@@ -312,6 +312,7 @@ $string['filesubmissions'] = 'File submissions';
 $string['filter'] = 'Filter';
 $string['filterall'] = 'All';
 $string['filterdraft'] = 'Draft';
+$string['filtergraded'] = 'Graded';
 $string['filtergrantedextension'] = 'Granted extension';
 $string['filternone'] = 'No filter';
 $string['filternotsubmitted'] = 'Not submitted';
