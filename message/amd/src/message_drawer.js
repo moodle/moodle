@@ -281,11 +281,14 @@ function(
             });
 
             PubSub.subscribe(Events.TOGGLE_VISIBILITY, function(buttonid) {
+                const buttonElement = document.getElementById(buttonid);
                 if (isVisible(root)) {
                     hide(root);
+                    buttonElement?.setAttribute('aria-expanded', false);
                     $(SELECTORS.JUMPTO).attr('tabindex', -1);
                 } else {
                     show(namespace, root);
+                    buttonElement?.setAttribute('aria-expanded', true);
                     setJumpFrom(buttonid);
                     $(SELECTORS.JUMPTO).attr('tabindex', 0);
                 }
@@ -306,7 +309,7 @@ function(
             if (button) {
                 $('#' + button).focus();
             }
-            PubSub.publish(Events.TOGGLE_VISIBILITY);
+            PubSub.publish(Events.TOGGLE_VISIBILITY, button);
         });
 
         PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(args) {

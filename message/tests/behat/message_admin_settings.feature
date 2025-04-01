@@ -16,7 +16,7 @@ Feature: Message admin settings
     Given the following config values are set as admin:
       | messaging | 1 |
     When I log in as "admin"
-    Then "Toggle messaging drawer" "icon" should exist
+    Then "Toggle messaging drawer" "button" should exist
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should see "User One"
     And I follow "User One"
