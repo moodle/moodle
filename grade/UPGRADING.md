@@ -1,6 +1,6 @@
 # core_grades (subsystem) Upgrade notes
 
-## 5.0dev+
+## 5.0beta
 
 ### Added
 
@@ -11,6 +11,12 @@
   with `async: false`.
 
   For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
+### Deprecated
+
+- Deprecate print_graded_users_selector() from Moodle 2 era
+
+  For more information see [MDL-84673](https://tracker.moodle.org/browse/MDL-84673)
 
 ### Removed
 

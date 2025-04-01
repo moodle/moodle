@@ -1,6 +1,6 @@
 # core_customfield (subsystem) Upgrade notes
 
-## 5.0dev+
+## 5.0beta
 
 ### Added
 

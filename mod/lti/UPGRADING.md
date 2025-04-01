@@ -1,6 +1,6 @@
 # mod_lti Upgrade notes
 
-## 5.0dev+
+## 5.0beta
 
 ### Removed
 

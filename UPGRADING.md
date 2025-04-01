@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 5.0dev+
+## 5.0beta
 
 ### core
 
@@ -270,6 +270,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_backup
 
+#### Added
+
+- Added several hooks to the restore process to
+
+   1. Hook to allow extra settings to be defined for the course restore process.
+   2. Hook to allow adding extra fields to the copy course form.
+   3. Hook used by `copy_helper::process_formdata()` to expand the list of required fields.
+   4. Hook used to allow interaction with the copy task, before the actual task execution takes place.
+
+  Other changes include
+   1. `base_task::add_setting()` is now public to allow hook callbacks to add settings.
+   2. Settings are now added to the data sent to the course_restored event.
+
+  For more information see [MDL-83479](https://tracker.moodle.org/browse/MDL-83479)
+
 #### Removed
 
 - Remove all MODE_HUB related code.
@@ -503,6 +518,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84310](https://tracker.moodle.org/browse/MDL-84310)
 
+### core_files
+
+#### Added
+
+- Adds a new ad-hoc task `core_files\task\asynchronous_mimetype_upgrade_task` to upgrade the mimetype of files
+  asynchronously during core upgrades. The upgradelib also comes with a new utility function
+  `upgrade_create_async_mimetype_upgrade_task` for creating said ad-hoc task.
+
+  For more information see [MDL-81437](https://tracker.moodle.org/browse/MDL-81437)
+
 ### core_form
 
 #### Changed
@@ -522,6 +547,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   with `async: false`.
 
   For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
+#### Deprecated
+
+- Deprecate print_graded_users_selector() from Moodle 2 era
+
+  For more information see [MDL-84673](https://tracker.moodle.org/browse/MDL-84673)
 
 #### Removed
 
@@ -574,6 +605,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- question_attempt_step's constructor now accepts the class constant TIMECREATED_ON_FIRST_RENDER as a value for the
+  $timecreated parameter. Calling question_attempt::render for the first time will now set the first step's timecreated
+  to the current time if it is set to this value. Note, null could not be used here as it is already used to indicate
+  timecreated should be set to the current time.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
 - The definition of the abstract `core_question\local\bank\condition` class has changed to make it clearer which methods are required  in child classes.
   The `get_filter_class` method is no longer declared as abstract, and will return `null` by default to use the base  `core/datafilter/filtertype` class. If you have defined this method to return `null` in your own class, it will continue to work, but it is no longer necessary.
   `build_query_from_filter` and `get_condition_key` are now declared as abstract, since all filter condition classes must define these  (as well as existing abstract methods) to function. Again, exsiting child classes will continue to work if they did before, as they  already needed these methods.
@@ -1019,8 +1056,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### mod_quiz
 
+#### Added
+
+- quiz_attempt now has 2 additional state values, NOT_STARTED and SUBMITTED. These represent attempts when an attempt has been
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
+- New quiz setting "precreateperiod" controls the period before timeopen during which attempts will be pre-created using the new
+  NOT_STARTED state. This setting is marked advanced and locked by default, so can only be set by administrators. This setting
+  is read by the \mod_quiz\task\precreate_attempts task to identify quizzes due for pre-creation.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
+
 #### Changed
 
+- quiz_attempt_save_started now sets the IN_PROGRESS state, timestarted, and saves the attempt, while the new quiz_attempt_save_not_started function sets the NOT_STARTED state and saves the attempt.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
+- quiz_attempt_save_started Now takes an additional $timenow parameter, to specify the timestart of the attempt. This was previously
+  set in quiz_create_attempt, but is now set in quiz_attempt_save_started and quiz_attempt_save_not_started.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
 - The `quiz_question_tostring` method now includes a new boolean parameter, `displaytaglink`. This parameter specifies whether the tag name in the question bank should be displayed as a clickable hyperlink (`true`) or as plain text (`false`).
 
   For more information see [MDL-75075](https://tracker.moodle.org/browse/MDL-75075)
@@ -1033,6 +1088,29 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Both the existing instance property and the new static method can co-exist.
 
   For more information see [MDL-81521](https://tracker.moodle.org/browse/MDL-81521)
+
+#### Deprecated
+
+- quiz_attempt::process_finish is now deprecated, and its functionality is split between ::process_submit, which saves the
+  submission, sets the finish time and sets the SUBMITTED status, and ::process_grade_submission which performs automated
+  grading and sets the FINISHED status.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
+- The webservice function `mod_quiz_get_user_attempts` is now deprecated in favour of `mod_quiz_get_user_quiz_attempts`.
+
+  With the introduction of the new NOT_STARTED quiz attempt state, `mod_quiz_get_user_attempts` has been modified to not return NOT_STARTED attempts, allowing clients such as the mobile app to continue working without modifications.
+
+  `mod_quiz_get_user_quiz_attempts` will return attempts in all states, as `mod_quiz_get_user_attempts` did before. Once clients are updated to handle NOT_STARTED attempts, they can migrate to use this function.
+
+  A minor modification to `mod_quiz_start_attempt` has been made to allow it to transparently start an existing attempt that is in the NOT_STARTED state, rather than creating a new one.
+
+  For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
+
+#### Removed
+
+- Final removal of quiz_delete_override() and quiz_delete_all_overrides()
+
+  For more information see [MDL-80944](https://tracker.moodle.org/browse/MDL-80944)
 
 ### mod_wiki
 

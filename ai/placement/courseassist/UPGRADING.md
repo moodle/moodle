@@ -1,6 +1,6 @@
 # aiplacement_courseassist Upgrade notes
 
-## 5.0dev+
+## 5.0beta
 
 ### Added
 

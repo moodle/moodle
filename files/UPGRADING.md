@@ -1,5 +1,15 @@
 # core_files (subsystem) Upgrade notes
 
+## 5.0beta
+
+### Added
+
+- Adds a new ad-hoc task `core_files\task\asynchronous_mimetype_upgrade_task` to upgrade the mimetype of files
+  asynchronously during core upgrades. The upgradelib also comes with a new utility function
+  `upgrade_create_async_mimetype_upgrade_task` for creating said ad-hoc task.
+
+  For more information see [MDL-81437](https://tracker.moodle.org/browse/MDL-81437)
+
 ## 4.5
 
 ### Added
