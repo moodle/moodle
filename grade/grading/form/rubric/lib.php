@@ -863,16 +863,19 @@ class gradingform_rubric_instance extends gradingform_instance {
         $currentgrade = $this->get_rubric_filling();
         parent::update($data);
         foreach ($data['criteria'] as $criterionid => $record) {
+            // Hardcoding/defaulting to html format for new/existing record
+            $record['remarkformat'] = FORMAT_HTML;
+
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array('instanceid' => $this->get_id(), 'criterionid' => $criterionid,
-                    'levelid' => $record['levelid'], 'remarkformat' => FORMAT_MOODLE);
+                    'levelid' => $record['levelid'], 'remarkformat' => $record['remarkformat']);
                 if (isset($record['remark'])) {
                     $newrecord['remark'] = $record['remark'];
                 }
                 $DB->insert_record('gradingform_rubric_fillings', $newrecord);
             } else {
                 $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
-                foreach (array('levelid', 'remark'/*, 'remarkformat' */) as $key) {
+                foreach (array('levelid', 'remark', 'remarkformat') as $key) {
                     // TODO MDL-31235 format is not supported yet
                     if (isset($record[$key]) && $currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
                         $newrecord[$key] = $record[$key];
