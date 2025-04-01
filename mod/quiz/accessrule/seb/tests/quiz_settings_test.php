@@ -82,6 +82,7 @@ final class quiz_settings_test extends \advanced_testcase {
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
                 . "<key>showTime</key><false/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><true/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><true/><key>browserMediaCaptureMicrophone</key><true/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><true/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>hashedQuitPassword</key>"
                 . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
@@ -115,6 +116,7 @@ final class quiz_settings_test extends \advanced_testcase {
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
             . "<key>showTime</key><false/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
             . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><true/><key>audioMute</key><false/>"
+            . "<key>browserMediaCaptureCamera</key><true/><key>browserMediaCaptureMicrophone</key><true/>"
             . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><true/>"
             . "<key>URLFilterEnableContentFilter</key><false/><key>hashedQuitPassword</key>"
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
@@ -132,6 +134,7 @@ final class quiz_settings_test extends \advanced_testcase {
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
             . "<key>showTime</key><false/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
             . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><true/><key>audioMute</key><false/>"
+            . "<key>browserMediaCaptureCamera</key><true/><key>browserMediaCaptureMicrophone</key><true/>"
             . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><true/>"
             . "<key>URLFilterEnableContentFilter</key><true/><key>hashedQuitPassword</key>"
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
@@ -150,7 +153,7 @@ final class quiz_settings_test extends \advanced_testcase {
 
         $quizsettings = new seb_quiz_settings(0, $settings);
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("65ff7a3b8aec80e58fbe2e7968826c33cbf0ac444a748055ebe665829cbf4201",
+        $this->assertEquals("24712dcecc69a2ca8ad19f4f8928375038f087e13ce9f504cfc4496846aaaf27",
             $configkey
         );
     }
@@ -163,12 +166,12 @@ final class quiz_settings_test extends \advanced_testcase {
 
         $quizsettings = new seb_quiz_settings(0, $settings);
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("65ff7a3b8aec80e58fbe2e7968826c33cbf0ac444a748055ebe665829cbf4201",
+        $this->assertEquals("24712dcecc69a2ca8ad19f4f8928375038f087e13ce9f504cfc4496846aaaf27",
                 $configkey);
 
         $quizsettings->set('filterembeddedcontent', 1); // Alter the settings.
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("d975b8a2ec4472495a8be7c64d7c8cc960dbb62472d5e88a8847ac0e5d77e533",
+        $this->assertEquals("e2f6dc2a6ddb9bdfa7530dc8afbae996499c34a954e1c635c4fed894e47c1abc",
             $configkey);
     }
 
@@ -565,6 +568,7 @@ final class quiz_settings_test extends \advanced_testcase {
                 . "<key>allowWlan</key><false/><key>showReloadButton</key>"
                 . "<true/><key>showTime</key><true/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><false/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><false/><key>browserMediaCaptureMicrophone</key><false/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><false/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>URLFilterRules</key><array>"
                 . "<dict><key>action</key><integer>1</integer><key>active</key><true/>"
@@ -593,6 +597,7 @@ final class quiz_settings_test extends \advanced_testcase {
                 . "<key>allowWlan</key><false/><key>showReloadButton</key>"
                 . "<true/><key>showTime</key><true/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><false/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><false/><key>browserMediaCaptureMicrophone</key><false/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><false/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>URLFilterRules</key><array>"
                 . "<dict><key>action</key><integer>0</integer><key>active</key><true/>"
@@ -621,6 +626,7 @@ final class quiz_settings_test extends \advanced_testcase {
                 . "<key>allowWlan</key><false/><key>showReloadButton</key>"
                 . "<true/><key>showTime</key><true/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><false/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><false/><key>browserMediaCaptureMicrophone</key><false/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><false/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>URLFilterRules</key><array>"
                 . "<dict><key>action</key><integer>1</integer><key>active</key><true/>"
@@ -649,6 +655,7 @@ final class quiz_settings_test extends \advanced_testcase {
                 . "<key>allowWlan</key><false/><key>showReloadButton</key>"
                 . "<true/><key>showTime</key><true/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><false/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><false/><key>browserMediaCaptureMicrophone</key><false/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><false/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>URLFilterRules</key><array>"
                 . "<dict><key>action</key><integer>0</integer><key>active</key><true/>"
@@ -677,6 +684,7 @@ final class quiz_settings_test extends \advanced_testcase {
                 . "<key>allowWlan</key><false/><key>showReloadButton</key>"
                 . "<true/><key>showTime</key><true/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
                 . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><false/><key>audioMute</key><false/>"
+                . "<key>browserMediaCaptureCamera</key><false/><key>browserMediaCaptureMicrophone</key><false/>"
                 . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><false/>"
                 . "<key>URLFilterEnableContentFilter</key><false/><key>URLFilterRules</key><array><dict><key>action</key>"
                 . "<integer>1</integer><key>active</key><true/><key>expression</key><string>*</string>"

@@ -22,6 +22,8 @@
         <FIELD NAME="userconfirmquit" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether confirm quit popup should appear."/>
         <FIELD NAME="enableaudiocontrol" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool to show volume and audio controls."/>
         <FIELD NAME="muteonstartup" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether browser starts muted."/>
+        <FIELD NAME="allowcapturecamera" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether SEB may access camera."/>
+        <FIELD NAME="allowcapturemicrophone" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether SEB may access microphone."/>
         <FIELD NAME="allowspellchecking" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether spell checking will happen in SEB."/>
         <FIELD NAME="allowreloadinexam" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether user can reload."/>
         <FIELD NAME="activateurlfiltering" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Bool whether URLs will be filtered."/>
