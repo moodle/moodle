@@ -41,7 +41,7 @@ class o1 extends gpt4o {
     }
 
     #[\Override]
-    public function model_type(): int {
-        return self::MODEL_TYPE_TEXT;
+    public function model_type(): array {
+        return [self::MODEL_TYPE_TEXT];
     }
 }

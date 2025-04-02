@@ -192,7 +192,7 @@ class action_form extends action_settings_form {
         $models['custom'] = get_string('custom', 'core_form');
         foreach (helper::get_model_classes() as $class) {
             $model = new $class();
-            if ($model->model_type() == $modeltype) {
+            if (in_array($modeltype, $model->model_type())) {
                 $models[$model->get_model_name()] = $model->get_model_display_name();
             }
         }

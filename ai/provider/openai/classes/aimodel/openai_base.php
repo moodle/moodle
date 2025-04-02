@@ -31,9 +31,9 @@ interface openai_base {
     public const MODEL_TYPE_IMAGE = 2;
 
     /**
-     * Get model type.
+     * Get model types.
      *
-     * @return int Model type.
+     * @return array List of model types.
      */
-    public function model_type(): int;
+    public function model_type(): array;
 }
