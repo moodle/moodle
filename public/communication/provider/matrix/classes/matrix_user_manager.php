@@ -64,7 +64,9 @@ class matrix_user_manager {
 
         // Matrix/Synapse servers will not allow numeric usernames.
         if (is_numeric($username)) {
-            $username = self::MATRIX_USER_PREFIX . $username;
+            $configprefix = get_config('communication_matrix', 'matrixuserprefix');
+            $prefix = !empty($configprefix) ? $configprefix : self::MATRIX_USER_PREFIX;
+            $username = $prefix . $username;
         }
 
         $homeserver = get_config('communication_matrix', 'matrixhomeservername');
