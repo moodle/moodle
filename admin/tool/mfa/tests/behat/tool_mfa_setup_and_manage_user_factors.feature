@@ -37,8 +37,17 @@ Feature: Set up and manage user factors
   Scenario: I can revoke a factor only when there is more than one active factor
     Given the following config values are set as admin:
       | enabled | 1 | factor_webauthn |
+    And I navigate to "Plugins > SMS > Manage SMS gateways" in site administration
+    And I follow "Create new SMS gateway"
+    And I set the following fields to these values:
+      | SMS gateway provider | AWS           |
+      | Gateway name         | Dummy gateway |
+      | Access key           | key123        |
+      | Secret access key    | secret456     |
+    And I press "Save changes"
     And the following config values are set as admin:
       | enabled | 1 | factor_sms     |
+      | smsgateway | Dummy gateway (AWS) | factor_sms     |
     And the following config values are set as admin:
       | enabled | 0 | factor_email |
     And the following "tool_mfa > User factors" exist:
