@@ -77,6 +77,7 @@ class grade_import_form extends moodleform {
             $mform->addElement('text', 'iprestriction', get_string('keyiprestriction', 'userkey'), array('size'=>80));
             $mform->addHelpButton('iprestriction', 'keyiprestriction', 'userkey');
             $mform->setDefault('iprestriction', getremoteaddr()); // own IP - just in case somebody does not know what user key is
+            $mform->setType('iprestriction', PARAM_RAW_TRIMMED);
 
             $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
             $mform->addHelpButton('validuntil', 'keyvaliduntil', 'userkey');
