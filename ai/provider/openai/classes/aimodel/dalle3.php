@@ -43,7 +43,7 @@ class dalle3 extends base implements openai_base {
     }
 
     #[\Override]
-    public function model_type(): int {
-        return self::MODEL_TYPE_IMAGE;
+    public function model_type(): array {
+        return [self::MODEL_TYPE_IMAGE];
     }
 }

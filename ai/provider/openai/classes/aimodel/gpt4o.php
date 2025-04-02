@@ -81,7 +81,7 @@ class gpt4o extends base implements openai_base {
     }
 
     #[\Override]
-    public function model_type(): int {
-        return self::MODEL_TYPE_TEXT;
+    public function model_type(): array {
+        return [self::MODEL_TYPE_TEXT];
     }
 }
