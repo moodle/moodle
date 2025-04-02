@@ -1360,7 +1360,7 @@ function glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mo
         echo '<table>';
         if ( $aliases ) {
             $id = "keyword-{$entry->id}";
-            echo '<tr valign="top"><td class="aliases">' .
+            echo '<tr valign="top"><td class="aliases hstack gap-2">' .
                 '<label for="' . $id . '">' . get_string('aliases', 'glossary') . ': </label>' .
                 $aliases . '</td></tr>';
         }
