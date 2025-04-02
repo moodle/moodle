@@ -3003,8 +3003,13 @@ body.dragging {
             padding-left: 2.5rem;
         }
     }
-    .dropdown-item[aria-selected="true"] {
-        font-weight: bold;
+
+    .dropdown-item {
+        padding: map-get($spacers, 1) map-get($spacers, 4);
+
+        [aria-selected="true"] {
+            font-weight: bold;
+        }
     }
 }
 
