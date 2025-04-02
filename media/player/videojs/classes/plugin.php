@@ -308,10 +308,17 @@ class media_videojs_plugin extends core_media_player_native {
 
             // Ogv.JS Tech.
             $this->ogvtech = false;
-            if (in_array($ext, $this->ogvsupportedextensions) &&
-                (core_useragent::is_safari() || core_useragent::is_ios() || core_useragent::is_chrome())) {
-                // Chrome has stopped supporting OGV in the latest version. Refer: https://caniuse.com/ogv.
-                // We need to enable Ogv.JS Tech plugin for Safari, iOS and Chrome.
+            /* The following browsers do not support OGV natively:
+                - Chrome (since version 120)
+                - Edge (since version 122)
+                - Safari
+                - Safari on iOS
+                - Firefox (since version 130)
+                - Opera (since version 106)
+            Refer: https://caniuse.com/ogv.
+            We need to enable Ogv.JS Tech plugin for all browsers that do not support OGV natively.
+            */
+            if (in_array($ext, $this->ogvsupportedextensions)) {
                 $this->ogvtech = true;
                 $result[] = $url;
                 continue;
