@@ -4,6 +4,11 @@
 
 use core\plugininfo\gradepenalty;
 
+$ADMIN->add('grades', new admin_category('gradereports', new lang_string('reportsettings', 'grades')));
+$ADMIN->add('grades', new admin_category('gradeimports', new lang_string('importsettings', 'grades')));
+$ADMIN->add('grades', new admin_category('gradeexports', new lang_string('exportsettings', 'grades')));
+$ADMIN->add('grades', new admin_category('gradepenalty', new lang_string('gradepenalty', 'grades')));
+
 if (has_capability('moodle/grade:manage', $systemcontext)
  or has_capability('moodle/grade:manageletters', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
@@ -183,7 +188,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     // The plugins must implement a settings.php file that adds their admin settings to the $settings object
 
     // Reports
-    $ADMIN->add('grades', new admin_category('gradereports', new lang_string('reportsettings', 'grades')));
     foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
@@ -196,7 +200,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     }
 
     // Imports
-    $ADMIN->add('grades', new admin_category('gradeimports', new lang_string('importsettings', 'grades')));
     foreach (core_component::get_plugin_list('gradeimport') as $plugin => $plugindir) {
 
      // Include all the settings commands for this plugin if there are any
@@ -211,7 +214,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
 
     // Exports
-    $ADMIN->add('grades', new admin_category('gradeexports', new lang_string('exportsettings', 'grades')));
     foreach (core_component::get_plugin_list('gradeexport') as $plugin => $plugindir) {
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
@@ -224,7 +226,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     }
 
     // Penalty.
-    $ADMIN->add('grades', new admin_category('gradepenalty', new lang_string('gradepenalty', 'grades')));
 
     // Supported modules.
     $modules = core_grades\penalty_manager::get_supported_modules();

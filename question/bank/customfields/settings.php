@@ -25,7 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
+$capabilities = ['qbank/customfields:configurecustomfields'];
+
+if ($hassiteconfig || has_any_capability($capabilities, core\context\system::instance())) {
     // Settings for question custom fields.
     $settings = null;
     $ADMIN->add('qbanksettings',

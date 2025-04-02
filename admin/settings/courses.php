@@ -28,13 +28,22 @@ require_once($CFG->libdir . '/pdflib.php');
 
 use core_admin\local\settings\filesize;
 
-$capabilities = array(
+$ADMIN->add('courses', new admin_category('coursedefaultsettings', new lang_string('defaultsettingscategory', 'course')));
+$ADMIN->add('courses', new admin_category('groups', new lang_string('groups')));
+$ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
+$ADMIN->add('courses', new admin_category('backups', new lang_string('backups', 'admin')));
+
+$capabilities = [
     'moodle/backup:backupcourse',
     'moodle/category:manage',
     'moodle/course:create',
     'moodle/site:approvecourse',
-    'moodle/restore:restorecourse'
-);
+    'moodle/restore:restorecourse',
+    'moodle/course:manageactivities',
+    'moodle/course:configurecustomfields',
+    'moodle/group:configurecustomfields',
+    'moodle/course:recommendactivity',
+];
 if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Speedup for non-admins, add all caps used on this page.
     $ADMIN->add('courses',
@@ -104,7 +113,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     }
 
     // Add a category for the course Default settings.
-    $ADMIN->add('courses', new admin_category('coursedefaultsettings', new lang_string('defaultsettingscategory', 'course')));
     // Course Default Settings Page.
     // NOTE: these settings must be applied after all other settings because they depend on them.
 
@@ -298,8 +306,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
-    // Add a category for the Groups.
-    $ADMIN->add('courses', new admin_category('groups', new lang_string('groups')));
+    // Add to the 'Groups' category.
     $ADMIN->add(
         'groups',
         new admin_externalpage(
@@ -319,8 +326,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
-    // Add a category for the Activity Chooser.
-    $ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
+    // Add to the 'Activity Chooser' category.
     $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
     // Tab mode for the activity chooser.
     $temp->add(
@@ -372,8 +378,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
-    // Add a category for backups.
-    $ADMIN->add('courses', new admin_category('backups', new lang_string('backups','admin')));
+    // Add to the 'Backups' category.
 
     // Create a page for general backups configuration and defaults.
     $temp = new admin_settingpage('backupgeneralsettings', new lang_string('generalbackdefaults', 'backup'), 'moodle/backup:backupcourse');

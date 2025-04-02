@@ -25,6 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$ADMIN->add('server', new admin_category('taskconfig', new lang_string('taskadmintitle', 'admin')));
+$ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));
+$ADMIN->add('server', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
+
 if ($hassiteconfig) {
     // System paths.
     $temp = new admin_settingpage('systempaths', new lang_string('systempaths', 'admin'));
@@ -333,7 +337,6 @@ if ($hassiteconfig) {
     $ADMIN->add('server', $temp);
 
     // Tasks.
-    $ADMIN->add('server', new admin_category('taskconfig', new lang_string('taskadmintitle', 'admin')));
 
     // Task processing.
     $temp = new admin_settingpage('taskprocessing', new lang_string('taskprocessing', 'admin'));
@@ -467,7 +470,6 @@ if ($hassiteconfig) {
     }
 
     // Email.
-    $ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));
 
     // Outgoing mail configuration.
     $temp = new admin_settingpage('outgoingmailconfig', new lang_string('outgoingmailconfig', 'admin'));
@@ -639,7 +641,6 @@ if ($hassiteconfig) {
     }
 
     // Web services.
-    $ADMIN->add('server', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
 
     // Web services > Overview.
     $temp = new admin_settingpage('webservicesoverview', new lang_string('webservicesoverview', 'webservice'));

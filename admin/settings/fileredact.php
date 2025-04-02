@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+if (!$ADMIN->locate('file_redactor')) {
+    $ADMIN->add('server', new admin_category('file_redactor', get_string('redactor', 'core_files')));
+}
 if ($hassiteconfig) {
-    if (!$ADMIN->locate('file_redactor')) {
-        $ADMIN->add('server', new admin_category('file_redactor', get_string('redactor', 'core_files')));
-    }
 
     $manager = \core\di::get(\core_files\redactor\manager::class);
 
