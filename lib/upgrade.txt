@@ -25,6 +25,9 @@ completed modules to the DBMS improving the performance of the method.
   user has been redirected to the expected location.
   e.g. `And the url should match "/mod/forum/view\.php\?id=[0-9]+"`
 
+* A new function `file_clear_draft_area()` has been added to delete the files in a draft area.
+  For more information see [MDL-72050](https://tracker.moodle.org/browse/MDL-72050)
+
 === 4.4.5 ===
 
 * All uses of the following PHPUnit methods have been removed as these methods are deprecated upstream without direct replacement:
