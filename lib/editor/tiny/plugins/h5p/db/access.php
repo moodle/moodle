@@ -35,7 +35,7 @@ $capabilities = [
     ],
     'tiny/h5p:use' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
             'editingteacher' => CAP_ALLOW,
         ],

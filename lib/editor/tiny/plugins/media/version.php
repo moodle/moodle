@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025031500;
+$plugin->version   = 2025040200;
 $plugin->requires  = 2024100100;
 $plugin->component = 'tiny_media';
