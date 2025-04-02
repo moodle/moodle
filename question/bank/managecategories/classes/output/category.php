@@ -148,6 +148,30 @@ class category implements renderable, templatable {
                     'data-questioncount' => $this->category->questioncount,
                 ]
             ));
+        }
+
+        // Sets up export to XML link.
+        if (qbank::is_plugin_enabled('qbank_exportquestions')) {
+            $exporturl = new moodle_url(
+                '/question/bank/exportquestions/export.php',
+                ['cat' => helper::combine_id_context($this->category)]
+            );
+            if ($courseid !== 0) {
+                $exporturl->param('courseid', $courseid);
+            } else {
+                $exporturl->param('cmid', $cmid);
+            }
+
+            $menu->add(new action_menu_link(
+                $exporturl,
+                new pix_icon('t/download', 'download'),
+                get_string('exportasxml', 'question'),
+                false,
+            ));
+        }
+
+        // The delete action which should be last.
+        if ($canmanagecategory) {
             // Sets up delete link.
             $deleteurl = new moodle_url(
                 '/question/bank/managecategories/category.php',
@@ -175,26 +199,6 @@ class category implements renderable, templatable {
                         $this->category->name,
                     ]),
                 ],
-            ));
-        }
-
-        // Sets up export to XML link.
-        if (qbank::is_plugin_enabled('qbank_exportquestions')) {
-            $exporturl = new moodle_url(
-                '/question/bank/exportquestions/export.php',
-                ['cat' => helper::combine_id_context($this->category)]
-            );
-            if ($courseid !== 0) {
-                $exporturl->param('courseid', $courseid);
-            } else {
-                $exporturl->param('cmid', $cmid);
-            }
-
-            $menu->add(new action_menu_link(
-                $exporturl,
-                new pix_icon('t/download', 'download'),
-                get_string('exportasxml', 'question'),
-                false,
             ));
         }
 
