@@ -38,14 +38,14 @@ Feature: Unread messages
     And I should see "##today##%d %B##" in the "New group" "core_message > Message conversation"
     And I log out
     And I log in as "student2"
-    And I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should see "1" in the "Toggle messaging drawer" "button"
     And I open messaging
     And I should see "1" in the "Group" "core_message > Message tab"
     And "New group" "core_message > Message" should exist
     And I should see "1" in the "New group" "core_message > Message"
     And I select "New group" conversation in messaging
     And I should see "Hi!" in the "New group" "core_message > Message conversation"
-    And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should not see "1" in the "Toggle messaging drawer" "button"
     And I should not see "1" in the "Group" "core_message > Message tab"
     And I should not see "1" in the "New group" "core_message > Message"
 
@@ -55,14 +55,14 @@ Feature: Unread messages
       | student1 | student2 | Hi!                   |
       | student2 | student1 | What do you need?     |
     When I log in as "student1"
-    Then I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    Then I should see "1" in the "Toggle messaging drawer" "button"
     And I open messaging
     And I should see "1" in the "Private" "core_message > Message tab"
     And "Student 2" "core_message > Message" should exist
     And I should see "1" in the "Student 2" "core_message > Message"
     And I select "Student 2" conversation in messaging
     And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should not see "1" in the "Toggle messaging drawer" "button"
     And I should not see "1" in the "Private" "core_message > Message tab"
     And I should not see "1" in the "Student 2" "core_message > Message"
 
@@ -75,13 +75,13 @@ Feature: Unread messages
       | user     | contact  |
       | student1 | student2 |
     When I log in as "student1"
-    Then I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    Then I should see "1" in the "Toggle messaging drawer" "button"
     And I open messaging
     And I should see "1" in the "Starred" "core_message > Message tab"
     And "Student 2" "core_message > Message" should exist
     And I should see "1" in the "Student 2" "core_message > Message"
     And I select "Student 2" conversation in messaging
     And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should not see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"
+    And I should not see "1" in the "Toggle messaging drawer" "button"
     And I should not see "1" in the "Starred" "core_message > Message tab"
     And I should not see "1" in the "Student 2" "core_message > Message"
