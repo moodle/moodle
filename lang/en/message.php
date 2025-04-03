@@ -249,7 +249,6 @@ $string['successproviderenabled'] = '\'{$a->provider}\' for \'{$a->processor}\' 
 $string['successproviderlocked'] = '\'{$a->provider}\' for \'{$a->processor}\' locked.';
 $string['successproviderunlocked'] = '\'{$a->provider}\' for \'{$a->processor}\' unlocked.';
 $string['successproviderupdate'] = '\'{$a}\' updated.';
-$string['togglenotificationmenu'] = 'Toggle notifications menu';
 $string['togglemessagemenu'] = 'Toggle messaging drawer';
 $string['totalconversations'] = '{$a} total conversations';
 $string['touserdoesntexist'] = 'You cannot send a message to a user ID ({$a}) that doesn\'t exist.';
@@ -280,3 +279,6 @@ $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';
 $string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
+
+// Deprecated since Moodle 5.0.
+$string['togglenotificationmenu'] = 'Toggle notifications menu';
