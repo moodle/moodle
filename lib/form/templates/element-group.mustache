@@ -8,7 +8,7 @@
     {{/label}}
     {{$element}}
         {{#label}}
-            <fieldset class="w-100 m-0 p-0 border-0">
+            <fieldset class="w-100 m-0 p-0 border-0" id="{{element.id}}">
                 <legend class="sr-only">{{label}}</legend>
                 <div class="d-flex flex-wrap align-items-center">
                 {{#element.elements}}
@@ -19,7 +19,7 @@
             </fieldset>
         {{/label}}
         {{^label}}
-            <div class="w-100 m-0 p-0 border-0">
+            <div class="w-100 m-0 p-0 border-0" id="{{element.id}}">
                 <div class="d-flex flex-wrap align-items-center">
                 {{#element.elements}}
                     {{{separator}}}
