@@ -3750,6 +3750,15 @@ class curl {
             return null;
         }
 
+        // Check if the URL is blocked in core curl_security_helper or
+        // curl security helper that passed to curl class constructor.
+        // Note, we purposely check the configured helper first,
+        // as this may be being mocked for unit testing.
+        if ($this->securityhelper->url_is_blocked($url)) {
+            $this->error = $this->securityhelper->get_blocked_url_string();
+            return $this->error;
+        }
+
         // Augment all installed plugin's security helpers if there is any.
         // The plugin's function has to be defined as plugintype_pluginname_curl_security_helper in pluginname/lib.php.
         $plugintypes = get_plugins_with_function('curl_security_helper');
@@ -3766,13 +3775,6 @@ class curl {
                     }
                 }
             }
-        }
-
-        // Check if the URL is blocked in core curl_security_helper or
-        // curl security helper that passed to curl class constructor.
-        if ($this->securityhelper->url_is_blocked($url)) {
-            $this->error = $this->securityhelper->get_blocked_url_string();
-            return $this->error;
         }
 
         // Set allowed resolve info if the URL is not blocked.
