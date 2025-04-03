@@ -27,7 +27,7 @@
 }}
 
 {{#icon}}
-    <span class="penalty-indicator-icon" title="{{info}}">
+    <span data-bs-toggle="tooltip" class="penalty-indicator-icon" title="{{info}}">
         {{#pix}}{{name}}, {{component}}{{/pix}}
     </span>
 {{/icon}}
@@ -41,3 +41,13 @@
         {{/grademax}}
     </span>
 {{/finalgrade}}
+
+{{#js}}
+require(['theme_boost/bootstrap/tooltip'], function(Tooltip) {
+    // Re-init the tooltip to ensure those dynamically added through AJAX are initialized
+    document.querySelectorAll('.penalty-indicator-icon[data-bs-toggle="tooltip"]').forEach(tooltipElement => {
+        Tooltip.getInstance(tooltipElement)?.dispose();
+        new Tooltip(tooltipElement);
+    });
+});
+{{/js}}
