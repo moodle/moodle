@@ -5583,14 +5583,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         return false;
     }
 
-    if (defined('BEHAT_SITE_RUNNING')) {
-        // Fake email sending in behat.
+    if (defined('BEHAT_SITE_RUNNING') && !defined('TEST_EMAILCATCHER_MAIL_SERVER') &&
+            !defined('TEST_EMAILCATCHER_API_SERVER')) {
+
+        // Behat tests are running and we are not using email catcher so fake email sending.
         return true;
     }
 
     if (!empty($CFG->noemailever)) {
         // Hidden setting for development sites, set in config.php if needed.
-        debugging('Not sending email due to $CFG->noemailever config setting', DEBUG_NORMAL);
+        debugging('Not sending email due to $CFG->noemailever config setting', DEBUG_DEVELOPER);
         return true;
     }
 
