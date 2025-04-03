@@ -83,13 +83,13 @@ Feature: Optional policies
     And I set the following fields to these values:
       | Username      | user3               |
       | Password      | user3                 |
-      | Email address | user3@address.invalid |
-      | Email (again) | user3@address.invalid |
+      | Email address | user3@example.com    |
+      | Email (again) | user3@example.com   |
       | First name    | User3                 |
       | Last name       | L3                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user3@address.invalid"
+    And I should see "An email should have been sent to your address at user3@example.com"
     And I confirm email for "user3"
     And I should see "Thanks, User3 L3"
     And I should see "Your registration has been confirmed"

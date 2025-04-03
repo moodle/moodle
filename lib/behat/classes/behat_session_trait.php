@@ -1695,6 +1695,32 @@ EOF;
     }
 
     /**
+     * Get the user object from an identifier.
+     *
+     * The user username and email fields are checked.
+     *
+     * @param string $identifier The user's username or email.
+     * @return stdClass|null The user id or null if not found.
+     */
+    protected function get_user_by_identifier(string $identifier): ?stdClass {
+        global $DB;
+
+        $sql = <<<EOF
+            SELECT *
+              FROM {user}
+             WHERE username = :username
+                OR email = :email
+        EOF;
+
+        $result = $DB->get_record_sql($sql, [
+            'username' => $identifier,
+            'email' => $identifier,
+        ]);
+
+        return $result ?: null;
+    }
+
+    /**
      * Get the user id from an identifier.
      *
      * The user username and email fields are checked.
