@@ -54,6 +54,7 @@ final class template_test extends \advanced_testcase {
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
             . "<key>showTime</key><false/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
             . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><true/><key>audioMute</key><false/>"
+            . "<key>browserMediaCaptureCamera</key><true/><key>browserMediaCaptureMicrophone</key><true/>"
             . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><true/>"
             . "<key>URLFilterEnableContentFilter</key><false/><key>hashedQuitPassword</key>"
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
@@ -102,6 +103,7 @@ final class template_test extends \advanced_testcase {
 <plist version=\"1.0\"><dict><key>showTaskBar</key><true/><key>allowWlan</key><false/><key>showReloadButton</key><true/>"
             . "<key>showTime</key><false/><key>showInputLanguage</key><true/><key>allowQuit</key><true/>"
             . "<key>quitURLConfirm</key><true/><key>audioControlEnabled</key><true/><key>audioMute</key><false/>"
+            . "<key>browserMediaCaptureCamera</key><true/><key>browserMediaCaptureMicrophone</key><true/>"
             . "<key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key><true/><key>URLFilterEnable</key><true/>"
             . "<key>URLFilterEnableContentFilter</key><false/><key>hashedQuitPassword</key>"
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
@@ -129,6 +131,8 @@ final class template_test extends \advanced_testcase {
             'linkquitseb' => '',
             'userconfirmquit' => '1',
             'enableaudiocontrol' => '1',
+            'allowcapturecamera' => '1',
+            'allowcapturemicrophone' => '1',
             'muteonstartup' => '0',
             'allowspellchecking' => '0',
             'allowreloadinexam' => '1',
