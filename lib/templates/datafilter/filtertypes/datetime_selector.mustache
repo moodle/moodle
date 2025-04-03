@@ -41,7 +41,7 @@
 <div class="d-flex flex-column flex-md-row align-items-md-center" data-required="{{required}}">
     <span id="core-filter_row-{{filtertype}}-mode-{{uniqid}}"></span>
     <span class="{{filtertype}}-afterwrapper">
-        <label for="core-filter_row-{{filtertype}}-after-{{uniqid}}" class="sr-only">{{afterlabel}}</label>
+        <label for="core-filter_row-{{filtertype}}-after-{{uniqid}}" class="visually-hidden">{{afterlabel}}</label>
         <input
             id="core-filter_row-{{filtertype}}-after-{{uniqid}}"
             type="datetime-local"
@@ -57,7 +57,7 @@
         {{#str}} operator_and {{/str}}
     </span>
     <span class="{{filtertype}}-beforewrapper">
-        <label for="core-filter_row-{{filtertype}}-before-{{uniqid}}" class="sr-only">{{beforelabel}}</label>
+        <label for="core-filter_row-{{filtertype}}-before-{{uniqid}}" class="visually-hidden">{{beforelabel}}</label>
         <input
             id="core-filter_row-{{filtertype}}-before-{{uniqid}}"
             type="datetime-local"

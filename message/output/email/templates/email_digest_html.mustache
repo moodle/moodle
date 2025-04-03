@@ -70,10 +70,10 @@
             padding: 10px;
             vertical-align: top;
         }
-        .text-left {
+        .text-start {
             text-align: left;
         }
-        .text-right {
+        .text-end {
             text-align: right;
         }
         .float-right {
@@ -124,11 +124,11 @@
             <th width="40px">
                 <img src="{{{ grouppictureurl }}}" class="round" width="40px" height="40px"/>
             </th>
-            <th class="text-left">
+            <th class="text-start">
                 <strong>{{ groupname }}</strong><br>
                 {{ coursename }}
             </th>
-            <th class="nowrap text-right">
+            <th class="nowrap text-end">
                 <span class="badge">{{ numberofunreadmessages }}</span> <span class="gray-light">{{#str}} emaildigestunreadmessages, message_email {{/str}}</span>
             </th>
         </tr>

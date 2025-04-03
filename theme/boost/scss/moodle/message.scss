@@ -527,10 +527,6 @@ $message-day-color: color-contrast($message-app-bg) !default;
             &:hover {
                 color: $white;
                 background-color: $primary;
-                .badge-primary {
-                    background-color: $white;
-                    color: $primary;
-                }
             }
             &:first-child {
                 border-top: 0;

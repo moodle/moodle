@@ -272,7 +272,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
             ],
             'title' => $labelstr,
             'label' => $labelstr,
-            'labelclasses' => 'sr-only',
+            'labelclasses' => 'visually-hidden',
         ];
 
         return $OUTPUT->render_from_template('core_admin/setting_configtoggle', $params);

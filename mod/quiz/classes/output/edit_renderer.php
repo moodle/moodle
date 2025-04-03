@@ -1079,7 +1079,7 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= html_writer::span($title);
             $output .= html_writer::span(
                 get_string('invalidquestiontype', 'question', $question->originalqtype),
-                'badge bg-danger text-white ml-3'
+                'badge bg-danger text-white ms-3'
             );
         } else {
 

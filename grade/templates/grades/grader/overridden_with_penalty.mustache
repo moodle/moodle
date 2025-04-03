@@ -36,16 +36,16 @@
 
 <div class="container">
     <div class="row">
-        <div class="mr-0">{{#str}}originalgrade, core_grades{{/str}}: </div>
+        <div class="me-0">{{#str}}originalgrade, core_grades{{/str}}: </div>
         {{>core_grades/grades/grader/input}}
     </div>
 
     <div class="row">
-        <div class="mr-0">{{#str}}currentgrade, core_grades{{/str}}: {{{effectivegrade}}}</div>
+        <div class="me-0">{{#str}}currentgrade, core_grades{{/str}}: {{{effectivegrade}}}</div>
     </div>
 
     <div class="row">
-        <div class="mr-0" title="{{exemptiontooltip}}">{{#str}}exemptpenalty, core_grades{{/str}}:</div>
+        <div class="me-0" title="{{exemptiontooltip}}">{{#str}}exemptpenalty, core_grades{{/str}}:</div>
         <label for="{{exemptionid}}" class="accesshide">{{{exemptionlabel}}}</label>
         <input type="checkbox" name="{{exemptionname}}"
                value="{{deductedmark}}" id="{{exemptionid}}"

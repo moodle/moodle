@@ -480,7 +480,7 @@ class template {
             'classes' => 'recordcheckbox',
             'value' => $entry->id,
             'label' => get_string('selectfordeletion', 'data'),
-            'labelclasses' => 'sr-only',
+            'labelclasses' => 'visually-hidden',
         ]);
         return $OUTPUT->render($checkbox);
     }
