@@ -301,6 +301,8 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $sebsettings->userconfirmquit = null;
             $sebsettings->enableaudiocontrol = null;
             $sebsettings->muteonstartup = null;
+            $sebsettings->allowcapturecamera = null;
+            $sebsettings->allowcapturemicrophone = null;
             $sebsettings->allowspellchecking = null;
             $sebsettings->allowreloadinexam = null;
             $sebsettings->activateurlfiltering = null;
