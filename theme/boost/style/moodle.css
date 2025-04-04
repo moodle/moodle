@@ -38467,6 +38467,7 @@ body {
   right: 0;
   top: 0;
   height: 500px;
+  max-height: 80vh;
   width: 380px;
   border: 1px solid #ddd;
   transition: height 0.25s;
