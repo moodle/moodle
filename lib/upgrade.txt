@@ -12,6 +12,9 @@ To use this feature:
  - `TEST_EMAILCATCHER_API_SERVER` - The Mailpit API server (qe.g. `http://localhost:8025`)
 3. Ensure that the email catcher is set up using the step `Given an email catcher server is configured`.
 
+* A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text.
+  This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+
 === 4.4.6 ===
 
 * A new core\ip_utils::normalize_internet_address() method is created to
