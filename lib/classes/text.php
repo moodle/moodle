@@ -676,4 +676,16 @@ class core_text {
 
         return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
     }
+
+    /**
+     * Trims control characters out of a string.
+     * Example: (\x00-\x1f) and (\x7f)
+     *
+     * @param string $text Input string
+     * @return string Cleaned string value
+     */
+    public static function trim_ctrl_chars(string $text): string {
+        // Remove control characters text.
+        return preg_replace('/[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]/i', '', $text);
+    }
 }
