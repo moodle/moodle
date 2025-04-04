@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3.12 ===
+* A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text.
+  This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+
 === 4.3.8 ===
 
 * The `navigation_cache` class now uses the Moodle Universal Cache (MUC) to store the navigation cache data instead of storing

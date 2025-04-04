@@ -157,13 +157,10 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
                 $this->questionsubcacheid = $newquestionid;
                 // Cache all cleaned answers and questiontext.
                 foreach ($potentialsubs as $potentialsub) {
-                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
-                    $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is',
-                            '', $potentialsub->questiontext); // Clean CTRL chars.
+                    $cleanquestion = core_text::trim_ctrl_chars($potentialsub->questiontext); // Clean CTRL chars.
                     $cleanquestion = preg_replace("/\r\n|\r/", "\n", $cleanquestion); // Normalize line ending.
 
-                    $cleananswer = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is',
-                            '', $potentialsub->answertext); // Clean CTRL chars.
+                    $cleananswer = core_text::trim_ctrl_chars($potentialsub->answertext); // Clean CTRL chars.
                     $cleananswer = preg_replace("/\r\n|\r/", "\n", $cleananswer); // Normalize line ending.
 
                     $this->questionsubcache[$cleanquestion][$cleananswer] = $potentialsub->id;
