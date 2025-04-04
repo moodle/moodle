@@ -61,7 +61,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Edit" "link" in the "Policy1" "table_row"
@@ -83,7 +83,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Edit" "link" in the "Policy1" "table_row"
@@ -101,7 +101,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Edit" "link" in the "Policy1" "table_row"
@@ -180,7 +180,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
@@ -218,7 +218,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
@@ -247,7 +247,7 @@ Feature: Manage policies
       | Policy1    | v1       | full text2 | short text2 | active   |
     And I log in as "user1"
     And I press "Next"
-    And I set the field "I agree to the Policy1" to "1"
+    And I set the field "I agree to the Policy1." to "1"
     And I press "Next"
     And I follow "Preferences" in the user menu
     And I should see "Preferences"
