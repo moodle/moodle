@@ -1799,7 +1799,7 @@ You can see it appended to your assignment submission:
 </font></p>
 <hr>
 <font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
-            'assignment submission for \'<i>Escaping &amp; Unescaping</i>\'<br /><br />
+            'assignment submission for \'Escaping &amp; Unescaping\'.
 You can see it appended to your <a href="' . $assignurl .
             '">assignment submission</a>.</p></font>
 <hr>',

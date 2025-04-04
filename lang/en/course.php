@@ -115,7 +115,7 @@ $string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
 <p>A number of students in {$a->coursename} have not accessed the course recently.</p>';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 <p>Courses with start dates in the next week have been identified as having no teacher or student enrolments.</p>';
-$string['overview_info'] = 'View all the activities in this course, including key details like due date and updates.';
+$string['overview_info'] = 'An overview of all activities in the course, with dates and other information.';
 $string['overview_missing_notice'] = 'Go to {$a} for more details.';
 $string['overview_missing_title'] = 'Information not available here for {$a} activities';
 $string['overview_modname'] = '{$a} overview page';

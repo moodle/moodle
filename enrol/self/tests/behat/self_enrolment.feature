@@ -51,7 +51,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I should see "An enrolment key will be required"
+    And I should see "An enrolment key will be required."
     And I press "Enrol me"
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |

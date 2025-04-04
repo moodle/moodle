@@ -832,8 +832,8 @@ final class notification_helper_test extends \advanced_testcase {
         $message = reset($messages);
 
         // Check the subject line and short message.
-        $this->assertEquals('Assignment Submission Confirmation - Assignment 1', $message->subject);
-        $this->assertEquals('Assignment Submission Confirmation - Assignment 1', $message->smallmessage);
+        $this->assertEquals('Assignment submission confirmation - Assignment 1', $message->subject);
+        $this->assertEquals('Assignment submission confirmation - Assignment 1', $message->smallmessage);
 
         // Check the plain text message.
         $this->assertEquals('A100 -> Assignment -> Assignment 1
@@ -858,7 +858,7 @@ File submissions
 ', $message->fullmessage);
 
         $expectedfragments = [
-            '<p>Your assignment for <strong>Assignment 1</strong> has been successfully submitted.</p>',
+            '<p>Your assignment submission for \'Assignment 1\' has been submitted.</p>',
             '<p>You can view your submission and check its status on the <a href="' .
                 'https://www.example.com/moodle/mod/assign/view.php?id=' .
                 $assignment->cmid . '">assignment page</a>.</p>',

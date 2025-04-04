@@ -146,7 +146,7 @@ Feature: Testing overview integration in mod_assign
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"
-    Then I should see "View all the activities in this course"
+    Then I should see "An overview of all activities in the course"
     And I should see "Name" in the "assign_overview_collapsible" "region"
     And I should see "Due date" in the "assign_overview_collapsible" "region"
     And I should see "Submissions" in the "assign_overview_collapsible" "region"
