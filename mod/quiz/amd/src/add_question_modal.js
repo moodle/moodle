@@ -132,7 +132,7 @@ export default class AddQuestionModal extends Modal {
         await AutoComplete.enhance(
             Selector,
             false,
-            '',
+            'core_question/question_banks_datasource',
             placeholder,
             false,
             true,

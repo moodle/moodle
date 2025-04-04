@@ -134,6 +134,10 @@ class question_bank_helper {
      * @param bool $getcategories optionally return the categories belonging to these banks.
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      * it will only be included if the other parameters allow it.
+     * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
+     *      parameters that will get banks across multiple contexts.
+     * @param string $search Optional term to search question bank instances by name
+     * @param int $limit The number of results to return (default 0 = no limit)
      * @return stdClass[]
      */
     public static function get_activity_instances_with_shareable_questions(
@@ -142,13 +146,19 @@ class question_bank_helper {
         array $havingcap = [],
         bool $getcategories = false,
         int $currentbankid = 0,
+        ?context $filtercontext = null,
+        string $search = '',
+        int $limit = 0,
     ): array {
         return self::get_bank_instances(true,
             $incourseids,
             $notincourseids,
             $getcategories,
             $currentbankid,
-            $havingcap
+            $havingcap,
+            $filtercontext,
+            $search,
+            $limit,
         );
     }
 
@@ -161,6 +171,8 @@ class question_bank_helper {
      * @param bool $getcategories optionally return the categories belonging to these banks.
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      * it will only be included if the other parameters allow it.
+     * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
+     *       parameters that will get banks across multiple contexts.
      * @return stdClass[]
      */
     public static function get_activity_instances_with_private_questions(
@@ -169,13 +181,15 @@ class question_bank_helper {
         array $havingcap = [],
         bool $getcategories = false,
         int $currentbankid = 0,
+        ?context $filtercontext = null,
     ): array {
         return self::get_bank_instances(false,
             $incourseids,
             $notincourseids,
             $getcategories,
             $currentbankid,
-            $havingcap
+            $havingcap,
+            $filtercontext,
         );
     }
 
@@ -191,6 +205,10 @@ class question_bank_helper {
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      *  it will only be included if the other parameters allow it.
      * @param array $havingcap current user must have these capabilities on each bank context.
+     * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
+     *     parameters that will get banks across multiple contexts.
+     * @param string $search Optional term to search question bank instances by name
+     * @param int $limit The number of results to return (default 0 = no limit)
      * @return stdClass[]
      */
     private static function get_bank_instances(
@@ -200,6 +218,9 @@ class question_bank_helper {
         bool $getcategories = false,
         int $currentbankid = 0,
         array $havingcap = [],
+        ?context $filtercontext = null,
+        string $search = '',
+        int $limit = 0,
     ): array {
         global $DB;
 
@@ -241,13 +262,17 @@ class question_bank_helper {
             if ($plugin === self::get_default_question_bank_activity_name()) {
                 $sql .= " AND p{$key}.type <> '" . self::TYPE_PREVIEW . "'";
             }
+            if (!empty($search)) {
+                $sql .= " AND " . $DB->sql_like("p{$key}.name", ":search{$key}", false);
+                $params["search{$key}"] = "%{$search}%";
+            }
             $pluginssql[] = $sql;
         }
         $pluginssql = implode(' ', $pluginssql);
 
         // Build the SQL to filter out any requested course ids.
         if (!empty($notincourseids)) {
-            [$notincoursesql, $notincourseparams] = $DB->get_in_or_equal($notincourseids, SQL_PARAMS_QM, 'param', false);
+            [$notincoursesql, $notincourseparams] = $DB->get_in_or_equal($notincourseids, SQL_PARAMS_NAMED, 'param', false);
             $notincoursesql = "AND cm.course {$notincoursesql}";
             $params = array_merge($params, $notincourseparams);
         } else {
@@ -256,7 +281,7 @@ class question_bank_helper {
 
         // Build the SQL to include ONLY records belonging to the requested courses.
         if (!empty($incourseids)) {
-            [$incoursesql, $incourseparams] = $DB->get_in_or_equal($incourseids);
+            [$incoursesql, $incourseparams] = $DB->get_in_or_equal($incourseids, SQL_PARAMS_NAMED);
             $incoursesql = " AND cm.course {$incoursesql}";
             $params = array_merge($params, $incourseparams);
         } else {
@@ -265,8 +290,8 @@ class question_bank_helper {
 
         // Optionally order the results by the requested bank id.
         if (!empty($currentbankid)) {
-            $orderbysql = " ORDER BY CASE WHEN cm.id = ? THEN 0 ELSE 1 END ASC, cm.id DESC ";
-            $params[] = $currentbankid;
+            $orderbysql = " ORDER BY CASE WHEN cm.id = :currentbankid THEN 0 ELSE 1 END ASC, cm.id DESC ";
+            $params['currentbankid'] = $currentbankid;
         } else {
             $orderbysql = '';
         }
@@ -280,7 +305,7 @@ class question_bank_helper {
                 GROUP BY cm.id, cm.course
                 {$orderbysql}";
 
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, $params, limitnum: $limit);
         $banks = [];
 
         foreach ($rs as $cm) {
@@ -293,8 +318,9 @@ class question_bank_helper {
                 }
             }
             // Populate the raw record.
-            $banks[] = self::get_formatted_bank($cm, $currentbankid);
+            $banks[] = self::get_formatted_bank($cm, $currentbankid, filtercontext: $filtercontext);
         }
+        $rs->close();
 
         return $banks;
     }
@@ -305,9 +331,15 @@ class question_bank_helper {
      *
      * @param int $userid of the user to get recently viewed banks for.
      * @param int $notincourseid if supplied don't return any in this course id
+     * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
+     *       parameters that will get banks across multiple contexts.
      * @return cm_info[]
      */
-    public static function get_recently_used_open_banks(int $userid, int $notincourseid = 0): array {
+    public static function get_recently_used_open_banks(
+        int $userid,
+        int $notincourseid = 0,
+        ?context $filtercontext = null,
+    ): array {
         $prefs = get_user_preferences(self::RECENTLY_VIEWED, null, $userid);
         $contextids = !empty($prefs) ? explode(',', $prefs) : [];
         if (empty($contextids)) {
@@ -328,7 +360,7 @@ class question_bank_helper {
             if (!empty($notincourseid) && $notincourseid == $cm->course) {
                 continue;
             }
-            $record = self::get_formatted_bank($cm);
+            $record = self::get_formatted_bank($cm, filtercontext: $filtercontext);
             $banks[] = $record;
         }
 
@@ -370,12 +402,15 @@ class question_bank_helper {
 
     /**
      * Populate the raw record with data for use in rendering.
+     *
      * @param stdClass $cm raw course_modules record to populate data from.
      * @param int $currentbankid set an 'enabled' flag on the instance that matched this id.
-     * Used in qbank_bulkmove/bulk_move.mustache
+     *     Used in qbank_bulkmove/bulk_move.mustache
+     * @param ?context $filtercontext Optional context in which to apply filters.
+     *
      * @return stdClass
      */
-    private static function get_formatted_bank(stdClass $cm, int $currentbankid = 0): stdClass {
+    private static function get_formatted_bank(stdClass $cm, int $currentbankid = 0, ?context $filtercontext = null): stdClass {
 
         $cminfo = cm_info::create($cm);
         $concatedcats = !empty($cm->cats) ? explode(self::CATEGORY_SEPARATOR, $cm->cats) : [];
@@ -390,14 +425,19 @@ class question_bank_helper {
         }, $concatedcats);
 
         $bank = new stdClass();
-        $bank->name = $cminfo->get_formatted_name(['escape' => false]);
+        $filteroptions = ['escape' => false];
+        if (!is_null($filtercontext)) {
+            $filteroptions['context'] = $filtercontext;
+        }
+        $bank->name = $cminfo->get_formatted_name($filteroptions);
         $bank->modid = $cminfo->id;
         $bank->contextid = $cminfo->context->id;
-        $bank->coursenamebankname = format_string($cminfo->get_course()->shortname, true,
-                ['context' => $cminfo->context, 'escape' => false]) . " - {$bank->name}";
+        if (!isset($filteroptions['context'])) {
+            $filteroptions['context'] = context_course::instance($cminfo->get_course()->id);
+        }
+        $bank->coursenamebankname = format_string($cminfo->get_course()->shortname, true, $filteroptions) . " - {$bank->name}";
         $bank->cminfo = $cminfo;
         $bank->questioncategories = $categories;
-
         return $bank;
     }
 

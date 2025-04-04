@@ -21,6 +21,7 @@
 {
     "quizname": "Quiz 1",
     "quizcmid": 1,
+    "quizcontextid": 1,
     "hascoursesharedbanks": true,
     "coursesharedbanks": [
         {
@@ -131,14 +132,9 @@
     <hr class="w-75">
 {{/hasrecentlyviewedbanks}}
 
-{{#hassharedbanks}}
-    <div class="search-banks">
-        <h5>{{#str}}otherquestionbank, core_question{{/str}}</h5>
-        <select class="form-select" id="searchbanks">
-            <option value=""></option>
-            {{#sharedbanks}}
-                <option value="{{modid}}">{{{coursenamebankname}}}</option>
-            {{/sharedbanks}}
-        </select>
-    </div>
-{{/hassharedbanks}}
+
+<div class="search-banks">
+    <h5>{{#str}}otherquestionbank, core_question{{/str}}</h5>
+    <select class="form-select" id="searchbanks" data-contextid="{{quizcontextid}}">
+    </select>
+</div>
