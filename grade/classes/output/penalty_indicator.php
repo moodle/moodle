@@ -71,7 +71,7 @@ class penalty_indicator implements renderable, templatable {
         $finalgrade = $this->showfinalgrade ? format_float($this->grade->finalgrade , $this->decimals) : null;
         $grademax = $this->showgrademax ? format_float($this->grade->get_grade_max(), $this->decimals) : null;
         $icon = $this->penaltyicon ?: ['name' => 'i/risk_xss', 'component' => 'core'];
-        $info = get_string('gradepenalty_indicator_info', 'core_grades',  format_float($penalty, $this->decimals));
+        $info = get_string('gradepenalty_indicator_info', 'core_grades', $penalty);
 
         $context = [
             'penalty' => $penalty,
