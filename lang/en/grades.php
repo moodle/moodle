@@ -213,7 +213,6 @@ $string['eventscaleupdated'] = 'Scale updated';
 $string['eventusergraded'] = 'User graded';
 $string['excluded'] = 'Excluded';
 $string['excluded_help'] = 'If ticked, the grade will not be included in any aggregation.';
-$string['exemptpenalty'] = 'Exempt penalty';
 $string['expand'] = 'Expand category';
 $string['expandcriterion'] = 'Expand criterion';
 $string['export'] = 'Export';
