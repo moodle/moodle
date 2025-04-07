@@ -80,6 +80,7 @@ class ai_action_register extends base {
         $mainalias = $this->get_table_alias('ai_action_register');
         $generatetextalias = 'aagt';
         $summarisetextalias = 'aast';
+        $explaintextalias = 'aaet';
 
         // Action name column.
         $columns[] = (new column(
@@ -139,7 +140,7 @@ class ai_action_register extends base {
             ->add_callback([format::class, 'userdate']);
 
         // Prompt tokens column.
-        // Only available for summarise_text and generate_text actions.
+        // Only available for summarise_text, generate_text actions and explain_text actions.
         $columns[] = (new column(
             'prompttokens',
             new lang_string('prompttokens', 'core_ai'),
@@ -154,8 +155,13 @@ class ai_action_register extends base {
                 LEFT JOIN {ai_action_summarise_text} {$summarisetextalias}
                        ON {$mainalias}.actionid = {$summarisetextalias}.id
                       AND {$mainalias}.actionname = 'summarise_text'")
+            ->add_join("
+                LEFT JOIN {ai_action_explain_text} {$explaintextalias}
+                       ON {$mainalias}.actionid = {$explaintextalias}.id
+                      AND {$mainalias}.actionname = 'explain_text'")
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens)", 'prompttokens')
+            ->add_field("COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens,
+                    {$explaintextalias}.prompttokens)", 'prompttokens')
             ->set_is_sortable(true)
             ->set_help_icon(new help_icon('prompttokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
@@ -163,7 +169,7 @@ class ai_action_register extends base {
             });
 
         // Completion tokens column.
-        // Only available for summarise_text and generate_text actions.
+        // Only available for summarise_text, generate_text actions and explain_text actions.
         $columns[] = (new column(
             'completiontokens',
             new lang_string('completiontokens', 'core_ai'),
@@ -178,8 +184,13 @@ class ai_action_register extends base {
                 LEFT JOIN {ai_action_summarise_text} {$summarisetextalias}
                        ON {$mainalias}.actionid = {$summarisetextalias}.id
                       AND {$mainalias}.actionname = 'summarise_text'")
+            ->add_join("
+                LEFT JOIN {ai_action_explain_text} {$explaintextalias}
+                       ON {$mainalias}.actionid = {$explaintextalias}.id
+                      AND {$mainalias}.actionname = 'explain_text'")
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken)", 'completiontokens')
+            ->add_field("COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken,
+                    {$explaintextalias}.completiontoken)", 'completiontokens')
             ->set_is_sortable(true)
             ->set_help_icon(new help_icon('completiontokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
@@ -198,6 +209,7 @@ class ai_action_register extends base {
         $mainalias = $this->get_table_alias('ai_action_register');
         $generatetextalias = 'aagt';
         $summarisetextalias = 'aast';
+        $explaintextalias = 'aaet';
 
         // Action name filter.
         $filters[] = (new filter(
@@ -258,7 +270,8 @@ class ai_action_register extends base {
             'prompttokens',
             new lang_string('prompttokens', 'core_ai'),
             $this->get_entity_name(),
-            "COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens)",
+            "COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens,
+                    {$explaintextalias}.prompttokens)",
         ))
             ->add_joins($this->get_joins());
 
@@ -268,7 +281,8 @@ class ai_action_register extends base {
             'completiontokens',
             new lang_string('completiontokens', 'core_ai'),
             $this->get_entity_name(),
-            "COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken)",
+            "COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken,
+                    {$explaintextalias}.completiontoken)",
         ))
             ->add_joins($this->get_joins());
 

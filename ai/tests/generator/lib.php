@@ -47,45 +47,43 @@ class core_ai_generator extends component_generator_base {
             throw new Exception('\'ai actions\' requires the field \'provider\' to be specified');
         }
 
-        $action = new stdClass();
-        foreach ($data as $key => $value) {
-            // Add data to parent action record.
-            $action->$key = $value;
+        // Create the child action record.
+        $child = new stdClass();
+        $child->prompt = 'Prompt text';
 
-            // Create the child action record.
-            $child = new stdClass();
-            $child->prompt = 'Prompt text';
-
-            if ($key === 'actionname') {
-                // Generate image actions need to be structured differently.
-                if ($value === 'generate_image') {
-                    $child->numberimages = 1;
-                    $child->quality = 'hd';
-                    $child->aspectratio = 'landscape';
-                    $child->style = 'vivid';
-                    $child->sourceurl = 'http://localhost/yourimage';
-                    $child->revisedprompt = 'Revised prompt';
-                } else {
-                    // Generate text (and variants).
-                    $child->generatedcontent = 'Your generated content';
-                    $child->prompttokens = 33;
-                    $child->completiontoken = 44;
-                }
-                // Simulate an error.
-                if ($key === 'success' && $value == 0) {
-                    $action->errorcode = 403;
-                    $action->errormessage = 'Forbidden';
-                }
-
-                $childid = $DB->insert_record("ai_action_{$value}", $child);
-            }
+        // Generate image actions need to be structured differently.
+        if ($data['actionname'] === 'generate_image') {
+            $child->numberimages = 1;
+            $child->quality = 'hd';
+            $child->aspectratio = 'landscape';
+            $child->style = 'vivid';
+            $child->sourceurl = 'http://localhost/yourimage';
+            $child->revisedprompt = 'Revised prompt';
+        } else {
+            // Generate text (and variants).
+            $child->generatedcontent = 'Your generated content';
+            $child->prompttokens = $data['prompttokens'] ?? 111;
+            $child->completiontoken = $data['completiontokens'] ?? 222;
         }
 
+        // Simulate an error.
+        if ($data['success'] == 0) {
+            $data['errorcode'] = 403;
+            $data['errormessage'] = 'Forbidden';
+            // Unset some values that won't be present with an error.
+            unset($child->generatedcontent);
+            unset($child->revisedprompt);
+            unset($child->prompttokens);
+            unset($child->completiontoken);
+        }
+
+        $childid = $DB->insert_record("ai_action_{$data['actionname']}", $child);
+
         // Finalise some fields before inserting.
-        $action->actionid = $childid;
-        $action->timecreated = time();
-        $action->timecompleted = time() + 1;
-        $DB->insert_record('ai_action_register', $action);
+        $data['actionid'] = $childid;
+        $data['timecreated'] = time();
+        $data['timecompleted'] = time() + 1;
+        $DB->insert_record('ai_action_register', $data);
     }
 
     /**
