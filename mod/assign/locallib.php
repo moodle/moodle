@@ -5421,7 +5421,15 @@ class assign {
                         '',
                         $cangrade
                     );
-                    $gradefordisplay = $gradebookgrade->str_long_grade;
+                    // Display the penalty indicator next to the penalized grade, if applicable.
+                    $penaltyindicator = \core_grades\penalty_manager::show_penalty_indicator(
+                        new \grade_grade([
+                            'deductedmark' => $gradebookgrade->deductedmark ?? 0,
+                            'overridden' => $gradebookgrade->overridden ?? 0,
+                        ], false)
+                    );
+
+                    $gradefordisplay = $penaltyindicator . $gradebookgrade->str_long_grade;
                 } else {
                     $gradefordisplay = $this->display_grade($gradebookgrade->grade, false, 0, 0, $gradebookgrade->deductedmark);
                 }
@@ -5635,11 +5643,16 @@ class assign {
             // Now get the gradefordisplay.
             if ($controller) {
                 $controller->set_grade_range(make_grades_menu($this->get_instance()->grade), $this->get_instance()->grade > 0);
-                $grade->gradefordisplay = $controller->render_grade($PAGE,
-                                                                     $grade->id,
-                                                                     $gradingitem,
-                                                                     $penalisedgrade,
-                                                                     $cangrade);
+                // Display the penalty indicator next to the penalized grade, if applicable.
+                $penaltyindicator = \core_grades\penalty_manager::show_penalty_indicator(
+                    new \grade_grade([
+                        'deductedmark' => $deductedmark,
+                        'overridden' => $userid > 0 ? $this->get_grade_item()->get_grade($userid)->overridden : 0,
+                    ], false)
+                );
+                $gradeoutput = $penaltyindicator . $penalisedgrade;
+
+                $grade->gradefordisplay = $controller->render_grade($PAGE, $grade->id, $gradingitem, $gradeoutput, $cangrade);
             } else {
                 $grade->gradefordisplay = $this->display_grade($penalisedgrade, false, 0, 0, $deductedmark);
             }
