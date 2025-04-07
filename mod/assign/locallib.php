@@ -5650,7 +5650,7 @@ class assign {
                         'overridden' => $userid > 0 ? $this->get_grade_item()->get_grade($userid)->overridden : 0,
                     ], false)
                 );
-                $gradeoutput = $penaltyindicator . $penalisedgrade;
+                $gradeoutput = $penaltyindicator . format_float($penalisedgrade, $this->get_grade_item()->get_decimals());
 
                 $grade->gradefordisplay = $controller->render_grade($PAGE, $grade->id, $gradingitem, $gradeoutput, $cangrade);
             } else {
