@@ -8,9 +8,6 @@ Feature: Switching question bank when adding questions to a quiz
     Given the following "users" exist:
       | username |
       | teacher  |
-    And the following "role capability" exists:
-      | role                   | teacher |
-      | moodle/question:useall | allow   |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
