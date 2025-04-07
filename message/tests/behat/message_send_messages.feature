@@ -92,7 +92,7 @@ Feature: Message send messages
     And I send "Hi!" message to "Student 2" user
     And I select "Student 2" user in messaging
     And I set the field "Write a message..." to "What you doing?"
-    When I follow "Dashboard"
+    When I follow "Profile" in the user menu
     Then I should see "You have an unsent message. It will be lost if you leave this page."
     And I press "Send message"
     And I should see "What you doing?" in the "Student 2" "core_message > Message conversation"

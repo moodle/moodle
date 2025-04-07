@@ -34,9 +34,15 @@
 
 }}
 {{< core/drawer}}
+    {{$tabindex}}-1{{/tabindex}}
+    {{$role}}dialog{{/role}}
+    {{$drawerattributes}}
+        aria-modal="true"
+        aria-labelledby="message-drawer-header-{{uniqid}}"
+    {{/drawerattributes}}
     {{$drawercontent}}
-        <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
-            <h2 class="visually-hidden">{{#str}} messagingcategory,admin {{/str}}</h2>
+        <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region" tabindex="0">
+            <h2 class="visually-hidden" id="message-drawer-header-{{uniqid}}">{{#str}} messagingcategory,admin {{/str}}</h2>
             <div class="closewidget text-end pe-2">
                 <a class="text-dark btn-link" data-action="closedrawer" href="#"
                    title="{{#cleanstr}} closebuttontitle {{/cleanstr}}" aria-label="{{#cleanstr}} closebuttontitle {{/cleanstr}}"

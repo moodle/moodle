@@ -42,6 +42,9 @@ define(
     'core/str',
     'core/config',
     'core/ajax',
+    'core/local/aria/focuslock',
+    'core/modal_backdrop',
+    'core/templates',
 ],
 function(
     $,
@@ -64,11 +67,13 @@ function(
     Str,
     Config,
     Ajax,
+    FocusLock,
+    ModalBackdrop,
+    Templates,
 ) {
 
     var SELECTORS = {
         DRAWER: '[data-region="right-hand-drawer"]',
-        JUMPTO: '.popover-region [data-region="jumpto"]',
         PANEL_BODY_CONTAINER: '[data-region="panel-body-container"]',
         PANEL_HEADER_CONTAINER: '[data-region="panel-header-container"]',
         VIEW_CONTACT: '[data-region="view-contact"]',
@@ -141,6 +146,69 @@ function(
         });
     };
 
+    let backdropPromise = null;
+
+    /**
+     * Set the focus on the drawer.
+     *
+     * This method also creates or destroy any necessary backdrop zone and focus trap.
+     *
+     * @param {Object} root The message drawer container.
+     * @param {Boolean} hasFocus Whether the drawer has focus or not.
+     */
+    var setFocus = function(root, hasFocus) {
+        var drawerRoot = Drawer.getDrawerRoot(root);
+        if (!drawerRoot.length) {
+            return;
+        }
+        if (!backdropPromise) {
+            backdropPromise = Templates.render('core/modal_backdrop', {})
+                .then(html => new ModalBackdrop(html));
+        }
+        const backdropWithAdjustments = backdropPromise.then(modalBackdrop => {
+            const messageDrawerZIndex = window.getComputedStyle(drawerRoot[0]).zIndex;
+            if (messageDrawerZIndex) {
+                modalBackdrop.setZIndex(messageDrawerZIndex - 1);
+            }
+            modalBackdrop.getAttachmentPoint().get(0).addEventListener('click', e => {
+                PubSub.publish(Events.HIDE, {});
+                e.preventDefault();
+            });
+            return modalBackdrop;
+        });
+        if (hasFocus) {
+            FocusLock.trapFocus(root[0]);
+            // eslint-disable-next-line promise/catch-or-return
+            backdropWithAdjustments.then(modalBackdrop => {
+                if (modalBackdrop) {
+                    modalBackdrop.show();
+                    const pageWrapper = document.getElementById('page');
+                    pageWrapper.style.overflow = 'hidden';
+                    // Set the focus on the close button so when we press enter, it closes the drawer as it did before
+                    var closeButton = root.find(SELECTORS.CLOSE_BUTTON);
+                    if (closeButton.length) {
+                        closeButton.focus();
+                    }
+                }
+                return modalBackdrop;
+            });
+        } else {
+            // eslint-disable-next-line promise/catch-or-return
+            backdropWithAdjustments.then(modalBackdrop => {
+                if (modalBackdrop) {
+                    FocusLock.untrapFocus();
+                    var button = $(SELECTORS.DRAWER).attr('data-origin');
+                    if (button) {
+                        $('#' + button).focus();
+                    }
+                    modalBackdrop.hide();
+                    const pageWrapper = document.getElementById('page');
+                    pageWrapper.style.overflow = 'visible';
+                }
+                return modalBackdrop;
+            });
+        }
+    };
     /**
      * Show the message drawer.
      *
@@ -155,6 +223,7 @@ function(
 
         var drawerRoot = Drawer.getDrawerRoot(root);
         if (drawerRoot.length) {
+            setFocus(root, true);
             Drawer.show(drawerRoot);
         }
     };
@@ -167,6 +236,7 @@ function(
     var hide = function(root) {
         var drawerRoot = Drawer.getDrawerRoot(root);
         if (drawerRoot.length) {
+            setFocus(root, false);
             Drawer.hide(drawerRoot);
         }
     };
@@ -361,7 +431,7 @@ function(
      * @param {bool} alwaysVisible Is this messaging app always shown?
      */
     var registerEventListeners = function(namespace, root, alwaysVisible) {
-        CustomEvents.define(root, [CustomEvents.events.activate]);
+        CustomEvents.define(root, [CustomEvents.events.activate, CustomEvents.events.escape]);
         var paramRegex = /^data-route-param-?(\d*)$/;
 
         root.on(CustomEvents.events.activate, SELECTORS.ROUTES, function(e, data) {
@@ -468,6 +538,9 @@ function(
                     $(SELECTORS.JUMPTO).attr('tabindex', 0);
                 }
             });
+            root.on(CustomEvents.events.escape, function() {
+                PubSub.publish(Events.HIDE, {});
+            });
         }
 
         PubSub.subscribe(Events.SHOW_CONVERSATION, function(args) {
@@ -479,7 +552,7 @@ function(
         var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
         closebutton.on(CustomEvents.events.activate, function(e, data) {
             data.originalEvent.preventDefault();
-
+            setFocus(root, false);
             var button = $(SELECTORS.DRAWER).attr('data-origin');
             if (button) {
                 $('#' + button).focus();

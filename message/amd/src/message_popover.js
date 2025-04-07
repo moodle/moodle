@@ -80,7 +80,6 @@ function(
 
         button.on(CustomEvents.events.activate, function(e, data) {
             toggleMessageDrawerVisibility(button.attr('id'));
-            button.focus();
             data.originalEvent.preventDefault();
         });
 
