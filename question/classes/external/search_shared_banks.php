@@ -76,7 +76,7 @@ class search_shared_banks extends external_api {
 
         $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
             notincourseids: [$courseid],
-            havingcap: ['moodle/question:managecategory'],
+            havingcap: ['moodle/question:useall', 'moodle/question:usemine'],
             filtercontext: $modulecontext,
             search: $search,
             limit: self::MAX_RESULTS + 1, // Return up to 1 extra result, so we know there are more.

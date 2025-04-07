@@ -130,7 +130,7 @@ class question_bank_helper {
      *
      * @param array $incourseids array of course ids where you want instances included. Leave empty if you want from all courses.
      * @param array $notincourseids array of course ids where you do not want instances included.
-     * @param array $havingcap current user must have these capabilities on each bank context.
+     * @param array $havingcap current user must have at least one of these capabilities on each bank context.
      * @param bool $getcategories optionally return the categories belonging to these banks.
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      * it will only be included if the other parameters allow it.
@@ -167,7 +167,7 @@ class question_bank_helper {
      *
      * @param array $incourseids array of course ids where you want instances included. Leave empty if you want from all courses.
      * @param array $notincourseids array of course ids where you do not want instances included.
-     * @param array $havingcap current user must have these capabilities on each bank context.
+     * @param array $havingcap current user must have at least one of these capabilities on each bank context.
      * @param bool $getcategories optionally return the categories belonging to these banks.
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      * it will only be included if the other parameters allow it.
@@ -204,7 +204,7 @@ class question_bank_helper {
      * @param bool $getcategories optionally return the categories belonging to these banks.
      * @param int $currentbankid optionally include the bank id you want included as the first result from the method return.
      *  it will only be included if the other parameters allow it.
-     * @param array $havingcap current user must have these capabilities on each bank context.
+     * @param array $havingcap current user must have at least one of these capabilities on each bank context.
      * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
      *     parameters that will get banks across multiple contexts.
      * @param string $search Optional term to search question bank instances by name
