@@ -101,7 +101,7 @@ final class question_history_view_test extends \advanced_testcase {
         $course = $generator->create_course();
         $qbank = $generator->create_module('qbank', ['course' => $course->id]);
         $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
-        $context = \context_course::instance($course->id);
+        $context = \context_module::instance($cm->id);
 
         // Create a question in the default category.
         $contexts = new \core_question\local\bank\question_edit_contexts($context);

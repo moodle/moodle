@@ -45,7 +45,7 @@ final class question_bank_column_test extends \advanced_testcase {
         $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $questionbank = new view(
-                new question_edit_contexts(\context_course::instance($course->id)),
+                new question_edit_contexts(\context_module::instance($cm->id)),
                 new \moodle_url('/'),
                 $course,
                 $cm
@@ -82,7 +82,7 @@ final class question_bank_column_test extends \advanced_testcase {
         $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $cm = get_coursemodule_from_id('qbank', $qbank->cmid);
         $questionbank = new view(
-                new question_edit_contexts(\context_course::instance($course->id)),
+                new question_edit_contexts(\context_module::instance($cm->id)),
                 new \moodle_url('/'),
                 $course,
                 $cm

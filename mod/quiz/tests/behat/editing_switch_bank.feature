@@ -54,10 +54,10 @@ Feature: Switching question bank when adding questions to a quiz
     And I should see "Test questions 3"
 
   Scenario: Viewing question banks not in the current course show as recently accessed
-    Given I am on the "qbank1" "Activity" page
-    And I am on the "qbank2" "Activity" page
-    And I am on the "qbank3" "Activity" page
-    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    Given "teacher" has recently viewed the "qbank1" "qbank" question bank
+    And "teacher" has recently viewed the "qbank2" "qbank" question bank
+    And "teacher" has recently viewed the "qbank3" "qbank" question bank
+    And "teacher" has recently viewed the "Quiz 1" "quiz" question bank
     When I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Switch bank" "button"

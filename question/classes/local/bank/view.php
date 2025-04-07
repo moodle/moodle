@@ -267,6 +267,9 @@ class view {
         $this->init_question_actions();
         $this->init_sort();
         $this->init_bulk_actions();
+
+        // Record that this question bank has been used.
+        question_bank_helper::add_bank_context_to_recently_viewed($contexts->lowest());
     }
 
     /**
