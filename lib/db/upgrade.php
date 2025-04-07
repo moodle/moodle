@@ -1669,5 +1669,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025040100.01);
     }
 
+    // Remove overriddenmark field from grade_grades.
+    if ($oldversion < 2025040700.00) {
+        $table = new xmldb_table('grade_grades');
+        $field = new xmldb_field('overriddenmark');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025040700.00);
+    }
+
     return true;
 }

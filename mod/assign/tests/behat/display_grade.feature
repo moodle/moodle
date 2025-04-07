@@ -103,12 +103,32 @@ Feature: Check that the assignment grade can be updated correctly
       | assign                | user      | onlinetext                        |
       | Test assignment name  | student1  | I'm the student first submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    When I change window size to "large"
+    And I change window size to "large"
     And I go to "Student 1" "Test assignment name" activity advanced grading page
-    And I set the field "Grade out of 100" to "100"
+    When I set the field "Grade out of 100" to "100"
     And I set the field "Notify student" to "0"
     And I press "Save changes"
+    Then the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
     And I follow "View all submissions"
     And "Student 1" row "Grade" column of "generaltable" table should contain "100.00"
     And "Student 1" row "Final grade" column of "generaltable" table should contain "90.00"
     And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
+    # Override the grade.
+    And I am on the "Course 1" "grades > Grader report > View" page
+    And the following should exist in the "user-grades" table:
+      | -1-                | -2-                   | -3-       | -4-      |
+      | Student 1          | student10@example.com | 90        | 90      |
+    And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
+    And I turn editing mode on
+    And I set the following fields to these values:
+      | Student 1 Test assignment name grade | 100 |
+    And I click on "Save changes" "button"
+    And I turn editing mode off
+    And the following should exist in the "user-grades" table:
+      | -1-                | -2-                   | -3-       | -4-      |
+      | Student 1          | student10@example.com | 100       | 100      |
+    And ".penalty-indicator-icon" "css_element" should not exist
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    And ".penalty-indicator-icon" "css_element" should not exist
+    And I follow "View all submissions"
+    And ".penalty-indicator-icon" "css_element" should not exist

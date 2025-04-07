@@ -1,11 +1,11 @@
-@gradereport @gradereport_grader @gradereport_grader_deduction
+@gradereport @gradereport_grader @gradereport_grade_override
 Feature: As a teacher, I want to override a grade with a deduction and check the gradebook.
+  The deducted mark should not affect the overridden grade.
 
   Background:
     Given the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
-    And I enable grade penalties for overridden grades
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
@@ -33,19 +33,16 @@ Feature: As a teacher, I want to override a grade with a deduction and check the
     And I turn editing mode on
     And I set the following fields to these values:
         | Student 1 Manual grade 01 grade             | 80 |
-        | Student 1 Manual grade 01 Penalty exemption | 0  |
-        | Student 1 Manual grade 02 Penalty exemption | 1  |
     And I click on "Save changes" "button"
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -2-                  | -3-       | -4-       | -5-       |
-      | Student 1          | student1@example.com | 70        | 100       | 170       |
+      | -1-                | -2-                  | -3-       | -4-      | -5-       |
+      | Student 1          | student1@example.com | 80        | 80       | 160       |
     When I turn editing mode on
     And I set the following fields to these values:
       | Student 1 Manual grade 02 grade             | 100 |
-      | Student 1 Manual grade 02 Penalty exemption | 0   |
     And I click on "Save changes" "button"
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
       | -1-                | -2-                  | -3-       | -4-       | -5-       |
-      | Student 1          | student1@example.com | 70        | 80        | 150       |
+      | Student 1          | student1@example.com | 80        | 100       | 180       |

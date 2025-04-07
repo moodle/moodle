@@ -50,7 +50,7 @@ class grade_grade extends grade_object {
     public $required_fields = array('id', 'itemid', 'userid', 'rawgrade', 'rawgrademax', 'rawgrademin',
                                  'rawscaleid', 'usermodified', 'finalgrade', 'hidden', 'locked',
                                  'locktime', 'exported', 'overridden', 'excluded', 'timecreated',
-                                 'timemodified', 'aggregationstatus', 'aggregationweight', 'deductedmark', 'overriddenmark');
+                                 'timemodified', 'aggregationstatus', 'aggregationweight', 'deductedmark');
 
     /**
      * Array of optional fields with default values (these should match db defaults)
@@ -220,9 +220,6 @@ class grade_grade extends grade_object {
 
     /** @var float $deductedmark mark deducted from final grade */
     public float $deductedmark = 0;
-
-    /** @var float $overriddenmark mark overridden by teacher */
-    public float $overriddenmark = 0;
 
     /**
      * Returns array of grades for given grade_item+users
@@ -1292,43 +1289,15 @@ class grade_grade extends grade_object {
     }
 
     /**
-     * Determine if penalty is applied to this overridden mark.
-     *
-     * @return bool whether penalty is applied
-     */
-    public function can_apply_penalty_to_overridden_mark(): bool {
-        // Check config.
-        if (!get_config('core', 'gradepenalty_overriddengrade')) {
-            return false;
-        }
-
-        // Check if the raw grade was deducted.
-        if ($this->deductedmark <= 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Whether the penalty is applied to this overridden mark.
-     *
-     * @return bool whether penalty is applied
-     */
-    public function is_penalty_applied_to_overridden_mark(): bool {
-        return $this->overridden > 0 && $this->overriddenmark > $this->finalgrade;
-    }
-
-    /**
      * Whether the penalty is applied to this final grade.
      *
      * @return bool whether penalty is applied
      */
     public function is_penalty_applied_to_final_grade(): bool {
-        if ($this->overridden > 0) {
-            return $this->is_penalty_applied_to_overridden_mark();
-        } else {
-            return $this->deductedmark > 0;
+        // Return false if the grade is overridden.
+        if ($this->is_overridden()) {
+            return false;
         }
+        return $this->deductedmark > 0;
     }
 }
