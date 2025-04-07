@@ -34,6 +34,12 @@
 
 }}
 {{< core/drawer}}
+    {{$tabindex}}-1{{/tabindex}}
+    {{$role}}dialog{{/role}}
+    {{$drawerattributes}}
+        aria-modal="true"
+        aria-labelledby="message-drawer-header-{{uniqid}}"
+    {{/drawerattributes}}
     {{$drawercontent}}
         <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
             <h2 class="sr-only">{{#str}} messagingcategory,admin {{/str}}</h2>
