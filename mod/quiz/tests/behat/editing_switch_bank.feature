@@ -6,17 +6,17 @@ Feature: Switching question bank when adding questions to a quiz
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | weeks |
-      | Course 2 | C2 | weeks |
-      | Course 3 | C3 | weeks |
+      | fullname | shortname |
+      | Course 1 | C1        |
+      | Course 2 | C2        |
+      | Course 3 | C3        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | teacher1 | C2 | editingteacher |
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
+      | teacher | C2     | editingteacher |
     And the following "activities" exist:
       | activity   | name    | intro                                    | course | idnumber |
       | quiz       | Quiz 1  | Quiz 1 for testing the Add menu          | C1     | quiz1    |
@@ -31,8 +31,7 @@ Feature: Switching question bank when adding questions to a quiz
       | Activity module | qbank3     | Test questions 3 |
       | Activity module | qbank4     | Test questions 4 |
       | Activity module | quiz1      | Test questions 5 |
-    And I log in as "teacher1"
-    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher"
 
   Scenario: Switching to another bank shows the expected banks
     When I open the "last" add to quiz menu
