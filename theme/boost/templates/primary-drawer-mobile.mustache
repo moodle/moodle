@@ -51,12 +51,19 @@
     {{$drawerclasses}}drawer drawer-left drawer-primary{{/drawerclasses}}
     {{$drawercloseonresize}}1{{/drawercloseonresize}}
     {{$drawerheading}}
-        {{# output.should_display_navbar_logo }}
-            <img src="{{output.get_compact_logo_url}}" class="logo py-1 h-100" alt="{{sitename}}">
-        {{/ output.should_display_navbar_logo }}
-        {{^ output.should_display_navbar_logo }}
-            <span class="sitename" title="{{{ sitename }}}">{{{ sitename }}}</span>
-        {{/ output.should_display_navbar_logo }}
+        <a
+            href="{{{ config.homeurl }}}"
+            title="{{{ sitename }}}"
+            data-region="site-home-link"
+            class="aabtn text-reset d-flex align-items-center py-1 h-100"
+        >
+            {{# output.should_display_navbar_logo }}
+                <img src="{{output.get_compact_logo_url}}" class="logo py-1 h-100" alt="{{sitename}}">
+            {{/ output.should_display_navbar_logo }}
+            {{^ output.should_display_navbar_logo }}
+                <span class="sitename" title="{{{ sitename }}}">{{{ sitename }}}</span>
+            {{/ output.should_display_navbar_logo }}
+        </a>
     {{/drawerheading}}
     {{$drawercontent}}
         <div class="list-group">
