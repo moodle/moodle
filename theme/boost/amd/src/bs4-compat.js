@@ -174,11 +174,10 @@ const initializeBootsrap4Components = (container) => {
  * @deprecated since Moodle 5.0
  * @param {HTMLElement} element The element to search for Bootstrap 4 elements.
  */
-const initBootstrap4Compatibility = (element) => {
+export const init = (element) => {
     if (!element) {
         element = document;
     }
     replaceBootstrap4Attributes(element);
     initializeBootsrap4Components(element);
 };
-export default initBootstrap4Compatibility;
