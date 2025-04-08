@@ -193,8 +193,7 @@ class humandate implements renderable, templatable {
 
     #[\Override]
     public function export_for_template(renderer_base $output): array {
-        $timestamp = $this->datetime->getTimestamp();
-        $userdate = userdate($timestamp, get_string('strftimedayshort'));
+        $userdate = $this->default_userdate();
         $relative = null;
         if ($this->userelatives) {
             $relative = $this->format_relative_date();
@@ -206,7 +205,7 @@ class humandate implements renderable, templatable {
             $date = $relative ?? $userdate;
         }
         $data = [
-            'timestamp' => $timestamp,
+            'timestamp' => $this->datetime->getTimestamp(),
             'userdate' => $userdate,
             'date' => $date,
             'time' => $this->format_time(),
@@ -228,6 +227,21 @@ class humandate implements renderable, templatable {
     }
 
     /**
+     * Returns the default user date format.
+     *
+     * @return string The formatted date.
+     */
+    private function default_userdate(): string {
+        $timestamp = $this->datetime->getTimestamp();
+        if ($this->is_current_year()) {
+            $format = get_string('strftimedayshort', 'langconfig');
+        } else {
+            $format = get_string('strftimedaydate', 'langconfig');
+        }
+        return userdate($timestamp, $format);
+    }
+
+    /**
      * Checks if the date is near.
      *
      * @return bool Whether the date is near.
@@ -239,6 +253,17 @@ class humandate implements renderable, templatable {
         $due = $this->datetime->diff($this->clock->now());
         $intervalseconds = $this->interval_to_seconds($due);
         return $intervalseconds < $this->near && $intervalseconds > 0;
+    }
+
+    /**
+     * Checks if the datetime is from the current year.
+     *
+     * @return bool True if the datetime is from the current year, false otherwise.
+     */
+    private function is_current_year(): bool {
+        $currentyear = $this->clock->now()->format('Y');
+        $datetimeyear = $this->datetime->format('Y');
+        return $currentyear === $datetimeyear;
     }
 
     /**
