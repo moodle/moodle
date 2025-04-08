@@ -38842,6 +38842,9 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   .navbar {
     display: none;
   }
+  .tertiary-navigation {
+    display: none;
+  }
 }
 .modal .modal-body > .loading-icon {
   display: block;
@@ -40621,11 +40624,6 @@ div.editor_atto_toolbar button .icon {
 @media (max-width: 575.98px) {
   .tertiary-navigation .page-toggler > p {
     font-size: 80%;
-  }
-}
-@media print {
-  .tertiary-navigation {
-    display: none;
   }
 }
 .popover-process-monitor {
