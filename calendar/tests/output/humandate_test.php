@@ -39,17 +39,18 @@ final class humandate_test extends \advanced_testcase {
         $this->setTimezone('Australia/Perth');
     }
 
-     /**
-      * Test export_for_template() method.
-      *
-      * @dataProvider provider_export_for_template
-      * @param int $addseconds The number of seconds to add to the current time.
-      * @param bool $userelatives Whether to use relative dates.
-      * @param string|null $date For relative dates, the expected string (Tomorrow, Today, Yesterday).
-      * @param bool $ispast Whether the date is in the past.
-      * @param bool $needtitle Whether the date needs a title.
-      * @param bool $isnear Whether the date is near.
-      */
+    /**
+     * Test export_for_template() method.
+     *
+     * @dataProvider provider_export_for_template
+     * @param int $addseconds The number of seconds to add to the current time.
+     * @param bool $userelatives Whether to use relative dates.
+     * @param string|null $date For relative dates, the expected string (Tomorrow, Today, Yesterday).
+     * @param bool $ispast Whether the date is in the past.
+     * @param bool $needtitle Whether the date needs a title.
+     * @param bool $isnear Whether the date is near.
+     * @param string $userdateformat The user date expected format.
+     */
     public function test_export_for_template(
         int $addseconds,
         bool $userelatives,
@@ -57,6 +58,7 @@ final class humandate_test extends \advanced_testcase {
         bool $ispast,
         bool $needtitle,
         bool $isnear,
+        string $userdateformat,
     ): void {
         global $PAGE;
 
@@ -70,7 +72,7 @@ final class humandate_test extends \advanced_testcase {
         $expected = [
             'timestamp' => $timestamp,
             'date' => $date,
-            'userdate' => userdate($timestamp, get_string('strftimedayshort')),
+            'userdate' => userdate($timestamp, get_string($userdateformat)),
             'ispast' => $ispast,
             'needtitle' => $needtitle,
             'isnear' => $isnear,
@@ -95,38 +97,43 @@ final class humandate_test extends \advanced_testcase {
                 'ispast' => false,
                 'needtitle' => true,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'Tomorrow with relatives' => [
-                'addseconds' => 86400,
+                'addseconds' => DAYSECS,
                 'userelatives' => true,
                 'date' => 'Tomorrow',
                 'ispast' => false,
                 'needtitle' => true,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'Yesterday with relatives' => [
-                'addseconds' => -86400,
+                'addseconds' => -DAYSECS,
                 'userelatives' => true,
                 'date' => 'Yesterday',
                 'ispast' => true,
                 'needtitle' => true,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'One hour future with relatives' => [
-                'addseconds' => 3600,
+                'addseconds' => HOURSECS,
                 'userelatives' => true,
                 'date' => 'Tomorrow',
                 'ispast' => false,
                 'needtitle' => true,
                 'isnear' => true,
+                'userdateformat' => 'strftimedayshort',
             ],
             'One hour past with relatives' => [
-                'addseconds' => -3600,
+                'addseconds' => -HOURSECS,
                 'userelatives' => true,
                 'date' => 'Today',
                 'ispast' => true,
                 'needtitle' => true,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'Now without relatives' => [
                 'addseconds' => 0,
@@ -135,38 +142,61 @@ final class humandate_test extends \advanced_testcase {
                 'ispast' => false,
                 'needtitle' => false,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'Tomorrow without relatives' => [
-                'addseconds' => 86400,
+                'addseconds' => DAYSECS,
                 'userelatives' => false,
                 'date' => 'Tomorrow',
                 'ispast' => false,
                 'needtitle' => false,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'Yesterday without relatives' => [
-                'addseconds' => -86400,
+                'addseconds' => -DAYSECS,
                 'userelatives' => false,
                 'date' => 'Yesterday',
                 'ispast' => true,
                 'needtitle' => false,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
             ],
             'One hour future without relatives' => [
-                'addseconds' => 3600,
+                'addseconds' => HOURSECS,
                 'userelatives' => false,
                 'date' => null,
                 'ispast' => false,
                 'needtitle' => false,
                 'isnear' => true,
+                'userdateformat' => 'strftimedayshort',
             ],
             'One hour past without relatives' => [
-                'addseconds' => -3600,
+                'addseconds' => -HOURSECS,
                 'userelatives' => false,
                 'date' => null,
                 'ispast' => true,
                 'needtitle' => false,
                 'isnear' => false,
+                'userdateformat' => 'strftimedayshort',
+            ],
+            'one year from now' => [
+                'addseconds' => YEARSECS,
+                'userelatives' => false,
+                'date' => null,
+                'ispast' => false,
+                'needtitle' => false,
+                'isnear' => false,
+                'userdateformat' => 'strftimedaydate',
+            ],
+            'one year in the past' => [
+                'addseconds' => -YEARSECS,
+                'userelatives' => false,
+                'date' => null,
+                'ispast' => true,
+                'needtitle' => false,
+                'isnear' => false,
+                'userdateformat' => 'strftimedaydate',
             ],
         ];
     }
