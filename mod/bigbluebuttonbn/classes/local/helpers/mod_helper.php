@@ -42,6 +42,10 @@ class mod_helper {
         self::process_pre_save_checkboxes($bigbluebuttonbn);
         self::process_pre_save_common($bigbluebuttonbn);
         $bigbluebuttonbn->participants = htmlspecialchars_decode($bigbluebuttonbn->participants, ENT_COMPAT);
+        // Conditionally force grade type to none if the activity is recording only.
+        if ($bigbluebuttonbn->type == instance::TYPE_RECORDING_ONLY) {
+            $bigbluebuttonbn->grade = GRADE_TYPE_NONE;
+        }
     }
 
     /**
