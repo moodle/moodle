@@ -134,6 +134,9 @@ trait fake_plugins_test_trait {
                 }
             }
         }
+
+        // Finally purge whatever was already cached in plugin_manager.
+        \cache::make('core', 'plugin_manager')->purge();
     }
 
     /**
