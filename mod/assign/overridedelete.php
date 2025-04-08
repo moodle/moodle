@@ -67,6 +67,11 @@ if (!empty($override->userid)) {
 if ($confirm) {
     require_sesskey();
 
+    $assign->delete_override($override->id);
+
+    reorder_group_overrides($assign->get_instance()->id);
+
+    // Recalculate grades after the override is deleted.
     if ($recalculate) {
         $assignintance = clone $assign->get_instance();
         $assignintance->cmidnumber = $assign->get_course_module()->idnumber;
@@ -80,10 +85,6 @@ if ($confirm) {
             }
         }
     }
-
-    $assign->delete_override($override->id);
-
-    reorder_group_overrides($assign->get_instance()->id);
 
     redirect($cancelurl);
 }

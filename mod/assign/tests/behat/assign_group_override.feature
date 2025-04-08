@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @assign_grade
 Feature: Assign group override
   In order to grant a group special access to an assignment
   As a teacher
@@ -258,3 +258,58 @@ Feature: Assign group override
     And I should see "Only visible to members/Non-Participation" in the "Override group" "select"
     And I should see "Only see own membership" in the "Override group" "select"
     And I should not see "Not visible" in the "Override group" "select"
+
+  @javascript
+  Scenario: Add, modify then delete a group override and trigger penalty recalculation
+    Given I enable grade penalties for assignment
+    And the following "activity" exists:
+      | activity                             | assign                      |
+      | course                               | C1                          |
+      | name                                 | Test assignment penalty     |
+      | intro                                | Test assignment description |
+      | grade                                | 100                         |
+      | duedate                              | ##tomorrow##                |
+      | gradepenalty                         | 1                           |
+      | assignsubmission_onlinetext_enabled  | 1                           |
+      | submissiondrafts                     | 0                           |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                        |
+      | Test assignment name  | student1  | I'm the student first submission  |
+    # Add an override.
+    And I am on the "Test assignment penalty" Activity page logged in as teacher1
+    When I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I press "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 1            |
+      | Due date       | ##tomorrow +1day## |
+    And I press "Save"
+    When I am on the "Test assignment penalty" Activity page
+    And I change window size to "large"
+    And I go to "Sam1 Student1" "Test assignment penalty" activity advanced grading page
+    And I set the field "Grade out of 100" to "90"
+    And I set the field "Notify student" to "0"
+    And I press "Save changes"
+    And I follow "View all submissions"
+    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "90.00"
+    # Modify the override.
+    When I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I click on "Edit" "link" in the "Group 1" "table_row"
+    And I set the following fields to these values:
+      | Recalculate penalty   | Yes                |
+      | Due date              | ##yesterday##      |
+    And I press "Save"
+    And I navigate to "Submissions" in current page administration
+    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "80.00"
+    # Delete the override.
+    When I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I click on "Delete" "link"
+    Then I click on "Recalculate penalty for user(s) in the override" "checkbox"
+    And I press "Continue"
+    And I navigate to "Submissions" in current page administration
+    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "90.00"
