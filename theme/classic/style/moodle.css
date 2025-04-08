@@ -28715,8 +28715,8 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   font-size: 64px;
 }
 .icon.emoticon {
-  max-width: 20px;
-  max-height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 img.icon {

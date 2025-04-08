@@ -97,8 +97,8 @@ $iconwidthsizes: map-merge((
     }
 
     &.emoticon {
-        max-width: map-get($iconwidthsizes, 3);
-        max-height: map-get($iconsizes, 3);
+        width: map-get($iconsizes, 3);
+        height: map-get($iconsizes, 3);
     }
 }
 
