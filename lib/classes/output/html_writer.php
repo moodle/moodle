@@ -561,7 +561,7 @@ class html_writer {
             }
         }
         if (empty($table->attributes['class'])) {
-            $table->attributes['class'] = 'generaltable';
+            $table->attributes['class'] = 'generaltable table';
         }
         if (!empty($table->tablealign)) {
             $table->attributes['class'] .= ' boxalign' . $table->tablealign;

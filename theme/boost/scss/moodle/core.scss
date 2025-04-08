@@ -405,22 +405,6 @@ form.popupform div {
     overflow: auto;
 }
 
-// Position required for table sizing inside a flex container.
-.no-overflow > .generaltable {
-    margin-bottom: 0;
-}
-
-.no-overflow,
-.table-responsive {
-    .generaltable {
-        .visually-hidden,
-        .accesshide {
-            position: relative;
-            display: block;
-        }
-    }
-}
-
 // Accessibility features
 
 // Accessibility: text 'seen' by screen readers but not visual users.

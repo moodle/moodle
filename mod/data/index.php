@@ -147,5 +147,5 @@ foreach ($datas as $data) {
 }
 
 echo "<br />";
-echo html_writer::tag('div', html_writer::table($table), array('class'=>'no-overflow'));
+echo html_writer::tag('div', html_writer::table($table), ['class' => 'table-responsive']);
 echo $OUTPUT->footer();

@@ -77,3 +77,19 @@ table {
         font-size: 3rem;
     }
 }
+
+.table-responsive {
+    // Fix dropdown menu position inside responsive tables.
+    .dropdown {
+        position: static !important; /* stylelint-disable-line declaration-no-important */
+    }
+    // Fix visually hidden text in responsive tables.
+    .table {
+        margin-bottom: 0;
+        .visually-hidden,
+        .accesshide {
+            position: relative !important; /* stylelint-disable-line declaration-no-important */
+            display: block;
+        }
+    }
+}

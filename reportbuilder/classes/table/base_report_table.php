@@ -317,7 +317,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
         $this->set_caption($this->report::get_name(), ['class' => 'visually-hidden']);
 
-        echo html_writer::start_tag('div');
+        echo html_writer::start_tag('div', ['class' => 'table-responsive']);
         echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 }
