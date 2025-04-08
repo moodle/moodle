@@ -1,6 +1,6 @@
 # theme_boost Upgrade notes
 
-## 5.0rc1
+## 5.0rc2
 
 ### Changed
 
