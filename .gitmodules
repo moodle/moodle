@@ -20,6 +20,11 @@
 	path = blocks/quickmail
 	url = https://github.com/ucsf-education/moodle-block_quickmail
 	branch = UCSFCLE_405_STABLE
+[submodule "course/format/topcoll"]
+	path = course/format/topcoll
+	url = https://github.com/gjbarnard/moodle-format_topcoll
+	branch = main
+	tag = V405.0.4
 [submodule "enrol/ilios"]
 	path = enrol/ilios
 	url = https://github.com/ilios/moodle-enrol-ilios
