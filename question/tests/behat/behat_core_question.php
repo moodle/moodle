@@ -408,4 +408,36 @@ class behat_core_question extends behat_question_base {
         // Apply filters.
         $this->execute("behat_forms::press_button", [get_string('applyfilters')]);
     }
+
+    /**
+     * Record that a user has recently accessed the question bank related to a particular activity.
+     *
+     * @Given :user has recently viewed the :activityname :activitytype question bank
+     * @param string $useridentifier The user's username or email.
+     * @param string $activityname name of an activity.
+     * @param string $activitytype type of an activity, e.g. 'quiz' or 'qbank'.
+     */
+    public function user_has_recently_viewed_question_bank(
+        string $useridentifier,
+        string $activityname,
+        string $activitytype,
+    ): void {
+        global $USER;
+        $originaluser = $USER;
+
+        if (!plugin_supports('mod', $activitytype, FEATURE_USES_QUESTIONS)) {
+            throw new Exception($activitytype . ' do not have a question bank.');
+        }
+
+        $user = $this->get_user_by_identifier($useridentifier);
+        if (!$user) {
+            throw new Exception('Unknow user ' . $useridentifier . '.');
+        }
+        $USER = $user;
+
+        $cm = $this->get_cm_by_activity_name($activitytype, $activityname);
+        \core_question\local\bank\question_bank_helper::add_bank_context_to_recently_viewed($cm->context);
+
+        $USER = $originaluser;
+    }
 }

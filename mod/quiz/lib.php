@@ -2344,7 +2344,9 @@ function mod_quiz_output_fragment_quiz_question_bank($args): string {
             build_required_parameters_for_custom_view($params, $extraparams);
 
     $course = get_course($cm->course);
-    require_capability('mod/quiz:manage', $contexts->lowest());
+    if (!has_capability('moodle/question:useall', $contexts->lowest())) {
+        require_capability('moodle/question:usemine', $contexts->lowest());
+    }
 
     // Custom View.
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);

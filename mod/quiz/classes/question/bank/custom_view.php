@@ -316,12 +316,11 @@ class custom_view extends \core_question\local\bank\view {
      * @return void
      */
     public function display(): void {
-        $editcontexts = $this->contexts->having_one_edit_tab_cap('questions');
 
         echo \html_writer::start_div('questionbankwindow boxwidthwide boxaligncenter', [
             'data-component' => 'core_question',
             'data-callback' => 'display_question_bank',
-            'data-contextid' => $editcontexts[array_key_last($editcontexts)]->id,
+            'data-contextid' => $this->contexts->lowest()->id,
         ]);
 
         // Show the 'switch question bank' button.
