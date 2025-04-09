@@ -32,6 +32,11 @@
 	path = filter/ucsfezproxy
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
 	branch = MOODLE_405_STABLE
+[submodule "lib/editor/tiny/plugins/fontcolor"]
+	path = lib/editor/tiny/plugins/fontcolor
+	url = https://github.com/bfh/moodle-tiny_fontcolor
+	branch = main
+	tag = V0.8
 [submodule "local/bulkenrol"]
 	path = local/bulkenrol
 	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
