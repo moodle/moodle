@@ -38909,6 +38909,9 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   .container {
     width: auto;
   }
+  .navbar {
+    display: none;
+  }
 }
 .modal .modal-body > .loading-icon {
   display: block;
