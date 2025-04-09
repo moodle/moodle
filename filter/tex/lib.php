@@ -84,10 +84,19 @@ function filter_tex_sanitize_formula(string $texexp): string {
         '\afterassignment', '\expandafter', '\noexpand', '\special',
         '\let', '\futurelet', '\else', '\fi', '\chardef', '\makeatletter', '\afterground',
         '\noexpand', '\line', '\mathcode', '\item', '\section', '\mbox', '\declarerobustcommand',
-        '\ExplSyntaxOn', '\pdffiledump',
+        '\ExplSyntaxOn', '\pdffiledump', '\mathtex',
     ];
 
     $allowlist = ['inputenc'];
+
+    // Add encoded backslash (&#92;) versions of backslashed items to deny list.
+    $encodedslashdenylist = array_map(function($value) {
+        $encoded = str_replace('\\', '&#92;', $value);
+        // Return an encoded slash version if a slash is found, otherwise null so we can filter it off.
+        return $encoded != $value ? $encoded : null;
+    }, $denylist);
+    $encodedslashdenylist = array_filter($encodedslashdenylist);
+    $denylist = array_merge($denylist, $encodedslashdenylist);
 
     // Prepare the denylist for regular expression.
     $denylist = array_map(function($value){
