@@ -192,7 +192,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_sort_order(): array {
         $rules = self::get_defined_custom_rules();
-        array_unshift($rules, 'completionview');
+        array_unshift($rules, 'completionview', 'completionusegrade', 'completionpassgrade');
         return $rules;
     }
 
