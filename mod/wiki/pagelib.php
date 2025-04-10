@@ -715,7 +715,7 @@ class page_wiki_comments extends page_wiki {
                 $t->data[] = $row3;
             }
 
-            echo html_writer::tag('div', html_writer::table($t), array('class'=>'no-overflow'));
+            echo html_writer::tag('div', html_writer::table($t), ['class' => 'table-responsive']);
 
         }
     }

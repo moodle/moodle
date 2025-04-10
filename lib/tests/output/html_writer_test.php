@@ -315,7 +315,7 @@ final class html_writer_test extends \basic_testcase {
         $output = html_writer::table($table);
 
         $expected = <<<EOF
-<table class="generaltable" id="Jeffrey" data-name="Colin">
+<table class="generaltable table" id="Jeffrey" data-name="Colin">
 <caption>A table of meaningless data.</caption><tbody><tr class="lastrow" id="Bob" data-name="Fred">
 <td class="cell c0 lastcol" id="Jeremy" data-name="John" style=""></td>
 </tr>
@@ -344,7 +344,7 @@ EOF;
 
         $output = html_writer::table($table);
         $expected = <<<EOF
-<table class="generaltable" id="whodat">
+<table class="generaltable table" id="whodat">
 <caption class="accesshide">Who even knows?</caption><tbody><tr class="">
 <td class="cell c0" style="">fred</td>
 <td class="cell c1 lastcol" style="">MDK</td>

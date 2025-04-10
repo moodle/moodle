@@ -25968,18 +25968,6 @@ form.popupform div {
   overflow: auto;
 }
 
-.no-overflow > .generaltable {
-  margin-bottom: 0;
-}
-
-.no-overflow .generaltable .visually-hidden,
-.no-overflow .generaltable .accesshide,
-.table-responsive .generaltable .visually-hidden,
-.table-responsive .generaltable .accesshide {
-  position: relative;
-  display: block;
-}
-
 .accesshide {
   width: 1px !important;
   height: 1px !important;
@@ -37120,6 +37108,18 @@ table .sticky-column {
   max-height: 3rem;
   max-width: 3rem;
   font-size: 3rem;
+}
+
+.table-responsive .dropdown {
+  position: static !important; /* stylelint-disable-line declaration-no-important */
+}
+.table-responsive .table {
+  margin-bottom: 0;
+}
+.table-responsive .table .visually-hidden,
+.table-responsive .table .accesshide {
+  position: relative !important; /* stylelint-disable-line declaration-no-important */
+  display: block;
 }
 
 /**

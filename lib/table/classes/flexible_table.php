@@ -1866,7 +1866,7 @@ class flexible_table {
         // Start of main data table.
 
         if ($this->responsive) {
-            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+            echo html_writer::start_tag('div', ['class' => 'table-responsive']);
         }
         echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
