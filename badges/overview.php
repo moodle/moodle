@@ -39,6 +39,7 @@ if (empty($CFG->enablebadges)) {
 $badge = new badge($badgeid);
 $context = $badge->get_context();
 $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type));
+$title = [$badge->name];
 
 if ($badge->type == BADGE_TYPE_COURSE) {
     if (empty($CFG->badges_allowcoursebadges)) {
@@ -47,6 +48,7 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
     $course = get_course($badge->courseid);
     $heading = format_string($course->fullname, true, ['context' => $context]);
+    $title[] = $heading;
 
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
     $PAGE->set_pagelayout('standard');
@@ -62,7 +64,7 @@ $currenturl = new moodle_url('/badges/overview.php', array('id' => $badge->id));
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
 $PAGE->set_heading($heading);
-$PAGE->set_title($badge->name);
+$PAGE->set_title(implode(\moodle_page::TITLE_SEPARATOR, $title));
 $PAGE->navbar->add($badge->name);
 
 require_capability('moodle/badges:viewbadges', $context);
