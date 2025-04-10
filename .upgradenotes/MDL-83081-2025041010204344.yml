@@ -1,0 +1,7 @@
+issueNumber: MDL-83081
+notes:
+  mod_label:
+    - message: >-
+        The dndmedia setting has been removed. From now on dropping a media file
+        into a course will always ask the user if they want to create a label.
+      type: removed
