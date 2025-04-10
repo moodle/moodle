@@ -165,13 +165,10 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url(
-            $this->baseurl,
-            [
-                'sectionid' => $this->section->id,
-                'duplicatesection' => 1,
-                'sesskey' => sesskey(),
-            ]
+        $url = $this->format->get_update_url(
+            action: 'section_duplicate',
+            ids: [$this->section->id],
+            returnurl: $this->baseurl,
         );
 
         return new link_secondary(

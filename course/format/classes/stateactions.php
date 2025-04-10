@@ -342,6 +342,36 @@ class stateactions {
     }
 
     /**
+     * Duplicate course sections.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int|null $targetsectionid not used
+     * @param int|null $targetcmid not used
+     */
+    public function section_duplicate(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:update', $coursecontext);
+
+        foreach ($ids as $sectionid) {
+            // We need to get the latest modinfo on each iteration because the section numbers change.
+            $modinfo = get_fast_modinfo($course);
+            $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
+            course_get_format($course->id)->duplicate_section($section);
+        }
+
+        // Adding a section affects the full course structure.
+        $this->course_state($updates, $course);
+    }
+
+    /**
      * Hide course sections.
      *
      * @param stateupdates $updates the affected course elements track
