@@ -118,12 +118,12 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(1, $studentgrades['tables']);
 
         // Read returned grades.
-        $studentreturnedgrades = [];
+        $studentreturnedgradeshtml = [];
 
-        $studentreturnedgrades[$studentgrades['tables'][0]['userid']] =
-            (int) $studentgrades['tables'][0]['tabledata'][2]['grade']['content'];
+        $studentreturnedgradeshtml[$studentgrades['tables'][0]['userid']] =
+             $studentgrades['tables'][0]['tabledata'][2]['grade']['content'];
 
-        $this->assertEquals($s1grade, $studentreturnedgrades[$student1->id]);
+        $this->assertStringContainsString($s1grade, $studentreturnedgradeshtml[$student1->id]);
     }
 
     /**
@@ -149,8 +149,8 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertTrue(count($studentgrade['warnings']) == 0);
 
         $this->assertTrue(count($studentgrade['tables']) == 1);
-        $student1returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
-        $this->assertEquals($s1grade, $student1returnedgrade);
+        $student1returnedgradehtml = $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
+        $this->assertStringContainsString($s1grade, $student1returnedgradehtml);
 
         // A user can see his own even when in no groups.
         $this->setUser($student3);
@@ -161,8 +161,8 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertTrue(count($studentgrade['warnings']) == 0);
 
         $this->assertTrue(count($studentgrade['tables']) == 1);
-        $student3returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
-        $this->assertEquals($s3grade, $student3returnedgrade);
+        $student3returnedgradehtml = $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
+        $this->assertStringContainsString($s3grade, $student3returnedgradehtml);
 
         // Expect exception when user is not indicated.
         $this->setUser($student3);
