@@ -129,7 +129,7 @@ class quiz_statistics_table extends flexible_table {
         $this->collapsible(true);
 
         $this->set_attribute('id', 'questionstatistics');
-        $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
+        $this->set_attribute('class', 'table generaltable generalbox');
 
         parent::setup();
     }

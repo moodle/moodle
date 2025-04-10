@@ -153,7 +153,7 @@ require('managetabs.php');
 $table = new html_table();
 $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'leftalign');
 $table->id = 'roles';
-$table->attributes['class'] = 'admintable generaltable';
+$table->attributes['class'] = 'admintable table generaltable';
 $table->head = array(
     get_string('role') . ' ' . $OUTPUT->help_icon('roles', 'core_role'),
     get_string('description'),

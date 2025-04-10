@@ -1074,7 +1074,7 @@ class user extends grade_report {
         $table = new \html_table();
         $table->attributes = [
             'summary' => s(get_string('tablesummary', 'gradereport_user')),
-            'class' => 'generaltable boxaligncenter user-grade',
+            'class' => 'table generaltable user-grade',
         ];
 
         // Set the table headings.

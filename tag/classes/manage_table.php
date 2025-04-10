@@ -93,7 +93,7 @@ class core_tag_manage_table extends table_sql {
 
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('id', 'tag-management-list');
-        $this->set_attribute('class', 'admintable generaltable tag-management-table');
+        $this->set_attribute('class', 'admintable table generaltable tag-management-table');
 
         $totalcount = "SELECT COUNT(tg.id)
             FROM {tag} tg

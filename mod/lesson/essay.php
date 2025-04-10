@@ -384,7 +384,7 @@ switch ($mode) {
         $table = new html_table();
         $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('status'),
             get_string('email', 'lesson'));
-        $table->attributes['class'] = 'standardtable generaltable';
+        $table->attributes['class'] = 'table generaltable';
         $table->align = array('left', 'left', 'left');
         $table->wrap = array('nowrap', 'nowrap', '');
 

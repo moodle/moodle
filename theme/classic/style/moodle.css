@@ -29206,7 +29206,7 @@ img.icon {
   padding: 0.15em 0.5em;
 }
 
-#trustedhosts .generaltable {
+#trustedhosts .table {
   margin-left: auto;
   margin-right: auto;
   width: 500px;
@@ -36105,17 +36105,17 @@ div#dock {
   align-self: flex-start;
 }
 
-.path-mod-lesson .generaltable td {
+.path-mod-lesson .table td {
   vertical-align: middle;
 }
-.path-mod-lesson .generaltable td label {
+.path-mod-lesson .table td label {
   margin-bottom: 0;
 }
-.path-mod-lesson .generaltable td .highlight {
+.path-mod-lesson .table td .highlight {
   display: inline-block;
   margin-left: 0.25rem;
 }
-.path-mod-lesson .generaltable td input[type=checkbox] {
+.path-mod-lesson .table td input[type=checkbox] {
   display: block;
 }
 
@@ -36801,19 +36801,19 @@ img.userpicture {
   font-size: 1.03125rem;
 }
 
-#page-report-outline-index .generaltable tbody tr {
+#page-report-outline-index .table tbody tr {
   background-color: #fff;
 }
-#page-report-outline-index .generaltable tbody tr.section {
+#page-report-outline-index .table tbody tr.section {
   padding-left: 2rem;
 }
-#page-report-outline-index .generaltable tbody tr.section h3, #page-report-outline-index .generaltable tbody tr.section .h3 {
+#page-report-outline-index .table tbody tr.section h3, #page-report-outline-index .table tbody tr.section .h3 {
   font-size: 1.171875rem;
 }
-#page-report-outline-index .generaltable tbody tr.section h4, #page-report-outline-index .generaltable tbody tr.section .h4 {
+#page-report-outline-index .table tbody tr.section h4, #page-report-outline-index .table tbody tr.section .h4 {
   font-size: 1.03125rem;
 }
-#page-report-outline-index .generaltable tbody td.delegated {
+#page-report-outline-index .table tbody td.delegated {
   padding-left: 3.5rem;
 }
 
@@ -37053,47 +37053,20 @@ img.userpicture {
   background: #222;
 }
 
+/**
+ * File tables.scss.
+ * Contains styles for tables.
+ */
 .generaltable {
-  width: 100%;
-  margin-bottom: 1rem;
-  color: var(--bs-emphasis-color);
-  background-color: var(--bs-body-bg);
+  border-top: var(--bs-border-width) solid var(--bs-border-color);
 }
 .generaltable th,
 .generaltable td {
   padding: 0.75rem;
-  vertical-align: top;
   border-top: var(--bs-border-width) solid var(--bs-border-color);
 }
-.generaltable thead th,
-.generaltable thead td {
-  vertical-align: bottom;
-  border-bottom: calc(2 * var(--bs-border-width)) solid var(--bs-border-color);
-}
-.generaltable tbody + tbody {
-  border-top: calc(2 * var(--bs-border-width)) solid var(--bs-border-color);
-}
-.generaltable.table-sm th,
-.generaltable.table-sm td {
-  padding: 0.3rem;
-}
-.generaltable tbody tr:hover.dimmed_text a:not(.menu-action) {
-  color: var(--bs-emphasis-color);
-}
-.generaltable tbody tr:hover td.sticky-column {
-  background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
-}
-.generaltable tbody td,
-.generaltable tbody th {
-  color: inherit;
-  background-color: inherit;
-}
 
-table caption {
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 42px;
-  text-align: left;
+table {
   caption-side: top;
 }
 table .sticky-column {
@@ -37113,6 +37086,42 @@ table .sticky-column {
   font-size: 3rem;
 }
 
+/**
+ * Custom styles for Bootstrap table classes.
+ */
+.table {
+  border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+.table tbody td,
+.table tbody th {
+  color: inherit;
+  background-color: inherit;
+}
+.table tbody tr:hover.dimmed_text a:not(.menu-action), .table tbody tr:hover.text-muted a:not(.menu-action) {
+  color: var(--bs-emphasis-color);
+}
+.table tbody tr:hover td.sticky-column {
+  background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
+}
+
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: #6a737b #f8f9fa;
+}
+.table-responsive::-webkit-scrollbar {
+  width: 12px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #6a737b;
+  border-radius: 20px;
+  border: 3px solid #f8f9fa;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #495057;
+}
 .table-responsive .dropdown {
   position: static !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -37760,110 +37769,110 @@ p.arrow_button {
   font-weight: normal;
   padding-left: 24px;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.spacer {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.spacer {
   height: 0.5rem;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr[data-hidden=true] {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr[data-hidden=true] {
   display: none;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr th {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr th {
   vertical-align: bottom;
   border: none;
   text-align: left;
   background-color: #f8f9fa;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr th.rowspan {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr th.rowspan {
   padding: 0;
   width: 24px;
   min-width: 24px;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td {
   min-width: 4.5em;
   background-color: #f8f9fa;
   border: none;
   vertical-align: middle;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .small {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.column-name .small {
   font-size: 70%;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemselect {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.column-name .itemselect {
   margin-right: 15px;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.column-weight {
   min-width: 15em;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight .weightoverride {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.column-weight .weightoverride {
   margin-right: 5px;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-actions .dropdown-toggle::after {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.column-actions .dropdown-toggle::after {
   display: none;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.movehere {
   padding: 0;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.movehere a.movehere {
   display: block;
   width: 100%;
   margin: 5px 0 5px 0;
   padding: 3px 0 3px 0;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere hr {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.movehere a.movehere hr {
   border-top: 2px dashed #8f959e;
   margin: 0;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere:hover hr {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr td.movehere a.movehere:hover hr {
   border-top: 2px dashed #0f6cbf;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td {
   background-color: #fff;
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td:first-child {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td:first-child {
   border-left: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td:last-child {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td:last-child {
   border-right: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name {
   font-weight: bold;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name div {
   display: flex;
   min-height: 30px;
   align-items: center;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name div a.toggle-category {
   height: 24px;
   width: 24px;
   font-size: 12px;
   line-height: 24px;
   margin-right: 3px;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category[aria-expanded=true] .expanded, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category[aria-expanded=false] .collapsed {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name div a.toggle-category[aria-expanded=true] .expanded, .path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name div a.toggle-category[aria-expanded=false] .collapsed {
   display: none;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category i {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.category td.column-name div a.toggle-category i {
   font-size: 12px;
   width: 12px;
   height: 12px;
   color: #1d2125;
   margin: 0;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item td {
   background-color: #fff;
   border-top: 3px solid #f8f9fa;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.categoryitem td, .path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.courseitem td {
   min-width: 4.5em;
   background-color: #f8f9fa;
   border: none;
   vertical-align: middle;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td.column-name, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td.column-name {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.categoryitem td.column-name, .path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.courseitem td.column-name {
   padding-left: 0;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td:not(.column-actions), .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td:not(.column-actions) {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.categoryitem td:not(.column-actions), .path-grade-edit-tree .gradetree-wrapper .setup-grades.table tr.item.courseitem td:not(.column-actions) {
   font-weight: bold;
 }
 .path-grade-edit-tree .gradetree-wrapper .badge-light {
@@ -37938,10 +37947,10 @@ p.arrow_button {
 .path-grade-report-user .user-grade {
   border: none;
 }
-.path-grade-report-user .user-grade.generaltable .levelodd {
+.path-grade-report-user .user-grade.table .levelodd {
   background-color: transparent;
 }
-.path-grade-report-user .user-grade.generaltable .leveleven {
+.path-grade-report-user .user-grade.table .leveleven {
   background-color: var(--bs-body-bg);
 }
 .path-grade-report-user .user-grade .column-contributiontocoursetotal,

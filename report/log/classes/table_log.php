@@ -67,7 +67,7 @@ class report_log_table_log extends table_sql {
     public function __construct($uniqueid, $filterparams = null) {
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'reportlog generaltable generalbox table-sm');
+        $this->set_attribute('class', 'reportlog generaltable table table-sm');
         $this->filterparams = $filterparams;
         // Add course column if logs are displayed for site.
         $cols = array();

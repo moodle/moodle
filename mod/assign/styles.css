@@ -14,16 +14,16 @@
     margin-bottom: 1.5em;
 }
 
-.path-mod-assign div.submissionstatus .generaltable,
-.path-mod-assign div.submissionlinks .generaltable,
-.path-mod-assign div.feedback .generaltable,
-.path-mod-assign div.submissionsummarytable .generaltable,
+.path-mod-assign div.submissionstatus .table,
+.path-mod-assign div.submissionlinks .table,
+.path-mod-assign div.feedback .table,
+.path-mod-assign div.submissionsummarytable .table,
 .path-mod-assign div.attempthistory table,
-.path-mod-assign div.gradingsummary .generaltable {
+.path-mod-assign div.gradingsummary .table {
     width: 100%;
 }
 
-.path-mod-assign table.generaltable table td {
+.path-mod-assign table.table table td {
     border: 0 none;
 }
 
@@ -628,13 +628,13 @@
     margin-right: 5px;
 }
 
-.path-mod-assign [data-region="grade-panel"] .submissionsummarytable table.generaltable td {
+.path-mod-assign [data-region="grade-panel"] .submissionsummarytable table.table td {
     padding: 8px 0;
     background-color: transparent;
 }
 
-.path-mod-assign [data-region="grade-panel"] .submissionsummarytable .generaltable tbody > tr:nth-child(2n+1) > td,
-.path-mod-assign [data-region="grade-panel"] .submissionsummarytable .generaltable tbody tr:hover > td {
+.path-mod-assign [data-region="grade-panel"] .submissionsummarytable .table tbody > tr:nth-child(2n+1) > td,
+.path-mod-assign [data-region="grade-panel"] .submissionsummarytable .table tbody tr:hover > td {
     background-color: transparent;
 }
 
@@ -1214,7 +1214,7 @@
 /** End of base fixes **/
 
 /** Fix to YUI tree (which is a table) when displayed within grading table. **/
-.path-mod-assign table.generaltable table td.ygtvcell {
+.path-mod-assign table.table table td.ygtvcell {
     border: 0;
     padding: 0;
 }

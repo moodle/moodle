@@ -62,7 +62,7 @@ class sql_table extends flexible_table {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Set some sensible defaults.
-        $this->set_attribute('class', 'generaltable generalbox');
+        $this->set_attribute('class', 'table generaltable');
     }
 
     /**

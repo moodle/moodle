@@ -49,7 +49,7 @@ class coursestructure implements \renderable, \templatable {
 
         $headers = $this->export_headers($output);
         return [
-                'class' => 'generaltable boxaligncenter',
+                'class' => 'table generaltable',
                 'headers' => $headers,
                 'headerscount' => count($headers),
                 'activities' => $this->export_activities($output),

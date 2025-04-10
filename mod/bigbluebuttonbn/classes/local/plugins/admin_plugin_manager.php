@@ -107,7 +107,7 @@ class admin_plugin_manager {
             get_string('uninstallplugin', 'core_admin')
         ]);
         $table->set_attribute('id', extension::BBB_EXTENSION_PLUGIN_NAME . 'plugins');
-        $table->set_attribute('class', 'admintable generaltable');
+        $table->set_attribute('class', 'admintable table generaltable');
         $table->setup();
 
         $plugins = $this->get_sorted_plugins_list();

@@ -179,7 +179,7 @@ class comment_manager {
             get_string('action')
         );
         $table->colclasses = array ('leftalign', 'leftalign', 'leftalign', 'leftalign');
-        $table->attributes = array('class'=>'admintable generaltable');
+        $table->attributes = ['class' => 'admintable table generaltable'];
         $table->id = 'commentstable';
         $table->data = array();
 

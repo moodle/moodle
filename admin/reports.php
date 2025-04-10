@@ -46,7 +46,7 @@ $table->define_headers(array(get_string('plugin'), get_string('logstoressupporte
         $struninstall));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'reportplugins');
-$table->set_attribute('class', 'admintable generaltable');
+$table->set_attribute('class', 'admintable table generaltable');
 $table->setup();
 
 $plugins = array();

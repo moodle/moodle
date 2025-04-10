@@ -170,7 +170,7 @@ class grade_report_overview extends grade_report {
 
         $this->table->set_attribute('cellspacing', '0');
         $this->table->set_attribute('id', 'overview-grade');
-        $this->table->set_attribute('class', 'boxaligncenter generaltable');
+        $this->table->set_attribute('class', 'table generaltable');
 
         $this->table->setup();
     }

@@ -179,7 +179,7 @@ $removeenabled = $canunenrol ? '' : 'disabled="disabled"';
 <form id="assignform" method="post" action="<?php echo $PAGE->url ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 
-  <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
+  <table summary="" class="roleassigntable table generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
           <p><label for="removeselect"><?php print_string('enrolledusers', 'enrol'); ?></label></p>

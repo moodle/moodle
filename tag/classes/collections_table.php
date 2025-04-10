@@ -41,7 +41,7 @@ class core_tag_collections_table extends html_table {
         global $OUTPUT;
         parent::__construct();
 
-        $this->attributes['class'] = 'generaltable tag-collections-table';
+        $this->attributes['class'] = 'table generaltable tag-collections-table';
 
         $this->head = array(
             get_string('name'),

@@ -167,7 +167,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
     $table->define_baseurl($baseurl);
 
-    $table->set_attribute('class', 'generaltable generalbox reporttable');
+    $table->set_attribute('class', 'table generaltable reporttable');
 
     $table->sortable(true,'lastname','ASC');
     $table->no_sorting('select');

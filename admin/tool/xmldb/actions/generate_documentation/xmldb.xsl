@@ -21,7 +21,7 @@
 <!-- Fields (if any): table with field, type, comment -->
 <xsl:template match="FIELDS[FIELD]">
   <xsl:param name="tableid" />
-  <table class="generaltable boxaligncenter" style="margin:1em 0" cellspacing="1" cellpadding="5" width="100%">
+  <table class="table generaltable" style="margin:1em 0" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Field</th>
       <th class="header c1" scope="col">Type</th>
@@ -60,7 +60,7 @@
 <!-- Keys (if any): table with key, type, field(s), reference, and comment -->
 <xsl:template match="KEYS[KEY]">
   <h4>Keys</h4>
-  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%">
+  <table class="table generaltable" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Name</th>
       <th class="header c1" scope="col">Type</th>
@@ -99,7 +99,7 @@
 <!-- Indexes -->
 <xsl:template match="INDEXES[INDEX]">
   <h4>Indexes</h4>
-  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%">
+  <table class="table generaltable" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Name</th>
       <th class="header c1" scope="col">Type</th>

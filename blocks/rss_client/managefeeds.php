@@ -103,7 +103,7 @@ $table->define_baseurl($baseurl);
 
 $table->set_attribute('cellspacing', '0');
 $table->set_attribute('id', 'rssfeeds');
-$table->set_attribute('class', 'generaltable generalbox');
+$table->set_attribute('class', 'table generaltable');
 $table->column_class('feed', 'feed');
 $table->column_class('actions', 'actions');
 

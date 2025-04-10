@@ -54,7 +54,7 @@ if (empty($h5pactivities)) {
 }
 
 $table = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
+$table->attributes['class'] = 'table generaltable mod_index';
 
 $align = ['center', 'left'];
 if ($course->format == 'weeks' || $course->format == 'topics') {

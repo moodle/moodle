@@ -228,7 +228,7 @@ if ($roleid) {
 <form id="assignform" method="post" action="<?php echo $assignurl ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 
-  <table id="assigningrole" summary="" class="admintable roleassigntable generaltable" cellspacing="0">
+  <table id="assigningrole" summary="" class="admintable roleassigntable table generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
           <p><label for="removeselect"><?php print_string('extusers', 'core_role'); ?></label></p>
@@ -322,7 +322,7 @@ if ($roleid) {
     $table->id = 'assignrole';
     $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'core_role'));
     $table->colclasses = array('leftalign role', 'leftalign', 'centeralign userrole');
-    $table->attributes['class'] = 'admintable generaltable';
+    $table->attributes['class'] = 'admintable table generaltable';
     if ($showroleholders) {
         $table->headspan = array(1, 1, 2);
         $table->colclasses[] = 'leftalign roleholder';

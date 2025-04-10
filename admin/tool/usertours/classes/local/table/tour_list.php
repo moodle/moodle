@@ -67,7 +67,7 @@ class tour_list extends \flexible_table {
             get_string('actions', 'tool_usertours'),
         ]);
 
-        $this->set_attribute('class', 'admintable generaltable');
+        $this->set_attribute('class', 'admintable table generaltable');
         $this->setup();
 
         $this->tourcount = helper::count_tours();

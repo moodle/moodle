@@ -58,7 +58,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('nextruntime', 'tool_task'),
         ];
 
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable table generaltable';
         $table->colclasses = [];
 
         // For each task entry (row) show action buttons/logs link depending on the user permissions.
@@ -259,7 +259,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('actions','tool_task'),
         ];
 
-        $table->attributes['class'] = 'generaltable';
+        $table->attributes['class'] = 'table generaltable';
         $table->colclasses = [];
 
         // For each task entry (row) show action buttons/logs link depending on the user permissions.
@@ -384,7 +384,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('default', 'tool_task'),
         ];
 
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable table generaltable';
         $table->colclasses = [];
 
         if (!$showloglink) {

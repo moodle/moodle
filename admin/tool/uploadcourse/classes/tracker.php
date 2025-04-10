@@ -205,8 +205,8 @@ class tool_uploadcourse_tracker {
             $this->buffer->output(implode("\t", $columns));
         } else if ($this->outputmode == self::OUTPUT_HTML) {
             $ci = 0;
-            echo html_writer::start_tag('table', array('class' => 'generaltable boxaligncenter flexible-wrap',
-                'summary' => get_string('uploadcoursesresult', 'tool_uploadcourse')));
+            echo html_writer::start_tag('table', ['class' => 'table generaltable',
+                'summary' => get_string('uploadcoursesresult', 'tool_uploadcourse')]);
             echo html_writer::start_tag('tr', array('class' => 'heading r' . $this->rownb));
             echo html_writer::tag('th', get_string('csvline', 'tool_uploadcourse'),
                 array('class' => 'c' . $ci++, 'scope' => 'col'));

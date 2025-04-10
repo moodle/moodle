@@ -113,7 +113,7 @@ if (!$table->is_downloading($download, $exportfilename)) {
 $table->define_baseurl($PAGE->url);
 $table->define_columns(array('element', 'value'));
 $table->define_headers(array(get_string('element', 'scorm'), get_string('value', 'scorm')));
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter scormtrackreport');
+$table->set_attribute('class', 'table generaltable scormtrackreport');
 $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
 $table->setup();
 

@@ -122,7 +122,7 @@ $table->head = array(
     get_string("backupnext")
 );
 $table->headspan = array(1, 3, 1, 1);
-$table->attributes = array('class' => 'generaltable backup-report');
+$table->attributes = ['class' => 'table generaltable backup-report'];
 $table->data = array();
 
 $select = ', ' . context_helper::get_preload_record_columns_sql('ctx');

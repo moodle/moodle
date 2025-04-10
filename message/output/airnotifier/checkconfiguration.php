@@ -87,7 +87,7 @@ $table->colclasses = [
     'leftalign summary',
 ];
 $table->id = 'message_airnotifier_checkconfiguration';
-$table->attributes = ['class' => 'admintable generaltable'];
+$table->attributes = ['class' => 'admintable table generaltable'];
 $table->data = [];
 
 $senddisabled = false;

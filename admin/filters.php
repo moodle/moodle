@@ -121,7 +121,7 @@ $table = new html_table();
 $table->head  = [get_string('filter'), get_string('isactive', 'filters'),
         get_string('order'), get_string('applyto', 'filters'), get_string('settings'), get_string('uninstallplugin', 'core_admin')];
 $table->colclasses = array ('leftalign', 'leftalign', 'centeralign', 'leftalign', 'leftalign', 'leftalign');
-$table->attributes['class'] = 'admintable generaltable';
+$table->attributes['class'] = 'admintable table generaltable';
 $table->id = 'filterssetting';
 $table->data  = [];
 

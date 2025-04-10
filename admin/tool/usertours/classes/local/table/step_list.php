@@ -73,7 +73,7 @@ class step_list extends \flexible_table {
             get_string('actions', 'tool_usertours'),
         ]);
 
-        $this->set_attribute('class', 'admintable generaltable steptable');
+        $this->set_attribute('class', 'admintable table generaltable steptable');
         $this->setup();
     }
 

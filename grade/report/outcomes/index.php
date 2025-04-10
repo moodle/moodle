@@ -110,7 +110,7 @@ if ($taskindicator->has_task_record()) {
     exit;
 }
 
-$html = '<table class="generaltable boxaligncenter" width="90%" cellspacing="1" cellpadding="5" summary="Outcomes Report">' . "\n";
+$html = '<table class="table generaltable" width="90%" cellspacing="1" cellpadding="5" summary="Outcomes Report">' . "\n";
 $html .= '<tr><th class="header c0" scope="col">' . get_string('outcomeshortname', 'grades') . '</th>';
 $html .= '<th class="header c1" scope="col">' . get_string('courseavg', 'grades') . '</th>';
 $html .= '<th class="header c2" scope="col">' . get_string('sitewide', 'grades') . '</th>';

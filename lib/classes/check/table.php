@@ -104,7 +104,7 @@ class table implements \renderable {
             'leftalign action',
         ];
         $table->id = $this->type . 'reporttable';
-        $table->attributes = ['class' => 'admintable ' . $this->type . 'report generaltable'];
+        $table->attributes = ['class' => 'admintable ' . $this->type . 'report table generaltable'];
 
         foreach ($this->checks as $check) {
             $ref = $check->get_ref();
