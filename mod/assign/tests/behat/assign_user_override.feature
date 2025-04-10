@@ -1,4 +1,4 @@
-@mod @mod_assign @assign_grade
+@mod @mod_assign
 Feature: Assign user override
   In order to grant a student special access to an assignment
   As a teacher
@@ -222,7 +222,7 @@ Feature: Assign user override
     And "Delete" "icon" should exist in the "Sam1 Student1" "table_row"
 
   @javascript
-  Scenario: Add, modify then delete a group override and trigger penalty recalculation
+  Scenario: Teachers can trigger grade penalty recalculation when modifying or deleting user overrides
     Given I enable grade penalties for assignment
     And the following "activity" exists:
       | activity                             | assign                      |
@@ -237,38 +237,36 @@ Feature: Assign user override
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                        |
       | Test assignment name  | student1  | I'm the student first submission  |
-    # Add an override.
+    # Add a user override with a due date set in the future.
     And I am on the "Test assignment penalty" Activity page logged in as teacher1
-    When I navigate to "Overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides > Add user override" in current page administration
     And I set the following fields to these values:
       | Override user  | Student1           |
       | Due date       | ##tomorrow +1day## |
     And I press "Save"
-    When I am on the "Test assignment penalty" Activity page
     And I change window size to "large"
     And I go to "Sam1 Student1" "Test assignment penalty" activity advanced grading page
     And I set the field "Grade out of 100" to "90"
     And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I follow "View all submissions"
-    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
-    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "90.00"
-    # Modify the override.
-    When I navigate to "Overrides" in current page administration
+    And "Sam1 Student1" row "Grade" column of "submissions" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "90.00"
+    # Modify the user override by changing the due date to a past date.
+    And I navigate to "Overrides" in current page administration
     And I click on "Edit" "link" in the "Sam1 Student1" "table_row"
-    And I set the following fields to these values:
+    When I set the following fields to these values:
       | Recalculate penalty   | Yes                |
       | Due date              | ##yesterday##      |
     And I press "Save"
     And I navigate to "Submissions" in current page administration
-    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
-    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "80.00"
-    # Delete the override.
-    When I navigate to "Overrides" in current page administration
-    And I click on "Delete" "link"
-    Then I click on "Recalculate penalty for user(s) in the override" "checkbox"
-    And I press "Continue"
+    Then "Sam1 Student1" row "Grade" column of "submissions" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "80.00"
+    # Delete the user override.
+    And I navigate to "Overrides" in current page administration
+    And I click on "Delete" "link" in the "Sam1 Student1" "table_row"
+    And I click on "Recalculate penalty for user(s) in the override" "checkbox" in the "Confirm" "dialogue"
+    And I click on "Continue" "button" in the "Confirm" "dialogue"
     And I navigate to "Submissions" in current page administration
-    And "Sam1 Student1" row "Grade" column of "generaltable" table should contain "90.00"
-    And "Sam1 Student1" row "Final grade" column of "generaltable" table should contain "90.00"
+    And "Sam1 Student1" row "Grade" column of "submissions" table should contain "90.00"
+    And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "90.00"

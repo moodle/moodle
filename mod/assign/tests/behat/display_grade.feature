@@ -110,14 +110,14 @@ Feature: Check that the assignment grade can be updated correctly
     And I press "Save changes"
     Then the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
     And I follow "View all submissions"
-    And "Student 1" row "Grade" column of "generaltable" table should contain "90.00"
-    And "Student 1" row "Final grade" column of "generaltable" table should contain "80.00"
+    And "Student 1" row "Grade" column of "submissions" table should contain "90.00"
+    And "Student 1" row "Final grade" column of "submissions" table should contain "80.00"
     And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
     # Override the grade.
     And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "user-grades" table:
       | -1-                | -2-                   | -3-       | -4-      |
-      | Student 1          | student10@example.com | 90        | 90      |
+      | Student 1          | student10@example.com | 80        | 80       |
     And the "title" attribute of ".penalty-indicator-icon" "css_element" should contain "Late penalty applied -10.00 marks"
     And I turn editing mode on
     And I set the following fields to these values:
