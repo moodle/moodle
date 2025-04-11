@@ -3408,6 +3408,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
+        // Return early if no userids are provided.
+        if (empty($params['userids'])) {
+            return [];
+        }
+
         // Filter the user IDs, removing the IDs of the users that the current user cannot view.
         require_once($CFG->dirroot . '/user/lib.php');
         $userfieldsapi = \core_user\fields::for_userpic()->including('username', 'deleted');
@@ -3418,9 +3423,14 @@ class core_message_external extends external_api {
             return user_can_view_profile($targetuser);
         });
 
+        // Return early if no user IDs are left after filtering.
+        if (empty($filteredids)) {
+            return [];
+        }
+
         return \core_message\helper::get_member_info(
             $params['referenceuserid'],
-            $filteredids ?? [],
+            $filteredids,
             $params['includecontactrequests'],
             $params['includeprivacyinfo']
         );
