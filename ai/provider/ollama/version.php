@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'aiprovider_ollama';
-$plugin->version = 2025032500;
-$plugin->requires = 2025010300;
+$plugin->version = 2025041400;
+$plugin->requires = 2025040800;
 $plugin->maturity = MATURITY_STABLE;

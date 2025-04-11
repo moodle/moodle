@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'aiprovider_azureai';
-$plugin->version = 2025010300;
-$plugin->requires = 2025010300;
+$plugin->version = 2025041400;
+$plugin->requires = 2025040800;
 $plugin->maturity = MATURITY_STABLE;
