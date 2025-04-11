@@ -104,7 +104,6 @@ class mod_choice_renderer extends plugin_renderer_base {
             }
         }
 
-        $html .= html_writer::end_tag('ul');
         $html .= html_writer::end_tag('form');
 
         return $html;
