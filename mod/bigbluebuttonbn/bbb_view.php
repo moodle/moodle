@@ -68,6 +68,8 @@ $context = $instance->get_context();
 
 require_login($course, true, $cm);
 
+require_sesskey();
+
 // Note : this uses the group optional_param as a value to decide which groupid.
 $groupid = groups_get_activity_group($cm, true) ?: null;
 if ($groupid) {
@@ -144,14 +146,18 @@ switch (strtolower($action)) {
         break;
 
     case 'play':
-        $recording = recording::get_record(['id' => $rid]);
-        if ($href = $recording->get_remote_playback_url($rtype)) {
-            logger::log_recording_played_event($instance, $rid);
-            redirect(urldecode($href));
-        } else {
+        $recordings = $instance->get_recordings();
+        if (!isset($recordings[$rid])) {
+            notification::add(get_string('recordingnotfound', 'mod_bigbluebuttonbn'), notification::ERROR);
+            redirect($instance->get_view_url());
+        }
+        $href = $recordings[$rid]->get_remote_playback_url($rtype);
+        if (!$href) {
             notification::add(get_string('recordingurlnotfound', 'mod_bigbluebuttonbn'), notification::ERROR);
             redirect($instance->get_view_url());
         }
+        logger::log_recording_played_event($instance, $rid);
+        redirect(urldecode($href));
         // We should never reach this point.
         break;
 }
