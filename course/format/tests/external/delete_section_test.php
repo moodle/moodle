@@ -61,7 +61,10 @@ final class delete_section_test extends \externallib_advanced_testcase {
         $this->resetAfterTest();
 
         $course =
-            $this->getDataGenerator()->create_course(['numsections' => $sectionum, 'format' => $format, ...$formatoptions]);
+            $this->getDataGenerator()->create_course(array_merge(
+                ['numsections' => $sectionum, 'format' => $format],
+                $formatoptions,
+            ));
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         // Execute the method.
         $courseformat = course_get_format($course->id);
