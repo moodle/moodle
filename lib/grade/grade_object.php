@@ -174,9 +174,10 @@ abstract class grade_object {
      * @param string $table The table to retrieve from
      * @param string $classname The name of the class to instantiate
      * @param array $params An array of conditions like $fieldname => $fieldvalue
-     * @return array|bool Array of object instances or false if not found
+     * @param string $sortby The SQL sort order. E.g. 'id ASC'
+     * @return array|bool Array of object instances (sorted by $sortby) or false if not found
      */
-    public static function fetch_all_helper($table, $classname, $params) {
+    public static function fetch_all_helper($table, $classname, $params, string $sortby = 'id ASC') {
         global $DB; // Need to introspect DB here.
 
         $instance = new $classname();
@@ -217,7 +218,7 @@ abstract class grade_object {
         }
 
         global $DB;
-        $rs = $DB->get_recordset_select($table, $wheresql, $newparams);
+        $rs = $DB->get_recordset_select($table, $wheresql, $newparams, $sortby);
         //returning false rather than empty array if nothing found
         if (!$rs->valid()) {
             $rs->close();
