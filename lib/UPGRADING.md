@@ -15,6 +15,9 @@
   3. Ensure that the email catcher is set up using the step `Given an email catcher server is configured`.
 
   For more information see [MDL-75971](https://tracker.moodle.org/browse/MDL-75971)
+- The public method `get_slashargument` has been added to the `url` class.
+
+  For more information see [MDL-84351](https://tracker.moodle.org/browse/MDL-84351)
 - A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text. This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
 
   For more information see [MDL-84907](https://tracker.moodle.org/browse/MDL-84907)
