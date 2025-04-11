@@ -577,6 +577,7 @@ class recording extends persistent {
                     'bn' => $this->raw_get('bigbluebuttonbnid'),
                     'rid' => $this->get('id'),
                     'rtype' => $clone['type'],
+                    'sesskey' => sesskey(),
                 ]);
 
                 return $clone;
