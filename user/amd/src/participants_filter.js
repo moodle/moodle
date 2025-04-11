@@ -22,6 +22,7 @@
  */
 
 import CoreFilter from 'core/datafilter';
+import CourseFilter from 'core/datafilter/filtertypes/courseid';
 import * as DynamicTable from 'core_table/dynamic';
 import Selectors from 'core/datafilter/selectors';
 import Notification from 'core/notification';
@@ -52,6 +53,7 @@ export const init = filterRegionId => {
             })
             .catch(Notification.exception);
     });
+    coreFilter.activeFilters.courseid = new CourseFilter('courseid', filterSet);
     coreFilter.init();
 
     /**
