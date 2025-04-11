@@ -56,13 +56,13 @@
             <td> {{{backpackweburl}}} </td>
             <td>
                 {{#canmoveup}}
-                    <a href="{{baseurl}}?id={{id}}&action=moveup">{{#pix}}t/up, core,{{#str}}moveup{{/str}}{{/pix}}</a>
+                    <a href="{{baseurl}}?id={{id}}&sesskey={{sesskey}}&action=moveup">{{#pix}}t/up, core,{{#str}}moveup{{/str}}{{/pix}}</a>
                 {{/canmoveup}}
                 {{^canmoveup}}
                     {{#pix}}spacer, moodle{{/pix}}
                 {{/canmoveup}}
                 {{#canmovedown}}
-                    <a href="{{baseurl}}?id={{id}}&action=movedown">{{#pix}}t/down, core,{{#str}}movedown{{/str}}{{/pix}}</a>
+                    <a href="{{baseurl}}?id={{id}}&sesskey={{sesskey}}&action=movedown">{{#pix}}t/down, core,{{#str}}movedown{{/str}}{{/pix}}</a>
                 {{/canmovedown}}
                 {{^canmovedown}}
                     {{#pix}}spacer, moodle{{/pix}}
