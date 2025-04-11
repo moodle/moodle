@@ -3425,9 +3425,17 @@ class core_message_external extends external_api {
         $userfieldsapi = \core_user\fields::for_userpic()->including('username', 'deleted');
         $userfields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
         $users = $DB->get_records_list('user', 'id', $userids, '', $userfields, 0, 100);
-        $filteredids = array_filter($params['userids'], function($userid) use ($users) {
+        $filteredids = array_filter($params['userids'], function($userid) use ($users, $params) {
             $targetuser = $users[$userid];
-            return user_can_view_profile($targetuser);
+            // Check if the user has the contact already.
+            $iscontact = \core_message\api::is_contact($params['referenceuserid'], $userid);
+            if ($iscontact) {
+                // User is a contact, so we can return the info for this user.
+                return true;
+            } else {
+                // User is not a contact, so we need to check if the user is allowed to see the profile or not.
+                return user_can_view_profile($targetuser);
+            }
         });
 
         // Return early if no user IDs are left after filtering.
