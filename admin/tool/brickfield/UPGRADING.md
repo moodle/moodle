@@ -1,6 +1,6 @@
 # tool_brickfield Upgrade notes
 
-## 5.0rc2
+## 5.0rc3
 
 ### Deprecated
 

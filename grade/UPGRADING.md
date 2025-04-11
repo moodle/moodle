@@ -1,6 +1,6 @@
 # core_grades (subsystem) Upgrade notes
 
-## 5.0rc2
+## 5.0rc3
 
 ### Added
 
@@ -11,6 +11,12 @@
   with `async: false`.
 
   For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
+### Changed
+
+- The `grade_object::fetch_all_helper()` now accepts a new `$sort` parameter with a default value is `id ASC` to sort the grade instances
+
+  For more information see [MDL-85115](https://tracker.moodle.org/browse/MDL-85115)
 
 ### Deprecated
 

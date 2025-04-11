@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 5.0rc2
+## 5.0rc3
 
 ### core
 
@@ -69,6 +69,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
 
   For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
+- The public method `get_slashargument` has been added to the `url` class.
+
+  For more information see [MDL-84351](https://tracker.moodle.org/browse/MDL-84351)
 - The new PHP enum core\output\local\properties\iconsize can be used to limit the amount of icons sizes an output component can use. The enum has the same values available in the theme_boost scss.
 
   For more information see [MDL-84555](https://tracker.moodle.org/browse/MDL-84555)
@@ -564,6 +567,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   with `async: false`.
 
   For more information see [MDL-81714](https://tracker.moodle.org/browse/MDL-81714)
+
+#### Changed
+
+- The `grade_object::fetch_all_helper()` now accepts a new `$sort` parameter with a default value is `id ASC` to sort the grade instances
+
+  For more information see [MDL-85115](https://tracker.moodle.org/browse/MDL-85115)
 
 #### Deprecated
 

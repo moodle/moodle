@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.0rc2
+## 5.0rc3
 
 ### Added
 
@@ -61,6 +61,9 @@
 - Now lib/templates/select_menu.mustache has a new integer headinglevel context value to specify the heading level to keep the header accessibility when used as a tertiary navigation.
 
   For more information see [MDL-84208](https://tracker.moodle.org/browse/MDL-84208)
+- The public method `get_slashargument` has been added to the `url` class.
+
+  For more information see [MDL-84351](https://tracker.moodle.org/browse/MDL-84351)
 - The new PHP enum core\output\local\properties\iconsize can be used to limit the amount of icons sizes an output component can use. The enum has the same values available in the theme_boost scss.
 
   For more information see [MDL-84555](https://tracker.moodle.org/browse/MDL-84555)
