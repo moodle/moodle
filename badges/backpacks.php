@@ -56,7 +56,7 @@ if ($action == 'delete' && $confirm && confirm_sesskey()) {
     } else {
         $msg = get_string('sitebackpacknotdeleted', 'badges');
     }
-} else if ($action == 'moveup' || $action == 'movedown') {
+} else if (($action == 'moveup' || $action == 'movedown') && confirm_sesskey()) {
     // If no backpack has been selected, there isn't anything to move.
     if (empty($id)) {
         redirect($url);
