@@ -29,18 +29,20 @@ import {
  * This does not load MathJAX yet - it addes the configuration to the head incase it gets loaded later.
  * It also subscribes to the filter-content-updated event so MathJax can respond to content loaded by Ajax.
  *
- * @param {Object} params List of configuration params containing mathjaxconfig (text) and lang
+ * @param {Object} params List of configuration params containing mathjaxurl, mathjaxconfig (text) and lang
  */
 export const configure = (params) => {
-    if (window.MathJax) {
-        // Let's still set the locale even if the localization is not yet ported to version 3.2.2
-        // https://docs.mathjax.org/en/v3.2-latest/upgrading/v2.html#not-yet-ported-to-version-3.
-        window.MathJax.config.locale = params.lang;
-    }
+    loadMathJax(params.mathjaxurl, () => {
+        if (window.MathJax) {
+            // Let's still set the locale even if the localization is not yet ported to version 3.2.2
+            // https://docs.mathjax.org/en/v3.2-latest/upgrading/v2.html#not-yet-ported-to-version-3.
+            window.MathJax.config.locale = params.lang;
+        }
 
-    // Listen for events triggered when new text is added to a page that needs
-    // processing by a filter.
-    document.addEventListener(eventTypes.filterContentUpdated, contentUpdated);
+        // Listen for events triggered when new text is added to a page that needs
+        // processing by a filter.
+        document.addEventListener(eventTypes.filterContentUpdated, contentUpdated);
+    });
 };
 
 /**
@@ -111,4 +113,20 @@ export const contentUpdated = (event) => {
     listOfElementContainMathJax.forEach((mathjaxElements) => {
         mathjaxElements.forEach((node) => typesetNode(node));
     });
+};
+
+/**
+ * Load the MathJax script.
+ *
+ * @param {String} url The URL of the MathJax script to load.
+ * @param {function} callback The function to call when the script has loaded.
+ */
+const loadMathJax = (url, callback) => {
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.onload = () => {
+        callback();
+    };
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
 };
