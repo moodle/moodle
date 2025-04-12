@@ -122,7 +122,7 @@ The `$handler` parameter does not necessarily have to be a callback, it could al
 class name or any other kind of data you wish to associate with the route. FastRoute only tells you
 which handler corresponds to your URI, how you interpret it is up to you.
 
-#### Shorcut methods for common request methods
+#### Shortcut methods for common request methods
 
 For the `GET`, `POST`, `PUT`, `PATCH`, `DELETE` and `HEAD` request methods shortcut methods are available. For example:
 

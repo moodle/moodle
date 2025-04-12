@@ -30,12 +30,12 @@
 
 ### Added
 
-- Bridged `theme-color-level` using a new `shift-color` function to prepare for its deprecation in Boostrap 5.
+- Bridged `theme-color-level` using a new `shift-color` function to prepare for its deprecation in Bootstrap 5.
 
   For more information see [MDL-81816](https://tracker.moodle.org/browse/MDL-81816)
 - Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default.
 
-  Support for the `regular`, and `brands` families of icons has now been added, allowing icons defined with `\core\outut\icon_system::FONTAWESOME` to use them.
+  Support for the `regular`, and `brands` families of icons has now been added, allowing icons defined with `\core\output\icon_system::FONTAWESOME` to use them.
 
   Icons can select the FontAwesome family (`fa-regular`, `fa-brands`, `fa-solid`) by using the relevant class name when display the icon.
 

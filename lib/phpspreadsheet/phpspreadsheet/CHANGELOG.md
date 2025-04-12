@@ -164,7 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - Html Reader/Writer Better Handling of Booleans. [PR #4257](https://github.com/PHPOffice/PhpSpreadsheet/pull/4257)
 - Fill Patterns/Colors When Xml Attributes are Missing. [Issue #4248](https://github.com/PHPOffice/PhpSpreadsheet/issues/4248) [PR #4250](https://github.com/PHPOffice/PhpSpreadsheet/pull/4250)
-- Remove Unneccesary files from Composer Package. [PR #4262](https://github.com/PHPOffice/PhpSpreadsheet/pull/4262)
+- Remove Unnecessary files from Composer Package. [PR #4262](https://github.com/PHPOffice/PhpSpreadsheet/pull/4262)
 - Swapped row and column indexes in ReferenceHelper. [Issue #4246](https://github.com/PHPOffice/PhpSpreadsheet/issues/4246) [PR #4247](https://github.com/PHPOffice/PhpSpreadsheet/pull/4247)
 - Fix minor break handling drawings. [Issue #4241](https://github.com/PHPOffice/PhpSpreadsheet/issues/4241) [PR #4244](https://github.com/PHPOffice/PhpSpreadsheet/pull/4244)
 - Ignore cell formatting when the format is a single @. [Issue #4242](https://github.com/PHPOffice/PhpSpreadsheet/issues/4242) [PR #4243](https://github.com/PHPOffice/PhpSpreadsheet/pull/4243)
@@ -222,7 +222,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
-- Xls Writer Condtional Rules Applied to Whole Rows or Columns. [Issue #3185](https://github.com/PHPOffice/PhpSpreadsheet/issues/3185) [PR #4152](https://github.com/PHPOffice/PhpSpreadsheet/pull/4152)
+- Xls Writer Conditional Rules Applied to Whole Rows or Columns. [Issue #3185](https://github.com/PHPOffice/PhpSpreadsheet/issues/3185) [PR #4152](https://github.com/PHPOffice/PhpSpreadsheet/pull/4152)
 - Xlsx Writer Duplicate ContentTypes Entry for Background Image. [Issue #4179](https://github.com/PHPOffice/PhpSpreadsheet/issues/4179) [PR #4180](https://github.com/PHPOffice/PhpSpreadsheet/pull/4180)
 - Check strictNullComparison outside of loops. [PR #3347](https://github.com/PHPOffice/PhpSpreadsheet/pull/3347)
 - SUMIFS Does Not Require xlfn. [Issue #4182](https://github.com/PHPOffice/PhpSpreadsheet/issues/4182) [PR #4186](https://github.com/PHPOffice/PhpSpreadsheet/pull/4186)
@@ -466,7 +466,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Recomputation of Relative Addresses in Defined Names. [Issue #3661](https://github.com/PHPOffice/PhpSpreadsheet/issues/3661) [PR #3673](https://github.com/PHPOffice/PhpSpreadsheet/pull/3673)
 - Writer Xls Characters Outside BMP (emojis). [Issue #642](https://github.com/PHPOffice/PhpSpreadsheet/issues/642) [PR #3696](https://github.com/PHPOffice/PhpSpreadsheet/pull/3696)
 - Xlsx Reader Improve Handling of Row and Column Styles. [Issue #3533](https://github.com/PHPOffice/PhpSpreadsheet/issues/3533) [Issue #3534](https://github.com/PHPOffice/PhpSpreadsheet/issues/3534) [PR #3688](https://github.com/PHPOffice/PhpSpreadsheet/pull/3688)
-- Avoid Allocating RowDimension Unneccesarily. [PR #3686](https://github.com/PHPOffice/PhpSpreadsheet/pull/3686)
+- Avoid Allocating RowDimension Unnecessarily. [PR #3686](https://github.com/PHPOffice/PhpSpreadsheet/pull/3686)
 - Use Column Style when Row Dimension Exists Without Style. [Issue #3534](https://github.com/PHPOffice/PhpSpreadsheet/issues/3534) [PR #3688](https://github.com/PHPOffice/PhpSpreadsheet/pull/3688)
 - Inconsistency Between Cell Data and Explicitly Declared Type. [Issue #3711](https://github.com/PHPOffice/PhpSpreadsheet/issues/3711) [PR #3715](https://github.com/PHPOffice/PhpSpreadsheet/pull/3715)
 - Unexpected Namespacing in rels File. [Issue #3720](https://github.com/PHPOffice/PhpSpreadsheet/issues/3720) [PR #3722](https://github.com/PHPOffice/PhpSpreadsheet/pull/3722)
@@ -891,7 +891,7 @@ Note that this will be the last 1.x branch release before the 2.x release. We wi
 
   This is determined by the Calculation Engine locale setting.
 
-  (i.e. `"Vrai"` wil be converted to a boolean `true` if the Locale is set to `fr`.)
+  (i.e. `"Vrai"` will be converted to a boolean `true` if the Locale is set to `fr`.)
 - Allow `psr/simple-cache` 2.x
 
 ### Deprecated
@@ -1199,7 +1199,7 @@ Note that this will be the last 1.x branch release before the 2.x release. We wi
 - Fixed incorrect R1C1 to A1 subtraction formula conversion (`R[-2]C-R[2]C`) [Issue #2076](https://github.com/PHPOffice/PhpSpreadsheet/pull/2076) [PR #2086](https://github.com/PHPOffice/PhpSpreadsheet/pull/2086)
 - Correctly handle absolute A1 references when converting to R1C1 format [PR #2060](https://github.com/PHPOffice/PhpSpreadsheet/pull/2060)
 - Correct default fill style for conditional without a pattern defined [Issue #2035](https://github.com/PHPOffice/PhpSpreadsheet/issues/2035) [PR #2050](https://github.com/PHPOffice/PhpSpreadsheet/pull/2050)
-- Fixed issue where array key check for existince before accessing arrays in Xlsx.php [PR #1970](https://github.com/PHPOffice/PhpSpreadsheet/pull/1970)
+- Fixed issue where array key check for existence before accessing arrays in Xlsx.php [PR #1970](https://github.com/PHPOffice/PhpSpreadsheet/pull/1970)
 - Fixed issue with quoted strings in number format mask rendered with toFormattedString() [Issue 1972#](https://github.com/PHPOffice/PhpSpreadsheet/issues/1972) [PR #1978](https://github.com/PHPOffice/PhpSpreadsheet/pull/1978)
 - Fixed issue with percentage formats in number format mask rendered with toFormattedString() [Issue 1929#](https://github.com/PHPOffice/PhpSpreadsheet/issues/1929) [PR #1928](https://github.com/PHPOffice/PhpSpreadsheet/pull/1928)
 - Fixed issue with _ spacing character in number format mask corrupting output from toFormattedString() [Issue 1924#](https://github.com/PHPOffice/PhpSpreadsheet/issues/1924) [PR #1927](https://github.com/PHPOffice/PhpSpreadsheet/pull/1927)
@@ -1286,7 +1286,7 @@ Note that this will be the last 1.x branch release before the 2.x release. We wi
 
 - Fixed issue with absolute path in worksheets' Target [PR #1769](https://github.com/PHPOffice/PhpSpreadsheet/pull/1769)
 - Fix for Xls Reader when SST has a bad length [#1592](https://github.com/PHPOffice/PhpSpreadsheet/issues/1592)
-- Resolve Xlsx loader issue whe hyperlinks don't have a destination
+- Resolve Xlsx loader issue when hyperlinks don't have a destination
 - Resolve issues when printer settings resources IDs clash with drawing IDs
 - Resolve issue with SLK long filenames [#1612](https://github.com/PHPOffice/PhpSpreadsheet/issues/1612)
 - ROUNDUP and ROUNDDOWN return incorrect results for values of 0 [#1627](https://github.com/phpoffice/phpspreadsheet/pull/1627)
@@ -1388,7 +1388,7 @@ Note that this will be the last 1.x branch release before the 2.x release. We wi
 - Fix for Issue [#1495](https://github.com/PHPOffice/PhpSpreadsheet/issues/1495) (Sheet index being changed when multiple sheets are used in formula) [#1500]((https://github.com/PHPOffice/PhpSpreadsheet/pull/1500))
 - Fix for Issue [#1533](https://github.com/PHPOffice/PhpSpreadsheet/issues/1533) (A reference to a cell containing a string starting with "#" leads to errors in the generated xlsx.) [#1534](https://github.com/PHPOffice/PhpSpreadsheet/pull/1534)
 - Xls Writer - Correct Timestamp Bug [#1493](https://github.com/PHPOffice/PhpSpreadsheet/pull/1493)
-- Don't ouput row and columns without any cells in HTML writer [#1235](https://github.com/PHPOffice/PhpSpreadsheet/issues/1235)
+- Don't output row and columns without any cells in HTML writer [#1235](https://github.com/PHPOffice/PhpSpreadsheet/issues/1235)
 
 ## 1.13.0 - 2020-05-31
 

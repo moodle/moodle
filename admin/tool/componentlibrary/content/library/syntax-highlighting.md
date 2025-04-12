@@ -9,7 +9,7 @@ weight: 3
 
 ## Using Shortcodes for syntax
 
-Using this (shortcode) syntax you can higlight programming syntax in the component library
+Using this (shortcode) syntax you can highlight programming syntax in the component library
 
 ## HTML highlighting
 

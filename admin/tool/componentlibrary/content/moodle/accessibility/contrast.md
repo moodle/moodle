@@ -8,7 +8,7 @@ tags:
  - 3.9
 ---
 
-## Accessibile colours
+## Accessible colours
 
 In WCAG 2, contrast is a measure of the difference in perceived "luminance" or brightness between two colors (the phrase "color contrast" is never used). This brightness difference is expressed as a ratio ranging from 1:1 (e.g. white on white) to 21:1 (e.g., black on a white).
 

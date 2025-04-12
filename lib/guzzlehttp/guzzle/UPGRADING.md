@@ -423,7 +423,7 @@ $response = $client->send($request);
 ### Messages
 
 Messages no longer have references to their counterparts (i.e., a request no
-longer has a reference to it's response, and a response no loger has a
+longer has a reference to it's response, and a response no longer has a
 reference to its request). This association is now managed through a
 `GuzzleHttp\Adapter\TransactionInterface` object. You can get references to
 these transaction objects using request events that are emitted over the

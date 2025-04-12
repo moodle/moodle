@@ -29,7 +29,7 @@ The page footer should always stick to the bottom of the page and never overlap 
 
 ### Minimal footer requirements
 
-The page footer is required to inject the page JavaScript, show the reset user tours link and show user info and (if avaliable) the contents of the user configure theme custom menu.
+The page footer is required to inject the page JavaScript, show the reset user tours link and show user info and (if available) the contents of the user configure theme custom menu.
 
 {{< example >}}
 <footer id="page-footer" class="py-3 bg-dark text-light">

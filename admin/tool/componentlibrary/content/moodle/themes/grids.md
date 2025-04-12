@@ -35,7 +35,7 @@ Use the bootstrap grid column classes to create responsive grids. Rules to follo
     </div>
     <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-3">
       <div class="inner h-100 border p-1">
-    ascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu.
+    ascetur ridiculous mus. Donec quam felis, ultricies nec, pellentesque eu.
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-3">

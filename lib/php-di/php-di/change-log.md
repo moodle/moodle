@@ -210,8 +210,8 @@ Internal changes in case you were replacing/extending some parts:
 
 Read the [news entry](news/13-php-di-4-4-released.md).
 
-- [#185](https://github.com/PHP-DI/PHP-DI/issues/185) Support for invokable objects in `Container::call()`
-- [#192](https://github.com/PHP-DI/PHP-DI/pull/192) Support for invokable classes in `Container::call()` (will instantiate the class)
+- [#185](https://github.com/PHP-DI/PHP-DI/issues/185) Support for invocable objects in `Container::call()`
+- [#192](https://github.com/PHP-DI/PHP-DI/pull/192) Support for invocable classes in `Container::call()` (will instantiate the class)
 - [#184](https://github.com/PHP-DI/PHP-DI/pull/184) Option to ignore phpdoc errors
 
 ## 4.3

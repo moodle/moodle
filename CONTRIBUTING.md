@@ -11,7 +11,7 @@ There are many ways that you can contribute to Moodle, not just through developm
 
 All issues should be reported via, and patched provided to the [Moodle Tracker][3].
 
-The Moodle [Github][4] repository is a clone of the official Moodle repository, whcih can be found at https://git.moodle.org.
+The Moodle [Github][4] repository is a clone of the official Moodle repository, which can be found at https://git.moodle.org.
 
 ## Moodle core bug fixes and new features
 
@@ -23,7 +23,7 @@ Over the years, Moodle has developed a mature process for reporting, reviewing, 
 - New features are developed on the `main` branch. Bug fixes are also backported to currently supported maintenance (stable) branches.
 
 > [!IMPORTANT]
-> Please do not publish security issues, or patches releating to them publicly.
+> Please do not publish security issues, or patches relating to them publicly.
 > See our [Responsible Disclosure Policy][5] for more information.
 
 

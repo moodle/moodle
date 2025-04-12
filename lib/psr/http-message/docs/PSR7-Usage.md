@@ -101,13 +101,13 @@ $response->getBody()->write('hello');
 ### Getting the body contents
 
 The following snippet gets the contents of a stream contents.
-> Note: Streams must be rewinded, if content was written into streams, it will be ignored when calling `getContents()` because the stream pointer is set to the last character, which is `\0` - meaning end of stream.
+> Note: Streams must be rewound, if content was written into streams, it will be ignored when calling `getContents()` because the stream pointer is set to the last character, which is `\0` - meaning end of stream.
 ```php 
 $body = $response->getBody();
 $body->rewind(); // or $body->seek(0);
 $bodyText = $body->getContents();
 ```
-> Note: If `$body->seek(1)` is called before `$body->getContents()`, the first character will be ommited as the starting pointer is set to `1`, not `0`. This is why using `$body->rewind()` is recommended.
+> Note: If `$body->seek(1)` is called before `$body->getContents()`, the first character will be omitted as the starting pointer is set to `1`, not `0`. This is why using `$body->rewind()` is recommended.
 
 ### Append to body
 
@@ -146,7 +146,7 @@ $body->write('ef'); // stream contains "efcd"
 $body->write($contents); // stream contains "efabcd"
 ```
 
-> Note: `getContents()` seeks the stream while reading it, therefore if the second `rewind()` method call was not present the stream would have resulted in `abcdefabcd` because the `write()` method appends to stream if not preceeded by `rewind()` or `seek(0)`.
+> Note: `getContents()` seeks the stream while reading it, therefore if the second `rewind()` method call was not present the stream would have resulted in `abcdefabcd` because the `write()` method appends to stream if not preceded by `rewind()` or `seek(0)`.
 
 #### Prepending by using contents as a string
 ```php

@@ -8,7 +8,7 @@ weight: 1
 
 ## The Moodle colour scheme:
 
-Moodle colours are slighty different from standard Bootstrap colours. Custom moodle colours are usually defined in a theme preset. For example `theme/boost/scss/preset/default.scss`
+Moodle colours are slightly different from standard Bootstrap colours. Custom moodle colours are usually defined in a theme preset. For example `theme/boost/scss/preset/default.scss`
 
 {{< example show_markup=false >}}
 <div class="card-deck">

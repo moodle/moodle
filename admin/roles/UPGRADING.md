@@ -5,7 +5,7 @@
 ### Added
 
 - All session management has been moved to the `\core\session\manager` class.
-  This removes the dependancy to use the `sessions` table.
+  This removes the dependency to use the `sessions` table.
 
   Session management plugins (like Redis) should now inherit
   the base `\core\session\handler` class, which implements

@@ -36,7 +36,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-75971](https://tracker.moodle.org/browse/MDL-75971)
 - A new core\ip_utils::normalize_internet_address() method is created to sanitize an IP address, a range of IP addresses, a domain name or a wildcard domain matching pattern.
 
-  Moodle previously allowed entries such as 192.168. or .moodle.org for certain variables (eg: $CFG->proxybypass). Since MDL-74289, these formats are no longer allowed. This method converts this informations into an authorized format. For example, 192.168. becomes 192.168.0.0/16 and .moodle.org becomes *.moodle.org.
+  Moodle previously allowed entries such as 192.168. or .moodle.org for certain variables (eg: $CFG->proxybypass). Since MDL-74289, these formats are no longer allowed. This method converts this information into an authorized format. For example, 192.168. becomes 192.168.0.0/16 and .moodle.org becomes *.moodle.org.
 
   Also a new core\ip_utils::normalize_internet_address_list() method is created. Based on core\ip_utils::normalize_internet_address(), this method normalizes a string containing a series of Internet addresses.
 
@@ -60,7 +60,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add after_role_switched hook that is triggered when we switch role to a new role in a course.
 
   For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
-- New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
+- New generic collapsible section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
 - A new method get_instance_record has been added to cm_info object so core can get the activity table record without using the $DB object every time. Also, the method caches de result so getting more than once per execution is much faster.
@@ -146,7 +146,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - question_make_default_categories()
 
   No longer creates a default category in either CONTEXT_SYSTEM, CONTEXT_COURSE, or CONTEXT_COURSECAT.
-  Superceded by question_get_default_category which can optionally create one if it does not exist.
+  Superseded by question_get_default_category which can optionally create one if it does not exist.
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 - question_delete_course()
@@ -177,7 +177,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
 
   For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
-- Final removal of the following constants/methods from the `\core\encyption` class, removing support for OpenSSL fallback:
+- Final removal of the following constants/methods from the `\core\encryption` class, removing support for OpenSSL fallback:
 
   - `METHOD_OPENSSL`
   - `OPENSSL_CIPHER`
@@ -389,7 +389,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
-- Now the core_courseformat\local\content\cm\completion output is more reusable. All the HTML has been moved to its own mustache file, and the output class has a new set_smallbutton method to decide wether to rendered it as a small button (like in the course page) or as a normal one (for other types of pages).
+- Now the core_courseformat\local\content\cm\completion output is more reusable. All the HTML has been moved to its own mustache file, and the output class has a new set_smallbutton method to decide whether to rendered it as a small button (like in the course page) or as a normal one (for other types of pages).
 
   For more information see [MDL-83872](https://tracker.moodle.org/browse/MDL-83872)
 - New core_course\output\activity_icon class to render activity icons with or without purpose color. This output will centralize the way Moodle renders activity icons
@@ -484,7 +484,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Protected function `core_courseformat\output\local\content\section\availability::availability_info()` has been fully removed. Use `core_courseformat\output\local\content\section\availability::get_availability_data()` instead.
 
   For more information see [MDL-78489](https://tracker.moodle.org/browse/MDL-78489)
-- The old UI for moving activities and sections without javascript is not avaiable anymore from the actions dropdown. From now, on the only UI to move activities and sections is using the move action in the course editor. Format plugins can still use the old links to make the "move here" elements appear, but they will show deprecated messages. All the non-ajax moving will be removed in Moodle 6.0.
+- The old UI for moving activities and sections without javascript is not available anymore from the actions dropdown. From now, on the only UI to move activities and sections is using the move action in the course editor. Format plugins can still use the old links to make the "move here" elements appear, but they will show deprecated messages. All the non-ajax moving will be removed in Moodle 6.0.
 
   For more information see [MDL-83562](https://tracker.moodle.org/browse/MDL-83562)
 
@@ -639,7 +639,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-68806](https://tracker.moodle.org/browse/MDL-68806)
 - The definition of the abstract `core_question\local\bank\condition` class has changed to make it clearer which methods are required  in child classes.
   The `get_filter_class` method is no longer declared as abstract, and will return `null` by default to use the base  `core/datafilter/filtertype` class. If you have defined this method to return `null` in your own class, it will continue to work, but it is no longer necessary.
-  `build_query_from_filter` and `get_condition_key` are now declared as abstract, since all filter condition classes must define these  (as well as existing abstract methods) to function. Again, exsiting child classes will continue to work if they did before, as they  already needed these methods.
+  `build_query_from_filter` and `get_condition_key` are now declared as abstract, since all filter condition classes must define these  (as well as existing abstract methods) to function. Again, existing child classes will continue to work if they did before, as they  already needed these methods.
 
   For more information see [MDL-83859](https://tracker.moodle.org/browse/MDL-83859)
 
@@ -953,7 +953,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - There is a new method `submission_summary_for_messages()` for submission sub-plugins to summarise what has been submitted for inclusion in confirmation messages to students.
 
   For more information see [MDL-84387](https://tracker.moodle.org/browse/MDL-84387)
-- When the assignment activity sends notifications, it now sets more information in the $a object passed to the languages strings for the message subject and body. This is to give more flexibility to people using Language Customisation. The avaiable information is the same as the template context for the two templates in the next paragraph, but without the messagetext/html.
+- When the assignment activity sends notifications, it now sets more information in the $a object passed to the languages strings for the message subject and body. This is to give more flexibility to people using Language Customisation. The available information is the same as the template context for the two templates in the next paragraph, but without the messagetext/html.
   Also, the overall structure of these messages is now rendered using templates mod_assign/messages/notification_html and mod_assign/messages/notification_html, so they can be overridden by themes. As a result of this, the methods format_notification_message_text and format_notification_message_html (which should have been private to mod_assign and not used anywhere else) have been removed.
 
   For more information see [MDL-84733](https://tracker.moodle.org/browse/MDL-84733)
@@ -1030,7 +1030,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
-- The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' contructors.
+- The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' constructors.
 
   For more information see [MDL-81744](https://tracker.moodle.org/browse/MDL-81744)
 
@@ -1171,12 +1171,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 - qbank_bulkmove/helper::get_displaydata
 
-  Superceded by a modal and webservice, see qbank_bulkmove/modal_question_bank_bulkmove and core_question_external\move_questions
+  Superseded by a modal and webservice, see qbank_bulkmove/modal_question_bank_bulkmove and core_question_external\move_questions
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 - qbank_bulkmove\output\renderer::render_bulk_move_form
 
-  Superceded by qbank_bulkmove\output\bulk_move
+  Superseded by qbank_bulkmove\output\bulk_move
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 
@@ -2118,7 +2118,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 #### Added
 
 - All session management has been moved to the `\core\session\manager` class.
-  This removes the dependancy to use the `sessions` table.
+  This removes the dependency to use the `sessions` table.
 
   Session management plugins (like Redis) should now inherit
   the base `\core\session\handler` class, which implements
@@ -2146,7 +2146,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
-- A new `$reponsive` property (defaulting to `true`) has been added to the `\core_table\flexible_table` class.
+- A new `$responsive` property (defaulting to `true`) has been added to the `\core_table\flexible_table` class.
   This property allows you to control whether the table is rendered as a responsive table.
 
   For more information see [MDL-80748](https://tracker.moodle.org/browse/MDL-80748)
@@ -2266,7 +2266,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
-- Added new `FEATURE_QUICKCREATE` for modules that can be quickly created in the course wihout filling a previous form.
+- Added new `FEATURE_QUICKCREATE` for modules that can be quickly created in the course without filling a previous form.
 
   For more information see [MDL-81767](https://tracker.moodle.org/browse/MDL-81767)
 
@@ -2464,12 +2464,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
-- Bridged `theme-color-level` using a new `shift-color` function to prepare for its deprecation in Boostrap 5.
+- Bridged `theme-color-level` using a new `shift-color` function to prepare for its deprecation in Bootstrap 5.
 
   For more information see [MDL-81816](https://tracker.moodle.org/browse/MDL-81816)
 - Upon upgrading Font Awesome from version 4 to 6, the solid family was selected by default.
 
-  Support for the `regular`, and `brands` families of icons has now been added, allowing icons defined with `\core\outut\icon_system::FONTAWESOME` to use them.
+  Support for the `regular`, and `brands` families of icons has now been added, allowing icons defined with `\core\output\icon_system::FONTAWESOME` to use them.
 
   Icons can select the FontAwesome family (`fa-regular`, `fa-brands`, `fa-solid`) by using the relevant class name when display the icon.
 

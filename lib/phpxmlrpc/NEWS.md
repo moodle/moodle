@@ -856,7 +856,7 @@ file of their own: xmlrpc_wrappers.inc.
 You will have to include() / require() it in your scripts if you have been using those functions.
 
 For increased security, the automatic rebuilding of php object instances out of received xmlrpc structs in
-wrap_xmlrpc_method() has been disabled (but it can be optionally reenabled).
+wrap_xmlrpc_method() has been disabled (but it can be optionally re-enabled).
 
 The constructor of xmlrpcval() values has seen major changes, and it will not throw a php warning anymore when invoked
 using an unknown xmlrpc type: the error will only be written to php error log. Also, new xmlrpcval('true', 'boolean')
@@ -923,7 +923,7 @@ In greater detail:
 * fixed bug: method xmlrpcval::structmemexists($value) would not work
 * fixed bug: wrap_xmlrpc_method would fail if invoked with a client object that has return_type=phpvals
 * fixed bug: in case of call to client::multicall without fallback and server error
-* fixed bug: recursive serialization of xmlrpcvals loosing specified UTF-8 charset
+* fixed bug: recursive serialization of xmlrpcvals losing specified UTF-8 charset
 * fixed bug: serializing to ISO-8859-1 with php 5 would raise an error if non-ascii chars where found when decoding
 * new: client can use NTLM and Digest authentication methods for https and http 1.1 connections; authentication to
   proxy can be set to NTLM, too
@@ -1014,7 +1014,7 @@ The placement of files and directories in the distribution has been deeply modif
 in the hope of making it more clear, now that the file count has increased.
 I hope you find it easy.
 
-Support for "advanced" HTTP features such as cookies, proxies and keep-alives has
+Support for "advanced" HTTP features such as cookies, proxies and keep-alive has
 been added at last.
 
 It is now much easier to convert between xmlrpcval objects and php values, and

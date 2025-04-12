@@ -12,7 +12,7 @@ tags:
 
 ## How to use course cards
 
-Course cards are rendered using a shared template found in `course/templates/coursecard.mustache`. They are loaded throught JavaScript or PHP on pages like the user dashboard.
+Course cards are rendered using a shared template found in `course/templates/coursecard.mustache`. They are loaded through JavaScript or PHP on pages like the user dashboard.
 
 Course cards should always contain an image, if no image is provided by the backend a placeholder image is used. The card image and title should be clickable and should always link you to a course page.
 

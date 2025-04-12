@@ -28,7 +28,7 @@
   For more information see [MDL-75971](https://tracker.moodle.org/browse/MDL-75971)
 - A new core\ip_utils::normalize_internet_address() method is created to sanitize an IP address, a range of IP addresses, a domain name or a wildcard domain matching pattern.
 
-  Moodle previously allowed entries such as 192.168. or .moodle.org for certain variables (eg: $CFG->proxybypass). Since MDL-74289, these formats are no longer allowed. This method converts this informations into an authorized format. For example, 192.168. becomes 192.168.0.0/16 and .moodle.org becomes *.moodle.org.
+  Moodle previously allowed entries such as 192.168. or .moodle.org for certain variables (eg: $CFG->proxybypass). Since MDL-74289, these formats are no longer allowed. This method converts this information into an authorized format. For example, 192.168. becomes 192.168.0.0/16 and .moodle.org becomes *.moodle.org.
 
   Also a new core\ip_utils::normalize_internet_address_list() method is created. Based on core\ip_utils::normalize_internet_address(), this method normalizes a string containing a series of Internet addresses.
 
@@ -52,7 +52,7 @@
 - Add after_role_switched hook that is triggered when we switch role to a new role in a course.
 
   For more information see [MDL-83542](https://tracker.moodle.org/browse/MDL-83542)
-- New generic collapsable section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
+- New generic collapsible section output added. Use core\output\local\collapsable_section or include the core/local/collapsable_section template to use it. See the full documentation in the component library.
 
   For more information see [MDL-83869](https://tracker.moodle.org/browse/MDL-83869)
 - A new method get_instance_record has been added to cm_info object so core can get the activity table record without using the $DB object every time. Also, the method caches de result so getting more than once per execution is much faster.
@@ -138,7 +138,7 @@
 - question_make_default_categories()
 
   No longer creates a default category in either CONTEXT_SYSTEM, CONTEXT_COURSE, or CONTEXT_COURSECAT.
-  Superceded by question_get_default_category which can optionally create one if it does not exist.
+  Superseded by question_get_default_category which can optionally create one if it does not exist.
 
   For more information see [MDL-71378](https://tracker.moodle.org/browse/MDL-71378)
 - question_delete_course()
@@ -169,7 +169,7 @@
 - Remove support deprecated boolean 'primary' parameter in \core\output\single_button. The 4th parameter is now a string and not a boolean (the use was to set it to true to have a primary button)
 
   For more information see [MDL-75875](https://tracker.moodle.org/browse/MDL-75875)
-- Final removal of the following constants/methods from the `\core\encyption` class, removing support for OpenSSL fallback:
+- Final removal of the following constants/methods from the `\core\encryption` class, removing support for OpenSSL fallback:
 
   - `METHOD_OPENSSL`
   - `OPENSSL_CIPHER`

@@ -68,4 +68,4 @@ exampleContainer.querySelectorAll('.aalink').forEach(function (link) {
 The focus order when navigating a Moodle page needs to be logical.
 An example of logical focus order would be starting at the main menu before then following through to the main content and finally the footer. To achieve this the navdrawer menu has been relocate in the DOM to be positioned right after the navdrawer in [MDL-67863](https://tracker.moodle.org/browse/MDL-67863).
 
-Testing with a keyboard is essential when evaluating the accessibility of your compoment, You should never be able to tab to hidden items and there should always be a visual que to your current location in the page.
+Testing with a keyboard is essential when evaluating the accessibility of your component, You should never be able to tab to hidden items and there should always be a visual que to your current location in the page.

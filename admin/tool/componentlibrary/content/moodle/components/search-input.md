@@ -86,7 +86,7 @@ Use a default search input when searching is not expected to be the primary acti
 
 **Use**
 
-This search option is used when the search imput immediately triggers updating data displayed below the search, for example: a table of usernames. It includes a clear button that clears the input on typeing.
+This search option is used when the search input immediately triggers updating data displayed below the search, for example: a table of usernames. It includes a clear button that clears the input on typeing.
 
 **Variables**
 

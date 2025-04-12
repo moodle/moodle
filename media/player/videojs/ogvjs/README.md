@@ -13,7 +13,7 @@ Based around libogg, libvorbis, libtheora, libopus, libvpx, libnestegg and dav1d
 * remove execute bits from wasm
 
 1.8.9 - 2022-04-06
-* Bump yuv-canvas to 1.2.11, further perf improvments for frame drawing
+* Bump yuv-canvas to 1.2.11, further perf improvements for frame drawing
 * Workaround gets audio working when ringer is disabled by iOS hardware switch
 
 1.8.8 - 2022-04-04

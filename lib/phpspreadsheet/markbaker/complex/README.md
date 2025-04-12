@@ -81,7 +81,7 @@ You'll need to replace `markbaker/complex`in your `composer.json` file with the 
 composer require markbaker/complex-functions:^3.0
 ```
 
-You should not reference this library (`markbaker/complex`) in your `composer.json`, composer wil take care of that for you.
+You should not reference this library (`markbaker/complex`) in your `composer.json`, composer will take care of that for you.
 
 # Usage
 

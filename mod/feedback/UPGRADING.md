@@ -10,7 +10,7 @@
 
 ### Deprecated
 
-- The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' contructors.
+- The 'mode' parameter has been deprecated from 'edit_template_action_bar' and 'templates_table' constructors.
 
   For more information see [MDL-81744](https://tracker.moodle.org/browse/MDL-81744)
 

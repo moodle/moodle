@@ -53,5 +53,5 @@ Is there a webservice backend required?
 
 Descripbe the `aria-something` parts of the element. Are there any possible accessibility issues using this example?
 What are the considerations for keyboard navigation?
-What accessibile colors can be used?
+What accessible colors can be used?
 How to test its accessibility?

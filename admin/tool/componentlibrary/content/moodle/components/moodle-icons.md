@@ -23,7 +23,7 @@ Icons can be rendered in moodle templates using this notation:
 
 ## Rendering icons in Php
 
-Use the pix_icon method to retreive the HTML for an icon.
+Use the pix_icon method to retrieve the HTML for an icon.
 
 {{< php >}}
     $icon = $OUTPUT->pix_icon('i/edit', 'Edit me', 'moodle');

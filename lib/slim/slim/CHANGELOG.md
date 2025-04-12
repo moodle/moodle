@@ -171,7 +171,7 @@
 - [2864](https://github.com/slimphp/Slim/pull/2864) Optimize error message in error handling if displayErrorDetails was not set
 - [2876](https://github.com/slimphp/Slim/pull/2876) Update links from http to https
 - [2877](https://github.com/slimphp/Slim/pull/2877) Fix docblock for `Slim\Routing\RouteCollector::cacheFile`
-- [2878](https://github.com/slimphp/Slim/pull/2878) check body is writable only on ouput buffering append
+- [2878](https://github.com/slimphp/Slim/pull/2878) check body is writable only on output buffering append
 - [2896](https://github.com/slimphp/Slim/pull/2896) Render errors uniformly
 - [2902](https://github.com/slimphp/Slim/pull/2902) Fix prophecies
 - [2908](https://github.com/slimphp/Slim/pull/2908) Use autoload-dev for `Slim\Tests` namespace

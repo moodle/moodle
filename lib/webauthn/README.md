@@ -63,7 +63,7 @@ just verify that the device is the same device used on registration.
 You can use 'none' attestation with this library if you only check 'none' as format.
 
 > [!TIP]
-> this is propably what you want to use if you want secure login for a public website.
+> this is probably what you want to use if you want secure login for a public website.
 
 ### indirect attestation
 the browser may replace the AAGUID and attestation statement with a more privacy-friendly and/or more easily
@@ -72,10 +72,10 @@ You can not validate against any root ca, if the browser uses a anonymization ce
 this library sets attestation to indirect, if you select multiple formats but don't provide any root ca.
 
 > [!TIP]
-> hybrid soultion, clients may be discouraged by browser warnings but then you know what device they're using (statistics rulez!)
+> hybrid solution, clients may be discouraged by browser warnings but then you know what device they're using (statistics rulez!)
 
 ### direct attestation
-the browser proviedes data about the identificator device, the device can be identified uniquely. User could be tracked over multiple sites, because of that the browser may show a warning message about providing this data when register.
+the browser provides data about the identificator device, the device can be identified uniquely. User could be tracked over multiple sites, because of that the browser may show a warning message about providing this data when register.
 this library sets attestation to direct, if you select multiple formats and provide root ca's.
 
 > [!TIP]

@@ -80,7 +80,7 @@ You'll need to replace `markbaker/matrix`in your `composer.json` file with the n
 composer require markbaker/matrix-functions:^1.0
 ```
 
-You should not reference this library (`markbaker/matrix`) in your `composer.json`, composer wil take care of that for you.
+You should not reference this library (`markbaker/matrix`) in your `composer.json`, composer will take care of that for you.
 
 # Usage
 

@@ -74,7 +74,7 @@ While the cache API must still be functional in order for calls to it to work it
 Disabling the cache entirely.
 Like above there are times when you want the cache to avoid initialising anything it doesn't absolutely need. Things such as installation and upgrade require this functionality.
 When the cache API is disabled it is still functional however special "disabled" classes will be used instead of the regular classes that make the Cache API tick.
-These disabled classes do the least work possible and through this means we avoid all manner of intialisation and configuration.
+These disabled classes do the least work possible and through this means we avoid all manner of initialisation and configuration.
 Once disabled it cannot be re-enabled.
 
     // To disable the cache entirely call the following:

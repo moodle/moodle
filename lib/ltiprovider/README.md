@@ -4,7 +4,7 @@ These classes are an extension of the LTI Tool Provider class library created by
 
 Whilst supporting LTI is relatively simple, the benefits to using a class library like this one are:
 * the abstraction layer provided by the classes keeps the LTI communications separate from the application code;
-* the code can be re-used between multiple tool providers;
+* the code can be reused between multiple tool providers;
 * LTI data is transformed into useful objects and missing data automatically replaced with sensible defaults;
 * the outcomes service function uses LTI 1.1 or the unofficial outcomes extension according to whichever is supported by the tool consumer;
 * the unofficial extensions for memberships and setting services are supported;

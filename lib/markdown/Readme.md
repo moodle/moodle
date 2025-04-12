@@ -213,9 +213,9 @@ PHP Markdown Lib 1.9.0 (1 Dec 2019)
 	`aria-label` attribute.
 	(Thanks to Sunny Walker for the implementation.)
 
-*	Occurances of "`^^`" in `fn_backlink_html`, `fn_backlink_class`,
+*	Occurrences of "`^^`" in `fn_backlink_html`, `fn_backlink_class`,
 	`fn_backlink_title`, and `fn_backlink_label` will be replaced by the 
-	corresponding footnote number in the HTML output. Occurances of "`%%`" will be 
+	corresponding footnote number in the HTML output. Occurrences of "`%%`" will be 
 	replaced by a number for the reference (footnotes can have multiple references).
 	(Thanks to Sunny Walker for the implementation.)
 
@@ -341,7 +341,7 @@ PHP Markdown Lib 1.4.1 (4 May 2014)
 	won't be interpreted as Markdown.
 
 *	Corrected an bug where some inline links with spaces in them would not
-	work even when surounded with angle brackets:
+	work even when surrounded with angle brackets:
 
 		[link](<s p a c e s>)
 

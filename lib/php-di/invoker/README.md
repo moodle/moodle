@@ -186,7 +186,7 @@ You can also register both resolvers at the same time if you wish by prepending 
 
 The `Invoker` can be wired to your DI container to resolve the callables.
 
-For example with an invokable class:
+For example with an invocable class:
 
 ```php
 class MyHandler

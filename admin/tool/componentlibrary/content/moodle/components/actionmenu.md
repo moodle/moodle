@@ -19,7 +19,7 @@ Moodle action menus are a reusable component that can display a list of actions 
 - `lib/classes/output/local/action_menu/subpanel.php`: contains the `subpanel` menu item class.
 - `lib/templates/action_menu.mustache`: contains the main template for the action menu.
 - `lib/templates/action_menu_*`: location for the legacy auxliar mustache files.
-- `lib/templates/local/action_menu/*`: location for any new auxiliar mustache files.
+- `lib/templates/local/action_menu/*`: location for any new auxiliary mustache files.
 
 ## Examples
 
@@ -182,7 +182,7 @@ The following example creates a subpanel using a renderable choicelist instance:
 /** @var core_renderer $output*/
 $output = $PAGE->get_renderer('core');
 
-// A choice list is a renderable class to outpout a user choice.
+// A choice list is a renderable class to output a user choice.
 $choice = new core\output\choicelist('Choice example');
 $choice->add_option("statusa", "Status A", [
     'url' => $PAGE->url,

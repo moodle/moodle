@@ -122,7 +122,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 * Refactor parsing logic to mostly reside in the class files whose data
   structure is to be parsed (this should eventually allow us to unit-test
   specific parts of the parsing logic individually).
-* Fix error in parsing `calc` expessions when the first operand is a negative
+* Fix error in parsing `calc` expressions when the first operand is a negative
   number, thanks to @raxbg.
 * Support parsing CSS4 colors in hex notation with alpha values, thanks to
   @raxbg.

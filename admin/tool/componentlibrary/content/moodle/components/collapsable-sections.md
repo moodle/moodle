@@ -1,7 +1,7 @@
 ---
 layout: docs
-title: "Collapsable sections"
-description: "A reusable collapsable section component"
+title: "Collapsible sections"
+description: "A reusable collapsible section component"
 date: 2024-12-20T10:10:00+08:00
 draft: false
 tags:
@@ -11,25 +11,25 @@ tags:
 
 ## How it works
 
-The collapsable section component in Moodle allows you to create sections of content that can be expanded or collapsed by the user. This is useful for organizing content in a way that doesn't overwhelm the user with too much information at once. The component is built using a combination of PHP, Mustache templates, and JavaScript.
+The collapsible section component in Moodle allows you to create sections of content that can be expanded or collapsed by the user. This is useful for organizing content in a way that doesn't overwhelm the user with too much information at once. The component is built using a combination of PHP, Mustache templates, and JavaScript.
 
 ## Source files
 
-- `lib/templates/local/collapsable_section.mustache`: The Mustache template for rendering the collapsable section.
-- `lib/classes/output/local/collapsable_section.php`: The output class for the collapsable section component.
-- `lib/amd/src/local/collapsable_section/events.js`: JavaScript module for handling events related to the collapsable section.
-- `lib/amd/src/local/collapsable_section/controls.js`: JavaScript module for controlling the collapsable section.
+- `lib/templates/local/collapsable_section.mustache`: The Mustache template for rendering the collapsible section.
+- `lib/classes/output/local/collapsable_section.php`: The output class for the collapsible section component.
+- `lib/amd/src/local/collapsable_section/events.js`: JavaScript module for handling events related to the collapsible section.
+- `lib/amd/src/local/collapsable_section/controls.js`: JavaScript module for controlling the collapsible section.
 
 ## Usage
 
-To use the collapsable section component, you need to create an instance of the `collapsable_section` class and render it using Moodle's output renderer. You can customize the title content, section content, CSS classes, and additional HTML attributes.
+To use the collapsible section component, you need to create an instance of the `collapsable_section` class and render it using Moodle's output renderer. You can customize the title content, section content, CSS classes, and additional HTML attributes.
 
 Example:
 
 {{< php >}}
 use core\output\local\collapsable_section;
 
-// Create an instance of the collapsable section.
+// Create an instance of the collapsible section.
 $section = new collapsable_section(
     titlecontent: 'Section Title',
     sectioncontent: 'This is the content of the section.',
@@ -45,7 +45,7 @@ echo $OUTPUT->render($section);
     }
 {{< /mustache >}}
 
-You can also add CSS classes, extra HTML attributes, and customize the expand and collapse labels of the collapsable section:
+You can also add CSS classes, extra HTML attributes, and customize the expand and collapse labels of the collapsible section:
 
 {{< php >}}
 $section = new collapsable_section(
@@ -83,9 +83,9 @@ echo $OUTPUT->render($section);
     }
 {{< /mustache >}}
 
-## Include a collapsable section from a mustache template
+## Include a collapsible section from a mustache template
 
-Collapsable sections can also be included from a Mustache template using the `core/local/collapsable_section` template. This template allows you to define the title content and section content within the template.
+Collapsible sections can also be included from a Mustache template using the `core/local/collapsable_section` template. This template allows you to define the title content and section content within the template.
 
 {{< mustache template="tool_componentlibrary/examples/collapsablesections/includesection" >}}
     {
@@ -96,7 +96,7 @@ Collapsable sections can also be included from a Mustache template using the `co
 
 ### Control a section
 
-The collapsable sections component includes a JavaScript module for controlling the sections. This module provides methods to hide, show, and toggle the visibility of the sections.
+The collapsible sections component includes a JavaScript module for controlling the sections. This module provides methods to hide, show, and toggle the visibility of the sections.
 
 To use the JavaScript controls, you need to import the `CollapsableSection` module and create an instance from a selector:
 
@@ -129,7 +129,7 @@ if (section.isVisible()) {
 
 ### Events
 
-The collapsable sections component also includes a JavaScript module for handling events. This module wraps the standard Bootstrap collapsable events and provides custom event types for collapsable sections.
+The collapsible sections component also includes a JavaScript module for handling events. This module wraps the standard Bootstrap collapsible events and provides custom event types for collapsible sections.
 
 The component triggers two main events:
 
@@ -143,7 +143,7 @@ For convenience, the `core/local/collapsable_section/events` also list the origi
 - `hide.bs.collapse`: when the collapse is starting to hide.
 - `hidden.bs.collapse`: when the collapse has been hidden.
 
-To listen for events related to the collapsable sections, you need to import the `eventTypes` from the `events` module and add event listeners:
+To listen for events related to the collapsible sections, you need to import the `eventTypes` from the `events` module and add event listeners:
 
 ```javascript
 import {eventTypes as collapsableSectionEventTypes} from 'core/local/collapsable_section/events';
