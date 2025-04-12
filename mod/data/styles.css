@@ -198,8 +198,8 @@
 #page-mod-data-field- .whitebutton .btn-secondary,
 #page-mod-data-templates .whitebutton .btn-secondary {
     background: white;
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
 }
 
 #page-mod-data-preset .generaltable {
