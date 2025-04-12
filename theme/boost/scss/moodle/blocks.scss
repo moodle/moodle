@@ -259,6 +259,10 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
             width: 100%;
         }
     }
+    // Make space for active item indicator.
+    .dropdown-item {
+        padding-left: map-get($spacers, 4);
+    }
 }
 
 //

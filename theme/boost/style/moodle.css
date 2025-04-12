@@ -29776,6 +29776,9 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
     width: 100%;
   }
 }
+.block_myoverview .dropdown-item {
+  padding-left: 1.5rem;
+}
 
 .block_timeline .paged-content-page-container {
   background-color: var(--bs-body-bg);
