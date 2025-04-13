@@ -44,5 +44,8 @@ function xmldb_enrol_fee_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025011300, 'enrol', 'fee');
     }
 
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

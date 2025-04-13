@@ -53,5 +53,8 @@ function xmldb_factor_email_upgrade($oldversion): bool {
         upgrade_plugin_savepoint(true, 2024122400, 'factor', 'email');
     }
 
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

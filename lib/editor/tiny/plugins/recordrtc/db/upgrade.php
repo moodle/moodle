@@ -65,5 +65,8 @@ function xmldb_tiny_recordrtc_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024112000, 'tiny', 'recordrtc');
     }
 
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

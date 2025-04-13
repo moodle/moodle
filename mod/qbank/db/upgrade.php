@@ -35,5 +35,8 @@ function xmldb_qbank_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
