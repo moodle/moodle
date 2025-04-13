@@ -1,6 +1,0 @@
-issueNumber: MDL-84907
-notes:
-  core:
-    - message: |2
-         A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text. This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
-      type: improved

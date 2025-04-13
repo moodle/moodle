@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 4.5.3+
+## 4.5.4
 
 ### Added
 

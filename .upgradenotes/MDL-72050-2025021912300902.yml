@@ -1,7 +1,0 @@
-issueNumber: MDL-72050
-notes:
-  core_files:
-    - message: >-
-        A new function `file_clear_draft_area()` has been added to delete the
-        files in a draft area.
-      type: improved
