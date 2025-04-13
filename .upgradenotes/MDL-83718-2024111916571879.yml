@@ -1,9 +1,0 @@
-issueNumber: MDL-83718
-notes:
-  core_reportbuilder:
-    - message: >-
-        Report table instances no longer populate the `countsql` and
-        `countparams` class properties. Instead calling code can access
-        `totalrows` to obtain the same value, or by calling the helper
-        method `report::get_report_row_count`
-      type: changed

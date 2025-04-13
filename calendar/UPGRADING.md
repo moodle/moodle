@@ -1,6 +1,6 @@
 # core_calendar (subsystem) Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Deprecated
 

@@ -1,8 +1,0 @@
-issueNumber: MDL-83440
-notes:
-  mod_assign:
-    - message: >-
-        Assign sub-plugins have a new method `assign_plugin::settings_validation`
-        which can be overridden to validate the data when the assignments form
-        is saved.
-      type: improved

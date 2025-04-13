@@ -1,6 +1,6 @@
 # tool_admin_presets Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Deprecated
 

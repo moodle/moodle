@@ -1,6 +1,6 @@
 # qbank_bulkmove Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Deprecated
 

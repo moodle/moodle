@@ -1,6 +1,6 @@
 # mod_quiz Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Added
 

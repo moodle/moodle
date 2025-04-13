@@ -1,7 +1,0 @@
-issueNumber: MDL-78890
-notes:
-  gradereport_grader:
-    - message: >-
-        The method `gradereport_grader::get_right_avg_row()` has been finally
-        deprecated and will now throw an exception if called.
-      type: deprecated

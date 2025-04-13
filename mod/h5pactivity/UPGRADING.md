@@ -1,6 +1,6 @@
 # mod_h5pactivity Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Changed
 

@@ -1,5 +1,0 @@
-issueNumber: MDL-84673
-notes:
-  core_grades:
-    - message: Deprecate print_graded_users_selector() from Moodle 2 era
-      type: deprecated

@@ -1,5 +1,0 @@
-issueNumber: MDL-80944
-notes:
-  mod_quiz:
-    - message: Final removal of quiz_delete_override() and quiz_delete_all_overrides()
-      type: removed

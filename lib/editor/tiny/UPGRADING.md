@@ -1,6 +1,6 @@
 # editor_tiny Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Added
 

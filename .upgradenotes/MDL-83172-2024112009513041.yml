@@ -1,5 +1,0 @@
-issueNumber: MDL-83172
-notes:
-  core:
-    - message: Oracle support has been removed in LMS
-      type: removed

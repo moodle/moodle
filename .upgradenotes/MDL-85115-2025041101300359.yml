@@ -1,7 +1,0 @@
-issueNumber: MDL-85115
-notes:
-  core_grades:
-    - message: >
-        The `grade_object::fetch_all_helper()` now accepts a new `$sort`
-        parameter with a default value is `id ASC` to sort the grade instances
-      type: changed

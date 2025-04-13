@@ -1,7 +1,0 @@
-issueNumber: MDL-81509
-notes:
-  core:
-    - message: >-
-        Final deprecation of methods `task_base::is_blocking` and
-        `task_base::set_blocking`.
-      type: removed

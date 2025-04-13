@@ -1,5 +1,0 @@
-issueNumber: MDL-77668
-notes:
-  core_grades:
-    - message: Removed unused grade_edit_tree_column_select class
-      type: removed

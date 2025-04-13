@@ -1,6 +1,6 @@
 # block_social_activities Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Removed
 

@@ -1,6 +1,6 @@
 # mod_folder Upgrade notes
 
-## 5.0rc3
+## 5.0
 
 ### Removed
 

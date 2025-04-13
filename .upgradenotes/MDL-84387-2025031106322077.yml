@@ -1,8 +1,0 @@
-issueNumber: MDL-84387
-notes:
-  mod_assign:
-    - message: >-
-        There is a new method `submission_summary_for_messages()` for submission
-        sub-plugins to summarise what has been submitted for inclusion in
-        confirmation messages to students.
-      type: improved

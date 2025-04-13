@@ -1,5 +1,0 @@
-issueNumber: MDL-82457
-notes:
-  core_adminpresets:
-    - message: Remove chat and survey from Adminpresets.
-      type: removed
