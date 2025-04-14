@@ -58,5 +58,8 @@ function xmldb_tool_recyclebin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024111500, 'tool', 'recyclebin');
     }
 
+    // Automatically generated Moodle v5.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
