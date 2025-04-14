@@ -33,7 +33,7 @@ Feature: Testing overview integration in mod_assign
     And the following "activities" exist:
       | activity | name           | course | idnumber | duedate              | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | submissiondrafts |
       | assign   | Date assign    | C1     | assign1  | ##1 Jan 2040 08:00## | 1                                   | 0                             | 0                |
-      | assign   | No submissions | C1     | assign2  | ##1 Jan 2040 08:00## | 1                                   | 0                             | 0                |
+      | assign   | No submissions | C1     | assign2  | ##tomorrow noon##    | 1                                   | 0                             | 0                |
       | assign   | Pending grades | C1     | assign3  |                      | 1                                   | 0                             | 0                |
     And the following "mod_assign > submissions" exist:
       | assign         | user     | onlinetext                          |
@@ -64,7 +64,7 @@ Feature: Testing overview integration in mod_assign
     And I should see "Actions" in the "assign_overview_collapsible" "region"
     # Check Due dates.
     And I should see "1 January 2040" in the "Date assign" "table_row"
-    And I should see "1 January 2040" in the "No submissions" "table_row"
+    And I should see "Tomorrow" in the "No submissions" "table_row"
     And I should see "-" in the "Pending grades" "table_row"
     # Check Submissions.
     And I should see "1 of 8" in the "Date assign" "table_row"
@@ -130,7 +130,7 @@ Feature: Testing overview integration in mod_assign
     And I should see "Grade" in the "assign_overview_collapsible" "region"
     # Check Due dates.
     And I should see "1 January 2040" in the "Date assign" "table_row"
-    And I should see "1 January 2040" in the "No submissions" "table_row"
+    And I should see "Tomorrow" in the "No submissions" "table_row"
     And I should see "-" in the "Pending grades" "table_row"
     # Check Submission status.
     And I should see "Submitted for grading" in the "Date assign" "table_row"
