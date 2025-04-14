@@ -277,6 +277,19 @@ class badge extends base {
         ))
             ->add_joins($this->get_joins());
 
+        // Language.
+        $filters[] = (new filter(
+            select::class,
+            'language',
+            new lang_string('language'),
+            $this->get_entity_name(),
+            "{$badgealias}.language",
+        ))
+            ->add_joins($this->get_joins())
+            ->set_options_callback(
+                fn() => get_string_manager()->get_list_of_translations(),
+            );
+
         // Version.
         $filters[] = (new filter(
             text::class,
