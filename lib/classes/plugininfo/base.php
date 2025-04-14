@@ -30,8 +30,6 @@ use moodle_url;
 
 /**
  * Base class providing access to the information about a plugin
- *
- * @property-read string component the component name, type_name
  */
 abstract class base {
 
