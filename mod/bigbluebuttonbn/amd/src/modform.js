@@ -163,6 +163,9 @@ const applyInstanceTypeProfile = (profileType, isFeatureEnabled) => {
     // Competencies validation.
     showFieldset('id_competenciessection', showAll ||
         isFeatureEnabled(profileType, 'competenciessection'));
+    // Standards grading feature validation.
+    showFieldset('id_modstandardgrade', showAll ||
+        isFeatureEnabled(profileType, 'modstandardgrade'));
     // Completion validation.
     showFieldset('id_activitycompletionheader', showAll ||
         isFeatureEnabled(profileType, 'activitycompletionheader'));
