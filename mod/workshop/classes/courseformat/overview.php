@@ -17,6 +17,7 @@
 namespace mod_workshop\courseformat;
 
 use cm_info;
+use core_calendar\output\humandate;
 use core_courseformat\local\overview\overviewitem;
 use core\output\action_link;
 use core\output\local\properties\text_align;
@@ -130,7 +131,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         return new overviewitem(
             name: get_string('deadline', 'workshop'),
             value: (int) $deadline,
-            content: userdate($deadline),
+            content: humandate::create_from_timestamp($deadline),
         );
     }
 
