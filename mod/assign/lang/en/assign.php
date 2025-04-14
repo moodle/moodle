@@ -220,6 +220,7 @@ $string['editingstatus'] = 'Editing status';
 $string['enabled'] = 'Enabled';
 $string['enabletimelimit'] = 'Enable timed assignments';
 $string['enabletimelimit_help'] = 'If enabled, you can set a time limit on assignment settings page.';
+$string['errorgradechangessaveddetail'] = 'The changes to the grade and feedback failed to save';
 $string['eventallsubmissionsdownloaded'] = 'All the submissions are being downloaded.';
 $string['eventassessablesubmitted'] = 'A submission has been submitted.';
 $string['eventbatchsetmarkerallocationviewed'] = 'Batch set marker allocation viewed';

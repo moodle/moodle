@@ -48,8 +48,12 @@ define(['jquery'], function($) {
             $(selector).trigger('save-form-state');
 
             var data = $(selector).serialize(),
-                previousdata = $(selector).data('saved-form-state');
+                previousdata = $(selector).data('saved-form-state'),
+                unresolvederror = $(selector).data('unresolved-error');
 
+            if (unresolvederror) {
+                return true;
+            }
             if (typeof previousdata === 'undefined') {
                 return false;
             }
