@@ -96,16 +96,18 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(null);
 
         $this->check_current_output(
-                $this->get_contains_draggable_marker_home_expectation(1, false),
-                $this->get_contains_draggable_marker_home_expectation(2, false),
-                $this->get_contains_draggable_marker_home_expectation(3, false),
-                $this->get_contains_hidden_expectation(1),
-                $this->get_contains_hidden_expectation(2),
-                $this->get_contains_hidden_expectation(3),
-                $this->get_contains_submit_button_expectation(true),
-                $this->get_does_not_contain_feedback_expectation(),
-                $this->get_tries_remaining_expectation(3),
-                $this->get_no_hint_visible_expectation());
+            new \question_pattern_expectation(
+                '~<div class="dropzones" data-visibled-dropzones=~'),
+            $this->get_contains_draggable_marker_home_expectation(1, false),
+            $this->get_contains_draggable_marker_home_expectation(2, false),
+            $this->get_contains_draggable_marker_home_expectation(3, false),
+            $this->get_contains_hidden_expectation(1),
+            $this->get_contains_hidden_expectation(2),
+            $this->get_contains_hidden_expectation(3),
+            $this->get_contains_submit_button_expectation(true),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_tries_remaining_expectation(3),
+            $this->get_no_hint_visible_expectation());
 
         $completelywrong = array('c1' => '0,250', 'c2' => '100,250', 'c3' => '150,250');
         // Save the wrong answer.
@@ -321,6 +323,7 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
+        $dd->showmisplaced = true;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
         // Check the initial state.
@@ -358,6 +361,8 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$gradedpartial);
         $this->check_current_mark(2);
         $this->check_current_output(
+                new \question_pattern_expectation(
+                    '~<div class="dropzones" data-visibled-dropzones="\\[[^]]+\\]"~'),
                 $this->get_contains_draggable_marker_home_expectation(1, false),
                 $this->get_contains_draggable_marker_home_expectation(2, false),
                 $this->get_contains_draggable_marker_home_expectation(3, false),
