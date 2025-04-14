@@ -16,6 +16,7 @@
 
 namespace mod_feedback\courseformat;
 
+use core_calendar\output\humandate;
 use core_courseformat\local\overview\overviewitem;
 use core\output\action_link;
 use core\output\local\properties\button;
@@ -92,7 +93,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         return new overviewitem(
             name: get_string('feedbackclose', 'mod_feedback'),
             value: $duedate,
-            content: userdate($duedate),
+            content: humandate::create_from_timestamp($duedate),
         );
     }
 
