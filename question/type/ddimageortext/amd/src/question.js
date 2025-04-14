@@ -1120,9 +1120,9 @@ define([
          * @method
          * @param {String} containerId the id of the div.que that contains this question.
          * @param {boolean} readOnly whether the question is read-only.
-         * @param {Array} places data.
          */
-        init: function(containerId, readOnly, places) {
+        init: function(containerId, readOnly) {
+            const places = JSON.parse(document.querySelector('#' + containerId + ' .dropzones').dataset.placeInfo);
             questionManager.questions[containerId] =
                 new DragDropOntoImageQuestion(containerId, readOnly, places);
             if (!questionManager.eventHandlersInitialised) {
