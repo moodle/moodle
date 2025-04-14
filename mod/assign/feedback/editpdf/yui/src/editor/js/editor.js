@@ -513,7 +513,6 @@ EDITOR.prototype = {
                         } else if (data.status === 2 || data.status === -1) {
                             // The combined PDF is ready.
                             // We now know the page count and can convert it to a set of images.
-                            this.pagecount = data.pagecount;
 
                             if (data.pageready == data.pagecount) {
                                 this.prepare_pages_for_display(data);
@@ -637,6 +636,7 @@ EDITOR.prototype = {
             return;
         }
 
+        this.pagecount = data.pagecount;
         this.pages = data.pages;
 
         for (i = 0; i < this.pages.length; i++) {
