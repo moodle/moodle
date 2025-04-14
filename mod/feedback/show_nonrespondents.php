@@ -22,6 +22,8 @@
  * @package mod_feedback
  */
 
+use mod_feedback\manager;
+
 require_once("../../config.php");
 require_once("lib.php");
 require_once($CFG->libdir.'/tablelib.php');
@@ -153,7 +155,12 @@ echo $OUTPUT->header();
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
 echo $renderer->main_action_bar($actionbar);
-
+if (!manager::can_see_others_in_groups($cm)) {
+    // The user is not in a group so show message and exit.
+    echo $OUTPUT->notification(get_string('notingroup'));
+    echo $OUTPUT->footer();
+    exit();
+}
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
