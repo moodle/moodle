@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_feedback\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 // Include forms lib.
@@ -2850,10 +2852,12 @@ function feedback_extend_settings_navigation(settings_navigation $settings, navi
     }
 
     if (has_capability('mod/feedback:viewreports', $context)) {
-        $feedbacknode->add_node($analysisnode);
-        $feedbacknode->add(get_string(($hassecondary ? 'responses' : 'show_entries'), 'feedback'),
-            new moodle_url('/mod/feedback/show_entries.php', ['id' => $settings->get_page()->cm->id]),
-            navigation_node::TYPE_CUSTOM, null, 'responses');
+        if (manager::can_see_others_in_groups($settings->get_page()->cm)) {
+            $feedbacknode->add_node($analysisnode);
+            $feedbacknode->add(get_string(($hassecondary ? 'responses' : 'show_entries'), 'feedback'),
+                new moodle_url('/mod/feedback/show_entries.php', ['id' => $settings->get_page()->cm->id]),
+                navigation_node::TYPE_CUSTOM, null, 'responses');
+        }
     } else {
         $feedbackcompletion = new mod_feedback_completion($feedback, $context, $settings->get_page()->course->id);
         if ($feedbackcompletion->can_view_analysis()) {
