@@ -1,3 +1,7 @@
+[submodule "admin/tool/externaltaskmonitor"]
+	path = admin/tool/externaltaskmonitor
+	url = https://github.com/ucsf-education/tool_externaltaskmonitor
+	branch = MOODLE_405_STABLE
 [submodule "admin/tool/ilioscategoryassignment"]
 	path = admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
@@ -133,4 +137,3 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
 	tag = v4.5.1
-
