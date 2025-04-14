@@ -16,6 +16,7 @@
 
 namespace mod_feedback;
 
+use cm_info;
 use stdClass;
 
 /**
@@ -37,5 +38,22 @@ class manager {
         global $DB;
 
         return $DB->get_record('feedback_template', ['id' => $templateid], '*', MUST_EXIST);
+    }
+
+    /**
+     * Check if the current user can see other users if in groups
+     *
+     * @param cm_info $cm
+     * @return bool
+     */
+    public static function can_see_others_in_groups(cm_info $cm): bool {
+        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $cm->context);
+        if ($canaccessallgroups) {
+            return true;
+        }
+        $course = $cm->get_course();
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        $usergroups = groups_get_user_groups($course->id);
+        return ($groupmode != SEPARATEGROUPS || !empty($usergroups['0']));
     }
 }
