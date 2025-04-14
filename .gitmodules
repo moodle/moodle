@@ -47,6 +47,10 @@
 	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
 	branch = MOODLE_405_STABLE
 	tag = v4.5-r1
+[submodule "local/quizanon"]
+	path = local/quizanon
+	url = https://github.com/ucsf-education/local_quizanon
+	branch = MOODLE_405_STABLE
 [submodule "local/staticpage"]
 	path = local/staticpage
 	url = https://github.com/moodle-an-hochschulen/moodle-local_staticpage
@@ -129,3 +133,4 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_405_STABLE
 	tag = v4.5.1
+
