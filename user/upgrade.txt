@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.4.9 ===
+
+* New method `\core_user::get_dummy_fullname(...)` for returning dummy user fullname comprised of configured name
+  fields only
+
 === 4.4.4 ===
 
 * The user profile field `display_name()` method now accepts an optional `$escape` parameter to define whether to
