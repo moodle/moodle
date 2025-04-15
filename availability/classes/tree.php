@@ -220,9 +220,9 @@ class tree extends tree_node {
 
             // First see if it's a condition. These have a defined type.
             if (isset($child->type)) {
-                // Look for a plugin of this type.
+                /** @var \core_availability\condition $classname */
                 $classname = '\availability_' . $child->type . '\condition';
-                if (!array_key_exists($child->type, $enabled)) {
+                if (!array_key_exists($child->type, $enabled) || !class_exists($classname)) {
                     if ($lax) {
                         // On load of existing settings, ignore if class
                         // doesn't exist.

@@ -117,6 +117,11 @@ abstract class frontend {
         foreach ($enabled as $plugin => $info) {
             // Create plugin front-end object.
             $class = '\availability_' . $plugin . '\frontend';
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            /** @var \core_availability\frontend $frontend */
             $frontend = new $class();
 
             // Add to array of required YUI modules.
