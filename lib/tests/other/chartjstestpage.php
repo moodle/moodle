@@ -54,6 +54,7 @@ $chart3->set_title('TENSIONED LINES CHART');
 $chart3->add_series($sales);
 $chart3->add_series($expenses);
 $chart3->set_labels($labels);
+$chart3->set_responsive_options(['aspectRatio' => 2, 'maintainAspectRatio' => true, 'resizeDelay' => 1]);
 
 $chart4 = new \core\chart_line();
 $chart4->set_smooth(true);
