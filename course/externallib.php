@@ -969,6 +969,14 @@ class core_course_external extends external_api {
                 throw new moodle_exception('errorinvalidparam', 'webservice', '', 'shortname');
             }
 
+            // Make sure start/end date are correctly set.
+            if (!array_key_exists('startdate', $course)) {
+                $course['startdate'] = usergetmidnight(time());
+            }
+            if (!array_key_exists('enddate', $course) && $courseconfig->courseenddateenabled) {
+                $course['enddate'] = $course['startdate'] + $courseconfig->courseduration;
+            }
+
             // Make sure lang is valid
             if (array_key_exists('lang', $course)) {
                 if (empty($availablelangs[$course['lang']])) {
