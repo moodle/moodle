@@ -941,6 +941,8 @@ class core_course_external extends external_api {
         $params = self::validate_parameters(self::create_courses_parameters(),
                         array('courses' => $courses));
 
+        $courseconfig = get_config('moodlecourse');
+
         $availablethemes = core_component::get_plugin_list('theme');
         $availablelangs = get_string_manager()->get_list_of_translations();
 
@@ -988,6 +990,8 @@ class core_course_external extends external_api {
                 }
             }
 
+            $course['showactivitydates'] = $courseconfig->showactivitydates;
+
             //force visibility if ws user doesn't have the permission to set it
             $category = $DB->get_record('course_categories', array('id' => $course['categoryid']));
             if (!has_capability('moodle/course:visibility', $context)) {
@@ -995,7 +999,6 @@ class core_course_external extends external_api {
             }
 
             //set default value for completion
-            $courseconfig = get_config('moodlecourse');
             if (completion_info::is_enabled_for_site()) {
                 if (!array_key_exists('enablecompletion', $course)) {
                     $course['enablecompletion'] = $courseconfig->enablecompletion;
