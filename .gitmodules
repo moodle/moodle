@@ -1,3 +1,7 @@
+[submodule "admin/tool/externaltaskmonitor"]
+	path = admin/tool/externaltaskmonitor
+	url = https://github.com/ucsf-education/tool_externaltaskmonitor
+	branch = MOODLE_405_STABLE
 [submodule "admin/tool/ilioscategoryassignment"]
 	path = admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
@@ -52,6 +56,10 @@
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
 	branch = MOODLE_405_STABLE
 	tag = v4.5-r1
+[submodule "local/navbarhelpmenu"]
+	path = local/navbarhelpmenu
+	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
+	branch = MOODLE_405_STABLE
 [submodule "local/quizanon"]
 	path = local/quizanon
 	url = https://github.com/ucsf-education/local_quizanon
