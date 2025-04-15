@@ -98,7 +98,6 @@ $string['evententryadded'] = 'Blog entry added';
 $string['evententrydeleted'] = 'Blog entry deleted';
 $string['evententryupdated'] = 'Blog entry updated';
 $string['externalblogcrontime'] = 'External blog cron schedule';
-$string['externalblogdeleteconfirm'] = 'Unregister this external blog?';
 $string['externalblogdeleted'] = 'External blog unregistered';
 $string['externalblogs'] = 'External blogs';
 $string['eventexternalblogsviewed'] = 'External registered blogs viewed';
@@ -217,3 +216,6 @@ $string['wrongexternalid'] = 'Wrong external blog ID';
 $string['page-blog-edit'] = 'Blog editing pages';
 $string['page-blog-index'] = 'Blog listing pages';
 $string['page-blog-x'] = 'All blog pages';
+
+// Deprecated since Moodle 5.1.
+$string['externalblogdeleteconfirm'] = 'Unregister this external blog?';
