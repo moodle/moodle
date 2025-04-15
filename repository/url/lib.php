@@ -150,8 +150,13 @@ EOD;
             return;
         }
         $this->processedfiles[] = $url;
-        $curl = new curl;
-        $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 3));
+        $curl = new curl([
+            'proxy' => true,
+        ]);
+        $curl->setopt([
+            'CURLOPT_FOLLOWLOCATION' => true,
+            'CURLOPT_MAXREDIRS' => 3,
+        ]);
         $msg = $curl->head($url);
         $info = $curl->get_info();
         if ($info['http_code'] != 200) {
