@@ -17,6 +17,7 @@
 namespace core_user;
 
 use core_text;
+use core_user;
 
 /**
  * Class for retrieving information about user fields that are needed for displaying user identity.
@@ -585,10 +586,7 @@ class fields {
         $unique = self::$uniqueidentifier++;
 
         $namefields = self::get_name_fields();
-
-        // Create a dummy user object containing all name fields.
-        $dummyuser = (object) array_combine($namefields, $namefields);
-        $dummyfullname = fullname($dummyuser, $override);
+        $dummyfullname = core_user::get_dummy_fullname(null, ['override' => $override]);
 
         // Extract any name fields from the fullname format in the order that they appear.
         $matchednames = array_values(order_in_string($namefields, $dummyfullname));
