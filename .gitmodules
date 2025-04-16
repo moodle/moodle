@@ -6,6 +6,10 @@
 	path = admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_405_STABLE
+[submodule "admin/tool/ldapsync"]
+	path = admin/tool/ldapsync
+	url = https://github.com/ucsf-education/moodle-admin-tool-ldapsync
+	branch = MOODLE_405_STABLE
 [submodule "blocks/checklist"]
 	path = blocks/checklist
 	url = https://github.com/davosmith/moodle-block_checklist
