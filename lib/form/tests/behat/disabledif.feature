@@ -27,3 +27,15 @@ Feature: disabledIf functionality in forms
     And the "class" attribute of "#fitem_id_some_static" "css_element" should not contain "text-muted"
     And the "#id_some_static_username" "css_element" should be enabled
     And the "class" attribute of "Check" "button" should not contain "disabled"
+
+  Scenario: The file picker element is disabled when 'eq' disabledIf conditions are met
+    Given I am on the "filepicker_hideif_disabledif_form" "core_form > Fixture" page logged in as "admin"
+    And the "#id_filepicker" "css_element" should be enabled
+    When I click on "Disable" "radio"
+    Then the "#id_filepicker" "css_element" should be disabled
+
+  @_file_upload
+  Scenario: The other element is disabled when the file picker is not empty
+    Given I am on the "filepicker_hideif_disabledif_form" "core_form > Fixture" page logged in as "admin"
+    When I upload "lib/ddl/tests/fixtures/xmldb_table.xml" file to "File picker" filemanager
+    Then the "inputtext1" "field" should be disabled
