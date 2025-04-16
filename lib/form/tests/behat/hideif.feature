@@ -39,3 +39,15 @@ Feature: hideIf functionality in forms
     Then I should not see "Static with form elements"
     And I click on "Enable" "radio"
     And I should see "Static with form elements"
+
+  Scenario: The file picker element is hidden when 'eq' hideIf conditions are met
+    Given I am on the "filepicker_hideif_disabledif_form" "core_form > Fixture" page logged in as "admin"
+    And "#fitem_id_filepicker" "css_element" should be visible
+    When I click on "Hide" "radio"
+    Then "#fitem_id_filepicker" "css_element" should not be visible
+
+  @_file_upload
+  Scenario: The other element is hidden when the file picker is not empty
+    Given I am on the "filepicker_hideif_disabledif_form" "core_form > Fixture" page logged in as "admin"
+    When I upload "lib/ddl/tests/fixtures/xmldb_table.xml" file to "File picker" filemanager
+    Then I should not see "inputtext2"
