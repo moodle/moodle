@@ -51,6 +51,11 @@
 	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
 	branch = MOODLE_405_STABLE
 	tag = v4.5-r1
+[submodule "local/maintenance_livecheck"]
+	path = local/maintenance_livecheck
+	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
+	branch = MOODLE_405_STABLE
+	tag = v4.5-r1
 [submodule "local/navbarhelpmenu"]
 	path = local/navbarhelpmenu
 	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
