@@ -24,6 +24,7 @@ use context_user;
 use core\context;
 use core_component;
 use core_date;
+use core_user;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -375,10 +376,8 @@ class user extends base {
 
         $namefields = fields::get_name_fields(true);
 
-        // Create a dummy user object containing all name fields.
-        $dummyuser = (object) array_combine($namefields, $namefields);
         $viewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
-        $dummyfullname = fullname($dummyuser, $viewfullnames);
+        $dummyfullname = core_user::get_dummy_fullname(null, ['override' => $viewfullnames]);
 
         // Extract any name fields from the fullname format in the order that they appear.
         $matchednames = array_values(order_in_string($namefields, $dummyfullname));
