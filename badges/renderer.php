@@ -387,55 +387,11 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render a collection of badges.
-     *
-     * @param \core_badges\output\badge_collection $badges
-     * @return string
-     *
      * @deprecated since Moodle 4.4
-     * @todo MDL-80455 this will be removed in Moodle 4.8
      */
+    #[\core\attribute\deprecated(null, since: '4.4', mdl: 'MDL-80052', final: true)]
     protected function render_badge_collection(\core_badges\output\badge_collection $badges) {
-        debugging('The method render_badge_collection() has been deprecated', DEBUG_DEVELOPER);
-        $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
-        $htmlpagingbar = $this->render($paging);
-        $table = new html_table();
-        $table->attributes['class'] = 'table table-bordered table-striped';
-
-        $sortbyname = $this->helper_sortable_heading(get_string('name'),
-                'name', $badges->sort, $badges->dir);
-        $sortbyawarded = $this->helper_sortable_heading(get_string('awardedtoyou', 'badges'),
-                'dateissued', $badges->sort, $badges->dir);
-        $table->head = array(
-                    get_string('badgeimage', 'badges'),
-                    $sortbyname,
-                    get_string('description', 'badges'),
-                    get_string('bcriteria', 'badges'),
-                    $sortbyawarded
-                );
-        $table->colclasses = array('badgeimage', 'name', 'description', 'criteria', 'awards');
-
-        foreach ($badges->badges as $badge) {
-            $badgeimage = print_badge_image($badge, $this->page->context, 'large');
-            $name = $badge->name;
-            $description = $badge->description;
-            $criteria = self::print_badge_criteria($badge);
-            if ($badge->dateissued) {
-                $icon = new pix_icon('i/valid',
-                            get_string('dateearned', 'badges',
-                                userdate($badge->dateissued, get_string('strftimedatefullshort', 'core_langconfig'))));
-                $badgeurl = new moodle_url('/badges/badge.php', array('hash' => $badge->uniquehash));
-                $awarded = $this->output->action_icon($badgeurl, $icon, null, null, true);
-            } else {
-                $awarded = "";
-            }
-            $row = array($badgeimage, $name, $description, $criteria, $awarded);
-            $table->data[] = $row;
-        }
-
-        $htmltable = html_writer::table($table);
-
-        return $htmlpagingbar . $htmltable . $htmlpagingbar;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -620,56 +576,11 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders a table with users who have earned the badge.
-     * Based on stamps collection plugin.
-     *
-     * @param \core_badges\output\badge_recipients $recipients
-     * @return string
-     *
      * @deprecated since Moodle 4.4
-     * @todo MDL-80455 this will be removed in Moodle 4.8
      */
+    #[\core\attribute\deprecated(null, since: '4.4', mdl: 'MDL-80052', final: true)]
     protected function render_badge_recipients(\core_badges\output\badge_recipients $recipients) {
-        debugging('The method render_badge_recipients() has been deprecated', DEBUG_DEVELOPER);
-        $paging = new paging_bar($recipients->totalcount, $recipients->page, $recipients->perpage, $this->page->url, 'page');
-        $htmlpagingbar = $this->render($paging);
-        $table = new html_table();
-        $table->attributes['class'] = 'generaltable boxaligncenter boxwidthwide';
-
-        $sortbyfirstname = $this->helper_sortable_heading(get_string('firstname'),
-                'firstname', $recipients->sort, $recipients->dir);
-        $sortbylastname = $this->helper_sortable_heading(get_string('lastname'),
-                'lastname', $recipients->sort, $recipients->dir);
-        if ($this->helper_fullname_format() == 'lf') {
-            $sortbyname = $sortbylastname . ' / ' . $sortbyfirstname;
-        } else {
-            $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
-        }
-
-        $sortbydate = $this->helper_sortable_heading(get_string('dateawarded', 'badges'),
-                'dateissued', $recipients->sort, $recipients->dir);
-
-        $table->head = array($sortbyname, $sortbydate, '');
-
-        foreach ($recipients->userids as $holder) {
-            $fullname = fullname($holder);
-            $fullname = html_writer::link(
-                            new moodle_url('/user/profile.php', array('id' => $holder->userid)),
-                            $fullname
-                        );
-            $awarded  = userdate($holder->dateissued);
-            $badgeurl = html_writer::link(
-                            new moodle_url('/badges/badge.php', array('hash' => $holder->uniquehash)),
-                            get_string('viewbadge', 'badges')
-                        );
-
-            $row = array($fullname, $awarded, $badgeurl);
-            $table->data[] = $row;
-        }
-
-        $htmltable = html_writer::table($table);
-
-        return $htmlpagingbar . $htmltable . $htmlpagingbar;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     ////////////////////////////////////////////////////////////////////////////
