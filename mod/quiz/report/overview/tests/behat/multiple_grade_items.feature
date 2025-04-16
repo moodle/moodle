@@ -41,14 +41,12 @@ Feature: Grades report for a quiz with multiple grade items
       | slot | response |
       |   1  | True     |
       |   2  | False    |
-
     When I am on the "Test quiz" "mod_quiz > Grades report" page logged in as teacher
-
-    Then "Lorna LottReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "50.00"
-    And "Lorna LottReview attempt" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "0.00"
-    And "Lorna LottReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "0.00"
-    And "Lorna LottReview attempt" row "Reading/1.00Sort by Reading/1.00 Ascending" column of "attempts" table should contain "1.00"
-    And "Lorna LottReview attempt" row "Listening/1.00Sort by Listening/1.00 Ascending" column of "attempts" table should contain "0.00"
-    And I follow "Reading/1.00Sort by Reading/1.00 Ascending"
+    Then "Lorna LottReview attempt" row "Grade/100.00" column of "attempts" table should contain "50.00"
+    And "Lorna LottReview attempt" row "Q. 1/50.00" column of "attempts" table should contain "0.00"
+    And "Lorna LottReview attempt" row "Q. 2/50.00" column of "attempts" table should contain "0.00"
+    And "Lorna LottReview attempt" row "Reading/1.00" column of "attempts" table should contain "1.00"
+    And "Lorna LottReview attempt" row "Listening/1.00" column of "attempts" table should contain "0.00"
     # Main thing to check here is that sorting does not give a fatal error
-    And "Lorna LottReview attempt" row "Listening/1.00Sort by Listening/1.00 Ascending" column of "attempts" table should contain "0.00"
+    And I click on "//a[@aria-label='Sort by Reading/1.00 ascending']" "xpath_element" in the "attempts" "table"
+    And "Lorna LottReview attempt" row "Listening/1.00" column of "attempts" table should contain "0.00"

@@ -78,7 +78,7 @@ Feature: Manage custom report columns sorting
     And I click on "Switch to preview mode" "button"
     And "user02" "table_row" should appear before "user01" "table_row"
     # Custom sorting for the user.
-    And I click on "Sort by First name Ascending" "link"
+    And I click on "//a[@aria-label='Sort by First name ascending']" "xpath_element" in the "Users" "table"
     And "user01" "table_row" should appear before "user02" "table_row"
     # Switching back to edit mode should observe report config.
     And I click on "Switch to edit mode" "button"
