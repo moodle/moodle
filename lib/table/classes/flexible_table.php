@@ -1693,15 +1693,21 @@ class flexible_table {
             $this->request[TABLE_VAR_DIR] => $sortorder,
         ];
 
+        if ($order != SORT_ASC) {
+            $sortlabel = get_string('sortbyxreverse', 'moodle', $text);
+        } else {
+            $sortlabel = get_string('sortbyx', 'moodle', $text);
+        }
+
         return html_writer::link(
             $this->baseurl->out(false, $params),
-            $text . get_accesshide(get_string('sortby') . ' ' .
-                $text . ' ' . $this->sort_order_name($isprimary, $order)),
+            $text,
             [
                     'data-sortable' => $this->is_sortable($column),
                     'data-sortby' => $column,
                     'data-sortorder' => $sortorder,
                     'role' => 'button',
+                    'aria-label' => $sortlabel,
             ]
         ) . ' ' . $this->sort_icon($isprimary, $order);
     }
