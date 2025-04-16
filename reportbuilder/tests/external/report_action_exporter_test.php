@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external;
 
 use advanced_testcase;
+use core\output\pix_icon;
 use core_reportbuilder\output\report_action;
 
 /**
@@ -37,7 +38,8 @@ final class report_action_exporter_test extends advanced_testcase {
     public function test_export(): void {
         global $PAGE;
 
-        $reportaction = new report_action('Add', ['class' => 'btn', 'data-action' => 'action']);
+        $reportaction = new report_action('Add', ['class' => 'btn', 'data-action' => 'action'], 'button',
+            new pix_icon('t/add', 'Add'));
 
         $exporter = new report_action_exporter(null, ['reportaction' => $reportaction]);
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
@@ -45,6 +47,11 @@ final class report_action_exporter_test extends advanced_testcase {
         $this->assertEquals((object) [
             'tag' => 'button',
             'title' => 'Add',
+            'icon' => [
+                'key' => 't/add',
+                'component' => 'moodle',
+                'title' => 'Add',
+            ],
             'attributes' => [
                 ['name' => 'class', 'value' => 'btn'],
                 ['name' => 'data-action', 'value' => 'action'],
