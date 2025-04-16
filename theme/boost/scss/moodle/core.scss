@@ -2553,7 +2553,7 @@ $picker-emojis-per-row: 7 !default;
 .emoji-auto-complete {
     height: $picker-row-height;
 
-    .btn.btn-link.btn-icon.emoji-button {
+    .btn.btn-icon.emoji-button {
         height: $picker-emoji-button-size;
         width: $picker-emoji-button-size;
         line-height: $picker-emoji-button-size;

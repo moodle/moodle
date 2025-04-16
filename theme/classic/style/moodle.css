@@ -28074,13 +28074,13 @@ input[disabled] {
 .emoji-auto-complete {
   height: 40px;
 }
-.emoji-auto-complete .btn.btn-link.btn-icon.emoji-button {
+.emoji-auto-complete .btn.btn-icon.emoji-button {
   height: 40px;
   width: 40px;
   line-height: 40px;
   font-size: 24px;
 }
-.emoji-auto-complete .btn.btn-link.btn-icon.emoji-button.active {
+.emoji-auto-complete .btn.btn-icon.emoji-button.active {
   background-color: #e9ecef;
 }
 

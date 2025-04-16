@@ -373,7 +373,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
                     'role' => 'button',
                     'aria-label' => get_string('moveitemup', 'core', $row->name),
                     'title' => get_string('moveitemup', 'core', $row->name),
-                    'class' => 'btn btn-link btn-icon',
+                    'class' => 'btn btn-link',
                 ]),
             );
         } else {
@@ -396,7 +396,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
                     'role' => 'button',
                     'aria-label' => get_string('moveitemdown', 'core', $row->name),
                     'title' => get_string('moveitemdown', 'core', $row->name),
-                    'class' => 'btn btn-link btn-icon',
+                    'class' => 'btn btn-link',
                 ]),
             );
         } else {
