@@ -13384,6 +13384,7 @@ readers do not read off random characters that represent icons */
   --bs-link-decoration: none;
   --bs-link-hover-color: #0c5699;
   --bs-link-hover-color-rgb: 12, 86, 153;
+  --bs-link-hover-decoration: underline;
   --bs-code-color: #db1a74;
   --bs-highlight-color: #1d2125;
   --bs-highlight-bg: #ffe3d1;
@@ -13638,6 +13639,7 @@ a {
 }
 a:hover {
   --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
+  text-decoration: underline;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -16262,6 +16264,7 @@ textarea.form-control-lg {
 }
 .btn:hover {
   color: var(--bs-btn-hover-color);
+  text-decoration: none;
   background-color: var(--bs-btn-hover-bg);
   border-color: var(--bs-btn-hover-border-color);
 }
@@ -16587,6 +16590,9 @@ textarea.form-control-lg {
   --bs-btn-box-shadow: 0 0 0 #000;
   --bs-btn-focus-shadow-rgb: 51, 130, 201;
   text-decoration: none;
+}
+.btn-link:hover, .btn-link:focus-visible {
+  text-decoration: underline;
 }
 .btn-link:focus-visible {
   color: var(--bs-btn-color);
@@ -16915,6 +16921,7 @@ textarea.form-control-lg {
 }
 .dropdown-item:hover, .dropdown-item:focus {
   color: var(--bs-dropdown-link-hover-color);
+  text-decoration: none;
   background-color: var(--bs-dropdown-link-hover-bg);
 }
 .dropdown-item.active, .dropdown-item:active {
@@ -17093,6 +17100,7 @@ textarea.form-control-lg {
 }
 .nav-link:hover, .nav-link:focus {
   color: var(--bs-nav-link-hover-color);
+  text-decoration: none;
 }
 .nav-link:focus-visible {
   outline: 0;
@@ -17246,6 +17254,7 @@ textarea.form-control-lg {
 }
 .navbar-brand:hover, .navbar-brand:focus {
   color: var(--bs-navbar-brand-hover-color);
+  text-decoration: none;
 }
 
 .navbar-nav {
@@ -17698,6 +17707,9 @@ textarea.form-control-lg {
   margin-bottom: 0;
 }
 
+.card-link:hover {
+  text-decoration: none;
+}
 .card-link + .card-link {
   margin-left: var(--bs-card-spacer-x);
 }
@@ -18023,6 +18035,7 @@ textarea.form-control-lg {
 .page-link:hover {
   z-index: 2;
   color: var(--bs-pagination-hover-color);
+  text-decoration: none;
   background-color: var(--bs-pagination-hover-bg);
   border-color: var(--bs-pagination-hover-border-color);
 }
@@ -30022,6 +30035,9 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 .maincalendar .calendarmonth ul li > a:hover {
   text-decoration: none;
 }
+.maincalendar .calendarmonth ul li > a:hover .eventname {
+  text-decoration: underline;
+}
 .maincalendar .calendarmonth ul li a[data-action=view-day-link] {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -30268,6 +30284,9 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 }
 .block .calendar_filters li > a:hover {
   text-decoration: none;
+}
+.block .calendar_filters li > a:hover .eventname {
+  text-decoration: underline;
 }
 .block .content h3.eventskey, .block .content .eventskey.h3 {
   margin-top: 0.5em;
