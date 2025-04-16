@@ -1,0 +1,7 @@
+issueNumber: MDL-82132
+notes:
+  core_user:
+    - message: >-
+        New method `\core_user::get_dummy_fullname(...)` for returning dummy
+        user fullname comprised of configured name fields only
+      type: improved
