@@ -6,6 +6,16 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 4.5.4+
+
+### core_user
+
+#### Added
+
+- New method `\core_user::get_dummy_fullname(...)` for returning dummy user fullname comprised of configured name fields only
+
+  For more information see [MDL-82132](https://tracker.moodle.org/browse/MDL-82132)
+
 ## 4.5.4
 
 ### core
