@@ -373,6 +373,8 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
 
 @mixin table-cards {
     table.reportbuilder-table {
+        --#{$prefix}table-striped-bg: #{$card-bg};
+        --#{$prefix}table-hover-bg: #{$card-bg};
         thead {
             display: none;
         }
@@ -381,14 +383,10 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
             flex-direction: column;
             margin: .5rem 0;
             padding: .25rem .5rem 0 .5rem;
-            background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
             word-wrap: break-word;
             background-clip: border-box;
             border: $card-border-width solid $card-border-color;
             @include border-radius($card-border-radius);
-            &:hover {
-                background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
-            }
             &.emptyrow {
                 display: none;
             }

@@ -40172,6 +40172,10 @@ div.editor_atto_toolbar button .icon {
 }
 
 @media (max-width: 575.98px) {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table {
+    --bs-table-striped-bg: var(--bs-body-bg);
+    --bs-table-hover-bg: var(--bs-body-bg);
+  }
   .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table thead {
     display: none;
   }
@@ -40180,14 +40184,10 @@ div.editor_atto_toolbar button .icon {
     flex-direction: column;
     margin: 0.5rem 0;
     padding: 0.25rem 0.5rem 0 0.5rem;
-    background-color: var(--bs-body-bg) !important; /* stylelint-disable-line declaration-no-important */
     word-wrap: break-word;
     background-clip: border-box;
     border: var(--bs-border-width) solid var(--bs-border-color-translucent);
     border-radius: var(--bs-border-radius);
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr:hover {
-    background-color: var(--bs-body-bg) !important; /* stylelint-disable-line declaration-no-important */
   }
   .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr.emptyrow {
     display: none;
@@ -40232,6 +40232,10 @@ div.editor_atto_toolbar button .icon {
   }
 }
 @media (min-width: 576px) {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table {
+    --bs-table-striped-bg: var(--bs-body-bg);
+    --bs-table-hover-bg: var(--bs-body-bg);
+  }
   .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table thead {
     display: none;
   }
@@ -40240,14 +40244,10 @@ div.editor_atto_toolbar button .icon {
     flex-direction: column;
     margin: 0.5rem 0;
     padding: 0.25rem 0.5rem 0 0.5rem;
-    background-color: var(--bs-body-bg) !important; /* stylelint-disable-line declaration-no-important */
     word-wrap: break-word;
     background-clip: border-box;
     border: var(--bs-border-width) solid var(--bs-border-color-translucent);
     border-radius: var(--bs-border-radius);
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr:hover {
-    background-color: var(--bs-body-bg) !important; /* stylelint-disable-line declaration-no-important */
   }
   .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr.emptyrow {
     display: none;
