@@ -1925,6 +1925,7 @@ class model {
                 $uniqueid = $this->get_time_splitting()->append_rangeindex($dbprediction->sampleid, $dbprediction->rangeindex);
                 $predictionrecords[$uniqueid]->id = $dbprediction->id;
             }
+            $dbpredictions->close();
         }
 
         return $predictionrecords;
