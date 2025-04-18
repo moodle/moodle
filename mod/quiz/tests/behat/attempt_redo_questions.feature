@@ -168,6 +168,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I follow "Review attempt"
     And I click on "1" "link" in the "First question" "question"
     And I switch to "reviewquestion" window
+    And "Summary of attempt" "table" should exist
     And the state of "First question" question is shown as "Incorrect"
     # Now switch to the other quiz attempt using the link at the top, which does not have a redo.
     And I click on "2" "link" in the "Attempts" "table_row"
