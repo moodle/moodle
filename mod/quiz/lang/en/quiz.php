@@ -1109,6 +1109,7 @@ $string['subplugintype_quizaccess_plural'] = 'Access rules';
 $string['substitutedby'] = 'will be substituted by';
 $string['summaryofattempt'] = 'Summary of attempt';
 $string['summaryofattempts'] = 'Your attempts';
+$string['summaryofattemptscaption'] = 'Attempt {$a} summary';
 $string['temporaryblocked'] = 'You are temporarily not allowed to re-attempt the quiz.<br /> You will be able to take another attempt on:';
 $string['theattempt'] = 'The attempt';
 $string['theattempt_help'] = 'Whether the student can review the attempt at all.';
