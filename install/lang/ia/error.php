@@ -44,3 +44,4 @@ $string['componentisuptodate'] = 'Componente es actualisate';
 $string['dmlexceptiononinstall'] = '<p>Un error de base de datos ha occurrite [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Verifica de file discargate falleva';
 $string['invalidmd5'] = 'Le variabile de verifica esseva errate - essaya novemente';
+$string['missingrequiredfield'] = 'Alcun campo requirite es mancante';
