@@ -34,8 +34,14 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $context The context of the course
  */
 function report_log_extend_navigation_course($navigation, $course, $context) {
+    global $SITE;
+
     if (has_capability('report/log:view', $context)) {
-        $url = new moodle_url('/report/log/index.php', array('id'=>$course->id));
+        $params = [
+            'id' => $course->id,
+            'iscoursepage' => ($course->id && ($course->id != $SITE->id)),
+        ];
+        $url = new moodle_url('/report/log/index.php', $params);
         $navigation->add(get_string('pluginname', 'report_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }

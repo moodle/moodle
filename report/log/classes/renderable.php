@@ -99,6 +99,9 @@ class report_log_renderable implements renderable {
     /** @var bool if the page is activity page */
     public $isactivitypage;
 
+    /** @var bool if the page is course page */
+    public $iscoursepage;
+
     /**
      * Constructor.
      *
@@ -121,6 +124,7 @@ class report_log_renderable implements renderable {
      * @param string $order (optional) sortorder of fetched records
      * @param string $origin (optional) origin of the event.
      * @param bool $isactivitypage (optional) if the page is activity page.
+     * @param bool $iscoursepage (optional) if the page is course page.
      */
     public function __construct(
         $logreader = "",
@@ -142,6 +146,7 @@ class report_log_renderable implements renderable {
         $order = "timecreated ASC",
         $origin ='',
         bool $isactivitypage = false,
+        bool $iscoursepage = false,
     ) {
 
         global $PAGE;
@@ -188,6 +193,7 @@ class report_log_renderable implements renderable {
         $this->logformat = $logformat;
         $this->origin = $origin;
         $this->isactivitypage = $isactivitypage;
+        $this->iscoursepage = $iscoursepage;
     }
 
     /**

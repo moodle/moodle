@@ -183,7 +183,7 @@ class report_log_renderer extends plugin_renderer_base {
      */
     private function get_course_selector_field(report_log_renderable $reportlog, int $selectedcourseid): string {
         // When the log report is accessed vie an activity, we do not need a course selector.
-        if ($reportlog->isactivitypage) {
+        if ($reportlog->isactivitypage || $reportlog->iscoursepage) {
             return html_writer::empty_tag(
                 'input',
                 ['type' => 'hidden', 'name' => 'id', 'value' => $selectedcourseid]
