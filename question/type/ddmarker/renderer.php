@@ -60,17 +60,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $output .= html_writer::img(self::get_url_for_image($qa, 'bgimage'), get_string('dropbackground', 'qtype_ddmarker'),
                 ['class' => 'dropbackground img-fluid w-100']);
 
-        $visibledropzones = [];
-        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
-            $visibledropzones = $question->get_drop_zones_without_hit($response);
-            if (count($visibledropzones) !== 0) {
-                $wrongpartsstringspans = [];
-                foreach ($visibledropzones as $visibledropzone) {
-                    $wrongpartsstringspans[] = html_writer::span($visibledropzone->markertext, 'wrongpart');
-                }
-            }
-        }
-        $output .= html_writer::div('', 'dropzones', ['data-visibled-dropzones' => json_encode($visibledropzones)]);
+        $output .= html_writer::div('', 'dropzones');
         $output .= html_writer::div('', 'markertexts');
 
         $output .= html_writer::end_div();
@@ -101,19 +91,33 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $output .= html_writer::end_div();
         $output .= html_writer::end_div();
 
+        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
+            $visibledropzones = $question->get_drop_zones_without_hit($response);
+        } else {
+            $visibledropzones = [];
+        }
+
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::div($question->get_validation_error($qa->get_last_qt_data()), 'validationerror');
         }
 
-        if (count($visibledropzones) !== 0) {
-            $wrongpartsstring = join(', ', $wrongpartsstringspans);
-            $output .= html_writer::span(get_string('followingarewrongandhighlighted', 'qtype_ddmarker', $wrongpartsstring),
-                'wrongparts');
+        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
+            $wrongparts = $question->get_drop_zones_without_hit($response);
+            if (count($wrongparts) !== 0) {
+                $wrongpartsstringspans = [];
+                foreach ($wrongparts as $wrongpart) {
+                    $wrongpartsstringspans[] = html_writer::span($wrongpart->markertext, 'wrongpart');
+                }
+                $wrongpartsstring = join(', ', $wrongpartsstringspans);
+                $output .= html_writer::span(get_string('followingarewrongandhighlighted', 'qtype_ddmarker', $wrongpartsstring),
+                        'wrongparts');
+            }
         }
 
         $output .= html_writer::div($hiddenfields, 'ddform');
+
         $this->page->requires->js_call_amd('qtype_ddmarker/question', 'init',
-                [$qa->get_outer_question_div_unique_id(), $options->readonly]);
+                [$qa->get_outer_question_div_unique_id(), $options->readonly, $visibledropzones]);
 
         return $output;
     }
