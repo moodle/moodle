@@ -92,14 +92,27 @@ test
         $PAGE->reset_theme_and_output();
         $PAGE->initialise_theme_and_output();
 
+        // Empty the custom user menu items.
+        // This should only contain default items and items added by extend_user_menu.
+        set_config('customusermenuitems', '');
+
+        // Default menu items.
+        $defaultmenu = $OUTPUT->user_menu($USER);
+
+        // Count the number of entries and dividers in the default menu.
+        preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $defaultmenu, $results);
+        $defaultentrycount = count($results[0]);
+        preg_match_all('/<span class="filler">/', $defaultmenu, $results);
+        $defaultdividercount = count($results[0]);
+
         // Set the configuration.
         set_config('customusermenuitems', $data);
 
         // We always add two dividers as standard.
-        $dividercount += 2;
+        $dividercount += $defaultdividercount;
 
         // The basic entry count will additionally include the wrapper menu, Preferences, Logout and switch roles link.
-        $entrycount += 3;
+        $entrycount += $defaultentrycount;
 
         $output = $OUTPUT->user_menu($USER);
         preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $output, $results);
