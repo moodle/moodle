@@ -156,4 +156,110 @@ final class running_test extends \advanced_testcase {
         $running = manager::get_running_tasks();
         $this->assertCount(0, $running);
     }
+
+    /**
+     * Test for adhoc task cleanup.
+     *
+     * @covers \core\task\manager::cleanup_metadata()
+     */
+    public function test_adhoc_cleanup_metadata(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $clock = $this->mock_clock_with_frozen();
+
+        // Specify lock factory to avoid previously mentioned issues with Postgres locks.
+        set_config('lock_factory', '\core\lock\db_record_lock_factory');
+
+        // Disable all scheduled tasks except the cleanup task.
+        $classname = 'core\task\task_lock_cleanup_task';
+        $DB->set_field_select('task_scheduled', 'disabled', 1, 'classname != ?', ["\\$classname"]);
+        $DB->set_field('task_scheduled', 'nextruntime', 1, ['classname' => "\\$classname"]);
+
+        // Create an adhoc task.
+        $task = new adhoc_test_task();
+        $task->set_next_run_time($clock->time() - MINSECS);
+
+        // Queue and start the adhoc task.
+        manager::queue_adhoc_task($task);
+        $task = manager::get_next_adhoc_task($clock->time());
+        manager::adhoc_task_starting($task);
+
+        // Release the lock to simulate an adhoc task that has been destroyed but hasn't been cleaned up.
+        $task->get_lock()->release();
+        $this->assertCount(1, manager::get_running_tasks());
+
+        // Run the cleanup scheduled task one hour later.
+        $clock->bump(HOURSECS);
+        $cleanuptask = manager::get_next_scheduled_task($clock->time());
+        manager::scheduled_task_starting($cleanuptask);
+        logmanager::start_logging($cleanuptask);
+        $this->assertCount(2, manager::get_running_tasks());
+        $cleanuptask->execute();
+
+        // Confirm the task has been cleaned up.
+        $this->assertCount(1, manager::get_running_tasks());
+
+        // Check the task log hasn't been finalised for the cleanup task.
+        $record = $DB->get_record('task_log', ['classname' => $classname]);
+        $this->assertEmpty($record);
+
+        // Now complete the task and make sure it was successful (0 = success, 1 = fail).
+        manager::scheduled_task_complete($cleanuptask);
+        $record = $DB->get_record('task_log', ['classname' => $classname]);
+        $this->assertEquals(0, $record->result);
+    }
+
+    /**
+     * Test for scheduled task cleanup.
+     *
+     * @covers \core\task\manager::cleanup_metadata()
+     */
+    public function test_scheduled_cleanup_metadata(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $clock = $this->mock_clock_with_frozen();
+
+        // Specify lock factory to avoid previously mentioned issues with Postgres locks.
+        set_config('lock_factory', '\core\lock\db_record_lock_factory');
+
+        // Disable all scheduled tasks except the cleanup task.
+        $classname = 'core\task\task_lock_cleanup_task';
+        $DB->set_field_select('task_scheduled', 'disabled', 1, 'classname != ?', ["\\$classname"]);
+        $DB->set_field('task_scheduled', 'nextruntime', $clock->time() + MINSECS, ['classname' => "\\$classname"]);
+
+        // Create a new scheduled task.
+        $task = new scheduled_test_task();
+        $task->set_next_run_time($clock->time() - MINSECS);
+
+        // Insert and start the test scheduled task.
+        $DB->insert_record('task_scheduled', manager::record_from_scheduled_task($task));
+        $task = manager::get_next_scheduled_task($clock->time());
+        manager::scheduled_task_starting($task);
+
+        // Release the lock to simulate a scheduled task that has been destroyed but hasn't been cleaned up.
+        $task->get_lock()->release();
+        $this->assertCount(1, manager::get_running_tasks());
+
+        // Run the cleanup scheduled task one hour later.
+        $clock->bump(HOURSECS);
+        $cleanuptask = manager::get_next_scheduled_task($clock->time());
+        manager::scheduled_task_starting($cleanuptask);
+        logmanager::start_logging($cleanuptask);
+        $this->assertCount(2, manager::get_running_tasks());
+        $cleanuptask->execute();
+
+        // Confirm the task has been cleaned up.
+        $this->assertCount(1, manager::get_running_tasks());
+
+        // Check the task log hasn't been finalised for the cleanup task.
+        $record = $DB->get_record('task_log', ['classname' => $classname]);
+        $this->assertEmpty($record);
+
+        // Now complete the task and make sure it was successful (0 = success, 1 = fail).
+        manager::scheduled_task_complete($cleanuptask);
+        $record = $DB->get_record('task_log', ['classname' => $classname]);
+        $this->assertEquals(0, $record->result);
+    }
 }

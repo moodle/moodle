@@ -1,0 +1,8 @@
+issueNumber: MDL-84442
+notes:
+  core:
+    - message: >-
+        Added a new optional param to adhoc_task_failed and
+        scheduled_task_failed to allow skipping log finalisation when called
+        from a separate task.
+      type: improved
