@@ -4608,7 +4608,8 @@ class assign {
             $jsparams['markingallocation'] = !empty($this->get_instance()->markingallocation);
             $jsparams['cmid'] = $this->get_course_module()->id;
             $jsparams['sesskey'] = sesskey();
-
+            $jsparams['supportssubmissions'] = $this->is_any_submission_plugin_enabled();
+            $jsparams['hassubmissions'] = $this->count_submissions() > 0;
             $PAGE->requires->js_call_amd('mod_assign/bulkactions/grading/bulk_actions', 'init', [$jsparams]);
         }
 
