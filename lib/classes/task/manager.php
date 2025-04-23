@@ -1130,14 +1130,17 @@ class manager {
      * This function indicates that an adhoc task was not completed successfully and should be retried.
      *
      * @param \core\task\adhoc_task $task
+     * @param bool $finaliselog finalise the log of the current running task
      */
-    public static function adhoc_task_failed(adhoc_task $task) {
+    public static function adhoc_task_failed(adhoc_task $task, bool $finaliselog = true) {
         global $DB;
 
         $clock = \core\di::get(\core\clock::class);
 
         // Finalise the log output.
-        logmanager::finalise_log(true);
+        if ($finaliselog) {
+            logmanager::finalise_log(true);
+        }
 
         $delay = $task->get_fail_delay();
 
@@ -1240,14 +1243,17 @@ class manager {
      * This function indicates that a scheduled task was not completed successfully and should be retried.
      *
      * @param \core\task\scheduled_task $task
+     * @param bool $finaliselog finalise the log of the current running task
      */
-    public static function scheduled_task_failed(scheduled_task $task) {
+    public static function scheduled_task_failed(scheduled_task $task, bool $finaliselog = true) {
         global $DB;
 
         $clock = \core\di::get(\core\clock::class);
 
         // Finalise the log output.
-        logmanager::finalise_log(true);
+        if ($finaliselog) {
+            logmanager::finalise_log(true);
+        }
 
         $delay = $task->get_fail_delay();
 
@@ -1466,7 +1472,10 @@ class manager {
 
                     $task = self::scheduled_task_from_record($taskrecord);
                     $task->set_lock($lock);
-                    self::scheduled_task_failed($task);
+
+                    // We have to skip log finalisation when failing the task as the finalise_log method from
+                    // the log manager is only aware of the current running task (i.e., the cleanup task).
+                    self::scheduled_task_failed($task, false);
                 } else if ($runningtask->type == 'adhoc') {
                     // Ad hoc tasks are removed from the DB if they finish successfully.
                     // If we can't re-get this task, that means it finished and was properly
@@ -1478,7 +1487,10 @@ class manager {
 
                     $task = self::adhoc_task_from_record($taskrecord);
                     $task->set_lock($lock);
-                    self::adhoc_task_failed($task);
+
+                    // We have to skip log finalisation when failing the task as the finalise_log method from
+                    // the log manager is only aware of the current running task (i.e., the cleanup task).
+                    self::adhoc_task_failed($task, false);
                 }
             }
         }
