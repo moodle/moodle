@@ -910,8 +910,8 @@ class process {
                 }
 
                 if ($this->get_bulk() == UU_BULK_UPDATED or $this->get_bulk() == UU_BULK_ALL) {
-                    if (!in_array($user->id, $SESSION->bulk_users)) {
-                        $SESSION->bulk_users[] = $user->id;
+                    if (!array_key_exists($user->id, $SESSION->bulk_users)) {
+                        $SESSION->bulk_users[$user->id] = $user->id;
                     }
                 }
 
@@ -924,8 +924,8 @@ class process {
                 $this->usersuptodate++;
 
                 if ($this->get_bulk() == UU_BULK_ALL) {
-                    if (!in_array($user->id, $SESSION->bulk_users)) {
-                        $SESSION->bulk_users[] = $user->id;
+                    if (!array_key_exists($user->id, $SESSION->bulk_users)) {
+                        $SESSION->bulk_users[$user->id] = $user->id;
                     }
                 }
             }
@@ -1059,8 +1059,8 @@ class process {
             \context_user::instance($user->id);
 
             if ($this->get_bulk() == UU_BULK_NEW or $this->get_bulk() == UU_BULK_ALL) {
-                if (!in_array($user->id, $SESSION->bulk_users)) {
-                    $SESSION->bulk_users[] = $user->id;
+                if (!array_key_exists($user->id, $SESSION->bulk_users)) {
+                    $SESSION->bulk_users[$user->id] = $user->id;
                 }
             }
         }
