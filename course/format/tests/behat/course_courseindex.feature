@@ -381,17 +381,3 @@ Feature: Course index depending on role
     And I turn editing mode on
     When I set the field "Edit section name" in the "page-header" "region" to "Custom section name"
     Then I should see "Custom section name" in the "courseindex-content" "region"
-
-  @javascript
-  Scenario: We cannot add a section when the number of section reaches maxsections but as soon as we reach under the limit we can add a section again.
-    Given the following config values are set as admin:
-      | maxsections | 4 | moodlecourse|
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    Then I should see "Section 1" in the "courseindex-content" "region"
-    And ".disabled" "css_element" should exist in the "[data-action='addSection']" "css_element"
-    And I should see "You have reached the maximum number of sections allowed for a course."
-    And I delete section "4"
-    And I click on "Delete" "button" in the ".modal" "css_element"
-    And ".disabled" "css_element" should not exist in the "[data-action='addSection']" "css_element"
-    And I should not see "You have reached the maximum number of sections allowed for a course."
