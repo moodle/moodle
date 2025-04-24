@@ -39,11 +39,8 @@ import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
 import {getFirst} from 'core/normalise';
 import {toggleBulkSelectionAction} from 'core_courseformat/local/content/actions/bulkselection';
-import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
-// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
-import Notification from "core/notification";
 
 // Load global strings.
 prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
@@ -87,7 +84,6 @@ export default class extends BaseComponent {
             // Availability modal selectors.
             OPTIONSRADIO: `[type='radio']`,
             COURSEADDSECTION: `#course-addsection`,
-            MAXSECTIONSWARNING: `[data-region='max-sections-warning']`,
             ADDSECTIONREGION: `[data-region='section-addsection']`,
         };
         // Component css classes.
@@ -114,24 +110,13 @@ export default class extends BaseComponent {
 
     /**
      * Initial state ready method.
-     *
-     * @param {Object} state the state data.
-     *
      */
-    stateReady(state) {
+    stateReady() {
         // Delegate dispatch clicks.
         this.addEventListener(
             this.element,
             'click',
             this._dispatchClick
-        );
-        // Check section limit.
-        this._checkSectionlist({state});
-        // Add an Event listener to recalculate limits it if a section HTML is altered.
-        this.addEventListener(
-            this.element,
-            CourseEvents.sectionRefreshed,
-            () => this._checkSectionlist({state})
         );
         // Any inplace editable update needs state refresh.
         this.addEventListener(
@@ -139,18 +124,6 @@ export default class extends BaseComponent {
             eventTypes.elementUpdated,
             this._inplaceEditableHandler
         );
-    }
-
-    /**
-     * Return the component watchers.
-     *
-     * @returns {Array} of watchers
-     */
-    getWatchers() {
-        return [
-            // Check section limit.
-            {watch: `course.sectionlist:updated`, handler: this._checkSectionlist},
-        ];
     }
 
     _dispatchClick(event) {
@@ -186,17 +159,6 @@ export default class extends BaseComponent {
     _actionMethodName(name) {
         const requestName = name.charAt(0).toUpperCase() + name.slice(1);
         return `_request${requestName}`;
-    }
-
-    /**
-     * Check the section list and disable some options if needed.
-     *
-     * @param {Object} detail the update details.
-     * @param {Object} detail.state the state object.
-     */
-    _checkSectionlist({state}) {
-        // Disable "add section" actions if the course max sections has been exceeded.
-        this._setAddSectionLocked(state.course.sectionlist.length > state.course.maxsections);
     }
 
     /**
@@ -811,38 +773,6 @@ export default class extends BaseComponent {
                 submitFunction(radio);
             }
         );
-    }
-
-    /**
-     * Disable all add sections actions.
-     *
-     * @param {boolean} locked the new locked value.
-     */
-    _setAddSectionLocked(locked) {
-        const targets = this.getElements(this.selectors.ADDSECTIONREGION);
-        targets.forEach(element => {
-            element.classList.toggle(this.classes.DISABLED, locked);
-            const addSectionElement = element.querySelector(this.selectors.ADDSECTION);
-            addSectionElement.classList.toggle(this.classes.DISABLED, locked);
-            this.setElementLocked(addSectionElement, locked);
-            // We tweak the element to show a tooltip as a title attribute.
-            if (locked) {
-                getString('sectionaddmax', 'core_courseformat')
-                    .then((text) => addSectionElement.setAttribute('title', text))
-                    .catch(Notification.exception);
-                addSectionElement.style.pointerEvents = null; // Unlocks the pointer events.
-                addSectionElement.style.userSelect = null; // Unlocks the pointer events.
-            } else {
-                addSectionElement.setAttribute('title', addSectionElement.dataset.addSections);
-            }
-        });
-        const courseAddSection = this.getElement(this.selectors.COURSEADDSECTION);
-        if (courseAddSection) {
-            const addSection = courseAddSection.querySelector(this.selectors.ADDSECTION);
-            addSection.classList.toggle(this.classes.DISPLAYNONE, locked);
-            const noMoreSections = courseAddSection.querySelector(this.selectors.MAXSECTIONSWARNING);
-            noMoreSections.classList.toggle(this.classes.DISPLAYNONE, !locked);
-        }
     }
 
     /**

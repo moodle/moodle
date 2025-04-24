@@ -37,7 +37,6 @@ final class permission_test extends advanced_testcase {
      * @param bool $ismoddisabled
      * @param bool $missingcapability
      * @param bool $isdelegated
-     * @param bool $maxsectionsreached
      * @param string $format
      * @param bool $expected
      *
@@ -47,7 +46,6 @@ final class permission_test extends advanced_testcase {
         bool $ismoddisabled,
         bool $missingcapability,
         bool $isdelegated,
-        bool $maxsectionsreached,
         string $format,
         bool $expected
     ): void {
@@ -66,10 +64,6 @@ final class permission_test extends advanced_testcase {
         if ($missingcapability) {
             $userrole = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
             assign_capability('mod/subsection:addinstance',  CAP_PROHIBIT, $userrole, context_course::instance($course->id));
-        }
-
-        if ($maxsectionsreached) {
-            set_config('maxsections', 5, 'moodlecourse');
         }
 
         if ($isdelegated) {
@@ -92,7 +86,6 @@ final class permission_test extends advanced_testcase {
                 'ismoddisabled' => true,
                 'missingcapability' => false,
                 'isdelegated' => false,
-                'maxsectionsreached' => false,
                 'format' => 'topics',
                 'expected' => false,
             ],
@@ -100,15 +93,6 @@ final class permission_test extends advanced_testcase {
                 'ismoddisabled' => false,
                 'missingcapability' => true,
                 'isdelegated' => false,
-                'maxsectionsreached' => false,
-                'format' => 'topics',
-                'expected' => false,
-            ],
-            'Max sections reached' => [
-                'ismoddisabled' => false,
-                'missingcapability' => false,
-                'isdelegated' => false,
-                'maxsectionsreached' => true,
                 'format' => 'topics',
                 'expected' => false,
             ],
@@ -116,7 +100,6 @@ final class permission_test extends advanced_testcase {
                 'ismoddisabled' => false,
                 'missingcapability' => false,
                 'isdelegated' => true,
-                'maxsectionsreached' => false,
                 'format' => 'topics',
                 'expected' => false,
             ],
@@ -124,15 +107,13 @@ final class permission_test extends advanced_testcase {
                 'ismoddisabled' => false,
                 'missingcapability' => false,
                 'isdelegated' => false,
-                'maxsectionsreached' => false,
                 'format' => 'singleactivity',
                 'expected' => false,
             ],
-            'Plugin enabled, with capability, max sections not reached, not inside a delegated section' => [
+            'Plugin enabled, with capability, not inside a delegated section' => [
                 'ismoddisabled' => false,
                 'missingcapability' => false,
                 'isdelegated' => false,
-                'maxsectionsreached' => false,
                 'format' => 'topics',
                 'expected' => true,
             ],
