@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
+
+  For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
+
 ## 5.0
 
 ### Added

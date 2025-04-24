@@ -8,6 +8,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 5.1dev
 
+### core
+
+#### Added
+
+- Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
+
+  For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
+
 ### core_user
 
 #### Added
