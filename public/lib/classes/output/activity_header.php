@@ -208,11 +208,16 @@ class activity_header implements renderable, templatable {
             );
         }
 
+        $additionalitems = '';
+        if (!$this->hideoverflow && !is_null($this->additionalnavitems)) {
+            $additionalitems = $this->additionalnavitems->export_for_template($output);
+        }
+
         return [
             'title' => $this->title,
             'description' => $this->description,
             'completion' => $activityinfo,
-            'additional_items' => $this->hideoverflow ? '' : $this->additionalnavitems,
+            'additional_items' => $additionalitems,
         ];
     }
 
