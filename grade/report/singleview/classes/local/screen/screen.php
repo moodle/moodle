@@ -259,15 +259,9 @@ abstract class screen {
     public function js() {
         global $PAGE;
 
-        $module = [
-            'name' => 'gradereport_singleview',
-            'fullpath' => '/grade/report/singleview/js/singleview.js',
-            'requires' => ['base', 'dom', 'event', 'event-simulate', 'io-base']
-        ];
-
         $PAGE->requires->strings_for_js(['overridenoneconfirm', 'removeoverride', 'removeoverridesave'],
             'gradereport_singleview');
-        $PAGE->requires->js_init_call('M.gradereport_singleview.init', [], false, $module);
+        $PAGE->requires->js_call_amd('gradereport_singleview/singleview', 'init');
     }
 
     /**

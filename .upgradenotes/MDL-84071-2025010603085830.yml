@@ -1,0 +1,9 @@
+issueNumber: MDL-84071
+notes:
+  gradereport_singleview:
+    - message: >
+        The `grade/report/singleview/js/singleview.js` file has been removed. And the
+        `grade/report/singleview/amd/src/singleview.js` file has been added. The new file
+        is converted from YUI to native JS.
+
+      type: improved
