@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage custom report schedules
   In order ot manage custom report schedules
   As an admin
@@ -107,7 +107,25 @@ Feature: Manage custom report schedules
       | Time last sent |
       | Time next send |
 
-  Scenario: Toggle report schedule
+  Scenario: Filter report schedules by enabled state
+    Given the following "core_reportbuilder > Schedules" exist:
+      | report    | name          | enabled |
+      | My report | My schedule 1 | 1       |
+      | My report | My schedule 2 | 0       |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Schedules" dynamic tab
+    When I click on "Filters" "button"
+    And I set the field "Enabled operator" in the "Enabled" "core_reportbuilder > Filter" to "Yes"
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "Filters applied"
+    And I should see "My schedule 1" in the "Report schedules" "table"
+    And I should not see "My schedule 2" in the "Report schedules" "table"
+    And I set the field "Enabled operator" in the "Enabled" "core_reportbuilder > Filter" to "No"
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "My schedule 1" in the "Report schedules" "table"
+    And I should see "My schedule 2" in the "Report schedules" "table"
+
+  Scenario: Toggle report schedule enabled state
     Given the following "core_reportbuilder > Schedules" exist:
       | report    | name        |
       | My report | My schedule |
@@ -116,6 +134,7 @@ Feature: Manage custom report schedules
     When I click on "Disable schedule" "field" in the "My schedule" "table_row"
     Then the "class" attribute of "My schedule" "table_row" should contain "text-muted"
     And I click on "Enable schedule" "field" in the "My schedule" "table_row"
+    And the "class" attribute of "My schedule" "table_row" should be set
 
   Scenario: Edit report schedule
     Given the following "core_reportbuilder > Schedules" exist:
