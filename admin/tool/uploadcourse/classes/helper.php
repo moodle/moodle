@@ -177,12 +177,7 @@ class tool_uploadcourse_helper {
      * @return enrol_plugin[]
      */
     public static function get_enrolment_plugins() {
-        $cache = cache::make('tool_uploadcourse', 'helper');
-        if (($enrol = $cache->get('enrol')) === false) {
-            $enrol = enrol_get_plugins(false);
-            $cache->set('enrol', $enrol);
-        }
-        return $enrol;
+        return enrol_get_plugins(false);
     }
 
     /**
