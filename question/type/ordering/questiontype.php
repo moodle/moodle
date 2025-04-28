@@ -462,20 +462,20 @@ class qtype_ordering extends question_type {
      */
     public function extract_options_for_export(stdClass $question): array {
 
-        $layouttype = match ($question->options->layouttype) {
+        $layouttype = match (intval($question->options->layouttype)) {
             qtype_ordering_question::LAYOUT_VERTICAL => 'VERTICAL',
             qtype_ordering_question::LAYOUT_HORIZONTAL => 'HORIZONTAL',
             default => '', // Shouldn't happen !!
         };
 
-        $selecttype = match ($question->options->selecttype) {
+        $selecttype = match (intval($question->options->selecttype)) {
             qtype_ordering_question::SELECT_ALL => 'ALL',
             qtype_ordering_question::SELECT_RANDOM => 'RANDOM',
             qtype_ordering_question::SELECT_CONTIGUOUS => 'CONTIGUOUS',
             default => '', // Shouldn't happen !!
         };
 
-        $gradingtype = match ($question->options->gradingtype) {
+        $gradingtype = match (intval($question->options->gradingtype)) {
             qtype_ordering_question::GRADING_ALL_OR_NOTHING => 'ALL_OR_NOTHING',
             qtype_ordering_question::GRADING_ABSOLUTE_POSITION => 'ABSOLUTE_POSITION',
             qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST => 'RELATIVE_NEXT_EXCLUDE_LAST',
@@ -488,7 +488,7 @@ class qtype_ordering extends question_type {
             default => '', // Shouldn't happen !!
         };
 
-        $showgrading = match ($question->options->showgrading) {
+        $showgrading = match (intval($question->options->showgrading)) {
             0 => 'HIDE',
             1 => 'SHOW',
             default => '', // Shouldn't happen !!

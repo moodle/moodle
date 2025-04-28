@@ -13,11 +13,11 @@
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
     <idnumber>myid</idnumber>
-    <layouttype></layouttype>
-    <selecttype></selecttype>
+    <layouttype>HORIZONTAL</layouttype>
+    <selecttype>ALL</selecttype>
     <selectcount>2</selectcount>
-    <gradingtype></gradingtype>
-    <showgrading></showgrading>
+    <gradingtype>RELATIVE_ALL_PREVIOUS_AND_NEXT</gradingtype>
+    <showgrading>SHOW</showgrading>
     <numberingstyle>none</numberingstyle>
     <correctfeedback format="html">
       <text>Well done!</text>
