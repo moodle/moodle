@@ -1,6 +1,6 @@
 // question: 123  name: Moodle
 // [id:myid]
-::Moodle::[html]Put these words in order.{>2     none
+::Moodle::[html]Put these words in order.{>2 ALL HORIZONTAL RELATIVE_ALL_PREVIOUS_AND_NEXT SHOW none
 Modular
 Object
 Oriented
