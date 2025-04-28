@@ -39,45 +39,73 @@ class gpt4o extends base implements openai_base {
     }
 
     #[\Override]
-    public function has_model_settings(): bool {
-        return true;
+    public function get_model_settings(): array {
+        return [
+            'top_p' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_FLOAT,
+                'help' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+            'max_tokens' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_max_tokens',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_INT,
+                'help' => [
+                    'identifier' => 'settings_max_tokens',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+            'frequency_penalty' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_frequency_penalty',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_RAW, // This is a raw value because it can be a float from -2.0 to 2.0.
+                'help' => [
+                    'identifier' => 'settings_frequency_penalty',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+            'presence_penalty' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_presence_penalty',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_RAW, // This is a raw value because it can be a float from -2.0 to 2.0.
+                'help' => [
+                    'identifier' => 'settings_presence_penalty',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+        ];
     }
 
     #[\Override]
     public function add_model_settings(MoodleQuickForm $mform): void {
-        $mform->addElement(
-            'text',
-            'top_p',
-            get_string('settings_top_p', 'aiprovider_openai'),
-        );
-        $mform->setType('top_p', PARAM_FLOAT);
-        $mform->addHelpButton('top_p', 'settings_top_p', 'aiprovider_openai');
-
-        $mform->addElement(
-            'text',
-            'max_tokens',
-            get_string('settings_max_tokens', 'aiprovider_openai'),
-        );
-        $mform->setType('max_tokens', PARAM_INT);
-        $mform->addHelpButton('max_tokens', 'settings_max_tokens', 'aiprovider_openai');
-
-        $mform->addElement(
-            'text',
-            'frequency_penalty',
-            get_string('settings_frequency_penalty', 'aiprovider_openai'),
-        );
-        // This is a raw value because it can be a float from -2.0 to 2.0.
-        $mform->setType('frequency_penalty', PARAM_RAW);
-        $mform->addHelpButton('frequency_penalty', 'settings_frequency_penalty', 'aiprovider_openai');
-
-        $mform->addElement(
-            'text',
-            'presence_penalty',
-            get_string('settings_presence_penalty', 'aiprovider_openai'),
-        );
-        // This is a raw value because it can be a float from -2.0 to 2.0.
-        $mform->setType('presence_penalty', PARAM_RAW);
-        $mform->addHelpButton('presence_penalty', 'settings_presence_penalty', 'aiprovider_openai');
+        $settings = $this->get_model_settings();
+        foreach ($settings as $key => $setting) {
+            $mform->addElement(
+                $setting['elementtype'],
+                $key,
+                get_string($setting['label']['identifier'], $setting['label']['component']),
+            );
+            $mform->setType($key, $setting['type']);
+            if (isset($setting['help'])) {
+                $mform->addHelpButton($key, $setting['help']['identifier'], $setting['help']['component']);
+            }
+        }
     }
 
     #[\Override]
