@@ -285,17 +285,11 @@ class format_topics extends core_courseformat\base {
         $elements = parent::create_edit_form_elements($mform, $forsection);
 
         if (!$forsection && (empty($COURSE->id) || $COURSE->id == SITEID)) {
-            // Add "numsections" element to the create course form - it will force new course to be prepopulated
-            // with empty sections.
-            // The "Number of sections" option is no longer available when editing course, instead teachers should
-            // delete and add sections when needed.
+            // Custom sections are always created with the default number of sections.
             $courseconfig = get_config('moodlecourse');
-            $max = (int)$courseconfig->maxsections;
-            $element = $mform->addElement('select', 'numsections', get_string('numberweeks'), range(0, $max ?: 52));
+            $element = $mform->addElement('hidden', 'numsections');
             $mform->setType('numsections', PARAM_INT);
-            if (is_null($mform->getElementValue('numsections'))) {
-                $mform->setDefault('numsections', $courseconfig->numsections);
-            }
+            $mform->setDefault('numsections', $courseconfig->numsections);
             array_unshift($elements, $element);
         }
 
