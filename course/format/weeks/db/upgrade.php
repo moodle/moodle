@@ -46,5 +46,19 @@ function xmldb_format_weeks_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025052600) {
+        $config = get_config('format_weeks');
+        // Crerate the default maxinitialsections setting if is not set.
+        if (!isset($config->maxinitialsections)) {
+            // The system may have some maxsections defined. We will keep the same value.
+            $courseconfig = get_config('moodlecourse');
+            $max = (int) $courseconfig->maxsections;
+            $config->maxinitialsections = $max ?: 52;
+            set_config('maxinitialsections', $config->maxinitialsections, 'format_weeks');
+        }
+
+        upgrade_plugin_savepoint(true, 2025052600, 'format', 'weeks');
+    }
+
     return true;
 }
