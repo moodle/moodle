@@ -4127,7 +4127,7 @@ class core_course_external extends external_api {
 
         self::validate_context($usercontext);
 
-        if ($userid != $USER->id and !has_capability('moodle/user:viewdetails', $usercontext)) {
+        if ($userid != $USER->id && !has_capability('moodle/user:viewalldetails', $usercontext)) {
             return array();
         }
 
