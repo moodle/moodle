@@ -41,6 +41,7 @@ require_login();
 
 $return = new moodle_url('/badges/criteria.php', array('id' => $badgeid));
 $badge = new badge($badgeid);
+$title = [get_string('addcriterion', 'badges'), $badge->name];
 $context = $badge->get_context();
 $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type));
 
@@ -65,6 +66,7 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
     $course = get_course($badge->courseid);
     $heading = format_string($course->fullname, true, ['context' => $context]);
+    $title[] = $heading;
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
     $PAGE->set_pagelayout('standard');
     navigation_node::override_active_url($navurl);
@@ -78,7 +80,7 @@ $urlparams = array('badgeid' => $badgeid, 'edit' => $edit, 'type' => $type, 'cri
 $PAGE->set_context($context);
 $PAGE->set_url('/badges/criteria_settings.php', $urlparams);
 $PAGE->set_heading($heading);
-$PAGE->set_title($badge->name);
+$PAGE->set_title(implode(\moodle_page::TITLE_SEPARATOR, $title));
 $PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))
     ->add(get_string('bcriteria', 'badges'), new moodle_url('criteria.php', ['id' => $badge->id]))
     ->add(get_string('criteria_' . $type, 'badges'));
