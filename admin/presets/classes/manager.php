@@ -93,6 +93,7 @@ class manager {
             'adminpresets_admin_settings_country_select' => 'adminpresets_admin_setting_configmultiselect_with_loader',
             'adminpresets_admin_settings_coursecat_select' => 'adminpresets_admin_setting_configmultiselect_with_loader',
             'adminpresets_admin_settings_h5plib_handler_select' => 'adminpresets_admin_setting_configselect',
+            // TODO: remove adminpresets_admin_settings_num_course_sections in Moodle 6.0 (MDL-85272).
             'adminpresets_admin_settings_num_course_sections' => 'adminpresets_admin_setting_configmultiselect_with_loader',
             'adminpresets_admin_settings_sitepolicy_handler_select' => 'adminpresets_admin_setting_configselect',
             'adminpresets_antivirus_clamav_pathtounixsocket_setting' => 'adminpresets_admin_setting_configtext',
