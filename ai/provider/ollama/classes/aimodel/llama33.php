@@ -39,51 +39,85 @@ class llama33 extends base implements ollama_base {
     }
 
     #[\Override]
-    public function has_model_settings(): bool {
-        return true;
+    public function get_model_settings(): array {
+        return [
+            'mirostat' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_mirostat',
+                    'component' => 'aiprovider_ollama',
+                ],
+                'type' => PARAM_INT,
+                'help' => [
+                    'identifier' => 'settings_mirostat',
+                    'component' => 'aiprovider_ollama',
+                ],
+            ],
+            'temperature' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_temperature',
+                    'component' => 'aiprovider_ollama',
+                ],
+                'type' => PARAM_FLOAT,
+                'help' => [
+                    'identifier' => 'settings_temperature',
+                    'component' => 'aiprovider_ollama',
+                ],
+            ],
+            'seed' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_seed',
+                    'component' => 'aiprovider_ollama',
+                ],
+                'type' => PARAM_INT,
+                'help' => [
+                    'identifier' => 'settings_seed',
+                    'component' => 'aiprovider_ollama',
+                ],
+            ],
+            'top_k' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_top_k',
+                    'component' => 'aiprovider_ollama',
+                ],
+                'type' => PARAM_FLOAT,
+                'help' => [
+                    'identifier' => 'settings_top_k',
+                    'component' => 'aiprovider_ollama',
+                ],
+            ],
+            'top_p' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_ollama',
+                ],
+                'type' => PARAM_FLOAT,
+                'help' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_ollama',
+                ],
+            ],
+        ];
     }
 
     #[\Override]
     public function add_model_settings(MoodleQuickForm $mform): void {
-        $mform->addElement(
-            'text',
-            'mirostat',
-            get_string('settings_mirostat', 'aiprovider_ollama'),
-        );
-        $mform->setType('mirostat', PARAM_INT);
-        $mform->addHelpButton('mirostat', 'settings_mirostat', 'aiprovider_ollama');
-
-        $mform->addElement(
-            'text',
-            'temperature',
-            get_string('settings_temperature', 'aiprovider_ollama'),
-        );
-        $mform->setType('temperature', PARAM_FLOAT);
-        $mform->addHelpButton('temperature', 'settings_temperature', 'aiprovider_ollama');
-
-        $mform->addElement(
-            'text',
-            'seed',
-            get_string('settings_seed', 'aiprovider_ollama'),
-        );
-        $mform->setType('seed', PARAM_INT);
-        $mform->addHelpButton('seed', 'settings_seed', 'aiprovider_ollama');
-
-        $mform->addElement(
-            'text',
-            'top_k',
-            get_string('settings_top_k', 'aiprovider_ollama'),
-        );
-        $mform->setType('top_k', PARAM_FLOAT);
-        $mform->addHelpButton('top_k', 'settings_top_k', 'aiprovider_ollama');
-
-        $mform->addElement(
-            'text',
-            'top_p',
-            get_string('settings_top_p', 'aiprovider_ollama'),
-        );
-        $mform->setType('top_p', PARAM_FLOAT);
-        $mform->addHelpButton('top_p', 'settings_top_p', 'aiprovider_ollama');
+        $settings = $this->get_model_settings();
+        foreach ($settings as $key => $setting) {
+            $mform->addElement(
+                $setting['elementtype'],
+                $key,
+                get_string($setting['label']['identifier'], $setting['label']['component']),
+            );
+            $mform->setType($key, $setting['type']);
+            if (isset($setting['help'])) {
+                $mform->addHelpButton($key, $setting['help']['identifier'], $setting['help']['component']);
+            }
+        }
     }
 
     #[\Override]
