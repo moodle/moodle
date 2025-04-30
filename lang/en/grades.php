@@ -897,7 +897,7 @@ $string['filterbyname'] = 'Filter by name';
 $string['filterfirstactive'] = 'First ({$a->first})';
 $string['filterlastactive'] = 'Last ({$a->last})';
 
-// Deprecated since Moodle 5.0.
+// Deprecated since Moodle 5.1.
 $string['editcalculationverbose'] = 'Edit calculation for {$a->category} {$a->itemmodule} {$a->itemname}';
 $string['editverbose'] = 'Edit {$a->category} {$a->itemmodule} {$a->itemname}';
 $string['hiddenuntildate'] = 'Hidden until: {$a}';
