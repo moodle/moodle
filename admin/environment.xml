@@ -5010,6 +5010,11 @@
           <ON_CHECK message="opcacherecommended" />
         </FEEDBACK>
       </PHP_SETTING>
+      <PHP_SETTING name="zend.exception_ignore_args" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="settingzendexceptionignoreargs" />
+        </FEEDBACK>
+      </PHP_SETTING>
     </PHP_SETTINGS>
     <CUSTOM_CHECKS>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_storage_engine" level="required">
