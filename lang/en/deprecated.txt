@@ -79,6 +79,5 @@ hiddenuntildate,core_grades
 hideverbose,core_grades
 locktimedate,core_grades
 lockverbose,core_grades
-nonunlockableverbose,core_grades
 showverbose,core_grades
 unlockverbose,core_grades
