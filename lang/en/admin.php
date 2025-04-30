@@ -1276,6 +1276,7 @@ $string['settingmaxinputvars'] = 'PHP setting max_input_vars is recommended to b
 $string['settingmaxinputvarsrequired'] = 'PHP setting max_input_vars must be at least 5000.';
 $string['settingmemorylimit'] = 'Insufficient memory detected, please set higher memory limit in PHP settings.';
 $string['settingsafemode'] = 'Moodle is not fully compatible with safe mode, please ask server administrator to turn it off. Running Moodle under safe mode is not supported, please expect various problems if you do so.';
+$string['settingzendexceptionignoreargs'] = 'It is strongly recommended that the PHP setting zend.exception_ignore_args be enabled as a security precaution.';
 $string['setupsearchengine'] = 'Setup search engine';
 $string['showcommentscount'] = 'Show comments count';
 $string['showdetails'] = 'Show details';
