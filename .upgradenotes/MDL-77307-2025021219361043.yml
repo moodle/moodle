@@ -1,0 +1,12 @@
+issueNumber: MDL-77307
+notes:
+  core_grades:
+    - message: >-
+        The previously deprecate methods have been removed:
+          - grade_structure::get_grade_analysis_icon
+          - grade_structure::get_reset_icon
+          - grade_structure::get_edit_icon
+          - grade_structure::get_hiding_icon
+          - grade_structure::get_locking_icon
+          - grade_structure::get_calculation_icon
+      type: removed
