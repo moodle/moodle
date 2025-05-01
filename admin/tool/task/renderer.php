@@ -274,7 +274,7 @@ class tool_task_renderer extends plugin_renderer_base {
                 $nextruntime = $task->get_next_run_time();
                 $due = $nextruntime < $now;
                 if ($task->get_attempts_available() > 0) {
-                    $nextrun = $due ? userdate($nextruntime) : get_string('asap', 'tool_task');
+                    $nextrun = $due ? get_string('asap', 'tool_task') : userdate($nextruntime);
                 } else {
                     $nextrun = get_string('never', 'admin');
                 }
