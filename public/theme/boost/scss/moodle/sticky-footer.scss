@@ -14,7 +14,7 @@ body {
     height: $stickyfooter-height;
     bottom: calc(#{$stickyfooter-height} * -1);
     transition: bottom .5s;
-    z-index: $zindex-fixed;
+    z-index: $zindex-sticky;
     box-shadow: 0 0 1rem rgba($black, .15);
     font-size: calc(#{$font-size-base} * 1.10);
     // Adjust sticky footer width to the main content area.
