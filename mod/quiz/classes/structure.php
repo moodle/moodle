@@ -1064,6 +1064,10 @@ class structure {
         if (!$slot) {
             return;
         }
+
+        // Retrieves the question type associated with a given slot.
+        $qtype = $this->get_question_type_for_slot($slotnumber);
+        
         $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', [$this->get_quizid()]);
 
         $trans = $DB->start_delegated_transaction();
@@ -1110,7 +1114,8 @@ class structure {
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'slotnumber' => $slotnumber,
-            ]
+                'qtype' => $qtype,
+            ],
         ]);
         $event->trigger();
     }
