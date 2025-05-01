@@ -108,7 +108,16 @@ require_login($course);
 require_capability('report/progress:view',$context);
 
 // Get group mode
-$group = groups_get_course_group($course,true); // Supposed to verify group
+if ($course->groupmode == SEPARATEGROUPS) {
+    $group = groups_get_course_group($course, true); // Supposed to verify group.
+} else {
+    if (groups_group_visible($groupid, $course)) {
+        $group = $groupid;
+    } else {
+        $group = 0;
+    }
+}
+
 if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
     require_capability('moodle/site:accessallgroups',$context);
 }
@@ -205,7 +214,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
     // Handle groups (if enabled).
-    echo $output->render_groups_select($url, $course);
+    echo $output->render_groups_select($url, $course, $group);
 
     // Display include activity filter.
     echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);

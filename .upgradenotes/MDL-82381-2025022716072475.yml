@@ -1,0 +1,5 @@
+issueNumber: MDL-82381
+notes:
+  report_progress:
+    - message: Added a new optional parameter $activegroup to render_groups_select()
+      type: changed
