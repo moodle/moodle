@@ -38883,7 +38883,7 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   transform: translate(-50%, -50%);
 }
 .modal .btn-close {
-  margin: -0.8rem -0.8rem -0.8rem auto;
+  margin: -0.4rem -0.4rem -0.4rem auto;
 }
 .modal .btn-close:not(:disabled):not(.disabled):hover, .modal .btn-close:not(:disabled):not(.disabled):focus {
   opacity: inherit;
