@@ -653,7 +653,35 @@ final class structure_test extends \advanced_testcase {
         ]);
         $structure = structure::create_for_quiz($quizobj);
 
+        // Set up event monitoring.
+        $sink = $this->redirectEvents();
+
         $structure->remove_slot(2);
+
+        // Get the event.
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Verify it's the right type of event.
+        $this->assertInstanceOf(\mod_quiz\event\slot_deleted::class, $event);
+
+        // Get the quiz_slot snapshot.
+        $slotid = $event->objectid;
+        $quizslotsnapshot = $event->get_record_snapshot('quiz_slots', $slotid);
+        $this->assertNotNull($quizslotsnapshot);
+
+        // Get the snapshot for question_references.
+        $questionreference = $event->other['questionreferenceid'];
+        if ($questionreference) {
+            $qreferencesnapshot = $event->get_record_snapshot('question_references', $questionreference);
+            $this->assertNotNull($qreferencesnapshot);
+        }
+
+        // Should NOT have the snapshot for question_set_references.
+        $questionsetreference = $event->other['questionsetreferenceid'];
+        $this->assertNull($questionsetreference);
 
         $structure = structure::create_for_quiz($quizobj);
         $this->assert_quiz_layout([
@@ -684,9 +712,37 @@ final class structure_test extends \advanced_testcase {
                  WHERE qs.quizid = ?
                    AND qsr.component = ?
                    AND qsr.questionarea = ?';
+
         $randomq = $DB->get_record_sql($sql, [$quizobj->get_quizid(), 'mod_quiz', 'slot']);
+        // Set up event monitoring.
+        $sink = $this->redirectEvents();
 
         $structure->remove_slot(2);
+
+        // Get the event.
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Verify it's the right type of event.
+        $this->assertInstanceOf(\mod_quiz\event\slot_deleted::class, $event);
+
+        // Get the quiz_slot snapshot.
+        $slotid = $event->objectid;
+        $quizslotsnapshot = $event->get_record_snapshot('quiz_slots', $slotid);
+        $this->assertNotNull($quizslotsnapshot);
+
+        // Should NOT have the snapshot for question_references.
+        $questionreference = $event->other['questionreferenceid'];
+        $this->assertNull($questionreference);
+
+        // Get the snapshot for question_set_references.
+        $questionsetreference = $event->other['questionsetreferenceid'];
+        if ($questionsetreference) {
+            $qsetreferencesnapshot = $event->get_record_snapshot('question_set_references', $questionsetreference);
+            $this->assertNotNull($qsetreferencesnapshot);
+        }
 
         $structure = structure::create_for_quiz($quizobj);
         $this->assert_quiz_layout([

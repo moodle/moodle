@@ -1190,7 +1190,8 @@ final class events_test extends \advanced_testcase {
             'other' => [
                 'quizid' => $quizobj->get_quizid(),
                 'slotnumber' => 1,
-            ]
+                'questionreferenceid' => 2,
+            ],
         ];
         $event = \mod_quiz\event\slot_deleted::create($params);
 
@@ -1203,7 +1204,28 @@ final class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\slot_deleted', $event);
         $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEquals(2, $event->other['questionreferenceid']);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test validation failure when neither questionreferenceid nor questionsetreferenceid is provided.
+     */
+    public function test_slot_deleted_no_questionreferenceids(): void {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => \context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'slotnumber' => 1,
+            ],
+        ];
+
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage('Either \'questionreferenceid\' or \'questionsetreferenceid\' must be set in other.');
+        slot_deleted::create($params);
     }
 
     /**
