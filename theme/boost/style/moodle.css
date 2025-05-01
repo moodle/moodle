@@ -27728,7 +27728,7 @@ dd:after {
   color: #1d2125;
 }
 
-.btn-footer-popover {
+.footer-popover .btn-footer-popover {
   display: none;
   position: fixed;
   bottom: 2rem;
