@@ -118,6 +118,10 @@ foreach ($settingspage->children as $childpage) {
                 }
                 $outputhtml .= html_writer::tag('div', '<!-- -->', array('class' => 'clearer'));
                 $outputhtml .= $setting->output_html($data);
+                if ($childpage->has_dependencies()) {
+                    $opts = ['dependencies' => $childpage->get_dependencies_for_javascript()];
+                    $PAGE->requires->js_call_amd('core/showhidesettings', 'init', [$opts]);
+                }
             }
             $outputhtml .= html_writer::end_tag('fieldset');
         }
