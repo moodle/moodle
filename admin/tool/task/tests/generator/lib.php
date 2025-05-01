@@ -43,7 +43,7 @@ class tool_task_generator extends testing_module_generator {
         global $DB;
         $conditions = ['classname' => $data['classname']];
         $record = $DB->get_record('task_scheduled', $conditions, '*', MUST_EXIST);
-        $record->timestarted = time() - $data['seconds'];
+        $record->timestarted = $data['seconds'] > 0 ? time() - $data['seconds'] : 0;
         $record->hostname = $data['hostname'];
         $record->pid = $data['pid'];
         $DB->update_record('task_scheduled', $record);
@@ -59,8 +59,8 @@ class tool_task_generator extends testing_module_generator {
         global $DB;
         $adhoctask = (object)[
             'classname' => $data['classname'],
-            'nextruntime' => 0,
-            'timestarted' => time() - $data['seconds'],
+            'nextruntime' => $data['nextruntime'] ?? 0,
+            'timestarted' => $data['seconds'] > 0 ? time() - $data['seconds'] : 0,
             'hostname' => $data['hostname'],
             'pid' => $data['pid'],
         ];
