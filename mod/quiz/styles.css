@@ -1105,23 +1105,23 @@ table.quizreviewsummary td.cell {
     text-align: right;
 }
 #page-mod-quiz-editgrading .inplaceeditable .quickeditlink {
-    color: var(--primary);
+    color: var(--bs-primary);
 }
 #page-mod-quiz-edit .inplaceeditable .quickeditlink {
-    color: var(--primary);
+    color: var(--bs-primary);
     text-decoration: none;
     background-color: transparent;
     padding-left: 1px;
     margin: 0;
 }
 #page-mod-quiz-edit .quickeditlink .aalink {
-    color: var(--primary);
+    color: var(--bs-primary);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
 #page-mod-quiz-edit .quickedition {
-    color: var(--primary);
+    color: var(--bs-primary);
     text-align: right;
     width: 10px;
     margin: 2px;
