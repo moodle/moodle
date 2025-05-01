@@ -175,4 +175,33 @@ final class theme_config_test extends advanced_testcase {
 
         $this->assertEquals('Right', $regions['side-pre']);
     }
+
+    /**
+     * Test that layouts are inherited from the parent theme and from the grandparent theme.
+     *
+     * @covers ::load
+     * @runInSeparateProcess
+     */
+    public function test_layout_inheritance(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes/';
+        $theme = theme_config::load('child');
+        $layout = $theme->layouts['frontpage']; // This is missing in the config.php of the child theme, so we expect
+        // it to be inherited from the parent theme.
+
+        // Check that the layout is inherited from the parent theme.
+        $this->assertEquals('columns1.php', $layout['file']);
+        $this->assertEquals(['side-pre'], $layout['regions']);
+
+        // Check that new layouts in the child theme are found.
+        $this->assertArrayHasKey('standardnonavchild', $theme->layouts);
+
+        // Check that new layouts in the parent theme are found.
+        $this->assertArrayHasKey('standardnonavparent', $theme->layouts);
+
+        // Check that layouts are also from the grandparent.
+        $this->assertArrayHasKey('base', $theme->layouts);
+    }
 }
