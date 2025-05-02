@@ -109,13 +109,15 @@ class course_request {
 
         // Notify the admin if required.
         if ($users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse')) {
+            $category = \core_course_category::get($data->category);
+
             $a = new stdClass();
             $a->link = "$CFG->wwwroot/course/pending.php";
             $a->user = fullname($USER);
-            $a->shortname = s($data->shortname) ?? '';
-            $a->fullname = s($data->fullname) ?? '';
-            $a->category = s($data->category) ?? '';
-            $a->reason = format_text($data->reason, FORMAT_PLAIN) ?? '';
+            $a->shortname = format_string($data->shortname, true, ['context' => $category->get_context()]);
+            $a->fullname = format_string($data->fullname, true, ['context' => $category->get_context()]);
+            $a->category = $category->get_formatted_name();
+            $a->reason = format_text($data->reason, FORMAT_PLAIN);
             $subject = get_string('courserequest');
             $message = get_string('courserequestnotifyemail', 'admin', $a);
             foreach ($users as $user) {
