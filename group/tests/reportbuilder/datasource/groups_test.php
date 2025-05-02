@@ -314,6 +314,12 @@ final class groups_test extends core_reportbuilder_testcase {
                 'group_member:timeadded_operator' => date::DATE_RANGE,
                 'group_member:timeadded_to' => 1622502000,
             ], false],
+            'Filter group member component' => ['group_member:component', [
+                'group_member:component_operator' => text::IS_EMPTY,
+            ], true],
+            'Filter group member component (no match)' => ['group_member:component', [
+                'group_member:component_operator' => text::IS_NOT_EMPTY,
+            ], false],
 
             // User (just to test join).
             'Filter user username' => ['user:username', [
