@@ -75,7 +75,7 @@ class controlmenu extends basecontrolmenu {
         $this->modcontext = context_module::instance($mod->id);
         $this->canmanageactivities = has_capability('moodle/course:manageactivities', $this->modcontext);
 
-        $this->basemodurl = new url('/course/mod.php', ['sesskey' => sesskey()]);
+        $this->basemodurl = new url('/course/mod.php');
         $sectionnumreturn = $format->get_sectionnum();
         if ($sectionnumreturn !== null) {
             $this->basemodurl->param('sr', $sectionnumreturn);
