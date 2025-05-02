@@ -1,5 +1,16 @@
 # gradereport_grader Upgrade notes
 
+## 5.1dev
+
+### Removed
+
+- The previously deprecated methods have been removed:
+    - grade_report_grader::get_left_icons_row
+    - grade_report_grader::get_right_icons_row
+    - grade_report_grader::get_icons
+
+  For more information see [MDL-77307](https://tracker.moodle.org/browse/MDL-77307)
+
 ## 5.0
 
 ### Deprecated

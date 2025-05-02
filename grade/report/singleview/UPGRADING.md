@@ -1,5 +1,13 @@
 # gradereport_singleview Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- The `grade/report/singleview/js/singleview.js` file has been removed. And the `grade/report/singleview/amd/src/singleview.js` file has been added. The new file is converted from YUI to native JS.
+
+  For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
+
 ## 4.5
 
 ### Deprecated

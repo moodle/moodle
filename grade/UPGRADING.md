@@ -1,5 +1,19 @@
 # core_grades (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Removed
+
+- The previously deprecate methods have been removed:
+    - grade_structure::get_grade_analysis_icon
+    - grade_structure::get_reset_icon
+    - grade_structure::get_edit_icon
+    - grade_structure::get_hiding_icon
+    - grade_structure::get_locking_icon
+    - grade_structure::get_calculation_icon
+
+  For more information see [MDL-77307](https://tracker.moodle.org/browse/MDL-77307)
+
 ## 5.0
 
 ### Added

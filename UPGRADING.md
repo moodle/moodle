@@ -16,6 +16,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
 
+### core_grades
+
+#### Removed
+
+- The previously deprecate methods have been removed:
+    - grade_structure::get_grade_analysis_icon
+    - grade_structure::get_reset_icon
+    - grade_structure::get_edit_icon
+    - grade_structure::get_hiding_icon
+    - grade_structure::get_locking_icon
+    - grade_structure::get_calculation_icon
+
+  For more information see [MDL-77307](https://tracker.moodle.org/browse/MDL-77307)
+
 ### core_user
 
 #### Added
@@ -23,6 +37,33 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New method `\core_user::get_dummy_fullname(...)` for returning dummy user fullname comprised of configured name fields only
 
   For more information see [MDL-82132](https://tracker.moodle.org/browse/MDL-82132)
+
+### gradereport_grader
+
+#### Removed
+
+- The previously deprecated methods have been removed:
+    - grade_report_grader::get_left_icons_row
+    - grade_report_grader::get_right_icons_row
+    - grade_report_grader::get_icons
+
+  For more information see [MDL-77307](https://tracker.moodle.org/browse/MDL-77307)
+
+### gradereport_singleview
+
+#### Added
+
+- The `grade/report/singleview/js/singleview.js` file has been removed. And the `grade/report/singleview/amd/src/singleview.js` file has been added. The new file is converted from YUI to native JS.
+
+  For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
+
+### report_progress
+
+#### Changed
+
+- Added a new optional parameter $activegroup to render_groups_select()
+
+  For more information see [MDL-82381](https://tracker.moodle.org/browse/MDL-82381)
 
 ## 5.0
 
