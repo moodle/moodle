@@ -60,4 +60,81 @@ final class cache_helper_test extends \advanced_testcase {
             [new \stdClass(), true],
         ];
     }
+
+    /**
+     * Test the filter_sorted_keys_by_prefixes method.
+     *
+     * @param array $keys
+     * @param array $prefixes
+     * @param array $expected
+     * @dataProvider filter_sorted_keys_by_prefixes_provider
+     */
+    public function test_filter_sorted_keys_by_prefixes(array $keys, array $prefixes, array $expected): void {
+        $this->assertEquals($expected, helper::filter_sorted_keys_by_prefixes($keys, $prefixes));
+    }
+
+    /**
+     * Data provider for filter_sorted_keys_by_prefixes tests.
+     *
+     * @return array
+     */
+    public static function filter_sorted_keys_by_prefixes_provider(): array {
+        return [
+            'simple match' => [
+                'keys' => ['aa', 'ab', 'ba', 'bb'],
+                'prefixes' => ['a'],
+                'expected' => ['aa', 'ab'],
+            ],
+            'multiple prefixes match' => [
+                'keys' => ['aa', 'ab', 'ba', 'bb', 'ca', 'cb'],
+                'prefixes' => ['a', 'c'],
+                'expected' => ['aa', 'ab', 'ca', 'cb'],
+            ],
+            'consecutive prefixes match' => [
+                'keys' => ['aa', 'ab', 'ba', 'bb', 'ca', 'cb'],
+                'prefixes' => ['a', 'b'],
+                'expected' => ['aa', 'ab', 'ba', 'bb'],
+            ],
+            'overlapping prefixes' => [
+                'keys' => ['a', 'ab', 'abc', 'abcd'],
+                'prefixes' => ['ab', 'abc'],
+                'expected' => ['ab', 'abc', 'abcd'],
+            ],
+            'exact match' => [
+                'keys' => ['a', 'b', 'c'],
+                'prefixes' => ['a', 'c'],
+                'expected' => ['a', 'c'],
+            ],
+            'duplicate keys' => [
+                'keys' => ['a', 'a', 'b', 'c'],
+                'prefixes' => ['a'],
+                'expected' => ['a', 'a'],
+            ],
+            'duplicate prefixes' => [
+                'keys' => ['a', 'b', 'c'],
+                'prefixes' => ['a', 'a', 'b'],
+                'expected' => ['a', 'b'],
+            ],
+            'unsorted keys boundry' => [
+                'keys' => ['c', 'b', 'a'],
+                'prefixes' => ['a'],
+                'expected' => [],
+            ],
+            'unsorted prefixes boundry' => [
+                'keys' => ['a', 'b', 'c'],
+                'prefixes' => ['d', 'a'],
+                'expected' => [],
+            ],
+            'empty keys' => [
+                'keys' => [],
+                'prefixes' => ['a'],
+                'expected' => [],
+            ],
+            'empty prefixes' => [
+                'keys' => ['a', 'b', 'c'],
+                'prefixes' => [],
+                'expected' => [],
+            ],
+        ];
+    }
 }
