@@ -32,3 +32,7 @@
 .block_social_activities .activity-groupmode-info {
     display: none;
 }
+
+.block_social_activities .inplaceeditable.inplaceeditingon input {
+    width: 100%;
+}
