@@ -413,7 +413,7 @@ abstract class moodleform_mod extends moodleform {
             if (empty($data[$assessedfieldname]) && empty($data[$gradefieldname])) {
                 // There are no grades set therefore completion is not allowed.
                 if (isset($data['completiongradeitemnumber']) && $data['completiongradeitemnumber'] == (string) $itemnumber) {
-                    $errors['completiongradeitemnumber'] = get_string(
+                    $errors['completionpassgrade'] = get_string(
                         'badcompletiongradeitemnumber',
                         'completion',
                         get_string("grade_{$itemname}_name", $component)
