@@ -3373,7 +3373,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $group->updateAttributes($attributes);
         $advanced = isset($this->_advancedElements[$group->getName()]);
 
-        $html = $OUTPUT->mform_element($group, $required, $advanced, $error, false);
+        $isinstickyfooter = $group->getName() && ($this->_stickyfooterelement == $group->getName());
+        $html = $OUTPUT->mform_element($group, $required, $advanced, $error, $isinstickyfooter);
         $fromtemplate = !empty($html);
         if (!$fromtemplate) {
             if (method_exists($group, 'getElementTemplateType')) {
@@ -3408,7 +3409,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         $this->_templates[$group->getName()] = $html;
         // Check if the element should be displayed in the sticky footer.
-        if ($group->getName() && ($this->_stickyfooterelement == $group->getName())) {
+        if ($isinstickyfooter) {
             $stickyfooter = new core\output\sticky_footer($html);
             $html = $OUTPUT->render($stickyfooter);
         }
