@@ -99,7 +99,7 @@ if (!has_capability('mod/data:manageentries', $context)) {
 // RSS and CSS and JS meta.
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
     $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-    $rsstitle = $courseshortname . ': ' . format_string($data->name);
+    $rsstitle = $courseshortname . \moodle_page::TITLE_SEPARATOR . format_string($data->name);
     rss_add_http_header($context, 'mod_data', $data, $rsstitle);
 }
 if ($data->csstemplate) {
