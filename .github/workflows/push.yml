@@ -65,6 +65,7 @@ jobs:
             extensions:
             db: mysqli
           - os: ubuntu-22.04
+            extensions: mongodb-1.19.4
             php: 8.1
             db: pgsql
 
