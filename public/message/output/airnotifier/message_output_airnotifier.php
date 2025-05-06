@@ -24,6 +24,7 @@
  * @since Moodle 2.7
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/message/output/lib.php');
 

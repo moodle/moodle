@@ -22,8 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 
-require_once(__DIR__ . '/../../../../config.php'); //included from messagelib (how to fix?)
-require_once($CFG->dirroot.'/message/output/lib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/message/output/lib.php');
 
 /**
  * The popup message processor
