@@ -122,3 +122,5 @@ Feature: Award badges based on activity completion
     And I select "Recipients (1)" from the "jump" singleselect
     And I should see "Student 1"
     And I should not see "Student 2"
+    And I should see "Download table data as"
+    And "Download" "button" should exist
