@@ -33,7 +33,7 @@ Feature: Testing overview integration in mod_feedback
     And the following "activities" exist:
       | activity | name                   | course | idnumber  | timeclose            |
       | feedback | Date feedback          | C1     | feedback1 | ##1 Jan 2040 08:00## |
-      | feedback | Not responded feedback | C1     | feedback2 | ##1 Jan 2040 08:00## |
+      | feedback | Not responded feedback | C1     | feedback2 | ##tomorrow noon##    |
       | feedback | No date feedback       | C1     | feedback3 |                      |
     Given the following "mod_feedback > question" exists:
       | activity     | feedback1                               |
@@ -60,7 +60,7 @@ Feature: Testing overview integration in mod_feedback
     And I should see "Allow answers until" in the "feedback_overview_collapsible" "region"
     And I should see "1 January 2040" in the "Date feedback" "table_row"
     And I should see "4 of 8" in the "Date feedback" "table_row"
-    And I should see "1 January 2040" in the "Not responded feedback" "table_row"
+    And I should see "Tomorrow" in the "Not responded feedback" "table_row"
     And I should see "0 of 8" in the "Not responded feedback" "table_row"
     And I should see "-" in the "No date feedback" "table_row"
     And I should see "3 of 8" in the "No date feedback" "table_row"
@@ -74,7 +74,7 @@ Feature: Testing overview integration in mod_feedback
     And I should see "Allow answers until" in the "feedback_overview_collapsible" "region"
     And I should see "1 January 2040" in the "Date feedback" "table_row"
     And "You have already submitted this feedback" "icon" should exist in the "Date feedback" "table_row"
-    And I should see "1 January 2040" in the "Not responded feedback" "table_row"
+    And I should see "Tomorrow" in the "Not responded feedback" "table_row"
     And I should see "-" in the "Not responded feedback" "table_row"
     And I should see "-" in the "No date feedback" "table_row"
     And "You have already submitted this feedback" "icon" should exist in the "No date feedback" "table_row"

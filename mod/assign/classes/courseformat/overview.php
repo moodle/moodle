@@ -17,6 +17,7 @@
 namespace mod_assign\courseformat;
 
 use assign;
+use core_calendar\output\humandate;
 use cm_info;
 use core_courseformat\local\overview\overviewitem;
 use core\output\action_link;
@@ -68,7 +69,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             );
         }
 
-        $content = userdate($duedate);
+        $content = humandate::create_from_timestamp($duedate);
 
         return new overviewitem(
             name: get_string('duedate', 'assign'),

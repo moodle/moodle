@@ -31,9 +31,9 @@ In order to summarize the workshops
       | student8 | C1     | student        |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity | name       | course | idnumber  | submissiontypetext | submissiontypefile | grade | gradinggrade | gradedecimals | overallfeedbackmethod |latesubmissions | submisstionstart     | submissionend        |
-      | workshop | Activity 1 | C1     | workshop1 | 2                  | 1                  | 100   | 5            | 1             | 2                     |1               | ##1 Jan 2018 08:00## | ##1 Jan 2040 08:00## |
-      | workshop | Activity 2 | C1     | workshop1 | 2                  | 1                  | 100   | 5            | 1             | 2                     |1               | ##1 Jan 2018 08:00## | ##1 Jan 2040 08:00## |
+      | activity | name       | course | idnumber  | submissiontypetext | submissiontypefile | grade | gradinggrade | gradedecimals | overallfeedbackmethod | latesubmissions | submisstionstart     | submissionend        |
+      | workshop | Activity 1 | C1     | workshop1 | 2                  | 1                  | 100   | 5            | 1             | 2                     | 1               | ##1 Jan 2018 08:00## | ##1 Jan 2040 08:00## |
+      | workshop | Activity 2 | C1     | workshop1 | 2                  | 1                  | 100   | 5            | 1             | 2                     | 1               | ##today noon##       | ##tomorrow noon##    |
 
   Scenario: The workshop overview report should generate log events
     Given I am on the "Course 1" "course > activities > workshop" page logged in as "teacher1"
@@ -145,7 +145,7 @@ In order to summarize the workshops
     And I should see "Submission phase" in the "Activity 2" "table_row"
     # Cheack Deadline.
     And I should see "-" in the "Activity 1" "table_row"
-    And I should see "1 January 2040" in the "Activity 2" "table_row"
+    And I should see "Tomorrow" in the "Activity 2" "table_row"
     # Check Submissions.
     And I should see "1 of 8" in the "Activity 1" "table_row"
     And I should see "0 of 8" in the "Activity 2" "table_row"
