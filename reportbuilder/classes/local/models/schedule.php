@@ -49,6 +49,9 @@ class schedule extends persistent {
     /** @var int No recurrence */
     public const RECURRENCE_NONE = 0;
 
+    /** @var int Hourly recurrence */
+    public const RECURRENCE_HOURLY = 6;
+
     /** @var int Daily recurrence */
     public const RECURRENCE_DAILY = 1;
 
@@ -125,6 +128,7 @@ class schedule extends persistent {
                 'default' => self::RECURRENCE_NONE,
                 'choices' => [
                     self::RECURRENCE_NONE,
+                    self::RECURRENCE_HOURLY,
                     self::RECURRENCE_DAILY,
                     self::RECURRENCE_WEEKDAYS,
                     self::RECURRENCE_WEEKLY,

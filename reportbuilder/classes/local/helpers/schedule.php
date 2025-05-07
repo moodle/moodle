@@ -20,8 +20,8 @@ namespace core_reportbuilder\local\helpers;
 
 use context_user;
 use core\{clock, di};
+use core\exception\{coding_exception, invalid_parameter_exception};
 use core_user;
-use invalid_parameter_exception;
 use stdClass;
 use stored_file;
 use table_dataformat_export_format;
@@ -237,6 +237,7 @@ class schedule {
      * @param model $schedule
      * @param int|null $timenow Deprecated since Moodle 4.5 - please use {@see clock} dependency injection
      * @return int
+     * @throws coding_exception
      */
     public static function calculate_next_send_time(model $schedule, ?int $timenow = null): int {
         global $CFG;
@@ -266,6 +267,9 @@ class schedule {
         ] = usergetdate($timescheduled, $CFG->timezone);
 
         switch ($recurrence) {
+            case model::RECURRENCE_HOURLY:
+                $hour += 1;
+            break;
             case model::RECURRENCE_DAILY:
                 $day += 1;
             break;
@@ -288,6 +292,9 @@ class schedule {
             break;
             case model::RECURRENCE_ANNUALLY:
                 $year += 1;
+            break;
+            default:
+                throw new coding_exception('Invalid recurrence value', $recurrence);
             break;
         }
 
@@ -382,6 +389,7 @@ class schedule {
     public static function get_recurrence_options(): array {
         return [
             model::RECURRENCE_NONE => get_string('none'),
+            model::RECURRENCE_HOURLY => get_string('recurrencehourly', 'core_reportbuilder'),
             model::RECURRENCE_DAILY => get_string('recurrencedaily', 'core_reportbuilder'),
             model::RECURRENCE_WEEKDAYS => get_string('recurrenceweekdays', 'core_reportbuilder'),
             model::RECURRENCE_WEEKLY => get_string('recurrenceweekly', 'core_reportbuilder'),

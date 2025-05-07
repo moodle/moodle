@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use advanced_testcase;
-use invalid_parameter_exception;
 use core\clock;
+use core\exception\{coding_exception, invalid_parameter_exception};
 use core_cohort\reportbuilder\audience\cohortmember;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\models\schedule as model;
@@ -413,6 +413,9 @@ final class schedule_test extends advanced_testcase {
             'Recurrence, time scheduled in future' => [
                 model::RECURRENCE_DAILY, '2021-06-05 12:00', '2021-06-05 12:00',
             ],
+            'Hourly recurrence' => [
+                model::RECURRENCE_HOURLY, '2021-06-04 20:30', '2021-06-04 23:30',
+            ],
             'Daily recurrence' => [
                 model::RECURRENCE_DAILY, '2021-06-02 12:00', '2021-06-05 12:00',
             ],
@@ -457,5 +460,28 @@ final class schedule_test extends advanced_testcase {
 
         $scheduleexpected = strtotime("{$expected} UTC");
         $this->assertEquals($scheduleexpected, schedule::calculate_next_send_time($schedule));
+    }
+
+    /**
+     * Test for calculating next schedule send time with an invalid recurrence value
+     */
+    public function test_calculate_next_send_time_invalid_recurrence(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        // Create model manually, as the generator automatically calculates next send itself.
+        $schedule = new model(0, (object) [
+            'reportid' => $report->get('id'),
+            'name' => 'My schedule',
+            'recurrence' => -42,
+            'timescheduled' => $this->clock->time() - DAYSECS,
+        ]);
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Invalid recurrence value');
+        schedule::calculate_next_send_time($schedule);
     }
 }
