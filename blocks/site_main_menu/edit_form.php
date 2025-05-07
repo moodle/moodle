@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,14 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_site_main_menu', language 'en', branch 'MOODLE_20_STABLE'
+ * Form for editing The Additional activities block instances.
  *
  * @package   block_site_main_menu
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2025 Sara Arjona <sara@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class block_site_main_menu_edit_form extends block_edit_form {
 
-$string['configtitle'] = 'Title';
-$string['pluginname'] = 'Additional activities';
-$string['privacy:metadata'] = 'The Additional activities block only shows data stored in other locations.';
-$string['site_main_menu:addinstance'] = 'Add a new Additional activities block';
+    #[\Override]
+    protected function specific_definition($mform) {
+        // Fields for editing HTML block title and contents.
+        $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
+
+        $mform->addElement('text', 'config_title', get_string('configtitle', 'block_site_main_menu'));
+        $mform->setDefault('config_title', get_string('pluginname', 'block_site_main_menu'));
+        $mform->setType('config_title', PARAM_TEXT);
+    }
+}
