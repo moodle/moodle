@@ -91,14 +91,27 @@
                 <span class="visually-hidden">{{#str}} collapse, core {{/str}}</span>
             </span>
         </a>
-        <a href="{{{sectionurl}}}"
-            class="courseindex-link text-truncate"
-            data-action="togglecourseindexsection"
-            data-for="section_title"
-            tabindex="-1"
-        >
-            {{{title}}}
-        </a>
+        {{! We display a link when there is a sectionurl, otherwise a span. The data-for attribute is required by JS. }}
+        {{#sectionurl}}
+            <a href="{{{sectionurl}}}"
+                class="courseindex-link text-truncate"
+                data-action="togglecourseindexsection"
+                data-for="section_title"
+                tabindex="-1"
+            >
+                {{{title}}}
+            </a>
+        {{/sectionurl}}
+        {{^sectionurl}}
+            <span
+                class="text-truncate"
+                data-action="togglecourseindexsection"
+                data-for="section_title"
+                tabindex="-1"
+            >
+                {{{title}}}
+            </span>
+        {{/sectionurl}}
         <span class="current-badge badge bg-primary text-white ms-2 px-2 rounded-pill">
             {{highlighted}}
         </span>
