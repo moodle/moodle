@@ -17,6 +17,7 @@
 namespace core_course\output;
 
 use core\component;
+use core\exception\coding_exception;
 use core\output\local\properties\iconsize;
 use core\output\renderable;
 use core\output\renderer_base;
@@ -63,7 +64,12 @@ class activity_icon implements renderable, templatable {
         /** @var string the module name */
         protected string $modname,
     ) {
-        $this->isbranded = component_callback('mod_' . $this->modname, 'is_branded', [], false) ? true : false;
+        try {
+            $this->isbranded = component_callback('mod_' . $this->modname, 'is_branded', [], false);
+        } catch (coding_exception $e) {
+            debugging($e->getMessage(), DEBUG_DEVELOPER);
+            $this->isbranded = false;
+        }
         $this->purpose = plugin_supports('mod', $this->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
     }
 
