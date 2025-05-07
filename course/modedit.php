@@ -127,7 +127,7 @@ if (!empty($add)) {
     $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
     $pageheading = get_string('editsettings', 'moodle');
-    $pagetitle = get_string('edita', 'moodle', $fullmodulename) . ': ' . $cm->name;
+    $pagetitle = get_string('edita', 'moodle', $fullmodulename) . moodle_page::TITLE_SEPARATOR . $cm->name;
     $navbaraddition = null;
 
 } else {
