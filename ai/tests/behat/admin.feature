@@ -145,3 +145,52 @@ Feature: An administrator can manage AI subsystem settings
     And I should see "This action is unavailable. No AI providers are configured for this action." in the "Generate image" "table_row"
     And I toggle the "Generate text" admin switch "off"
     And I should see "Generate text disabled."
+
+  @javascript
+  Scenario: Model settings can be individually configured
+    Given the following "core_ai > ai providers" exist:
+      | provider          | name            | enabled | apikey | orgid |
+      | aiprovider_openai | OpenAI API test | 1       | 123    | abc   |
+    And I am logged in as "admin"
+    And I navigate to "AI > AI providers" in site administration
+    And I click on the "Settings" link in the table row containing "OpenAI API test"
+    # Configure model settings for 'GPT-4o'.
+    And I click on the "Settings" link in the table row containing "Generate text"
+    And I set the following fields to these values:
+      | AI model          | GPT-4o |
+      | top_p             | 11     |
+      | max_tokens        | 12     |
+      | frequency_penalty | 13     |
+      | presence_penalty  | 14     |
+    And I press "Save changes"
+    And I click on the "Settings" link in the table row containing "Generate text"
+    And the field "top_p" matches value "11"
+    And the field "max_tokens" matches value "12"
+    And the field "frequency_penalty" matches value "13"
+    And the field "presence_penalty" matches value "14"
+    # Change the model and check fields are empty.
+    And I set the following fields to these values:
+      | AI model | O1 |
+    And the field "top_p" matches value ""
+    And the field "max_tokens" matches value ""
+    And the field "frequency_penalty" matches value ""
+    And the field "presence_penalty" matches value ""
+    # Set model settings for 'O1'.
+    And I set the following fields to these values:
+      | top_p             | 21 |
+      | max_tokens        | 22 |
+      | frequency_penalty | 23 |
+      | presence_penalty  | 24 |
+    And I press "Save changes"
+    # Go back and check both models have their settings stored.
+    And I click on the "Settings" link in the table row containing "Generate text"
+    And the field "top_p" matches value "21"
+    And the field "max_tokens" matches value "22"
+    And the field "frequency_penalty" matches value "23"
+    And the field "presence_penalty" matches value "24"
+    And I set the following fields to these values:
+      | AI model | GPT-4o |
+    And the field "top_p" matches value "11"
+    And the field "max_tokens" matches value "12"
+    And the field "frequency_penalty" matches value "13"
+    And the field "presence_penalty" matches value "14"

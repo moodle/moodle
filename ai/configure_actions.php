@@ -87,6 +87,16 @@ if ($data = $mform->get_data()) {
     $providerinstance = $manager->get_provider_instances(['id' => $id]);
     $providerinstance = reset($providerinstance);
     $actionconfig = $providerinstance->actionconfig;
+
+    // Merge existing settings with new ones.
+    $existingmodelsettings = $actionconfig[$action]['modelsettings'] ?? [];
+    $newmodelsettings = $data->modelsettings ?? [];
+    if (!empty($existingmodelsettings) && !empty($newmodelsettings)) {
+        $newmodelsettings = array_replace($existingmodelsettings, $newmodelsettings);
+    }
+    $actionconfig[$action]['modelsettings'] = $newmodelsettings;
+    unset($data->modelsettings);
+
     $actionconfig[$action]['settings'] = (array)$data;
     $actionconfig[$action]['enabled'] = $providerinstance->actionconfig[$action]['enabled'];
 
