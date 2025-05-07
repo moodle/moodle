@@ -1,0 +1,7 @@
+issueNumber: MDL-80455
+notes:
+  core_badges:
+    - message: >-
+        Final removal of core_badges_renderer::render_badge_collection() and
+        core_badges_renderer::render_badge_recipients()
+      type: removed
