@@ -104,7 +104,8 @@ class question_reference_manager {
                 // Get the names of the tags in the condition. Find or create corresponding tags,
                 // and set their ids in the new condition.
                 $oldtags = array_map(fn($oldtag) => explode(',', $oldtag)[1], $filtercondition['tags']);
-                $newtags = \core_tag_tag::create_if_missing(1, $oldtags);
+                $questiontagcollid = \core_tag_area::get_collection('core_question', 'question');
+                $newtags = \core_tag_tag::create_if_missing($questiontagcollid, $oldtags);
                 $newtagids = array_map(fn($newtag) => $newtag->id, $newtags);
 
                 $filtercondition['filter']['qtagids'] = [
