@@ -215,7 +215,9 @@ class overviewtable implements renderable, named_templatable {
     private function is_cm_displayable(cm_info $cm): bool {
         // Folder is an exception because it has settings to be displayed in the course
         // page without having a view link.
-        return $cm->uservisible && ($cm->has_view() || strcmp($cm->modname, 'folder') === 0);
+        return $cm->uservisible
+            && ($cm->has_view() || strcmp($cm->modname, 'folder') === 0)
+            && \course_modinfo::is_mod_type_visible_on_course($cm->modname);
     }
 
     /**

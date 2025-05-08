@@ -41,9 +41,18 @@ final class text_filter_test extends \advanced_testcase {
             'page',
             ['course' => $course->id, 'name' => 'Test (2)']
         );
+        // Create a label and question bank that should not be linked to.
+        $this->getDataGenerator()->create_module(
+            'label',
+            ['course' => $course->id, 'name' => 'Label 1', 'intro' => 'Label 1']
+        );
+        $this->getDataGenerator()->create_module(
+            'qbank',
+            ['course' => $course->id, 'name' => 'Question bank 1']
+        );
 
         // Format text with all three entries in HTML.
-        $html = '<p>Please read the two pages Test 1 and <i>Test (2)</i>.</p>';
+        $html = '<p>Please read the two pages Test 1 and <i>Test (2)</i>, but not Label 1 or Question bank 1.</p>';
         $filtered = format_text($html, FORMAT_HTML, ['context' => $context]);
 
         // Find all the glossary links in the result.
