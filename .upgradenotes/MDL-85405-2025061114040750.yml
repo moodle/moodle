@@ -1,0 +1,9 @@
+issueNumber: MDL-85405
+notes:
+  core_course:
+    - message: >-
+        The external function `core_course_get_course_contents` now includes the
+        `candisplay` property for each returned module. If this is false, the
+        module should not be displayed on the course page (for example, for
+        question banks).
+      type: improved

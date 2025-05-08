@@ -287,6 +287,7 @@ class core_course_external extends external_api {
                         $module['completion'] = $cm->completion;
                         $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
+                        $module['candisplay'] = plugin_supports('mod', $cm->modname, FEATURE_CAN_DISPLAY, true);
                         $module['dates'] = $activitydates;
                         $module['groupmode'] = $cm->groupmode;
 
@@ -487,6 +488,10 @@ class core_course_external extends external_api {
                                     'activitybadge' => self::get_activitybadge_structure(),
                                     'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
                                     'noviewlink' => new external_value(PARAM_BOOL, 'Whether the module has no view page',
+                                        VALUE_OPTIONAL),
+                                    'candisplay' => new external_value(
+                                        PARAM_BOOL,
+                                        'Whether the module should be displayed on the course page',
                                         VALUE_OPTIONAL),
                                     'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
                                         0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
