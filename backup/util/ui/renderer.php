@@ -1093,8 +1093,9 @@ class core_backup_renderer extends plugin_renderer_base {
             $sourceurl = new \moodle_url('/course/view.php', array('id' => $copy->sourceid));
 
             $tablerow = array(
-                html_writer::link($sourceurl, $copy->source),
-                $copy->destination,
+                html_writer::link($sourceurl, format_string($copy->source, true,
+                    ['context' => context_course::instance($copy->sourceid)])),
+                format_string($copy->destination, true, ['context' => context_course::instance($copy->sourceid)]),
                 userdate($copy->timecreated),
                 get_string($copy->operation),
                 $this->get_status_display($copy->status, $copy->backupid, $copy->restoreid, $copy->operation)
