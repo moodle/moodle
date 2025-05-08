@@ -26,6 +26,7 @@ Feature: Block activity modules
       | url        | Frontpage url name          | Frontpage url description          | Acceptance test site | url0        |
       | wiki       | Frontpage wiki name         | Frontpage wiki description         | Acceptance test site | wiki0       |
       | workshop   | Frontpage workshop name     | Frontpage workshop description     | Acceptance test site | workshop0   |
+      | qbank      | Frontpage qbank name        | Frontpage qbank description        | Acceptance test site | qbank0      |
 
     When I log in as "admin"
     And I am on site homepage
@@ -74,6 +75,8 @@ Feature: Block activity modules
     And I should see "Frontpage imscp name"
     And I should see "Frontpage folder name"
     And I should see "Frontpage url name"
+    And I am on site homepage
+    And "Question banks" "link" should not exist in the "Activities" "block"
 
   Scenario: Add activities block in a course
     Given the following "courses" exist:
@@ -100,6 +103,7 @@ Feature: Block activity modules
       | url        | Test url name          | Test url description          | C1     | url1        |
       | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
+      | qbank      | Test qbank name        | Test qbank description        | C1     | qbank1      |
 
     When I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
@@ -147,3 +151,5 @@ Feature: Block activity modules
     And I should see "Test imscp name"
     And I should see "Test folder name"
     And I should see "Test url name"
+    And I am on "Course 1" course homepage
+    And "Question banks" "link" should not exist in the "Activities" "block"

@@ -225,8 +225,11 @@ class overviewtable implements externable, named_templatable, renderable {
         // Folder is an exception because it has settings to be displayed in the course
         // page without having a view link.
         return (
-            (has_capability('moodle/course:viewhiddenactivities', $cm->context)
-            || (($cm->is_visible_on_course_page() || $cm->is_stealth())
+            \course_modinfo::is_mod_type_visible_on_course($cm->modname)
+            && (
+                has_capability('moodle/course:viewhiddenactivities', $cm->context)
+                || (($cm->is_visible_on_course_page() || $cm->is_stealth()
+            )
             && ($cm->available || !empty($cm->availableinfo))))
             && ($cm->has_view() || strcmp($cm->modname, 'folder') === 0)
         );
