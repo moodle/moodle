@@ -17,7 +17,6 @@
 namespace core\oauth2\service;
 
 use core\oauth2\issuer;
-use core\oauth2\endpoint;
 use core\oauth2\user_field_mapping;
 use core\oauth2\discovery\openidconnect;
 
@@ -39,7 +38,7 @@ class microsoft extends openidconnect implements issuer_interface {
         $record = (object) [
             'name' => 'Microsoft',
             'image' => 'https://www.microsoft.com/favicon.ico',
-            'baseurl' => '',
+            'baseurl' => 'https://login.microsoftonline.com/common/v2.0',
             'loginscopes' => 'openid profile email user.read',
             'loginscopesoffline' => 'openid profile email user.read offline_access',
             'showonloginpage' => issuer::EVERYWHERE,
@@ -50,49 +49,33 @@ class microsoft extends openidconnect implements issuer_interface {
         return $issuer;
     }
 
-    /**
-     * Create endpoints for this issuer.
-     *
-     * @param issuer $issuer Issuer the endpoints should be created for.
-     * @return issuer
-     */
-    public static function create_endpoints(issuer $issuer): issuer {
-        $endpoints = [
-            'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            'token_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-            'userinfo_endpoint' => 'https://graph.microsoft.com/v1.0/me/',
-            'userpicture_endpoint' => 'https://graph.microsoft.com/v1.0/me/photo/$value',
-        ];
-        foreach ($endpoints as $name => $url) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'name' => $name,
-                'url' => $url
-            ];
-            $endpoint = new endpoint(0, $record);
-            $endpoint->create();
+    #[\Override]
+    protected static function create_field_mappings(issuer $issuer): void {
+        // Remove existing user field mapping.
+        foreach (user_field_mapping::get_records(['issuerid' => $issuer->get('id')]) as $userfieldmapping) {
+            $userfieldmapping->delete();
         }
 
         // Create the field mappings.
         $mapping = [
-            'givenName' => 'firstname',
-            'surname' => 'lastname',
-            'userPrincipalName' => 'email',
+            'sub' => 'idnumber',
+            'givenname' => 'firstname',
+            'familyname' => 'lastname',
+            'email' => 'email',
             'displayName' => 'alternatename',
             'officeLocation' => 'address',
             'mobilePhone' => 'phone1',
-            'preferredLanguage' => 'lang'
+            'locale' => 'lang',
         ];
+
         foreach ($mapping as $external => $internal) {
             $record = (object) [
                 'issuerid' => $issuer->get('id'),
                 'externalfield' => $external,
-                'internalfield' => $internal
+                'internalfield' => $internal,
             ];
             $userfieldmapping = new user_field_mapping(0, $record);
             $userfieldmapping->create();
         }
-
-        return $issuer;
     }
 }
