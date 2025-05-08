@@ -337,6 +337,7 @@ final class oauth2_test extends \advanced_testcase {
             ],
             'Microsoft' => [
                 'type' => 'microsoft',
+                'discoveryurl' => '.well-known/openid-configuration',
             ],
             'Facebook' => [
                 'type' => 'facebook',
