@@ -405,6 +405,12 @@ class core_cohort_external extends external_api {
                 $results = $results + cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
             }
         } else if ($includes == 'all') {
+            $contextsystem = context_system::instance();
+            if (!$context instanceof context_system &&
+                    !has_any_capability(['moodle/cohort:view', 'moodle/cohort:manage'], $contextsystem)) {
+
+                throw new required_capability_exception($contextsystem, 'moodle/cohort:view', 'nopermissions', '');
+            }
             $results = cohort_get_all_cohorts($limitfrom, $limitnum, $query);
             $results = $results['cohorts'];
         } else {
