@@ -441,18 +441,19 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
 }
 
 // Logic to apply card-view mixin when necessary
+.reportbuilder-report {
+    container-type: inline-size; /* stylelint-disable-line */
+}
 
 .reportbuilder-report[data-report-type="0"]:not([data-editing]) {
-    // Report card view for small screens (if not forcing table).
-    @include media-breakpoint-down(xs) {
+    // Report card view for small containers (if not forcing table).
+    @container (width < #{map-get($grid-breakpoints, sm)}) { /* stylelint-disable-line */
         &:not([data-force-table]) {
             @include table-cards;
         }
     }
     // Report card view for bigger screens (if forcing card).
-    @include media-breakpoint-up(sm) {
-        &[data-force-card] {
-            @include table-cards;
-        }
+    &[data-force-card] {
+        @include table-cards;
     }
 }
