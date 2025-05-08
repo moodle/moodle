@@ -60,10 +60,10 @@ class renderer extends plugin_renderer_base {
      * @param string $pagetitle the page title to add to the rest of the parts. Empty by default.
      */
     public function set_title(array $titleparts, string $pagetitle = '') {
-        $title = implode(\moodle_page::TITLE_SEPARATOR, $titleparts);
         if (!empty($pagetitle)) {
-            $title = $pagetitle . ': ' . $title;
+            array_unshift($titleparts, $pagetitle);
         }
+        $title = implode(\moodle_page::TITLE_SEPARATOR, $titleparts);
         $this->page->set_title($title);
     }
 }
