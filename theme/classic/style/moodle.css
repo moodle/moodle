@@ -29587,6 +29587,14 @@ img.icon {
 .block .block-controls .dropdown-toggle::after {
   display: none;
 }
+.block .block-controls .dropdown-menu {
+  max-width: 500px;
+}
+.block .block-controls .dropdown-menu .dropdown-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 [data-region=blocks-column] {
   width: 360px;
