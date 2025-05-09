@@ -1,0 +1,8 @@
+issueNumber: MDL-85433
+notes:
+  core_courseformat:
+    - message: >-
+        A new interface, `main_activity_interface`, is now available. Course
+        format plugins should implement it if they intend to display only a
+        single activity in the course page.
+      type: improved
