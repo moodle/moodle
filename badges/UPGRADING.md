@@ -1,5 +1,13 @@
 # core_badges (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Removed
+
+- Final removal of core_badges_renderer::render_badge_collection() and core_badges_renderer::render_badge_recipients()
+
+  For more information see [MDL-80455](https://tracker.moodle.org/browse/MDL-80455)
+
 ## 5.0
 
 ### Added

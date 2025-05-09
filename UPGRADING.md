@@ -16,6 +16,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
 
+### core_badges
+
+#### Removed
+
+- Final removal of core_badges_renderer::render_badge_collection() and core_badges_renderer::render_badge_recipients()
+
+  For more information see [MDL-80455](https://tracker.moodle.org/browse/MDL-80455)
+
 ### core_grades
 
 #### Removed
