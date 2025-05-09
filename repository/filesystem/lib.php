@@ -622,6 +622,8 @@ class repository_filesystem extends repository {
                 $filename = $options['filename'];
             }
             $dontdie = ($options && isset($options['dontdie']));
+            // If the file is linked to the original then we should not cache it.
+            $lifetime = 0;
             send_file($file, $filename, $lifetime , $filter, false, $forcedownload, '', $dontdie);
         } else {
             send_file_not_found();
