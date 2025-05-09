@@ -166,6 +166,7 @@ class controlmenu extends basecontrolmenu {
         $controls['duplicate'] = $this->get_cm_duplicate_item();
         $controls['assign'] = $this->get_cm_assign_item();
         $controls['groupmode'] = $this->get_cm_groupmode_item();
+        $controls['permalink'] = $this->get_cm_permalink_item();
         $controls['delete'] = $this->get_cm_delete_item();
 
         return $controls;
@@ -391,6 +392,27 @@ class controlmenu extends basecontrolmenu {
             subpanel: $groupmode->get_choice_list(),
             attributes: ['class' => 'editing_groupmode'],
             icon: new pix_icon('t/groupv', '', 'moodle', ['class' => 'iconsmall']),
+        );
+    }
+
+    /**
+     * Generates the permalink item for a course module.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_cm_permalink_item(): ?link {
+        $url = $this->mod->get_url();
+        if (!$url) {
+            return null;
+        }
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('i/link', ''),
+            text: get_string('activitylink', 'course'),
+            attributes: [
+                'class' => 'permalink',
+                'data-action' => 'permalink',
+            ],
         );
     }
 
