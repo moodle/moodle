@@ -438,12 +438,15 @@ class sectionactions extends baseactions {
 
             if ($modupdated) {
                 $cmids[] = $cm->id;
-                course_module_updated::create_from_cm($cm)->trigger();
             }
         }
 
         \course_modinfo::purge_course_modules_cache($this->course->id, $cmids);
         rebuild_course_cache($this->course->id, false, true);
+        foreach ($cmids as $cmid) {
+            $cm = get_coursemodule_from_id(null, $cmid, $this->course->id);
+            course_module_updated::create_from_cm($cm)->trigger();
+        }
     }
 
     /**
