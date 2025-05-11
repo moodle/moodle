@@ -591,7 +591,7 @@ class main implements renderable, templatable {
         if ($CFG->coursecreationguide) {
             // Add quickstart guide link.
             $quickstart = new \moodle_url($CFG->coursecreationguide, ['lang' => current_language()]);
-            $docparams = [
+            $docparams += [
                 'quickhref' => $quickstart->out(),
                 'quicktitle' => get_string('viewquickstart', 'block_myoverview'),
                 'quicktarget' => '_blank',
