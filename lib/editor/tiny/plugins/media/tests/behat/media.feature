@@ -46,13 +46,13 @@ Feature: Use the TinyMCE editor to upload a media file
     And I click on "Subtitles and captions" "link" in the "Media details" "dialogue"
     And I click on "Browse repositories..." "button" in the "Media details" "dialogue"
     And I upload "/lib/editor/tiny/tests/behat/fixtures/<subtitlefile>" to the file picker for TinyMCE
-    And I set the field "Language" in the "Media details" "dialogue" to "<subtitlelangcode>"
+    And I set the field "Language" in the "Media details" "dialogue" to "<subtitlelang>"
     And I set the field "Label" in the "Media details" "dialogue" to "<subtitletitle>"
     And I click on "Save" "button" in the "Media details" "dialogue"
     And I switch to the "Description" TinyMCE editor iframe
     And "//*[contains(@data-id, 'id_description_editor')]//<mediatype>[@title='<newfixturetitle>' and @autoplay='autoplay' and @loop='loop' and @muted='true' and @controls='controls']" "xpath_element" should exist
     And "//*[contains(@data-id, 'id_description_editor')]//<mediatype>//source[contains(@src, '<fixturefile>')]" "xpath_element" should exist
-    And "//*[contains(@data-id, 'id_description_editor')]//<mediatype>//track[contains(@src, '<subtitlefile>') and @kind='subtitles' and contains(@srclang, '<subtitlelang>') and @label='<subtitletitle>']" "xpath_element" should exist
+    And "//*[contains(@data-id, 'id_description_editor')]//<mediatype>//track[contains(@src, '<subtitlefile>') and @kind='subtitles' and contains(@srclang, '<subtitlelangcode>') and @label='<subtitletitle>']" "xpath_element" should exist
     And I switch to the main frame
     And I select the "video" element in position "1" of the "Description" TinyMCE editor
     And I click on the "Multimedia" button for the "Description" TinyMCE editor
@@ -65,12 +65,12 @@ Feature: Use the TinyMCE editor to upload a media file
     And <customsizeverify3>
     And I click on "Subtitles and captions" "link" in the "Media details" "dialogue"
     And the field "Subtitle track URL" in the "Media details" "dialogue" does not match value ""
-    And the field "Language" in the "Media details" "dialogue" matches value "<subtitlelangcode>"
+    And the field "Language" in the "Media details" "dialogue" matches value "<subtitlelang>"
     And the field "Label" in the "Media details" "dialogue" matches value "<subtitletitle>"
 
     Examples:
       | mediatype | fixturefile      | fixturetitle | newfixturetitle   | subtitlefile        | subtitletitle             | subtitlelangcode | subtitlelang | thumbnailaction  | originalsizeverify                                                            | customsizeverify1                                                           | customsizeverify2                                                           | customsizeverify3                                                       | customsizestep                                                             | customsizeaction                                                         |
-      | video     | moodle-logo.mp4  | moodle-logo  | Moodle LMS Logo   | subtitle-sample.vtt | Subtitle sample for video | en               | English      | should exist     | the field "Original size" in the "Media details" "dialogue" matches value "1" | the field "Custom size" in the "Media details" "dialogue" matches value "0" | the field "Custom size" in the "Media details" "dialogue" matches value "1" | the field "Width" in the "Media details" "dialogue" matches value "300" | I click on "Custom size" "radio" in the "Media details" "dialogue"         | I set the field "Width" in the "Media details" "dialogue" to "300"       |
+      | video     | moodle-logo.mp4  | moodle-logo  | Moodle LMS Logo   | subtitle-sample.vtt | Subtitle sample for video | he               | Hebrew       | should exist     | the field "Original size" in the "Media details" "dialogue" matches value "1" | the field "Custom size" in the "Media details" "dialogue" matches value "0" | the field "Custom size" in the "Media details" "dialogue" matches value "1" | the field "Width" in the "Media details" "dialogue" matches value "300" | I click on "Custom size" "radio" in the "Media details" "dialogue"         | I set the field "Width" in the "Media details" "dialogue" to "300"       |
       | audio     | audio-sample.mp3 | audio-sample | Sample Audio File | subtitle-sample.vtt | Subtitle sample for audio | fr               | French       | should not exist | "Original size" "field" should not exist in the "Media details" "dialogue"    | "Custom size" "field" should not exist in the "Media details" "dialogue"    | "Custom size" "field" should not exist in the "Media details" "dialogue"    | "Width" "field" should not exist in the "Media details" "dialogue"      | "Original size" "field" should not exist in the "Media details" "dialogue" | "Custom size" "field" should not exist in the "Media details" "dialogue" |
 
   @_file_upload
