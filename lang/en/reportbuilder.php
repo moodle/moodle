@@ -178,6 +178,7 @@ $string['movecolumn'] = 'Move column \'{$a}\'';
 $string['movecondition'] = 'Move condition \'{$a}\'';
 $string['movefilter'] = 'Move filter \'{$a}\'';
 $string['movesorting'] = 'Move sorting for column \'{$a}\'';
+$string['neveraccessed'] = 'Never accessed';
 $string['newreport'] = 'New report';
 $string['newschedule'] = 'New schedule';
 $string['noaudiences'] = 'There are no audiences for this report';

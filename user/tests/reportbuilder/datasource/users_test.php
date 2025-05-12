@@ -103,6 +103,7 @@ final class users_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:phone1']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:phone2']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:address']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstaccess']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastaccess']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:confirmed']);
@@ -162,6 +163,7 @@ final class users_test extends core_reportbuilder_testcase {
             $phone1,
             $phone2,
             $address,
+            $firstaccess,
             $lastaccess,
             $suspended,
             $confirmed,
@@ -196,6 +198,7 @@ final class users_test extends core_reportbuilder_testcase {
         $this->assertEquals($user->phone1, $phone1);
         $this->assertEquals($user->phone2, $phone2);
         $this->assertEquals($user->address, $address);
+        $this->assertEmpty($firstaccess);
         $this->assertEmpty($lastaccess);
         $this->assertEquals('No', $suspended);
         $this->assertEquals('Yes', $confirmed);
@@ -490,6 +493,14 @@ final class users_test extends core_reportbuilder_testcase {
                 'user:timemodified_operator' => date::DATE_RANGE,
                 'user:timemodified_to' => 1622502000,
             ], false],
+            'Filter firstaccess' => ['user:firstaccess', [
+                'user:firstaccess_operator' => date::DATE_EMPTY,
+            ], true],
+            'Filter firstaccess (no match)' => ['user:firstaccess', [
+                'user:firstaccess_operator' => date::DATE_RANGE,
+                'user:firstaccess_from' => 1619823600,
+                'user:firstaccess_to' => 1622502000,
+            ], false],
             'Filter lastaccess' => ['user:lastaccess', [
                 'user:lastaccess_operator' => date::DATE_EMPTY,
             ], true],
@@ -497,6 +508,12 @@ final class users_test extends core_reportbuilder_testcase {
                 'user:lastaccess_operator' => date::DATE_RANGE,
                 'user:lastaccess_from' => 1619823600,
                 'user:lastaccess_to' => 1622502000,
+            ], false],
+            'Filter neveraccessed' => ['user:neveraccessed', [
+                'user:neveraccessed_operator' => boolean_select::CHECKED,
+            ], true],
+            'Filter neveraccessed (no match)' => ['user:neveraccessed', [
+                'user:neveraccessed_operator' => boolean_select::NOT_CHECKED,
             ], false],
             'Filter lastip' => ['user:lastip', [
                 'user:lastip_operator' => text::IS_EQUAL_TO,
@@ -581,8 +598,6 @@ final class users_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'), 0, $filtervalues);
 
         if ($expectmatch) {
-            $this->assertNotEmpty($content);
-
             // Merge report usernames into easily traversable array.
             $usernames = array_merge(...array_map('array_values', $content));
             $this->assertContains($user->username, $usernames);

@@ -419,6 +419,7 @@ class user extends base {
             'phone1' => new lang_string('phone1'),
             'phone2' => new lang_string('phone2'),
             'address' => new lang_string('address'),
+            'firstaccess' => new lang_string('firstaccess'),
             'lastaccess' => new lang_string('lastaccess'),
             'suspended' => new lang_string('suspended'),
             'confirmed' => new lang_string('confirmed', 'admin'),
@@ -446,6 +447,7 @@ class user extends base {
             case 'suspended':
                 $fieldtype = column::TYPE_BOOLEAN;
                 break;
+            case 'firstaccess':
             case 'lastaccess':
             case 'timecreated':
             case 'timemodified':
@@ -520,6 +522,16 @@ class user extends base {
 
             $filters[] = $filter;
         }
+
+        // Never accessed filter.
+        $filters[] = (new filter(
+            boolean_select::class,
+            'neveraccessed',
+            new lang_string('neveraccessed', 'core_reportbuilder'),
+            $this->get_entity_name(),
+            "CASE WHEN {$tablealias}.firstaccess = {$tablealias}.lastaccess OR {$tablealias}.lastaccess = 0 THEN 1 ELSE 0 END",
+        ))
+            ->add_joins($this->get_joins());
 
         // User select filter.
         $filters[] = (new filter(
