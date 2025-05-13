@@ -48,7 +48,10 @@ class behat_blocks extends behat_base {
      */
     public function i_add_the_block($blockname) {
         $addblock = get_string('addblock');
-        $this->execute('behat_general::i_click_on_in_the', [$addblock, 'link_exact', '.add_block_button', 'css_element']);
+        $this->execute(
+            'behat_general::i_click_on_in_the',
+            [$addblock, 'link_exact', '[data-region="add-block-button"]', 'css_element']
+        );
 
         if (!$this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the', [$blockname, 'link_exact', '#region-main', 'css_element']);

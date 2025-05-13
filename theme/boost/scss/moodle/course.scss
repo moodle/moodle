@@ -53,21 +53,6 @@ $divider-hover-color: $primary !default;
     }
 }
 
-// Course 'add section' button.
-.btn.add-section {
-    @include border-radius($activity-border-radius);
-    border: $divider-width dashed $border-color;
-    color: $primary;
-    font-size: $font-size-sm;
-    font-weight: bold;
-    &:hover,
-    &:focus {
-        background-color: $primary-light-background;
-        border: $divider-width solid $primary;
-        color: $primary;
-    }
-}
-
 // Max sections reached alert.
 .max-section-alert {
     border-top: $divider-width dashed $border-color;

@@ -143,3 +143,23 @@ p.arrow_button {
     --#{$prefix}btn-focus-shadow-rgb: #{to-rgb($gray-600)};
     @include button-focus($gray-600, $white);
 }
+
+/*
+ * Add content buttons.
+ */
+
+.btn-add-content {
+    @include border-radius();
+    border: map-get($border-widths, 2) dashed $border-color;
+    color: $primary;
+    background-color: $body-bg;
+    font-size: $font-size-sm;
+    font-weight: bold;
+    &:hover,
+    &:focus {
+        background-color: $primary-light-background;
+        border-style: solid;
+        border-color: $primary;
+        color: $primary;
+    }
+}
