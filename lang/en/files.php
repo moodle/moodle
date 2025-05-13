@@ -32,8 +32,8 @@ $string['redactor'] = 'File redaction';
 $string['redactor:exifremover'] = 'EXIF remover';
 $string['redactor:exifremover:emptyremovetags'] = 'Remove tags can not be empty!';
 $string['redactor:exifremover:enabled'] = 'Enable EXIF remover';
-$string['redactor:exifremover:enabled_desc'] = 'By default, EXIF Remover only supports JPG files using PHP GD, or ExifTool if it is configured.
-This degrades the quality of the image and removes the orientation tag.
+$string['redactor:exifremover:enabled_desc'] = 'By default, EXIF Remover only supports JPG files using PHP GD or ExifTool if configured.
+Using PHP GD for this purpose can degrade the quality of the image.
 
 To enhance the performance of EXIF Remover, please configure the ExifTool settings below.
 
