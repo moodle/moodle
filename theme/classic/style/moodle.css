@@ -40468,7 +40468,7 @@ div.editor_atto_toolbar button .icon {
 .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-divider {
   display: none;
 }
-.moremenu .dropdownmoremenu > .dropdown-menu .dropdown-item {
+.moremenu .dropdown-item {
   padding-left: 1.5rem;
 }
 .moremenu .dropdown-item[aria-current=true],
