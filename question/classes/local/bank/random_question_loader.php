@@ -103,40 +103,11 @@ class random_question_loader {
 
 
     /**
-     * Pick a question at random from the given category, from among those with the fewest uses.
-     * If an array of tag ids are specified, then only the questions that are tagged with ALL those tags will be selected.
-     *
-     * It is up the the caller to verify that the cateogry exists. An unknown category
-     * behaves like an empty one.
-     *
-     * @param int $categoryid the id of a category in the question bank.
-     * @param bool $includesubcategories wether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids An array of tag ids. A question has to be tagged with all the provided tagids (if any)
-     *      in order to be eligible for being picked.
-     * @return int|null the id of the question picked, or null if there aren't any.
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('get_next_filtered_question_id()', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function get_next_question_id($categoryid, $includesubcategories, $tagids = []): ?int {
-        debugging(
-            'Function get_next_question_id() is deprecated, please use get_next_filtered_question_id() instead.',
-            DEBUG_DEVELOPER
-        );
-
-        $this->ensure_questions_for_category_loaded($categoryid, $includesubcategories, $tagids);
-
-        $categorykey = $this->get_category_key($categoryid, $includesubcategories, $tagids);
-        if (empty($this->availablequestionscache[$categorykey])) {
-            return null;
-        }
-
-        reset($this->availablequestionscache[$categorykey]);
-        $lowestcount = key($this->availablequestionscache[$categorykey]);
-        reset($this->availablequestionscache[$categorykey][$lowestcount]);
-        $questionid = key($this->availablequestionscache[$categorykey][$lowestcount]);
-        $this->use_question($questionid);
-        return $questionid;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -151,33 +122,11 @@ class random_question_loader {
     }
 
     /**
-     * Get the key into {@see $availablequestionscache} for this combination of options.
-     *
-     * @param int $categoryid the id of a category in the question bank.
-     * @param bool $includesubcategories wether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids an array of tag ids.
-     * @return string the cache key.
-     *
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('get_filtered_questions_key()', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function get_category_key($categoryid, $includesubcategories, $tagids = []): string {
-        debugging(
-            'Function get_category_key() is deprecated, please get_fitlered_questions_key instead.',
-            DEBUG_DEVELOPER
-        );
-        if ($includesubcategories) {
-            $key = $categoryid . '|1';
-        } else {
-            $key = $categoryid . '|0';
-        }
-
-        if (!empty($tagids)) {
-            $key .= '|' . implode('|', $tagids);
-        }
-
-        return $key;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -280,69 +229,11 @@ class random_question_loader {
     }
 
     /**
-     * Populate {@see $availablequestionscache} for this combination of options.
-     *
-     * @param int $categoryid The id of a category in the question bank.
-     * @param bool $includesubcategories Whether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids An array of tag ids. If an array is provided, then
-     *      only the questions that are tagged with ALL the provided tagids will be loaded.
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('ensure_filtered_questions_loaded()', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function ensure_questions_for_category_loaded($categoryid, $includesubcategories, $tagids = []): void {
-        debugging(
-            'Function ensure_questions_for_category_loaded() is deprecated, please use the function ' .
-                'ensure_filtered_questions_loaded.',
-            DEBUG_DEVELOPER
-        );
-
-        global $DB;
-
-        $categorykey = $this->get_category_key($categoryid, $includesubcategories, $tagids);
-
-        if (isset($this->availablequestionscache[$categorykey])) {
-            // Data is already in the cache, nothing to do.
-            return;
-        }
-
-        // Load the available questions from the question bank.
-        if ($includesubcategories) {
-            $categoryids = question_categorylist($categoryid);
-        } else {
-            $categoryids = [$categoryid];
-        }
-
-        list($extraconditions, $extraparams) = $DB->get_in_or_equal($this->excludedqtypes,
-                SQL_PARAMS_NAMED, 'excludedqtype', false);
-
-        $questionidsandcounts = \question_bank::get_finder()->get_questions_from_categories_and_tags_with_usage_counts(
-                $categoryids, $this->qubaids, 'q.qtype ' . $extraconditions, $extraparams, $tagids);
-        if (!$questionidsandcounts) {
-            // No questions in this category.
-            $this->availablequestionscache[$categorykey] = [];
-            return;
-        }
-
-        // Put all the questions with each value of $prevusecount in separate arrays.
-        $idsbyusecount = [];
-        foreach ($questionidsandcounts as $questionid => $prevusecount) {
-            if (isset($this->recentlyusedquestions[$questionid])) {
-                // Recently used questions are never returned.
-                continue;
-            }
-            $idsbyusecount[$prevusecount][] = $questionid;
-        }
-
-        // Now put that data into our cache. For each count, we need to shuffle
-        // questionids, and make those the keys of an array.
-        $this->availablequestionscache[$categorykey] = [];
-        foreach ($idsbyusecount as $prevusecount => $questionids) {
-            shuffle($questionids);
-            $this->availablequestionscache[$categorykey][$prevusecount] = array_combine(
-                    $questionids, array_fill(0, count($questionids), 1));
-        }
-        ksort($this->availablequestionscache[$categorykey]);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -392,33 +283,11 @@ class random_question_loader {
     }
 
     /**
-     * Get the list of available question ids for the given criteria.
-     *
-     * @param int $categoryid The id of a category in the question bank.
-     * @param bool $includesubcategories Whether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids An array of tag ids. If an array is provided, then
-     *      only the questions that are tagged with ALL the provided tagids will be loaded.
-     * @return int[] The list of question ids
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('get_filtered_question_ids()', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function get_question_ids($categoryid, $includesubcategories, $tagids = []): array {
-        debugging(
-            'Function get_question_ids() is deprecated, please use get_filtered_question_ids() instead.',
-            DEBUG_DEVELOPER
-        );
-
-        $this->ensure_questions_for_category_loaded($categoryid, $includesubcategories, $tagids);
-        $categorykey = $this->get_category_key($categoryid, $includesubcategories, $tagids);
-        $cachedvalues = $this->availablequestionscache[$categorykey];
-        $questionids = [];
-
-        foreach ($cachedvalues as $usecount => $ids) {
-            $questionids = array_merge($questionids, array_keys($ids));
-        }
-
-        return $questionids;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -445,35 +314,11 @@ class random_question_loader {
     }
 
     /**
-     * Check whether a given question is available in a given category. If so, mark it used.
-     * If an optional list of tag ids are provided, then the question must be tagged with
-     * ALL of the provided tags to be considered as available.
-     *
-     * @param int $categoryid the id of a category in the question bank.
-     * @param bool $includesubcategories wether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param int $questionid the question that is being used.
-     * @param array $tagids An array of tag ids. Only the questions that are tagged with all the provided tagids can be available.
-     * @return bool whether the question is available in the requested category.
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('is_filtered_question_available()', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function is_question_available($categoryid, $includesubcategories, $questionid, $tagids = []): bool {
-        debugging(
-            'Function is_question_available() is deprecated, please use is_filtered_question_available() instead.',
-            DEBUG_DEVELOPER
-        );
-        $this->ensure_questions_for_category_loaded($categoryid, $includesubcategories, $tagids);
-        $categorykey = $this->get_category_key($categoryid, $includesubcategories, $tagids);
-
-        foreach ($this->availablequestionscache[$categorykey] as $questionids) {
-            if (isset($questionids[$questionid])) {
-                $this->use_question($questionid);
-                return true;
-            }
-        }
-
-        return false;
+            \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -524,58 +369,11 @@ class random_question_loader {
     }
 
     /**
-     * Get the list of available questions for the given criteria.
-     *
-     * @param int $categoryid The id of a category in the question bank.
-     * @param bool $includesubcategories Whether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids An array of tag ids. If an array is provided, then
-     *      only the questions that are tagged with ALL the provided tagids will be loaded.
-     * @param int $limit Maximum number of results to return.
-     * @param int $offset Number of items to skip from the begging of the result set.
-     * @param string[] $fields The fields to return for each question.
-     * @return \stdClass[] The list of question records
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('get_filtered_questions()', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function get_questions($categoryid, $includesubcategories, $tagids = [], $limit = 100, $offset = 0, $fields = []) {
-        debugging(
-            'Function get_questions() is deprecated, please use get_filtered_questions() instead.',
-            DEBUG_DEVELOPER
-        );
-        global $DB;
-
-        $questionids = $this->get_question_ids($categoryid, $includesubcategories, $tagids);
-        if (empty($questionids)) {
-            return [];
-        }
-
-        if (empty($fields)) {
-            // Return all fields.
-            $fieldsstring = '*';
-        } else {
-            $fieldsstring = implode(',', $fields);
-        }
-
-        // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql).
-        $hasquestions = false;
-        if (!empty($questionids)) {
-            $hasquestions = true;
-        }
-        if ($hasquestions) {
-            list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
-            $condition = 'WHERE q.id ' . $condition;
-            $sql = "SELECT {$fieldsstring}
-                      FROM (SELECT q.*, qbe.questioncategoryid as category
-                      FROM {question} q
-                      JOIN {question_versions} qv ON qv.questionid = q.id
-                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      {$condition}) q ORDER BY q.id";
-
-            return $DB->get_records_sql($sql, $param, $offset, $limit);
-        } else {
-            return [];
-        }
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -590,23 +388,10 @@ class random_question_loader {
     }
 
     /**
-     * Count the number of available questions for the given criteria.
-     *
-     * @param int $categoryid The id of a category in the question bank.
-     * @param bool $includesubcategories Whether to pick a question from exactly
-     *      that category, or that category and subcategories.
-     * @param array $tagids An array of tag ids. If an array is provided, then
-     *      only the questions that are tagged with ALL the provided tagids will be loaded.
-     * @return int The number of questions matching the criteria.
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
+    #[\core\attribute\deprecated('count_filtered_questions()', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function count_questions($categoryid, $includesubcategories, $tagids = []): int {
-        debugging(
-            'Function count_questions() is deprecated, please use count_filtered_questions() instead.',
-            DEBUG_DEVELOPER
-        );
-        $questionids = $this->get_question_ids($categoryid, $includesubcategories, $tagids);
-        return count($questionids);
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 }

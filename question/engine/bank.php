@@ -659,107 +659,30 @@ class question_finder implements data_source_interface {
     }
 
     /**
-     * Get the ids of all the questions in a list of categories, with the number
-     * of times they have already been used in a given set of usages.
-     *
-     * The result array is returned in order of increasing (count previous uses).
-     *
-     * @param array $categoryids an array question_category ids.
-     * @param qubaid_condition $qubaids which question_usages to count previous uses from.
-     * @param string $extraconditions extra conditions to AND with the rest of
-     *      the where clause. Must use named parameters.
-     * @param array $extraparams any parameters used by $extraconditions.
-     * @return array questionid => count of number of previous uses.
-     *
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
-    public function get_questions_from_categories_with_usage_counts($categoryids,
-            qubaid_condition $qubaids, $extraconditions = '', $extraparams = array()) {
-        debugging(
-            'Function get_questions_from_categories_with_usage_counts() is deprecated, please do not use the function.',
-            DEBUG_DEVELOPER
-        );
-        return $this->get_questions_from_categories_and_tags_with_usage_counts(
-                $categoryids, $qubaids, $extraconditions, $extraparams);
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
+    public function get_questions_from_categories_with_usage_counts(
+        $categoryids,
+        qubaid_condition $qubaids,
+        $extraconditions = '',
+        $extraparams = []
+    ) {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Get the ids of all the questions in a list of categories that have ALL the provided tags,
-     * with the number of times they have already been used in a given set of usages.
-     *
-     * The result array is returned in order of increasing (count previous uses).
-     *
-     * @param array $categoryids an array of question_category ids.
-     * @param qubaid_condition $qubaids which question_usages to count previous uses from.
-     * @param string $extraconditions extra conditions to AND with the rest of
-     *      the where clause. Must use named parameters.
-     * @param array $extraparams any parameters used by $extraconditions.
-     * @param array $tagids an array of tag ids
-     * @return array questionid => count of number of previous uses.
      * @deprecated since Moodle 4.3
-     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
-    public function get_questions_from_categories_and_tags_with_usage_counts($categoryids,
-            qubaid_condition $qubaids, $extraconditions = '', $extraparams = array(), $tagids = array()) {
-        debugging(
-            'Function get_questions_from_categories_and_tags_with_usage_counts() is deprecated, please do not use the function.',
-            DEBUG_DEVELOPER
-        );
-        global $DB;
-
-        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
-
-        $readystatus = question_version_status::QUESTION_STATUS_READY;
-        $select = "q.id, (SELECT COUNT(1)
-                            FROM " . $qubaids->from_question_attempts('qa') . "
-                           WHERE qa.questionid = q.id AND " . $qubaids->where() . "
-                         ) AS previous_attempts";
-        $from   = "{question} q";
-        $join   = "JOIN {question_versions} qv ON qv.questionid = q.id
-                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid";
-        $from = $from . " " . $join;
-        $where  = "qbe.questioncategoryid {$qcsql}
-               AND q.parent = 0
-               AND qv.status = '$readystatus'
-               AND qv.version = (SELECT MAX(v.version)
-                                  FROM {question_versions} v
-                                  JOIN {question_bank_entries} be
-                                    ON be.id = v.questionbankentryid
-                                 WHERE be.id = qbe.id)";
-        $params = $qcparams;
-
-        if (!empty($tagids)) {
-            // We treat each additional tag as an AND condition rather than
-            // an OR condition.
-            //
-            // For example, if the user filters by the tags "foo" and "bar" then
-            // we reduce the question list to questions that are tagged with both
-            // "foo" AND "bar". Any question that does not have ALL of the specified
-            // tags will be omitted.
-            list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED, 'ti');
-            $tagparams['tagcount'] = count($tagids);
-            $tagparams['questionitemtype'] = 'question';
-            $tagparams['questioncomponent'] = 'core_question';
-            $where .= " AND q.id IN (SELECT ti.itemid
-                                       FROM {tag_instance} ti
-                                      WHERE ti.itemtype = :questionitemtype
-                                            AND ti.component = :questioncomponent
-                                            AND ti.tagid {$tagsql}
-                                   GROUP BY ti.itemid
-                                     HAVING COUNT(itemid) = :tagcount)";
-            $params += $tagparams;
-        }
-
-        if ($extraconditions) {
-            $extraconditions = ' AND (' . $extraconditions . ')';
-        }
-
-        return $DB->get_records_sql_menu("SELECT $select
-                                                FROM $from
-                                               WHERE $where $extraconditions
-                                            ORDER BY previous_attempts",
-                $qubaids->from_where_params() + $params + $extraparams);
+    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
+    public function get_questions_from_categories_and_tags_with_usage_counts(
+        $categoryids,
+        qubaid_condition $qubaids,
+        $extraconditions = '',
+        $extraparams = [],
+        $tagids = []
+    ) {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     #[\Override]

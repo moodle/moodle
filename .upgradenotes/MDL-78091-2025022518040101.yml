@@ -1,0 +1,21 @@
+issueNumber: MDL-78091
+notes:
+  core_question:
+    - message: >-
+        Final deprecation of:
+          - core_question\local\bank\random_question_loader::get_next_question_id()
+          - core_question\local\bank\random_question_loader::get_category_key()
+          - core_question\local\bank\random_question_loader::ensure_questions_for_category_loaded()
+          - core_question\local\bank\random_question_loader::get_question_ids()
+          - core_question\local\bank\random_question_loader::is_question_available()
+          - core_question\local\bank\random_question_loader::get_questions()
+          - core_question\local\bank\random_question_loader::count_questions()
+          - core_question\local\bank\view::display_top_pagnation()
+          - core_question\local\bank\view::display_bottom_pagination()
+          - question_finder::get_questions_from_categories_with_usage_counts()
+          - question_finder::get_questions_from_categories_and_tags_with_usage_counts()
+      type: removed
+    - message: >-
+        Intial deprecation of core_question_bank_renderer::render_question_pagination() and the associated template file.
+        Rendering the question pagination is now done via ajax based pagination.
+      type: deprecated

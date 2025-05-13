@@ -1,0 +1,13 @@
+issueNumber: MDL-78091
+notes:
+  mod_quiz:
+    - message: >
+        Initial deprecation add_random_form and associates.
+
+        The just removed mod_quiz\form\add_random_form was the only place in
+        core where the mod_quiz/add_random_form javascript was called, so we can
+        deprecate this now. This also enables us to deprecate the
+        mod_quiz/random_question_form_preview javascript and the
+        mod_quiz/random_question_form_preview_question_list template as they are
+        direct dependends.
+      type: deprecated
