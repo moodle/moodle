@@ -3129,11 +3129,9 @@ blockquote {
             display: none;
         }
     }
-    button {
+    .showmore-button {
         float: right;
-        &.btn-link {
-            text-decoration: none;
-        }
+        text-decoration: none;
         .icon {
             font-size: $btn-font-size-sm;
             margin: 0;
