@@ -201,7 +201,7 @@ class core_renderer extends \core_renderer {
                 ];
                 $imagedata = html_writer::img($iconurl->out(false), '', $iconattrs);
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
-                $purposeclass .= ' activityiconcontainer icon-size-6';
+                $purposeclass .= ' activityiconcontainer me-2';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $isbranded = component_callback('mod_' . $this->page->activityname, 'is_branded', [], false);
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass . ($isbranded ? ' isbranded' : '')]);

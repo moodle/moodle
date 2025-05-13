@@ -135,15 +135,9 @@ class activity_icon implements renderable, templatable {
 
     #[\Override]
     public function export_for_template(renderer_base $output): array {
-        if (!isset($this->iconurl)) {
-            $this->iconurl = $this->get_icon_url($output);
-        }
-        $needfiltering = $this->colourize && $this->iconurl->get_param('filtericon');
-        $iconclass = $needfiltering ? '' : 'nofilter';
-
         $data = [
-            'icon' => $this->iconurl,
-            'iconclass' => $iconclass,
+            'icon' => $this->get_icon_url($output),
+            'iconclass' => $this->get_icon_classes($output),
             'modname' => $this->modname,
             'pluginname' => get_string('pluginname', 'mod_' . $this->modname),
             'purpose' => $this->purpose,
@@ -165,6 +159,9 @@ class activity_icon implements renderable, templatable {
      * @return url
      */
     public function get_icon_url(renderer_base $output): url {
+        if (isset($this->iconurl)) {
+            return $this->iconurl;
+        }
         $icon = $output->image_url('monologo', $this->modname);
         // Legacy activity modules may only have an `icon` icon instead of a `monologo` icon.
         $ismonologo = component::has_monologo_icon('mod', $this->modname);
@@ -174,6 +171,7 @@ class activity_icon implements renderable, templatable {
             // The name of the param is not colorize to preserve backward compatibility.
             $icon->param('filtericon', 1);
         }
+        $this->iconurl = $icon;
         return $icon;
     }
 
@@ -211,6 +209,20 @@ class activity_icon implements renderable, templatable {
      */
     public function get_extra_classes(): string {
         return $this->extraclasses;
+    }
+
+    /**
+     * Get the icon classes.
+     *
+     * @param renderer_base $output
+     * @return string
+     */
+    public function get_icon_classes(renderer_base $output): string {
+        $result = 'activityicon icon';
+        $iconurl = $this->get_icon_url($output);
+        $needfiltering = $this->colourize && $iconurl->get_param('filtericon');
+        $result .= ($needfiltering) ? '' : ' nofilter';
+        return $result;
     }
 
     /**

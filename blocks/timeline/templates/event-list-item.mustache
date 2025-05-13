@@ -54,7 +54,10 @@
             <small class="text-end text-nowrap align-self-center ms-1">
                 {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
             </small>
-            <div class="activityiconcontainer small courseicon align-self-top align-self-center mx-3  mb-1 mb-sm-0 text-nowrap">
+            <div
+                class="small courseicon align-self-top align-self-center mx-2 mb-1 mb-sm-0 text-nowrap {{!
+                    }} activityiconcontainer {{#purpose}}{{purpose}}{{/purpose}}"
+            >
                 {{#icon}}
                 {{#iconurl}}
                     <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon {{iconclass}}">

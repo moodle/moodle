@@ -28834,70 +28834,6 @@ img.icon {
   align-items: center;
 }
 
-.activityiconcontainer {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-}
-.activityiconcontainer .activityicon,
-.activityiconcontainer .icon {
-  margin: 0;
-  font-size: 32px;
-  height: 32px;
-  width: 40px;
-  max-height: 32px;
-  max-width: 40px;
-}
-.activityiconcontainer.small {
-  width: 42px;
-  height: 42px;
-  max-width: 42px;
-  max-height: 42px;
-}
-.activityiconcontainer.smaller {
-  width: 32px;
-  height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-}
-.activityiconcontainer.smaller .activityicon {
-  width: 40px;
-  height: 32px;
-  max-width: 40px;
-  max-height: 32px;
-}
-
-.activityiconcontainer.administration:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.administration:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.8549019608 0 0 0 0 0.3450980392 0 0 0 0 0.937254902 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
-.activityiconcontainer.assessment:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.assessment:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9764705882 0 0 0 0 0 0 0 0 0 0.5254901961 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
-.activityiconcontainer.collaboration:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.collaboration:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.3568627451 0 0 0 0 0.2509803922 0 0 0 0 1 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
-.activityiconcontainer.communication:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.communication:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9215686275 0 0 0 0 0.3843137255 0 0 0 0 0 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
-.activityiconcontainer.content:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.content:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.6 0 0 0 0 0.6784313725 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
-.activityiconcontainer.interactivecontent:not(.isbranded) .activityicon:not(.nofilter),
-.activityiconcontainer.interactivecontent:not(.isbranded) .icon:not(.nofilter) {
-  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.5529411765 0 0 0 0 0.2392156863 0 0 0 0 0.1058823529 0 0 0 1 0 "/></filter></svg>#recolor');
-}
-
 .icon-box {
   width: 60px;
   height: 48px;
@@ -28932,6 +28868,67 @@ img.icon {
 }
 .icon-circle.reversed .icon {
   color: #fff;
+}
+
+/*
+ * Activity icons
+ */
+.activityiconcontainer {
+  width: 52px;
+  height: 52px;
+  max-width: 52px;
+  max-height: 52px;
+}
+.activityiconcontainer.small {
+  width: 42px;
+  height: 42px;
+  max-width: 42px;
+  max-height: 42px;
+}
+.activityiconcontainer.smaller {
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
+}
+.activityiconcontainer .activityicon,
+.activityiconcontainer .icon {
+  margin: 0;
+  font-size: inherit;
+  width: inherit;
+  height: inherit;
+  max-width: inherit;
+  max-height: inherit;
+}
+
+.activityiconcontainer.administration:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.administration:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.8549019608 0 0 0 0 0.3450980392 0 0 0 0 0.937254902 0 0 0 1 0 "/></filter></svg>#recolor');
+}
+
+.activityiconcontainer.assessment:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.assessment:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9764705882 0 0 0 0 0 0 0 0 0 0.5254901961 0 0 0 1 0 "/></filter></svg>#recolor');
+}
+
+.activityiconcontainer.collaboration:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.collaboration:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.3568627451 0 0 0 0 0.2509803922 0 0 0 0 1 0 0 0 1 0 "/></filter></svg>#recolor');
+}
+
+.activityiconcontainer.communication:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.communication:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.9215686275 0 0 0 0 0.3843137255 0 0 0 0 0 0 0 0 1 0 "/></filter></svg>#recolor');
+}
+
+.activityiconcontainer.content:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.content:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.6 0 0 0 0 0.6784313725 0 0 0 1 0 "/></filter></svg>#recolor');
+}
+
+.activityiconcontainer.interactivecontent:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.interactivecontent:not(.isbranded) .icon:not(.nofilter) {
+  filter: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="recolor" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.5529411765 0 0 0 0 0.2392156863 0 0 0 0 0.1058823529 0 0 0 1 0 "/></filter></svg>#recolor');
 }
 
 :root {
