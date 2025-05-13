@@ -94,13 +94,17 @@ final class reportlib_test extends \advanced_testcase {
         // The test data is:
         // id | quizid | user | attempt | sumgrades | state
         // ---------------------------------------------------
-        // 4  | 456    | 123  | 1       | 30        | finished
+        // 4  | 456    | 123  | 1       | null      | submitted
         // 2  | 456    | 123  | 2       | 50        | finished
         // 1  | 456    | 123  | 3       | 50        | finished
         // 3  | 456    | 123  | 4       | null      | inprogress
         // 5  | 456    | 1    | 1       | 100       | finished
+        // 6  | 456    | 234  | 1       | 100       | finished
+        // 7  | 456    | 234  | 2       | null      | submitted
         // layout is only given because it has a not-null constraint.
         // uniqueid values are meaningless, but that column has a unique constraint.
+        // user 123 will have their first attempt submitted, but not finished.
+        // user 234 will have their last attempt submitted, but not finished.
 
         $fakeattempt->attempt = 3;
         $fakeattempt->sumgrades = 50;
@@ -110,6 +114,7 @@ final class reportlib_test extends \advanced_testcase {
         $fakeattempt->attempt = 2;
         $fakeattempt->sumgrades = 50;
         $fakeattempt->uniqueid = 26;
+        $fakeattempt->state = quiz_attempt::FINISHED;
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $fakeattempt->attempt = 4;
@@ -119,15 +124,29 @@ final class reportlib_test extends \advanced_testcase {
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $fakeattempt->attempt = 1;
-        $fakeattempt->sumgrades = 30;
+        $fakeattempt->sumgrades = null;
         $fakeattempt->uniqueid = 52;
-        $fakeattempt->state = quiz_attempt::FINISHED;
+        $fakeattempt->state = quiz_attempt::SUBMITTED;
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $fakeattempt->attempt = 1;
         $fakeattempt->userid = 1;
         $fakeattempt->sumgrades = 100;
         $fakeattempt->uniqueid = 65;
+        $fakeattempt->state = quiz_attempt::FINISHED;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 1;
+        $fakeattempt->userid = 234;
+        $fakeattempt->sumgrades = 100;
+        $fakeattempt->uniqueid = 99;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 2;
+        $fakeattempt->userid = 234;
+        $fakeattempt->sumgrades = null;
+        $fakeattempt->uniqueid = 77;
+        $fakeattempt->state = quiz_attempt::SUBMITTED;
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $quiz = new \stdClass();
@@ -136,27 +155,52 @@ final class reportlib_test extends \advanced_testcase {
         $quiz->grademethod = QUIZ_ATTEMPTFIRST;
         $firstattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
-                        . quiz_report_qm_filter_select($quiz), [123, 456]);
-        $this->assertEquals(1, count($firstattempt));
+                . quiz_report_qm_filter_select($quiz), [123, 456]);
+        $this->assertCount(1, $firstattempt);
         $firstattempt = reset($firstattempt);
         $this->assertEquals(1, $firstattempt->attempt);
+        $this->assertEquals(quiz_attempt::SUBMITTED, $firstattempt->state);
+
+        $firstattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
+                . quiz_report_qm_filter_select($quiz), [234, 456]);
+        $this->assertCount(1, $firstattempt);
+        $firstattempt = reset($firstattempt);
+        $this->assertEquals(1, $firstattempt->attempt);
+        $this->assertEquals(quiz_attempt::FINISHED, $firstattempt->state);
 
         $quiz->grademethod = QUIZ_ATTEMPTLAST;
         $lastattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
                 . quiz_report_qm_filter_select($quiz), [123, 456]);
-        $this->assertEquals(1, count($lastattempt));
+        $this->assertCount(1, $lastattempt);
         $lastattempt = reset($lastattempt);
         $this->assertEquals(3, $lastattempt->attempt);
+        $this->assertEquals(quiz_attempt::FINISHED, $lastattempt->state);
+
+        $lastattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
+                . quiz_report_qm_filter_select($quiz), [234, 456]);
+        $this->assertCount(1, $lastattempt);
+        $lastattempt = reset($lastattempt);
+        $this->assertEquals(2, $lastattempt->attempt);
+        $this->assertEquals(quiz_attempt::SUBMITTED, $lastattempt->state);
 
         $quiz->attempts = 0;
         $quiz->grademethod = QUIZ_GRADEHIGHEST;
         $bestattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} qa_alias WHERE userid = ? AND quiz = ? AND "
                 . quiz_report_qm_filter_select($quiz, 'qa_alias'), [123, 456]);
-        $this->assertEquals(1, count($bestattempt));
+        $this->assertCount(1, $bestattempt);
         $bestattempt = reset($bestattempt);
         $this->assertEquals(2, $bestattempt->attempt);
+
+        $bestattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} qa_alias WHERE userid = ? AND quiz = ? AND "
+                . quiz_report_qm_filter_select($quiz, 'qa_alias'), [234, 456]);
+        $this->assertCount(1, $bestattempt);
+        $bestattempt = reset($bestattempt);
+        $this->assertEquals(1, $bestattempt->attempt);
     }
 
     public function test_quiz_results_never_below_zero(): void {
