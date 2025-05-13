@@ -66,7 +66,9 @@
 {{! The block should be fast to load, we only load the editor when needed.}}
 {{#editing}}
 require(['core_courseformat/local/content'], function(component) {
-    component.init('block_social_activities_section', {});
+    // We want to include both block content and block footer in the selector
+    // because the footer has the add activity button.
+    component.init('.block_social_activities', {});
 });
 {{/editing}}
 {{/js}}

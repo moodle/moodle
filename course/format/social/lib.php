@@ -151,6 +151,11 @@ class format_social extends core_courseformat\base {
 
     #[\Override]
     public function get_section_name($section) {
+        $section = $this->get_section($section);
+        if ($section->is_delegated()) {
+            return $section->name;
+        }
+        // Social format only uses one section inside the social activities block.
         return get_string('socialactivities', 'format_social');
     }
 
@@ -162,13 +167,6 @@ class format_social extends core_courseformat\base {
     #[\Override]
     public function get_sectionnum(): int {
         return 0;
-    }
-
-
-    #[\Override]
-    public function get_max_sections() {
-        // Social ony uses one section.
-        return 1;
     }
 
     /**
@@ -184,6 +182,8 @@ class format_social extends core_courseformat\base {
     #[\Override]
     public function is_section_visible(section_info $section): bool {
         $visible = parent::is_section_visible($section);
-        return $visible && $section->section == 0;
+        // Social format does only use section 0 as a normal section.
+        // Any other included section should be a delegated one (subsections).
+        return $visible && ($section->sectionnum == 0 || $section->is_delegated());
     }
 }
