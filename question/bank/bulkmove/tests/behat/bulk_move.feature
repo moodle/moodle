@@ -77,7 +77,7 @@ Feature: Use the qbank plugin manager page for bulkmove
     When I open the autocomplete suggestions list in the ".search-banks" "css_element"
     Then I should not see "C3 - Question bank 3" in the ".search-banks" "css_element"
     And I click on "C1 - Question bank 1" item in the autocomplete list
-    Then I should not see "Test questions 1" in the ".search-categories" "css_element"
+    Then I should not see "Test questions 1" in the ".search-categories .form-autocomplete-selection" "css_element"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
     And "Test questions 2" "autocomplete_suggestions" should exist
     And "Test questions 3" "autocomplete_suggestions" should not exist
