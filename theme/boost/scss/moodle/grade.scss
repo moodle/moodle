@@ -392,7 +392,7 @@
                 padding-left: 24px;
             }
 
-            &.generaltable {
+            &.table {
 
                 tr {
                     &.spacer {
@@ -654,7 +654,7 @@
 .path-grade-report-user .user-grade {
     border: none;
 
-    &.generaltable {
+    &.table {
         .levelodd {
             background-color: $table-accent-bg;
         }

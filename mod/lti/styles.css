@@ -451,12 +451,12 @@
 }
 
 /* The following removes the striping that lives in table_sql, which we can't change from within reportbuilder */
-#page-mod-lti-coursetools table.generaltable tbody tr:nth-of-type(2n+1),
+#page-mod-lti-coursetools table.table tbody tr:nth-of-type(2n+1),
 #page-mod-lti-coursetools table.table-striped tbody tr:nth-of-type(2n+1) {
     background: inherit;
 }
 
-#page-mod-lti-coursetools table.generaltable tbody tr:hover,
+#page-mod-lti-coursetools table.table tbody tr:hover,
 #page-mod-lti-coursetools table.table-striped tbody tr:hover {
     background: #fff;
 }

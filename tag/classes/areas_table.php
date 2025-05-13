@@ -42,7 +42,7 @@ class core_tag_areas_table extends html_table {
         global $OUTPUT;
         parent::__construct();
 
-        $this->attributes['class'] = 'generaltable tag-areas-table';
+        $this->attributes['class'] = 'table generaltable tag-areas-table';
 
         $this->head = array(
             get_string('tagareaname', 'core_tag'),

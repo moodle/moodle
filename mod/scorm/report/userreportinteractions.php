@@ -122,7 +122,7 @@ $table->define_columns(array('id', 'studentanswer', 'correctanswer', 'result', '
 $table->define_headers(array(get_string('trackid', 'scorm'), get_string('response', 'scorm'),
     get_string('rightanswer', 'scorm'), get_string('result', 'scorm'),
     get_string('calculatedweight', 'scorm')));
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+$table->set_attribute('class', 'table generaltable');
 
 $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
 $table->setup();

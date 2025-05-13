@@ -64,7 +64,7 @@ class rules extends \table_sql implements \renderable {
     public function __construct($uniqueid, \moodle_url $url, $courseid = 0, $perpage = 100) {
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'toolmonitor subscriberules generaltable generalbox');
+        $this->set_attribute('class', 'toolmonitor subscriberules table generaltable');
         $this->define_columns(array('name', 'description', 'course', 'plugin', 'eventname', 'filters', 'select'));
         $this->define_headers(array(
                 get_string('rulename', 'tool_monitor'),

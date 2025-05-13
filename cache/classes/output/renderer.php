@@ -451,7 +451,7 @@ class renderer extends \plugin_renderer_base {
             'right', 'right',
         ];
         $summarytable->data = [];
-        $summarytable->attributes['class'] = 'generaltable w-auto';
+        $summarytable->attributes['class'] = 'table generaltable w-auto';
         $storetotals = [];
 
         // We will highlight all cells that are more than 2% of total size, so work that out first.

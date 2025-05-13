@@ -84,7 +84,7 @@ class quiz_grading_renderer extends plugin_renderer_base {
         $output = '';
 
         $table = new html_table();
-        $table->class = 'generaltable';
+        $table->class = 'table generaltable';
         $table->id = 'questionstograde';
         $table->head = $header;
         $table->data = $data;

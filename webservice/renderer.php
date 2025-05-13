@@ -41,7 +41,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         $table = new html_table();
         $table->size = array('45%', '10%', '45%');
-        $table->attributes['class'] = 'roleassigntable generaltable generalbox boxaligncenter';
+        $table->attributes['class'] = 'roleassigntable table generaltable';
         $table->summary = '';
         $table->cellspacing = 0;
         $table->cellpadding = 0;

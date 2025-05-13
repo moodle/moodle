@@ -163,7 +163,7 @@ if (empty($availablefilters)) {
         $table->colclasses[] = 'leftalign';
     }
     $table->id = 'frontpagefiltersettings';
-    $table->attributes['class'] = 'admintable generaltable';
+    $table->attributes['class'] = 'admintable table generaltable';
     $table->data = [];
 
     // Iterate through filters adding to display table.

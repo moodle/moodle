@@ -65,7 +65,7 @@ class renderable extends \table_sql implements \renderable {
         parent::__construct($uniqueid);
 
         $this->set_attribute('id', 'toolmonitorrules_table');
-        $this->set_attribute('class', 'toolmonitor managerules generaltable generalbox');
+        $this->set_attribute('class', 'toolmonitor managerules table generaltable');
         $this->define_columns(array('name', 'description', 'course', 'plugin', 'eventname', 'filters', 'manage'));
         $this->define_headers(array(
                 get_string('rulename', 'tool_monitor'),

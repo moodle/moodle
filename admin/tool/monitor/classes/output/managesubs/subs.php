@@ -59,7 +59,7 @@ class subs extends \table_sql implements \renderable {
     public function __construct($uniqueid, \moodle_url $url, $courseid = 0, $perpage = 100) {
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'toolmonitor subscriptions generaltable generalbox');
+        $this->set_attribute('class', 'toolmonitor subscriptions table generaltable');
         $this->define_columns(array('name', 'description', 'course', 'plugin', 'instance', 'eventname',
             'filters', 'unsubscribe'));
         $this->define_headers(array(

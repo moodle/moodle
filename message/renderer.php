@@ -75,7 +75,7 @@ class core_message_renderer extends plugin_renderer_base {
     public function manage_messageoutputs($processors) {
         // Display the current workflows
         $table = new html_table();
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable table generaltable';
         $table->data        = array();
         $table->head        = array(
             get_string('name'),

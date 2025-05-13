@@ -98,7 +98,7 @@ class tablelog extends \table_sql implements \renderable {
         global $CFG;
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'gradereport_history generaltable generalbox');
+        $this->set_attribute('class', 'gradereport_history table generaltable');
 
         // Set protected properties.
         $this->context = $context;

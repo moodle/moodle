@@ -140,7 +140,7 @@ function print_report_tree($contextid, $contexts, $allroles) {
     // If there are any role overrides here, print them.
     if (!empty($contexts[$contextid]->rolecapabilities)) {
         $rowcounter = 0;
-        echo '<table class="generaltable table-striped"><tbody>';
+        echo '<table class="table generaltable table-striped"><tbody>';
         foreach ($allroles as $role) {
             if (isset($contexts[$contextid]->rolecapabilities[$role->id])) {
                 $permission = $contexts[$contextid]->rolecapabilities[$role->id];

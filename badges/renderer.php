@@ -766,7 +766,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $paging = new paging_bar($related->totalcount, $related->page, $related->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable boxaligncenter boxwidthwide';
+        $table->attributes['class'] = 'table generaltable';
         $table->head = array(
             get_string('name'),
             get_string('version', 'badges'),
@@ -825,7 +825,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $paging = new paging_bar($alignments->totalcount, $alignments->page, $alignments->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable boxaligncenter boxwidthwide';
+        $table->attributes['class'] = 'table generaltable';
         $table->head = array('Name', 'URL', '');
 
         foreach ($alignments->alignments as $item) {

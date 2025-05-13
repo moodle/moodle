@@ -93,8 +93,8 @@
     width: 100%;
 }
 
-.path-grade-report-singleview .reporttable .generaltable th,
-.path-grade-report-singleview .reporttable .generaltable td {
+.path-grade-report-singleview .reporttable .table th,
+.path-grade-report-singleview .reporttable .table td {
     text-align: left;
     vertical-align: middle;
     border: none;

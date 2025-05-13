@@ -107,7 +107,7 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
   <input type="hidden" name="returnurl" value="<?php echo $returnurl->out_as_local_url() ?>" />
 
-  <table summary="" class="generaltable generalbox boxaligncenter" cellspacing="0">
+  <table summary="" class="table generaltable" cellspacing="0">
     <tr>
       <td id="existingcell">
           <p><label for="removeselect"><?php print_string('currentusers', 'cohort'); ?></label></p>

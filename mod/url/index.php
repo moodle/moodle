@@ -62,7 +62,7 @@ if (!$urls = get_all_instances_in_course('url', $course)) {
 $usesections = course_format_uses_sections($course->format);
 
 $table = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
+$table->attributes['class'] = 'table generaltable mod_index';
 
 if ($usesections) {
     $strsectionname = course_get_format($course)->get_generic_section_name();

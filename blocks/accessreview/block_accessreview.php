@@ -113,7 +113,7 @@ class block_accessreview extends block_base {
                 return $this->content;
             }
             $table->data = $tabledata;
-            $table->attributes['class'] = 'generaltable table-sm block_accessreview_table';
+            $table->attributes['class'] = 'generaltable table table-sm block_accessreview_table';
             $this->content->text .= html_writer::table($table, true);
 
             // Check for compatible course formats for highlighting.

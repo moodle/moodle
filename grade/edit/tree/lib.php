@@ -71,7 +71,7 @@ class grade_edit_tree {
 
         $this->table = new html_table();
         $this->table->id = "grade_edit_tree_table";
-        $this->table->attributes['class'] = 'generaltable simple setup-grades';
+        $this->table->attributes['class'] = 'table generaltable simple setup-grades';
         if ($this->moving) {
             $this->table->attributes['class'] .= ' moving';
         }

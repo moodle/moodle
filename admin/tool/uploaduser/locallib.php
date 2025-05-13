@@ -94,7 +94,7 @@ class uu_progress_tracker {
      */
     public function start() {
         $ci = 0;
-        echo '<table id="uuresults" class="generaltable boxaligncenter flexible-wrap" summary="'.get_string('uploadusersresult', 'tool_uploaduser').'">';
+        echo '<table id="uuresults" class="table generaltable" summary="'.get_string('uploadusersresult', 'tool_uploaduser').'">';
         echo '<tr class="heading r0">';
         foreach ($this->headers as $key => $header) {
             echo '<th class="header c'.$ci++.'" scope="col">'.$header.'</th>';

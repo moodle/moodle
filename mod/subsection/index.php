@@ -53,7 +53,7 @@ if (empty($subsections)) {
 }
 
 $table = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
+$table->attributes['class'] = 'table generaltable mod_index';
 
 if ($course->format == 'weeks') {
     $table->head  = [get_string('week'), get_string('name')];

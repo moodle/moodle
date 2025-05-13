@@ -85,7 +85,7 @@ class manage_qbank_plugins_page extends \admin_setting {
         $table = new \html_table();
         $table->head  = [$txt->name, $txt->enable, $txt->settings, $txt->uninstall];
         $table->align = ['left', 'center', 'center', 'center', 'center'];
-        $table->attributes['class'] = 'manageqbanktable generaltable admintable';
+        $table->attributes['class'] = 'manageqbanktable table generaltable admintable';
         $table->data  = [];
 
         $totalenabled = 0;

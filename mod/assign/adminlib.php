@@ -182,7 +182,7 @@ class assign_plugin_manager {
                 get_string('version'), get_string('hideshow', 'assign'),
                 get_string('order'), get_string('settings'), get_string('uninstallplugin', 'core_admin')));
         $table->set_attribute('id', $this->subtype . 'plugins');
-        $table->set_attribute('class', 'admintable generaltable');
+        $table->set_attribute('class', 'admintable table generaltable');
         $table->setup();
 
         $plugins = $this->get_sorted_plugins_list();

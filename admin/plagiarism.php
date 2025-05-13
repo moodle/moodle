@@ -54,7 +54,7 @@ $table = new html_table();
 $table->head  = array($txt->name, $txt->version, $txt->uninstall, $txt->settings);
 $table->colclasses = array('mdl-left', 'mdl-align', 'mdl-align', 'mdl-align');
 $table->data  = array();
-$table->attributes['class'] = 'manageplagiarismtable generaltable';
+$table->attributes['class'] = 'manageplagiarismtable table generaltable';
 
 // Iterate through auth plugins and add to the display table.
 $authcount = count($plagiarismplugins);

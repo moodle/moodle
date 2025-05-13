@@ -415,7 +415,7 @@ class portfolio_exporter {
         }
         $mainsummary = array_merge($mainsummary, $csummary, $isummary);
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable exportsummary';
+        $table->attributes['class'] = 'table generaltable exportsummary';
         $table->data = array();
         foreach ($mainsummary as $string => $value) {
             $table->data[] = array($string, $value);

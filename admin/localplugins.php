@@ -43,7 +43,7 @@ $table->define_columns(array('name', 'version', 'uninstall'));
 $table->define_headers(array(get_string('plugin'), get_string('version'), get_string('uninstallplugin', 'core_admin')));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'localplugins');
-$table->set_attribute('class', 'admintable generaltable');
+$table->set_attribute('class', 'admintable table generaltable');
 $table->setup();
 
 $plugins = array();

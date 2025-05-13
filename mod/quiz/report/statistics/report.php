@@ -303,7 +303,7 @@ class quiz_statistics_report extends report_base {
         $questioninfotable = new html_table();
         $questioninfotable->align = ['center', 'center'];
         $questioninfotable->width = '60%';
-        $questioninfotable->attributes['class'] = 'generaltable titlesleft';
+        $questioninfotable->attributes['class'] = 'table generaltable titlesleft';
 
         $questioninfotable->data = [];
         $questioninfotable->data[] = [get_string('modulename', 'quiz'), $quiz->name];
@@ -325,7 +325,7 @@ class quiz_statistics_report extends report_base {
         $questionstatstable = new html_table();
         $questionstatstable->align = ['center', 'center'];
         $questionstatstable->width = '60%';
-        $questionstatstable->attributes['class'] = 'generaltable titlesleft';
+        $questionstatstable->attributes['class'] = 'table generaltable titlesleft';
 
         unset($datumfromtable['number']);
         unset($datumfromtable['icon']);
@@ -498,7 +498,7 @@ class quiz_statistics_report extends report_base {
         $quizinfotable = new html_table();
         $quizinfotable->align = ['center', 'center'];
         $quizinfotable->width = '60%';
-        $quizinfotable->attributes['class'] = 'generaltable titlesleft';
+        $quizinfotable->attributes['class'] = 'table generaltable titlesleft';
         $quizinfotable->data = [];
 
         foreach ($quizinfo as $heading => $value) {

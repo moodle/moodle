@@ -58,7 +58,7 @@ class template_list extends \flexible_table {
         parent::__construct('quizaccess_seb' . $id);
 
         $this->define_baseurl($PAGE->url);
-        $this->set_attribute('class', 'generaltable admintable');
+        $this->set_attribute('class', 'table generaltable admintable');
 
         // Column definition.
         $this->define_columns([

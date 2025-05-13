@@ -187,7 +187,7 @@ class report extends \mod_scorm\report {
 
                 $table->set_attribute('cellspacing', '0');
                 $table->set_attribute('id', 'attempts');
-                $table->set_attribute('class', 'generaltable generalbox');
+                $table->set_attribute('class', 'table generaltable');
 
                 // Start working -- this is necessary as soon as the niceties are over.
                 $table->setup();

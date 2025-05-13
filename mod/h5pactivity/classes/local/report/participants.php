@@ -77,7 +77,7 @@ class participants extends table_sql implements report {
         ];
         $this->define_columns($columns);
         $this->define_headers($headers);
-        $this->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+        $this->set_attribute('class', 'table generaltable');
         $this->sortable(true);
         $this->no_sorting('score');
         $this->no_sorting('timemodified');

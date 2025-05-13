@@ -1,65 +1,19 @@
+/**
+ * File tables.scss.
+ * Contains styles for tables.
+ */
+
 .generaltable {
-    width: 100%;
-    margin-bottom: $spacer;
-    color: $table-color;
-    background-color: $table-bg; // Reset for nesting within parents with `background-color`.
-
-    $table-cell-padding: .75rem !default;
-    $table-cell-padding-sm: .3rem !default;
-
+    border-top: $table-border-width solid $table-border-color;
     th,
     td {
-        padding: $table-cell-padding;
-        vertical-align: top;
+        padding: .75rem;
         border-top: $table-border-width solid $table-border-color;
-    }
-
-    thead th,
-    thead td {
-        vertical-align: bottom;
-        border-bottom: calc(2 * #{$table-border-width}) solid $table-border-color;
-    }
-
-    tbody + tbody {
-        border-top: calc(2 * #{$table-border-width}) solid $table-border-color;
-    }
-
-    &.table-sm {
-        th,
-        td {
-            padding: $table-cell-padding-sm;
-        }
-    }
-    tbody tr {
-        &:hover {
-            &.dimmed_text {
-                a:not(.menu-action) {
-                    color: $table-hover-color;
-                }
-            }
-            td.sticky-column {
-                background-color: $table-hover-bg;
-            }
-        }
-    }
-    // Allow table cells to inherit text color and background color from table rows.
-    tbody {
-        td,
-        th {
-            color: inherit;
-            background-color: inherit;
-        }
     }
 }
 
 table {
-    caption {
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 42px;
-        text-align: left;
-        caption-side: top;
-    }
+    caption-side: top;
     .sticky-column {
         position: sticky;
         left: 0;
@@ -67,6 +21,7 @@ table {
     }
 }
 
+// Fix loading icon position in dynamic tables.
 .table-dynamic > .loading-icon {
     position: absolute;
     left: calc(50% - 1.5rem);
@@ -78,7 +33,36 @@ table {
     }
 }
 
+/**
+ * Custom styles for Bootstrap table classes.
+ */
+
+.table {
+    border-top: $table-border-width solid $table-border-color;
+    // Allow table cells to inherit text color and background color from table rows.
+    tbody {
+        td,
+        th {
+            color: inherit;
+            background-color: inherit;
+        }
+    }
+    // Fix hover styling for table rows.
+    tbody tr:hover {
+        &.dimmed_text,
+        &.text-muted {
+            a:not(.menu-action) {
+                color: $table-hover-color;
+            }
+        }
+        td.sticky-column {
+            background-color: $table-hover-bg;
+        }
+    }
+}
+
 .table-responsive {
+    @include thin-scrolls($gray-100);
     // Fix dropdown menu position inside responsive tables.
     .dropdown {
         position: static !important; /* stylelint-disable-line declaration-no-important */

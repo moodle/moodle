@@ -47,7 +47,7 @@ $table->head = array(
     get_string('thirdpartylibrarylocation', 'core_admin'), get_string('license'));
 $table->align = array('left', 'left', 'left', 'left');
 $table->id = 'thirdpartylibs';
-$table->attributes['class'] = 'admintable generaltable';
+$table->attributes['class'] = 'admintable table generaltable';
 $table->data  = array();
 
 foreach ($files as $component => $xmlpath) {

@@ -288,7 +288,8 @@ if (!$csv) {
     }
 
     print '<div id="completion-progress-wrapper" class="no-overflow">';
-    print '<table id="completion-progress" class="generaltable flexible boxaligncenter"><thead><tr style="vertical-align:top">';
+    print '<table id="completion-progress" class="table generaltable flexible">';
+    print '<thead><tr style="vertical-align:top">';
 
     // User heading / sort option
     print '<th scope="col" class="completion-sortchoice">';

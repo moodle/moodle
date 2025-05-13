@@ -1283,7 +1283,7 @@ class view {
         // Start of the table.
         echo \html_writer::start_tag('table', [
             'id' => 'categoryquestions',
-            'class' => 'question-bank-table generaltable',
+            'class' => 'question-bank-table table generaltable',
             'data-defaultsort' => json_encode($this->sort),
         ]);
 

@@ -55,7 +55,7 @@ class renderer extends plugin_renderer_base {
             get_string('info', 'auth_oauth2'),
             get_string('edit'),
         ];
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable table generaltable';
         $data = [];
 
         $index = 0;

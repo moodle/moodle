@@ -68,7 +68,7 @@ class manage_communication_providers_page extends admin_setting {
             get_string('uninstallplugin', 'core_admin'),
         ];
         $table->align = ['left', 'center', 'center', 'center'];
-        $table->attributes['class'] = 'managecommunicationtable generaltable admintable';
+        $table->attributes['class'] = 'managecommunicationtable table generaltable admintable';
         $table->data = [];
 
         foreach ($plugins as $plugin) {
