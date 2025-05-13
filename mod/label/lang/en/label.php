@@ -23,10 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configdndmedia'] = 'Offer to create a Text and media area when media files are dragged and dropped onto a course.';
 $string['configdndresizeheight'] = 'When a Text and media area is created from a dragged and dropped media file, resize it if it is higher than this many pixels. If set to zero, the media file will not be resized.';
 $string['configdndresizewidth'] = 'When a Text and media area is created from a dragged and dropped media file, resize it if it is wider than this many pixels. If set to zero, the media file will not be resized.';
-$string['dndmedia'] = 'Media drag and drop';
 $string['dndresizeheight'] = 'Resize drag and drop height';
 $string['dndresizewidth'] = 'Resize drag and drop width';
 $string['dnduploadlabel'] = 'Add media to course page';
@@ -60,3 +58,7 @@ $string['privacy:metadata'] = 'The Text and media area plugin does not store any
 $string['pluginadministration'] = 'Text and media area administration';
 $string['pluginname'] = 'Text and media area';
 $string['search:activity'] = 'Text and media area';
+
+// Deprecated since Moodle 5.1.
+$string['configdndmedia'] = 'Offer to create a Text and media area when media files are dragged and dropped onto a course.';
+$string['dndmedia'] = 'Media drag and drop';

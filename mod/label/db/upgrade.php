@@ -59,5 +59,12 @@ function xmldb_label_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025051300) {
+        // The dndmedia setting is not used anymore, so we remove it.
+        unset_config('dndmedia', 'label');
+
+        upgrade_mod_savepoint(true, 2025051300, 'label');
+    }
+
     return true;
 }
