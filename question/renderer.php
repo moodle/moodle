@@ -130,10 +130,10 @@ class core_question_bank_renderer extends plugin_renderer_base {
      *
      * @param array $displaydata
      * @return bool|string
-     * @deprecated since Moodle 5.0 MDL-78091
+     * @deprecated since Moodle 5.1 MDL-78091
      * @todo MDL-84648 Final deprecation on Moodle 6.0
      */
-    #[\core\attribute\deprecated(null, since: '5.0', mdl: 'MDL-78091')]
+    #[\core\attribute\deprecated(null, since: '5.1', mdl: 'MDL-78091')]
     public function render_question_pagination($displaydata) {
         \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         // The template question_pagination should also be deleted with this function.
