@@ -103,8 +103,10 @@
     display: inline-block;
 }
 
-#page-mod-glossary-showentry #page-content {
-    min-width: 600px;
+@media (min-width: 768px) { /* Only apply this rule for larger devices (tablets, 768px and up). */
+    #page-mod-glossary-showentry #page-content {
+        min-width: 600px;
+    }
 }
 
 #page-mod-glossary-print .mod-glossary-entrylist .mod-glossary-entry {
