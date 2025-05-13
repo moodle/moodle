@@ -39,6 +39,7 @@ function qbank_supports(string $feature) {
         case FEATURE_CAN_DISPLAY:
         case FEATURE_CAN_UNINSTALL:
         case FEATURE_COMMENT:
+        case FEATURE_COMPLETION:
         case FEATURE_COMPLETION_HAS_RULES:
         case FEATURE_COMPLETION_TRACKS_VIEWS:
         case FEATURE_CONTROLS_GRADE_VISIBILITY:
