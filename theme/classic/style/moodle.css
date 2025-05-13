@@ -28533,13 +28533,11 @@ blockquote {
 .showmore-container:not(.collapsed) .collapsed-content {
   display: none;
 }
-.showmore-container button {
+.showmore-container .showmore-button {
   float: right;
-}
-.showmore-container button.btn-link {
   text-decoration: none;
 }
-.showmore-container button .icon {
+.showmore-container .showmore-button .icon {
   font-size: 0.8203125rem;
   margin: 0;
 }
