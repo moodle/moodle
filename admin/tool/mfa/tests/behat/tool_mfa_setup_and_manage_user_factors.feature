@@ -32,6 +32,7 @@ Feature: Set up and manage user factors
     And I click on "Cancel" "button"
     And I click on "Manage security key" "button"
     And I should see "Manage security key"
+    And I should see "Add security key"
 
   @javascript
   Scenario: I can revoke a factor only when there is more than one active factor
@@ -78,3 +79,15 @@ Feature: Set up and manage user factors
     And I click on "Replace" "button" in the "MacBook" "table_row"
     When I click on "Yes, replace" "button" in the "Replace 'MacBook' security key?" "dialogue"
     Then I should see "Replace security key"
+
+  Scenario: I can add a new factor instance on the manage factor page
+    Given the following config values are set as admin:
+      | enabled | 1 | factor_webauthn |
+    And the following "tool_mfa > User factors" exist:
+      | username | factor   | label    |
+      | admin    | webauthn | MacBook  |
+    And I follow "Preferences" in the user menu
+    And I click on "Multi-factor authentication preferences" "link"
+    And I click on "Manage security key" "button"
+    When I click on "Add security key" "button"
+    Then I should see "Set up security key"
