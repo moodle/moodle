@@ -424,7 +424,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $menuitems[] = new \action_menu_link_secondary($url, null, $title);
         $menu = new \action_menu($menuitems);
         $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-        $extraclasses = 'btn btn-link btn-icon d-flex';
+        $extraclasses = 'btn btn-icon d-flex';
         $menu->set_menu_trigger($icon, $extraclasses);
         $menu->set_menu_left();
         $menu->set_boundary('window');
