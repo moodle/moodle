@@ -64,7 +64,7 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_save_cancel', 'core/modal_
             var users = {};
             var predictionToUserMapping = cTarget.data('prediction-to-user-id');
 
-            var checkedSelector = '.insights-list input[data-togglegroup^="insight-bulk-action"][data-toggle="slave"]:checked';
+            var checkedSelector = '.insights-list input[data-togglegroup^="insight-bulk-action"][data-toggle="target"]:checked';
             $(checkedSelector).each(function(index, value) {
                 var predictionId = $(value).closest('tr[data-prediction-id]').data('prediction-id');
 

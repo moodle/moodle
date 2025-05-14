@@ -15,9 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @deprecated since Moodle 5.0
+
+    Please use core/checkbox-toggleall-toggler-button instead.
+
     @template core/checkbox-toggleall-master-button
 
-    Template for a master button in a toggle group. The master button toggles the checked states of the slave checkboxes.
+    Template for a toggler button in a toggle group. The toggler button toggles the checked states of the target checkboxes.
 
     Data attributes required for JS:
     * data-action
@@ -38,7 +42,7 @@
 }}
 <button type="button" id="{{id}}" name="{{name}}" class="btn {{^classes}}btn-secondary{{/classes}}{{#classes}}{{.}}{{/classes}}"
         data-action="toggle"
-        data-toggle="master"
+        data-toggle="toggler"
         data-togglegroup="{{togglegroup}}"
         data-toggle-selectall="{{selectall}}"
         data-toggle-deselectall="{{deselectall}}"

@@ -36,7 +36,7 @@ import 'core/inplace_editable';
 
 const Selectors = {
     bulkActionSelect: "#formactionid",
-    bulkUserSelectedCheckBoxes: "input[data-togglegroup='participants-table'][data-toggle='slave']:checked",
+    bulkUserSelectedCheckBoxes: "input[data-togglegroup='participants-table'][data-toggle='target']:checked",
     checkCountButton: "#checkall",
     showCountText: '[data-region="participant-count"]',
     showCountToggle: '[data-action="showcount"]',
@@ -139,7 +139,7 @@ export const init = ({
             const currentPageSize = parseInt(tableRoot.dataset.tablePageSize, 10);
             const totalRowCount = parseInt(tableRoot.dataset.tableTotalRows, 10);
 
-            CheckboxToggleAll.updateSlavesFromMasterState(root, 'participants-table');
+            CheckboxToggleAll.updateTargetsFromTogglerState(root, 'participants-table');
 
             const pageCountStrings = [
                 {

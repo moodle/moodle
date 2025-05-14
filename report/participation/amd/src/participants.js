@@ -30,7 +30,7 @@ import {showSendMessage} from 'core_user/local/participants/bulkactions';
 
 const Selectors = {
     bulkActionSelect: "#formactionid",
-    bulkUserSelectedCheckBoxes: "input[data-togglegroup^='participants-table'][data-toggle='slave']:checked",
+    bulkUserSelectedCheckBoxes: "input[data-togglegroup^='participants-table'][data-toggle='target']:checked",
     participantsForm: '#participantsform',
 };
 

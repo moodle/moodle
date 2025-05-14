@@ -34,7 +34,7 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 
 const Selectors = {
     commentDelete: '[data-action="comment-delete"]',
-    commentDeleteChecked: '[data-togglegroup="report-select-all"][data-toggle="slave"]:checked',
+    commentDeleteChecked: '[data-togglegroup="report-select-all"][data-toggle="target"]:checked',
     commentDeleteSelected: '[data-action="comment-delete-selected"]',
 };
 

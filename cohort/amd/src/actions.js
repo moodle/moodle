@@ -33,7 +33,7 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {eventTypes} from 'core/local/inplace_editable/events';
 
 const SELECTORS = {
-    CHECKBOXES: '[data-togglegroup="report-select-all"][data-toggle="slave"]:checked',
+    CHECKBOXES: '[data-togglegroup="report-select-all"][data-toggle="target"]:checked',
     DELETE: '[data-action="cohort-delete"]',
     DELETEBUTTON: '[data-action="cohort-delete-selected"]',
     EDITNAME: '[data-itemtype="cohortname"]',

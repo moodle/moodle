@@ -37,43 +37,43 @@ class checkbox_toggleall implements renderable, templatable {
     /** @var string The name of the group of checkboxes to be toggled. */
     protected $togglegroup;
 
-    /** @var bool $ismaster Whether we're rendering for a master checkbox or a slave checkbox. */
-    protected $ismaster;
+    /** @var bool $istoggler Whether we're rendering for a toggler checkbox or a target checkbox. */
+    protected $istoggler;
 
     /** @var array $options The options for the checkbox. */
     protected $options;
 
-    /** @var bool $isbutton Whether to render this as a button. Applies to master checkboxes only. */
+    /** @var bool $isbutton Whether to render this as a button. Applies to toggler checkboxes only. */
     protected $isbutton;
 
     /**
      * Constructor.
      *
      * @param string $togglegroup The name of the group of checkboxes to be toggled.
-     * @param bool $ismaster Whether we're rendering for a master checkbox or a slave checkbox.
+     * @param bool $ismaster Whether we're rendering for a toggler checkbox or a target checkbox.
      * @param array $options The options for the checkbox. Valid options are:
      *     <ul>
      *         <li><b>id          </b> string - The element ID.</li>
      *         <li><b>name        </b> string - The element name.</li>
      *         <li><b>classes     </b> string - CSS classes that you want to add for your checkbox or toggle controls.
-     *                                          For button type master toggle controls, this could be any Bootstrap 4 btn classes
+     *                                          For button type toggler toggle controls, this could be any Bootstrap 4 btn classes
      *                                          that you might want to add. Defaults to "btn-secondary".</li>
      *         <li><b>value       </b> string|int - The element's value.</li>
      *         <li><b>checked     </b> boolean - Whether to render this initially as checked.</li>
      *         <li><b>label       </b> string - The label for the checkbox element.</li>
      *         <li><b>labelclasses</b> string - CSS classes that you want to add for your label.</li>
-     *         <li><b>selectall   </b> string - Master only. The language string that will be used to indicate that clicking on
-     *                                 the master will select all of the slave checkboxes. Defaults to "Select all".</li>
-     *         <li><b>deselectall </b> string - Master only. The language string that will be used to indicate that clicking on
-     *                                 the master will select all of the slave checkboxes. Defaults to "Deselect all".</li>
+     *         <li><b>selectall   </b> string - Toggler only. The language string that will be used to indicate that clicking on
+     *                                 the toggler will select all the target checkboxes. Defaults to "Select all".</li>
+     *         <li><b>deselectall </b> string - Toggler only. The language string that will be used to indicate that clicking on
+     *                                 the toggler will select all the target checkboxes. Defaults to "Deselect all".</li>
      *     </ul>
-     * @param bool $isbutton Whether to render this as a button. Applies to master only.
+     * @param bool $isbutton Whether to render this as a button. Applies to toggler only.
      */
     public function __construct(string $togglegroup, bool $ismaster, $options = [], $isbutton = false) {
         $this->togglegroup = $togglegroup;
-        $this->ismaster = $ismaster;
+        $this->istoggler = $ismaster;
         $this->options = $options;
-        $this->isbutton = $ismaster && $isbutton;
+        $this->isbutton = $this->istoggler && $isbutton;
     }
 
     /**
@@ -94,7 +94,7 @@ class checkbox_toggleall implements renderable, templatable {
             'checked' => $this->options['checked'] ?? false,
         ];
 
-        if ($this->ismaster) {
+        if ($this->istoggler) {
             $data->selectall = $this->options['selectall'] ?? get_string('selectall');
             $data->deselectall = $this->options['deselectall'] ?? get_string('deselectall');
         }
@@ -108,13 +108,13 @@ class checkbox_toggleall implements renderable, templatable {
      * @return string
      */
     public function get_template() {
-        if ($this->ismaster) {
+        if ($this->istoggler) {
             if ($this->isbutton) {
-                return 'core/checkbox-toggleall-master-button';
+                return 'core/checkbox-toggleall-toggler-button';
             } else {
-                return 'core/checkbox-toggleall-master';
+                return 'core/checkbox-toggleall-toggler';
             }
         }
-        return 'core/checkbox-toggleall-slave';
+        return 'core/checkbox-toggleall-target';
     }
 }

@@ -119,14 +119,14 @@ class view_footer extends sticky_footer {
             // Build the select/deselect all control.
             $selectallid = 'selectall-listview-entries';
             $togglegroup = 'listview-entries';
-            $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+            $togglercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
                 'id' => $selectallid,
                 'name' => $selectallid,
                 'value' => 1,
                 'label' => get_string('selectall'),
                 'classes' => 'btn-secondary mx-1',
             ], true);
-            $data['selectall'] = $output->render($mastercheckbox);
+            $data['selectall'] = $output->render($togglercheckbox);
 
             $data['deleteselected'] = html_writer::empty_tag('input', [
                 'class' => 'btn btn-secondary mx-1',

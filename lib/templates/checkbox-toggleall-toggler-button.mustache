@@ -15,13 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @deprecated since Moodle 5.0
+    @template core/checkbox-toggleall-toggler-button
 
-    Please use core/checkbox-toggleall-toggler instead.
-
-    @template core/checkbox-toggleall-master
-
-    Template for a toggler checkbox in a toggle group. The toggler checkbox toggles the checked states of the target checkboxes.
+    Template for a toggler button in a toggle group. The toggler button toggles the checked states of the slave checkboxes.
 
     Data attributes required for JS:
     * data-action
@@ -35,24 +31,22 @@
         "togglegroup": "toggle-group",
         "label": "Select everything!",
         "checked": true,
-        "classes": "p-1",
+        "classes": "btn-primary btn-lg",
         "selectall": "Select all",
-        "deselectall": "Deselect all",
-        "labelclasses": "badge bg-info text-white"
+        "deselectall": "Deselect all"
     }
 }}
-<div class="form-check p-0">
-    <input id="{{id}}" name="{{name}}" type="checkbox" class="{{classes}}" value="{{value}}"
-           aria-labelledby="{{id}}-label"
-           data-action="toggle"
-           data-toggle="toggler"
-           data-togglegroup="{{togglegroup}}"
-           data-toggle-selectall="{{selectall}}"
-           data-toggle-deselectall="{{deselectall}}"
-           {{#checked}}checked="checked"{{/checked}}
-    >
-    <label id="{{id}}-label" for="{{id}}" class="form-check-label d-block pe-2 {{labelclasses}}">{{label}}</label>
-</div>
+<button type="button" id="{{id}}" name="{{name}}" class="btn {{^classes}}btn-secondary{{/classes}}{{#classes}}{{.}}{{/classes}}"
+        data-action="toggle"
+        data-toggle="toggler"
+        data-togglegroup="{{togglegroup}}"
+        data-toggle-selectall="{{selectall}}"
+        data-toggle-deselectall="{{deselectall}}"
+        data-checkall="{{#checked}}0{{/checked}}{{^checked}}1{{/checked}}">
+    {{#checked}}{{deselectall}}{{/checked}}
+    {{^checked}}{{selectall}}{{/checked}}
+</button>
+
 {{#js}}
     require(['core/checkbox-toggleall'], function(ToggleAll) {
         ToggleAll.init();

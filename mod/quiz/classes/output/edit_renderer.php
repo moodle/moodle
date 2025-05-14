@@ -305,7 +305,7 @@ class edit_renderer extends \plugin_renderer_base {
         $selectallid = 'questionselectall';
         $selectalltext = get_string('selectall', 'moodle');
         $deselectalltext = get_string('deselectall', 'moodle');
-        $mastercheckbox = new \core\output\checkbox_toggleall($this->togglegroup, true, [
+        $togglercheckbox = new \core\output\checkbox_toggleall($this->togglegroup, true, [
             'id' => $selectallid,
             'name' => $selectallid,
             'value' => 1,
@@ -314,7 +314,7 @@ class edit_renderer extends \plugin_renderer_base {
             'deselectall' => $deselectalltext,
         ], true);
 
-        $selectdeselect = html_writer::div($this->render($mastercheckbox), 'selectmultiplecommandbuttons');
+        $selectdeselect = html_writer::div($this->render($togglercheckbox), 'selectmultiplecommandbuttons');
         $output .= html_writer::tag('div', $selectdeselect, $toolbaroptions);
         return $output;
     }

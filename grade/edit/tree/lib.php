@@ -825,38 +825,38 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
             'category' => $params['eid']
         ]);
 
-        $mastercheckbox = '';
+        $togglercheckbox = '';
         if ($this->deepest_level > 1) {
             if (empty($params['eid'])) {
                 throw new Exception('Array key (eid) missing from 3rd param of ' .
                     'grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
             }
 
-            // Get toggle group for this master checkbox.
+            // Get toggle group for this toggler checkbox.
             $togglegroup = $this->get_checkbox_togglegroup($category);
-            // Set label for this master checkbox.
-            $masterlabel = $params['level'] === 1 ? get_string('all') : $params['name'];
-            // Build the master checkbox.
-            $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+            // Set label for this toggler checkbox.
+            $togglerlabel = $params['level'] === 1 ? get_string('all') : $params['name'];
+            // Build the toggler checkbox.
+            $togglercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
                 'id' => 'select_category_' . $category->id,
                 'name' => $togglegroup,
                 'value' => 1,
                 'classes' => 'itemselect ignoredirty',
-                'label' => $masterlabel,
+                'label' => $togglerlabel,
                 // Consistent label to prevent the select column from resizing.
-                'selectall' => $masterlabel,
-                'deselectall' => $masterlabel,
+                'selectall' => $togglerlabel,
+                'deselectall' => $togglerlabel,
                 'labelclasses' => 'accesshide',
             ]);
 
-            $mastercheckbox = $OUTPUT->render($mastercheckbox);
+            $togglercheckbox = $OUTPUT->render($togglercheckbox);
         }
 
         $moveaction = isset($params['moveaction']) ? $params['moveaction'] : '';
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
         $categorycell->colspan = ($this->deepest_level + 2) - $params['level'];
         $rowtitle = html_writer::div($params['name'], 'rowtitle');
-        $categorycell->text = html_writer::div($mastercheckbox . $visibilitytoggle . $moveaction . $rowtitle, 'fw-bold');
+        $categorycell->text = html_writer::div($togglercheckbox . $visibilitytoggle . $moveaction . $rowtitle, 'fw-bold');
         return $categorycell;
     }
 
