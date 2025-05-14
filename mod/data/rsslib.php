@@ -119,9 +119,12 @@ defined('MOODLE_INTERNAL') || die();
             $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
             // First all rss feeds common headers.
-            $header = rss_standard_header($courseshortname . ': ' . format_string($data->name, true, array('context' => $context)),
-                                          $CFG->wwwroot."/mod/data/view.php?d=".$data->id,
-                                          format_text($data->intro, $data->introformat, array('context' => $context)));
+            $header = rss_standard_header($courseshortname
+                . \moodle_page::TITLE_SEPARATOR
+                . format_string($data->name, true, ['context' => $context]),
+                $CFG->wwwroot . "/mod/data/view.php?d=" . $data->id,
+                format_text($data->intro, $data->introformat, ['context' => $context])
+            );
 
             if (!empty($header)) {
                 $articles = rss_add_items($items);
