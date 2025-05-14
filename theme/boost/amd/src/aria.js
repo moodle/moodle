@@ -343,7 +343,7 @@ const comboboxFix = () => {
                 }
             }
         }
-    });
+    }, true);
 
     document.addEventListener('click', e => {
         const option = e.target.closest('[role="listbox"] [role="option"]');
