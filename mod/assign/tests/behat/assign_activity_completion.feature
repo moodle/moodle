@@ -54,7 +54,7 @@ Feature: View activity completion in the assignment activity
     And the manual completion button of "Music history" is displayed as "Done"
 
   @javascript
-  Scenario: The manual completion button will not be shown on the course page if the Show activity completion conditions is set to No
+  Scenario: Assign module manual completion button hidden if Show activity completion is set to No
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
