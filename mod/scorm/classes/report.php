@@ -81,11 +81,11 @@ class report {
     /**
      * Generates a checkbox that can be added to header tables to select/deselect all entries in the SCORM report.
      *
-     * @deprecated since Moodle 5.0
+     * @deprecated since Moodle 5.1
      * @todo MDL-83748 Remove this method in Moodle 6.0.
      * @return string
      */
-    #[\core\attribute\deprecated(replacement: '\mod_scorm\report::generate_toggler_checkbox()', since: '5.0', mdl: 'MDL-79756')]
+    #[\core\attribute\deprecated(replacement: '\mod_scorm\report::generate_toggler_checkbox()', since: '5.1', mdl: 'MDL-79756')]
     protected function generate_master_checkbox(): string {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
         return $this->generate_toggler_checkbox();
