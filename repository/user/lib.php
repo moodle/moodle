@@ -167,4 +167,12 @@ class repository_user extends repository {
     public function contains_private_data() {
         return false;
     }
+
+    #[\Override]
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
+        // If the file is linked to the original then we should not cache it.
+        $lifetime = 0;
+
+        parent::send_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+    }
 }
