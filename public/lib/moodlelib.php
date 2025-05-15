@@ -912,7 +912,7 @@ function get_host_from_url($url) {
  * images, objects, etc.
  */
 function html_is_blank($string) {
-    return trim(strip_tags((string)$string, '<img><object><applet><input><select><textarea><hr>')) == '';
+    return trim(strip_tags((string)$string, '<img><object><applet><input><select><textarea><hr><iframe>')) == '';
 }
 
 /**
