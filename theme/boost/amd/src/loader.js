@@ -98,7 +98,15 @@ const enablePopovers = () => {
  */
 const enableTooltips = () => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new Bootstrap.Tooltip(tooltipTriggerEl));
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Bootstrap.Tooltip(tooltipTriggerEl));
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            tooltipList.forEach(tooltip => {
+                tooltip.hide();
+            });
+        }
+    });
 };
 
 /**
