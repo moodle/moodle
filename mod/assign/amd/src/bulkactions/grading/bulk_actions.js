@@ -67,6 +67,12 @@ export default class extends BulkActions {
     /** @type {boolean} Whether to show the set workflow state action. */
     #workflowState;
 
+    /** @type {boolean} Whether this assignment supports submissions. */
+    #supportsSubmissions;
+
+    /** @type {boolean} Whether this assignment has submissions. */
+    #hasSubmissions;
+
     /**
      * Returns the instance of the class.
      *
@@ -81,6 +87,8 @@ export default class extends BulkActions {
      * @param {boolean} options.markingallocation - Whether to show the set marking allocation action.
      * @param {Array} options.pluginoperations - The list of plugin operations.
      * @param {string} options.sesskey - The session key.
+     * @param {boolean} options.supportssubmissions - Whether this assignment supports submissions.
+     * @param {boolean} options.hassubmissions - Whether this assignment has submissions.
      * @returns {this} An instance of the anonymous class extending BulkActions.
      */
     static init(options) {
@@ -101,10 +109,13 @@ export default class extends BulkActions {
      * @param {boolean} options.markingallocation - Whether to show the set marking allocation action.
      * @param {Array} options.pluginoperations - The list of plugin operations.
      * @param {string} options.sesskey - The session key.
+     * @param {boolean} options.hassubmissions - Whether this assignment has any submissions.
+     * @param {boolean} options.supportssubmissions - Whether this assignment allows submissions.
      */
     constructor({
         cmid, message, submissiondrafts, removesubmission, extend,
-        grantattempt, workflowstate, markingallocation, pluginoperations, sesskey
+        grantattempt, workflowstate, markingallocation, pluginoperations, sesskey,
+        hassubmissions, supportssubmissions
     }) {
         super();
         this.#cmid = cmid;
@@ -117,43 +128,51 @@ export default class extends BulkActions {
         this.#markingAllocation = markingallocation;
         this.#sesskey = sesskey;
         this.#pluginOperations = pluginoperations;
+        this.#hasSubmissions = hassubmissions;
+        this.#supportsSubmissions = supportssubmissions;
     }
 
     getBulkActions() {
-        const actions = [
-            new GeneralAction(
-                this.#cmid,
-                this.#sesskey,
-                'lock',
-                getString('batchoperationlock', 'mod_assign'),
-                Templates.renderPix('i/lock', 'core'),
-                getString('locksubmissions', 'mod_assign'),
-                getString('batchoperationconfirmlock', 'mod_assign'),
-                getString('batchoperationlock', 'mod_assign'),
-            ),
-            new GeneralAction(
-                this.#cmid,
-                this.#sesskey,
-                'unlock',
-                getString('batchoperationunlock', 'mod_assign'),
-                Templates.renderPix('i/unlock', 'core'),
-                getString('unlocksubmissions', 'mod_assign'),
-                getString('batchoperationconfirmunlock', 'mod_assign'),
-                getString('batchoperationunlock', 'mod_assign'),
-            ),
-            new GeneralAction(
-                this.#cmid,
-                this.#sesskey,
-                'downloadselected',
-                getString('batchoperationdownloadselected', 'mod_assign'),
-                Templates.renderPix('t/download', 'core'),
-                getString('downloadselectedsubmissions', 'mod_assign'),
-                getString('batchoperationconfirmdownloadselected', 'mod_assign'),
-                getString('batchoperationdownloadselected', 'mod_assign'),
-            ),
-        ];
-
-        if (this.#removeSubmission) {
+        const actions = [];
+        if (this.#supportsSubmissions) {
+            actions.push(
+                new GeneralAction(
+                    this.#cmid,
+                    this.#sesskey,
+                    'lock',
+                    getString('batchoperationlock', 'mod_assign'),
+                    Templates.renderPix('i/lock', 'core'),
+                    getString('locksubmissions', 'mod_assign'),
+                    getString('batchoperationconfirmlock', 'mod_assign'),
+                    getString('batchoperationlock', 'mod_assign'),
+                ),
+                new GeneralAction(
+                    this.#cmid,
+                    this.#sesskey,
+                    'unlock',
+                    getString('batchoperationunlock', 'mod_assign'),
+                    Templates.renderPix('i/unlock', 'core'),
+                    getString('unlocksubmissions', 'mod_assign'),
+                    getString('batchoperationconfirmunlock', 'mod_assign'),
+                    getString('batchoperationunlock', 'mod_assign'),
+                ),
+            );
+        }
+        if (this.#supportsSubmissions && this.#hasSubmissions) {
+            actions.push(
+                new GeneralAction(
+                    this.#cmid,
+                    this.#sesskey,
+                    'downloadselected',
+                    getString('batchoperationdownloadselected', 'mod_assign'),
+                    Templates.renderPix('t/download', 'core'),
+                    getString('downloadselectedsubmissions', 'mod_assign'),
+                    getString('batchoperationconfirmdownloadselected', 'mod_assign'),
+                    getString('batchoperationdownloadselected', 'mod_assign'),
+                ),
+            );
+        }
+        if (this.#removeSubmission && this.#supportsSubmissions && this.#hasSubmissions) {
             actions.push(new DeleteAction(this.#cmid, this.#sesskey));
         }
 
@@ -216,7 +235,6 @@ export default class extends BulkActions {
                 )
             );
         }
-
         return actions;
     }
 
