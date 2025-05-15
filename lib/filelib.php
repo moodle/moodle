@@ -2609,8 +2609,8 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             header('Cache-Control: private, max-age=10, no-transform');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
-        } else { //normal http - prevent caching at all cost
-            header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0, no-transform');
+        } else { // Normal http - prevent caching at all cost.
+            header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0, no-transform', 'no-store');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: no-cache');
         }
