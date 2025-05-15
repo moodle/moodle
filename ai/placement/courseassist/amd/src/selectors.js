@@ -26,6 +26,8 @@ export default {
         AIDRAWER_BODY: '#ai-drawer .ai-drawer-body',
         PAGE: '#page',
         MAIN_REGION: '[role="main"]',
+        JUMPTO: '.ai-course-summarise-controls [data-region="jumpto"]',
+        AIDRAWER_CLOSE: '#ai-drawer-close',
     },
     ACTIONS: {
         SUMMARY: '[data-action="course-summarise"]',
