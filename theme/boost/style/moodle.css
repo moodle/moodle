@@ -39269,6 +39269,12 @@ div.editor_atto_toolbar button .icon {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.dir-rtl .dropdown-menu {
+  transform: none !important; /* stylelint-disable-line declaration-no-important */
+  top: 100% !important; /* stylelint-disable-line declaration-no-important */
+  right: inherit !important; /* stylelint-disable-line declaration-no-important */
+}
+
 /**
  Deprecations
  */
