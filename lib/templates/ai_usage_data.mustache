@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/ai_usage_data
+
+    Template for AI usage data.
+
+    Example context (json):
+    {
+        "aiusagedata": [{
+            "providers": [{
+                "providerName": "AI provider name",
+                "aiactions": [{
+                    "actionName": "AI action name",
+                    "aiactionvalues": [{
+                        "success_count": "1",
+                        "fail_count": "2",
+                        "average_time": "15",
+                        "predominant_error": "403",
+                        "models": [{
+                            "gpt-4o": "1"
+                        }]
+                    }]
+                }]
+            }],
+            "timerange": [{
+                "label": "Time range for stats",
+                "values": [{
+                    "timefrom": "Time from: Friday, 2 May 2025, 1:22 AM",
+                    "timeto": "Time from: Friday, 3 May 2025, 1:22 AM"
+                }]
+            }]
+        }]
+    }
+}}
+
+{{#aiusagedata}}
+    {{#str}} aiusagedata, hub {{/str}}:
+    <ul>
+        {{! AI providers. }}
+        {{#providers}}
+            <li>{{providername}}:</li>
+            {{#aiactions}}
+                <ul>
+                    <li>{{actionname}}:</li>
+                    {{#aiactionvalues}}
+                        <ul>
+                            {{#values}}
+                                <li>{{values}}</li>
+                            {{/values}}
+
+                            {{^values}}
+                                <li>{{label}}:</li>
+                                {{#models}}
+                                    <ul>
+                                        <li>{{.}}</li>
+                                    </ul>
+                                {{/models}}
+                            {{/values}}
+                        </ul>
+                    {{/aiactionvalues}}
+                </ul>
+            {{/aiactions}}
+        {{/providers}}
+
+        {{! Time range for stats. }}
+        {{#timerange}}
+            <li>{{label}}:</li>
+            {{#values}}
+                <ul>
+                    <li>{{.}}</li>
+                </ul>
+            {{/values}}
+        {{/timerange}}
+    </ul>
+{{/aiusagedata}}
+{{^aiusagedata}}
+    {{#str}} noaiusagedata, hub {{/str}}
+{{/aiusagedata}}

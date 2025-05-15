@@ -239,6 +239,8 @@ class registration {
      * @return string
      */
     public static function get_stats_summary($siteinfo) {
+        global $OUTPUT;
+
         $fieldsneedconfirm = self::get_new_registration_fields();
         $summary = html_writer::tag('p', get_string('sendfollowinginfo_help', 'hub')) .
             html_writer::start_tag('ul');
@@ -284,7 +286,7 @@ class registration {
             'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
             'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
             'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
-            'aiusage' => get_string('aiusagestats', 'hub', self::get_ai_usage_time_range(true)),
+            'aiusage' => $OUTPUT->render_from_template('core/ai_usage_data', ['aiusagedata' => self::show_ai_usage()]),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -723,6 +725,75 @@ class registration {
             'timefrom' => $timefrom,
             'timeto' => $timeto,
         ];
+    }
+
+    /**
+     * Displays AI usage data for all providers.
+     *
+     * @return array Array containing usage data, grouped by provider
+     */
+    public static function show_ai_usage(): array {
+        // Initialize aiusage collection.
+        $aiusage = [];
+
+        // Process each provider's data.
+        foreach (self::get_ai_usage_data() as $provider => $actions) {
+            if ($provider === 'time_range') {
+                $aiusage['timerange'] = [
+                    'label' => get_string($provider, 'hub'),
+                    'values' => self::format_ai_usage_actions($actions),
+                ];
+            } else {
+                // Initialize provider data structure.
+                $aiusage['providers'][] = [
+                    'providername' => get_string('pluginname', $provider),
+                    'aiactions' => self::format_ai_usage_actions($actions),
+                ];
+            }
+        }
+
+        return $aiusage;
+    }
+
+    /**
+     * Formats individual actions for a provider.
+     *
+     * @param array $actions Raw actions data
+     * @return array Formatted action data
+     */
+    private static function format_ai_usage_actions(array $actions): array {
+        $formattedactions = [];
+
+        foreach ($actions as $action => $values) {
+            if (in_array($action, ['timefrom', 'timeto'])) {
+                $formattedactions[] = get_string($action, 'hub', userdate($values));
+            } else {
+                $formattedactions[] = [
+                    'actionname' => get_string("action_$action", 'core_ai'),
+                    'aiactionvalues' => self::format_ai_usage_action_values($values),
+                ];
+            }
+        }
+
+        return $formattedactions;
+    }
+
+    /**
+     * Formats action values into formatted strings.
+     *
+     * @param array $values Action values to format
+     * @return array Formatted action values
+     */
+    private static function format_ai_usage_action_values(array $values): array {
+        $formattedvalues = [];
+
+        foreach ($values as $key => $value) {
+            if (get_string_manager()->string_exists($key, 'hub', $value)) {
+                $formattedvalues[]['values'] = get_string($key, 'hub', $value);
+            }
+        }
+
+        return $formattedvalues;
     }
 
     /**
