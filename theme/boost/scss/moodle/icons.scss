@@ -31,10 +31,9 @@ $iconsizes: map-merge((
 .icon {
     max-width: map-get($iconsizes, 4);
     max-height: map-get($iconsizes, 4);
-    margin: 0;
+    margin: 0 map-get($spacers, 2) 0 0;
     padding: 0;
     box-sizing: content-box;
-    margin-right: 0.5rem;
 
     &.spacer {
         margin-right: 0;

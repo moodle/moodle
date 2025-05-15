@@ -26234,10 +26234,9 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 .icon {
   max-width: 24px;
   max-height: 24px;
-  margin: 0;
+  margin: 0 0.5rem 0 0;
   padding: 0;
   box-sizing: content-box;
-  margin-right: 0.5rem;
 }
 .icon.spacer {
   margin-right: 0;
