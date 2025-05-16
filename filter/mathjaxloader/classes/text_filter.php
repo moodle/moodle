@@ -147,7 +147,9 @@ class text_filter extends \core_filters\text_filter {
         }
 
         if ($hasdisplayorinline || $hasextra) {
-            $PAGE->requires->js_call_amd('filter_mathjaxloader/loader', 'typeset');
+            if ($PAGE->requires->should_create_one_time_item_now('filter_mathjaxloader-typeset')) {
+                $PAGE->requires->js_call_amd('filter_mathjaxloader/loader', 'typeset');
+            }
             return '<span class="filter_mathjaxloader_equation">' . $text . '</span>';
         }
         return $text;
