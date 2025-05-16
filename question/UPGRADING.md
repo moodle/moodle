@@ -1,5 +1,30 @@
 # core_question (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Deprecated
+
+- Intial deprecation of core_question_bank_renderer::render_question_pagination() and the associated template file. Rendering the question pagination is now done via ajax based pagination.
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
+### Removed
+
+- Final deprecation of:
+    - core_question\local\bank\random_question_loader::get_next_question_id()
+    - core_question\local\bank\random_question_loader::get_category_key()
+    - core_question\local\bank\random_question_loader::ensure_questions_for_category_loaded()
+    - core_question\local\bank\random_question_loader::get_question_ids()
+    - core_question\local\bank\random_question_loader::is_question_available()
+    - core_question\local\bank\random_question_loader::get_questions()
+    - core_question\local\bank\random_question_loader::count_questions()
+    - core_question\local\bank\view::display_top_pagnation()
+    - core_question\local\bank\view::display_bottom_pagination()
+    - question_finder::get_questions_from_categories_with_usage_counts()
+    - question_finder::get_questions_from_categories_and_tags_with_usage_counts()
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
 ## 5.0
 
 ### Added

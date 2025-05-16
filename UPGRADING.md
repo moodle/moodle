@@ -16,6 +16,36 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
 
+#### Changed
+
+- Changes were implemented to make `checkbox-toggleall` output component more inclusive:
+
+  * Replace the references to `master` checkboxes with `toggler`.
+  * Replace the references to `slave` checkboxes with `target`.
+
+  For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+
+#### Deprecated
+
+- The following `core/checkbox-toggleall` templates have been deprecated:
+
+  - `core/checkbox-toggleall-master-button` - This is replaced with `core/checkbox-toggleall-toggler-button`
+  - `core/checkbox-toggleall-master` - This is replaced with `core/checkbox-toggleall-toggler`
+  - `core/checkbox-toggleall-slave` - This is replaced with `core/checkbox-toggleall-target`
+
+  The following items in the `core/checkbox-toggleall` JS module have been deprecated:
+
+  - Method:
+      - `updateSlavesFromMasterState()` - This is replaced with `updateTargetsFromTogglerState()`.
+
+  - Usage of the following selectors:
+      - `data-toggle=master` - This is replaced with `data-toggle=toggler`.
+      - `data-toggle=slave` - This is replaced with `data-toggle=target`.
+
+  The usage of these selectors will continue to be supported until they are removed by final deprecation. In the meantime, a deprecation warning in the JavaScript console will be shown if usage of these selectors is detected.
+
+  For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+
 ### core_badges
 
 #### Removed
@@ -37,6 +67,31 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - grade_structure::get_calculation_icon
 
   For more information see [MDL-77307](https://tracker.moodle.org/browse/MDL-77307)
+
+### core_question
+
+#### Deprecated
+
+- Intial deprecation of core_question_bank_renderer::render_question_pagination() and the associated template file. Rendering the question pagination is now done via ajax based pagination.
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
+#### Removed
+
+- Final deprecation of:
+    - core_question\local\bank\random_question_loader::get_next_question_id()
+    - core_question\local\bank\random_question_loader::get_category_key()
+    - core_question\local\bank\random_question_loader::ensure_questions_for_category_loaded()
+    - core_question\local\bank\random_question_loader::get_question_ids()
+    - core_question\local\bank\random_question_loader::is_question_available()
+    - core_question\local\bank\random_question_loader::get_questions()
+    - core_question\local\bank\random_question_loader::count_questions()
+    - core_question\local\bank\view::display_top_pagnation()
+    - core_question\local\bank\view::display_bottom_pagination()
+    - question_finder::get_questions_from_categories_with_usage_counts()
+    - question_finder::get_questions_from_categories_and_tags_with_usage_counts()
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
 
 ### core_user
 
@@ -64,6 +119,85 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `grade/report/singleview/js/singleview.js` file has been removed. And the `grade/report/singleview/amd/src/singleview.js` file has been added. The new file is converted from YUI to native JS.
 
   For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
+
+### mod_label
+
+#### Removed
+
+- The dndmedia setting has been removed. From now on dropping a media file into a course will always ask the user if they want to create a label.
+
+  For more information see [MDL-83081](https://tracker.moodle.org/browse/MDL-83081)
+
+### mod_quiz
+
+#### Deprecated
+
+- Final deprecations for the quiz. The following functions have been removed:
+    - quiz_has_question_use
+    - quiz_update_sumgrades
+    - quiz_update_all_attempt_sumgrades
+    - quiz_update_all_final_grades
+    - quiz_set_grade
+    - quiz_save_best_grade
+    - quiz_calculate_best_grade
+    - quiz_calculate_best_attempt
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Initial deprecation add_random_form and associates.
+  The just removed mod_quiz\form\add_random_form was the only place in core where the mod_quiz/add_random_form javascript was called, so we can deprecate this now. This also enables us to deprecate the mod_quiz/random_question_form_preview javascript and the mod_quiz/random_question_form_preview_question_list template as they are direct dependends.
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
+#### Removed
+
+- Final deprecations for the quiz. The following files have been removed:
+    - mod/quiz/accessmanager_form.php
+    - mod/quiz/accessmanager.php
+    - mod/quiz/accessrule/accessrulebase.php
+    - mod/quiz/attemptlib.php
+    - mod/quiz/cronlib.php
+    - mod/quiz/override_form.php
+    - mod/quiz/renderer.php
+    - mod/quiz/report/attemptsreport_form.php
+    - mod/quiz/report/attemptsreport_options.php
+    - mod/quiz/report/attemptsreport_table.php
+    - mod/quiz/report/attemptsreport.php
+    - mod/quiz/report/default.php
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecations for the quiz. The following methods have been removed:
+     - mod_quiz\output\renderer::no_questions_message
+     - mod_quiz\output\renderer::render_mod_quiz_links_to_other_attempts
+     - mod_quiz\output\renderer::render_quiz_nav_question_button
+     - mod_quiz\output\renderer::render_quiz_nav_section_heading
+     - mod_quiz\structure::get_slot_tags_for_slot_id
+     - mod_quiz\structure::is_display_number_customised
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecations for the quiz. The following classes have been removed:
+    - mod_quiz_overdue_attempt_updater
+    - moodle_quiz_exception
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- The const quiz_statistics\calculator::TIME_TO_CACHE has been removed.
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecation of:
+    - mod_quiz\form\add_random_form::class
+    - mod_quiz\local\structure\slot_random::set_tags()
+    - mod_quiz\local\structure\slot_random::set_tags_by_id()
+    - const quiz_statistics\calculator::TIME_TO_CACHE
+    - quiz_add_random_questions()
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
+### mod_scorm
+
+#### Deprecated
+
+- The method `\mod_scorm\report::generate_master_checkbox()` has been deprecated and should no longer be used. SCORM report plugins calling this method should use `\mod_scorm\report::generate_toggler_checkbox()` instead.
+
+  For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
 
 ### report_progress
 

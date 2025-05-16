@@ -1,5 +1,68 @@
 # mod_quiz Upgrade notes
 
+## 5.1dev
+
+### Deprecated
+
+- Final deprecations for the quiz. The following functions have been removed:
+    - quiz_has_question_use
+    - quiz_update_sumgrades
+    - quiz_update_all_attempt_sumgrades
+    - quiz_update_all_final_grades
+    - quiz_set_grade
+    - quiz_save_best_grade
+    - quiz_calculate_best_grade
+    - quiz_calculate_best_attempt
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Initial deprecation add_random_form and associates.
+  The just removed mod_quiz\form\add_random_form was the only place in core where the mod_quiz/add_random_form javascript was called, so we can deprecate this now. This also enables us to deprecate the mod_quiz/random_question_form_preview javascript and the mod_quiz/random_question_form_preview_question_list template as they are direct dependends.
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
+### Removed
+
+- Final deprecations for the quiz. The following files have been removed:
+    - mod/quiz/accessmanager_form.php
+    - mod/quiz/accessmanager.php
+    - mod/quiz/accessrule/accessrulebase.php
+    - mod/quiz/attemptlib.php
+    - mod/quiz/cronlib.php
+    - mod/quiz/override_form.php
+    - mod/quiz/renderer.php
+    - mod/quiz/report/attemptsreport_form.php
+    - mod/quiz/report/attemptsreport_options.php
+    - mod/quiz/report/attemptsreport_table.php
+    - mod/quiz/report/attemptsreport.php
+    - mod/quiz/report/default.php
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecations for the quiz. The following methods have been removed:
+     - mod_quiz\output\renderer::no_questions_message
+     - mod_quiz\output\renderer::render_mod_quiz_links_to_other_attempts
+     - mod_quiz\output\renderer::render_quiz_nav_question_button
+     - mod_quiz\output\renderer::render_quiz_nav_section_heading
+     - mod_quiz\structure::get_slot_tags_for_slot_id
+     - mod_quiz\structure::is_display_number_customised
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecations for the quiz. The following classes have been removed:
+    - mod_quiz_overdue_attempt_updater
+    - moodle_quiz_exception
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- The const quiz_statistics\calculator::TIME_TO_CACHE has been removed.
+
+  For more information see [MDL-76612](https://tracker.moodle.org/browse/MDL-76612)
+- Final deprecation of:
+    - mod_quiz\form\add_random_form::class
+    - mod_quiz\local\structure\slot_random::set_tags()
+    - mod_quiz\local\structure\slot_random::set_tags_by_id()
+    - const quiz_statistics\calculator::TIME_TO_CACHE
+    - quiz_add_random_questions()
+
+  For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+
 ## 5.0
 
 ### Added
