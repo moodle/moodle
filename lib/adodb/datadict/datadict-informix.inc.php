@@ -81,7 +81,7 @@ class ADODB2_informix extends ADODB_DataDict {
 	}
 
 	// return string must begin with space
-	function _CreateSuffix($fname, &$ftype, $fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned)
+	function _createSuffix($fname, &$ftype, $fnotnull, $fdefault, $fautoinc, $fconstraint, $funsigned, $fprimary, &$pkey)
 	{
 		if ($fautoinc) {
 			$ftype = 'SERIAL';

@@ -32,7 +32,6 @@ class ADODB_sqlite3 extends ADOConnection {
 	var $dataProvider = "sqlite";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $concat_operator='||';
-	var $_errorNo = 0;
 	var $hasLimit = true;
 	var $hasInsertID = true; 		/// supports autoincrement ID?
 	var $hasAffectedRows = true; 	/// supports affected rows for update/delete?
@@ -276,17 +275,20 @@ class ADODB_sqlite3 extends ADOConnection {
 		return $this->_connectionID->changes();
 	}
 
+	protected function lastError()
+	{
+		$this->_errorMsg = $this->_connectionID->lastErrorMsg();
+		$this->_errorCode = $this->_connectionID->lastErrorCode();
+	}
+
 	function ErrorMsg()
  	{
-		if ($this->_logsql) {
-			return $this->_errorMsg;
-		}
-		return ($this->_errorNo) ? $this->ErrorNo() : ''; //**tochange?
+		return $this->_errorMsg;
 	}
 
 	function ErrorNo()
 	{
-		return $this->_connectionID->lastErrorCode(); //**tochange??
+		return $this->_errorCode;
 	}
 
 	function SQLDate($fmt, $col=false)
@@ -335,7 +337,7 @@ class ADODB_sqlite3 extends ADOConnection {
 	{
 		$rez = $this->_connectionID->query($sql);
 		if ($rez === false) {
-			$this->_errorNo = $this->_connectionID->lastErrorCode();
+			$this->lastError();
 		}
 		// If no data was returned, we don't need to create a real recordset
 		elseif ($rez->numColumns() == 0) {
@@ -647,6 +649,10 @@ class ADODB_sqlite3 extends ADOConnection {
 
 		// Prepare the statement
 		$stmt = $this->_connectionID->prepare($sql);
+		if ($stmt === false) {
+			$this->lastError();
+			return false;
+		}
 
 		// Set the first bind value equal to value we want to update
 		if (!$stmt->bindValue(1, $val, SQLITE3_BLOB)) {

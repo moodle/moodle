@@ -74,6 +74,7 @@ function ADODB_SetDatabaseAdapter(&$db, $index=false)
 }
 
 
+#[\AllowDynamicProperties]
 class ADODB_Active_Record {
 	static $_changeNames = true; // dynamically pluralize table names
 

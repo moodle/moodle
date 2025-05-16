@@ -4,7 +4,7 @@
     <location>adodb</location>
     <name>ADOdb</name>
     <description>Database abstraction library for MySQL, PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 and ODBC.</description>
-    <version>5.22.8</version>
+    <version>5.22.9</version>
     <license>BSD/LGPL</license>
     <licenseversion>3-Clause/2.1+</licenseversion>
     <repository>https://github.com/ADOdb/ADOdb</repository>

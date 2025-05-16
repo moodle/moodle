@@ -82,6 +82,7 @@ function ADODB_SetDatabaseAdapter(&$db)
 }
 
 
+#[\AllowDynamicProperties]
 class ADODB_Active_Record {
 	static $_changeNames = true; // dynamically pluralize table names
 	static $_foreignSuffix = '_id'; //

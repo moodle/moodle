@@ -74,13 +74,16 @@ class ADODB2_sqlite extends ADODB_DataDict {
 	}
 
 	// return string must begin with space
-	function _CreateSuffix($fname,&$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned)
+	function _createSuffix($fname, &$ftype, $fnotnull, $fdefault, $fautoinc, $fconstraint, $funsigned, $fprimary, &$pkey)
 	{
 		$suffix = '';
-		if ($funsigned) $suffix .= ' UNSIGNED';
+		if ($funsigned && !($fprimary && $fautoinc)) $suffix .= ' UNSIGNED';
 		if ($fnotnull) $suffix .= ' NOT NULL';
 		if (strlen($fdefault)) $suffix .= " DEFAULT $fdefault";
-		if ($fautoinc) $suffix .= ' AUTOINCREMENT';
+		if ($fprimary && $fautoinc) {
+			$suffix .= ' PRIMARY KEY AUTOINCREMENT';
+			array_pop($pkey);
+		}
 		if ($fconstraint) $suffix .= ' '.$fconstraint;
 		return $suffix;
 	}
