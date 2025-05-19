@@ -31,12 +31,15 @@ import SortableList from 'core/sortable_list';
 import {getString, getStrings} from 'core/str';
 import {add as addToast} from 'core/toast';
 import {reorderQuestions} from 'mod_feedback/local/repository';
+import Templates from 'core/templates';
 
 const Selectors = {
     deleteQuestionButton: '[data-action="delete"]',
     sortableListRegion: '[data-region="questions-sortable-list"]',
     sortableElement: '[data-region="questions-sortable-list"] .feedback_itemlist[id]',
-    sortableElementTitle: '[data-region="item-title"]',
+    sortableElementTitle: '[data-region="item-title"] span',
+    questionLabel: '[data-region="questions-sortable-list"] .col-form-label',
+    actionsMenuData: '[data-item-actions-menu]',
 };
 
 /**
@@ -72,7 +75,7 @@ let moduleId = null;
  *
  * @param {Integer} cmId
  */
-export const init = (cmId) => {
+export const init = async(cmId) => {
 
     moduleId = cmId;
 
@@ -91,7 +94,10 @@ export const init = (cmId) => {
     prefetchStrings('mod_feedback', [
         'confirmdeleteitem',
         'questionmoved',
+        'move_item',
     ]);
+
+    await enhanceEditForm();
 
     // Add event listeners.
     document.addEventListener('click', async event => {
@@ -132,4 +138,33 @@ export const init = (cmId) => {
     });
 
     initialized = true;
+};
+
+/**
+ * Enhance the edit form by adding a move item button and an action menu to each question.
+ *
+ * @returns {Promise<void>}
+ */
+const enhanceEditForm = async() => {
+    const questionLabels = document.querySelectorAll(Selectors.questionLabel);
+    const movetitle = await getString('move_item', 'mod_feedback');
+
+    const updates = Array.from(questionLabels).map(async(container) => {
+        const label = container.querySelector(Selectors.actionsMenuData);
+        if (!label) {
+            return;
+        }
+
+        try {
+            const contextData = {
+                movetitle,
+                label: label.parentElement.outerHTML,
+                actionsmenu: JSON.parse(label.dataset.itemActionsMenu || '{}'),
+            };
+            container.innerHTML = await Templates.render('mod_feedback/item_edit_enhanced_title', contextData);
+        } catch (error) {
+            await Notification.exception(error);
+        }
+    });
+    await Promise.all(updates);
 };

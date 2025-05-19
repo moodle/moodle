@@ -472,14 +472,10 @@ class mod_feedback_complete_form extends moodleform {
         foreach ($actions as $action) {
             $menu->add($action);
         }
-        $editmenu = $OUTPUT->render($menu);
-        $draghandle = $OUTPUT->render_from_template('core/drag_handle',
-                ['movetitle' => get_string('move_item', 'mod_feedback')]);
-
-        $name = html_writer::div($draghandle, 'itemhandle', ['data-drag-type' => 'move']) .
-                html_writer::div($element->getLabel(), 'itemname', ['data-region' => 'item-title']) .
-                html_writer::div($editmenu, 'itemactions');
-        $element->setLabel(html_writer::div($name, 'itemtitle d-flex mb-3'));
+        $menudata = $menu->export_for_template($OUTPUT);
+        $element->setLabel(html_writer::span($element->getLabel(), '', [
+            'data-item-actions-menu' => json_encode($menudata),
+        ]));
     }
 
     /**
