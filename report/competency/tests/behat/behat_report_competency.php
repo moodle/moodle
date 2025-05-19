@@ -76,4 +76,52 @@ class behat_report_competency extends behat_base {
         ];
     }
 
+    /**
+     * Set the value of a competency filter.
+     *
+     * @When /^I set the competency filter "([^"]*)" to "([^"]*)"$/
+     * @param string $fieldlocator The field locator.
+     * @param string $value The value to set.
+     * @throws Exception
+     */
+    public function set_competency_filter(
+        string $fieldlocator,
+        string $value,
+    ): void {
+        $field = behat_field_manager::get_form_field_from_label($fieldlocator, $this)->get_node();
+        $session = $this->getSession();
+
+        $value = trim($value);
+
+        // Click into the field.
+        $field->click();
+
+        // Remove any existing text.
+        do {
+            behat_base::type_keys($session, [behat_keys::BACKSPACE, behat_keys::DELETE]);
+        } while (strlen($field->getValue()) > 0);
+        $this->wait_for_pending_js();
+
+        // Type in the new value.
+        behat_base::type_keys($session, str_split($value));
+        $this->wait_for_pending_js();
+
+        // If the autocomplete found suggestions, then it will have:
+        // 1) marked itself as expanded; and
+        // 2) have an aria-selected suggestion in the list.
+        $expanded = $field->getAttribute('aria-expanded');
+        $suggestion = $field->getParent()->getParent()->find('css', '.form-autocomplete-suggestions > [aria-selected="true"]');
+
+        if ($expanded && null !== $suggestion) {
+            // A suggestion was found.
+            // Click on the first item in the list.
+            $suggestion->click();
+        } else {
+            throw new \InvalidArgumentException(
+                "Unable to find '{$value}' in the list of options."
+            );
+        }
+
+        $this->wait_for_pending_js();
+    }
 }
