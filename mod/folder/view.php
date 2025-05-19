@@ -65,7 +65,7 @@ $completion->set_module_viewed($cm);
 
 $PAGE->set_url('/mod/folder/view.php', array('id' => $cm->id));
 
-$PAGE->set_title($course->shortname.': '.$folder->name);
+$PAGE->set_title($course->shortname . \moodle_page::TITLE_SEPARATOR . $folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 

@@ -46,7 +46,7 @@ $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
 $PAGE->set_url('/mod/folder/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strfolders);
+$PAGE->set_title($course->shortname . \moodle_page::TITLE_SEPARATOR . $strfolders);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('coursehome');
 $PAGE->navbar->add($strfolders);

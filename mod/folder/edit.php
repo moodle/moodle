@@ -39,7 +39,7 @@ require_login($course, false, $cm);
 require_capability('mod/folder:managefiles', $context);
 
 $PAGE->set_url('/mod/folder/edit.php', array('id' => $cm->id));
-$PAGE->set_title($course->shortname.': '.$folder->name);
+$PAGE->set_title($course->shortname . \moodle_page::TITLE_SEPARATOR . $folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 $PAGE->set_secondary_active_tab('modulepage');
