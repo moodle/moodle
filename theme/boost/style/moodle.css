@@ -40188,7 +40188,12 @@ div.editor_atto_toolbar button .icon {
   margin-right: 0;
 }
 
-@media (max-width: 575.98px) {
+.reportbuilder-report {
+  container-type: inline-size; /* stylelint-disable-line */
+}
+
+@container (width < 576px) {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]) { /* stylelint-disable-line */ }
   .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table {
     --bs-table-striped-bg: var(--bs-body-bg);
     --bs-table-hover-bg: var(--bs-body-bg);
@@ -40248,65 +40253,63 @@ div.editor_atto_toolbar button .icon {
     font-weight: bold;
   }
 }
-@media (min-width: 576px) {
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table {
-    --bs-table-striped-bg: var(--bs-body-bg);
-    --bs-table-hover-bg: var(--bs-body-bg);
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table thead {
-    display: none;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr {
-    display: flex;
-    flex-direction: column;
-    margin: 0.5rem 0;
-    padding: 0.25rem 0.5rem 0 0.5rem;
-    word-wrap: break-word;
-    background-clip: border-box;
-    border: var(--bs-border-width) solid var(--bs-border-color-translucent);
-    border-radius: var(--bs-border-radius);
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr.emptyrow {
-    display: none;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
-    display: none;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td {
-    display: block;
-    min-height: 3.6rem;
-    padding: 0.5rem 0.25rem;
-    border: none;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td::before {
-    content: attr(data-cardtitle);
-    display: block;
-    text-transform: uppercase;
-    font-size: 70%;
-    color: #343a40;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not([data-cardtitle]) {
-    min-height: 3rem;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
-    border-top: var(--bs-border-width) solid var(--bs-border-color-translucent);
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:first-child {
-    padding-right: 2rem;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle {
-    display: block !important; /* stylelint-disable-line declaration-no-important */
-    position: absolute;
-    right: 10px;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button {
-    padding: 0 0.5rem;
-    color: #6a737b;
-  }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button i {
-    font-size: 1.5em;
-    font-weight: bold;
-  }
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table {
+  --bs-table-striped-bg: var(--bs-body-bg);
+  --bs-table-hover-bg: var(--bs-body-bg);
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table thead {
+  display: none;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.5rem 0 0.5rem;
+  word-wrap: break-word;
+  background-clip: border-box;
+  border: var(--bs-border-width) solid var(--bs-border-color-translucent);
+  border-radius: var(--bs-border-radius);
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr.emptyrow {
+  display: none;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
+  display: none;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td {
+  display: block;
+  min-height: 3.6rem;
+  padding: 0.5rem 0.25rem;
+  border: none;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td::before {
+  content: attr(data-cardtitle);
+  display: block;
+  text-transform: uppercase;
+  font-size: 70%;
+  color: #343a40;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not([data-cardtitle]) {
+  min-height: 3rem;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
+  border-top: var(--bs-border-width) solid var(--bs-border-color-translucent);
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:first-child {
+  padding-right: 2rem;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle {
+  display: block !important; /* stylelint-disable-line declaration-no-important */
+  position: absolute;
+  right: 10px;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button {
+  padding: 0 0.5rem;
+  color: #6a737b;
+}
+.reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button i {
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .courseindex .courseindex-item {
