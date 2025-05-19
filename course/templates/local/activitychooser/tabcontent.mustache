@@ -15,14 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/local/activitychooser/favourites
+    @template core_course/local/activitychooser/tabcontent
 
-    Chooser favourite template partial.
+    TODO describe template tabcontent
 
     Example context (json):
     {
-        "tabLabel": "Favourites",
-        "tabHelp": "This is the help text for the favourites tab.",
+        "tabLabel": "Activities",
+        "tabHelp": "Activities help",
         "items": [
             {
                 "label": "Option name",
@@ -30,21 +30,36 @@
                 "urls": {
                     "addoption": "http://addoptionurl.com"
                 },
-                "icon": "<img class='icon' alt='' src='http://urltooptionicon'>"
+                "icon": "<img class='icon' src='http://urltooptionicon' alt='icon'>",
+                "purpose": "content",
+                "branded": 0
             }
         ]
     }
 }}
-<h6>{{tabLabel}}</h6>
-{{#tabHelp}}
-<p class="activitychooser_help">{{tabHelp}}</p>
-{{/tabHelp}}
+{{#hasSearchResults}}
 <div
-    class="optionscontainer d-flex flex-wrap mw-100 position-relative"
-    role="menubar"
-    data-region="chooser-options-container"
+    class="searchresultscontainer"
+    data-region="search-results-container"
+    aria-live="polite"
+></div>
+{{/hasSearchResults}}
+<div
+    class="categorycontent"
+    data-region="category-content"
 >
-    {{#items}}
-        {{>core_course/local/activitychooser/item}}
-    {{/items}}
+    <h6>{{tabLabel}}</h6>
+    {{#tabHelp}}
+    <p class="activitychooser_help">{{tabHelp}}</p>
+    {{/tabHelp}}
+
+    <div
+        class="optionscontainer d-flex flex-wrap mw-100 position-relative"
+        role="menubar"
+        data-region="chooser-options-container"
+    >
+        {{#items}}
+            {{>core_course/local/activitychooser/item}}
+        {{/items}}
+    </div>
 </div>

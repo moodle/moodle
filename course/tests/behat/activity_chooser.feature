@@ -93,7 +93,7 @@ Feature: Display and choose from the available activities in course
   Scenario: Favourite a module in the activity chooser
     Given I open the activity chooser
     And I should not see "Starred" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Add Assignment to starred" "button" in the "Add an activity or resource" "dialogue"
     And I should see "Starred" in the "Add an activity or resource" "dialogue"
     When I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
     Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
@@ -102,8 +102,8 @@ Feature: Display and choose from the available activities in course
 
   Scenario: Add a favourite module and check it exists when reopening the chooser
     Given I open the activity chooser
-    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Add Assignment to starred" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Add Forum to starred" "button" in the "Add an activity or resource" "dialogue"
     And I should see "Starred" in the "Add an activity or resource" "dialogue"
     And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
     And I click on "Add content" "button" in the "New section" "section"
@@ -113,10 +113,44 @@ Feature: Display and choose from the available activities in course
 
   Scenario: Add a favourite and then remove it whilst checking the tabs work as expected
     Given I open the activity chooser
-    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    And I should not see "Starred" in the "Add an activity or resource" "dialogue"
+    When I click on "Add Assignment to starred" "button" in the "Add an activity or resource" "dialogue"
+    # The favourite tab should appear once the user stars an activity.
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
     And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    Then I should not see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Remove Assignment from starred" "button" in the "favourites" "core_course > Activity chooser tab"
+    # The favourite tab should dissapear once the user changes tab.
+    And I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "All" "link" in the "Add an activity or resource" "dialogue"
+    And I should not see "Starred" in the "Add an activity or resource" "dialogue"
+
+  Scenario: The teacher can manage favourites form the favourites tab and the list is refreshed when the user change tab
+    Given I open the activity chooser
+    And I click on "Add Assignment to starred" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Add Forum to starred" "button" in the "Add an activity or resource" "dialogue"
+    And I should see "Starred" in the "Add an activity or resource" "dialogue"
+    When I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+    And I should see "Forum" in the "favourites" "core_course > Activity chooser tab"
+    And I click on "Remove Assignment from starred" "button" in the "favourites" "core_course > Activity chooser tab"
+    Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+    And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Forum" in the "favourites" "core_course > Activity chooser tab"
+    And I should not see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+
+  Scenario: The teacher can undo a unfavourite action done in the activity chooser favourites tab
+    Given I open the activity chooser
+    And I click on "Add Assignment to starred" "button" in the "Add an activity or resource" "dialogue"
+    When I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+    And I click on "Remove Assignment from starred" "button" in the "favourites" "core_course > Activity chooser tab"
+    Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+    And I click on "Add Assignment to starred" "button" in the "favourites" "core_course > Activity chooser tab"
+    # Change tab to refresh the favourites tab.
+    And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
 
   Scenario: The teacher can search for an activity by it's name
     Given I open the activity chooser
@@ -134,7 +168,6 @@ Feature: Display and choose from the available activities in course
     Given I open the activity chooser
     When I set the field "search" to "Random search query"
     Then I should see "0 results found" in the "Add an activity or resource" "dialogue"
-    And ".option" "css_element" should not exist in the ".searchresultitemscontainer" "css_element"
 
   Scenario: Teacher can return to the default activity chooser state by manually removing the search query
     Given I open the activity chooser
@@ -146,16 +179,16 @@ Feature: Display and choose from the available activities in course
     Then ".searchresultscontainer" "css_element" should not be visible
     And ".optionscontainer" "css_element" should exist
 
-  Scenario: Teacher can not see a "clear" button if a search query is not entered in the activity chooser search bar
+  Scenario: Teacher can not see a clear button if a search query is not entered in the activity chooser search bar
     When I open the activity chooser
     Then "Clear search input" "button" should not be visible
 
-  Scenario: Teacher can see a "clear" button after entering a search query in the activity chooser search bar
+  Scenario: Teacher can see a clear button after entering a search query in the activity chooser search bar
     Given I open the activity chooser
     When I set the field "search" to "Search query"
-    Then "Clear search input" "button" should not be visible
+    Then "Clear search input" "button" should be visible
 
-  Scenario: Teacher can not see a "clear" button if the search query is removed in the activity chooser search bar
+  Scenario: Teacher can not see a clear button if the search query is removed in the activity chooser search bar
     Given I open the activity chooser
     And I set the field "search" to "Search query"
     And "Clear search input" "button" should exist
@@ -164,7 +197,7 @@ Feature: Display and choose from the available activities in course
     And I wait "1" seconds
     Then "Clear search input" "button" should not be visible
 
-  Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the "clear" button
+  Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the clear button
     Given I open the activity chooser
     And I set the field "search" to "Search query"
     And I should see "results found" in the "Add an activity or resource" "dialogue"
@@ -173,12 +206,27 @@ Feature: Display and choose from the available activities in course
     And ".searchresultscontainer" "css_element" should not be visible
     And ".optionscontainer" "css_element" should exist
 
-  Scenario: Teacher gets the base case for the Activity Chooser tab mode
+  Scenario: Click on an activity chosser category should cancel the current search
     Given I open the activity chooser
-    And I should see "Activities" in the "Add an activity or resource" "dialogue"
-    When I click on "Activities" "link" in the "Add an activity or resource" "dialogue"
-    Then I should not see "Book" in the "activity" "core_course > Activity chooser tab"
+    And I set the field "search" to "Search query"
+    And I should see "results found" in the "Add an activity or resource" "dialogue"
+    And "Clear search input" "button" should be visible
+    When I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
+    And "Clear search input" "button" should not be visible
+    And the field "search" matches value ""
+    And I should see "Book" in the "resources" "core_course > Activity chooser tab"
+
+  Scenario: Teacher gets the base case for the Activity Chooser tab mode
+    When I open the activity chooser
+    Then I should see "Assignment" in the "all" "core_course > Activity chooser tab"
+    And I should see "Book" in the "all" "core_course > Activity chooser tab"
+    # Activities tab.
+    And I click on "Activities" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Assignment" in the "activities" "core_course > Activity chooser tab"
+    And I should not see "Book" in the "all" "core_course > Activity chooser tab"
+    # Resources tab.
     And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Book" in the "resources" "core_course > Activity chooser tab"
     And I should not see "Assignment" in the "resources" "core_course > Activity chooser tab"
 
   Scenario: Teacher can navigate through activity chooser in Topics format course
