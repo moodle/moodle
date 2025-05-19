@@ -8700,6 +8700,9 @@ class assign {
                 $shouldreopen = true;
                 break;
             case ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS:
+                if (!is_gradable($this->course->id, 'mod', 'assign', $this->get_instance()->id)) {
+                    return false;
+                }
                 // Check the gradetopass from the gradebook.
                 $gradeitem = $this->get_grade_item();
                 if ($gradeitem) {
