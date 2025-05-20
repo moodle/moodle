@@ -23,3 +23,7 @@ Removed:
 Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
+
+Changelog:
+ * MDL-85375:
+   - Fix SQL injection in pg_insert_id() - https://github.com/ADOdb/ADOdb/commit/11107d6d6e5160b62e05dff8a3a2678cf0e3a426
