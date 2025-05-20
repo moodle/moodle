@@ -420,6 +420,12 @@ final class oauth2_test extends \advanced_testcase {
 
         $this->assertFalse($googleissuer->is_available_for_login());
 
+        // Set showonloginpage to SMTP with XOAUTH2 only.
+        $googleissuer->set('showonloginpage', issuer::SMTPWITHXOAUTH2);
+        $googleissuer->update();
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+
         // Set showonloginpage to everywhere (service and login) and disable issuer.
         $googleissuer->set('showonloginpage', issuer::EVERYWHERE);
         $googleissuer->set('enabled', 0);
