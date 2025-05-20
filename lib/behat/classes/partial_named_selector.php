@@ -338,7 +338,7 @@ XPATH
 XPATH
         ,
             'select_menu' => <<<XPATH
-//*[@role='combobox'][@aria-labelledby = //label[contains(normalize-space(string(.)), %locator%)]/@id]
+//*[@role='combobox'][@aria-labelledby = //span[contains(normalize-space(string(.)), %locator%)]/@id]
 XPATH
         ,
         ],
