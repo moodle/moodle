@@ -36,6 +36,12 @@ use core\activity_dates;
  */
 class dates extends activity_dates {
 
+    /** @var int|null timeopen the activity opening date */
+    private ?int $timeopen;
+
+    /** @var int|null timeclose the activity closing date */
+    private ?int $timeclose;
+
     /**
      * Returns a list of important dates in mod_data
      *
@@ -44,27 +50,42 @@ class dates extends activity_dates {
     protected function get_dates(): array {
         $timeopen = $this->cm->customdata['timeavailablefrom'] ?? null;
         $timeclose = $this->cm->customdata['timeavailableto'] ?? null;
+
+        $this->timeopen = $timeopen ? (int) $timeopen : null;
+        $this->timeclose = $timeclose ? (int) $timeclose : null;
+
         $now = time();
         $dates = [];
 
-        if ($timeopen) {
-            $openlabelid = $timeopen > $now ? 'activitydate:opens' : 'activitydate:opened';
+        if ($this->timeopen) {
+            $openlabelid = $this->timeopen > $now ? 'activitydate:opens' : 'activitydate:opened';
             $dates[] = [
                 'dataid' => 'timeavailablefrom',
                 'label' => get_string($openlabelid, 'course'),
-                'timestamp' => (int) $timeopen,
+                'timestamp' => (int) $this->timeopen,
             ];
         }
 
-        if ($timeclose) {
-            $closelabelid = $timeclose > $now ? 'activitydate:closes' : 'activitydate:closed';
+        if ($this->timeclose) {
+            $closelabelid = $this->timeclose > $now ? 'activitydate:closes' : 'activitydate:closed';
             $dates[] = [
                 'dataid' => 'timeavailableto',
                 'label' => get_string($closelabelid, 'course'),
-                'timestamp' => (int) $timeclose,
+                'timestamp' => (int) $this->timeclose,
             ];
         }
 
         return $dates;
+    }
+
+    /**
+     * Returns the dues date data, if any.
+     * @return int|null the close timestamp or null if not set.
+     */
+    public function get_due_date(): ?int {
+        if (!isset($this->timeclose)) {
+            $this->get_dates();
+        }
+        return $this->timeclose;
     }
 }

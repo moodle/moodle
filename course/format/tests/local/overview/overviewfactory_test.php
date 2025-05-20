@@ -101,7 +101,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'data' => [
                 'resourcetype' => 'data',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_data\courseformat\overview::class,
             ],
             'feedback' => [
                 'resourcetype' => 'feedback',
