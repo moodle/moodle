@@ -270,7 +270,8 @@ final class question_bank_helper_test extends \advanced_testcase {
         self::setAdminUser();
 
         $coursename = random_string(question_bank_helper::BANK_NAME_MAX_LENGTH);
-        $course = self::getDataGenerator()->create_course(['shortname' => $coursename]);
+        $courseshortname = \core_text::substr($coursename, 0, 255);
+        $course = self::getDataGenerator()->create_course(['shortname' => $courseshortname]);
 
         $this->expectExceptionMessage('The provided bankname is too long for the database field.');
         question_bank_helper::create_default_open_instance(
@@ -411,7 +412,17 @@ final class question_bank_helper_test extends \advanced_testcase {
     public static function bank_name_strings(): array {
         $longname = 'One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
             'eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six twenty-seven ' .
-            'twenty-eight twenty-nine thirty thirty-one';
+            'twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three thirty-four thirty-five thirty-six thirty-seven ' .
+            'thirty-eight thirty-nine forty forty-one forty-two forty-three forty-four forty-five forty-six forty-seven ' .
+            'forty-eight forty-nine fifty fifty-one fifty-two fifty-three fifty-four fifty-five fifty-six fifty-seven ' .
+            'fifty-eight fifty-nine sixty sixty-one sixty-two sixty-three sixty-four sixty-five sixty-six sixty-seven ' .
+            'sixty-eight sixty-nine seventy seventy-one seventy-two seventy-three seventy-four seventy-five seventy-six ' .
+            'seventy-seven seventy-eight seventy-nine eighty eighty-one eighty-two eighty-three eighty-four eighty-five ' .
+            'eighty-six eighty-seven eighty-eight eighty-nine ninety ninety-one ninety-two ninety-three ninety-four ninety-five ' .
+            'ninety-six ninety-seven ninety-eight ninety-nine one hundred one hundred one one hundred two one hundred three ' .
+            'one hundred four one hundred five one hundred six one hundred seven one hundred eight one hundred nine ' .
+            'one hundred ten one hundred eleven one hundred twelve one hundred thirteen one hundred fourteen one hundred fifteen ' .
+            'one hundred sixteen one hundred seventeen';
         return [
             'String with no parameters' => [
                 'systembank',
@@ -431,7 +442,17 @@ final class question_bank_helper_test extends \advanced_testcase {
                 $longname,
                 'Top for One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen ' .
                     'seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six ' .
-                    'twenty-seven twenty-eight ...',
+                    'twenty-seven twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three thirty-four thirty-five ' .
+                    'thirty-six thirty-seven thirty-eight thirty-nine forty forty-one forty-two forty-three forty-four ' .
+                    'forty-five forty-six forty-seven forty-eight forty-nine fifty fifty-one fifty-two fifty-three fifty-four ' .
+                    'fifty-five fifty-six fifty-seven fifty-eight fifty-nine sixty sixty-one sixty-two sixty-three sixty-four ' .
+                    'sixty-five sixty-six sixty-seven sixty-eight sixty-nine seventy seventy-one seventy-two seventy-three ' .
+                    'seventy-four seventy-five seventy-six seventy-seven seventy-eight seventy-nine eighty eighty-one ' .
+                    'eighty-two eighty-three eighty-four eighty-five eighty-six eighty-seven eighty-eight eighty-nine ' .
+                    'ninety ninety-one ninety-two ninety-three ninety-four ninety-five ninety-six ninety-seven ninety-eight ' .
+                    'ninety-nine one hundred one hundred one one hundred two one hundred three one hundred four ' .
+                    'one hundred five one hundred six one hundred seven one hundred eight one hundred nine one hundred ten ' .
+                    'one hundred eleven one hundred twelve one hundred thirteen one hundred fourteen one hundred fifteen one ...',
             ],
             'String with short array parameter' => [
                 'defaultbank',
@@ -445,23 +466,49 @@ final class question_bank_helper_test extends \advanced_testcase {
                 ['coursename' => $longname],
                 'One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
                     'eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six ' .
-                    'twenty-seven twenty-eight ... course question bank',
+                    'twenty-seven twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three thirty-four thirty-five ' .
+                    'thirty-six thirty-seven thirty-eight thirty-nine forty forty-one forty-two forty-three forty-four ' .
+                    'forty-five forty-six forty-seven forty-eight forty-nine fifty fifty-one fifty-two fifty-three fifty-four ' .
+                    'fifty-five fifty-six fifty-seven fifty-eight fifty-nine sixty sixty-one sixty-two sixty-three sixty-four ' .
+                    'sixty-five sixty-six sixty-seven sixty-eight sixty-nine seventy seventy-one seventy-two seventy-three ' .
+                    'seventy-four seventy-five seventy-six seventy-seven seventy-eight seventy-nine eighty eighty-one ' .
+                    'eighty-two eighty-three eighty-four eighty-five eighty-six eighty-seven eighty-eight eighty-nine ninety ' .
+                    'ninety-one ninety-two ninety-three ninety-four ninety-five ninety-six ninety-seven ninety-eight ' .
+                    'ninety-nine one hundred one hundred one one hundred two one hundred three one hundred four ' .
+                    'one hundred five one hundred six one hundred seven one hundred eight one hundred nine one hundred ten ' .
+                    'one hundred eleven one hundred twelve one hundred thirteen one hundred fourteen one hundred fifteen ... ' .
+                    'course question bank',
             ],
             'String with multiple long array parameters' => [
                 'markoutofmax',
                 'question',
                 ['mark' => $longname, 'max' => $longname],
                 'Mark One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen ' .
-                    'eighteen ... out of One two three four five six seven eight nine ten eleven twelve thirteen fourteen ' .
-                    'fifteen sixteen seventeen eighteen ...',
+                    'eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six twenty-seven ' .
+                    'twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three thirty-four thirty-five thirty-six ' .
+                    'thirty-seven thirty-eight thirty-nine forty forty-one forty-two forty-three forty-four forty-five forty-six ' .
+                    'forty-seven forty-eight forty-nine fifty fifty-one fifty-two fifty-three fifty-four fifty-five fifty-six ' .
+                    'fifty-seven fifty-eight fifty-nine sixty sixty-one sixty-two sixty-three sixty-four sixty-five sixty-six ' .
+                    'sixty-seven ... out of One two three four five six seven eight nine ten eleven twelve thirteen fourteen ' .
+                    'fifteen sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four ' .
+                    'twenty-five twenty-six twenty-seven twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three ' .
+                    'thirty-four thirty-five thirty-six thirty-seven thirty-eight thirty-nine forty forty-one forty-two ' .
+                    'forty-three forty-four forty-five forty-six forty-seven forty-eight forty-nine fifty fifty-one fifty-two ' .
+                    'fifty-three fifty-four fifty-five fifty-six fifty-seven fifty-eight fifty-nine sixty sixty-one sixty-two ' .
+                    'sixty-three sixty-four sixty-five sixty-six sixty-seven ...',
             ],
             'Long lang string' => [
                 'howquestionsbehave_help',
                 'question',
                 null,
-                'Students can interact with the questions in the quiz in various different ways. For example, you may wish the ' .
-                    'students to enter an answer to each question and then submit the entire quiz, before anything is graded or ' .
-                    'they get any feedback. That would ...',
+                "Students can interact with the questions in the quiz in various different ways. For example, you may wish the " .
+                    "students to enter an answer to each question and then submit the entire quiz, before anything is graded or " .
+                    "they get any feedback. That would be 'Deferred feedback' mode.\n\n" .
+                    "Alternatively, you may wish for students to submit each question as they go along to get immediate " .
+                    "feedback, and if they do not get it right immediately, have another try for fewer marks. That would be " .
+                    "'Interactive with multiple tries' mode.\n" .
+                    "\n" .
+                    "Those are probably the two most commonly used modes of behaviour. ",
             ],
         ];
     }

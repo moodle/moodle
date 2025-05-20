@@ -37,7 +37,7 @@ class editsection_form extends moodleform {
         );
         $mform->setType('name', PARAM_RAW);
         $mform->setDefault('name', $sectioninfo->name);
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
 
         /// Prepare course and the editor
 
