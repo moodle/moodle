@@ -641,8 +641,20 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
         $record->grantedscopes = $scopes;
-        $record->email = isset($userinfo['email']) ? $userinfo['email'] : '';
-        $record->username = $userinfo['username'];
+        // Get email.
+        if (isset($userinfo['email'])) {
+            $record->email = $userinfo['email'];
+        } else if ($issuer->get_system_email()) {
+            $record->email = $issuer->get_system_email();
+        } else {
+            $record->email = '';
+        }
+        // Get username.
+        if (isset($userinfo['username'])) {
+            $record->username = $userinfo['username'];
+        } else if ($issuer->get_system_email()) {
+            $record->username = $issuer->get_system_email();
+        }
 
         $systemaccount = new system_account(0, $record);
 

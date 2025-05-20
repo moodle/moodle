@@ -40,6 +40,8 @@ class issuer extends persistent {
     const EVERYWHERE = 1;
     /** @var int Issuer is displayed on the login page only */
     const LOGINONLY = 2;
+    /** @var int Issuer is used for sending email using SMTP with XOAUTH2 */
+    const SMTPWITHXOAUTH2 = 3;
     /** @var int Issuer is displayed only in the services lists and can not be used for login */
     const SERVICEONLY = 0;
 
@@ -127,6 +129,11 @@ class issuer extends persistent {
                 'null' => NULL_ALLOWED,
                 'default' => null,
             ),
+            'systememail' => [
+                'type' => PARAM_EMAIL,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
         );
     }
 
@@ -200,6 +207,7 @@ class issuer extends persistent {
         return $this->get('id') &&
             $this->is_configured() &&
             $this->get('showonloginpage') != self::SERVICEONLY &&
+            $this->get('showonloginpage') != self::SMTPWITHXOAUTH2 &&
             $this->get('enabled') &&
             !empty($this->get_endpoint_url('userinfo'));
     }
@@ -267,5 +275,14 @@ class issuer extends persistent {
      */
     public function get_display_name(): string {
         return $this->get('loginpagename') ? $this->get('loginpagename') : $this->get('name');
+    }
+
+    /**
+     * Get the system email address for this issuer.
+     *
+     * @return string|null The system email address or null if not set.
+     */
+    public function get_system_email(): ?string {
+        return $this->get('systememail') ? $this->get('systememail') : null;
     }
 }
