@@ -243,13 +243,13 @@
 
 /* Forumpost unread
 -------------------------*/
-.forumpost.unread .row.header,
+.forumpost.unread .header,
 .path-course-view .unread,
 span.unread {
     background-color: #ffd;
 }
 
-.forumpost.unread .row.header {
+.forumpost.unread .header {
     border-bottom: 1px solid #ddd;
 }
 
