@@ -72,7 +72,6 @@ class behat_field_manager {
      * @return behat_form_field
      */
     public static function get_form_field(NodeElement $fieldnode, Session $session) {
-
         // Get the field type if is part of a moodleform.
         if (self::is_moodleform_field($fieldnode)) {
             $type = self::get_field_node_type($fieldnode, $session);
