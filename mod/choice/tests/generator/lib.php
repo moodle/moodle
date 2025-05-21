@@ -36,10 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 class mod_choice_generator extends testing_module_generator {
 
     public function create_instance($record = null, ?array $options = null) {
-        $record = (object)(array)$record;
+        $record = (object) (array) $record;
 
         if (!isset($record->timemodified)) {
             $record->timemodified = time();
+        }
+        if (isset($record->timeclose) && is_string($record->timeclose)) {
+            $record->timeclose = strtotime($record->timeclose);
         }
         if (!isset($record->option)) {
             $record->option = array();
@@ -50,6 +53,27 @@ class mod_choice_generator extends testing_module_generator {
         } else if (!is_array($record->option)) {
             $record->option = preg_split('/\s*,\s*/', trim($record->option), -1, PREG_SPLIT_NO_EMPTY);
         }
-        return parent::create_instance($record, (array)$options);
+        return parent::create_instance($record, (array) $options);
+    }
+
+    /**
+     * Submit a choice for a user (or current user))
+     *
+     * @param array $record composed of choiceid, choiceoptionids and userid
+     * @return void
+     */
+    public function create_response(array $record): void {
+        global $USER, $DB;
+        [
+            'choiceid' => $choiceid,
+            'responses' => $responses,
+            'userid' => $userid,
+        ] = $record;
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+        [$course, $cm] = get_course_and_cm_from_instance($choiceid, 'choice');
+        $choice = $DB->get_record('choice', ['id' => $choiceid], '*', MUST_EXIST);
+        choice_user_submit_response($responses, $choice, $userid, $course, $cm);
     }
 }
