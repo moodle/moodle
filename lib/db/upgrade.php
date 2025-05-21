@@ -1684,7 +1684,7 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2025051600.01) {
+    if ($oldversion < 2025051600.02) {
 
         // Changing precision of field name on table badge to (1333).
 
@@ -1718,8 +1718,15 @@ function xmldb_main_upgrade($oldversion) {
         // Launch change of precision for field itemname.
         $dbman->change_field_precision($table, $field);
 
+        // Changing precision of field itemname on table grade_items_history to (1333).
+        $table = new xmldb_table('grade_items_history');
+        $field = new xmldb_field('itemname', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'categoryid');
+
+        // Launch change of precision for field itemname.
+        $dbman->change_field_precision($table, $field);
+
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025051600.01);
+        upgrade_main_savepoint(true, 2025051600.02);
     }
 
     return true;
