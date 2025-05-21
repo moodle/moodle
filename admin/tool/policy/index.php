@@ -58,7 +58,7 @@ $agreedocs = array_values(array_unique($agreedocs));
 $declinedocs = array_values(array_unique($declinedocs));
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('secure');
 $PAGE->set_url('/admin/tool/policy/index.php');
 $PAGE->set_popup_notification_allowed(false);
 
