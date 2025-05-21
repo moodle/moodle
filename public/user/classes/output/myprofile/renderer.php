@@ -14,18 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * myprofile renderer.
- *
- * @package    core_user
- * @copyright  2015 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_user\output\myprofile;
-defined('MOODLE_INTERNAL') || die;
+
+use core\output\html_writer;
+
 /**
- * Report log renderer's for printing reports.
+ * Users' my profile renderer
  *
  * @since      Moodle 2.9
  * @package    core_user
@@ -37,16 +31,15 @@ class renderer extends \plugin_renderer_base {
      * Render the whole tree.
      *
      * @param tree $tree
-     *
      * @return string
      */
     public function render_tree(tree $tree) {
-        $return = \html_writer::start_tag('div', array('class' => 'profile_tree'));
+        $return = html_writer::start_tag('div', ['class' => 'profile_tree']);
         $categories = $tree->categories;
         foreach ($categories as $category) {
             $return .= $this->render($category);
         }
-        $return .= \html_writer::end_tag('div');
+        $return .= html_writer::end_tag('div');
         return $return;
     }
 
@@ -54,33 +47,28 @@ class renderer extends \plugin_renderer_base {
      * Render a category.
      *
      * @param category $category
-     *
      * @return string
      */
     public function render_category(category $category) {
-        $classes = $category->classes;
-        if (empty($classes)) {
-            $return = \html_writer::start_tag('section',
-                array('class' => 'node_category card d-inline-block w-100 mb-3'));
-            $return .= \html_writer::start_tag('div', array('class' => 'card-body'));
-        } else {
-            $return = \html_writer::start_tag('section',
-                array('class' => 'node_category card d-inline-block w-100 mb-3' . $classes));
-            $return .= \html_writer::start_tag('div', array('class' => 'card-body'));
-        }
-        $return .= \html_writer::tag('h3', $category->title, array('class' => 'lead'));
+        $return = html_writer::start_tag(
+            'section',
+            ['class' => 'node_category card d-inline-block w-100 mb-3 ' . (string) $category->classes],
+        );
+        $return .= html_writer::start_tag('div', ['class' => 'card-body']);
+
+        $return .= html_writer::tag('h3', $category->title, ['class' => 'lead']);
         $nodes = $category->nodes;
         if (empty($nodes)) {
             // No nodes, nothing to render.
             return '';
         }
-        $return .= \html_writer::start_tag('ul');
+        $return .= html_writer::start_tag('ul');
         foreach ($nodes as $node) {
             $return .= $this->render($node);
         }
-        $return .= \html_writer::end_tag('ul');
-        $return .= \html_writer::end_tag('div');
-        $return .= \html_writer::end_tag('section');
+        $return .= html_writer::end_tag('ul');
+        $return .= html_writer::end_tag('div');
+        $return .= html_writer::end_tag('section');
         return $return;
     }
 
@@ -88,13 +76,12 @@ class renderer extends \plugin_renderer_base {
      * Render a node.
      *
      * @param node $node
-     *
      * @return string
      */
     public function render_node(node $node) {
         $return = '';
         if (is_object($node->url)) {
-            $header = \html_writer::link($node->url, $node->title);
+            $header = html_writer::link($node->url, $node->title);
         } else {
             $header = $node->title;
         }
@@ -107,21 +94,21 @@ class renderer extends \plugin_renderer_base {
         if (!empty($content)) {
             if ($header) {
                 // There is some content to display below this make this a header.
-                $return = \html_writer::tag('dt', $header);
-                $return .= \html_writer::tag('dd', $content);
+                $return = html_writer::tag('dt', $header);
+                $return .= html_writer::tag('dd', $content);
 
-                $return = \html_writer::tag('dl', $return);
+                $return = html_writer::tag('dl', $return);
             } else {
-                $return = \html_writer::span($content);
+                $return = html_writer::span($content);
             }
             if ($classes) {
-                $return = \html_writer::tag('li', $return, array('class' => 'contentnode ' . $classes));
+                $return = html_writer::tag('li', $return, ['class' => 'contentnode ' . $classes]);
             } else {
-                $return = \html_writer::tag('li', $return, array('class' => 'contentnode'));
+                $return = html_writer::tag('li', $return, ['class' => 'contentnode']);
             }
         } else {
-            $return = \html_writer::span($header);
-            $return = \html_writer::tag('li', $return, array('class' => $classes));
+            $return = html_writer::span($header);
+            $return = html_writer::tag('li', $return, ['class' => $classes]);
         }
 
         return $return;
