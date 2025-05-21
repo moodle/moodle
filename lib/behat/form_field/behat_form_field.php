@@ -326,4 +326,13 @@ class behat_form_field implements behat_session_interface {
 
         return $this->fieldlocator;
     }
+
+    /**
+     * Returns the field node.
+     *
+     * @return NodeElement
+     */
+    public function get_node(): NodeElement {
+        return $this->field;
+    }
 }
