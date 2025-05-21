@@ -530,6 +530,13 @@ class manager {
             }
         }
 
+        // Site policies from tool_policy.
+        $policyviewurl = new \moodle_url('/admin/tool/policy/view.php');
+        $policyindexurl = new \moodle_url('/admin/tool/policy/index.php');
+        if ($policyviewurl->compare($url, URL_MATCH_BASE) || $policyindexurl->compare($url, URL_MATCH_BASE)) {
+            return self::NO_REDIRECT;
+        }
+
         // WS/AJAX check.
         if (WS_SERVER || AJAX_SCRIPT) {
             if (isset($SESSION->mfa_pending) && !empty($SESSION->mfa_pending)) {
