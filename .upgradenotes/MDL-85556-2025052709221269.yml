@@ -1,0 +1,8 @@
+issueNumber: MDL-85556
+notes:
+  core_question:
+    - message: >
+        The unit test repeated\_restore\_test::test\_restore\_course\_with\_same\_stamp\_questions was passing incorrectly on 5.x for question types that use answers.
+
+        Maintainers of third-party question types may want to re-run the test with the fix in place, or if they have copied parts of this test as the basis of a test in their own plugin, review the changes and see if they should be reflected in their own test.
+      type: fixed
