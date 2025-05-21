@@ -81,3 +81,4 @@ locktimedate,core_grades
 lockverbose,core_grades
 showverbose,core_grades
 unlockverbose,core_grades
+aiusagestats,core_hub
