@@ -26,4 +26,4 @@ Feature: Check the features of the TinyMCE Premium settings
   Scenario: I see a notification when I have both the premium and default accessibility checkers enabled
     When I click on "Enable Accessibility Checker" "link"
     Then I should see "Accessibility Checker enabled."
-    And I should see "The premium Accessibility Checker will override the default Accessibility Checker for users who have access to it."
+    And I should see "The TinyMCE Premium Accessibility Checker will override the default Accessibility Checker for users who have access to it."

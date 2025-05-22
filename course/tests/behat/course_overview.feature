@@ -80,13 +80,13 @@ Feature: Users can access the course activities overview page
     And I should see "Assignments" in the "assign_overview_collapsible" "region"
     And I should see "Forums" in the "forum_overview_collapsible" "region"
     And I should not see "Test assignment name" in the "assign_overview_collapsible" "region"
-    And I should not see "Forum overview page" in the "forum_overview_collapsible" "region"
+    And I should not see "Forum overview" in the "forum_overview_collapsible" "region"
     When I click on "Expand" "link" in the "assign_overview_collapsible" "region"
     Then I should see "Test assignment name" in the "assign_overview_collapsible" "region"
-    And I should not see "Forum overview page" in the "forum_overview_collapsible" "region"
+    And I should not see "Forum overview" in the "forum_overview_collapsible" "region"
     And I click on "Collapse" "link" in the "assign_overview_collapsible" "region"
     And I should not see "Test assignment name" in the "assign_overview_collapsible" "region"
-    And I should not see "Forum overview page" in the "forum_overview_collapsible" "region"
+    And I should not see "Forum overview" in the "forum_overview_collapsible" "region"
 
   Scenario: Course overview shows the course present activity types
     Given the following "activities" exist:
@@ -258,13 +258,13 @@ Feature: Users can access the course activities overview page
       | wiki     | C1     | Activity 2 |
       | assign   | C1     | Activity 3 |
     When I am on the "Course 1" "course > activities > wiki" page logged in as "student1"
-    And I should see "Wiki overview page"
+    And I should see "Wiki overview"
     And I follow "Wiki overview"
     And I should see "Activity 1"
     And I should see "Activity 2"
     # Check activities with integration do not show the link.
     And I am on the "Course 1" "course > activities > assign" page
-    And I should not see "Assignment overview page"
+    And I should not see "Assignment overview"
 
   Scenario: Activities overview provide completion information to the student
     Given the following "activities" exist:
