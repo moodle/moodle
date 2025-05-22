@@ -744,6 +744,11 @@ function course_delete_module($cmid, $async = false) {
         }
     }
 
+    if (empty($cm->instance)) {
+        throw new moodle_exception('cannotdeletemodulemissinginstance', '', '', null,
+            "Cannot delete course module with ID $cm->id because it does not have a valid activity instance.");
+    }
+
     // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
         throw new moodle_exception('cannotdeletemoduleinstance', '', '', null,
