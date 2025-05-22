@@ -405,8 +405,8 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionnum) => {
                     element.classList.add('text-primary');
                     element.dataset.favourited = 'true';
                     element.setAttribute('aria-pressed', true);
-                    element.firstElementChild.classList.remove('fa-star-o');
-                    element.firstElementChild.classList.add('fa-star');
+                    element.firstElementChild.classList.remove('fa-regular');
+                    element.firstElementChild.classList.add('fa');
                 });
 
                 favouriteTabNav.classList.remove('d-none');
@@ -422,8 +422,8 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionnum) => {
                     element.classList.remove('text-primary');
                     element.dataset.favourited = 'false';
                     element.setAttribute('aria-pressed', false);
-                    element.firstElementChild.classList.remove('fa-star');
-                    element.firstElementChild.classList.add('fa-star-o');
+                    element.firstElementChild.classList.remove('fa');
+                    element.firstElementChild.classList.add('fa-regular');
                 });
                 const newFaves = moduleData.content_items.filter(mod => mod.favourite === true);
 
