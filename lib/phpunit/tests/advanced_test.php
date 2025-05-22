@@ -780,6 +780,7 @@ final class advanced_test extends \advanced_testcase {
         $this->assertEquals(0, $mockedclock->now()->getTimestamp());
         $this->assertEquals(1, $newclock->now()->getTimestamp());
         $this->assertEquals(2, $mockedclock->now()->getTimestamp());
+        $this->assertEquals('Australia/Perth', $newclock->now()->getTimezone()->getName());
 
         // Specify a specific start time.
         $newclock = $this->mock_clock_with_incrementing(12345);
@@ -791,6 +792,7 @@ final class advanced_test extends \advanced_testcase {
         $this->assertEquals(12347, $mockedclock->now()->getTimestamp());
 
         $this->assertEquals($newclock->time, $mockedclock->now()->getTimestamp());
+        $this->assertEquals('Australia/Perth', $newclock->now()->getTimezone()->getName());
     }
 
     /**
@@ -813,6 +815,7 @@ final class advanced_test extends \advanced_testcase {
         $initialtime = $mockedclock->now()->getTimestamp();
         $this->assertEquals($initialtime, $newclock->now()->getTimestamp());
         $this->assertEquals($initialtime, $mockedclock->now()->getTimestamp());
+        $this->assertEquals('Australia/Perth', $newclock->now()->getTimezone()->getName());
 
         // Specify a specific start time.
         $newclock = $this->mock_clock_with_frozen(12345);
@@ -823,5 +826,6 @@ final class advanced_test extends \advanced_testcase {
         $this->assertEquals($initialtime, $mockedclock->now());
         $this->assertEquals($initialtime, $newclock->now());
         $this->assertEquals($initialtime, $mockedclock->now());
+        $this->assertEquals('Australia/Perth', $newclock->now()->getTimezone()->getName());
     }
 }
