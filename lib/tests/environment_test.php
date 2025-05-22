@@ -75,6 +75,13 @@ final class environment_test extends \advanced_testcase {
             $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
         }
 
+        if ($result->part === 'php_setting'
+                && $result->info === 'zend.exception_ignore_args'
+                && $result->getLevel() === 'optional'
+                && $result->getStatus() === false) {
+            $this->markTestSkipped('zend.exception_ignore_args is not necessary for unit testing.');
+        }
+
         if ($result->part === 'php_extension'
                 && $result->getPluginName() !== ''
                 && $result->getLevel() === 'optional'
