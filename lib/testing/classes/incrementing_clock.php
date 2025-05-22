@@ -26,6 +26,9 @@ class incrementing_clock implements \core\clock {
     /** @var int The next time of the clock */
     public int $time;
 
+    /** @var DateTimeZone The system timezone. */
+    protected DateTimeZone $timezone;
+
     /**
      * Create a new instance of the incrementing clock.
      *
@@ -35,10 +38,11 @@ class incrementing_clock implements \core\clock {
         ?int $starttime = null,
     ) {
         $this->time = $starttime ?? time();
+        $this->timezone = \core_date::get_server_timezone_object();
     }
 
     public function now(): \DateTimeImmutable {
-        return new \DateTimeImmutable('@' . $this->time++);
+        return (new \DateTimeImmutable('@' . $this->time++))->setTimezone($this->timezone);
     }
 
     public function time(): int {
