@@ -294,23 +294,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     );
 
     $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
-    // Tab mode for the activity chooser.
-    $temp->add(
-        new admin_setting_configselect(
-            'activitychoosertabmode',
-            new lang_string('activitychoosertabmode', 'course'),
-            new lang_string('activitychoosertabmode_desc', 'course'),
-            3,
-            [
-                3 => new lang_string('activitychoosertabmodefour', 'course'),
-                4 => new lang_string('activitychoosertabmodefive', 'course'),
-                5 => new lang_string('activitychoosertabmodesix', 'course'),
-                0 => new lang_string('activitychoosertabmodeone', 'course'),
-                1 => new lang_string('activitychoosertabmodetwo', 'course'),
-                2 => new lang_string('activitychoosertabmodethree', 'course'),
-            ]
-        )
-    );
 
     // Add to the 'Groups' category.
     $ADMIN->add(
@@ -334,23 +317,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
 
     // Add to the 'Activity Chooser' category.
     $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
-    // Tab mode for the activity chooser.
-    $temp->add(
-        new admin_setting_configselect(
-            'activitychoosertabmode',
-            new lang_string('activitychoosertabmode', 'course'),
-            new lang_string('activitychoosertabmode_desc', 'course'),
-            3,
-            [
-                3 => new lang_string('activitychoosertabmodefour', 'course'),
-                4 => new lang_string('activitychoosertabmodefive', 'course'),
-                5 => new lang_string('activitychoosertabmodesix', 'course'),
-                0 => new lang_string('activitychoosertabmodeone', 'course'),
-                1 => new lang_string('activitychoosertabmodetwo', 'course'),
-                2 => new lang_string('activitychoosertabmodethree', 'course'),
-            ]
-        )
-    );
 
     // Build a list of plugins that use the footer callback.
     $pluginswithfunction = get_plugins_with_function('custom_chooser_footer', 'lib.php');

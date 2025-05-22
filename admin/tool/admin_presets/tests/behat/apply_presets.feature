@@ -28,7 +28,6 @@ Feature: I can apply presets
     And I should see "Setting changes"
 #   Checking all the settings to be applied for the Starter (if will help to identify possible regressions).
     And I should see "Activities" in the "Setting changes" "table"
-    And I should see "Activity chooser tabs" in the "Setting changes" "table"
     And I should see "Adaptive mode (no penalties)" in the "Setting changes" "table"
     And I should see "Blog menu" in the "Setting changes" "table"
     And I should see "Blog tags" in the "Setting changes" "table"
