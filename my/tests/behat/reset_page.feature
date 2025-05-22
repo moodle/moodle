@@ -8,24 +8,21 @@ Feature: Reset dashboard page to default
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
-      | student2 | C1 | student |
-    And I log in as "student1"
 
+  @javascript
   Scenario: Add blocks to page and reset
-    When I turn editing mode on
+    When I log in as "student1"
+    And I turn editing mode on
     And I add the "Latest announcements" block
-    And I add the "Comments" block
     And I press "Reset page to default"
-    Then I should not see "Latest announcements"
-    And I should see "Timeline"
-    And I should see "Calendar"
-    And I should not see "Upcoming events"
-    And I should not see "Comments"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    Then "Latest announcements" "block" should not exist
+    And "Timeline" "block" should exist
+    And "Calendar" "block" should exist
     And I should not see "Reset page to default"

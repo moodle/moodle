@@ -180,10 +180,24 @@ if ($PAGE->user_allowed_editing()) {
         $params['edit'] = 1;
     } else if (empty($edit)) {
         $editstring = get_string('updatemymoodleon');
-        $resetbutton = $OUTPUT->single_button($reseturl, $resetstring);
+        $resetbutton = $OUTPUT->single_button(
+            $reseturl,
+            $resetstring,
+            options: [
+                'data-modal' => 'confirmation',
+                'data-modal-content-str' => json_encode(['resetpageconfirm', 'my']),
+            ],
+        );
     } else {
         $editstring = get_string('updatemymoodleoff');
-        $resetbutton = $OUTPUT->single_button($reseturl, $resetstring);
+        $resetbutton = $OUTPUT->single_button(
+            $reseturl,
+            $resetstring,
+            options: [
+                'data-modal' => 'confirmation',
+                'data-modal-content-str' => json_encode(['resetpageconfirm', 'my']),
+            ],
+        );
     }
 
     $url = new moodle_url("$CFG->wwwroot/user/profile.php", $params);
