@@ -199,6 +199,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
 
+### qtype_multichoice
+
+#### Changed
+
+- Restrict override of margin-bottom for fitem_id_answer_* and fitem_id_fraction_* divs to own edit form. Question type plugins currently benefitting from the unlimited style override will need to change their styles.css accordingly. An example can be found in calculatedmulti's style sheet.
+
+  For more information see [MDL-85240](https://tracker.moodle.org/browse/MDL-85240)
+
 ### report_progress
 
 #### Changed
