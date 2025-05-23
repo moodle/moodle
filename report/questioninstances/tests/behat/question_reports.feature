@@ -35,6 +35,8 @@ Feature: A Teacher can generate question instance reports
   Scenario: Generate general and specific report
     Given I am on the "C1" "Course" page logged in as "admin"
     And I navigate to "Reports > Question instances" in site administration
+    # Checks the dropdown list is in alphabetical order
+    And "Matching" "option" should appear before "Select missing words" "option" in the "Question type" "select"
     When I press "Get the report"
     Then "Quiz: Test quiz Q001" row "Total" column of "generaltable" table should contain "2"
     And "Quiz: Test quiz Q001" row "Visible" column of "generaltable" table should contain "2"
