@@ -77,6 +77,7 @@ Options:
 --adminemail=STRING   Email address for the moodle admin account.
 --sitepreset=STRING   Admin site preset to be applied during the installation process.
 --supportemail=STRING Email address for support and help.
+--noreplyemail=STRING Email address used for noreply.
 --upgradekey=STRING   The upgrade key to be set in the config.php, leave empty to not set it.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
@@ -255,6 +256,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminemail'        => '',
         'sitepreset'        => '',
         'supportemail'      => '',
+        'noreplyemail'      => '',
         'upgradekey'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
@@ -749,6 +751,20 @@ if (!$skipdatabase) {
     // Validate that the support email address provided is valid.
     if (!empty($options['supportemail']) && !validate_email($options['supportemail'])) {
         $a = (object)['option' => 'supportemail', 'value' => $options['supportemail']];
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+    }
+
+    // Ask for the noreply address.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('clinoreplyemail', 'install'));
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['noreplyemail']);
+        $options['noreplyemail'] = cli_input($prompt, $options['noreplyemail']);
+    }
+
+    // Validate that the noreply address provided is valid.
+    if (!empty($options['noreplyemail']) && !validate_email($options['noreplyemail'])) {
+        $a = (object)['option' => 'noreplyemail', 'value' => $options['noreplyemail']];
         cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }
