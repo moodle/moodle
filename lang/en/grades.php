@@ -185,7 +185,7 @@ $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)'
 $string['errorcalculationunknown'] = 'Invalid formula';
 $string['errorcalculationbroken'] = 'Error in the calculation of grade item {$a}.';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
-$string['errornegativepenalty'] = 'Received negative value during penalty aggregation for grade ID {$a}';
+$string['errornegativepenalty'] = 'Negative value received from penalty aggregation for grade ID {$a}.';
 $string['errornocalculationallowed'] = 'Calculations are not allowed for this item';
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
 $string['errornocourse'] = 'Could not get course information';
@@ -516,7 +516,9 @@ $string['missingitemtypeoreid'] = 'Array key (itemtype or eid) missing';
 $string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
 $string['modgrade'] = 'Grade';
-$string['modgrade_help'] = 'Select the type of grading used for this activity. If \'scale\' is chosen, you can then choose the scale from the drop-down menu. If using point grading, you can then enter the maximum grade available for this activity.';
+$string['modgrade_help'] = '* Point - A numerical value
+* None - Feedback only
+* Scale - An item from a list';
 $string['modgradecantchangegradetype'] = 'You cannot change the type, as grades already exist for this item.';
 $string['modgradecantchangegradetypemsg'] = 'Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades.';
 $string['modgradecantchangegradetyporscalemsg'] = 'Some grades have already been awarded, so the grade type and scale cannot be changed.';
@@ -719,7 +721,7 @@ $string['realletter'] = 'Real (letter)';
 $string['realpercentage'] = 'Real (percentage)';
 $string['recalculatepenalty'] = 'Recalculate penalties';
 $string['recalculatepenaltyconfirm'] = 'This will recalculate and apply penalties for all submissions in this context. Are you sure you want to continue?';
-$string['recalculatepenaltysuccess'] = 'Successfully initiated penalty recalculation. There may be a delay before grades are updated.';
+$string['recalculatepenaltysuccess'] = 'Penalty recalculation in progress. There may be a delay before grades are updated.';
 $string['recalculatinggrades'] = 'Recalculating grades';
 $string['recalculatinggradesadhoc'] = 'The report will update automatically. You don\'t need to do anything.';
 $string['recovergradesdefault'] = 'Recover grades default';
