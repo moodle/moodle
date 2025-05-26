@@ -1,8 +1,8 @@
 @block @block_site_main_menu
-Feature: Add URL to main menu block
+Feature: Add URL to Additional activities block
   In order to add helpful resources for students
   As a admin
-  I need to add URLs to the main menu block and check it works.
+  I need to add URLs to the Additional activities block and check it works.
 
   Background:
     Given the following "courses" exist:
@@ -14,7 +14,7 @@ Feature: Add URL to main menu block
       | site_main_menu | System       | 1         | site-index      | side-pre      |
 
   @javascript
-  Scenario: Add a URL in menu block and ensure it appears
+  Scenario: Add a URL in Additional activities block and ensure it appears
     Given I log in as "admin"
     And I am on site homepage
     And the following "activity" exists:
@@ -30,15 +30,15 @@ Feature: Add URL to main menu block
       | id_display | In pop-up |
     And I press "Save and return to course"
     And I turn editing mode on
-    Then "reference link" "link" should exist in the "Main menu" "block"
-    And "Add an activity or resource" "button" should exist in the "Main menu" "block"
+    Then "reference link" "link" should exist in the "Additional activities" "block"
+    And "Add an activity or resource" "button" should exist in the "Additional activities" "block"
 
   @javascript
-  Scenario: Add a URL in menu block can appear in the entire site
+  Scenario: Add a URL in Additional activities block can appear in the entire site
     When I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I configure the "Main menu" block
+    And I configure the "Additional activities" block
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
@@ -54,19 +54,19 @@ Feature: Add URL to main menu block
     And I set the following fields to these values:
       | id_display | Embed |
     And I press "Save and return to course"
-    Then I click on "reference link" "link" in the "Main menu" "block"
-    And "reference link" "link" should exist in the "Main menu" "block"
+    Then I click on "reference link" "link" in the "Additional activities" "block"
+    And "reference link" "link" should exist in the "Additional activities" "block"
     And I am on the "C1" "Course" page
-    And "reference link" "link" should exist in the "Main menu" "block"
+    And "reference link" "link" should exist in the "Additional activities" "block"
     And I navigate to "Badges > Add a new badge" in site administration
-    And "reference link" "link" should exist in the "Main menu" "block"
+    And "reference link" "link" should exist in the "Additional activities" "block"
 
   @javascript
   Scenario: Add a URL in menu block can appear in any front page
     When I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I configure the "Main menu" block
+    And I configure the "Additional activities" block
     And I set the following fields to these values:
       | Page contexts | Display on the site home and any pages added to the site home. |
     And I press "Save changes"
@@ -82,20 +82,20 @@ Feature: Add URL to main menu block
     And I set the following fields to these values:
       | id_display | Embed |
     And I press "Save and return to course"
-    Then I click on "reference link" "link" in the "Main menu" "block"
-    And "reference link" "link" should exist in the "Main menu" "block"
+    Then I click on "reference link" "link" in the "Additional activities" "block"
+    And "reference link" "link" should exist in the "Additional activities" "block"
     And I am on the "C1" "Course" page
-    And "Main menu" "block" should not exist
+    And "Additional activities" "block" should not exist
     And I navigate to "Badges > Add a new badge" in site administration
-    And "Main menu" "block" should not exist
+    And "Additional activities" "block" should not exist
 
   @javascript
-  Scenario: When the "Main Menu" block is displayed throrought the entire site, adding an URL in a course
+  Scenario: When the Additional activities block is displayed throrought the entire site, adding an URL in a course
   results in adding it in the course and not in the frontpage
     Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I configure the "Main menu" block
+    And I configure the "Additional activities" block
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
@@ -112,5 +112,5 @@ Feature: Add URL to main menu block
     And I set the following fields to these values:
       | id_display | In pop-up |
     And I press "Save and return to course"
-    Then "reference link" "link" should not exist in the "Main menu" "block"
+    Then "reference link" "link" should not exist in the "Additional activities" "block"
     And I should see "mooooooooodle" in the "region-main" "region"

@@ -26,10 +26,28 @@ class block_site_main_menu extends block_base {
         $this->title = get_string('pluginname', 'block_site_main_menu');
     }
 
-    function applicable_formats() {
-        return array('site' => true);
+    #[\Override]
+    public function specialization() {
+        if (isset($this->config->title)) {
+            $this->title = format_string($this->config->title, true, ['context' => $this->context]);
+        } else {
+            $this->title = get_string('pluginname', 'block_site_main_menu');
+        }
     }
 
+    #[\Override]
+    function applicable_formats() {
+        $format = course_get_format($this->get_block_course());
+        $applicableformat = $format && !$format->has_view_page();
+
+        return [
+            'course-view' => $applicableformat,
+            'mod' => $applicableformat,
+            'site' => true,
+        ];
+    }
+
+    #[\Override]
     function get_content() {
         if ($this->content !== NULL) {
             return $this->content;
@@ -43,8 +61,7 @@ class block_site_main_menu extends block_base {
             return $this->content;
         }
 
-        $course = get_site();
-
+        $course = $this->get_block_course();
         course_create_sections_if_missing($course, 0);
         $format = course_get_format($course);
         $modinfo = $format->get_modinfo();
@@ -63,5 +80,40 @@ class block_site_main_menu extends block_base {
             displayoptions: ['inblock' => true],
         );
         return $this->content;
+    }
+    /**
+     * Get the course for the block.
+     *
+     * @return stdClass The course object.
+     */
+    protected function get_block_course(): stdClass {
+        global $COURSE;
+
+        if (!empty($this->page)) {
+            $course = $this->page->course;
+        }
+        if (empty($course)) {
+            $course = $COURSE;
+        }
+
+        if ($this->context) {
+            $context = $this->context->get_parent_context();
+            if ($context->contextlevel == CONTEXT_COURSE) {
+                $courseid = $context->instanceid;
+            } else if ($context->contextlevel == CONTEXT_SYSTEM) {
+                $courseid = SITEID;
+            } else {
+                $coursecontext = $context->get_course_context(false);
+                if ($coursecontext) {
+                    $courseid = $coursecontext->instanceid;
+                }
+            }
+        }
+
+        if (isset($courseid) && $courseid != $course->id) {
+            $course = get_course($courseid);
+        }
+
+        return $course;
     }
 }

@@ -1,11 +1,11 @@
 @block @block_site_main_menu
-Feature: Edit activities in main menu block
-  In order to use main menu block
+Feature: Edit activities in Additional activities block
+  In order to use Additional activities block
   As an admin
   I need to add and edit activities there
 
   @javascript
-  Scenario: Edit name of acitivity in-place in site main menu block
+  Scenario: Edit name of activity in-place in Additional activities block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -25,7 +25,7 @@ Feature: Edit activities in main menu block
     And I should see "New forum name"
 
   @javascript
-  Scenario: Activities in main menu block can be made available but not visible on a course page
+  Scenario: Activities in Additional activities block can be made available but not visible on a course page
     Given the following config values are set as admin:
       | allowstealth | 1 |
     And the following "blocks" exist:
@@ -53,11 +53,11 @@ Feature: Edit activities in main menu block
     And I turn editing mode off
     And I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
     And I log out
-    And I should not see "My forum name" in the "Main menu" "block"
-    And I should see "Visible forum" in the "Main menu" "block"
+    And I should not see "My forum name" in the "Additional activities" "block"
+    And I should see "Visible forum" in the "Additional activities" "block"
 
   @javascript
-  Scenario: The move activity modal allow to move from the main menu block to the main content
+  Scenario: The move activity modal allow to move from the Additional activities block to the main content
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -81,7 +81,7 @@ Feature: Edit activities in main menu block
     And I should not see "My forum name" in the "block_site_main_menu_section" "region"
 
   @javascript
-  Scenario: The move activity modal allow to move from the main content to the main menu block
+  Scenario: The move activity modal allow to move from the main content to the Additional activities block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -106,7 +106,7 @@ Feature: Edit activities in main menu block
     And I should see "My forum name" in the "block_site_main_menu_section" "region"
 
   @javascript
-  Scenario: Admin can delete an activity in the main menu block
+  Scenario: Admin can delete an activity in the Additional activities block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -125,7 +125,7 @@ Feature: Edit activities in main menu block
     Then I should not see "My forum name" in the "block_site_main_menu_section" "region"
 
   @javascript
-  Scenario: Admin can duplicate an activity in the main menu block
+  Scenario: Admin can duplicate an activity in the Additional activities block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -143,7 +143,7 @@ Feature: Edit activities in main menu block
     Then I should see "My forum name (copy)" in the "block_site_main_menu_section" "region"
 
   @javascript
-  Scenario: Admin can move right and left an activity in the main menu block
+  Scenario: Admin can move right and left an activity in the Additional activities block
     Given the following "activity" exists:
       | activity | forum                |
       | course   | Acceptance test site |
@@ -167,3 +167,22 @@ Feature: Edit activities in main menu block
     And I open "My forum name" actions menu
     And "Move right" "link" should be visible
     And "Move left" "link" should not be visible
+
+  @javascript
+  Scenario: Additional activities block title can be changed
+    Given the following "activity" exists:
+      | activity | forum                |
+      | course   | Acceptance test site |
+      | name     | My forum name        |
+      | idnumber | forum                |
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | site_main_menu | System       | 1         | site-index      | side-pre      |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    When I configure the "Additional activities" block
+    And I set the field "Title" to "My new title"
+    And I press "Save changes"
+    Then "My new title" "block" should exist
+    And "Additional activities" "block" should not exist
