@@ -110,3 +110,23 @@ Feature: Manage contacts
     And I click on "Remove" "button"
     And I go back in "view-conversation" message drawer
     And I should see "No contacts" in the "//*[@data-region='empty-message-container']" "xpath_element"
+
+  Scenario: Prevent sending a 'contact request' if user access is not permitted
+    Given the following config values are set as admin:
+      | messagingallusers | 0 |
+    When I am on the "student1" "user > profile" page logged in as admin
+    Then I should not see "Add to contacts"
+    And I click on "Message" "link"
+    And I click on "Conversation actions menu" "button"
+    And I should not see "Add to contacts"
+    And I click on "User info" "link"
+    And I should not see "Add to contacts"
+
+  Scenario: Disabling messagingallusers preserves the contact request sent status
+    Given I am on the "student1" "user > profile" page logged in as admin
+    And I click on "Add to contacts" "link"
+    And I should see "Contact request sent"
+    And the following config values are set as admin:
+      | messagingallusers | 0 |
+    When I reload the page
+    Then I should see "Contact request sent"
