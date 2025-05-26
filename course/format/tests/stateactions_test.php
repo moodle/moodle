@@ -1968,4 +1968,210 @@ final class stateactions_test extends \advanced_testcase {
             $modinfo->get_section_info(1)->sequence
         );
     }
+
+    /**
+     * Test for section_duplicate public method.
+     *
+     * @covers ::section_duplicate
+     */
+    public function test_section_duplicate(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'initsections' => 1]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 1]);
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 1]);
+
+        $this->setAdminUser();
+
+        $courseformat = course_get_format($course->id);
+        $modinfo = course_modinfo::instance($course);
+        $sectiontoduplicate = $modinfo->get_section_info(1);
+        $nextsection = $modinfo->get_section_info(2);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(3, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(2, $cms);
+
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+        $actions->section_duplicate($updates, $course, [$sectiontoduplicate->id]);
+
+        $results = $this->summarize_updates($updates);
+        $this->assertCount(4, $results['put']['section']);
+        $this->assertCount(4, $results['put']['cm']);
+
+        // Validate structure.
+        $modinfo = course_modinfo::instance($course);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(4, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(4, $cms);
+
+        $originalsection = $modinfo->get_section_info(1);
+        $this->assertEquals($sectiontoduplicate->id, $originalsection->id);
+        $cms = $originalsection->get_sequence_cm_infos();
+        $this->assertEquals($forum->cmid, $cms[0]->id);
+        $this->assertEquals($page->cmid, $cms[1]->id);
+
+        $duplicatedsection = $modinfo->get_section_info(2);
+        $cms = $duplicatedsection->get_sequence_cm_infos();
+        $this->assertEquals($forum->name, $cms[0]->get_name());
+        $this->assertEquals($page->name, $cms[1]->get_name());
+
+        $newnextsection = $modinfo->get_section_info(3);
+        $this->assertEquals($nextsection->id, $newnextsection->id);
+    }
+
+    /**
+     * Test duplicating multiple sections.
+     *
+     * @covers ::section_duplicate
+     */
+    public function test_section_duplicate_multiple(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 3, 'initsections' => 1]);
+        $mod11 = $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 1]);
+        $mod12 = $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 1]);
+        $mod21 = $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 2]);
+        $mod22 = $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 2]);
+
+        $this->setAdminUser();
+
+        $courseformat = course_get_format($course->id);
+        $modinfo = course_modinfo::instance($course);
+        $sectiontoduplicate1 = $modinfo->get_section_info(1);
+        $sectiontoduplicate2 = $modinfo->get_section_info(2);
+        $nextsection = $modinfo->get_section_info(3);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(4, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(4, $cms);
+
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+        $actions->section_duplicate($updates, $course, [$sectiontoduplicate2->id, $sectiontoduplicate1->id]);
+
+        $results = $this->summarize_updates($updates);
+        $this->assertCount(6, $results['put']['section']);
+        $this->assertCount(8, $results['put']['cm']);
+
+        // Validate structure.
+        $modinfo = course_modinfo::instance($course);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(6, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(8, $cms);
+
+        $originalsection = $modinfo->get_section_info(1);
+        $this->assertEquals($sectiontoduplicate1->id, $originalsection->id);
+        $cms = $originalsection->get_sequence_cm_infos();
+        $this->assertEquals($mod11->cmid, $cms[0]->id);
+        $this->assertEquals($mod12->cmid, $cms[1]->id);
+
+        $duplicatedsection = $modinfo->get_section_info(2);
+        $cms = $duplicatedsection->get_sequence_cm_infos();
+        $this->assertEquals($mod11->name, $cms[0]->get_name());
+        $this->assertEquals($mod12->name, $cms[1]->get_name());
+
+        $originalsection = $modinfo->get_section_info(3);
+        $this->assertEquals($sectiontoduplicate2->id, $originalsection->id);
+        $cms = $originalsection->get_sequence_cm_infos();
+        $this->assertEquals($mod21->cmid, $cms[0]->id);
+        $this->assertEquals($mod22->cmid, $cms[1]->id);
+
+        $duplicatedsection = $modinfo->get_section_info(4);
+        $cms = $duplicatedsection->get_sequence_cm_infos();
+        $this->assertEquals($mod21->name, $cms[0]->get_name());
+        $this->assertEquals($mod22->name, $cms[1]->get_name());
+
+        $newnextsection = $modinfo->get_section_info(5);
+        $this->assertEquals($nextsection->id, $newnextsection->id);
+    }
+
+    /**
+     * Test for section_duplicate public method with no capabilities.
+     *
+     * @covers ::section_duplicate
+     */
+    public function test_section_duplicate_no_capabilities(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'initsections' => 1]);
+        $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 1]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course], ['section' => 1]);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $this->setUser($user);
+
+        $courseformat = course_get_format($course->id);
+        $modinfo = course_modinfo::instance($course);
+        $sectiontoduplicate = $modinfo->get_section_info(1);
+
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+
+        $this->expectException(moodle_exception::class);
+        $actions->section_duplicate($updates, $course, [$sectiontoduplicate->id]);
+    }
+
+    /**
+     * Test for section_duplicate on a delegated section (subsection).
+     *
+     * @covers ::section_duplicate
+     */
+    public function test_section_duplicate_delegated_section(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['numsections' => 2]);
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course], ['section' => 3]);
+
+        $this->setAdminUser();
+
+        $courseformat = course_get_format($course->id);
+        $modinfo = course_modinfo::instance($course);
+        $sectiontoduplicate = $modinfo->get_section_info(3);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(4, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(2, $cms); // Subsection is both a section and a cm.
+
+        $actions = new stateactions();
+        $updates = new stateupdates($courseformat);
+        $actions->section_duplicate($updates, $course, [$sectiontoduplicate->id]);
+
+        $results = $this->summarize_updates($updates);
+        $this->assertCount(5, $results['put']['section']);
+        $this->assertCount(3, $results['put']['cm']);
+
+        // Validate structure.
+        $modinfo = course_modinfo::instance($course);
+
+        $sections = $modinfo->get_section_info_all();
+        $this->assertCount(5, $sections);
+        $cms = $modinfo->get_cms();
+        $this->assertCount(3, $cms);
+
+        $originalsection = $modinfo->get_section_info(3);
+        $this->assertEquals($sectiontoduplicate->id, $originalsection->id);
+        $cms = $originalsection->get_sequence_cm_infos();
+        $this->assertEquals($forum->cmid, $cms[0]->id);
+
+        $duplicatedsection = $modinfo->get_section_info(4);
+        $cms = $duplicatedsection->get_sequence_cm_infos();
+        $this->assertEquals($forum->name, $cms[0]->get_name());
+
+        // Duplicating subsections is not supported yet. Any duplicated subsection
+        // will be promoted to a section.
+        $this->assertFalse($duplicatedsection->is_delegated());
+    }
 }

@@ -33,7 +33,7 @@ $name = optional_param('name', '', PARAM_TEXT);
 $edit = optional_param('edit', -1, PARAM_BOOL);
 $hide = optional_param('hide', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $show = optional_param('show', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
-$duplicatesection = optional_param('duplicatesection', 0, PARAM_INT);
+$duplicatesection = optional_param('duplicatesection', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
 $idnumber = optional_param('idnumber', '', PARAM_RAW);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
@@ -236,10 +236,15 @@ if ($PAGE->user_allowed_editing()) {
         }
     }
 
+    // TODO remove this if as part of MDL-83530.
     if (
         !empty($section) && !empty($coursesections) && !empty($duplicatesection)
         && has_capability('moodle/course:update', $context) && confirm_sesskey()
     ) {
+        debugging(
+            'The duplicatesection param is deprecated. Please use course/format/update.php instead.',
+            DEBUG_DEVELOPER
+        );
         $newsection = $format->duplicate_section($coursesections);
         redirect(course_get_url($course, $newsection->section));
     }
