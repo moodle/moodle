@@ -221,12 +221,13 @@ Feature: Mapping courses in a feedback
     And I should see "2 (66.67 %)" in the "option e" "table_row"
     And I should see "0" in the "option f" "table_row"
 
+  @block_site_main_menu
   Scenario: Site feedback deletion hides feedback block completely
     When I log in as "manager"
     And I am on site homepage
     And I turn editing mode on
     And I add the "Feedback" block
-    And I add the "Main menu" block
+    And I add the "Additional activities" block
     And I click on "Delete" "link" in the "Course feedback" activity
     And I press "Delete"
     And I turn editing mode off

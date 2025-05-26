@@ -67,7 +67,7 @@ Feature: I can apply presets
     And I should see "Lesson" in the "Setting changes" "table"
     And I should see "Logged in user" in the "Setting changes" "table"
     And I should see "Login" in the "Setting changes" "table"
-    And I should see "Main menu" in the "Setting changes" "table"
+    And I should see "Additional activities" in the "Setting changes" "table"
     And I should see "Maximum number of attachments" in the "Setting changes" "table"
     And "Maximum number of attachments" row "Current value" column of "Setting changes" table should contain "9"
     And "Maximum number of attachments" row "New value" column of "Setting changes" table should contain "3"
