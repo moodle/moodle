@@ -1489,5 +1489,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024100702.03);
     }
 
+    if ($oldversion < 2024100704.07) {
+        // Add index for querying delegated sections.
+        $table = new xmldb_table('course_sections');
+        $index = new xmldb_index('component_itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemid']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024100704.07);
+    }
+
     return true;
 }
