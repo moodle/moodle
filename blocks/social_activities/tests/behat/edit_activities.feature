@@ -139,3 +139,20 @@ Feature: Edit activities in social activities block
     And I open "Social forum" actions menu
     And "Move right" "link" should be visible
     And "Move left" "link" should not be visible
+
+  @javascript
+  Scenario: Social activities block can have subsections
+    Given the following "activity" exists:
+      | activity | assign          |
+      | course   | C1              |
+      | name     | Assignment name |
+      | section  | 0               |
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I click on "Add content" "button" in the ".block_social_activities .footer" "css_element"
+    And I click on "Subsection" "link" in the ".dropdown-menu.show" "css_element"
+    Then I should see "New subsection" in the "Social activities" "block"
+    And I open "Assignment name" actions menu
+    And I click on "Move" "link" in the "Assignment name" activity
+    And I click on "New subsection" "link" in the "Move activity" "dialogue"
+    Then  I should see "Assignment name" in the "New subsection" "section"
