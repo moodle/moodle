@@ -115,9 +115,11 @@
             <a class="dropdown-item" href="#" data-action="request-delete-conversation" role="menuitem">
                 {{#str}} deleteconversation, core_message {{/str}}
             </a>
+            {{#cancreatecontact}}
             <a class="dropdown-item {{#iscontact}}hidden{{/iscontact}}" href="#" data-action="request-add-contact" role="menuitem">
                 {{#str}} addtoyourcontacts, core_message {{/str}}
             </a>
+            {{/cancreatecontact}}
             <a class="dropdown-item {{^iscontact}}hidden{{/iscontact}}" href="#" data-action="request-remove-contact"
             role="menuitem">
                 {{#str}} removefromyourcontacts, core_message {{/str}}
