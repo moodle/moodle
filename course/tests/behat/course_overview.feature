@@ -301,3 +301,15 @@ Feature: Users can access the course activities overview page
     And I should see "-" in the "Activity 2" "table_row"
     When I am on the "Course 1" "course > activities > lesson" page logged in as "teacher1"
     And I should not see "Grade" in the "lesson_overview_collapsible" "region"
+
+  Scenario: Activities name is properly filtered and rendered
+    Given the following config values are set as admin:
+      | formatstringstriptags | 0 |
+    And the following "activity" exists:
+      | activity  | assign                                                                                                             |
+      | course    | C1                                                                                                                 |
+      | section   | 1                                                                                                                  |
+      | idnumber  | mathjax                                                                                                            |
+      | name      | <span class="filter_mathjaxloader_equation">Announcements$$(a+b)=2$$<span class="nolink">$$(a+b)=2$$</span></span> |
+    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    Then I should not see "span" in the "assign_overview_collapsible" "region"
