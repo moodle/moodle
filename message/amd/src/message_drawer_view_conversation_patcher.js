@@ -425,7 +425,8 @@ function(
                     showonlinestatus: newOtherUser.showonlinestatus,
                     isonline: newOtherUser.isonline,
                     isblocked: newOtherUser.isblocked,
-                    iscontact: newOtherUser.iscontact
+                    iscontact: newOtherUser.iscontact,
+                    cancreatecontact: newOtherUser.cancreatecontact,
                 }
             };
         }
