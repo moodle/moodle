@@ -36,6 +36,7 @@ $user        = optional_param('user', 0, PARAM_INT); // User to display.
 $date        = optional_param('date', 0, PARAM_INT); // Date to display.
 $modid       = optional_param('modid', 0, PARAM_ALPHANUMEXT); // Module id or 'site_errors'.
 $isactivitypage = optional_param('isactivitypage', false, PARAM_BOOL); // Is this a course module page?
+$iscoursepage = optional_param('iscoursepage', false, PARAM_BOOL); // Is this a course report page?
 $modaction   = optional_param('modaction', '', PARAM_ALPHAEXT); // An action as recorded in the logs.
 $page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
 $perpage     = optional_param('perpage', '100', PARAM_INT); // How many per page.
@@ -186,6 +187,7 @@ $reportlog = new report_log_renderable(
     order: 'timecreated DESC',
     origin: $origin,
     isactivitypage: $isactivitypage,
+    iscoursepage: ($iscoursepage || $isactivitypage),
 );
 
 $readers = $reportlog->get_readers();
