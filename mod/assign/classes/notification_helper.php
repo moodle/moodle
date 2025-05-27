@@ -494,6 +494,12 @@ class notification_helper {
                 continue;
             }
 
+            // Filter a list of users who meet the availability conditions.
+            $cm = $assignmentobj->get_course_module();
+            if (!\core_availability\info_module::is_user_visible($cm, $userid)) {
+                continue;
+            }
+
             // Check if the due date is still within range.
             $assignmentobj->update_effective_access($userid);
             $duedate = $assignmentobj->get_instance($userid)->duedate;
