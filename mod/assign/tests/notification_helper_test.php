@@ -781,6 +781,78 @@ final class notification_helper_test extends \advanced_testcase {
 
         // Clear sink.
         $sink->clear();
+
+        // Update due dates to simulate recent changes and trigger notifications.
+        // Only users meeting group-based availability conditions should receive them.
+        $updatedata = new \stdClass();
+
+        $updatedata->id = $assignment1->id;
+        $updatedata->duedate = $duedate1;
+        $DB->update_record('assign', $updatedata);
+
+        $updatedata->id = $assignment3->id;
+        $updatedata->duedate = $clock->time() + WEEKSECS;
+        $DB->update_record('assign', $updatedata);
+
+        // Create groups and set assignment availability conditions restricted to those groups.
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $groupduedate = $duedate1 + (HOURSECS * 3);
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment1->id,
+            'groupid' => $group1->id,
+            'duedate' => $groupduedate,
+        ]);
+        $availability =
+        ['op' => '&',
+            'showc' => [true],
+            'c' => [
+                [
+                    'type' => 'group',
+                    'id' => (int)$group1->id,
+                ],
+            ],
+        ];
+        $cm = get_coursemodule_from_instance('assign', $assignment1->id, $course->id);
+        $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cm->id]);
+
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+        $groupduedate = $duedate2 + (HOURSECS * 3);
+        $assignmentgenerator->create_override([
+            'assignid' => $assignment3->id,
+            'groupid' => $group2->id,
+            'duedate' => $groupduedate,
+        ]);
+        $availability =
+        ['op' => '&',
+            'showc' => [true],
+            'c' => [
+                [
+                    'type' => 'group',
+                    'id' => (int)$group2->id,
+                ],
+            ],
+        ];
+        $cm = get_coursemodule_from_instance('assign', $assignment3->id, $course->id);
+        $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cm->id]);
+
+        // Rebuild course cache to apply changes.
+        rebuild_course_cache($course->id, true);
+
+        // Add user1 to group1 so they meet the availability condition for assignment1.
+        // This user should now receive a notification for assignment1 only.
+        $generator->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
+
+        // Run notification task and validate only assignments visible to the user are included.
+        $this->run_due_digest_notification_helper_tasks();
+        $messages = $sink->get_messages_by_component('mod_assign');
+        $this->assertCount(1, $messages);
+        $message = reset($messages);
+        $this->assertStringContainsString($assignment1->name, $message->fullmessagehtml);
+        $this->assertEquals($user1->id, $message->useridto);
+        $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
+
+        // Clear sink.
+        $sink->clear();
     }
 
     /**
