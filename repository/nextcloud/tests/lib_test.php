@@ -23,8 +23,10 @@
  */
 namespace repository_nextcloud;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use repository;
 use repository_nextcloud;
+use webdav_client;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -1013,7 +1015,7 @@ XML;
     protected function get_initialised_return_array() {
         $ret = array();
         $ret['dynload'] = true;
-        $ret['nosearch'] = true;
+        $ret['nosearch'] = false;
         $ret['nologin'] = false;
         $ret['path'] = [
             [
@@ -1028,5 +1030,270 @@ XML;
         $ret['filereferencewarning'] = get_string('externalpubliclinkwarning', 'repository_nextcloud');
 
         return $ret;
+    }
+
+    /**
+     * Helper method to create a mock WebDAV client for search scenarios.
+     *
+     * @param bool $openreturn What the open() method should return
+     * @param array|bool|null $searchreturn What the search() method should return (null to skip expectation)
+     * @param string $searchpath Expected search path for search method
+     * @param string $searchuser Expected username for search method
+     * @param string $searchquery Expected query for search method
+     * @param bool $expectsearch Whether to expect search() to be called
+     * @return MockObject
+     */
+    protected function create_webdav_mock(bool $openreturn = true, array|bool|null $searchreturn = null,
+            string $searchpath = '/remote.php/dav/', string $searchuser = 'testuser', string $searchquery = 'test',
+            bool $expectsearch = true): MockObject {
+        $mock = $this->createMock(webdav_client::class);
+
+        $mock->expects($this->once())
+            ->method('open')
+            ->willReturn($openreturn);
+
+        // Only set search expectations when the connection succeeds and search is expected.
+        if ($searchreturn !== null && $expectsearch && $openreturn) {
+            $mock->expects($this->once())
+                ->method('search')
+                ->with($searchpath, $searchuser, $searchquery)
+                ->willReturn($searchreturn);
+        } else if (!$expectsearch) {
+            $mock->expects($this->never())
+                ->method('search');
+        }
+
+        // Only expect close() when connection was successful.
+        if ($openreturn) {
+            $mock->expects($this->once())
+                ->method('close');
+        }
+
+        $this->set_private_property($mock, 'dav');
+
+        return $mock;
+    }
+
+    /**
+     * Helper method to create a mock OAuth2 client for search scenarios.
+     *
+     * @param array $userinfo The userinfo to return from get_userinfo()
+     * @return MockObject
+     */
+    protected function create_oauth_mock(array $userinfo = ['username' => 'testuser']): MockObject {
+        $mock = $this->createMock(\core\oauth2\client::class);
+
+        $mock->expects($this->any())
+            ->method('get_userinfo')
+            ->willReturn($userinfo);
+
+        $this->set_private_property($mock, 'client');
+
+        return $mock;
+    }
+
+    /**
+     * Test search functionality with various inputs using the WebDAV search endpoint.
+     *
+     * @dataProvider search_provider
+     * @param string $searchtext The text to search for
+     * @param array|bool $mockresponse The mock response from the webdav search method
+     * @param array $expectedlist The expected result list
+     * @covers ::search
+     */
+    public function test_search(string $searchtext, array|bool $mockresponse, array $expectedlist): void {
+        $expected = $this->get_initialised_return_array();
+        $expected['list'] = $expectedlist;
+
+        $this->resetAfterTest(true);
+        $this->setUser();
+
+        $this->create_webdav_mock(true, $mockresponse, '/remote.php/dav/', 'testuser', $searchtext);
+        $this->create_oauth_mock(['username' => 'testuser']);
+
+        $result = $this->repo->search($searchtext);
+
+        // Verify error logging occurs for failed searches to help with debugging.
+        if ($mockresponse === false) {
+            $this->assertDebuggingCalled('Nextcloud search: WebDAV search request failed.', DEBUG_DEVELOPER);
+        }
+
+        // Remove dynamic thumbnail values to enable reliable comparison.
+        if (isset($result['list'])) {
+            foreach ($result['list'] as &$item) {
+                if (isset($item['thumbnail'])) {
+                    $item['thumbnail'] = null;
+                }
+            }
+        }
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test search error handling scenarios.
+     *
+     * @dataProvider search_error_provider
+     * @param string $searchtext The search query to test
+     * @param array|null $userinfo OAuth userinfo to mock (null for no client)
+     * @param string $expecteddebugging Expected debugging message
+     * @param bool $openreturn Whether WebDAV open should succeed
+     * @param bool $expectsearch Whether search method should be called
+     * @covers ::search
+     */
+    public function test_search_errors(string $searchtext, array|null $userinfo, string $expecteddebugging,
+            bool $openreturn = true, bool $expectsearch = true): void {
+        $this->resetAfterTest(true);
+        $this->setUser();
+        $expected = $this->get_initialised_return_array();
+
+        // Handle special case where no client is set to test initialization errors.
+        if ($userinfo === null) {
+            $this->set_private_property(null, 'client');
+        } else {
+            $searchuser = $userinfo['username'] ?? '';
+            $this->create_webdav_mock($openreturn, null, '/remote.php/dav/',
+                $searchuser, $searchtext, $expectsearch);
+            $this->create_oauth_mock($userinfo);
+        }
+
+        $result = $this->repo->search($searchtext);
+
+        // Verify appropriate debugging messages are logged for troubleshooting.
+        if (!empty($expecteddebugging)) {
+            $this->assertDebuggingCalled($expecteddebugging, DEBUG_DEVELOPER);
+        }
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for search error scenarios.
+     *
+     * @return array
+     */
+    public static function search_error_provider(): array {
+        return [
+            'WebDAV connection failure' => [
+                'searchtext' => 'test',
+                'userinfo' => ['username' => 'testuser'],
+                'expecteddebugging' => 'Failed to open WebDAV connection.',
+                'openreturn' => false,
+                'expectsearch' => false,
+            ],
+            'Malformed WebDAV response' => [
+                'searchtext' => 'test',
+                'userinfo' => ['username' => 'testuser'],
+                'expecteddebugging' => 'Nextcloud search: WebDAV search request failed.',
+            ],
+            'No OAuth client defined' => [
+                'searchtext' => 'test',
+                'userinfo' => null,
+                'expecteddebugging' => 'OAuth client not initialized.',
+                'expectsearch' => false,
+            ],
+            'Empty userinfo from OAuth client' => [
+                'searchtext' => 'test',
+                'userinfo' => [],
+                'expecteddebugging' => 'Nextcloud search: Unable to extract userinfo from OAuth2 client',
+                'expectsearch' => false,
+            ],
+            'Empty username from OAuth client' => [
+                'searchtext' => 'test',
+                'userinfo' => ['username' => ''],
+                'expecteddebugging' => 'Nextcloud search: Unable to extract username from OAuth2 client userinfo',
+                'expectsearch' => false,
+            ],
+        ];
+    }
+
+    /**
+     * Data provider for search tests.
+     *
+     * @return array
+     */
+    public static function search_provider(): array {
+        return [
+            'Basic search' => [
+                'searchtext' => 'test',
+                'mockresponse' => [
+                    [
+                        'href' => '/remote.php/dav/files/testuser/test.txt',
+                        'lastmodified' => 'Tue, 04 Mar 2025 11:35:29 GMT',
+                        'status' => 'HTTP/1.1 200 OK',
+                        'getcontentlength' => '123',
+                        'resourcetype' => '',
+                    ],
+                ],
+                'expectedlist' => [
+                    'TEST.TXT' => [
+                        'title' => 'test.txt',
+                        'size' => '123',
+                        'source' => '/test.txt',
+                        'thumbnail' => null,
+                        'datemodified' => 1741088129,
+                    ],
+                ],
+            ],
+            'Empty search results' => [
+                'searchtext' => 'notfound',
+                'mockresponse' => [],
+                'expectedlist' => [],
+            ],
+            'Folder and file results' => [
+                'searchtext' => 'report',
+                'mockresponse' => [
+                    [
+                        'href' => '/remote.php/dav/files/testuser/Reports/',
+                        'lastmodified' => 'Tue, 04 Mar 2025 11:35:29 GMT',
+                        'status' => 'HTTP/1.1 200 OK',
+                        'getcontentlength' => '',
+                        'resourcetype' => 'collection',
+                    ],
+                    [
+                        'href' => '/remote.php/dav/files/testuser/Reports/report-summary.txt',
+                        'lastmodified' => 'Tue, 04 Mar 2025 11:35:29 GMT',
+                        'status' => 'HTTP/1.1 200 OK',
+                        'getcontentlength' => '200',
+                        'resourcetype' => '',
+                    ],
+                    [
+                        'href' => '/remote.php/dav/files/testuser/report-2023.pdf',
+                        'lastmodified' => 'Tue, 04 Mar 2025 11:35:29 GMT',
+                        'status' => 'HTTP/1.1 200 OK',
+                        'getcontentlength' => '1024',
+                        'resourcetype' => '',
+                    ],
+                ],
+                'expectedlist' => [
+                    'REPORTS/' => [
+                        'title' => 'Reports',
+                        'children' => [],
+                        'path' => '/Reports/',
+                        'thumbnail' => null,
+                        'datemodified' => 1741088129,
+                    ],
+                    'REPORTS/REPORT-SUMMARY.TXT' => [
+                        'title' => 'Reports/report-summary.txt',
+                        'size' => '200',
+                        'source' => '/Reports/report-summary.txt',
+                        'thumbnail' => null,
+                        'datemodified' => 1741088129,
+                    ],
+                    'REPORT-2023.PDF' => [
+                        'title' => 'report-2023.pdf',
+                        'size' => '1024',
+                        'source' => '/report-2023.pdf',
+                        'thumbnail' => null,
+                        'datemodified' => 1741088129,
+                    ],
+                ],
+            ],
+            'Failed search' => [
+                'searchtext' => 'error',
+                'mockresponse' => false,
+                'expectedlist' => [],
+            ],
+        ];
     }
 }
