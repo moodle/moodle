@@ -34,7 +34,7 @@
 require(['jquery'], function($) {
     $('#{{element.id}}_label').css('cursor', 'default');
     $('#{{element.id}}_label').click(function() {
-        $('#{{element.id}}')
+        $('#{{element.id}}, [data-groupname="{{element.name}}"]')
             .find('button, a, input:not([type="hidden"]), select, textarea, [tabindex]')
             .filter(':not([disabled]):not([tabindex="0"]):not([tabindex="-1"])')
             .first().focus();
