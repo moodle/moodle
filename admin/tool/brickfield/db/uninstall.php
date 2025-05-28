@@ -24,5 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Remove the 'enableaccessibilitytools' configuration setting in case of reinstall.
-unset_config('enableaccessibilitytools');
+/**
+ * Plugin uninstall code.
+ *
+ * @return true
+ */
+function xmldb_tool_brickfield_uninstall(): bool {
+    // Remove the 'enableaccessibilitytools' configuration setting in case of reinstall.
+    unset_config('enableaccessibilitytools');
+
+    return true;
+}
