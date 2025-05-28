@@ -90,7 +90,7 @@ class text_filter extends \core_filters\text_filter {
         foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
                 $conceptlist[] = new filter_object(
-                    format_string($concept->concept, true, ['context' => $this->context]),
+                    $this->glossary_format_string($concept->concept),
                     null,
                     null,
                     $concept->casesensitive,
@@ -146,9 +146,12 @@ class text_filter extends \core_filters\text_filter {
             $title = get_string(
                 'glossaryconcept',
                 'filter_glossary',
-                ['glossary' => replace_ampersands_not_followed_by_entity(strip_tags(format_string($glossaries[$concept->glossaryid],
-                    true, ['context' => $this->context]))),
-                    'concept' => format_string($concept->concept, true, ['context' => $this->context])]
+                [
+                    'glossary' => replace_ampersands_not_followed_by_entity(
+                        strip_tags($this->glossary_format_string($glossaries[$concept->glossaryid]))
+                    ),
+                    'concept' => $this->glossary_format_string($concept->concept),
+                ]
             );
             // Hardcoding dictionary format in the URL rather than defaulting
             // to the current glossary format which may not work in a popup.
@@ -212,4 +215,24 @@ class text_filter extends \core_filters\text_filter {
     private function sort_entries_by_length($filterobject0, $filterobject1) {
         return strlen($filterobject1->phrase) <=> strlen($filterobject0->phrase);
     }
+
+    /**
+     * Format text while temporarily disabling the glossary filter to prevent recursion.
+     *
+     * @param string $text The text to format.
+     * @return string The formatted string.
+     */
+    private function glossary_format_string(string $text): string {
+        $filtermanager = \filter_manager::instance();
+
+        try {
+            // Basically runs format_text, but without the glossary filter to prevent recursion.
+            $filtered = $filtermanager->filter_text($text, $this->context, [], ['glossary']);
+        } catch (\Exception $e) {
+            // Fallback in case of error.
+            $filtered = $text;
+        }
+        return $filtered;
+    }
+
 }
