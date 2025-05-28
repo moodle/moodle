@@ -121,7 +121,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'lesson' => [
                 'resourcetype' => 'lesson',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_lesson\courseformat\overview::class,
             ],
             'lti' => [
                 'resourcetype' => 'lti',
