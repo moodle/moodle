@@ -1276,7 +1276,7 @@ function question_default_export_filename($course, $category): string {
  *
  * @param int|stdClass|question_definition $questionorid object or id.
  *      If an object is passed, it should include ->contextid and ->createdby.
- * @param string $cap 'add', 'edit', 'view', 'use', 'move' or 'tag'.
+ * @param string $cap 'add', 'edit', 'view', 'use', 'move', or 'tag'.
  * @param int $notused no longer used.
  * @return bool this user has the capability $cap for this question $question?
  */

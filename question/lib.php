@@ -86,3 +86,16 @@ function core_question_output_fragment_question_data(array $args): string {
     $questionbank->display_question_list();
     return ob_get_clean();
 }
+
+/**
+ * Render and return a category selector for the categories in a given question bank.
+ *
+ * @param array $args ['bankcmid' => Course module ID of the question bank]
+ * @return string The rendered selector.
+ */
+function core_question_output_fragment_category_selector(array $args): string {
+    global $OUTPUT;
+    $context = \core\context\module::instance($args['bankcmid']);
+    $selector = new \core_question\output\question_category_selector([$context], autocomplete: true);
+    return $OUTPUT->render($selector);
+}
