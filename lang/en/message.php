@@ -137,6 +137,7 @@ $string['notificationwindow'] = 'Notification window';
 $string['notificationpreferences'] = 'Notification preferences';
 $string['notificationimage'] = 'Notification image';
 $string['notifications'] = 'Notifications';
+$string['notificationsmarkedasread'] = 'All notifications have been marked as read';
 $string['notincontactsheading'] = '{$a} is not in your contacts';
 $string['notincontacts'] = 'You need to add {$a} to your contacts to be able to send them messages.';
 $string['notsupported'] = 'Not supported';
