@@ -32,6 +32,12 @@ class mod_qbank_generator extends testing_module_generator {
         if (empty($record->type)) {
             $record->type = core_question\local\bank\question_bank_helper::TYPE_STANDARD;
         }
+        if (isset($options['section']) && (int) $options['section'] !== 0) {
+            throw new \core\exception\coding_exception(
+                "Attempted to create a mod_qbank instance in section {$options['section']}. " .
+                    "Question banks can only be created in section 0.",
+            );
+        }
         return parent::create_instance($record, $options);
     }
 }

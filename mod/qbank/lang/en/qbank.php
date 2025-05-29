@@ -26,6 +26,7 @@
 $string['addanotherbank'] = 'Add question bank';
 $string['coursecategory'] = 'Shared teaching resources for category: {$a}';
 $string['courserestore'] = 'Course restore';
+$string['createqbank'] = 'Create question bank {$a}';
 $string['modulename'] = 'Question bank';
 $string['modulename_help'] = 'This activity allows a teacher to create, preview, and edit questions in a database of question categories.
 
@@ -37,6 +38,7 @@ $string['noqbankinstances'] = 'There are no question banks in this course.';
 $string['pluginadministration'] = 'Question bank administration';
 $string['pluginname'] = 'Question bank';
 $string['privacy:metadata'] = 'The Question bank plugin does not store any personal data, core_question automatically tracks all sorts of data for questions.';
+$string['progress_createqbank'] = 'Creating question banks';
 $string['qbank:addinstance'] = 'Add a new question bank';
 $string['qbank:view'] = 'View question bank';
 $string['qbankname'] = 'Question bank name';
