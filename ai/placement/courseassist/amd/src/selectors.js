@@ -28,6 +28,8 @@ export default {
         MAIN_REGION: '[role="main"]',
         AIDRAWER_CLOSE: '#ai-drawer-close',
         RESPONSE: '.course-assist-response',
+        JUMPTO: '.course-assist-controls [data-region="jumpto"]',
+        ACTION: '.course-assist-controls [data-input-type="action"]',
     },
     ACTIONS: {
         SUMMARY: '.course-assist-controls [data-action="summarise"]',
