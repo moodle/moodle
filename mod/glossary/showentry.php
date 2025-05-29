@@ -85,7 +85,7 @@ if (!empty($courseid)) {
     echo $OUTPUT->header();    // Needs to be something here to allow linking back to the whole glossary
 }
 
-if ($glossary) {
+if (isset($glossary)) {
     $url = new moodle_url('view.php', ['id' => $cm->id]);
     $backlink = html_writer::link($url, get_string('back'), ['class' => 'btn btn-secondary']);
     echo html_writer::tag('div', $backlink, ['class' => 'tertiary-navigation']);
