@@ -56,7 +56,7 @@ export default class ModalQuestionBankBulkmove extends Modal {
     static init(contextId, categoryId) {
         document.addEventListener('click', (e) => {
             const trigger = e.target;
-            if (trigger.className === 'dropdown-item' && trigger.getAttribute('name') === 'move') {
+            if (trigger.classList.contains('dropdown-item') && trigger.getAttribute('name') === 'move') {
                 e.preventDefault();
                 ModalQuestionBankBulkmove.create({
                     contextId,

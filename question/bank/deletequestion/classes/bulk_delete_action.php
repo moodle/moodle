@@ -44,6 +44,11 @@ class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
         return new \moodle_url('/question/bank/deletequestion/delete.php', $params);
     }
 
+    #[\Override]
+    public function get_bulk_action_classes(): string {
+        return 'text-danger';
+    }
+
     public function get_bulk_action_capabilities(): ?array {
         return [
             'moodle/question:editall',
