@@ -1,0 +1,19 @@
+issueNumber: MDL-85069
+notes:
+  core_question:
+    - message: >
+        `core_question_search_shared_banks` will now search all question banks,
+        not just those outside the current course.
+
+        This makes the service usable in cases outside of the current "Switch
+        banks" UI, which require searching all banks on the site.
+
+        It also makes the autocomplete in the "Switch banks" UI more consistent,
+        as it was previously excluding some of the banks listed in the UI
+        (Question banks in this course), but not others (Recently viewed
+        question banks).
+
+        This change has also adds a 'requiredcapabilties' parameter to the
+        function, which accepts an list of abbreviated capabilities for 
+        checking access against question banks before they are returned.
+      type: changed
