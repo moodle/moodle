@@ -6,19 +6,58 @@ Feature: In a lesson activity, teachers can review student attempts
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
+    # Force group mode so you don't need to set it manually on the activity.
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname | category | groupmodeforce |
+      | Course 1 | C1        | 0        |                |
+      | Course 2 | C2        |          | 1              |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | teacher1 | C2     | editingteacher |
+      | student1 | C2     | student        |
+      | student2 | C2     | student        |
     And the following "activities" exist:
-      | activity   | name             | course | idnumber    | retake |
-      | lesson     | Test lesson name | C1     | lesson1     | 1      |
+      | activity | name             | course | idnumber    | retake |
+      | lesson   | Test lesson name | C1     | lesson1     | 1      |
+      | lesson   | Lesson 1         | C2     |             |        |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C2     | G1       |
+      | Group 2 | C2     | G2       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student2 | G2    |
+    And the following "mod_lesson > page" exist:
+      | lesson   | qtype       | title                | content                         |
+      | Lesson 1 | multichoice | Multichoice question | This is a multichoice question. |
+      | Lesson 1 | essay       | Essay question       | Write an essay about anything.  |
+      | Lesson 1 | content     | Content page         | First page contents.            |
+    And the following "mod_lesson > answers" exist:
+      | page                 | answer           | jumpto        | score |
+      | Multichoice question | Correct answer   | Next page     | 1     |
+      | Multichoice question | Incorrect answer | This page     | 0     |
+      | Essay question       |                  | Next page     | 1     |
+      | Content page         | Previous page    | Previous page | 0     |
+      | Content page         | Next page        | Next page     | 0     |
+    And I am on the "Lesson 1" "lesson activity" page logged in as student1
+    And I set the following fields to these values:
+      | Correct answer | 1 |
+    And I press "Submit"
+    And I set the field "Your answer" to "School is awesome!"
+    And I press "Submit"
+    And I am on the "Lesson 1" "lesson activity" page logged in as student2
+    And I set the following fields to these values:
+      | Incorrect answer | 1 |
+    And I press "Submit"
+    And I set the field "Your answer" to "Once upon an essay."
+    And I press "Submit"
 
   Scenario: View student attempts in a lesson containing both content and question pages
     Given the following "mod_lesson > pages" exist:
@@ -96,3 +135,53 @@ Feature: In a lesson activity, teachers can review student attempts
     And I should not see "High score"
     And I should not see "Average score"
     And I should not see "Low score"
+
+  Scenario Outline: Teacher can filter lesson essay grading by group
+    Given I am on the "C2" "course editing" page logged in as teacher1
+    And I set the field "Group mode" to "<groupmode>"
+    And I press "Save and display"
+    And I am on the "Lesson 1" "lesson activity" page
+    And I press "Grade essays"
+    When I select "Group 1" from the "<groupmode>" singleselect
+    Then I should see "Student 1"
+    And I should not see "Student 2"
+    And I select "Group 2" from the "<groupmode>" singleselect
+    And I should see "Student 2"
+    And I should not see "Student 1"
+    And I select "All participants" from the "<groupmode>" singleselect
+    And I should see "Student 1"
+    And I should see "Student 2"
+
+    Examples:
+      | groupmode       |
+      | Separate groups |
+      | Visible groups  |
+
+  Scenario Outline: Teacher can filter lesson reports by group
+    Given I am on the "C2" "course editing" page logged in as teacher1
+    And I set the field "Group mode" to "<groupmode>"
+    And I press "Save and display"
+    And I am on the "Lesson 1" "lesson activity" page
+    And I navigate to "Reports" in current page administration
+    When I select "Group 1" from the "<groupmode>" singleselect
+    Then I should see "Student 1"
+    And I should not see "Student 2"
+    And I select "Group 2" from the "<groupmode>" singleselect
+    And I should see "Student 2"
+    And I should not see "Student 1"
+    And I select "All participants" from the "<groupmode>" singleselect
+    And I should see "Student 1"
+    And I should see "Student 2"
+
+    Examples:
+      | groupmode       |
+      | Separate groups |
+      | Visible groups  |
+
+  @javascript
+  Scenario: Teacher can delete selected attempts
+    Given I am on the "Lesson 1" "lesson activity" page logged in as teacher1
+    And I navigate to "Reports" in current page administration
+    When I click on "selectall-attempts" "checkbox"
+    And I select "Delete selected" from the "With selected attempts..." singleselect
+    Then I should see "No attempts have been made on this lesson."
