@@ -320,11 +320,6 @@ body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
     margin-top: 1.5em;
 }
 
-#page-mod-quiz-edit .section .activity .actions .version-selection {
-    width: 8em;
-    padding: 0;
-}
-
 @media print {
     .quiz-secure-window * {
         display: none;
