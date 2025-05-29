@@ -122,6 +122,9 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I should see "Question 1"
     And I should see "Question 2"
     And I should not see "Question 3"
+    # No questions are highlighted when bulk-moved.
+    And the "class" attribute of "Question 1" "table_row" should not contain "highlight"
+    And the "class" attribute of "Question 2" "table_row" should not contain "highlight"
 
   @javascript
   Scenario: Unable to bulk move questions from history page
@@ -131,3 +134,37 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     Then I should see question bulk action "deleteselected"
     And I should not see question bulk action "move"
+
+  @javascript
+  Scenario: Questions can be moved to a different bank
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    And I press "Create a new question ..."
+    And I set the field "item_qtype_truefalse" to "1"
+    # Manually create a new question so additional parameters are included in the URL, and we can test they are handled correctly
+    # during the move operation.
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    And I set the following fields to these values:
+      | Question name | Seventh question |
+      | Question text | test             |
+    And I press "id_submitbutton"
+    And I click on "Seventh question" "checkbox"
+    And I click on "With selected" "button"
+    And I click on "move" "button"
+    And the field "searchbanks" matches value "C1 - Test quiz"
+    And the field "searchcategories" matches value "Test questions 1"
+    And I open the autocomplete suggestions list in the ".search-banks" "css_element"
+    And I click on "C1 - Question bank 1" item in the autocomplete list
+    And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And I click on "Test questions 2" item in the autocomplete list
+    And I click on "Move questions" "button"
+    And I should see "Are you sure you want to move these questions?"
+    When I click on "Confirm" "button"
+    Then I should see "Questions successfully moved"
+    # The move dialogue should default to the new bank and category.
+    And I click on "Seventh question" "checkbox"
+    And I click on "With selected" "button"
+    And I click on "move" "button"
+    And the field "searchbanks" matches value "C1 - Question bank 1"
+    And the field "searchcategories" matches value "Test questions 2"
+    # The moved question should be highlighted
+    And the "class" attribute of "Seventh question" "table_row" should contain "highlight"
