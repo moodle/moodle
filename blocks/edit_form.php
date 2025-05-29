@@ -441,6 +441,11 @@ class block_edit_form extends \core_form\dynamic_form {
             $blockregion = $this->optional_param('blockregion', null, PARAM_TEXT);
             $newblock = $this->page->blocks->add_block_at_end_of_default_region($this->block->name(),
                 empty($blockregion) ? null : $blockregion);
+
+            if (empty($newblock)) {
+                return;
+            }
+
             $this->page->blocks->load_blocks();
             $newblock = $this->page->blocks->find_instance($newblock->instance->id);
             $newdata = $this->prepare_defaults($newblock->instance);
