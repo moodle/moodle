@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/enrol/manual/externallib.php');
  * @category   phpunit
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \enrol_manual_external
  * @since Moodle 2.4
  */
 final class externallib_test extends externallib_advanced_testcase {
@@ -93,6 +94,16 @@ final class externallib_test extends externallib_advanced_testcase {
         }
         $this->assignUserCapability('enrol/manual:enrol', $context1->id, $roleid);
         $this->assertEquals(0, $DB->count_records('user_enrolments'));
+
+        // Call with invalid user.
+        try {
+            enrol_manual_external::enrol_users([
+                ['roleid' => 1, 'userid' => 654321, 'courseid' => $course1->id],
+            ]);
+            $this->fail('Exception expected for invalid user.');
+        } catch (\moodle_exception $e) {
+            $this->assertSame('invaliduser', $e->errorcode);
+        }
 
         // Call with forbidden role.
         try {
@@ -276,7 +287,7 @@ final class externallib_test extends externallib_advanced_testcase {
             ));
             $this->fail('Exception expected: invalid student id');
         } catch (\Exception $ex) {
-            $this->assertTrue($ex instanceof \invalid_parameter_exception);
+            $this->assertSame('invaliduser', $ex->errorcode);
         }
 
         // Call for course without manual instance.
