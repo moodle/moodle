@@ -42,7 +42,10 @@ class registration_cron_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        \core\hub\registration::update_cron();
+        // Only execute the task if site is public.
+        if (site_is_public()) {
+            \core\hub\registration::update_cron();
+        }
     }
 
 }
