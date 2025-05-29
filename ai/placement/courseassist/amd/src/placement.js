@@ -57,6 +57,9 @@ const AICourseAssist = class {
         this.aiDrawerElement = document.querySelector(Selectors.ELEMENTS.AIDRAWER);
         this.aiDrawerBodyElement = document.querySelector(Selectors.ELEMENTS.AIDRAWER_BODY);
         this.pageElement = document.querySelector(Selectors.ELEMENTS.PAGE);
+        this.jumpToElement = document.querySelector(Selectors.ELEMENTS.JUMPTO);
+        this.summaryActionElement = document.querySelector(Selectors.ACTIONS.SUMMARY);
+        this.aiDrawerCloseElement = this.aiDrawerElement.querySelector(Selectors.ELEMENTS.AIDRAWER_CLOSE);
 
         this.registerEventListeners();
     }
@@ -70,6 +73,7 @@ const AICourseAssist = class {
             if (summariseAction) {
                 e.preventDefault();
                 this.toggleAIDrawer();
+                this.summaryActionElement.focus();
                 const isPolicyAccepted = await this.isPolicyAccepted();
                 if (!isPolicyAccepted) {
                     // Display policy.
@@ -86,6 +90,16 @@ const AICourseAssist = class {
             if (this.isAIDrawerOpen()) {
                 this.closeAIDrawer();
             }
+        });
+
+        // Focus on the AI drawer's close button when the jump-to element is focused.
+        this.jumpToElement.addEventListener('focus', () => {
+            this.aiDrawerCloseElement.focus();
+        });
+
+        // Focus on the summary action element when the AI drawer is focused.
+        this.aiDrawerElement.addEventListener('focus', () => {
+            this.summaryActionElement.focus();
         });
     }
 
@@ -177,12 +191,13 @@ const AICourseAssist = class {
         // Close message drawer if it is shown.
         MessageDrawerHelper.hide();
         this.aiDrawerElement.classList.add('show');
+        this.aiDrawerElement.setAttribute('tabindex', '0');
         this.aiDrawerBodyElement.setAttribute('aria-live', 'polite');
         if (!this.pageElement.classList.contains('show-drawer-right')) {
             this.addPadding();
         }
-        // Disable the summary button.
-        this.disableSummaryButton();
+        this.jumpToElement.setAttribute('tabindex', 0);
+        this.jumpToElement.focus();
     }
 
     /**
@@ -190,12 +205,13 @@ const AICourseAssist = class {
      */
     closeAIDrawer() {
         this.aiDrawerElement.classList.remove('show');
+        this.aiDrawerElement.setAttribute('tabindex', '-1');
         this.aiDrawerBodyElement.removeAttribute('aria-live');
         if (this.pageElement.classList.contains('show-drawer-right') && this.aiDrawerBodyElement.dataset.removepadding === '1') {
             this.removePadding();
         }
-        // Enable the summary button.
-        this.enableSummaryButton();
+        this.jumpToElement.setAttribute('tabindex', -1);
+        this.summaryActionElement.focus();
     }
 
     /**
@@ -223,27 +239,6 @@ const AICourseAssist = class {
     removePadding() {
         this.pageElement.classList.remove('show-drawer-right');
         this.aiDrawerBodyElement.dataset.removepadding = '0';
-    }
-
-    /**
-     * Disable the summary button.
-     */
-    disableSummaryButton() {
-        const summaryButton = document.querySelector(Selectors.ACTIONS.SUMMARY);
-        if (summaryButton) {
-            summaryButton.setAttribute('disabled', 1);
-        }
-    }
-
-    /**
-     * Enable the summary button and focus on it.
-     */
-    enableSummaryButton() {
-        const summaryButton = document.querySelector(Selectors.ACTIONS.SUMMARY);
-        if (summaryButton) {
-            summaryButton.removeAttribute('disabled');
-            summaryButton.focus();
-        }
     }
 
     /**
