@@ -40,7 +40,7 @@
         ]
     }
 }}
-<div {{#isdropdown}}id="#ai-features"{{/isdropdown}}
+<div {{#isdropdown}}id="ai-features"{{/isdropdown}}
     class="course-assist-controls py-3">
     {{#isdropdown}}
         {{> aiplacement_courseassist/actions_dropdown }}
@@ -50,4 +50,5 @@
             {{> aiplacement_courseassist/action_button }}
         {{/actions}}
     {{/isdropdown}}
+    {{> core_message/message_jumpto }}
 </div>
