@@ -1,5 +1,13 @@
 # core_course (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Deprecated
+
+- The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
+
+  For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
+
 ## 5.0
 
 ### Added

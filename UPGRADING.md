@@ -12,6 +12,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- - Added is_site_registered_in_hub method in lib/classes/hub/api.php to
+    check if the site is registered or not.
+  - Added get_secret method in lib/classes/hub/registration.php to get site's secret.
+
+  For more information see [MDL-83448](https://tracker.moodle.org/browse/MDL-83448)
 - Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
 
   For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
@@ -53,6 +58,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Final removal of core_badges_renderer::render_badge_collection() and core_badges_renderer::render_badge_recipients()
 
   For more information see [MDL-80455](https://tracker.moodle.org/browse/MDL-80455)
+
+### core_course
+
+#### Deprecated
+
+- The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
+
+  For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
 
 ### core_grades
 
@@ -101,6 +114,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-82132](https://tracker.moodle.org/browse/MDL-82132)
 
+### block_site_main_menu
+
+#### Added
+
+- The "Main menu" block has been renamed to "Additional activities." Its title is now customizable, and it can be used in course formats without a dedicated view page (for instance, Single activity). On the Home page, this block has also been renamed; administrators will need to manually revert the name if they wish to retain "Main menu" after upgrading.
+
+  For more information see [MDL-85392](https://tracker.moodle.org/browse/MDL-85392)
+
 ### gradereport_grader
 
 #### Removed
@@ -127,6 +148,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The dndmedia setting has been removed. From now on dropping a media file into a course will always ask the user if they want to create a label.
 
   For more information see [MDL-83081](https://tracker.moodle.org/browse/MDL-83081)
+
+### mod_qbank
+
+#### Changed
+
+- The bulk_action_base class has gotten a get_bulk_action_classes function to let bulk actions specify additional classes to add to the bulk action menu entry. If none is defined in the child, '' is returned.
+
+  For more information see [MDL-84548](https://tracker.moodle.org/browse/MDL-84548)
 
 ### mod_quiz
 
