@@ -113,7 +113,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'glossary' => [
                 'resourcetype' => 'glossary',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_glossary\courseformat\overview::class,
             ],
             'h5pactivity' => [
                 'resourcetype' => 'h5pactivity',
