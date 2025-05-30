@@ -34,8 +34,8 @@ $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Error, valor incorrecte "{$a->value}" for "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valor incorrecte, per favor essaya novemente';
 $string['clitypevalue'] = 'valor de typo';
-$string['clitypevaluedefault'] = 'valor de typo,pressa Enter per usar le vaor predefinite ({$a})';
-$string['cliunknowoption'] = 'Uotiones non recognoscite:
+$string['clitypevaluedefault'] = 'valor de typo, pressa Enter per usar le valor predefinite ({$a})';
+$string['cliunknowoption'] = 'Optiones non recognoscite:
  {$a}
 Per favor usa le option --help.';
 $string['cliyesnoprompt'] = 'typa s (significa si) o n (significa no)';
