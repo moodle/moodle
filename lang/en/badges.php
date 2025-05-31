@@ -415,6 +415,7 @@ $string['month'] = 'Month(s)';
 $string['moredetails'] = 'More details';
 $string['mybadges'] = 'My badges';
 $string['mybackpack'] = 'My backpack settings';
+$string['namewithimagelink'] = 'Name with image and link';
 $string['namewithlink'] = 'Name with link';
 $string['never'] = 'Never';
 $string['newbackpack'] = 'Add a new backpack';
