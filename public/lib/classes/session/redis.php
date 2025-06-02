@@ -114,8 +114,8 @@ class redis extends handler implements SessionHandlerInterface {
     /** @var clock A clock instance */
     protected clock $clock;
 
-    /** @var int $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
-    protected int $connectiontimeout = 3;
+    /** @var float $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
+    protected float $connectiontimeout = 3.0;
 
     /**
      * Create new instance of handler.
@@ -205,7 +205,7 @@ class redis extends handler implements SessionHandlerInterface {
         }
 
         if (isset($CFG->session_redis_connection_timeout)) {
-            $this->connectiontimeout = (int)$CFG->session_redis_connection_timeout;
+            $this->connectiontimeout = (float)$CFG->session_redis_connection_timeout;
         }
 
         if (isset($CFG->session_redis_max_retries)) {
