@@ -29,6 +29,7 @@ import AutoComplete from 'core/form-autocomplete';
 import {moveQuestions} from 'core_question/repository';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 
 
 export default class ModalQuestionBankBulkmove extends Modal {
@@ -38,13 +39,15 @@ export default class ModalQuestionBankBulkmove extends Modal {
         SAVE_BUTTON: '[data-action="bulkmovesave"]',
         SELECTED_QUESTIONS: 'table#categoryquestions input[id^="checkq"]',
         SEARCH_BANK: '#searchbanks',
-        SEARCH_CATEGORY: '#searchcategories',
-        CATEGORY_OPTIONS: '#searchcategories option',
+        SEARCH_CATEGORY: '.selectcategory',
+        QUESTION_CATEGORY_SELECTOR: '.question_category_selector',
+        CATEGORY_OPTIONS: '.selectcategory option',
         BANK_OPTIONS: '#searchbanks option',
         CATEGORY_ENHANCED_INPUT: '.search-categories input',
         ORIGINAL_SELECTS: 'select.bulk-move',
         CATEGORY_WARNING: '#searchcatwarning',
         CATEGORY_SUGGESTION: '.search-categories span.form-autocomplete-downarrow',
+        CATEGORY_SELECTION: '.search-categories span[role="option"][data-active-selection="true"]',
         CONFIRM_BUTTON: '.bulk-move-footer button[data-action="save"]',
         CANCEL_BUTTON: '.bulk-move-footer button[data-action="cancel"]'
     };
@@ -112,6 +115,7 @@ export default class ModalQuestionBankBulkmove extends Modal {
      * @param {integer} currentCategoryId
      */
     async display(currentBankContextId, currentCategoryId) {
+        const displayPending = new Pending('qbank_bulkmove/bulk_move_modal');
         this.bodyPromise = await Fragment.loadFragment(
             'qbank_bulkmove',
             'bulk_move',
@@ -122,52 +126,29 @@ export default class ModalQuestionBankBulkmove extends Modal {
         );
 
         await this.setBody(this.bodyPromise);
-        await this.enhanceSelects(document.querySelectorAll(ModalQuestionBankBulkmove.SELECTORS.ORIGINAL_SELECTS));
+        await this.enhanceSelects();
         this.registerEnhancedEventListeners();
-        this.mapCategoryContextIds();
         this.updateSaveButtonState();
+        displayPending.resolve();
     }
 
     /**
      * Register event listeners on the enhanced selects. Must be done after they have been enhanced.
      */
     registerEnhancedEventListeners() {
-        document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_CATEGORY).addEventListener("change", (e) => {
-            const targetCategoryId = e.currentTarget.value;
-            this.targetCategoryId = targetCategoryId;
-            this.rebuildOptions(this.targetBankContextId, targetCategoryId);
+        document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_CATEGORY).addEventListener("change", () => {
             this.updateSaveButtonState();
         });
 
-        document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_BANK).addEventListener("change", (e) => {
-            const selectedBankContextId = e.currentTarget.value;
-            this.targetBankContextId = selectedBankContextId;
-            this.rebuildOptions(selectedBankContextId, this.targetCategoryId);
+        document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_BANK).addEventListener("change", async(e) => {
+            await this.updateCategorySelector(e.currentTarget.value);
+            this.updateSaveButtonState();
         });
 
         this.getModal().on("click", ModalQuestionBankBulkmove.SELECTORS.SAVE_BUTTON, (e) => {
             e.preventDefault();
             void this.displayConfirmMove();
         });
-    }
-
-    /**
-     * Set a map, so we can determine which bank belongs to which category.
-     */
-    mapCategoryContextIds() {
-        const customSelectCategoryOptions = document.querySelectorAll(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_OPTIONS);
-
-        if (customSelectCategoryOptions.length === 0) {
-            return;
-        }
-
-        const categoryContextIds = [];
-
-        customSelectCategoryOptions.forEach((option) => {
-            categoryContextIds[option.value] = option.dataset.bankContextid;
-        });
-
-        this.categoryContextIds = categoryContextIds;
     }
 
     /**
@@ -201,37 +182,33 @@ export default class ModalQuestionBankBulkmove extends Modal {
     }
 
     /**
-     * Dynamically update all enhanced selects options based on what is selected.
+     * Update the category selector based on the selected question bank.
      *
-     * @param {integer} selectedBankContextId
-     * @param {integer} selectedCategoryId
+     * @param {Number} selectedBankCmId
+     * @return {Promise} Resolved when the update is complete.
      */
-    rebuildOptions(selectedBankContextId, selectedCategoryId) {
-        const categoryContextIds = this.categoryContextIds;
-        const customSelectCategoryOptions = document.querySelectorAll(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_OPTIONS);
-
-        // Disable the category selector if no bank selected.
-        if (!selectedBankContextId) {
+    updateCategorySelector(selectedBankCmId) {
+        if (!selectedBankCmId) {
             this.updateCategorySelectorState(false);
+            return Promise.resolve();
         } else {
-            // Mark to be disabled all the categories not belonging to the selected bank.
-            // This will then be handled by the enhanced selects event handlers.
-            customSelectCategoryOptions.forEach((option) => {
-                if (option.dataset.bankContextid != selectedBankContextId) {
-                    option.dataset.enabled = 'disabled';
-                } else {
-                    option.dataset.enabled = 'enabled';
+            return Fragment.loadFragment(
+                'core_question',
+                'category_selector',
+                this.contextId,
+                {
+                    'bankcmid': selectedBankCmId,
                 }
-            });
-            this.updateCategorySelectorState(true);
-        }
-
-        // De-select the selected category if it does not belong to the selected bank.
-        if (selectedCategoryId && selectedBankContextId && categoryContextIds[selectedCategoryId] != selectedBankContextId) {
-            const selectedCategoryElement = document.querySelector(
-                '.search-categories span[role="option"][data-value="' + selectedCategoryId + '"]'
-            );
-            selectedCategoryElement.click();
+            )
+            .then((html, js) => {
+                const categorySelector = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.QUESTION_CATEGORY_SELECTOR);
+                return Templates.replaceNode(categorySelector, html, js);
+            })
+            .then(() => {
+                document.querySelector(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_WARNING).classList.add('d-none');
+                return this.enhanceSelects();
+            })
+            .catch(Notification.exception);
         }
     }
 
@@ -243,6 +220,7 @@ export default class ModalQuestionBankBulkmove extends Modal {
         const warning = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_WARNING);
         const enhancedInput = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_ENHANCED_INPUT);
         const suggestionButton = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_SUGGESTION);
+        const selection = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.CATEGORY_SELECTION);
 
         if (toEnable) {
             warning.classList.add('d-none');
@@ -252,6 +230,7 @@ export default class ModalQuestionBankBulkmove extends Modal {
             warning.classList.remove('d-none');
             enhancedInput.setAttribute('disabled', 'disabled');
             suggestionButton.classList.add('d-none');
+            selection.click(); // Clear selected category.
         }
     }
 
@@ -260,9 +239,10 @@ export default class ModalQuestionBankBulkmove extends Modal {
      */
     updateSaveButtonState() {
         const saveButton = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SAVE_BUTTON);
-        const targetCategoryId = this.targetCategoryId;
+        const categorySelector = document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_CATEGORY);
+        [this.targetCategoryId, this.targetBankContextId] = categorySelector.value.split(',');
 
-        if (targetCategoryId && targetCategoryId != this.currentCategoryId) {
+        if (this.targetCategoryId && this.targetCategoryId !== this.currentCategoryId) {
             saveButton.removeAttribute('disabled');
         } else {
             saveButton.setAttribute('disabled', 'disabled');
@@ -303,31 +283,32 @@ export default class ModalQuestionBankBulkmove extends Modal {
 
     /**
      * Take the provided select options and enhance them into auto-complete fields.
-     * @param {NodeList} selects Custom select elements to enhance.
+     *
      * @return {Promise<Promise[]>}
      */
-    async enhanceSelects(selects) {
+    async enhanceSelects() {
         const placeholder = await getString('searchbyname', 'mod_quiz');
-        const enhanced = [];
 
-        if (selects.length > 0) {
-            for (let i = 0; i < selects.length; i++) {
-                enhanced.push(AutoComplete.enhance(
-                        selects.item(i),
-                        false,
-                        '',
-                        placeholder,
-                        false,
-                        true,
-                        '',
-                        true
-                    )
-                );
-            }
+        await AutoComplete.enhance(
+            ModalQuestionBankBulkmove.SELECTORS.SEARCH_BANK,
+            false,
+            'core_question/question_banks_datasource',
+            placeholder,
+            false,
+            true,
+            '',
+            true,
+        );
 
-            return Promise.all(enhanced);
-        }
-
-        return Promise.reject('No selects to enhance');
+        await AutoComplete.enhance(
+            ModalQuestionBankBulkmove.SELECTORS.SEARCH_CATEGORY,
+            false,
+            null,
+            placeholder,
+            false,
+            true,
+            '',
+            true,
+        );
     }
 }
