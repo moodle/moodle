@@ -68,8 +68,8 @@ class cachestore_redis extends store implements
      */
     const TTL_EXPIRE_BATCH = 10000;
 
-    /** @var int The number of seconds to wait for a connection or response from the Redis server. */
-    const CONNECTION_TIMEOUT = 3;
+    /** @var float The number of seconds to wait for a connection or response from the Redis server. */
+    const CONNECTION_TIMEOUT = 3.0;
 
     /**
      * Name of this store.
@@ -124,7 +124,7 @@ class cachestore_redis extends store implements
     /**
      * The number of seconds to wait for a connection or response from the Redis server.
      *
-     * @var int
+     * @var float
      */
     protected $connectiontimeout = self::CONNECTION_TIMEOUT;
 
@@ -212,7 +212,7 @@ class cachestore_redis extends store implements
             $this->compressor = (int)$configuration['compressor'];
         }
         if (array_key_exists('connectiontimeout', $configuration)) {
-            $this->connectiontimeout = (int)$configuration['connectiontimeout'];
+            $this->connectiontimeout = (float)$configuration['connectiontimeout'];
         }
         if (array_key_exists('lockwait', $configuration)) {
             $this->lockwait = (int)$configuration['lockwait'];

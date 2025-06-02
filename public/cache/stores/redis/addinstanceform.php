@@ -69,6 +69,6 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
         $form->addElement('text', 'connectiontimeout', get_string('connectiontimeout', 'cachestore_redis'));
         $form->addHelpButton('connectiontimeout', 'connectiontimeout', 'cachestore_redis');
         $form->setDefault('connectiontimeout', cachestore_redis::CONNECTION_TIMEOUT);
-        $form->setType('connectiontimeout', PARAM_INT);
+        $form->setType('connectiontimeout', PARAM_FLOAT);
     }
 }
