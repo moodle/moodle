@@ -1,0 +1,8 @@
+issueNumber: MDL-85336
+notes:
+  core:
+    - message: >-
+        Redis connection timeout settings for cachestores and sessions have been
+        split into connection timeout and read timeout to allow for finer
+        control. These settings now also accept floats.
+      type: improved
