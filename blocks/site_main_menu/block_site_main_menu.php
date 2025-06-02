@@ -40,9 +40,15 @@ class block_site_main_menu extends block_base {
 
     #[\Override]
     function applicable_formats() {
-        $format = course_get_format($this->get_block_course());
-        $applicableformat = $format && !$format->has_view_page();
+        $course = $this->get_block_course();
+        if ($course->id == SITEID) {
+            return [
+                'site' => true,
+            ];
+        }
 
+        $format = course_get_format($course);
+        $applicableformat = $format && !$format->has_view_page();
         return [
             'course-view' => $applicableformat,
             'mod' => $applicableformat,
