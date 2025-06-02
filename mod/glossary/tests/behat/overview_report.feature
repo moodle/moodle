@@ -30,7 +30,6 @@ Feature: Testing overview integration in mod_glossary
       | glossary1 | student1 | Hydra    | Many-headed serpent; regrows heads when cut.     | 0        |
       | glossary1 | student2 | Centaur  | Half-human, half-horse creature from Greek myth. | 0        |
 
-  @javascript
   Scenario: Teacher can see the glossary relevant information in the glossary overview
     When I am on the "Course 1" "course > activities > glossary" page logged in as "teacher1"
     And I should not see "My Entries" in the "glossary_overview_collapsible" "region"
@@ -39,7 +38,7 @@ Feature: Testing overview integration in mod_glossary
       | Glossary without defaultapproval | 2       | Approve (3) |
       | Glossary without entries         | -       | -           |
     And I click on "Approve (3)" "link" in the "glossary_overview_collapsible" "region"
-    And I should see "Pending approval (3)" is active in secondary navigation
+    And I should see "Pending approval (3)" in the "page-header" "region"
 
   Scenario: Students can see the glossary relevant information in the glossary overview
     When I am on the "Course 1" "course > activities > glossary" page logged in as "student1"
