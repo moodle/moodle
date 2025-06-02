@@ -184,6 +184,7 @@ export default class {
      * @param {int|null|undefined} data.targetSectionId the target section id
      * @param {int|null|undefined} data.targetCmId the target cm id
      * @param {String|null|undefined} data.component optional component (for format plugins)
+     * @param {Object|undefined} [data.feedbackParams] the params to build the feedback message
      * @return {Object} the log entry
      */
     async _getLoggerEntry(stateManager, action, itemIds, data = {}) {
@@ -192,7 +193,7 @@ export default class {
             stateManager.setLogger(new SRLogger());
             isLoggerSet = true;
         }
-        const feedbackParams = {
+        let feedbackParams = {
             action,
             itemType: data.itemType ?? action.split('_')[0],
         };
@@ -210,6 +211,9 @@ export default class {
         }
         if (data.targetCmId) {
             feedbackParams.targetCmName = stateManager.get('cm', data.targetCmId).name;
+        }
+        if (data.feedbackParams) {
+            feedbackParams = {...feedbackParams, ...data.feedbackParams};
         }
 
         const message = await getString(
@@ -412,6 +416,8 @@ export default class {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_add', course.id, [], targetSectionId);
         stateManager.processUpdates(updates);
+        const logEntry = this._getLoggerEntry(stateManager, 'section_add', []);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -422,9 +428,11 @@ export default class {
      */
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
+        const logEntry = this._getLoggerEntry(stateManager, 'section_delete', sectionIds);
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
         this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -434,11 +442,13 @@ export default class {
      */
     async cmDelete(stateManager, cmIds) {
         const course = stateManager.get('course');
+        const logEntry = this._getLoggerEntry(stateManager, 'cm_delete', cmIds);
         this.cmLock(stateManager, cmIds, true);
         const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
         this.bulkReset(stateManager);
         this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -483,8 +493,18 @@ export default class {
             targetCmId = 0;
         }
         const course = stateManager.get('course');
+        const pluginname = await getString(
+            'pluginname',
+            `${modName.toLowerCase()}`,
+        );
+        const logEntry = this._getLoggerEntry(stateManager, 'cm_add', [], {
+            feedbackParams: {
+                'modname': pluginname,
+            },
+        });
         const updates = await this._callNewModuleWebservice(course.id, modName, targetSectionId, targetCmId);
         stateManager.processUpdates(updates);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**

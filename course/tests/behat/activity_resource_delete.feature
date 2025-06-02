@@ -27,12 +27,12 @@ Feature: Delete activity and resource works correctly
     When I click on "Delete" "link" in the "Label 1" activity
     And I click on "Delete" "button" in the "Delete activity?" "dialogue"
     # Confirm that label is successfully deleted
-    Then I should not see "Label 1"
+    Then I should not see "Label 1" in the "page-content" "region"
     And I open "Glossary 1" actions menu
     And I click on "Delete" "link" in the "Glossary 1" activity
     And I click on "Delete" "button" in the "Delete activity?" "dialogue"
     # Confirm that glossary is successfully deleted.
-    And I should not see "Glossary 1"
+    And I should not see "Glossary 1" in the "page-content" "region"
     # Reload the page and confirm that both the label and glossary are really deleted
     And I reload the page
     And I should not see "Label 1"
