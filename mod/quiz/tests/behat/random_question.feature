@@ -49,7 +49,7 @@ Feature: Moving a question to another category should not affect random question
     And I click on "With selected" "button"
     And I click on question bulk action "move"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
-    And I click on "Subcategory" item in the autocomplete list
+    And I click on "Subcategory" "list_item" in the "Move the selected questions to..." "dialogue"
     And I click on "Move questions" "button"
     And I should see "Are you sure you want to move these questions?"
     And I click on "Confirm" "button"
