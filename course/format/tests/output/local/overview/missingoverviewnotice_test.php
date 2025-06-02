@@ -72,7 +72,7 @@ final class missingoverviewnotice_test extends \advanced_testcase {
             'folder' => ['modname' => 'folder', 'expectempty' => false],
             'forum' => ['modname' => 'forum', 'expectempty' => false],
             'glossary' => ['modname' => 'glossary', 'expectempty' => true],
-            'h5pactivity' => ['modname' => 'h5pactivity', 'expectempty' => false],
+            'h5pactivity' => ['modname' => 'h5pactivity', 'expectempty' => true],
             'imscp' => ['modname' => 'imscp', 'expectempty' => false],
             'label' => ['modname' => 'label', 'expectempty' => false],
             'lesson' => ['modname' => 'lesson', 'expectempty' => false],
