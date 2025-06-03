@@ -160,4 +160,147 @@ final class report_helper_test extends \advanced_testcase {
         $this->assertEquals($expecteduserindexes, $indexes);
     }
 
+    /**
+     * Tests {@see report_helper::has_valid_group()}.
+     *
+     * @param int $groupmode Group mode for the course
+     * @param string $username Username of the user to check
+     * @param array $expected Expected result of the check, with 3 boolean values depending on the context:
+     * - Course context
+     * - Module context
+     * - System context
+     *
+     * @covers       \core\report_helper::has_valid_group
+     * @dataProvider  has_valid_group_provider
+     */
+    public function test_has_valid_group(int $groupmode, string $username, array $expected): void {
+        $this->resetAfterTest();
+
+        // Create some test course, groups, and users.
+        $generator = self::getDataGenerator();
+        $course = $generator->create_course(['groupmode' => $groupmode, 'groupmodeforce' => 1]);
+        $assign = $generator->create_module('assign', ['course' => $course->id]);
+        $g1 = $generator->create_group(['courseid' => $course->id]);
+
+        $this->userids = [];
+        $data = [
+            's1' => ['role' => 'student', 'group' => $g1->id],
+            's2' => ['role' => 'student', 'group' => null],
+            't1' => ['role' => 'teacher', 'group' => $g1->id],
+            't2' => ['role' => 'teacher', 'group' => null],
+            'et1' => ['role' => 'editingteacher', 'group' => null],
+        ];
+        foreach ($data as $key => $value) {
+            ['group' => $groupid, 'role' => $role] = $value;
+            $this->userids[$key] = $generator->create_user(['username' => $key]);
+            $generator->enrol_user($this->userids[$key]->id, $course->id, $role);
+            if ($groupid) {
+                groups_add_member($groupid, $this->userids[$key]->id);
+            }
+        }
+        $coursecontext = \context_course::instance($course->id);
+        [$course, $cm] = get_course_and_cm_from_instance($assign->id, 'assign');
+        $modulecontext = \context_module::instance($cm->id);
+        [$hasvalidgroupcourse, $hasvalidgroupmodule, $hasvalidgroupsystem] = $expected;
+        $this->assertEquals(
+            $hasvalidgroupcourse,
+            report_helper::has_valid_group($coursecontext, $this->userids[$username]->id),
+            "Failed for user $username in course context"
+        );
+        $this->assertEquals(
+            $hasvalidgroupmodule,
+            report_helper::has_valid_group($modulecontext, $this->userids[$username]->id),
+            'Failed for user ' . $username . ' in module context'
+        );
+        $this->assertEquals(
+            $hasvalidgroupsystem,
+            report_helper::has_valid_group(\context_system::instance(), $this->userids[$username]->id),
+            'Failed for user ' . $username . ' in system context'
+        );
+    }
+
+    /**
+     * Data provider for test_has_valid_group.
+     *
+     * @return array
+     */
+    public static function has_valid_group_provider(): array {
+        return [
+            'student 1 - g1 - separate group' => [
+                'groupmode' => SEPARATEGROUPS,
+                'username' => 's1',
+                'expected' => [true, true, true],
+            ],
+            'student 2 - no group - separate group' => [
+                'groupmode' => SEPARATEGROUPS,
+                'username' => 's2',
+                'expected' => [false, false, true],
+            ],
+            'teacher 1 - g1 - separate group' => [
+                'groupmode' => SEPARATEGROUPS,
+                'username' => 't1',
+                'expected' => [true, true, true],
+            ],
+            'teacher 2 - no group - separate group' => [
+                'groupmode' => SEPARATEGROUPS,
+                'username' => 't2',
+                'expected' => [false, false, true],
+            ],
+            'editing teacher - no group - separate group' => [
+                'groupmode' => SEPARATEGROUPS,
+                'username' => 'et1',
+                'expected' => [true, true, true],
+            ],
+            'student 1 - g1 - no group' => [
+                'groupmode' => NOGROUPS,
+                'username' => 's1',
+                'expected' => [true, true, true],
+            ],
+            'student 2 - no group - no group' => [
+                'groupmode' => NOGROUPS,
+                'username' => 's2',
+                'expected' => [true, true, true],
+            ],
+            'teacher 1 - g1 - no group' => [
+                'groupmode' => NOGROUPS,
+                'username' => 't1',
+                'expected' => [true, true, true],
+            ],
+            'teacher 2 - no group - no group' => [
+                'groupmode' => NOGROUPS,
+                'username' => 't2',
+                'expected' => [true, true, true],
+            ],
+            'editing teacher - no group - no group' => [
+                'groupmode' => NOGROUPS,
+                'username' => 'et1',
+                'expected' => [true, true, true],
+            ],
+            'student 1 - g1 - visible group' => [
+                'groupmode' => VISIBLEGROUPS,
+                'username' => 's1',
+                'expected' => [true, true, true],
+            ],
+            'student 2 - no group - visible group' => [
+                'groupmode' => VISIBLEGROUPS,
+                'username' => 's2',
+                'expected' => [true, true, true],
+            ],
+            'teacher 1 - g1 - visible group' => [
+                'groupmode' => VISIBLEGROUPS,
+                'username' => 't1',
+                'expected' => [true, true, true],
+            ],
+            'teacher 2 - no group - visible group' => [
+                'groupmode' => VISIBLEGROUPS,
+                'username' => 't2',
+                'expected' => [true, true, true],
+            ],
+            'editing teacher - visible group - no group' => [
+                'groupmode' => VISIBLEGROUPS,
+                'username' => 'et1',
+                'expected' => [true, true, true],
+            ],
+        ];
+    }
 }
