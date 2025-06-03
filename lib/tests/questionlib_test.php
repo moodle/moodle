@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core_question\local\bank\question_bank_helper;
+use mod_quiz\quiz_settings;
 use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -2437,4 +2439,104 @@ final class questionlib_test extends \advanced_testcase {
         $this->assertEquals(2, $nextversion);
     }
 
+    /**
+     * Update the context for a set reference, keeping the original category.
+     *
+     * @covers ::move_question_set_references()
+     */
+    public function test_move_question_set_references_context(): void {
+        $this->setAdminUser();
+        $sitecontext = \context_system::instance();
+        $topcategory = question_get_top_category($sitecontext->id, true);
+        $randomcategory = self::getDataGenerator()->get_plugin_generator('core_question')->create_question_category(
+            ['parent' => $topcategory->id],
+        );
+        // Create a course with a quiz containing a random question from the system context.
+        $randomcourse = self::getDataGenerator()->create_course(['shortname' => 'Random']);
+        $coursecontext = \context_course::instance($randomcourse->id);
+        $randomquiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(
+            [
+                'course' => $randomcourse->id,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+                'layout' => '1,0',
+            ],
+        );
+
+        $randomquizsettings = quiz_settings::create($randomquiz->id);
+        $structure = $randomquizsettings->get_structure();
+
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$randomcategory->id],
+                    'filteroptions' => ['includesubcategories' => true],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $sitecontext->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $randomcategory->id);
+
+        move_question_set_references($randomcategory->id, $randomcategory->id, $sitecontext->id, $coursecontext->id);
+
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $coursecontext->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $randomcategory->id);
+    }
+
+    /**
+     * Update the context and category for a set reference.
+     *
+     * @covers ::move_question_set_references()
+     */
+    public function test_move_question_set_references_category(): void {
+        $this->setAdminUser();
+        $sitecontext = \context_system::instance();
+        $sitetopcategory = question_get_top_category($sitecontext->id, true);
+        // Create a course with a quiz containing a random question from the system context.
+        $randomcourse = self::getDataGenerator()->create_course(['shortname' => 'Random']);
+        $coursecontext = \context_course::instance($randomcourse->id);
+        $coursetopcategory = question_get_top_category($coursecontext->id, true);
+        $randomquiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(
+            [
+                'course' => $randomcourse->id,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+                'layout' => '1,0',
+            ],
+        );
+        $randomquizsettings = quiz_settings::create($randomquiz->id);
+
+        $structure = $randomquizsettings->get_structure();
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$sitetopcategory->id],
+                    'filteroptions' => ['includesubcategories' => true],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $sitecontext->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $sitetopcategory->id);
+
+        move_question_set_references($sitetopcategory->id, $coursetopcategory->id, $sitecontext->id, $coursecontext->id);
+
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $coursecontext->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $coursetopcategory->id);
+    }
 }
