@@ -2180,12 +2180,14 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-.btn-footer-popover {
-    display: none;
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    @include box-shadow($popover-box-shadow);
+.footer-popover {
+    .btn-footer-popover {
+        display: none;
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        @include box-shadow($popover-box-shadow);
+    }
 }
 
 .btn-footer-communication {
