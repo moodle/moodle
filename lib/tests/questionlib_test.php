@@ -17,6 +17,7 @@
 namespace core;
 
 use core_question\local\bank\question_bank_helper;
+use mod_quiz\quiz_settings;
 use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -1673,4 +1674,109 @@ final class questionlib_test extends \advanced_testcase {
 
     }
 
+    /**
+     * Update the context for a set reference, keeping the original category.
+     *
+     * @covers ::move_question_set_references()
+     */
+    public function test_move_question_set_references_context(): void {
+        $this->setAdminUser();
+        // Create a course with a quiz containing a random question from a qbank context.
+        $randomcourse = self::getDataGenerator()->create_course(['shortname' => 'Random']);
+        $qbank1 = self::getDataGenerator()->get_plugin_generator('mod_qbank')->create_instance(['course' => $randomcourse->id]);
+        $context1 = \context_module::instance($qbank1->cmid);
+        $qbank2 = self::getDataGenerator()->get_plugin_generator('mod_qbank')->create_instance(['course' => $randomcourse->id]);
+        $context2 = \context_module::instance($qbank2->cmid);
+        $topcategory = question_get_top_category($context1->id, true);
+        $randomcategory = self::getDataGenerator()->get_plugin_generator('core_question')->create_question_category(
+            ['parent' => $topcategory->id],
+        );
+        $randomquiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(
+            [
+                'course' => $randomcourse->id,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+                'layout' => '1,0',
+            ],
+        );
+
+        $randomquizsettings = quiz_settings::create($randomquiz->id);
+        $structure = $randomquizsettings->get_structure();
+
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$randomcategory->id],
+                    'filteroptions' => ['includesubcategories' => true],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $context1->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $randomcategory->id);
+
+        move_question_set_references($randomcategory->id, $randomcategory->id, $context1->id, $context2->id);
+
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $context2->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $randomcategory->id);
+    }
+
+    /**
+     * Update the context and category for a set reference.
+     *
+     * @covers ::move_question_set_references()
+     */
+    public function test_move_question_set_references_category(): void {
+        $this->setAdminUser();
+        // Create a course with a quiz containing a random question from a qbank context.
+        $randomcourse = self::getDataGenerator()->create_course(['shortname' => 'Random']);
+        $qbank1 = self::getDataGenerator()->get_plugin_generator('mod_qbank')->create_instance(['course' => $randomcourse->id]);
+        $context1 = \context_module::instance($qbank1->cmid);
+        $qbank2 = self::getDataGenerator()->get_plugin_generator('mod_qbank')->create_instance(['course' => $randomcourse->id]);
+        $context2 = \context_module::instance($qbank2->cmid);
+        $topcategory1 = question_get_top_category($context1->id, true);
+        $topcategory2 = question_get_top_category($context2->id, true);
+        $randomquiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(
+            [
+                'course' => $randomcourse->id,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+                'layout' => '1,0',
+            ],
+        );
+
+        $randomquizsettings = quiz_settings::create($randomquiz->id);
+        $structure = $randomquizsettings->get_structure();
+
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$topcategory1->id],
+                    'filteroptions' => ['includesubcategories' => true],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $context1->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $topcategory1->id);
+
+        move_question_set_references($topcategory1->id, $topcategory2->id, $context1->id, $context2->id);
+
+        $structure = $randomquizsettings->get_structure();
+        $randomquestion = $structure->get_question_in_slot(1);
+
+        $this->assertEquals($randomquestion->contextid, $context2->id);
+        $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $topcategory2->id);
+    }
 }
