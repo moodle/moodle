@@ -171,6 +171,8 @@ class transfer_question_categories extends adhoc_task {
 
         $newtopcategory = question_get_top_category($newcontext->id, true);
 
+        move_question_set_references($oldtopcategory->id, $newtopcategory->id, $oldtopcategory->contextid, $newcontext->id, true);
+
         // This function moves subcategories, so we have to start at the top.
         question_move_category_to_context($oldtopcategory->id, $oldtopcategory->contextid, $newcontext->id);
 

@@ -729,6 +729,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 
     $subcatids = $DB->get_records_menu('question_categories', ['parent' => $categoryid], '', 'id,1');
     foreach ($subcatids as $subcatid => $notused) {
+        move_question_set_references($subcatid, $subcatid, $oldcontextid, $newcontext->id);
         $DB->set_field('question_categories', 'contextid', $newcontextid, ['id' => $subcatid]);
         question_move_category_to_context($subcatid, $oldcontextid, $newcontextid);
     }

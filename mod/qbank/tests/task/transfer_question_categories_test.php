@@ -21,6 +21,8 @@ use context_course;
 use context_coursecat;
 use context_module;
 use context_system;
+use core_question\local\bank\random_question_loader;
+use mod_quiz\quiz_settings;
 use stdClass;
 use core_question\local\bank\question_version_status;
 
@@ -159,6 +161,30 @@ final class transfer_question_categories_test extends \advanced_testcase {
         quiz_add_quiz_question($question1->id, $quiz, 1);
         quiz_add_quiz_question($question2->id, $quiz, 1);
 
+        // Create a course with a quiz containing a random question from the system context.
+        $randomcourse = self::getDataGenerator()->create_course(['shortname' => 'Random']);
+        $randomquiz = $quizgenerator->create_instance(
+            [
+                'course' => $randomcourse->id,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+                'layout' => '1,0',
+            ],
+        );
+        $randomquizsettings = quiz_settings::create($randomquiz->id);
+        $structure = $randomquizsettings->get_structure();
+        $topcategory = $DB->get_record('question_categories', ['contextid' => $sitecontext->id, 'parent' => 0]);
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$topcategory->id],
+                    'filteroptions' => ['includesubcategories' => true],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
+
         // Create a course category and then a question category attached to that context.
         $coursecategory = self::getDataGenerator()->create_category();
         $this->coursecatcontext = context_coursecat::instance($coursecategory->id);
@@ -275,6 +301,20 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $question4 = $questiongenerator->create_question('shortanswer', null, ['category' => $unusedcategory->id]);
         $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']);
         quiz_add_quiz_question($question1->id, $quiz, 1);
+
+        // The quiz also contains a random question from the used category.
+        $quizsettings = quiz_settings::create($quiz->id);
+        $structure = $quizsettings->get_structure();
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core_question\local\bank\condition::JOINTYPE_DEFAULT,
+                    'values' => [$usedcategory->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $structure->add_random_questions(1, 1, $filtercondition);
     }
 
     /**
@@ -304,6 +344,24 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $childcatq = end($questions);
         $this->assertEquals($parentcat->id, $parentcatq->categoryid);
         $this->assertEquals($childcat->id, $childcatq->categoryid);
+
+        // Make sure the "Random" course has 1 quiz with 1 random question that returns the questions from the system top category.
+        $randomcourse = $DB->get_record('course', ['shortname' => 'Random']);
+        $coursemods = get_course_mods($randomcourse->id);
+        $randomquiz = reset($coursemods);
+        $randomquizsettings = quiz_settings::create($randomquiz->instance);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestionslot = $structure->get_question_in_slot(1);
+        $this->assertEquals($randomquestionslot->contextid, $sitecontext->id);
+        $loader = new random_question_loader(new \qubaid_list([]));
+        $randomquestions = $loader->get_filtered_questions($randomquestionslot->filtercondition['filter']);
+        $this->assertCount(2, $randomquestions);
+        $randomq1 = reset($randomquestions);
+        $randomq2 = end($randomquestions);
+        $this->assertEquals($parentcatq->id, $randomq1->id);
+        $this->assertEquals($parentcat->id, $randomq1->category);
+        $this->assertEquals($childcatq->id, $randomq2->id);
+        $this->assertEquals($childcat->id, $randomq2->category);
 
         // Make sure that the course category has a question category below 'top'.
         $allcoursecatcats = $DB->get_records('question_categories', ['contextid' => $this->coursecatcontext->id], 'id ASC');
@@ -360,6 +418,15 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->assertCount(2, $this->get_question_data([$unusedcat->id]));
         $emptycat = next($questioncats);
         $this->assertCount(0, $this->get_question_data([$emptycat->id]));
+
+        // The question reference for the random question is using the "used" category, and the site context.
+        $coursemods = get_course_mods($this->usedunusedcontext->instanceid);
+        $quiz = reset($coursemods);
+        $quizsettings = quiz_settings::create($quiz->instance);
+        $structure = $quizsettings->get_structure();
+        $randomquestionslot = $structure->get_question_in_slot(2);
+        $this->assertEquals($this->usedunusedcontext->id, $randomquestionslot->contextid);
+        $this->assertEquals($usedcat->id, $randomquestionslot->filtercondition['filter']['category']['values'][0]);
     }
 
     /**
@@ -409,6 +476,22 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $childcat = next($sitemodcats);
         $this->assertEquals($topcat->id, $parentcat->parent);
         $this->assertEquals($parentcat->id, $childcat->parent);
+
+        // The random question should now point to the questions in the site course question bank.
+        $randomcourse = $DB->get_record('course', ['shortname' => 'Random']);
+        $coursemods = get_course_mods($randomcourse->id);
+        $randomquiz = reset($coursemods);
+        $randomquizsettings = quiz_settings::create($randomquiz->instance);
+        $structure = $randomquizsettings->get_structure();
+        $randomquestionslot = $structure->get_question_in_slot(1);
+        $this->assertEquals($randomquestionslot->contextid, $sitemodcontext->id);
+        $loader = new random_question_loader(new \qubaid_list([]));
+        $randomquestions = $loader->get_filtered_questions($randomquestionslot->filtercondition['filter']);
+        $this->assertCount(2, $randomquestions);
+        $randomq1 = reset($randomquestions);
+        $randomq2 = end($randomquestions);
+        $this->assertEquals($parentcat->id, $randomq1->category);
+        $this->assertEquals($childcat->id, $randomq2->category);
 
         // Course category context checks.
 
@@ -525,6 +608,19 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->assertEmpty($this->get_question_data([$usedunusedcats['top']->id]));
         $this->assertCount(2, $this->get_question_data([$usedunusedcats['Used Question Cat']->id]));
         $this->assertCount(2, $this->get_question_data([$usedunusedcats['Unused Question Cat']->id]));
+
+        // The question reference for the random question is using the same category, but the new context.
+        $modinfo = get_fast_modinfo($this->usedunusedcontext->instanceid);
+        $quizzes = $modinfo->get_instances_of('quiz');
+        $quiz = reset($quizzes);
+        $quizsettings = quiz_settings::create($quiz->instance);
+        $structure = $quizsettings->get_structure();
+        $randomquestionslot = $structure->get_question_in_slot(2);
+        $this->assertEquals($usedunusedqbank->context->id, $randomquestionslot->contextid);
+        $this->assertEquals(
+            $usedunusedcats['Used Question Cat']->id,
+            $randomquestionslot->filtercondition['filter']['category']['values'][0]
+        );
     }
 
     public function test_fix_wrong_parents(): void {
