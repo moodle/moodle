@@ -29,6 +29,7 @@ use core\report_helper;
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+global $SITE, $PAGE;
 
 $id = optional_param('id', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
@@ -65,22 +66,22 @@ $url = new moodle_url("/report/loglive/index.php", $params);
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
+$PAGE->set_context($context);
+$strlivelogs = get_string('livelogs', 'report_loglive');
+$PAGE->set_title("$coursename: $strlivelogs");
+$output = $PAGE->get_renderer('report_loglive');
+echo $output->header();
+if (!report_helper::has_valid_group($context)) {
+    echo $output->notification(get_string('notingroup'));
+    echo $output->footer();
+    exit();
+}
 
 $renderable = new report_loglive_renderable($logreader, $id, $url, 0, $page);
 $refresh = $renderable->get_refresh_rate();
 $logreader = $renderable->selectedlogreader;
-
-$strlivelogs = get_string('livelogs', 'report_loglive');
 $strupdatesevery = get_string('updatesevery', 'moodle', $refresh);
-
-
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_title("$coursename: $strlivelogs");
 $PAGE->set_heading($coursename);
-
-$output = $PAGE->get_renderer('report_loglive');
-echo $output->header();
 
 // Print selector dropdown.
 $pluginname = get_string('pluginname', 'report_loglive');
