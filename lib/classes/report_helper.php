@@ -179,4 +179,44 @@ class report_helper {
             'useridfilter' => $useridfilter,
         ];
     }
+
+    /**
+     * Check if the user is in a valid group for the course (i.e. if the user is in a group in SEPARATEGROUPS mode)
+     *
+     * @param context $context context for the course or module: if context is a course context, the course group mode is used,
+     * if it is a module context, the module effective group mode is used (combined with the current user).
+     * @param int|null $userid user id to check, if null the current user is used
+     * @return bool true if the user is in a valid group (i.e. belongs to a group in SEPARATEGROUPS MODE), false otherwise
+     */
+    public static function has_valid_group(\context $context, ?int $userid = null): bool {
+        global $USER;
+
+        $userid = $userid ?? $USER->id;
+
+        if ($context instanceof context_course) {
+            $courseid = $context->instanceid;
+            $course = get_course($courseid);
+            $groupmode = $course->groupmode;
+        } else if ($context instanceof \context_module) {
+            $courseid = $context->get_course_context()->instanceid;
+            $modinfo = get_fast_modinfo($courseid);
+            $cm = $modinfo->get_cm($context->instanceid);
+            $groupmode = $cm->effectivegroupmode;
+        } else {
+            return true; // No groups in system context.
+        }
+
+        if ($groupmode != SEPARATEGROUPS) {
+            return true; // No groups or visible all groups.
+        }
+
+        if (!has_capability('moodle/site:accessallgroups', $context, $userid)) {
+            $usergroups = groups_get_all_groups($courseid, $userid);
+            if (empty($usergroups)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

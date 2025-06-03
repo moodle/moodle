@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -34,7 +36,10 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $context The context of the course
  */
 function report_log_extend_navigation_course($navigation, $course, $context) {
-    if (has_capability('report/log:view', $context)) {
+    if (
+        has_capability('report/log:view', $context)
+        && report_helper::has_valid_group($context)
+    ) {
         $url = new moodle_url('/report/log/index.php', array('id'=>$course->id));
         $navigation->add(get_string('pluginname', 'report_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
@@ -124,7 +129,10 @@ function report_log_can_access_user_report($user, $course) {
  * @param stdClass $cm
  */
 function report_log_extend_navigation_module($navigation, $cm) {
-    if (has_capability('report/log:view', context_course::instance($cm->course))) {
+    if (
+        has_capability('report/log:view', context_course::instance($cm->course))
+        && report_helper::has_valid_group(context_module::instance($cm->id))
+    ) {
         $url = new moodle_url('/report/log/index.php', array('chooselog'=>'1','id'=>$cm->course,'modid'=>$cm->id));
         $navigation->add(get_string('logs'), $url, navigation_node::TYPE_SETTING, null, 'logreport', new pix_icon('i/report', ''));
     }
