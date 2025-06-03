@@ -60,8 +60,8 @@ class text_filter extends \core_filters\text_filter {
             'tagend' => '</iframe>',
         ];
 
-        $specialchars = ['?', '&'];
-        $escapedspecialchars = ['\?', '&amp;'];
+        $specialchars = ['~', '?', '&'];
+        $escapedspecialchars = ['\~', '\?', '&amp;'];
         $h5pcontents = [];
         $h5plinks = [];
 
@@ -103,7 +103,7 @@ class text_filter extends \core_filters\text_filter {
                 $params + ['ish5plink' => false]
             );
 
-            $h5pcontenturl->workregexp = '#' . $ultimatepattern . '#';
+            $h5pcontenturl->workregexp = '~' . $ultimatepattern . '~';
             $h5pcontents[] = $h5pcontenturl;
 
             // Regex to find h5p extensions in an <a> tag.
