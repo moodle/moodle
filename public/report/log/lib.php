@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -35,8 +37,10 @@ defined('MOODLE_INTERNAL') || die;
  */
 function report_log_extend_navigation_course($navigation, $course, $context) {
     global $SITE;
-
-    if (has_capability('report/log:view', $context)) {
+    if (
+        has_capability('report/log:view', $context)
+        && report_helper::has_valid_group($context)
+    ) {
         $params = [
             'id' => $course->id,
             'iscoursepage' => ($course->id && ($course->id != $SITE->id)),
@@ -130,7 +134,10 @@ function report_log_can_access_user_report($user, $course) {
  * @param stdClass $cm
  */
 function report_log_extend_navigation_module($navigation, $cm) {
-    if (has_capability('report/log:view', context_course::instance($cm->course))) {
+    if (
+        has_capability('report/log:view', context_course::instance($cm->course))
+        && report_helper::has_valid_group(context_module::instance($cm->id))
+    ) {
         $url = new moodle_url('/report/log/index.php', [
             'chooselog' => '1',
             'id' => $cm->course,
