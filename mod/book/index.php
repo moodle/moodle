@@ -42,7 +42,7 @@ $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
 $PAGE->set_url('/mod/book/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strbooks);
+$PAGE->set_title($course->shortname . \moodle_page::TITLE_SEPARATOR . $strbooks);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strbooks);
 echo $OUTPUT->header();
