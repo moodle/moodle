@@ -27,5 +27,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+include_course_ajax($course);
+
 $courserenderer = $PAGE->get_renderer('format_singleactivity');
 echo $courserenderer->display($course, $section != 0);

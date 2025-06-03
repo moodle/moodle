@@ -64,11 +64,11 @@ final class state_test extends \advanced_testcase {
         $this->setAdminUser();
         $courseformat = course_get_format($course->id);
         $modinfo = $courseformat->get_modinfo();
-        $issocialformat = $courseformat->get_format() === 'social';
+        $supportsections = $format !== 'social' && $format !== 'singleactivity';
 
         // Only create activities if the course format is not social.
         // There's no course home page (and sections) for social course format.
-        if (!$issocialformat || $format == 'theunittest') {
+        if ($supportsections) {
             // Add some activities to the course.
             $this->getDataGenerator()->create_module('page', ['course' => $course->id], ['section' => 1,
                 'visible' => 1]);
@@ -111,7 +111,7 @@ final class state_test extends \advanced_testcase {
         $sections = $modinfo->get_section_info_all();
 
         foreach ($sections as $key => $section) {
-            if (!$issocialformat || $format == 'theunittest') {
+            if ($supportsections) {
                 $this->assertEquals($section->id, $result->course->sectionlist[$key]);
                 if (!empty($section->uservisible)) {
                     $sectionstate = new $sectionclass($courseformat, $section);

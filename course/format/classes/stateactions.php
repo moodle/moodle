@@ -1106,12 +1106,6 @@ class stateactions {
             throw new moodle_exception('emptysectionids', 'core', null, $info);
         }
 
-        // No section actions are allowed if course format does not support sections.
-        $courseformat = course_get_format($course->id);
-        if (!$courseformat->uses_sections()) {
-            throw new moodle_exception('sectionactionnotsupported', 'core', null, $info);
-        }
-
         list($insql, $inparams) = $DB->get_in_or_equal($sectionids, SQL_PARAMS_NAMED);
 
         // Check if all the given sections exist.

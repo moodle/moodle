@@ -69,7 +69,7 @@ Feature: Edit activities in Additional activities block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I should see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should see "My forum name" in the "Additional activities" "block"
     And I should not see "My forum name" in the "region-main" "region"
     When I open "My forum name" actions menu
     And I click on "Move" "link" in the "My forum name" activity
@@ -78,7 +78,7 @@ Feature: Edit activities in Additional activities block
     And I should see "Site" in the "Move activity" "dialogue"
     And I click on "Site" "link" in the "Move activity" "dialogue"
     Then I should see "My forum name" in the "region-main" "region"
-    And I should not see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should not see "My forum name" in the "Additional activities" "block"
 
   @javascript
   Scenario: The move activity modal allow to move from the main content to the Additional activities block
@@ -94,7 +94,7 @@ Feature: Edit activities in Additional activities block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I should not see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should not see "My forum name" in the "Additional activities" "block"
     And I should see "My forum name" in the "region-main" "region"
     When I open "My forum name" actions menu
     And I click on "Move" "link" in the "My forum name" activity
@@ -103,7 +103,7 @@ Feature: Edit activities in Additional activities block
     And I should see "Site" in the "Move activity" "dialogue"
     And I click on "Block" "link" in the "Move activity" "dialogue"
     Then I should not see "My forum name" in the "region-main" "region"
-    And I should see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should see "My forum name" in the "Additional activities" "block"
 
   @javascript
   Scenario: Admin can delete an activity in the Additional activities block
@@ -118,11 +118,11 @@ Feature: Edit activities in Additional activities block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I should see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should see "My forum name" in the "Additional activities" "block"
     When I open "My forum name" actions menu
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete activity?" "dialogue"
-    Then I should not see "My forum name" in the "block_site_main_menu_section" "region"
+    Then I should not see "My forum name" in the "Additional activities" "block"
 
   @javascript
   Scenario: Admin can duplicate an activity in the Additional activities block
@@ -137,10 +137,10 @@ Feature: Edit activities in Additional activities block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I should see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should see "My forum name" in the "Additional activities" "block"
     When I open "My forum name" actions menu
     And I choose "Duplicate" in the open action menu
-    Then I should see "My forum name (copy)" in the "block_site_main_menu_section" "region"
+    Then I should see "My forum name (copy)" in the "Additional activities" "block"
 
   @javascript
   Scenario: Admin can move right and left an activity in the Additional activities block
@@ -155,7 +155,7 @@ Feature: Edit activities in Additional activities block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I should see "My forum name" in the "block_site_main_menu_section" "region"
+    And I should see "My forum name" in the "Additional activities" "block"
     When I open "My forum name" actions menu
     And "Move right" "link" should be visible
     And "Move left" "link" should not be visible

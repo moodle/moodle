@@ -19,53 +19,30 @@ Feature: Activity navigation in a single activity course
       | teacher1  | C1      | editingteacher  |
     And the following "activities" exist:
       | activity   | name         | intro                       | course | idnumber  | section |
+      | forum      | Forum 1      | Test forum description      | C1     | forum1    | 0       |
       | assign     | Assignment 1 | Test assignment description | C1     | assign1   | 0       |
       | lesson     | Lesson 1     | Test lesson description     | C1     | lesson1   | 0       |
-      | forum      | Forum 1      | Test forum description      | C1     | forum1    | 0       |
 
-  Scenario: Step through hidden activities in the course as a teacher.
+  Scenario: Step through activities in the course as a teacher
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
     # The first activity (Forum 1) won't have the previous activity link.
     Then "#prev-activity-link" "css_element" should not exist
-    And I should see "Assignment 1 (hidden)" in the "#next-activity-link" "css_element"
-    And I follow "Assignment 1 (hidden)"
+    And I should see "Assignment 1" in the "#next-activity-link" "css_element"
+    And I follow "Assignment 1"
     And I should see "Forum 1" in the "#prev-activity-link" "css_element"
-    And I should see "Lesson 1 (hidden)" in the "#next-activity-link" "css_element"
-    And I follow "Lesson 1 (hidden)"
-    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
+    And I should see "Lesson 1" in the "#next-activity-link" "css_element"
+    And I follow "Lesson 1"
+    And I should see "Assignment 1" in the "#prev-activity-link" "css_element"
     And "#next-activity-link" "css_element" should not exist
 
-  Scenario: Jump to a hidden activity as a teacher
-    Given I log in as "teacher1"
-    When I am on "Course 1" course homepage
-    Then "Jump to..." "field" should exist
-    # The current activity (Forum 1) will not be listed.
-    And the "Jump to..." select box should not contain "Forum 1"
-    # Check drop down menu contents.
-    And the "Jump to..." select box should contain "Assignment 1 (hidden)"
-    And the "Jump to..." select box should contain "Lesson 1 (hidden)"
-    # Jump to a hidden activity somewhere in the middle.
-    When I select "Assignment 1 (hidden)" from the "Jump to..." singleselect
-    Then I should see "Assignment 1"
-    And I should see "Forum 1" in the "#prev-activity-link" "css_element"
-    And I should see "Lesson 1 (hidden)" in the "#next-activity-link" "css_element"
-    # Jump to the first activity.
-    And I select "Forum 1" from the "Jump to..." singleselect
-    And I should see "Assignment 1 (hidden)" in the "#next-activity-link" "css_element"
-    But "#prev-activity-link" "css_element" should not exist
-    # Jump to the last activity.
-    And I select "Lesson 1 (hidden)" from the "Jump to..." singleselect
-    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
-    But "#next-activity-link" "css_element" should not exist
-
-  Scenario: The activity navigation controls are not available as a student.
+  Scenario: The activity navigation controls are available as a student
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     # The first activity won't have the previous activity link.
     Then "#prev-activity-link" "css_element" should not exist
-    And "#next-activity-link" "css_element" should not exist
-    And "Jump to..." "field" should not exist
+    And "#next-activity-link" "css_element" should exist
+    And "Jump to..." "field" should exist
 
   Scenario: The activity navigation asks for login to guest user
     Given I log in as "guest"
