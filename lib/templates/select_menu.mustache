@@ -86,7 +86,7 @@
 }}
 <div class="dropdown select-menu" id="{{baseid}}">
     {{#label}}{{^inlinelabel}}
-        <label id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
+        <span id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</span>
     {{/inlinelabel}}{{/label}}
     <div
         class="btn dropdown-toggle{{#inlinelabel}} d-flex text-left align-items-center p-0{{/inlinelabel}}"
@@ -102,7 +102,7 @@
         {{#inlinelabel}}
             <div class="pr-3 text-truncate">
                 {{#label}}
-                    <label class="d-block m-0 small" id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
+                    <span class="d-block m-0 small" id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</span>
                 {{/label}}
                 <span class="font-weight-bold" data-selected-option>
                     {{selectedoption}}
