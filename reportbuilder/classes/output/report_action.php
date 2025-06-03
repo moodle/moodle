@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\output;
 
-use core\output\{renderer_base, templatable};
+use core\output\{pix_icon, renderer_base, templatable};
 use core_reportbuilder\external\report_action_exporter;
 
 /**
@@ -36,6 +36,7 @@ class report_action implements templatable {
      * @param string $title
      * @param array $attributes
      * @param string $tag
+     * @param pix_icon|null $icon
      */
     public function __construct(
         /** @var string */
@@ -44,6 +45,8 @@ class report_action implements templatable {
         public readonly array $attributes,
         /** @var string */
         public readonly string $tag = 'button',
+        /** @var pix_icon|null */
+        public readonly ?pix_icon $icon = null,
     ) {
 
     }

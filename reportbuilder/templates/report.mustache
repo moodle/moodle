@@ -33,6 +33,11 @@
         "button": {
             "tag": "button",
             "title": "Click me",
+            "icon": {
+                "key": "t/add",
+                "component": "moodle",
+                "title": "Click me"
+            },
             "attributes": [{
                 "name": "class",
                 "value": "btn btn-primary"
@@ -54,7 +59,10 @@
                 {{! Action buttons }}
                 <div class="dropdown d-flex justify-content-end mb-3">
                     {{#button}}
-                        <{{{tag}}} {{#attributes}}{{name}}="{{value}}" {{/attributes}}>{{title}}</{{{tag}}}>
+                        <{{{tag}}} {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
+                            {{#icon}}{{#pix}}{{key}}, {{component}}, {{{title}}}{{/pix}}{{/icon}}
+                            {{{title}}}
+                        </{{{tag}}}>
                     {{/button}}
                     {{#filterspresent}}
                         {{>core_reportbuilder/local/filters/area}}

@@ -54,7 +54,15 @@ class report_action_exporter extends exporter {
                 'type' => PARAM_ALPHA,
             ],
             'title' => [
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
+            ],
+            'icon' => [
+                'type' => [
+                    'key' => ['type' => PARAM_RAW],
+                    'component' => ['type' => PARAM_COMPONENT],
+                    'title' => ['type' => PARAM_NOTAGS],
+                ],
+                'optional' => true,
             ],
             'attributes' => [
                 'type' => [
@@ -98,10 +106,15 @@ class report_action_exporter extends exporter {
             return ['name' => $key, 'value' => $value];
         }, array_keys($reportaction->attributes), $reportaction->attributes);
 
+        $optionalvalues = [];
+        if ($reportaction->icon !== null) {
+            $optionalvalues['icon'] = $reportaction->icon->export_for_pix();
+        }
+
         return [
             'tag' => $reportaction->tag ?: 'button',
             'title' => $reportaction->title,
             'attributes' => $attributes,
-        ];
+        ] + $optionalvalues;
     }
 }

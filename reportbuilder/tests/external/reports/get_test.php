@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\reports;
 
 use context_system;
+use core\output\pix_icon;
 use core_reportbuilder_generator;
 use core_external\external_api;
 use externallib_advanced_testcase;
@@ -100,7 +101,8 @@ final class get_test extends externallib_advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
 
         $instance = manager::get_report_from_persistent($report);
-        $instance->set_report_action(new report_action('Add', ['class' => 'btn', 'data-action' => 'action']));
+        $instance->set_report_action(new report_action('Add', ['class' => 'btn', 'data-action' => 'action'], 'button',
+            new pix_icon('t/add', 'Add')));
         $instance->set_report_info_container('Hello');
 
         // Add two filters.
@@ -118,6 +120,11 @@ final class get_test extends externallib_advanced_testcase {
         $this->assertEquals([
             'tag' => 'button',
             'title' => 'Add',
+            'icon' => [
+                'key' => 't/add',
+                'component' => 'moodle',
+                'title' => 'Add',
+            ],
             'attributes' => [
                 ['name' => 'class', 'value' => 'btn'],
                 ['name' => 'data-action', 'value' => 'action'],

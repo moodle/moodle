@@ -1,0 +1,7 @@
+issueNumber: MDL-85216
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `report_action` class now accepts a `pix_icon` to include inside the
+        rendered action element
+      type: improved
