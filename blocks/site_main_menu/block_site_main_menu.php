@@ -76,6 +76,10 @@ class block_site_main_menu extends block_base {
         $modinfo = $format->get_modinfo();
         $section = $modinfo->get_section_info(0);
 
+        if ($format->supports_ajax()) {
+            include_course_ajax($course);
+        }
+
         $courserenderer = $format->get_renderer($this->page);
 
         $output = new block_site_main_menu\output\mainsection($format, $section);

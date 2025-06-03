@@ -61,7 +61,7 @@ class mainsection implements renderable, templatable {
         $cmlist = $output->render($sectionoutput);
 
         return [
-            'siteid' => $course->id,
+            'courseid' => $course->id,
             'cmlist' => $cmlist,
             'sectionid' => $section->id,
             'sectionname' => $format->get_section_name($section),
