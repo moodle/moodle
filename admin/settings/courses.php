@@ -157,11 +157,17 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configselect('moodlecourse/format', new lang_string('format'), new lang_string('coursehelpformat'),
         'topics', $formcourseformats));
 
+    // TODO: remove this setting in Moodle 6.0 (MDL-85272).
     $temp->add(new admin_setting_configtext('moodlecourse/maxsections', new lang_string('maxnumberweeks'),
         new lang_string('maxnumberweeks_desc'), 52));
 
-    $temp->add(new admin_settings_num_course_sections('moodlecourse/numsections', new lang_string('numberweeks'),
-        new lang_string('coursehelpnumberweeks'), 4));
+    $temp->add(new admin_setting_configtext(
+        name: 'moodlecourse/numsections',
+        visiblename: new lang_string('numberweeks'),
+        description: new lang_string('coursehelpnumberweeks'),
+        defaultsetting: 4,
+        paramtype: PARAM_INT,
+    ));
 
     $choices = array();
     $choices['0'] = new lang_string('hiddensectionscollapsed');

@@ -1,0 +1,8 @@
+issueNumber: MDL-84291
+notes:
+  format_weeks:
+    - message: >-
+        The weekly sections format now has a system setting called Maximum
+        initial number of weeks that replaced the old "Max sections" when
+        creating a new course
+      type: improved

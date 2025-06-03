@@ -33,4 +33,12 @@ if ($ADMIN->fulltree) {
         new lang_string('indentation_help', 'format_weeks').'<br />'.$link,
         1
     ));
+
+    $settings->add(new admin_setting_configtext(
+        name: 'format_weeks/maxinitialsections',
+        visiblename: new lang_string('maxinitialsections', 'format_weeks'),
+        description: new lang_string('maxinitialsections_help', 'format_weeks'),
+        defaultsetting: 52,
+        paramtype: PARAM_INT,
+    ));
 }

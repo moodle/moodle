@@ -82,3 +82,5 @@ lockverbose,core_grades
 showverbose,core_grades
 unlockverbose,core_grades
 aiusagestats,core_hub
+maxsectionslimit,core
+maxsectionaddmessage,core_courseformat

@@ -319,7 +319,8 @@ class format_weeks extends core_courseformat\base {
             // The "Number of sections" option is no longer available when editing course, instead teachers should
             // delete and add sections when needed.
             $courseconfig = get_config('moodlecourse');
-            $max = (int)$courseconfig->maxsections;
+            $weeksconfig = get_config('format_weeks');
+            $max = (int)$weeksconfig->maxinitialsections;
             $element = $mform->addElement('select', 'numsections', get_string('numberweeks'), range(0, $max ?: 52));
             $mform->setType('numsections', PARAM_INT);
             if (is_null($mform->getElementValue('numsections'))) {
