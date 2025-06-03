@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.20 ===
+
+* Add a new method has_valid_group in \core\report_helper that will return true or false depending if the user has a valid group. This is mainly
+  false in case the user is not in any group in SEPARATEGROUPS. Used in report_log and report_loglive.
+
 === 4.1.18 ===
 * A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text.
   This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters

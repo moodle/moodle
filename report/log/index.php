@@ -150,11 +150,18 @@ if ($course->id == $SITE->id) {
     $PAGE->set_heading($course->fullname);
 }
 
+$output = $PAGE->get_renderer('report_log');
+if (!report_helper::has_valid_group($context)) {
+    echo $output->header();
+    echo $output->notification(get_string('notingroup'));
+    echo $output->footer();
+    exit();
+}
+
 $reportlog = new report_log_renderable($logreader, $course, $user, $modid, $modaction, $group, $edulevel, $showcourses, $showusers,
         $chooselog, true, $url, $date, $logformat, $page, $perpage, 'timecreated DESC', $origin);
-$readers = $reportlog->get_readers();
-$output = $PAGE->get_renderer('report_log');
 
+$readers = $reportlog->get_readers();
 if (empty($readers)) {
     echo $output->header();
     echo $output->heading(get_string('nologreaderenabled', 'report_log'));
