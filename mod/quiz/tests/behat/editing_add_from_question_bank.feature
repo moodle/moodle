@@ -172,6 +172,7 @@ Feature: Adding questions to a quiz from the question bank
     And I click on "Select" "checkbox" in the "question 03 name" "table_row"
     And I click on "Add selected questions to the quiz" "button"
     And I should see "question 03 name"
+    And "Qbank 1 & < > " "text" should appear after "question 03 name" "text"
 
   @javascript
   Scenario: Validate the sorting while adding questions from question bank
