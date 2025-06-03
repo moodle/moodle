@@ -1865,12 +1865,18 @@ class structure {
     private function populate_question_sources(): void {
         global $DB;
 
-        $sql = 'SELECT c.id AS contextid, cm.id, cm.course
-                  FROM {question_categories} qc
-                  JOIN {context} c ON c.id = qc.contextid
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = ' . CONTEXT_MODULE . '
-              GROUP BY c.id, cm.id, cm.course';
-        $this->questionsources = $DB->get_records_sql($sql);
+        $contextids = array_map(fn($question) => $question->contextid, $this->questions);
+        [$insql, $inparams] = $DB->get_in_or_equal(array_unique($contextids));
+
+        $sql = "
+            SELECT c.id as contextid, cm.id, cm.course
+              FROM {context} c
+              JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = ?
+             WHERE c.id {$insql}
+        ";
+        $params = array_merge([context_module::LEVEL], $inparams);
+
+        $this->questionsources = $DB->get_records_sql($sql, $params);
     }
 
     /**
