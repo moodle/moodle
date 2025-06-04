@@ -214,20 +214,37 @@ Feature: Display and choose from the available activities in course
     When I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
     And "Clear search input" "button" should not be visible
     And the field "search" matches value ""
-    And I should see "Book" in the "resources" "core_course > Activity chooser tab"
+    And I should see "Book" in the "content" "core_course > Activity chooser tab"
 
   Scenario: Teacher gets the base case for the Activity Chooser tab mode
     When I open the activity chooser
     Then I should see "Assignment" in the "all" "core_course > Activity chooser tab"
     And I should see "Book" in the "all" "core_course > Activity chooser tab"
-    # Activities tab.
-    And I click on "Activities" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Assignment" in the "activities" "core_course > Activity chooser tab"
-    And I should not see "Book" in the "all" "core_course > Activity chooser tab"
+    # Assessment tab.
+    And I click on "Assessment" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities that allow evaluation and measurement of student" in the "Add an activity or resource" "dialogue"
+    And "Book" "link" should not exist in the "assessment" "core_course > Activity chooser tab"
+    And "Assignment" "link" should exist in the "assessment" "core_course > Activity chooser tab"
+    # Collaboration tab.
+    And I click on "Collaboration" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Tools for collaborative learning" in the "Add an activity or resource" "dialogue"
+    And "Assignment" "link" should not exist in the "collaboration" "core_course > Activity chooser tab"
+    And "Database" "link" should exist in the "collaboration" "core_course > Activity chooser tab"
+    # Communication tab.
+    And I click on "Communication" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities that facilitate real-time communication" in the "Add an activity or resource" "dialogue"
+    And "Database" "link" should not exist in the "communication" "core_course > Activity chooser tab"
+    And "Choice" "link" should exist in the "communication" "core_course > Activity chooser tab"
     # Resources tab.
     And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Book" in the "resources" "core_course > Activity chooser tab"
-    And I should not see "Assignment" in the "resources" "core_course > Activity chooser tab"
+    And I should see "Activities and tools to organise and display course materials" in the "Add an activity or resource" "dialogue"
+    And "Choice" "link" should not exist in the "content" "core_course > Activity chooser tab"
+    And "File" "link" should exist in the "content" "core_course > Activity chooser tab"
+    # Interactive content tab.
+    And I click on "Interactive content" "link" in the "Add an activity or resource" "dialogue"
+    And I should see "Engaging interactive activities" in the "Add an activity or resource" "dialogue"
+    And "File" "link" should not exist in the "interactivecontent" "core_course > Activity chooser tab"
+    And "H5P" "link" should exist in the "interactivecontent" "core_course > Activity chooser tab"
 
   Scenario: Teacher can navigate through activity chooser in Topics format course
     When I open the activity chooser
