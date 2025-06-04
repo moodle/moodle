@@ -3163,6 +3163,8 @@ class curl {
     private $ignoresecurity;
     /** @var array $mockresponses For unit testing only - return the head of this list instead of making the next request. */
     private static $mockresponses = [];
+    /** @var array $curlresolveinfo Resolve addresses for the URL that have passed cuRL security checks, in a CURLOPT_RESOLVE compatible format. */
+    private $curlresolveinfo = [];
 
     /**
      * Curl constructor.
@@ -3759,6 +3761,9 @@ class curl {
             return $this->error;
         }
 
+        // Set allowed resolve info if the URL is not blocked.
+        $this->curlresolveinfo = $this->securityhelper->get_resolve_info();
+
         return null;
     }
 
@@ -3793,6 +3798,10 @@ class curl {
 
         // Set the URL as a curl option.
         $this->setopt(array('CURLOPT_URL' => $url));
+
+        // Force cURL to only resolve the URL from IP/port combinations that were validated by the security helper.
+        // This prevents re-fetching DNS data on subsequent requests, which could return un-validated hosts/ports.
+        $this->setopt(['CURLOPT_RESOLVE' => $this->curlresolveinfo]);
 
         // Create curl instance.
         $curl = curl_init();
@@ -3903,6 +3912,10 @@ class curl {
                 }
 
                 curl_setopt($curl, CURLOPT_URL, $redirecturl);
+
+                // Force cURL to only resolve the URL from IP/port combinations that were validated by the security helper.
+                // This prevents re-fetching DNS data on subsequent requests, which could return un-validated hosts/ports.
+                $this->setopt(['CURLOPT_RESOLVE' => $this->curlresolveinfo]);
 
                 // If CURLOPT_UNRESTRICTED_AUTH is empty/false, don't send credentials to other hosts.
                 // Ref: https://curl.se/libcurl/c/CURLOPT_UNRESTRICTED_AUTH.html.
