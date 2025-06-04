@@ -1826,6 +1826,7 @@ $string['remoteappuser'] = 'Remote {$a} User';
 $string['remove'] = 'Remove';
 $string['removeadmin'] = 'Remove admin';
 $string['removecreator'] = 'Remove course creator';
+$string['removed'] = 'Removed {$a}';
 $string['removestudent'] = 'Remove student';
 $string['removeteacher'] = 'Remove teacher';
 $string['rename'] = 'Rename';
