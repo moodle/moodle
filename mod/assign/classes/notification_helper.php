@@ -494,7 +494,7 @@ class notification_helper {
                 continue;
             }
 
-            // Filter a list of users who meet the availability conditions.
+            // Check if the module is visible to the user.
             $cm = $assignmentobj->get_course_module();
             if (!\core_availability\info_module::is_user_visible($cm, $userid)) {
                 continue;
