@@ -16,6 +16,9 @@
 
 namespace mod_assign;
 
+use core\task\task_trait;
+use mod_assign\task\queue_assignment_due_digest_notification_tasks_for_users;
+
 /**
  * Test class for the assignment notification_helper.
  *
@@ -26,6 +29,9 @@ namespace mod_assign;
  * @covers \mod_assign\notification_helper
  */
 final class notification_helper_test extends \advanced_testcase {
+
+    use task_trait;
+
     /**
      * Run all the tasks related to the 'due soon' notifications.
      */
@@ -781,78 +787,116 @@ final class notification_helper_test extends \advanced_testcase {
 
         // Clear sink.
         $sink->clear();
+    }
 
-        // Update due dates to simulate recent changes and trigger notifications.
-        // Only users meeting group-based availability conditions should receive them.
-        $updatedata = new \stdClass();
+    /**
+     * Test sending the assignment due digest notification to users in groups with restricted access.
+     */
+    public function test_send_due_digest_notification_to_users_in_groups(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_incrementing();
+        $sink = $this->redirectMessages();
+        /** @var \mod_assign_generator $assignmentgenerator */
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
-        $updatedata->id = $assignment1->id;
-        $updatedata->duedate = $duedate1;
-        $DB->update_record('assign', $updatedata);
+        // Create a course, users and enrol users.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user3->id, $course->id, 'student');
 
-        $updatedata->id = $assignment3->id;
-        $updatedata->duedate = $clock->time() + WEEKSECS;
-        $DB->update_record('assign', $updatedata);
-
-        // Create groups and set assignment availability conditions restricted to those groups.
+        // Create groups and add users to groups.
         $group1 = $generator->create_group(['courseid' => $course->id]);
-        $groupduedate = $duedate1 + (HOURSECS * 3);
-        $assignmentgenerator->create_override([
-            'assignid' => $assignment1->id,
-            'groupid' => $group1->id,
-            'duedate' => $groupduedate,
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
+        $generator->create_group_member(['groupid' => $group2->id, 'userid' => $user2->id]);
+
+        // Create assignments.
+        $assignment1 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $clock->time() + WEEKSECS,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
         ]);
-        $availability =
-        ['op' => '&',
+        $assignment2 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $clock->time() + WEEKSECS,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+        $assignment3 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $clock->time() + WEEKSECS,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+
+        // Set restricted access for assignment1 and assignment2 to groups.
+        $availability = [
+            'op' => '&',
             'showc' => [true],
             'c' => [
                 [
                     'type' => 'group',
-                    'id' => (int)$group1->id,
+                    'id' => (int) $group1->id,
                 ],
             ],
         ];
         $cm = get_coursemodule_from_instance('assign', $assignment1->id, $course->id);
         $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cm->id]);
 
-        $group2 = $generator->create_group(['courseid' => $course->id]);
-        $groupduedate = $duedate2 + (HOURSECS * 3);
-        $assignmentgenerator->create_override([
-            'assignid' => $assignment3->id,
-            'groupid' => $group2->id,
-            'duedate' => $groupduedate,
-        ]);
-        $availability =
-        ['op' => '&',
+        $availability = [
+            'op' => '&',
             'showc' => [true],
             'c' => [
                 [
                     'type' => 'group',
-                    'id' => (int)$group2->id,
+                    'id' => (int) $group2->id,
                 ],
             ],
         ];
-        $cm = get_coursemodule_from_instance('assign', $assignment3->id, $course->id);
+        $cm = get_coursemodule_from_instance('assign', $assignment2->id, $course->id);
         $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cm->id]);
 
         // Rebuild course cache to apply changes.
         rebuild_course_cache($course->id, true);
 
-        // Add user1 to group1 so they meet the availability condition for assignment1.
-        // This user should now receive a notification for assignment1 only.
-        $generator->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
-
-        // Run notification task and validate only assignments visible to the user are included.
-        $this->run_due_digest_notification_helper_tasks();
+        // Run the tasks. We want to run all the adhoc tasks at the same time. So we will use the normal task runner.
+        $this->execute_task('\mod_assign\task\queue_all_assignment_due_digest_notification_tasks');
+        // Execute the remaining ad-hoc backup task.
+        $this->start_output_buffering();
+        $this->runAdhocTasks('\mod_assign\task\send_assignment_due_digest_notification_to_user');
+        $this->stop_output_buffering();
         $messages = $sink->get_messages_by_component('mod_assign');
-        $this->assertCount(1, $messages);
-        $message = reset($messages);
-        $this->assertStringContainsString($assignment1->name, $message->fullmessagehtml);
-        $this->assertEquals($user1->id, $message->useridto);
-        $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
 
-        // Clear sink.
-        $sink->clear();
+        // Process the messages.
+        $processedmessages = [];
+        foreach ($messages as $message) {
+            $processedmessages[$message->useridto] = $message;
+        }
+
+        // Verify the messages.
+        $this->assertCount(3, $processedmessages);
+        // User1 should receive a message for assignment1 and assignment3.
+        $this->assertArrayHasKey($user1->id, $processedmessages);
+        $this->assertStringContainsString($assignment1->name, $processedmessages[$user1->id]->fullmessagehtml);
+        $this->assertStringContainsString($assignment3->name, $processedmessages[$user1->id]->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment2->name, $processedmessages[$user1->id]->fullmessagehtml);
+        // User2 should receive a message for assignment2 and assignment3.
+        $this->assertArrayHasKey($user2->id, $processedmessages);
+        $this->assertStringContainsString($assignment2->name, $processedmessages[$user2->id]->fullmessagehtml);
+        $this->assertStringContainsString($assignment3->name, $processedmessages[$user2->id]->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment1->name, $processedmessages[$user2->id]->fullmessagehtml);
+        // User3 should receive a message for assignment3 only.
+        $this->assertArrayHasKey($user3->id, $processedmessages);
+        $this->assertStringContainsString($assignment3->name, $processedmessages[$user3->id]->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment1->name, $processedmessages[$user3->id]->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment2->name, $processedmessages[$user3->id]->fullmessagehtml);
     }
 
     /**
