@@ -104,8 +104,7 @@ export default class extends BulkAction {
         });
 
         // Handle save event.
-        modal.getRoot().on(ModalEvents.save, (e) => {
-            e.preventDefault();
+        modal.getRoot().on(ModalEvents.save, () => {
             modal.getRoot().find('form').submit();
         });
     }
