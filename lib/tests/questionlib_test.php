@@ -171,10 +171,8 @@ final class questionlib_test extends \advanced_testcase {
         $context2 = \context_module::instance($modqbank2->cmid);
         /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $questioncat1 = $questiongenerator->create_question_category(['contextid' =>
-            $context1->id]);
-        $questioncat2 = $questiongenerator->create_question_category(['contextid' =>
-            $context2->id]);
+        $questioncat1 = question_get_default_category($context1->id);
+        $questioncat2 = question_get_default_category($context2->id);
         $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat1->id]);
         $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat1->id]);
         $question3 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat2->id]);
@@ -209,7 +207,7 @@ final class questionlib_test extends \advanced_testcase {
 
         // Create some question categories and questions in this course.
         $modcontext = \context_module::instance($modqbank3->cmid);
-        $questioncat = $questiongenerator->create_question_category(['contextid' => $modcontext->id]);
+        $questioncat = question_get_default_category($modcontext->id);
         $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat->id]);
         $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $questioncat->id]);
 
@@ -1217,7 +1215,7 @@ final class questionlib_test extends \advanced_testcase {
         $context = $this->create_course_and_question_bank();
 
         $top = question_get_top_category($context->id, true);
-        $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
+        $cat1 = question_get_default_category($context->id);
         $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $cat2 = $questiongenerator->create_question_category(['parent' => $top->id]);
@@ -1255,7 +1253,7 @@ final class questionlib_test extends \advanced_testcase {
         $wrongcontext = \context_module::instance($qbank2->cmid);
 
         $top = question_get_top_category($bank1context->id, true);
-        $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
+        $cat1 = question_get_default_category($bank1context->id);
         $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $cat2 = $questiongenerator->create_question_category(['parent' => $top->id, 'contextid' => $wrongcontext->id]);

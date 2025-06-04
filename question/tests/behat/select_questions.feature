@@ -26,6 +26,7 @@ Feature: The questions in the question bank can be selected in various ways
       | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
 
   @javascript
   Scenario: The question text can be chosen all in the list of questions

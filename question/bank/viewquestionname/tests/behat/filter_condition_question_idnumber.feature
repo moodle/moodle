@@ -20,6 +20,7 @@ Feature: Filter questions by idnumber
       | Test questions   | numerical | b    | Answer the second question | q_02_bc  |
       | Test questions   | essay     | c    | Answer the third question  | Q_21_ca  |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "q_01_ab"
     And I should see "q_02_bc"
     And I should see "Q_21_ca"

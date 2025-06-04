@@ -83,7 +83,7 @@ final class question_bank_helper_test extends \advanced_testcase {
 
         $sharedmod1 = $sharedmodgen->create_instance(['course' => $course1]);
         $sharedmod1context = \context_module::instance($sharedmod1->cmid);
-        $sharedmod1qcat1 = $qgen->create_question_category(['contextid' => $sharedmod1context->id]);
+        $sharedmod1qcat1 = question_get_default_category($sharedmod1context->id);
         $sharedmod1qcat2 = $qgen->create_question_category(['contextid' => $sharedmod1context->id]);
         $sharedmod1qcat2child = $qgen->create_question_category([
             'contextid' => $sharedmod1context->id,
@@ -92,13 +92,13 @@ final class question_bank_helper_test extends \advanced_testcase {
         ]);
         $privatemod1 = $privatemodgen->create_instance(['course' => $course1]);
         $privatemod1context = \context_module::instance($privatemod1->cmid);
-        $privatemod1qcat1 = $qgen->create_question_category(['contextid' => $privatemod1context->id]);
+        $privatemod1qcat1 = question_get_default_category($privatemod1context->id);
         role_assign($roles['editingteacher']->id, $user->id, \context_module::instance($sharedmod1->cmid));
         role_assign($roles['editingteacher']->id, $user->id, \context_module::instance($privatemod1->cmid));
 
         $sharedmod2 = $sharedmodgen->create_instance(['course' => $course2]);
         $sharedmod2context = \context_module::instance($sharedmod2->cmid);
-        $sharedmod2qcat1 = $qgen->create_question_category(['contextid' => $sharedmod2context->id]);
+        $sharedmod2qcat1 = question_get_default_category($sharedmod2context->id);
         $sharedmod2qcat2 = $qgen->create_question_category(['contextid' => $sharedmod2context->id]);
         $sharedmod2qcat2child = $qgen->create_question_category([
             'contextid' => $sharedmod2context->id,
@@ -106,7 +106,7 @@ final class question_bank_helper_test extends \advanced_testcase {
         ]);
         $privatemod2 = $privatemodgen->create_instance(['course' => $course2]);
         $privatemod2context = \context_module::instance($privatemod2->cmid);
-        $privatemod1qcat1 = $qgen->create_question_category(['contextid' => $privatemod2context->id]);
+        $privatemod1qcat1 = question_get_default_category($privatemod2context->id);
         role_assign($roles['editingteacher']->id, $user->id, \context_module::instance($sharedmod2->cmid));
         role_assign($roles['editingteacher']->id, $user->id, \context_module::instance($privatemod2->cmid));
 

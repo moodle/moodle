@@ -18,13 +18,11 @@ Feature: A teacher can put questions in categories in the question bank
       | activity | name           | course | idnumber |
       | qbank    | Qbank 1        | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel    | reference | questioncategory   | name                        |
-      | Activity module | qbank1    | Top                | top                         |
-      | Activity module | qbank1    | top                | Default for qbank1          |
-      | Activity module | qbank1    | Default for qbank1 | Subcategory & < > " ' &amp; |
-      | Activity module | qbank1    | Default for qbank1 | Another subcat              |
-      | Activity module | qbank1    | top                | Used category               |
-      | Activity module | qbank1    | top                | Default & testing           |
+      | contextlevel    | reference | questioncategory    | name                        |
+      | Activity module | qbank1    | Default for Qbank 1 | Subcategory & < > " ' &amp; |
+      | Activity module | qbank1    | Default for Qbank 1 | Another subcat              |
+      | Activity module | qbank1    | top                 | Used category               |
+      | Activity module | qbank1    | top                 | Default & testing           |
     And the following "questions" exist:
       | questioncategory | qtype | name                      | questiontext                  |
       | Used category    | essay | Test question to be moved | Write about whatever you want |
@@ -57,7 +55,7 @@ Feature: A teacher can put questions in categories in the question bank
       | Subcategory & < > " ' &amp; | essay | Test question for renaming category | Write about whatever you want |
     And I open the action menu in "Subcategory & < > \" ' &amp;" "list_item"
     And I choose "Edit settings" in the open action menu
-    And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for qbank1"
+    And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for Qbank 1"
     And I set the following fields to these values:
       | Name            | New name     |
       | Category info   | I was edited |
@@ -81,11 +79,11 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
     And I should see "The category 'Used category' contains 1 questions"
-    And I select "Default for qbank1" from the "Category" singleselect
+    And I select "Default for Qbank 1" from the "Category" singleselect
     And I press "Save in category"
     Then I should not see "Used category"
     And I press "Add category"
-    And I should see "Default for qbank1 (1)"
+    And I should see "Default for Qbank 1 (1)"
 
   @_file_upload
   Scenario: Multi answer questions with their child questions can be moved to another category when the current category is deleted
@@ -107,7 +105,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: Filter questions by category and subcategories
     When I am on the "Qbank 1" "core_question > question bank" page
-    And I apply question bank filter "Category" with value "Default for qbank1"
+    And I apply question bank filter "Category" with value "Default for Qbank 1"
     Then I should not see "Question 1"
     When I set the field "Also show questions from subcategories" to "1"
     And I click on "Apply filters" "button"
@@ -127,6 +125,7 @@ Feature: A teacher can put questions in categories in the question bank
     And I follow "from question bank"
     And I click on "Switch bank" "button"
     And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I apply question bank filter "Category" with value "Default for Qbank 1"
     When I set the field "Also show questions from subcategories" to "1"
     And I click on "Apply filters" "button"
     Then I should see "Question 1" in the "categoryquestions" "table"
@@ -140,7 +139,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: Filter question by an invalid category should show validation error
     When I am on the "Qbank 1" "core_question > question bank" page
-    And I click on "Default for qbank1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I click on "Default for Qbank 1" "text" in the ".form-autocomplete-selection" "css_element"
     And I click on "Apply filters" "button"
     Then the "Category" field validity check should return "false"
     And the "Category" field validation message should contain "You must select a valid category"
@@ -148,7 +147,7 @@ Feature: A teacher can put questions in categories in the question bank
   Scenario: Correcting an invalid category should no longer show validation error
     When I am on the "Qbank 1" "core_question > question bank" page
     # First try to submit with a blank category.
-    And I click on "Default for qbank1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I click on "Default for Qbank 1" "text" in the ".form-autocomplete-selection" "css_element"
     And I click on "Apply filters" "button"
     # Then apply a correct category.
     And I apply question bank filter "Category" with value "Used category"

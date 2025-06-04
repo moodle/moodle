@@ -26,16 +26,16 @@ Feature: Questions in the question bank have versions
     And quiz "Quiz 1" contains the following questions:
       | question       | page |
       | First question | 1    |
+    And I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
 
   @javascript
   Scenario: Question version is displayed
-    Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
     Then I should see "v1 (latest)"
 
   @javascript
   Scenario: Question version change when question is altered
-    Given I am on the "Quiz 1" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Edit question" action for "First question" in the question bank
     And I should see "v1 (latest)"
     When I set the field "id_name" to "Renamed question v2"

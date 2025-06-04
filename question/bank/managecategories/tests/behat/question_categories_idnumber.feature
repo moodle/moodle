@@ -24,7 +24,6 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
     # Note need to create the top category each time.
     When the following "question categories" exist:
       | contextlevel    | reference | questioncategory | name           | idnumber |
-      | Activity module | qbank1    | Top              | top            |          |
       | Activity module | qbank1    | top              | Used category  | c1used   |
     And I am on the "Qbank 1" "core_question > question categories" page
     And I press "Add category"
@@ -49,7 +48,6 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
   Scenario: A question category can be edited and saved without changing the idnumber
     When the following "question categories" exist:
       | contextlevel    | reference | questioncategory | name           | idnumber |
-      | Activity module | qbank1    | Top              | top            |          |
       | Activity module | qbank1    | top              | Used category  | c1used   |
     And I am on the "Qbank 1" "core_question > question categories" page
     Then I open the action menu in "Used category" "list_item"

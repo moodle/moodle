@@ -254,6 +254,7 @@ Feature: Edit quiz page - remove multiple questions
 
     When I open the "last" add to quiz menu
     And I follow "a random question"
+    And I apply question bank filter "Category" with value "Test questions"
     And I set the field "Number of random questions" to "3"
     And I press "Add random question"
     And I click on "Select multiple items" "button"

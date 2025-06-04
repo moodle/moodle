@@ -47,6 +47,7 @@ Feature: Adding questions to a quiz from the question bank
     When I am on the "Quiz 1" "mod_quiz > Edit" page
     And I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     Then I should see "foo" in the "question 01 name" "table_row"
     And I should see "bar" in the "question 02 name" "table_row"
     And I should see "qidnum" in the "question 02 name" "table_row"
@@ -70,6 +71,7 @@ Feature: Adding questions to a quiz from the question bank
     And I follow "from question bank"
     And I click on "Switch bank" "button"
     And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I apply question bank filter "Category" with value "Qbank questions"
     Then I should see "qbanktag1" in the "question 03 name" "table_row"
     And I should see "qbanktag2" in the "question 04 name" "table_row"
     And I apply question bank filter "Tag" with value "qbanktag1"
@@ -91,6 +93,7 @@ Feature: Adding questions to a quiz from the question bank
     When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
     And I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should see "question 02 name" in the "categoryquestions" "table"
     And I should not see "Feature question" in the "categoryquestions" "table"
@@ -149,6 +152,7 @@ Feature: Adding questions to a quiz from the question bank
     And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I open the "Page 1" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'question 03 name')]//input[@type='checkbox']" to "1"
     And I click on "Add selected questions to the quiz" "button"
     Then I should see "question 03 name" on quiz page "1"
@@ -158,6 +162,7 @@ Feature: Adding questions to a quiz from the question bank
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     And I set the field with xpath "//input[@type='checkbox' and @id='qbheadercheckbox']" to "1"
     And I press "Add selected questions to the quiz"
     Then I should see "question 01 name" on quiz page "1"
@@ -170,9 +175,11 @@ Feature: Adding questions to a quiz from the question bank
     When I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Current bank: Quiz 1"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "question 01 name"
     And I click on "Switch bank" "button"
     And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I apply question bank filter "Category" with value "Qbank questions"
     And I should see "question 03 name"
     But I should not see "question 01 name"
     And I click on "Select" "checkbox" in the "question 03 name" "table_row"
@@ -188,6 +195,7 @@ Feature: Adding questions to a quiz from the question bank
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     And I click on "Sort by Question ascending" "link"
     Then "question 01 name" "text" should appear before "question 02 name" "text"
     And I click on "Sort by Question descending" "link"
@@ -206,6 +214,7 @@ Feature: Adding questions to a quiz from the question bank
     When I set the field "Shuffle" to "1"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     Then I should see "question 01 name"
 
   Scenario: Question bank names are displayed in quiz questions
@@ -236,6 +245,7 @@ Feature: Adding questions to a quiz from the question bank
     And I follow "from question bank"
     And I click on "Switch bank" "button"
     And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I apply question bank filter "Category" with value "Qbank questions"
     And I click on "Select" "checkbox" in the "question 03 name" "table_row"
     And I click on "Add selected questions to the quiz" "button"
     When the following "role assigns" exist:

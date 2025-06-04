@@ -25,6 +25,7 @@ Feature: Time modified filter condition
       | Test questions   | Second question | Second question | ## 2024-01-10 11:00 ## |
       | Test questions   | Third question  | Third question  | ## 2024-01-10 12:00 ## |
     Given I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "First question"
     And I should see "Second question"
     And I should see "Third question"

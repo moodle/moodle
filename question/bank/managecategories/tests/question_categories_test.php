@@ -40,11 +40,11 @@ final class question_categories_test extends manage_category_test_base {
 
         // Create question categories for a course.
         $qbank = $this->create_qbank($this->create_course());
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $context = \context_module::instance($qbank->cmid);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat1->id]);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
         $qcat4 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat2->id]);
-        $context = \context_module::instance($qbank->cmid);
 
         // Create ordered tree.
         $questioncategories = new question_categories(
