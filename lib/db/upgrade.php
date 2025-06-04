@@ -1684,5 +1684,103 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025041400.08) {
+        // A [name => url] map of new OIDC endpoints to be updated/created.
+        $endpointuris = [
+            'discovery_endpoint' => 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+            'token_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            'userinfo_endpoint' => 'https://graph.microsoft.com/oidc/userinfo',
+            'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'device_authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/devicecode',
+            'end_session_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/logout',
+            'kerberos_endpoint' => 'https://login.microsoftonline.com/common/kerberos',
+        ];
+
+        // A [name] map of endpoints to be deleted.
+        $deletedendpointuris = [
+            'userpicture_endpoint',
+        ];
+
+        // A [internalfield => externalfield] map of new OIDC-based user field mappings to be updated/created.
+        $userfieldmappings = [
+            'idnumber' => 'sub',
+            'firstname' => 'givenname',
+            'lastname' => 'familyname',
+            'email' => 'email',
+            'lang' => 'locale',
+        ];
+
+        $admin = get_admin();
+        $adminid = $admin ? $admin->id : '0';
+
+        $microsoftservices = $DB->get_records('oauth2_issuer', ['servicetype' => 'microsoft']);
+        foreach ($microsoftservices as $microsoftservice) {
+            $time = time();
+
+            // Insert/update the new endpoints.
+            foreach ($endpointuris as $endpointname => $endpointuri) {
+                $endpoint = ['issuerid' => $microsoftservice->id, 'name' => $endpointname];
+                $endpointid = $DB->get_field('oauth2_endpoint', 'id', $endpoint);
+
+                if ($endpointid) {
+                    $endpoint = array_merge($endpoint, [
+                        'id' => $endpointid,
+                        'url' => $endpointuri,
+                        'timemodified' => $time,
+                        'usermodified' => $adminid,
+                    ]);
+                    $DB->update_record('oauth2_endpoint', $endpoint);
+                } else {
+                    $endpoint = array_merge($endpoint, [
+                        'url' => $endpointuri,
+                        'timecreated' => $time,
+                        'timemodified' => $time,
+                        'usermodified' => $adminid,
+                    ]);
+                    $DB->insert_record('oauth2_endpoint', $endpoint);
+                }
+            }
+
+            // Delete the old endpoints.
+            foreach ($deletedendpointuris as $endpointname) {
+                $endpoint = ['issuerid' => $microsoftservice->id, 'name' => $endpointname];
+                $DB->delete_records('oauth2_endpoint', $endpoint);
+            }
+
+            // Insert/update new user field mappings.
+            foreach ($userfieldmappings as $internalfieldname => $externalfieldname) {
+                $fieldmap = ['issuerid' => $microsoftservice->id, 'internalfield' => $internalfieldname];
+                $fieldmapid = $DB->get_field('oauth2_user_field_mapping', 'id', $fieldmap);
+
+                if ($fieldmapid) {
+                    $fieldmap = array_merge($fieldmap, [
+                        'id' => $fieldmapid,
+                        'externalfield' => $externalfieldname,
+                        'timemodified' => $time,
+                        'usermodified' => $adminid,
+                    ]);
+                    $DB->update_record('oauth2_user_field_mapping', $fieldmap);
+                } else {
+                    $fieldmap = array_merge($fieldmap, [
+                        'externalfield' => $externalfieldname,
+                        'timecreated' => $time,
+                        'timemodified' => $time,
+                        'usermodified' => $adminid,
+                    ]);
+                    $DB->insert_record('oauth2_user_field_mapping', $fieldmap);
+                }
+            }
+
+            // Update the baseurl for the issuer.
+            $microsoftservice->baseurl = 'https://login.microsoftonline.com/common/v2.0';
+            $microsoftservice->timemodified = $time;
+            $microsoftservice->usermodified = $adminid;
+            $DB->update_record('oauth2_issuer', $microsoftservice);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025041400.08);
+    }
+
     return true;
 }

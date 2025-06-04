@@ -54,13 +54,17 @@ Feature: Basic OAuth2 functionality
     And I should see "Testing service"
     And "Allow login" "icon" should exist in the "Testing service" "table_row"
     And "Allow services" "icon" should exist in the "Testing service" "table_row"
-    And I should see "-" in the "Testing service" "table_row"
+    And "Service discovery successful" "icon" should exist in the "Testing service" "table_row"
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
-    And I should not see "discovery_endpoint"
+    And I should see "discovery_endpoint"
+    And I should see "device_authorization_endpoint"
     And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
-    And I should see "firstname" in the "givenName" "table_row"
+    And I should see "firstname" in the "givenname" "table_row"
+    And I should see "idnumber" in the "sub" "table_row"
+    And I should see "email" in the "email" "table_row"
+    And I should see "lang" in the "locale" "table_row"
     And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Testing service" "table_row"
     And I set the following fields to these values:
