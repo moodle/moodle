@@ -72,6 +72,12 @@ class primary extends view {
             }
         }
 
+        // Add the calendar link only for guest users.
+        if (isguestuser()) {
+            $this->add(get_string('calendar', 'calendar'), new \moodle_url('/calendar/view.php?view=month'), self::TYPE_ROOTNODE,
+                null, 'calendar');
+        }
+
         $showsiteadminnode = empty($this->page->theme->removedprimarynavitems) ||
             !in_array('siteadminnode', $this->page->theme->removedprimarynavitems);
 
@@ -132,6 +138,10 @@ class primary extends view {
             } else if (in_array('siteadminnode', $children) && $node = $this->get_site_admin_node()) {
                 if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node(URL_MATCH_EXACT)) {
                     $activekey = 'siteadminnode';
+                }
+            } else if (in_array('calendar', $children) && $node = $this->find('calendar', self::TYPE_ROOTNODE)) {
+                if ($node->search_for_active_node(URL_MATCH_BASE)) {
+                    $activekey = 'calendar';
                 }
             }
 
