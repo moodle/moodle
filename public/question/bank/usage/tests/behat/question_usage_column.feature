@@ -9,12 +9,9 @@ Feature: Use the qbank plugin manager page for question usage
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name           | questiontext              |
-      | Test questions   | truefalse | First question | Answer the first question |
+      | questioncategory      | qtype     | name           | questiontext              |
+      | Default for Test quiz | truefalse | First question | Answer the first question |
     And I change window size to "large"
 
   Scenario: Enable/disable question usage column from the base view
@@ -32,8 +29,7 @@ Feature: Use the qbank plugin manager page for question usage
   @javascript
   Scenario: Question usage modal should work without any usage data
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
-    And I apply question bank filter "Category" with value "Test questions"
-    And I should see "Test questions"
+    And I should see "Default for Test quiz"
     And I should see "0" on the usage column
     When I click "0" on the usage column
     Then I should see "Version 1"
@@ -47,8 +43,7 @@ Feature: Use the qbank plugin manager page for question usage
       | question       | page |
       | First question | 1    |
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
-    And I apply question bank filter "Category" with value "Test questions"
-    And I should see "Test questions"
+    And I should see "Default for Test quiz"
     And I should see "1" on the usage column
     When I click "1" on the usage column
     Then "Test quiz" "table_row" should exist in the "question-usage_table" "region"

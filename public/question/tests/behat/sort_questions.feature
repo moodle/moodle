@@ -17,14 +17,11 @@ Feature: The questions in the question bank can be sorted in various ways
     And the following "activities" exist:
       | activity   | name    | intro              | course | idnumber |
       | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name              | user     | questiontext    | idnumber    |
-      | Test questions   | essay     | A question 1 name | admin    | Question 1 text | numidnum</a |
-      | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |             |
-      | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text | numidnum</c |
+      | questioncategory    | qtype     | name              | user     | questiontext    | idnumber    |
+      | Default for Qbank 1 | essay     | A question 1 name | admin    | Question 1 text | numidnum</a |
+      | Default for Qbank 1 | essay     | B question 2 name | teacher1 | Question 2 text |             |
+      | Default for Qbank 1 | numerical | C question 3 name | teacher1 | Question 3 text | numidnum</c |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
 
   Scenario: The questions are sorted by type by default

@@ -41,8 +41,8 @@ final class generator_test extends \advanced_testcase {
         $count = $DB->count_records('question_categories');
 
         $cat = $generator->create_question_category();
-        $count += $count ? 1 : 2; // Calling $generator->create_question_category() for the first time
-                                  // creates a Top category as well.
+        $count += $count ? 1 : 3; // Calling $generator->create_question_category() for the first time
+                                  // creates a Top and Default category as well.
         $this->assertEquals($count, $DB->count_records('question_categories'));
 
         $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);

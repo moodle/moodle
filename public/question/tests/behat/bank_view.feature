@@ -27,9 +27,8 @@ Feature: A bank view with questions can be managed
     | questioncategory | qtype       | name                    | questiontext                  | idnumber |
     | Test questions   | essay       | Essay test question     | Write about whatever you want | qid      |
     | Test questions   | numerical   | Numerical test question | Write about whatever you want | qid      |
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to "Question banks" in current page administration
-    And I click on "Qbank 1" "link"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Essay test question"
     And I should see "Numerical test question"
     And I choose "Delete" action for "Essay test question" in the question bank
@@ -45,9 +44,8 @@ Feature: A bank view with questions can be managed
     | Test questions   | missingtype   | Unknown type question   | Write about whatever you want |
     | Test questions   | truefalse     | Truefalse type question | Write about whatever you want |
     | Test questions   | essay         | Essay type question     | Write about whatever you want |
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to "Question banks" in current page administration
-    And I click on "Qbank 1" "link"
+    And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Unknown type question"
     And I should see "Truefalse type question"
     And I should see "Essay type question"

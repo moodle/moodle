@@ -19,21 +19,18 @@ Feature: Edit quiz page - pagination
     And the following "activities" exist:
       | activity   | name   | course | idnumber | questionsperpage | navmethod  |
       | quiz       | Quiz 1 | C1     | quiz1    | 0                | sequential |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1     | Quiz questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name | questiontext    |
-      | Quiz questions   | truefalse | 1    | Question1 text  |
-      | Quiz questions   | truefalse | 2    | Question2 text  |
-      | Quiz questions   | truefalse | 3    | Question3 text  |
-      | Quiz questions   | truefalse | 4    | Question4 text  |
-      | Quiz questions   | truefalse | 5    | Question5 text  |
-      | Quiz questions   | truefalse | 6    | Question6 text  |
-      | Quiz questions   | truefalse | 7    | Question7 text  |
-      | Quiz questions   | truefalse | 8    | Question8 text  |
-      | Quiz questions   | truefalse | 9    | Question9 text  |
-      | Quiz questions   | truefalse | 10   | Question10 text |
+      | questioncategory   | qtype     | name | questiontext    |
+      | Default for Quiz 1 | truefalse | 1    | Question1 text  |
+      | Default for Quiz 1 | truefalse | 2    | Question2 text  |
+      | Default for Quiz 1 | truefalse | 3    | Question3 text  |
+      | Default for Quiz 1 | truefalse | 4    | Question4 text  |
+      | Default for Quiz 1 | truefalse | 5    | Question5 text  |
+      | Default for Quiz 1 | truefalse | 6    | Question6 text  |
+      | Default for Quiz 1 | truefalse | 7    | Question7 text  |
+      | Default for Quiz 1 | truefalse | 8    | Question8 text  |
+      | Default for Quiz 1 | truefalse | 9    | Question9 text  |
+      | Default for Quiz 1 | truefalse | 10   | Question10 text |
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | 1        | 1    |

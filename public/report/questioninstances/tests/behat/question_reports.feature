@@ -14,13 +14,10 @@ Feature: A Teacher can generate question instance reports
     And the following "activities" exist:
       | activity | course | name           |
       | quiz     | C1     | Test quiz Q001 |
-    And the following "question categories" exist:
-      | contextlevel    | reference      | name           |
-      | Activity module | Test quiz Q001 | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype       | name |
-      | Test questions   | truefalse   | TF   |
-      | Test questions   | shortanswer | SA   |
+      | questioncategory           | qtype       | name |
+      | Default for Test quiz Q001 | truefalse   | TF   |
+      | Default for Test quiz Q001 | shortanswer | SA   |
     And quiz "Test quiz Q001" contains the following questions:
       | question | page | maxmark |
       | TF       | 1    | 5.0     |

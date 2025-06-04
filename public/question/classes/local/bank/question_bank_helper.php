@@ -611,6 +611,9 @@ class question_bank_helper {
         $data->name = $bankname;
         $data->type = in_array($type, self::SHARED_TYPES) ? $type : self::TYPE_STANDARD;
         $data->showdescription = $type === self::TYPE_STANDARD ? 0 : 1;
+        // Don't create the default category if this is being created by the system as part of a migration or restore,
+        // existing categories will be migrated to the new context.
+        $data->skipdefaultcategory = $type === self::TYPE_SYSTEM;
 
         $mod = add_moduleinfo($data, $course);
 

@@ -538,7 +538,7 @@ final class category_manager_test extends \advanced_testcase {
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $context = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $qcategory1 = $questiongenerator->create_question_category(['contextid' => $context->id]);
+        $qcategory1 = question_get_default_category($context->id);
 
         // Try to delete an only child of top category having also at least one child.
         $this->expectException('moodle_exception');
@@ -591,15 +591,15 @@ final class category_manager_test extends \advanced_testcase {
         $context = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $topcategory = question_get_top_category($context->id, true);
-        $qcategory1 = $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $this->assertEquals(1, $manager->get_max_sortorder($topcategory->id));
+        $qcategory1 = question_get_default_category($context->id);
+        $this->assertEquals(999, $manager->get_max_sortorder($topcategory->id));
 
         $qcategory2 = $questiongenerator->create_question_category(['contextid' => $context->id, 'parent' => $qcategory1->id]);
 
         $this->assertEquals(1, $manager->get_max_sortorder($qcategory1->id));
 
         $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $this->assertEquals(2, $manager->get_max_sortorder($topcategory->id));
+        $this->assertEquals(1000, $manager->get_max_sortorder($topcategory->id));
 
         $this->assertEquals(0, $manager->get_max_sortorder($qcategory2->id));
         $questiongenerator->create_question_category(['contextid' => $context->id, 'parent' => $qcategory2->id]);

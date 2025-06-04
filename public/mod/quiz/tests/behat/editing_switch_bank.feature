@@ -51,7 +51,7 @@ Feature: Switching question bank when adding questions to a quiz
     But "Qbank 4" "autocomplete_suggestions" should not exist
     And I click on "C2 - Qbank 3" item in the autocomplete list
     And I should see "Current bank: Qbank 3"
-    And I should see "Test questions 3"
+    And I should see "Default for Qbank 3"
 
   Scenario: Viewing question banks not in the current course show as recently accessed
     Given "teacher" has recently viewed the "qbank1" "qbank" question bank
