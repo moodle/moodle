@@ -508,7 +508,9 @@ $string['missingitemtypeoreid'] = 'Array key (itemtype or eid) missing';
 $string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
 $string['modgrade'] = 'Grade';
-$string['modgrade_help'] = 'Select the type of grading used for this activity. If \'scale\' is chosen, you can then choose the scale from the drop-down menu. If using point grading, you can then enter the maximum grade available for this activity.';
+$string['modgrade_help'] = '* Point - A numerical value
+* None - Feedback only
+* Scale - An item from a list';
 $string['modgradecantchangegradetype'] = 'You cannot change the type, as grades already exist for this item.';
 $string['modgradecantchangegradetypemsg'] = 'Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades.';
 $string['modgradecantchangegradetyporscalemsg'] = 'Some grades have already been awarded, so the grade type and scale cannot be changed.';
