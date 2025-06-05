@@ -129,6 +129,7 @@ class issuer extends persistent {
             \core\oauth2\issuer::EVERYWHERE => get_string('issueruseineverywhere', 'tool_oauth2'),
             \core\oauth2\issuer::LOGINONLY => get_string('issueruseinloginonly', 'tool_oauth2'),
             \core\oauth2\issuer::SERVICEONLY => get_string('issueruseininternalonly', 'tool_oauth2'),
+            \core\oauth2\issuer::SMTPWITHXOAUTH2 => get_string('issueruseinsmtpwithoauth', 'tool_oauth2'),
         ];
         $mform->addElement('select', 'showonloginpage', get_string('issuerusein', 'tool_oauth2'), $options);
         $mform->addHelpButton('showonloginpage', 'issuerusein', 'tool_oauth2');
@@ -138,6 +139,13 @@ class issuer extends persistent {
         $mform->addRule('loginpagename', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginpagename', 'issuerloginpagename', 'tool_oauth2');
         $mform->hideIf('loginpagename', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+        $mform->hideIf('loginpagename', 'showonloginpage', 'eq', \core\oauth2\issuer::SMTPWITHXOAUTH2);
+
+        // Connected email for XOAUTH2.
+        $mform->addElement('text', 'systememail', get_string('issuersmtpsystememail', 'tool_oauth2'));
+        $mform->setType('systememail', PARAM_EMAIL);
+        $mform->addHelpButton('systememail', 'issuersmtpsystememail', 'tool_oauth2');
+        $mform->hideIf('systememail', 'showonloginpage', 'ne', \core\oauth2\issuer::SMTPWITHXOAUTH2);
 
         // Login scopes.
         $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
