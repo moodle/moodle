@@ -353,8 +353,14 @@ class notification_helper {
 
         $stringparams = [
             'firstname' => $user->firstname,
-            'assignmentname' => $assignmentobj->get_instance()->name,
-            'coursename' => $assignmentobj->get_course()->fullname,
+            'assignmentname' => format_string(
+                $assignmentobj->get_instance()->name,
+                options: ['context' => $assignmentobj->get_context()],
+            ),
+            'coursename' => format_string(
+                $assignmentobj->get_course()->fullname,
+                options: ['context' => $assignmentobj->get_course_context()],
+            ),
             'duedate' => userdate($duedate),
             'url' => $url,
         ];
@@ -363,7 +369,7 @@ class notification_helper {
             'user' => \core_user::get_user($user->id),
             'url' => $url->out(false),
             'subject' => get_string('assignmentduesoonsubject', 'mod_assign', $stringparams),
-            'assignmentname' => $assignmentobj->get_instance()->name,
+            'assignmentname' => $stringparams['assignmentname'],
             'html' => get_string('assignmentduesoonhtml', 'mod_assign', $stringparams),
             'sms' => get_string('assignmentduesoonsms', 'mod_assign', $stringparams),
         ];
@@ -447,8 +453,14 @@ class notification_helper {
 
         $stringparams = [
             'firstname' => $user->firstname,
-            'assignmentname' => $assignmentobj->get_instance()->name,
-            'coursename' => $assignmentobj->get_course()->fullname,
+            'assignmentname' => format_string(
+                $assignmentobj->get_instance()->name,
+                options: ['context' => $assignmentobj->get_context()],
+            ),
+            'coursename' => format_string(
+                $assignmentobj->get_course()->fullname,
+                options: ['context' => $assignmentobj->get_course_context()],
+            ),
             'duedate' => userdate($duedate),
             'url' => $url,
             'cutoffsnippet' => $snippet,
@@ -458,7 +470,7 @@ class notification_helper {
             'user' => \core_user::get_user($user->id),
             'url' => $url->out(false),
             'subject' => get_string('assignmentoverduesubject', 'mod_assign', $stringparams),
-            'assignmentname' => $assignmentobj->get_instance()->name,
+            'assignmentname' => $stringparams['assignmentname'],
             'html' => get_string('assignmentoverduehtml', 'mod_assign', $stringparams),
             'sms' => get_string('assignmentoverduesms', 'mod_assign', $stringparams),
         ];
@@ -531,8 +543,14 @@ class notification_helper {
                 'action' => 'view',
             ];
             $assignmentsfordigest[$assignment->id] = [
-                'assignmentname' => $assignmentobj->get_instance()->name,
-                'coursename' => $assignmentobj->get_course()->fullname,
+                'assignmentname' => format_string(
+                    $assignmentobj->get_instance()->name,
+                    options: ['context' => $assignmentobj->get_context()],
+                ),
+                'coursename' => format_string(
+                    $assignmentobj->get_course()->fullname,
+                    options: ['context' => $assignmentobj->get_course_context()],
+                ),
                 'duetime' => userdate($duedate, get_string('strftimetime12', 'langconfig')),
                 'url' => new \moodle_url('/mod/assign/view.php', $urlparams),
             ];
