@@ -152,7 +152,7 @@ Feature: Saving, using and deleting feedback templates
     And "My course template" "text" should not exist in the ".coursetemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".coursetemplates" "css_element"
 
-  @javascript
+  @javascript @accessibility
   Scenario: Manager can delete both course and public templates
     # Save feedback as both public and course template
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
@@ -166,10 +166,11 @@ Feature: Saving, using and deleting feedback templates
     And I choose "Save as new template" in the open action menu
     And I set the field "Name" to "My course template"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
-    # Delete course template
     And I navigate to "Templates" in current page administration
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
     Then "My public template" "text" should exist in the ".publictemplates" "css_element"
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
+    # Delete course template
     And I click on "Delete template" "link" in the "My course template" "table_row"
     And I should see "Are you sure you want to delete this template?"
     And I press "Yes"
