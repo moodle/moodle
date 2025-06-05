@@ -29,6 +29,8 @@ Feature: Use the activity chooser to insert activities anywhere in a section
     And "Insert content before 'Test Forum'" "button" should not be visible
     When I hover "Insert content before 'Test Forum'" "button"
     Then "Insert content before 'Test Forum'" "button" should be visible
+    And I hover "Insert content in section 'New section'" "button"
+    Then "Insert content in section 'New section'" "button" should be visible
 
   Scenario: The activity chooser can be used to insert modules before existing modules
     Given I change window size to "large"

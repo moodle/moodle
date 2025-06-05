@@ -23,6 +23,7 @@
     {
         "hasactionlinks": false,
         "sectionnum": 0,
+        "sectionname": "Section example",
         "modid": 1,
         "activityname": "Activity example",
         "sectionreturn": 0
@@ -44,10 +45,13 @@
             data-action="open-addingcontent"
             {{#modid}}
             data-beforemod="{{modid}}"
+            aria-label="{{#str}}insertcontentbefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
+            {{/modid}}
+            {{^modid}}
+            aria-label="{{#str}}insertcontentsection, core, { "sectionname": {{#quote}} {{sectionname}} {{/quote}} } {{/str}}"
             {{/modid}}
             aria-haspopup="true"
             aria-expanded="false"
-            aria-label="{{#str}}insertcontentbefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
             tabindex="0"
             title="{{#str}}addcontent, core{{/str}}"
     >
