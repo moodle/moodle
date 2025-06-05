@@ -494,6 +494,12 @@ class notification_helper {
                 continue;
             }
 
+            // Check if the module is visible to the user.
+            $cm = $assignmentobj->get_course_module();
+            if (!\core_availability\info_module::is_user_visible($cm, $userid)) {
+                continue;
+            }
+
             // Check if the due date is still within range.
             $assignmentobj->update_effective_access($userid);
             $duedate = $assignmentobj->get_instance($userid)->duedate;
