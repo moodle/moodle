@@ -75,4 +75,62 @@ final class legacy_question_set_conversion_test extends \advanced_testcase {
 
     }
 
+    /**
+     * Verifies that a legacy tag filter re-uses an existing tag that
+     * lives in the default collection and does not create a duplicate.
+     *
+     * @covers \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition
+     * @return void
+     */
+    public function test_tag_conversion_uses_existing_tag_in_default_collection(): void {
+        $this->resetAfterTest();
+
+        // Prepare a tag that already exists in the default collection.
+        $defaultcollectionid = \core_tag_collection::get_default();
+
+        // Create a tag inside that collection.
+        $tag = \core_tag_tag::create_if_missing($defaultcollectionid, ['legacytag'])['legacytag'];
+
+        // Legacy random-question filter – tag specified as "id,rawname".
+        $legacyfilter = ['tags' => ["{$tag->id},legacytag"]];
+        $converted = question_reference_manager::convert_legacy_set_reference_filter_condition($legacyfilter);
+
+        $this->assertEquals(
+            [$tag->id],
+            $converted['filter']['qtagids']['values'],
+            'Converter should preserve the existing tag ID and avoid duplicates.'
+        );
+    }
+
+    /**
+     * Verifies that a legacy tag filter respects a custom collection after
+     * the *question* tag-area has been moved there.
+     *
+     * @covers \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition
+     * @return void
+     */
+    public function test_tag_conversion_respects_custom_collection(): void {
+        $this->resetAfterTest();
+
+        // Create a custom collection and move the question tag-area to it.
+        $customcollection = \core_tag_collection::create((object) [
+            'name' => 'Questions',
+            'component' => 'core_question',
+            'searchable' => 0,
+        ]);
+        $questionarea = \core_tag_area::get_areas()['question']['core_question'];
+        \core_tag_area::update($questionarea, ['tagcollid' => $customcollection->id]);
+
+        // Create a tag inside that collection.
+        $tag = \core_tag_tag::create_if_missing($customcollection->id, ['legacytag'])['legacytag'];
+
+        $legacyfilter = ['tags' => ["{$tag->id},legacytag"]];
+        $converted = question_reference_manager::convert_legacy_set_reference_filter_condition($legacyfilter);
+
+        $this->assertEquals(
+            [$tag->id],
+            $converted['filter']['qtagids']['values'],
+            'Converter should use the tag ID from the custom collection.'
+        );
+    }
 }
