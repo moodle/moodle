@@ -53,7 +53,10 @@ class mod_feedback_templates_table extends flexible_table {
             $tablecolumns[] = 'actions';
         }
 
-        $tableheaders = array(get_string('template', 'feedback'), '');
+        $tableheaders = [
+            get_string('template', 'feedback'),
+            html_writer::span(get_string('actions'), 'sr-only'),
+        ];
 
         $this->set_attribute('class', 'templateslist');
 

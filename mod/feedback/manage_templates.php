@@ -80,12 +80,12 @@ echo $OUTPUT->header();
 if (!$mode) {
     echo $renderer->main_action_bar($actionbar);
 }
-echo $OUTPUT->heading(get_string('templates', 'mod_feedback'), 3);
+echo $OUTPUT->heading(get_string('templates', 'mod_feedback'), 2);
 
 // First we get the course templates.
 $templates = feedback_get_template_list($course, 'own');
 echo $OUTPUT->box_start('coursetemplates');
-echo $OUTPUT->heading(get_string('course'), 4);
+echo $OUTPUT->heading(get_string('course'), 3);
 
 $baseurl = new moodle_url('/mod/feedback/use_templ.php', $params);
 $tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl, $mode);
@@ -94,7 +94,7 @@ echo $OUTPUT->box_end();
 
 $templates = feedback_get_template_list($course, 'public');
 echo $OUTPUT->box_start('publictemplates');
-echo $OUTPUT->heading(get_string('public', 'feedback'), 4);
+echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
 $tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl, $mode);
 $tablepublic->display($templates);
 echo $OUTPUT->box_end();
