@@ -74,12 +74,12 @@ $PAGE->activityheader->set_attrs([
     "description" => ''
 ]);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('templates', 'mod_feedback'), 3);
+echo $OUTPUT->heading(get_string('templates', 'mod_feedback'));
 
 // First we get the course templates.
 $templates = feedback_get_template_list($course, 'own');
 echo $OUTPUT->box_start('coursetemplates');
-echo $OUTPUT->heading(get_string('coursetemplates', 'mod_feedback'), 4);
+echo $OUTPUT->heading(get_string('coursetemplates', 'mod_feedback'), 3);
 
 $baseurl = new moodle_url('/mod/feedback/use_templ.php', $params);
 $tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl);
@@ -88,7 +88,7 @@ echo $OUTPUT->box_end();
 
 $templates = feedback_get_template_list($course, 'public');
 echo $OUTPUT->box_start('publictemplates');
-echo $OUTPUT->heading(get_string('sitetemplates', 'mod_feedback'), 4);
+echo $OUTPUT->heading(get_string('sitetemplates', 'mod_feedback'), 3);
 $tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl);
 $tablepublic->display($templates);
 echo $OUTPUT->box_end();
