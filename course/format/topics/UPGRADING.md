@@ -1,5 +1,13 @@
 # format_topics Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Now the custom sections format won't ask for initial sections on the creation form. Instead it will use the system number of sections settings directly.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+
 ## 5.0
 
 ### Deprecated

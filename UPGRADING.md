@@ -20,6 +20,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
 
   For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
+- There is a new `core/page_title` Javascript module for manipulating the current page title
+
+  For more information see [MDL-84804](https://tracker.moodle.org/browse/MDL-84804)
 
 #### Changed
 
@@ -51,6 +54,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
 
+### core_auth
+
+#### Added
+
+- A new method called `get_additional_upgrade_token_parameters` has been added to `oauth2_client` class. This will allow custom clients to override this one and add their extra parameters for upgrade token request.
+
+  For more information see [MDL-80380](https://tracker.moodle.org/browse/MDL-80380)
+
 ### core_badges
 
 #### Removed
@@ -66,6 +77,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
 
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
+
+### core_courseformat
+
+#### Changed
+
+- The param $maxsections of get_num_sections_data in addsection output is not used anymore. If your format overrides this method, you should add a default value 0 to be consistent with the new implementation.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+
+#### Deprecated
+
+- The maxsections setting is now considered deprecated and will be removed in Moodle 6.0. Consider implementing your own setting in your format plugin if needed.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+- The format base method get_max_sections has been deprecated, as the maxsections setting is also deprecated and no longer in use.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
 
 ### core_grades
 
@@ -106,6 +134,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
 
+#### Fixed
+
+- The unit test repeated\_restore\_test::test\_restore\_course\_with\_same\_stamp\_questions was passing incorrectly on 5.x for question types that use answers.
+  Maintainers of third-party question types may want to re-run the test with the fix in place, or if they have copied parts of this test as the basis of a test in their own plugin, review the changes and see if they should be reflected in their own test.
+
+  For more information see [MDL-85556](https://tracker.moodle.org/browse/MDL-85556)
+
+### core_reportbuilder
+
+#### Added
+
+- The `report_action` class now accepts a `pix_icon` to include inside the rendered action element
+
+  For more information see [MDL-85216](https://tracker.moodle.org/browse/MDL-85216)
+
 ### core_user
 
 #### Added
@@ -121,6 +164,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The "Main menu" block has been renamed to "Additional activities." Its title is now customizable, and it can be used in course formats without a dedicated view page (for instance, Single activity). On the Home page, this block has also been renamed; administrators will need to manually revert the name if they wish to retain "Main menu" after upgrading.
 
   For more information see [MDL-85392](https://tracker.moodle.org/browse/MDL-85392)
+
+### format_topics
+
+#### Added
+
+- Now the custom sections format won't ask for initial sections on the creation form. Instead it will use the system number of sections settings directly.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+
+### format_weeks
+
+#### Added
+
+- The weekly sections format now has a system setting called Maximum initial number of weeks that replaced the old "Max sections" when creating a new course
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
 
 ### gradereport_grader
 

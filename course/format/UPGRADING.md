@@ -1,5 +1,22 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 5.1dev
+
+### Changed
+
+- The param $maxsections of get_num_sections_data in addsection output is not used anymore. If your format overrides this method, you should add a default value 0 to be consistent with the new implementation.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+
+### Deprecated
+
+- The maxsections setting is now considered deprecated and will be removed in Moodle 6.0. Consider implementing your own setting in your format plugin if needed.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+- The format base method get_max_sections has been deprecated, as the maxsections setting is also deprecated and no longer in use.
+
+  For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+
 ## 5.0
 
 ### Added
