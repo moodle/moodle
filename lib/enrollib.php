@@ -3735,7 +3735,7 @@ abstract class enrol_plugin {
         $message->fullmessagehtml = $messagehtml;
         $message->notification = 1;
         $message->contexturl = $a->profileurl;
-        $message->contexturlname = $course->fullname;
+        $message->contexturlname = $a->coursename;
 
         message_send($message);
     }
