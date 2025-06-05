@@ -77,6 +77,8 @@ if ($attemptobj->is_own_attempt()) {
 
 // Prepare summary informat about this question attempt.
 $summary = new attempt_summary_information();
+// Set the caption.
+$summary->set_caption(get_string('summaryofattempt', 'quiz'));
 
 // Student name.
 $userpicture = new user_picture($student);
