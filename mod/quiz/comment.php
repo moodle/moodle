@@ -58,7 +58,8 @@ echo $output->header();
 
 // Prepare summary information about this question attempt.
 $summary = new attempt_summary_information();
-
+// Set the caption.
+$summary->set_caption(get_string('summaryofattempt', 'quiz'));
 // Student name.
 $userpicture = new user_picture($student);
 $userpicture->courseid = $attemptobj->get_courseid();
