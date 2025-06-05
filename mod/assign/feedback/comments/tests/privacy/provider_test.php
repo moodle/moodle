@@ -43,7 +43,7 @@ final class provider_test extends provider_testcase {
         $submission = new \stdClass();
         $submission->assignment = $assign->get_instance()->id;
         $submission->userid = $student->id;
-        $submission->timecreated = time();
+        $submission->timecreated = \core\di::get(\core\clock::class)->time();
         $submission->onlinetext_editor = ['text' => $submissiontext,
                                          'format' => FORMAT_MOODLE];
 

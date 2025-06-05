@@ -1269,7 +1269,7 @@ class assign_grading_table extends table_sql implements renderable {
                         $submissioninfo .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
                     }
                 } else if (!$timesubmitted || $status == ASSIGN_SUBMISSION_STATUS_NEW) {
-                    $now = time();
+                    $now = \core\di::get(\core\clock::class)->time();
                     if ($due && ($now > $due)) {
                         $overduestr = get_string('overdue', 'assign', format_time($now - $due));
                         $submissioninfo .= $this->output->container($overduestr, 'overduesubmission');
@@ -1787,8 +1787,9 @@ class assign_grading_table extends table_sql implements renderable {
         if (empty($assignment->blindmarking)) {
             $result = array_merge($result, array('userid' => SORT_ASC));
         } else {
+            $now = \core\di::get(\core\clock::class)->time();
             $result = array_merge($result, [
-                    'COALESCE(s.timecreated, '  . time()        . ')'   => SORT_ASC,
+                    'COALESCE(s.timecreated, '  . $now          . ')'   => SORT_ASC,
                     'COALESCE(s.id, '           . PHP_INT_MAX   . ')'   => SORT_ASC,
                     'um.id'                                             => SORT_ASC,
                 ]);

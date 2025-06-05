@@ -292,7 +292,7 @@ class assign {
      */
     public function show_intro() {
         if ($this->get_instance()->alwaysshowdescription ||
-                time() > $this->get_instance()->allowsubmissionsfromdate) {
+                \core\di::get(\core\clock::class)->time() > $this->get_instance()->allowsubmissionsfromdate) {
             return true;
         }
         return false;
@@ -733,8 +733,9 @@ class assign {
         // Add the database record.
         $update = new stdClass();
         $update->name = $formdata->name;
-        $update->timemodified = time();
-        $update->timecreated = time();
+        $now = \core\di::get(\core\clock::class)->time();
+        $update->timemodified = $now;
+        $update->timecreated = $now;
         $update->course = $formdata->course;
         $update->courseid = $formdata->course;
         $update->intro = $formdata->intro;
@@ -1528,7 +1529,7 @@ class assign {
         $update = new stdClass();
         $update->id = $formdata->instance;
         $update->name = $formdata->name;
-        $update->timemodified = time();
+        $update->timemodified = \core\di::get(\core\clock::class)->time();
         $update->course = $formdata->course;
         $update->intro = $formdata->intro;
         $update->introformat = $formdata->introformat;
@@ -2358,8 +2359,9 @@ class assign {
                 // Note, different DBs have different ordering of NULL values.
                 // Therefore we coalesce the current time into the timecreated field, and the max possible integer into
                 // the ID field.
+                $now = \core\di::get(\core\clock::class)->time();
                 if (empty($tablesort)) {
-                    $orderby = "COALESCE(s.timecreated, " . time() . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
+                    $orderby = "COALESCE(s.timecreated, " . $now . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
                 }
             }
 
@@ -2773,8 +2775,8 @@ class assign {
         global $DB;
 
         // Only ever send a max of one days worth of updates.
-        $yesterday = time() - (24 * 3600);
-        $timenow   = time();
+        $timenow = \core\di::get(\core\clock::class)->time();
+        $yesterday = $timenow - (24 * 3600);
         $task = \core\task\manager::get_scheduled_task(mod_assign\task\cron_task::class);
         $lastruntime = $task->get_last_run_time();
 
@@ -3008,7 +3010,7 @@ class assign {
     public function update_grade($grade, $reopenattempt = false) {
         global $DB;
 
-        $grade->timemodified = time();
+        $grade->timemodified = \core\di::get(\core\clock::class)->time();
 
         if (!empty($grade->workflowstate)) {
             $validstates = $this->get_marking_workflow_states_for_current_user();
@@ -3254,7 +3256,7 @@ class assign {
                 $action = optional_param('action', '', PARAM_TEXT);
                 if ($action == 'editsubmission') {
                     if (empty($submission->timestarted) && $this->get_instance()->timelimit) {
-                        $submission->timestarted = time();
+                        $submission->timestarted = \core\di::get(\core\clock::class)->time();
                         $DB->update_record('assign_submission', $submission);
                     }
                 }
@@ -3266,7 +3268,7 @@ class assign {
             $submission->assignment = $this->get_instance()->id;
             $submission->userid = 0;
             $submission->groupid = $groupid;
-            $submission->timecreated = time();
+            $submission->timecreated = \core\di::get(\core\clock::class)->time();
             $submission->timemodified = $submission->timecreated;
             if ($attemptnumber >= 0) {
                 $submission->attemptnumber = $attemptnumber;
@@ -3767,7 +3769,7 @@ class assign {
                 $action = optional_param('action', '', PARAM_TEXT);
                 if ($action == 'editsubmission') {
                     if (empty($submission->timestarted) && $this->get_instance()->timelimit) {
-                        $submission->timestarted = time();
+                        $submission->timestarted = \core\di::get(\core\clock::class)->time();
                         $DB->update_record('assign_submission', $submission);
                     }
                 }
@@ -3778,7 +3780,7 @@ class assign {
             $submission = new stdClass();
             $submission->assignment   = $this->get_instance()->id;
             $submission->userid       = $userid;
-            $submission->timecreated = time();
+            $submission->timecreated = \core\di::get(\core\clock::class)->time();
             $submission->timemodified = $submission->timecreated;
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             if ($attemptnumber >= 0) {
@@ -3914,7 +3916,7 @@ class assign {
             $grade = new stdClass();
             $grade->assignment   = $this->get_instance()->id;
             $grade->userid       = $userid;
-            $grade->timecreated = time();
+            $grade->timecreated = \core\di::get(\core\clock::class)->time();
             // If we are "auto-creating" a grade - and there is a submission
             // the new grade should not have a more recent timemodified value
             // than the submission.
@@ -6092,7 +6094,7 @@ class assign {
         global $DB;
 
         if ($updatetime) {
-            $submission->timemodified = time();
+            $submission->timemodified = \core\di::get(\core\clock::class)->time();
         }
 
         // First update the submission for the current user.
@@ -6168,7 +6170,7 @@ class assign {
         }
 
         if ($updatetime) {
-            $submission->timemodified = time();
+            $submission->timemodified = \core\di::get(\core\clock::class)->time();
         }
         $result= $DB->update_record('assign_submission', $submission);
         if ($result) {
@@ -6203,7 +6205,7 @@ class assign {
             $userid = $USER->id;
         }
 
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
         $dateopen = true;
         $finaldate = false;
         if ($this->get_instance()->cutoffdate) {
@@ -6743,7 +6745,7 @@ class assign {
 
         $instance = $this->get_instance();
 
-        $late = $instance->duedate && ($instance->duedate < time());
+        $late = $instance->duedate && ($instance->duedate < \core\di::get(\core\clock::class)->time());
 
         if (!$instance->sendnotifications && !($late && $instance->sendlatenotifications)) {
             // No need to do anything.

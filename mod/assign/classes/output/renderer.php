@@ -345,7 +345,7 @@ class renderer extends \plugin_renderer_base {
             }
         }
 
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
         if ($summary->duedate) {
             // Time remaining.
             $duedate = $summary->duedate;
@@ -644,7 +644,7 @@ class renderer extends \plugin_renderer_base {
         $o = '';
         $o .= $this->output->container_start('submissionstatustable');
         $o .= $this->output->heading(get_string('submissionstatusheading', 'assign'), 3);
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
 
         $o .= $this->output->box_start('boxaligncenter submissionsummarytable');
 
@@ -1300,7 +1300,7 @@ class renderer extends \plugin_renderer_base {
      *               string and the second is a CSS class.
      */
     protected function get_time_remaining(\mod_assign\output\assign_submission_status $status): array {
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
         $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
         $submissionstarted = $submission && property_exists($submission, 'timestarted') && $submission->timestarted;
         $timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0 && $submissionstarted;

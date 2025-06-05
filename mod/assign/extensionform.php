@@ -157,7 +157,7 @@ class mod_assign_extension_form extends moodleform {
             $defaultdate = $lateststextension;
         } else {
             // Otherwise take the later of the deadline and one minute before midnight tonight (server time).
-            $endoftoday = new DateTimeImmutable('today 23:59', core_date::get_server_timezone_object());
+            $endoftoday = \core\di::get(\core\clock::class)->now()->setTime(23, 59);
             $defaultdate = max($finaldate, $endoftoday->getTimestamp());
         }
         $mform->addElement('date_time_selector', 'extensionduedate',

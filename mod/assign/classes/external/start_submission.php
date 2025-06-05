@@ -94,7 +94,7 @@ class start_submission extends external_api {
             }
 
             // Set the start time of the submission.
-            $submission->timestarted = time();
+            $submission->timestarted = \core\di::get(\core\clock::class)->time();
             $DB->update_record('assign_submission', $submission);
         }
 

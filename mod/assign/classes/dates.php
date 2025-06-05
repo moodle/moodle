@@ -71,7 +71,7 @@ class dates extends activity_dates {
             }
         }
 
-        $now = time();
+        $now = \core\di::get(\core\clock::class)->time();
         $dates = [];
 
         if ($timeopen) {
