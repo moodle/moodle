@@ -18,16 +18,22 @@ Feature: Adding questions to a quiz from the question bank
       | activity | name                                                                                                             | intro                                    | course | idnumber |
       | quiz     | Quiz 1                                                                                                           | Quiz 1 for testing the Add menu          | C1     | quiz1    |
       | qbank    | <span lang="en" class="multilang">Qbank</span><span lang="fr" class="multilang">Banqueq</span> 1 & < > " ' &amp; | Question bank 1 for testing the Add menu | C1     | qbank1   |
+      | qbank    | Question Bank A                                                                                                  | Question Bank A for testing qbank name   | C1     | qbankA   |
+      | qbank    | Question Bank B                                                                                                  | Question Bank B for testing qbank name   | C1     | qbankB   |
     And the following "question categories" exist:
       | contextlevel    | reference  | name              |
       | Activity module | quiz1      | Test questions    |
       | Activity module | qbank1     | Qbank questions   |
+      | Activity module | qbankA     | Qbank Questions 1 |
+      | Activity module | qbankB     | Qbank Questions 2 |
     And the following "questions" exist:
       | questioncategory  | qtype     | name             | user     | questiontext     | idnumber |
       | Test questions    | essay     | question 01 name | admin    | Question 01 text |          |
       | Test questions    | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
       | Qbank questions   | essay     | question 03 name | teacher1 | Question 03 text | q3idnum  |
       | Qbank questions   | essay     | question 04 name | teacher1 | Question 04 text | q4idnum  |
+      | Qbank Questions 1 | truefalse | TF1              | admin    | Qbank 1 question |          |
+      | Qbank Questions 2 | truefalse | TF2              | admin    | Qbank 2 question |          |
 
   Scenario: The questions can be filtered by tag
     Given I am on the "question 01 name" "core_question > edit" page logged in as teacher1
@@ -200,3 +206,12 @@ Feature: Adding questions to a quiz from the question bank
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "question 01 name"
+
+  Scenario: Question bank names are displayed in quiz questions
+    Given quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 1    |
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    Then I should see "Question Bank A" in the "TF1" "list_item"
+    And I should see "Question Bank B" in the "TF2" "list_item"
