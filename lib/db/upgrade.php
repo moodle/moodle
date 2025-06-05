@@ -1827,5 +1827,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025053000.01);
     }
 
+    if ($oldversion < 2025053000.02) {
+
+        // Define field systememail to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('systememail', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'loginpagename');
+
+        // Conditionally launch add field systememail.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025053000.02);
+    }
+
     return true;
 }

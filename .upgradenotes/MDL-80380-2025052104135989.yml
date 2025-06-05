@@ -1,0 +1,9 @@
+issueNumber: MDL-80380
+notes:
+  core_auth:
+    - message: >
+        A new method called `get_additional_upgrade_token_parameters` has been
+        added to `oauth2_client` class. This will allow custom clients to
+        override this one and add their extra parameters for upgrade token
+        request.
+      type: improved
