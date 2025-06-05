@@ -86,7 +86,8 @@ class renderer extends plugin_renderer_base {
             $namecell->header = true;
 
             // Login issuer.
-            if ((int)$issuer->get('showonloginpage') == issuer::SERVICEONLY) {
+            if ((int)$issuer->get('showonloginpage') == issuer::SERVICEONLY ||
+                    (int)$issuer->get('showonloginpage') == issuer::SMTPWITHXOAUTH2) {
                 $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
                 $logindisplayas = '';
             } else {
