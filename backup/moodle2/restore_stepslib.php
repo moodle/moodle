@@ -5487,18 +5487,39 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 $originalcontext = context::instance_by_id($contextid, IGNORE_MISSING);
                 if ($originalcontext && has_capability('mod/qbank:view', $originalcontext)) {
                     $originalquestions = get_questions_category(question_get_top_category($contextid), false);
+                    $targetcoursecontext = context_course::instance($this->get_courseid());
                     foreach ($originalquestions as $originalquestion) {
                         $backupids = restore_dbops::get_backup_ids_record(
                             $this->get_restoreid(),
                             'question',
                             $originalquestion->id,
                         );
+                        // Restored question references will point to the restored copy of the question. Select question references
+                        // that point to that restored copy, only if they are within the target course's context, so we can update
+                        // them to point to the original question.
+                        $conpathlike = $DB->sql_like('con.path', '?');
+                        $references = $DB->get_records_sql(
+                            "SELECT qr.id, qr.questionbankentryid
+                               FROM {question_references} qr
+                                    JOIN {context} con ON qr.usingcontextid = con.id
+                                    JOIN {question_versions} qv ON qv.questionbankentryid = qr.questionbankentryid
+                              WHERE qv.questionid = ?
+                                    AND {$conpathlike}",
+                            [
+                                $backupids->newitemid,
+                                $targetcoursecontext->path . '/%',
+                            ],
+                        );
+                        if (empty($references)) {
+                            continue;
+                        }
+                        [$refin, $refparams] = $DB->get_in_or_equal(array_keys($references));
                         $DB->set_field_select(
                             'question_references',
                             'questionbankentryid',
                             $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $backupids->itemid]),
-                            'questionbankentryid = (SELECT questionbankentryid FROM {question_versions} WHERE questionid = ?)',
-                            [$backupids->newitemid],
+                            'id ' . $refin,
+                            $refparams,
                         );
                     }
                     continue;
