@@ -23,7 +23,7 @@
 
 "use strict";
 
-import $ from 'jquery';
+import {processCollectedJavascript} from 'core/fragment';
 import 'core/inplace_editable';
 import {addIconToContainer} from 'core/loadingicon';
 import Notification from 'core/notification';
@@ -72,7 +72,7 @@ export const init = () => {
             addIconToContainer(toggleEditViewMode)
                 .then(() => getReport(reportElement.dataset.reportId, toggledEditMode))
                 .then(response => Promise.all([
-                    $.parseHTML(response.javascript, null, true).map(node => node.innerHTML).join("\n"),
+                    processCollectedJavascript(response.javascript),
                     Templates.renderForPromise('core_reportbuilder/local/dynamictabs/editor', response),
                 ]))
                 .then(([responseJs, {html, js}]) => Templates.replaceNode(reportElement, html, js + responseJs))
