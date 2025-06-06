@@ -2486,6 +2486,15 @@ class quiz_attempt {
         $versioninformation = qbank_helper::get_version_information_for_questions_in_attempt(
             $this->attempt, $this->get_context());
 
+        // Retrieve all slots (questions) in the quiz attempt.
+        $slots = $this->get_slots();
+
+        // Check if all slots have corresponding version information.
+        foreach ($slots as $slot) {
+            if (!isset($versioninformation[$slot])) {
+                $this->handle_missing_question_attempt();
+            }
+        }
         $anychanges = false;
         foreach ($versioninformation as $slotinformation) {
             if ($slotinformation->currentquestionid == $slotinformation->newquestionid) {
@@ -2515,6 +2524,19 @@ class quiz_attempt {
                 $DB->update_record('quiz_attempts', $this->attempt);
                 $this->recompute_final_grade();
             }
+        }
+    }
+
+    /**
+     * Handle the case where a question in an attempt has been deleted.
+     */
+    private function handle_missing_question_attempt(): void {
+        quiz_delete_attempt($this->attempt, $this->get_quiz());
+        $continuelink = new moodle_url('/mod/quiz/view.php', ['id' => $this->get_cmid()]);
+        if (has_capability('mod/quiz:preview', context_module::instance($this->get_cmid()))) {
+            throw new moodle_exception('attempterrorcontentchange', 'quiz', $continuelink);
+        } else {
+            throw new moodle_exception('attempterrorcontentchangeforuser', 'quiz', $continuelink);
         }
     }
 }
