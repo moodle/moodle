@@ -543,6 +543,11 @@ final class repeated_restore_test extends advanced_testcase {
                 "Cannot test edited answers for qtype_{$qtype} as it does not use answers.",
             );
         }
+        if ($DB->count_records('question_answers') === 0) {
+            $this->markTestSkipped(
+                "Cannot test edited answers for qtype_{$qtype} as it does not use the question_answers table.",
+            );
+        }
         foreach ($question2data->options->answers as $answer) {
             $answer->answer = 'New answer ' . $answer->id;
             $DB->update_record('question_answers', $answer);
