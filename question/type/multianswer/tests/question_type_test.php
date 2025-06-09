@@ -20,7 +20,9 @@ use qtype_multianswer;
 use qtype_multianswer_edit_form;
 use qtype_multichoice_base;
 use question_bank;
+use stdClass;
 use test_question_maker;
+use core\context;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -79,11 +81,13 @@ final class question_type_test extends \advanced_testcase {
         $q->timemodified = time();
         $q->createdby = $USER->id;
         $q->modifiedby = $USER->id;
+        $q->options = new stdClass();
 
         $sadata = new \stdClass();
         $sadata->id = 1;
         $sadata->qtype = 'shortanswer';
         $sadata->defaultmark = 1;
+        $sadata->options = new stdClass();
         $sadata->options->usecase = true;
         $sadata->options->answers[1] = (object) array('answer' => 'Bow-wow', 'fraction' => 0);
         $sadata->options->answers[2] = (object) array('answer' => 'Wiggly worm', 'fraction' => 0);
@@ -93,6 +97,7 @@ final class question_type_test extends \advanced_testcase {
         $mcdata->id = 1;
         $mcdata->qtype = 'multichoice';
         $mcdata->defaultmark = 1;
+        $mcdata->options = new stdClass();
         $mcdata->options->single = true;
         $mcdata->options->answers[1] = (object) array('answer' => 'Dog', 'fraction' => 0);
         $mcdata->options->answers[2] = (object) array('answer' => 'Owl', 'fraction' => 1);
@@ -433,5 +438,59 @@ final class question_type_test extends \advanced_testcase {
 
         $this->assertCount(2, $questiondata->options->questions);
         $this->assertEquals('subquestion_replacement', $questiondata->options->questions[$questiontodeletekey]->qtype);
+    }
+
+    /**
+     * Saving a new version of the question should retain the original subquestion versions, with their own qtype data.
+     */
+    public function test_save_question_options(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category([]);
+        $question = $generator->create_question('multianswer', 'twosubq', ['category' => $cat->id]);
+
+        get_question_options($question);
+        $originalsubq1 = reset($question->options->questions);
+        $originalsubq2 = next($question->options->questions);
+
+        // Assert that the original subquestions are the expected types, and they have options records.
+        $this->assertEquals('shortanswer', $originalsubq1->qtype);
+        $this->assertTrue($DB->record_exists('qtype_shortanswer_options', ['questionid' => $originalsubq1->id]));
+        $this->assertEquals('multichoice', $originalsubq2->qtype);
+        $this->assertTrue($DB->record_exists('qtype_multichoice_options', ['questionid' => $originalsubq2->id]));
+
+        // Edit the question, replacing the subquestions with two new questions of different types.
+        $editedquestion = test_question_maker::get_question_data('multianswer', 'twosubq');
+        $editedquestion->id = $question->id;
+        $editedquestion->category = $cat->id;
+        $editedquestion->context = context::instance_by_id($cat->contextid);
+        $editedsubq1 = test_question_maker::get_question_form_data('multichoice', 'one_of_four');
+        $editedsubq1->id = $originalsubq1->id;
+        $editedsubq1->qtype = 'multichoice';
+        $editedsubq2 = test_question_maker::get_question_form_data('shortanswer', 'frogtoad');
+        $editedsubq2->id = $originalsubq2->id;
+        $editedsubq2->qtype = 'shortanswer';
+        $editedquestion->options->questions = [$editedsubq1, $editedsubq2];
+        $this->qtype->save_question_options($editedquestion);
+
+        $newquestion = $DB->get_record('question', ['id' => $question->id]);
+        get_question_options($newquestion);
+        $newsubq1 = reset($newquestion->options->questions);
+        $newsubq2 = next($newquestion->options->questions);
+
+        // The new subquestions are different types, and did not re-use IDs from the original subquestions.
+        $this->assertEquals('multichoice', $newsubq1->qtype);
+        $this->assertFalse(in_array($newsubq1->id, [$originalsubq1->id, $originalsubq2->id]));
+        $this->assertEquals('shortanswer', $newsubq2->qtype);
+        $this->assertFalse(in_array($newsubq2->id, [$originalsubq1->id, $originalsubq2->id]));
+
+        // The original questions and option records still exist.
+        $this->assertTrue($DB->record_exists('question', ['id' => $originalsubq1->id]));
+        $this->assertTrue($DB->record_exists('qtype_shortanswer_options', ['questionid' => $originalsubq1->id]));
+        $this->assertTrue($DB->record_exists('question', ['id' => $originalsubq2->id]));
+        $this->assertTrue($DB->record_exists('qtype_multichoice_options', ['questionid' => $originalsubq2->id]));
     }
 }
