@@ -160,4 +160,19 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
 
         return $contents;
     }
+
+    #[\Override]
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+        if (count(get_object_vars($questiondata->options)) <= 1) {
+            // Historically, old versions of multichoice subquestions had their options record deleted.
+            // As qtype_multichoice::get_question_options() sets default options in this case, we need
+            // to do the same here. See MDL-85721.
+            $defaultoptions = (new qtype_multichoice())->create_default_options($questiondata);
+            $questiondata->options = (object) array_merge((array) $questiondata->options, (array) $defaultoptions);
+        }
+        return $questiondata;
+    }
 }
