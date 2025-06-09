@@ -56,7 +56,11 @@
             {{unreadcount}}
         </div>
     {{/togglecontent}}
-
+    {{$containerrole}}dialog{{/containerrole}}
+    {{$containerattributes}}
+        aria-modal="true"
+        tabindex="-1"
+    {{/containerattributes}}
     {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}
 
     {{$headertext}}{{#str}} notifications, message {{/str}}{{/headertext}}
