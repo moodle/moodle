@@ -27,8 +27,6 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-debugging('mod_lesson\event\highscore_added has been deprecated. Since the functionality no longer resides in the lesson module.',
-        DEBUG_DEVELOPER);
 /**
  * The mod_lesson highscore added event class.
  *
@@ -51,6 +49,10 @@ class highscore_added extends \core\event\base {
      * Set basic properties for the event.
      */
     protected function init() {
+        // phpcs:ignore moodle.Files.LineLength.TooLong
+        debugging('mod_lesson\event\highscore_added has been deprecated. Since the functionality no longer resides in the lesson module.',
+            DEBUG_DEVELOPER);
+
         $this->data['objecttable'] = 'lesson_high_scores';
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
