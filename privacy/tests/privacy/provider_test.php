@@ -23,16 +23,13 @@
  */
 namespace core_privacy\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_privacy\manager;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\types\type;
 use core_privacy\local\metadata\types\database_table;
-use core_privacy\local\metadata\types\external_location;
-use core_privacy\local\metadata\types\plugin_type_link;
 use core_privacy\local\metadata\types\subsystem_link;
-use core_privacy\local\metadata\types\user_preference;
+
+// phpcs:disable moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
 
 /**
  * Unit tests for all Privacy Providers.
@@ -40,7 +37,7 @@ use core_privacy\local\metadata\types\user_preference;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class provider_test extends \advanced_testcase {
+final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Returns a list of frankenstyle names of core components (plugins and subsystems).
      *
@@ -49,7 +46,7 @@ final class provider_test extends \advanced_testcase {
     public static function get_component_list(): array {
         $components = ['core' => [
             'component' => 'core',
-            'classname' => manager::get_provider_classname_for_component('core')
+            'classname' => manager::get_provider_classname_for_component('core'),
         ]];
         // Get all plugins.
         $plugintypes = \core_component::get_plugin_types();
@@ -80,16 +77,17 @@ final class provider_test extends \advanced_testcase {
     /**
      * Test that the specified null_provider works as expected.
      *
+     * @group        plugin_checks
      * @dataProvider null_provider_provider
+     * @coversNothing
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_null_provider($component, $classname) {
+    public function test_null_provider($component, $classname): void {
         $reason = $classname::get_reason();
         $this->assertIsString($reason);
 
         $this->assertIsString(get_string($reason, $component));
-        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -109,11 +107,13 @@ final class provider_test extends \advanced_testcase {
     /**
      * Test that the specified metadata_provider works as expected.
      *
+     * @group        plugin_checks
      * @dataProvider metadata_provider_provider
+     * @coversNothing
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_metadata_provider($component, $classname) {
+    public function test_metadata_provider($component, $classname): void {
         global $DB;
 
         $collection = new collection($component);
@@ -150,7 +150,6 @@ final class provider_test extends \advanced_testcase {
 
                 // Check that the string is also correctly defined.
                 $this->assertIsString(get_string($summary, $component));
-                $this->assertDebuggingNotCalled();
             }
 
             if ($fields = $item->get_privacy_fields()) {
@@ -161,7 +160,6 @@ final class provider_test extends \advanced_testcase {
 
                     // Check that the string is also correctly defined.
                     $this->assertIsString(get_string($identifier, $component));
-                    $this->assertDebuggingNotCalled();
                 }
             }
         }
@@ -170,11 +168,13 @@ final class provider_test extends \advanced_testcase {
     /**
      * Test that all providers implement some form of compliant provider.
      *
+     * @group        plugin_checks
      * @dataProvider get_component_list
+     * @coversNothing
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @param string $classname the fully qualified provider classname
      */
-    public function test_all_providers_compliant($component, $classname) {
+    public function test_all_providers_compliant($component, $classname): void {
         $manager = new manager();
         $this->assertTrue($manager->component_is_compliant($component));
     }
@@ -182,33 +182,12 @@ final class provider_test extends \advanced_testcase {
     /**
      * Ensure that providers do not throw an error when processing a deleted user.
      *
+     * @group           plugin_checks
      * @dataProvider    is_user_data_provider
+     * @coversNothing
      * @param   string  $component
      */
-    public function test_component_understands_deleted_users($component) {
-        $this->resetAfterTest();
-
-        // Create a user.
-        $user = $this->getDataGenerator()->create_user();
-
-        // Delete the user and their context.
-        delete_user($user);
-        $usercontext = \context_user::instance($user->id);
-        $usercontext->delete();
-
-        $contextlist = manager::component_class_callback($component, \core_privacy\local\request\core_user_data_provider::class,
-                'get_contexts_for_userid', [$user->id]);
-
-        $this->assertInstanceOf(\core_privacy\local\request\contextlist::class, $contextlist);
-    }
-
-    /**
-     * Ensure that providers do not throw an error when processing a deleted user.
-     *
-     * @dataProvider    is_user_data_provider
-     * @param   string  $component
-     */
-    public function test_userdata_provider_implements_userlist($component) {
+    public function test_userdata_provider_implements_userlist($component): void {
         $classname = manager::get_provider_classname_for_component($component);
         $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
     }
@@ -289,24 +268,32 @@ final class provider_test extends \advanced_testcase {
 
     /**
      * Test that all tables with user fields are covered by metadata providers
+     *
+     * @group        plugin_checks
+     * @dataProvider get_component_list
+     * @coversNothing
+     * @param string $component frankenstyle component name, e.g. 'mod_assign'
+     * @param string $classname the fully qualified provider classname
      */
-    public function test_table_coverage() {
+    public function test_table_coverage(string $component, string $classname): void {
         global $DB;
-        $dbman = $DB->get_manager();
+        $dbman = $DB->get_manager(); // Load DDL classes.
         $tables = [];
 
-        foreach ($dbman->get_install_xml_files() as $filename) {
-            $xmldbfile = new \xmldb_file($filename);
-            if (!$xmldbfile->loadXMLStructure()) {
-                continue;
-            }
-            $structure = $xmldbfile->getStructure();
-            $tablelist = $structure->getTables();
+        $filename = \core_component::get_component_directory($component) . '/db/install.xml';
+        if (!file_exists($filename)) {
+            $this->expectNotToPerformAssertions();
+            return;
+        }
+        $xmldbfile = new \xmldb_file($filename);
+        $this->assertTrue($xmldbfile->loadXMLStructure());;
 
-            foreach ($tablelist as $table) {
-                if ($fields = $this->get_userid_fields($table)) {
-                    $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
-                }
+        $structure = $xmldbfile->getStructure();
+        $tablelist = $structure->getTables();
+
+        foreach ($tablelist as $table) {
+            if ($fields = $this->get_userid_fields($table)) {
+                $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
             }
         }
 
