@@ -3034,7 +3034,7 @@ function calendar_output_fragment_event_form($args) {
             $groupcoursedata = groups_get_course_data($courseid);
             $formoptions['groups'] = [];
             foreach ($groupcoursedata->groups as $groupid => $groupdata) {
-                $formoptions['groups'][$groupid] = $groupdata->name;
+                $formoptions['groups'][$groupid] = format_string($groupdata->name, true, ['context' => $context]);
             }
         }
 
@@ -3078,7 +3078,7 @@ function calendar_output_fragment_event_form($args) {
             $groupcoursedata = groups_get_course_data($event->courseid);
             $formoptions['groups'] = [];
             foreach ($groupcoursedata->groups as $groupid => $groupdata) {
-                $formoptions['groups'][$groupid] = $groupdata->name;
+                $formoptions['groups'][$groupid] = format_string($groupdata->name, true, ['context' => $context]);
             }
         }
 
