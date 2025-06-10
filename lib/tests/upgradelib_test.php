@@ -1355,6 +1355,29 @@ class upgradelib_test extends advanced_testcase {
     }
 
     /**
+     * Test the check_mod_assignment check if mod_assignment is still used.
+     *
+     * @covers ::check_mod_assignment
+     * @return void
+     */
+    public function test_check_mod_assignment_is_used(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $result = new environment_results('custom_checks');
+
+        if ($DB->get_manager()->table_exists('assignment')) {
+            $DB->insert_record('assignment', (object)['name' => 'test_assign', 'intro' => 'test_assign_intro']);
+
+            $this->assertNotNull(check_mod_assignment($result));
+            $this->assertEquals('Assignment 2.2 is in use', $result->getInfo());
+            $this->assertFalse($result->getStatus());
+        } else {
+            $this->assertTrue($result->getStatus());
+        }
+    }
+
+    /**
      * Data provider of usermenu items.
      *
      * @return array

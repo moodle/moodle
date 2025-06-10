@@ -1,0 +1,93 @@
+#page-mod-customcert-edit .deletebutton {
+    text-align: right;
+}
+
+#page-mod-customcert-edit .addpage {
+    border-top: 1px solid #f4f4f4;
+    text-align: right;
+}
+
+#page-mod-customcert-edit #id_replace {
+    margin-left: 10px;
+}
+
+#page-mod-customcert-report .centre {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#page-mod-customcert-rearrange .savepositionsbtn,
+#page-mod-customcert-rearrange .applypositionsbtn,
+#page-mod-customcert-rearrange .cancelbtn {
+    float: left;
+}
+
+#page-mod-customcert-rearrange .element {
+    display: inline-block;
+    position: absolute;
+    word-wrap: break-word;
+}
+
+#page-mod-customcert-rearrange .element:before {
+    background-image: url([[pix:mod_customcert|target]]);
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    float: left;
+    height: 9px;
+    width: 100%;
+}
+
+#page-mod-customcert-rearrange .element:hover {
+    cursor: move;
+}
+
+#page-mod-customcert-rearrange .element.refpoint-left:before {
+    background-position: left top;
+    margin: -4px -5px -5px -4px;
+}
+
+#page-mod-customcert-rearrange .element.refpoint-center:before {
+    background-position: center top;
+    margin: -4px 0 -5px 0;
+}
+
+#page-mod-customcert-rearrange .element.refpoint-right:before {
+    background-position: right top;
+    margin: -4px -5px -5px 4px;
+}
+
+#page-mod-customcert-rearrange .element.align-left {
+    text-align: left;
+}
+
+#page-mod-customcert-rearrange .element.align-center {
+    text-align: center;
+}
+
+#page-mod-customcert-rearrange .element.align-right {
+    text-align: right;
+}
+
+#page-mod-customcert-rearrange #pdf {
+    border-style: solid;
+    border-width: 1px;
+    clear: both;
+    position: relative;
+}
+
+#page-mod-customcert-rearrange div#leftmargin {
+    border-left: 1px dotted black;
+}
+
+#page-mod-customcert-rearrange div#rightmargin {
+    border-right: 1px dotted black;
+}
+
+/*
+    This is a hack - the fieldset being returned by the edit_element_form class contains
+    the CSS class 'hidden' which when shown in a dialogue hides the fieldset.
+*/
+.moodle-dialogue #editelementform fieldset.hidden {
+    display: block;
+}

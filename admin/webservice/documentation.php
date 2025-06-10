@@ -23,21 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author Jerome Mouneyrac
  */
-
-use core_external\external_api;
-
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
 admin_externalpage_setup('webservicedocumentation');
-
-// get all the function descriptions
-$functions = $DB->get_records('external_functions', array(), 'name');
-$functiondescs = array();
-foreach ($functions as $function) {
-    $functiondescs[$function->name] = external_api::external_function_info($function);
-}
 
 // TODO: MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.
 
@@ -52,6 +42,19 @@ $printableformat = optional_param('print', false, PARAM_BOOL);
 
 /// OUTPUT
 echo $OUTPUT->header();
+
+// Get all the function descriptions.
+$functions = $DB->get_records('external_functions', [], 'name');
+$functiondescs = [];
+foreach ($functions as $function) {
+
+    // Skip invalid or otherwise incorrectly defined functions, otherwise the entire page is rendered inaccessible.
+    try {
+        $functiondescs[$function->name] = external_api::external_function_info($function);
+    } catch (Throwable $exception) {
+        echo $OUTPUT->notification($exception->getMessage(), \core\output\notification::NOTIFY_ERROR);
+    }
+}
 
 $renderer = $PAGE->get_renderer('core', 'webservice');
 echo $renderer->documentation_html($functiondescs,

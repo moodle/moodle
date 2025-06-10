@@ -765,7 +765,9 @@ class cache_helper {
                     if (strpos($key, cache_session::KEY_PREFIX) !== 0 || !is_array($value) || !isset($value['lastaccess'])) {
                         continue;
                     }
-                    if ((int)$value['lastaccess'] < $purgetime || true) {
+                    // BEGIN LSU session cache purging limits.
+                    if ((int)$value['lastaccess'] < $purgetime) {
+                    // END LSU session cache purging limits.
                         $todelete[] = $key;
                     }
                 }
@@ -859,5 +861,17 @@ class cache_helper {
             }
         }
         return $warnings;
+    }
+
+    /**
+     * A helper to determine whether a result was found.
+     *
+     * This has been deemed required after people have been confused by the fact that [] == false.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public static function result_found($value): bool {
+        return $value !== false;
     }
 }

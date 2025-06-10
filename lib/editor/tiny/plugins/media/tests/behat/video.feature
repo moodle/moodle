@@ -40,7 +40,7 @@ Feature: Use the TinyMCE editor to upload a video
     And I select the "video" element in position "1" of the "Description" TinyMCE editor
     When I click on the "Multimedia" button for the "Description" TinyMCE editor
     And I click on "Display options" "link"
-    And I set the field "Enter title" to "Test title"
+    And I set the field "Title" to "Test title"
     And I click on "Advanced settings" "link"
     And I click on "Play automatically" "checkbox"
     And I click on "Muted" "checkbox"
@@ -51,7 +51,7 @@ Feature: Use the TinyMCE editor to upload a video
     And I select the "video" element in position "1" of the "Description" TinyMCE editor
     And I click on the "Multimedia" button for the "Description" TinyMCE editor
     And I click on "Display options" "link"
-    And the field "Enter title" matches value "Test title"
+    And the field "Title" matches value "Test title"
     And I click on "Advanced settings" "link"
     And the field "Play automatically" matches value "1"
     And the field "Muted" matches value "1"

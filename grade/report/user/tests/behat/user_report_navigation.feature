@@ -21,14 +21,12 @@ Feature: Teacher can navigate to the previous or next user report.
       | student2  | C1     | student        |
       | student3  | C1     | student        |
     And the following "activities" exist:
-      | activity | course | idnumber | name                | intro             | grade |
-      | assign   | C1     | a1       | Test assignment one | Submit something! | 300   |
-    And I log in as "teacher1"
-    And I am on "Course" course homepage
+      | activity | course | idnumber | name                | grade |
+      | assign   | C1     | a1       | Test assignment one | 300   |
+    And I am on the "Course" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can navigate to the next user report
-    Given I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    Given I click on "Student 1" in the "user" search widget
     And I should see "Student 1" in the ".user-heading" "css_element"
     And ".previous" "css_element" should not exist in the ".user-navigation" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
@@ -46,8 +44,7 @@ Feature: Teacher can navigate to the previous or next user report.
     And ".next" "css_element" should not exist in the ".user-navigation" "css_element"
 
   Scenario: A teacher can navigate to the previous user report
-    Given I navigate to "View > User report" in the course gradebook
-    And I click on "Student 3" in the "user" search widget
+    Given I click on "Student 3" in the "user" search widget
     And I should see "Student 3" in the ".user-heading" "css_element"
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".previous" "css_element"

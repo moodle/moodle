@@ -1,35 +1,33 @@
 This files describes API changes for code that uses the question API.
 
-=== 4.2 ===
+=== 4.1.4 ===
 
-1) The question/qengine.js has been deprecated. We create core_question/question_engine
-   and core/scroll_manager to replace it.
+1) The core_question_generator::update_question has been changed so that it no longer modifies the $question
+   object that was passed in. Instead, the update question is returned (which was already the case).
+   If you were relying on the old behavioru in your tests, you will need a change like
+       $questiongenerator->update_question($question, ...);
+   to
+       $question = $questiongenerator->update_question($question, ...);
+   Also, the $question object returned now has fields questionbankentryid, versionid, version and status.
 
-2) For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
-   The affected classes are:
-   * restore_qbank_customfields_plugin
-   * category_condition
-   * tag_condition
-   * question_behaviour_attempt_updater
-   * question_engine_attempt_upgrader
-   * qformat_blackboard_six
-   * qtype_multianswer_edit_form
-   * qtype_ddimageortext_drop_zone
-   * qtype_randomsamatch_qe2_attempt_updater
-   * qformat_default
+2) question_stats_cleanup_task has been removed. It is no longer required. Instead,
+   older statistics are deleted whenever a new set are calculated for a particular quiz.
 
-   Some existing code and variables must be removed while working on this issue, including:
-   * Removed $replace in class qtype_calculated_variable_substituter
-   * Removed $wizarddisplay qtype_calculatedsimple_edit_form::definition_inner()
-   * Removed '$question->places[$placeno]->fieldname = $fieldname' in qtype_ddtoimage_renderer_base::formulation_and_controls()
-   * Removed $mc->single in qtype_multianswer_test_helper::make_multianswer_question_multiple()
+3) In the past, the methods get_last_calculated_time() and get_cached() of \core_question\statistics\responses\analyser
+   and \core_question\statistics\questions\all_calculated_for_qubaid_condition
+   only returned the pre-computed statistics if they were computed less than 15 minutes ago. Now, they will
+   always return any computed statistics that exist. The constants TIME_TO_CACHE in those classes
+   will be deprecated in Moodle 4.3.
 
-3) display_move_form() in qbank_managecategories\question_category_object class is deprecated and moved the logic to
-   the question/bank/managecategories/category.php.
+4) The cache() methods of classes analysis_for_question, analysis_for_subpart, analysis_for_class
+   and analysis_for_actual_response now take an optional $calculationtime, which is used the time
+   stored in the database. If not given, time() is used.
+
 
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().
+
 
 === 4.0.5 ===
 

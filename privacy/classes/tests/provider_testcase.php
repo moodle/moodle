@@ -100,7 +100,7 @@ abstract class provider_testcase extends \advanced_testcase {
      * @return  string
      */
     protected function get_provider_classname($component) {
-        $classname = "\\{$component}\\privacy\\provider";
+        $classname = "\\${component}\\privacy\\provider";
 
         if (!class_exists($classname)) {
             throw new \coding_exception("{$component} does not implement any provider");

@@ -14,21 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * License manager.
- *
- * @package    tool_licensemanager
- * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_licensemanager;
 
 use tool_licensemanager\form\edit_license;
 use license_manager;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * License manager, main controller for tool_licensemanager.
@@ -95,23 +85,25 @@ class manager {
         }
 
         $viewmanager = true;
-        $message = null;
+        $redirect = helper::get_licensemanager_url();
+
         switch ($action) {
             case self::ACTION_DISABLE:
+                require_sesskey();
                 license_manager::disable($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_ENABLE:
+                require_sesskey();
                 license_manager::enable($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_DELETE:
-                try {
-                    license_manager::delete($license);
-                } catch (\moodle_exception $e) {
-                    $message = $e->getMessage();
-                }
-
+                require_sesskey();
+                license_manager::delete($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_CREATE:
@@ -121,7 +113,9 @@ class manager {
 
             case self::ACTION_MOVE_UP:
             case self::ACTION_MOVE_DOWN:
+                require_sesskey();
                 $this->change_license_order($action, $license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_VIEW_LICENSE_MANAGER:
@@ -129,7 +123,7 @@ class manager {
                 break;
         }
         if ($viewmanager) {
-            $this->view_license_manager($message);
+            $this->view_license_manager();
         }
     }
 
@@ -234,18 +228,14 @@ class manager {
     /**
      * View the license manager.
      */
-    private function view_license_manager(string $message = null) : void {
-        global $PAGE, $OUTPUT;
+    private function view_license_manager() : void {
+        global $PAGE;
 
         $PAGE->requires->js_call_amd('tool_licensemanager/delete_license');
 
         $renderer = $PAGE->get_renderer('tool_licensemanager');
         $html = $renderer->header();
         $html .= $renderer->heading(get_string('licensemanager', 'tool_licensemanager'));
-
-        if (!empty($message)) {
-            $html .= $OUTPUT->notification($message);
-        }
 
         $table = new \tool_licensemanager\output\table();
         $html .= $renderer->render($table);

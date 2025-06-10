@@ -1,0 +1,103 @@
+name: Cron
+
+on:
+  schedule:
+    - cron: "5 10 9 * *"
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        moodle-branch: ['main']
+        php: ['8.1']
+        database: ['mysqli']
+
+    steps:
+      - name: checkout plugin
+        uses: actions/checkout@v3
+        with:
+          path: this-plugin
+
+      - name: setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: max_input_vars=5000
+          coverage: pcov
+
+      - name: npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
+          restore-keys: |
+            node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
+
+      - name: composer
+        run: |
+           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
+           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+           sudo locale-gen en_AU.UTF-8
+           sudo systemctl start mysql.service
+
+      - name: install Moodle
+        run: moodle-plugin-ci --ansi install --db-user=root --db-pass=root --db-host=127.0.0.1 --plugin this-plugin
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+      
+      - name: phplint
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phplint
+
+      - name: phpcpd
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phpcpd
+
+      - name: phpmd
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phpmd
+
+      - name: phpdoc
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phpdoc
+
+      - name: codechecker
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi codechecker
+
+      - name: validate
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi validate
+
+      - name: savepoints
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi savepoints
+
+      - name: grunt
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi grunt || true
+
+      - name: mustache
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi mustache
+
+      - name: phpunit
+        continue-on-error: true
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
+
+      - name: behat
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi behat --profile=chrome
+
+      - name: coveralls
+        if: ${{ always() }}
+        run: moodle-plugin-ci coveralls-upload || true
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}

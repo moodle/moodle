@@ -26,7 +26,7 @@ if (!$authplugin->ntlmsso_finish()) {
     // here (and not add 3 more secs).
     $loginsite = get_string("loginsite");
     $PAGE->navbar->add($loginsite);
-    $PAGE->set_title("$site->fullname: $loginsite");
+    $PAGE->set_title($loginsite);
     $PAGE->set_heading($site->fullname);
     echo $OUTPUT->header();
     redirect($CFG->wwwroot . '/login/index.php?authldap_skipntlmsso=1',

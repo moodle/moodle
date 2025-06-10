@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_lsusql/category
+
+    Template to render a category.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * name Category name.
+
+    Example context (json):
+    {
+        "id": 1,
+        "name": "category 1",
+        "expandable": false,
+        "show": "shown",
+        "showonlythislink": "true",
+        "url": "https://example.com/report_lsusql/category.php?id=1",
+        "linkref": "https://example.com/report_lsusql/index.php?hidecat=1",
+        "statistic": {
+            "manual": 1,
+            "hourly": 2,
+            "daily": 3,
+            "weekly": 4,
+            "monthly": 5
+        },
+        "querygroups": []
+    }
+}}
+
+<div class="csql_category csql_category{{#expandable}}{{show}}{{/expandable}}">
+    <h2>
+        {{#expandable}}
+            <a href="{{linkref}}" class="categoryname">{{name}}</a>
+        {{/expandable}}
+        {{^expandable}}
+            {{{name}}}
+        {{/expandable}}
+        {{#statistic}}
+            <span class="reportcounts">
+                {{#str}}categorycontent, report_lsusql, {
+                                                                "manual": {{#quote}}{{manual}}{{/quote}},
+                                                                "asap": {{#quote}}{{asap}}{{/quote}},
+                                                                "daily": {{#quote}}{{daily}}{{/quote}},
+                                                                "weekly": {{#quote}}{{weekly}}{{/quote}},
+                                                                "monthly": {{#quote}}{{monthly}}{{/quote}}
+                                                            }{{/str}}
+            </span>
+        {{/statistic}}
+        {{#showonlythislink}}
+            <a href="{{url}}" class="view-category">{{#str}}showonlythiscategory, report_lsusql, {{name}}{{/str}}</a>
+        {{/showonlythislink}}
+    </h2>
+    <div class="csql_category_reports">
+        {{#querygroups}}
+            {{#type}}
+                <h3>
+                    {{title}}
+                    {{{helpicon}}}
+                </h3>
+            {{/type}}
+            {{#queries}}
+                {{{categoryqueryitem}}}
+            {{/queries}}
+        {{/querygroups}}
+        {{^querygroups}}
+            <h3>{{#str}}availablereports, report_lsusql{{/str}}</h3>
+            <p>{{#str}}noreportsavailable, report_lsusql{{/str}}</p>
+        {{/querygroups}}
+    </div>
+</div>
+
+{{#addquerybutton}}
+    {{{addquerybutton}}}
+{{/addquerybutton}}

@@ -92,29 +92,6 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render activity section single select box.
-     *
-     * @param \moodle_url $url The base url.
-     * @param string $activitysection The current selected section.
-     * @param array $sections An array containing all sections of the course
-     * @return string HTML
-     * @throws \coding_exception
-     */
-    public function render_activity_section_select(\moodle_url $url, string $activitysection, array $sections): string {
-        $activitysectionurl = fullclone($url);
-        $activitysectionurl->remove_params(['activitysection']);
-        $options = $sections;
-        $options[-1] = get_string('no_filter_by_section', 'report_progress');
-        $sorttable = new single_select(
-            $activitysectionurl, 'activitysection',
-            $options, $activitysection, null, 'activity-section-select-report'
-        );
-        $sorttable->set_label(get_string('activitysection', 'report_progress'));
-        return \html_writer::div($this->output->render($sorttable),
-                'activity-section-selector include-activity-selector d-inline-block ml-3');
-    }
-
-    /**
      * Render download buttons.
      *
      * @param \moodle_url $url The base url.

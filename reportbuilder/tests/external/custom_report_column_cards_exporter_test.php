@@ -51,8 +51,8 @@ class custom_report_column_cards_exporter_test extends advanced_testcase {
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
 
         // The root of the menu cards property should contain each entity.
-        $this->assertCount(4, $export->menucards);
-        [$menucardcategory, $menucardcourse, $menucardtag, $menucardfile] = $export->menucards;
+        $this->assertCount(3, $export->menucards);
+        [$menucardcategory, $menucardcourse, $menucardtag] = $export->menucards;
 
         // Course category entity menu card.
         $this->assertEquals('Course category', $menucardcategory['name']);
@@ -93,20 +93,6 @@ class custom_report_column_cards_exporter_test extends advanced_testcase {
             'name' => 'Tag name',
             'identifier' => 'tag:name',
             'title' => 'Add column \'Tag name\'',
-            'action' => 'report-add-column',
-        ], $menucarditem);
-
-        // File entity menu card.
-        $this->assertEquals('Course image', $menucardfile['name']);
-        $this->assertEquals('file', $menucardfile['key']);
-        $this->assertNotEmpty($menucardfile['items']);
-
-        // Test the structure of the first menu card item.
-        $menucarditem = reset($menucardfile['items']);
-        $this->assertEquals([
-            'name' => 'Filename',
-            'identifier' => 'file:name',
-            'title' => 'Add column \'Filename\'',
             'action' => 'report-add-column',
         ], $menucarditem);
     }

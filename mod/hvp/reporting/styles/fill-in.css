@@ -1,0 +1,77 @@
+.h5p-fill-in-container {
+  line-height: 2.25;
+}
+
+.h5p-fill-in-container p {
+  line-height: 2.25;
+  margin-bottom: 0;
+}
+
+.h5p-fill-in-options {
+  color: #7F7F7F;
+  background-color: #F5F5F5;
+  padding: 1.66em;
+  font-size: 0.94em;
+}
+
+.h5p-fill-in-correct-responses-pattern,
+.h5p-fill-in-user-response-wrong,
+.h5p-fill-in-user-response-correct {
+  display: inline-block;
+  padding: 0.15em 0.66em;
+  margin-left: 0.33em;
+  margin-right: 0.33em;
+  border-radius: 0.33em;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.h5p-fill-in-correct-responses-pattern {
+  color: #79B74B;
+  background-color: #fff;
+  border: dashed 1px #79B74B;
+}
+
+.h5p-fill-in-user-response-correct {
+  color: #ffffff;
+  background: #8AC062;
+  border: dashed 1px #8AC062;
+}
+
+.h5p-fill-in-user-response-correct.h5p-fill-in-no-correct {
+  background-color: #186df7;
+  border: none;
+}
+
+.h5p-fill-in-user-response-correct:before {
+  font-family: 'h5p-reporting-icons';
+  content: "\e90c";
+}
+
+.h5p-fill-in-user-response-wrong {
+  color: #ffffff;
+  background-color: #DF465A;
+  border: dashed 1px #DF465A;
+}
+
+.h5p-fill-in-user-response-wrong:before {
+  font-family: 'h5p-reporting-icons';
+  content: "\e894";
+}
+
+.h5p-fill-in-footer {
+  font-size: 14px;
+  text-align: right;
+  margin-top: 30px;
+  color: #5C5C5C;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Customization for long-fill-in interactions */
+.h5p-fill-in-container.h5p-long-fill-in .h5p-fill-in-correct-responses-pattern,
+.h5p-fill-in-container.h5p-long-fill-in .h5p-fill-in-user-response-wrong,
+.h5p-fill-in-container.h5p-long-fill-in .h5p-fill-in-user-response-correct {
+  width: 100%;
+  white-space: normal;
+}

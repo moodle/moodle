@@ -28,6 +28,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
+use core_question\question_reference_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -119,6 +121,10 @@ function questions_in_use($questionids): bool {
 
     // Are they used by the core question system?
     if (question_engine::questions_in_use($questionids)) {
+        return true;
+    }
+
+    if (question_reference_manager::questions_with_references($questionids)) {
         return true;
     }
 
@@ -346,11 +352,12 @@ function question_delete_question($questionid): void {
                    qv.version,
                    qbe.id as entryid,
                    qc.id as categoryid,
-                   qc.contextid as contextid
+                   ctx.id as contextid
               FROM {question} q
               LEFT JOIN {question_versions} qv ON qv.questionid = q.id
               LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+              LEFT JOIN {context} ctx ON ctx.id = qc.contextid
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
@@ -360,8 +367,10 @@ function question_delete_question($questionid): void {
         $questionstocheck[] = $question->parent;
     }
 
-    // Do not delete a question if it is used by an activity module
+    // Do not delete a question if it is used by an activity module. Just mark the version hidden.
     if (questions_in_use($questionstocheck)) {
+        $DB->set_field('question_versions', 'status',
+                question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $questionid]);
         return;
     }
 
@@ -841,7 +850,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 /**
  * Given a list of ids, load the basic information about a set of questions from
  * the questions table. The $join and $extrafields arguments can be used together
- * to pull in extra data. See, for example, the usage in {@see \mod_quiz\quiz_attempt}, and
+ * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
  * @param array $questionids array of question ids to load. If null, then all
@@ -1486,9 +1495,10 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
 /**
  * Require capability on question.
  *
- * @param object $question
- * @param string $cap
- * @return bool
+ * @param int|stdClass|question_definition $question object or id.
+ *      If an object is passed, it should include ->contextid and ->createdby.
+ * @param string $cap 'add', 'edit', 'view', 'use', 'move' or 'tag'.
+ * @return bool true if the user has the capability. Throws exception if not.
  */
 function question_require_capability_on($question, $cap): bool {
     if (!question_has_capability_on($question, $cap)) {
@@ -1982,7 +1992,7 @@ function core_question_find_next_unused_idnumber(?string $oldidnumber, int $cate
     global $DB;
 
     // The the old idnumber is not of the right form, bail now.
-    if (!preg_match('~\d+$~', $oldidnumber, $matches)) {
+    if ($oldidnumber === null || !preg_match('~\d+$~', $oldidnumber, $matches)) {
         return null;
     }
 

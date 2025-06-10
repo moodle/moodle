@@ -22,8 +22,7 @@
  * support this.
  *
  * For more information, take a look to the documentation available:
- *     - Logging API: {@link http://docs.moodle.org/dev/Logging_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @package   core
  * @category  log

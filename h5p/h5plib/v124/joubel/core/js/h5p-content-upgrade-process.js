@@ -160,7 +160,7 @@ H5P.ContentUpgradeProcess = (function (Version) {
   ContentUpgradeProcess.prototype.processField = function (field, params, done) {
     var self = this;
 
-    if (params === undefined || params === null) {
+    if (params === undefined) {
       return done();
     }
 

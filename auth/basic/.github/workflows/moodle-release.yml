@@ -1,0 +1,20 @@
+#
+# Whenever version.php is changed, add the latest version
+# to the Moodle Plugins directory at https://moodle.org/plugins
+#
+name: Releasing in the Plugins directory
+
+on:
+  push:
+    branches:
+      - MOODLE_310_STABLE
+    paths:
+      - 'version.php'
+
+jobs:
+  release:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/group-310-plus-release.yml@main
+    with:
+      plugin_name: auth_basic
+    secrets:
+      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}

@@ -25,15 +25,10 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_files;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * Page external functions
@@ -99,7 +94,7 @@ class mod_page_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function view_page_returns() {
@@ -154,7 +149,7 @@ class mod_page_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the pages in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -163,10 +158,10 @@ class mod_page_external extends external_api {
                 helper_for_get_mods_by_courses::format_name_and_intro($page, 'mod_page');
 
                 $context = context_module::instance($page->coursemodule);
-                list($page->content, $page->contentformat) = \core_external\util::format_text(
+                list($page->content, $page->contentformat) = external_format_text(
                         $page->content, $page->contentformat,
-                        $context, 'mod_page', 'content', $page->revision, ['noclean' => true]);
-                $page->contentfiles = util::get_area_files($context->id, 'mod_page', 'content');
+                        $context->id, 'mod_page', 'content', $page->revision, ['noclean' => true]);
+                $page->contentfiles = external_util::get_area_files($context->id, 'mod_page', 'content');
 
                 $returnedpages[] = $page;
             }

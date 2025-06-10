@@ -709,15 +709,15 @@ class H5PValidator {
     'source' => '/^(http[s]?:\/\/.+)$/',
     'license' => '/^(CC BY|CC BY-SA|CC BY-ND|CC BY-NC|CC BY-NC-SA|CC BY-NC-ND|CC0 1\.0|GNU GPL|PD|ODC PDDL|CC PDM|U|C)$/',
     'licenseVersion' => '/^(1\.0|2\.0|2\.5|3\.0|4\.0)$/',
-    'licenseExtras' => '/^.{1,5000}$/s',
+    'licenseExtras' => '/^.{1,5000}$/',
     'yearsFrom' => '/^([0-9]{1,4})$/',
     'yearsTo' => '/^([0-9]{1,4})$/',
     'changes' => array(
       'date' => '/^[0-9]{2}-[0-9]{2}-[0-9]{2} [0-9]{1,2}:[0-9]{2}:[0-9]{2}$/',
       'author' => '/^.{1,255}$/',
-      'log' => '/^.{1,5000}$/s'
+      'log' => '/^.{1,5000}$/'
     ),
-    'authorComments' => '/^.{1,5000}$/s',
+    'authorComments' => '/^.{1,5000}$/',
     'w' => '/^[0-9]{1,4}$/',
     'h' => '/^[0-9]{1,4}$/',
     // deprecated
@@ -800,10 +800,6 @@ class H5PValidator {
    * TRUE if the .h5p file is valid
    */
   public function isValidPackage($skipContent = FALSE, $upgradeOnly = FALSE) {
-    // Create a temporary dir to extract package in.
-    $tmpDir = $this->h5pF->getUploadedH5pFolderPath();
-    $tmpPath = $this->h5pF->getUploadedH5pPath();
-
     // Check dependencies, make sure Zip is present
     if (!class_exists('ZipArchive')) {
       $this->h5pF->setErrorMessage($this->h5pF->t('Your PHP version does not support ZipArchive.'), 'zip-archive-unsupported');
@@ -815,6 +811,10 @@ class H5PValidator {
       unlink($tmpPath);
       return FALSE;
     }
+
+    // Create a temporary dir to extract package in.
+    $tmpDir = $this->h5pF->getUploadedH5pFolderPath();
+    $tmpPath = $this->h5pF->getUploadedH5pPath();
 
     // Only allow files with the .h5p extension:
     if (strtolower(substr($tmpPath, -3)) !== 'h5p') {
@@ -858,7 +858,7 @@ class H5PValidator {
       $totalSize += $fileStat['size'];
 
       $fileName = mb_strtolower($fileStat['name']);
-      if (preg_match('/(^[\._]|\/[\._]|\\\[\._])/', $fileName) !== 0) {
+      if (preg_match('/(^[\._]|\/[\._])/', $fileName) !== 0) {
         continue; // Skip any file or folder starting with a . or _
       }
       elseif ($fileName === 'h5p.json') {
@@ -938,7 +938,7 @@ class H5PValidator {
     for ($i = 0; $i < $zip->numFiles; $i++) {
       $fileName = $zip->statIndex($i)['name'];
 
-      if (preg_match('/(^[\._]|\/[\._]|\\\[\._])/', $fileName) !== 0) {
+      if (preg_match('/(^[\._]|\/[\._])/', $fileName) !== 0) {
         continue; // Skip any file or folder starting with a . or _
       }
 
@@ -998,7 +998,7 @@ class H5PValidator {
         //     - or -
         // - <machineName>-<majorVersion>.<minorVersion>
         // where machineName, majorVersion and minorVersion is read from library.json
-        if ($libraryH5PData['machineName'] !== $file && H5PCore::libraryToFolderName($libraryH5PData) !== $file) {
+        if ($libraryH5PData['machineName'] !== $file && H5PCore::libraryToString($libraryH5PData, TRUE) !== $file) {
           $this->h5pF->setErrorMessage($this->h5pF->t('Library directory name must match machineName or machineName-majorVersion.minorVersion (from library.json). (Directory: %directoryName , machineName: %machineName, majorVersion: %majorVersion, minorVersion: %minorVersion)', array(
               '%directoryName' => $file,
               '%machineName' => $libraryH5PData['machineName'],
@@ -1068,12 +1068,7 @@ class H5PValidator {
               'minorVersion' => $mainDependency['minorVersion']
             ))) {
           foreach ($missingLibraries as $libString => $library) {
-            if (!empty($mainDependency) && $library['machineName'] === $mainDependency['machineName']) {
-              $this->h5pF->setErrorMessage($this->h5pF->t('Missing main library @library', array('@library' => $libString )), 'missing-main-library');
-            }
-            else {
-              $this->h5pF->setErrorMessage($this->h5pF->t('Missing required library @library', array('@library' => $libString)), 'missing-required-library');
-            }
+            $this->h5pF->setErrorMessage($this->h5pF->t('Missing required library @library', array('@library' => $libString)), 'missing-required-library');
             $valid = FALSE;
           }
           if (!$this->h5pC->mayUpdateLibraries()) {
@@ -1625,21 +1620,20 @@ class H5PStorage {
 
     // Go through libraries that came with this package
     foreach ($this->h5pC->librariesJsonData as $libString => &$library) {
-      // Find local library with same major + minor
-      $existingLibrary = $this->h5pC->loadLibrary($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+      // Find local library identifier
+      $libraryId = $this->h5pC->getLibraryId($library, $libString);
 
       // Assume new library
       $new = TRUE;
-      if (isset($existingLibrary['libraryId'])) {
-        $new = false;
-        // We have the library installed already (with the same major + minor)
+      if ($libraryId) {
+        // Found old library
+        $library['libraryId'] = $libraryId;
 
-        $library['libraryId'] = $existingLibrary['libraryId'];
-
-        // Is this a newer patchVersion?
-        $newerPatchVersion = $existingLibrary['patchVersion'] < $library['patchVersion'];
-
-        if (!$newerPatchVersion) {
+        if ($this->h5pF->isPatchedLibrary($library)) {
+          // This is a newer version than ours. Upgrade!
+          $new = FALSE;
+        }
+        else {
           $library['saveDependencies'] = FALSE;
           // This is an older version, no need to save.
           continue;
@@ -1654,9 +1648,6 @@ class H5PStorage {
         H5PMetadata::boolifyAndEncodeSettings($library['metadataSettings']) :
         NULL;
 
-      // MOODLE PATCH: The library needs to be saved in database first before creating the files, because the libraryid is used
-      // as itemid for the files.
-      // Update our DB
       $this->h5pF->saveLibraryData($library, $new);
 
       // Save library folder
@@ -1670,10 +1661,6 @@ class H5PStorage {
 
       // Remove tmp folder
       H5PCore::deleteFileTree($library['uploadDirectory']);
-
-      if ($existingLibrary) {
-        $this->h5pC->fs->deleteLibrary($existingLibrary);
-      }
 
       if ($new) {
         $newOnes++;
@@ -2078,13 +2065,12 @@ class H5PCore {
 
   public static $coreApi = array(
     'majorVersion' => 1,
-    'minorVersion' => 25
+    'minorVersion' => 24
   );
   public static $styles = array(
     'styles/h5p.css',
     'styles/h5p-confirmation-dialog.css',
-    'styles/h5p-core-button.css',
-    'styles/h5p-tooltip.css',
+    'styles/h5p-core-button.css'
   );
   public static $scripts = array(
     'js/jquery.js',
@@ -2096,14 +2082,13 @@ class H5PCore {
     'js/h5p-confirmation-dialog.js',
     'js/h5p-action-bar.js',
     'js/request-queue.js',
-    'js/h5p-tooltip.js',
   );
   public static $adminScripts = array(
     'js/jquery.js',
     'js/h5p-utils.js',
   );
 
-  public static $defaultContentWhitelist = 'json png jpg jpeg gif bmp tif tiff svg eot ttf woff woff2 otf webm mp4 ogg mp3 m4a wav txt pdf rtf doc docx xls xlsx ppt pptx odt ods odp xml csv diff patch swf md textile vtt webvtt gltf glb';
+  public static $defaultContentWhitelist = 'json png jpg jpeg gif bmp tif tiff svg eot ttf woff woff2 otf webm mp4 ogg mp3 m4a wav txt pdf rtf doc docx xls xlsx ppt pptx odt ods odp xml csv diff patch swf md textile vtt webvtt';
   public static $defaultLibraryWhitelistExtras = 'js css';
 
   public $librariesJsonData, $contentJsonData, $mainJsonData, $h5pF, $fs, $h5pD, $disableFileCheck;
@@ -2541,7 +2526,7 @@ class H5PCore {
    * @return string
    */
   protected function getDependencyPath(array $dependency) {
-    return 'libraries/' . H5PCore::libraryToFolderName($dependency);
+    return 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
   }
 
   private static function getDependenciesHash(&$dependencies) {
@@ -2734,26 +2719,14 @@ class H5PCore {
    * Writes library data as string on the form {machineName} {majorVersion}.{minorVersion}
    *
    * @param array $library
-   *  With keys (machineName and/or name), majorVersion and minorVersion
+   *  With keys machineName, majorVersion and minorVersion
+   * @param boolean $folderName
+   *  Use hyphen instead of space in returned string.
    * @return string
    *  On the form {machineName} {majorVersion}.{minorVersion}
    */
-  public static function libraryToString($library) {
-    $name = $library['machineName'] ?? $library['name'];
-
-    return "{$name} {$library['majorVersion']}.{$library['minorVersion']}";
-  }
-
-  /**
-   * Get the name of a library's folder name
-   *
-   * @return string
-   */
-  public static function libraryToFolderName($library) {
-    $name = $library['machineName'] ?? $library['name'];
-    $includePatchVersion = $library['patchVersionInFolderName'] ?? false;
-
-    return "{$name}-{$library['majorVersion']}.{$library['minorVersion']}" . ($includePatchVersion ? ".{$library['patchVersion']}" : '');
+  public static function libraryToString($library, $folderName = FALSE) {
+    return (isset($library['machineName']) ? $library['machineName'] : $library['name']) . ($folderName ? '-' : ' ') . $library['majorVersion'] . '.' . $library['minorVersion'];
   }
 
   /**
@@ -3171,8 +3144,6 @@ class H5PCore {
    * @return int Identifier, or FALSE if non-existent
    */
   public function getLibraryId($library, $libString = NULL) {
-    static $libraryIdMap = [];
-
     if (!$libString) {
       $libString = self::libraryToString($library);
     }
@@ -3772,8 +3743,7 @@ class H5PCore {
       'copyrightWarning' => $this->h5pF->t('Copyrighted material cannot be shared in the H5P Content Hub. If the content is licensed with a OER friendly license like Creative Commons, please choose the appropriate license. If not this content cannot be shared.'),
       'keywordsExits' => $this->h5pF->t('Keywords already exists!'),
       'someKeywordsExits' => $this->h5pF->t('Some of these keywords already exist'),
-      'width' => $this->h5pF->t('width'),
-      'height' => $this->h5pF->t('height')
+
     );
   }
 

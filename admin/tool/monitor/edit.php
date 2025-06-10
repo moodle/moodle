@@ -110,6 +110,10 @@ if ($mformdata = $mform->get_data()) {
 
     redirect($manageurl);
 } else {
+    // Set up the yui module.
+    $PAGE->requires->yui_module('moodle-tool_monitor-dropdown', 'Y.M.tool_monitor.DropDown.init',
+            array(array('eventlist' => $eventlist)));
+
     echo $OUTPUT->header();
     $mform->set_data($rule);
     // If there's any subscription for this rule, display an information message.

@@ -2187,6 +2187,29 @@ class file_storage_test extends \advanced_testcase {
         $this->assertEquals($expectedmimetype, $mimetype);
     }
 
+    /**
+     * Test that get_pathname_hash returns the same file hash for pathnames
+     * with and without trailing / leading slash.
+     *
+     * @covers ::get_pathname_hash
+     *
+     */
+    public function test_get_pathname_hash(): void {
+        $contextid = 2;
+        $component = 'mod_test';
+        $filearea = 'data';
+        $itemid = 0;
+        $filepath1 = '/path';
+        $filepath2 = '/path/';
+        $filepath3 = 'path/';
+        $filename = 'example.jpg';
+        $hash1 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath1, $filename);
+        $hash2 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath2, $filename);
+        $hash3 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath3, $filename);
+        $this->assertEquals($hash1, $hash2);
+        $this->assertEquals($hash2, $hash3);
+    }
+
 }
 
 class test_stored_file_inspection extends stored_file {

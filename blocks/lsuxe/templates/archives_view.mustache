@@ -1,0 +1,118 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Cross Enrollment Tool
+ *
+ * @package   block_lsuxe
+ * @copyright 2008 onwards Louisiana State University
+ * @copyright 2008 onwards David Lowe, Robert Russo
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_lsuxe_container">
+    <table class="table table-hover table-striped lsuxe_mappings_table">
+        <thead>
+            <tr>
+                {{#moodleURL}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=url&dir=desc">{{# str }} moodlesurl, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=url&dir=asc">{{# str }} moodlesurl, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/moodleURL}}
+                {{^moodleURL}}
+                    <th><a href="?sort=url&dir=asc">{{# str }} moodlesurl, block_lsuxe {{/ str }}</a></th>
+                {{/moodleURL}}
+
+                {{#sourceShortname}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=subject&dir=desc">{{# str }} srccourseshortname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=subject&dir=asc">{{# str }} srccourseshortname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/sourceShortname}}
+                {{^sourceShortname}}
+                    <th><a href="?sort=subject&dir=asc">{{# str }} srccourseshortname, block_lsuxe {{/ str }}</a></th>
+                {{/sourceShortname}}
+
+                {{#sourceGroup}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=sent&dir=desc">{{# str }} srccoursegroupname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=sent&dir=asc">{{# str }} srccoursegroupname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/sourceGroup}}
+                {{^sourceGroup}}
+                    <th><a href="?sort=sent&dir=asc">{{# str }} srccoursegroupname, block_lsuxe {{/ str }}</a></th>
+                {{/sourceGroup}}
+
+                {{#destShortname}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=subject&dir=desc">{{# str }} destcourseshortname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=subject&dir=asc">{{# str }} destcourseshortname, block_lsuxe {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/destShortname}}
+                {{^destShortname}}
+                    <th><a href="?sort=subject&dir=asc">{{# str }} destcourseshortname, block_lsuxe {{/ str }}</a></th>
+                {{/destShortname}}
+
+                <th>{{# str }} enrolenddate, block_lsuxe {{/ str }}</th>
+                <th>{{# str }} updateinterval, block_lsuxe {{/ str }}</th>
+                <th>{{# str }} recovernow, block_lsuxe {{/ str }}</th>
+                
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{# mappings}}
+            <form method="POST" id="map_form_{{id}}">
+                <tr data-rowid='{{id}}'>
+                    <input type="hidden" value="{{id}}" name="sentdata"/>
+                    <input type="hidden" value="{{destmoodleid}}" name="destmoodleid"/>
+                    <td>{{moodleurl}}</td>
+                    <td><a href="{{xeurl}}/course/view.php?id={{courseid}}" target="_blank">{{shortname}}</a></td>
+                    <td><a href="{{xeurl}}/group/index.php?id={{groupid}}" target="_blank">{{groupname}}</a></td>
+                    <td><a href="{{moodleurl}}/course/view.php?id={{courseid}}" target="_blank">{{destcourseshortname}}</a></td>
+                    <td>{{endtime}}</td>
+                    <td>{{{updateinterval}}}</td>
+                    <td><button type="submit" class="btn btn-warning mview_recover"><i class="fa fa-undo"></i></button></td>
+                </tr>
+            </form>
+            {{/ mappings }}
+
+            {{^ mappings }}
+                <tr>
+                    <td colspan="7" align="center">{{# str }} noarchives, block_lsuxe {{/ str }}</td>
+                </tr>
+            {{/ mappings }}
+
+        </tbody>
+    </table>
+    
+    {{! This will load the JS for the views that have basic create, update, delete buttons }}
+    {{> block_lsuxe/buttons }}
+</div>

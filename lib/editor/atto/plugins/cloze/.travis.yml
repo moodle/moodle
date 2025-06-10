@@ -1,0 +1,83 @@
+language: php
+
+dist: bionic
+
+sudo: required
+
+services:
+  mysql
+
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.6"
+  chrome: "stable"
+  apt:
+    packages:
+    - openjdk-8-jre-headless
+    - chromium-chromedriver
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+matrix:
+  include:
+    - php: 7.4
+      env:
+      - MOODLE_BRANCH=master
+      - DB=mysqli
+
+    - php: 7.4
+      env:
+      - MOODLE_BRANCH=master
+      - DB=pgsql
+
+    - php: 7.4
+      env:
+      - MOODLE_BRANCH=MOODLE_310_STABLE
+      - DB=pgsql
+
+    - php: 7.4
+      env:
+      - MOODLE_BRANCH=MOODLE_39_STABLE
+      - DB=pgsql
+
+    - php: 7.3
+      env:
+      - MOODLE_BRANCH=MOODLE_38_STABLE
+      - DB=pgsql
+
+    - php: 7.2
+      env:
+      - MOODLE_BRANCH=MOODLE_37_STABLE
+      - DB=pgsql
+
+    - php: 7.1
+      env:
+      - MOODLE_BRANCH=MOODLE_35_STABLE
+      - DB=pgsql
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 14.1
+  - nvm use 14.1
+  - npm install -g grunt-cli
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt || [ "$MOODLE_BRANCH" != 'master' ]
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat --profile chrome

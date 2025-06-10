@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\external_api;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
 
 /**
  * External notes API
@@ -34,6 +26,7 @@ use core_external\util;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . "/notes/lib.php");
 
 /**
@@ -147,7 +140,7 @@ class core_notes_external extends external_api {
                     case 'text':
                         $textformat = FORMAT_PLAIN;
                     default:
-                        $textformat = util::validate_format($note['format']);
+                        $textformat = external_validate_format($note['format']);
                         break;
                 }
                 $dbnote->content = $note['text'];
@@ -192,7 +185,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.2
      */
     public static function create_notes_returns() {
@@ -259,7 +252,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of delete_notes result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function delete_notes_returns() {
@@ -312,7 +305,7 @@ class core_notes_external extends external_api {
                 $context = context_course::instance($note->courseid);
                 self::validate_context($context);
                 require_capability('moodle/notes:view', $context);
-                list($gotnote['text'], $gotnote['format']) = util::format_text($note->content,
+                list($gotnote['text'], $gotnote['format']) = external_format_text($note->content,
                                                                                   $note->format,
                                                                                   $context->id,
                                                                                   'notes',
@@ -336,7 +329,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of get_notes result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function get_notes_returns() {
@@ -415,7 +408,7 @@ class core_notes_external extends external_api {
                 $dbnote = new stdClass;
                 $dbnote->id = $note['id'];
                 $dbnote->content = $note['text'];
-                $dbnote->format = util::validate_format($note['format']);
+                $dbnote->format = external_validate_format($note['format']);
                 // Get the state ('personal', 'course', 'site').
                 switch ($note['publishstate']) {
                     case 'personal':
@@ -454,7 +447,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of update_notes result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function update_notes_returns() {
@@ -492,18 +485,16 @@ class core_notes_external extends external_api {
      * @since Moodle 2.9
      */
     protected static function create_note_list($courseid, $context, $userid, $state, $author = 0) {
-        $results = [];
+        $results = array();
         $notes = note_list($courseid, $userid, $state, $author);
         foreach ($notes as $key => $note) {
             $note = (array)$note;
-            [$note['content'], $note['format']] = util::format_text(
-                $note['content'],
-                $note['format'],
-                $context->id,
-                '',
-                '',
-                0
-            );
+            list($note['content'], $note['format']) = external_format_text($note['content'],
+                                                                           $note['format'],
+                                                                           $context->id,
+                                                                           '',
+                                                                           '',
+                                                                           0);
             $results[$key] = $note;
         }
         return $results;
@@ -597,7 +588,7 @@ class core_notes_external extends external_api {
     /**
      * Returns array of note structure
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.9
      */
     protected static function get_note_structure() {
@@ -617,7 +608,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.9
      */
     public static function get_course_notes_returns() {
@@ -717,7 +708,7 @@ class core_notes_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.9
      */
     public static function view_notes_returns() {

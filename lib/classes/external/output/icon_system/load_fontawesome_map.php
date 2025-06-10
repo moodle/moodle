@@ -14,13 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * A web service to load the mapping of moodle pix names to fontawesome icon names.
+ *
+ * @package    core
+ * @category   external
+ * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\external\output\icon_system;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
 use core\output\icon_system_fontawesome;
 use theme_config;
 
@@ -77,7 +86,7 @@ class load_fontawesome_map extends external_api {
     /**
      * Description of the return value for the `execute` function.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function execute_returns() {
         return new external_multiple_structure(new external_single_structure([

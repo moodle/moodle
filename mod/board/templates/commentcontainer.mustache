@@ -1,0 +1,83 @@
+{{!
+    This file is part of The Moodle simplednd module.
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_board/commentcontainer
+
+    This template renders the comments container.
+
+    Example context (json):
+    {
+        "commentcount": 2,
+        "canpost": true,
+        "comments": [
+            {
+                "id": 1,
+                "content": "This is a comment",
+                "date": "Tuesday, 1 January 2019, 12:00 AM",
+                "candelete": true
+            },
+            {
+                "id": 2,
+                "content": "This is a comment too",
+                "date": "Wednesday, 2 January 2019, 12:00 AM",
+                "candelete": true
+            }
+        ]
+    }
+}}
+<div class="comment mt-3 pt-3 border-top" data-region="commentbox" data-noteid="{{noteid}}">
+    <h6 class="pl-2 mb-3">{{#str}}comments, mod_board, {{{commentcount}}}{{/str}}</h6>
+    {{#canpost}}
+    <div class="d-flex mb-3 pl-2">
+        <div class="comment-input w-100 border-bottom" contenteditable="true" data-region="commentinput" data-noteid="{{commentid}}" aria-label="{{#str}}addcomment, mod_board{{/str}}" ></div>
+    </div>
+    <div data-region="comment-controls" class="collapse">
+        <div class="d-flex position-relative mb-3">
+            <button
+                class="btn btn-link btn-icon btn-secondary icon-no-margin icon-size-3 ml-1 text-reset"
+                aria-label="{{#str}} toggleemojipicker, core {{/str}}"
+                data-action="toggle-emoji-picker"
+            >
+                {{#pix}} e/emoticons, core{{/pix}}
+            </button>
+            <div
+                data-region="emoji-picker-container"
+                class="emoji-picker-container hidden"
+                aria-hidden="true"
+            >
+                {{> core/emoji/picker }}
+            </div>
+
+
+            <button type="button" class="btn btn-secondary btn-sm ml-auto" data-action="cancelcomment">
+                {{#str}}cancel{{/str}}
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm ml-1" data-action="postcomment">
+                {{#str}}addcomment, mod_board{{/str}}
+            </button>
+        </div>
+    </div>
+    {{/canpost}}
+    <div class="comments">
+        {{> mod_board/comments}}
+    </div>
+</div>
+{{#js}}
+require(['mod_board/comments'], function(Comments) {
+    Comments.init();
+});
+{{/js}}

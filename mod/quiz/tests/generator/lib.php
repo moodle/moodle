@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\quiz_attempt;
-use mod_quiz\quiz_settings;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,7 +31,7 @@ class mod_quiz_generator extends testing_module_generator {
         require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         $record = (object)(array)$record;
 
-        $defaultquizsettings = [
+        $defaultquizsettings = array(
             'timeopen'               => 0,
             'timeclose'              => 0,
             'preferredbehaviour'     => 'deferredfeedback',
@@ -88,7 +85,7 @@ class mod_quiz_generator extends testing_module_generator {
             'showuserpicture'        => 0,
             'showblocks'             => 0,
             'navmethod'              => QUIZ_NAVMETHOD_FREE,
-        ];
+        );
 
         foreach ($defaultquizsettings as $name => $value) {
             if (!isset($record->{$name})) {
@@ -118,7 +115,7 @@ class mod_quiz_generator extends testing_module_generator {
     public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
             array $forcedvariants = []) {
         // Build quiz object and load questions.
-        $quizobj = quiz_settings::create($quizid, $userid);
+        $quizobj = quiz::create($quizid, $userid);
 
         $attemptnumber = 1;
         $attempt = null;

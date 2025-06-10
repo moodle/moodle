@@ -50,22 +50,22 @@ class randomquestion_form extends \moodleform {
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
         $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-                ['contexts' => $usablecontexts, 'top' => true]);
+                array('contexts' => $usablecontexts, 'top' => true));
 
-        $mform->addElement('advcheckbox', 'includesubcategories', get_string('recurse', 'quiz'), null, null, [0, 1]);
+        $mform->addElement('advcheckbox', 'includesubcategories', get_string('recurse', 'quiz'), null, null, array(0, 1));
 
         $tops = question_get_top_categories_for_contexts(array_column($contexts->all(), 'id'));
         $mform->hideIf('includesubcategories', 'category', 'in', $tops);
 
         $tags = \core_tag_tag::get_tags_by_area_in_contexts('core_question', 'question', $usablecontexts);
-        $tagstrings = [];
+        $tagstrings = array();
         foreach ($tags as $tag) {
             $tagstrings["{$tag->id},{$tag->name}"] = $tag->name;
         }
-        $options = [
+        $options = array(
                 'multiple' => true,
                 'noselectionstring' => get_string('anytags', 'quiz'),
-        ];
+        );
         $mform->addElement('autocomplete', 'fromtags', get_string('randomquestiontags', 'mod_quiz'), $tagstrings, $options);
         $mform->addHelpButton('fromtags', 'randomquestiontags', 'mod_quiz');
 
@@ -75,10 +75,10 @@ class randomquestion_form extends \moodleform {
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
 
-        $buttonarray = [];
+        $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = $mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }
 

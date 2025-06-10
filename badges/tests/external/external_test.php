@@ -27,8 +27,6 @@
 namespace core_badges\external;
 
 use core_badges_external;
-use core_external\external_api;
-use core_external\external_settings;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -216,12 +214,12 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = core_badges_external::get_user_badges();
-        $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
         $this->assertEquals($expectedbadges, $result['badges']);
 
         // Pagination and filtering.
         $result = core_badges_external::get_user_badges(0, $this->course->id, 0, 1, '', true);
-        $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
         $this->assertCount(1, $result['badges']);
         $this->assertEquals($coursebadge, $result['badges'][0]);
     }
@@ -234,7 +232,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher);
 
         $result = core_badges_external::get_user_badges($this->student->id);
-        $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
 
         $this->assertCount(2, $result['badges']);
 
@@ -266,7 +264,7 @@ class external_test extends externallib_advanced_testcase {
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
 
-        external_settings::get_instance()->set_filter(true);
+        \external_settings::get_instance()->set_filter(true);
 
         // Update issuer name of test badge.
         $issuername = '<span class="multilang" lang="en">Issuer (en)</span><span class="multilang" lang="es">Issuer (es)</span>';
@@ -274,7 +272,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Retrieve student badges.
         $result = core_badges_external::get_user_badges($this->student->id);
-        $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
 
         // Site badge will be last, because it has the earlier issued date.
         $badge = end($result['badges']);

@@ -30,34 +30,24 @@ use core\oauth2\client;
  */
 class linkedin extends client {
     /**
-     * Fetch the user info from the userinfo and email endpoint and map fields back
+     * Override to handle LinkedIn's non-spec-compliant 'locale' field, which isn't a string (e.g. 'en-US') but an object.
      *
      * @return array|false
      */
     public function get_userinfo() {
-        $user = array_merge(parent::get_userinfo(), $this->get_useremail());
-        return $user;
-    }
-
-    /**
-     * Get the email address of the user from the email endpoint
-     *
-     * @return array|false
-     */
-    private function get_useremail() {
-        $url = $this->get_issuer()->get_endpoint_url('email');
-
-        $response = $this->get($url);
-        if (!$response) {
-            return false;
-        }
-        $userinfo = new \stdClass();
-        try {
-            $userinfo = json_decode($response);
-        } catch (\Exception $e) {
+        $rawuserinfo = $this->get_raw_userinfo();
+        if ($rawuserinfo === false) {
             return false;
         }
 
-        return $this->map_userinfo_to_fields($userinfo);
+        if (!empty($rawuserinfo->locale) && is_object($rawuserinfo->locale)) {
+            if (!empty($rawuserinfo->locale->language) && !empty($rawuserinfo->locale->country)) {
+                $rawuserinfo->locale = "{$rawuserinfo->locale->language}-{$rawuserinfo->locale->country}";
+            } else {
+                unset($rawuserinfo->locale);
+            }
+        }
+
+        return $this->map_userinfo_to_fields($rawuserinfo);
     }
 }

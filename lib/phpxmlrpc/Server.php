@@ -421,7 +421,7 @@ class Server
             }
         }
         if (isset($wanted)) {
-            return array(0, "Wanted {$wanted}, got {$got} at param {$pno}"); // TODO: Remove this modification in MDL-76415.
+            return array(0, "Wanted ${wanted}, got ${got} at param ${pno}");
         } else {
             return array(0, "No method signature matches number of parameters");
         }
@@ -558,10 +558,14 @@ class Server
             // makes the lib about 200% slower...
             //if (!is_valid_charset($reqEncoding, array('UTF-8')))
             if (!in_array($reqEncoding, array('UTF-8', 'US-ASCII')) && !XMLParser::hasEncoding($data)) {
-                if (function_exists('mb_convert_encoding')) {
-                    $data = mb_convert_encoding($data, 'UTF-8', $reqEncoding);
+                if ($reqEncoding == 'ISO-8859-1') {
+                    $data = utf8_encode($data);
                 } else {
-                    $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': unsupported charset encoding of received request: ' . $reqEncoding);
+                    if (extension_loaded('mbstring')) {
+                        $data = mb_convert_encoding($data, 'UTF-8', $reqEncoding);
+                    } else {
+                        $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': invalid charset encoding of received request: ' . $reqEncoding);
+                    }
                 }
             }
         }
@@ -665,7 +669,7 @@ class Server
                 return new Response(
                     0,
                     PhpXmlRpc::$xmlrpcerr['incorrect_params'],
-                    PhpXmlRpc::$xmlrpcstr['incorrect_params'] . ": {$errStr}" // TODO: Remove this modification in MDL-76415.
+                    PhpXmlRpc::$xmlrpcstr['incorrect_params'] . ": ${errStr}"
                 );
             }
         }
@@ -1016,8 +1020,8 @@ class Server
     public static function _xmlrpcs_multicall_error($err)
     {
         if (is_string($err)) {
-            $str = PhpXmlRpc::$xmlrpcstr["multicall_{$err}"]; // TODO: Remove this modification in MDL-76415.
-            $code = PhpXmlRpc::$xmlrpcerr["multicall_{$err}"]; // TODO: Remove this modification in MDL-76415.
+            $str = PhpXmlRpc::$xmlrpcstr["multicall_${err}"];
+            $code = PhpXmlRpc::$xmlrpcerr["multicall_${err}"];
         } else {
             $code = $err->faultCode();
             $str = $err->faultString();

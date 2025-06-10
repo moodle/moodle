@@ -87,7 +87,7 @@ H5P.ConfirmationDialog = (function (EventDispatcher) {
     popup.setAttribute('aria-labelledby', 'h5p-confirmation-dialog-dialog-text-' + uniqueId);
     popupBackground.appendChild(popup);
     popup.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {// Esc key
+      if (e.which === 27) {// Esc key
         // Exit dialog
         dialogCanceled(e);
       }
@@ -135,18 +135,18 @@ H5P.ConfirmationDialog = (function (EventDispatcher) {
     // Exit button
     var exitButton = document.createElement('button');
     exitButton.classList.add('h5p-confirmation-dialog-exit');
+    exitButton.setAttribute('aria-hidden', 'true');
     exitButton.tabIndex = -1;
-    exitButton.setAttribute('aria-label', options.cancelText);
+    exitButton.title = options.cancelText;
 
     // Cancel handler
     cancelButton.addEventListener('click', dialogCanceled);
     cancelButton.addEventListener('keydown', function (e) {
-      if (e.key === ' ') { // Space
+      if (e.which === 32) { // Space
         dialogCanceled(e);
       }
-      else if (e.key === 'Tab' && e.shiftKey) { // Shift-tab
-        const nextbutton = options.hideExit ? confirmButton : exitButton;
-        flowTo(nextbutton, e);
+      else if (e.which === 9 && e.shiftKey) { // Shift-tab
+        flowTo(confirmButton, e);
       }
     });
 
@@ -161,17 +161,11 @@ H5P.ConfirmationDialog = (function (EventDispatcher) {
     // Confirm handler
     confirmButton.addEventListener('click', dialogConfirmed);
     confirmButton.addEventListener('keydown', function (e) {
-      if (e.key === ' ') { // Space
+      if (e.which === 32) { // Space
         dialogConfirmed(e);
       }
-      else if (e.key === 'Tab' && !e.shiftKey) { // Tab        
-        let nextButton = confirmButton;
-        if (!options.hideExit) {
-          nextButton = exitButton;
-        }
-        else if (!options.hideCancel) {
-          nextButton = cancelButton;
-        }
+      else if (e.which === 9 && !e.shiftKey) { // Tab
+        const nextButton = !options.hideCancel ? cancelButton : confirmButton;
         flowTo(nextButton, e);
       }
     });
@@ -180,12 +174,8 @@ H5P.ConfirmationDialog = (function (EventDispatcher) {
     // Exit handler
     exitButton.addEventListener('click', dialogCanceled);
     exitButton.addEventListener('keydown', function (e) {
-      if (e.key === ' ') { // Space
+      if (e.which === 32) { // Space
         dialogCanceled(e);
-      }
-      else if (e.key === 'Tab' && !e.shiftKey) { // Tab        
-        const nextButton = options.hideCancel ? confirmButton : cancelButton;
-        flowTo(nextButton, e);
       }
     });
     if (!options.hideExit) {

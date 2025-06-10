@@ -27,7 +27,7 @@ Feature: Tiny editor accessibility checker
     And I should see "Images require alternative text." in the "Accessibility checker" "dialogue"
     And I click on "View" "link" in the "Accessibility checker" "dialogue"
     And I click on the "Image" button for the "Description" TinyMCE editor
-    And the field "Enter URL" matches value "/broken-image"
+    And the field "URL" matches value "/broken-image"
     And I set the field "Describe this image for someone who cannot see it" to "No more warning!"
     And I press "Save image"
     And I click on the "Tools > Accessibility checker" menu item for the "Description" TinyMCE editor
@@ -35,7 +35,7 @@ Feature: Tiny editor accessibility checker
     And I click on "Close" "button" in the "Accessibility checker" "dialogue"
     And I select the "img" element in position "2" of the "Description" TinyMCE editor
     And I click on the "Image" button for the "Description" TinyMCE editor
-    And I set the field "Enter URL" to "/decorative-image.png"
+    And I set the field "URL" to "/decorative-image.png"
     And I set the field "Describe this image for someone who cannot see it" to ""
     And I set the field "Width" to "1"
     And I set the field "Height" to "1"

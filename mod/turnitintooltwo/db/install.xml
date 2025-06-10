@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/turnitintooltwo/db" VERSION="20150401" COMMENT="XMLDB file for Moodle mod/turnitintooltwo"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+       >
+    <TABLES>
+        <TABLE NAME="turnitintooltwo" COMMENT="Turnitin Tools for Moodle" NEXT="turnitintooltwo_parts">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="course"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Course Turnitin Tools Activity Module belongs to" PREVIOUS="id" NEXT="type"/>
+                <FIELD NAME="type" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the Type of this instance" PREVIOUS="course" NEXT="name"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name for Turnitin Tools Instance" PREVIOUS="type" NEXT="grade"/>
+                <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="name" NEXT="numparts"/>
+                <FIELD NAME="numparts" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="defaultdtstart"/>
+                <FIELD NAME="defaultdtstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="numparts" NEXT="defaultdtdue"/>
+                <FIELD NAME="defaultdtdue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtstart" NEXT="defaultdtpost"/>
+                <FIELD NAME="defaultdtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtdue" NEXT="anon"/>
+                <FIELD NAME="anon" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtpost" NEXT="submitted"/>
+                <FIELD NAME="submitted" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="anon" NEXT="portfolio"/>
+                <FIELD NAME="portfolio" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submitted" NEXT="allowlate"/>
+                <FIELD NAME="allowlate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="portfolio" NEXT="reportgenspeed"/>
+                <FIELD NAME="reportgenspeed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="allowlate" NEXT="submitpapersto"/>
+                <FIELD NAME="submitpapersto" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="reportgenspeed" NEXT="spapercheck"/>
+                <FIELD NAME="spapercheck" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submitpapersto" NEXT="internetcheck"/>
+                <FIELD NAME="internetcheck" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="spapercheck" NEXT="journalcheck"/>
+                <FIELD NAME="journalcheck" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="internetcheck" NEXT="institution_check"/>
+                <FIELD NAME="institution_check" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="journalcheck" NEXT="maxfilesize"/>
+                <FIELD NAME="maxfilesize" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="institution_check" NEXT="intro"/>
+                <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the Turnitin Tools activity" PREVIOUS="maxfilesize" NEXT="introformat"/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="timecreated"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="studentreports"/>
+                <FIELD NAME="studentreports" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="dateformat"/>
+                <FIELD NAME="dateformat" TYPE="text" LENGTH="small" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="studentreports" NEXT="usegrademark"/>
+                <FIELD NAME="usegrademark" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dateformat" NEXT="gradedisplay"/>
+                <FIELD NAME="gradedisplay" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="usegrademark" NEXT="autoupdates"/>
+                <FIELD NAME="autoupdates" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="gradedisplay" NEXT="commentedittime"/>
+                <FIELD NAME="commentedittime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="autoupdates" NEXT="commentmaxsize"/>
+                <FIELD NAME="commentmaxsize" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="commentedittime" NEXT="autosubmission"/>
+                <FIELD NAME="autosubmission" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="commentmaxsize" NEXT="shownonsubmission"/>
+                <FIELD NAME="shownonsubmission" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="autosubmission" NEXT="excludebiblio"/>
+                <FIELD NAME="excludebiblio" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="shownonsubmission" NEXT="excludequoted"/>
+                <FIELD NAME="excludequoted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="excludebiblio" NEXT="excludevalue"/>
+                <FIELD NAME="excludevalue" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="excludequoted" NEXT="excludetype"/>
+                <FIELD NAME="excludetype" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" UNSIGNED="false" SEQUENCE="false" PREVIOUS="excludevalue" NEXT="perpage"/>
+                <FIELD NAME="perpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="25" UNSIGNED="false" SEQUENCE="false" PREVIOUS="excludetype" NEXT="erater"/>
+                <FIELD NAME="erater" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="perpage" NEXT="erater_handbook"/>
+                <FIELD NAME="erater_handbook" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater" NEXT="erater_dictionary"/>
+                <FIELD NAME="erater_dictionary" TYPE="char" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_handbook" NEXT="erater_spelling"/>
+                <FIELD NAME="erater_spelling" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_dictionary" NEXT="erater_grammar"/>
+                <FIELD NAME="erater_grammar" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_spelling" NEXT="erater_usage"/>
+                <FIELD NAME="erater_usage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_grammar" NEXT="erater_mechanics"/>
+                <FIELD NAME="erater_mechanics" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_usage" NEXT="erater_style"/>
+                <FIELD NAME="erater_style" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_mechanics" NEXT="transmatch"/>
+                <FIELD NAME="transmatch" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="erater_style" NEXT="rubric"/>
+                <FIELD NAME="rubric" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="transmatch" NEXT="allownonor"/>
+                <FIELD NAME="allownonor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="rubric" NEXT="needs_updating"/>
+                <FIELD NAME="needs_updating" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="allownonor" NEXT="syncreport"/>
+                <FIELD NAME="syncreport" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="needs_updating" NEXT="anongradebook"/>
+                <FIELD NAME="anongradebook" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="syncreport" NEXT="legacy"/>
+                <FIELD NAME="legacy" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="anongradebook"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="turnitintooltwo_parts" COMMENT="Turnitin Tools Submission Parts" NEXT="turnitintooltwo_users" PREVIOUS="turnitintooltwo">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="turnitintooltwoid"/>
+                <FIELD NAME="turnitintooltwoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="partname"/>
+                <FIELD NAME="partname" TYPE="text" LENGTH="medium" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitintooltwoid" NEXT="tiiassignid"/>
+                <FIELD NAME="tiiassignid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="partname" NEXT="dtstart"/>
+                <FIELD NAME="dtstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="tiiassignid" NEXT="dtdue"/>
+                <FIELD NAME="dtdue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtstart" NEXT="dtpost"/>
+                <FIELD NAME="dtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtdue" NEXT="maxmarks"/>
+                <FIELD NAME="maxmarks" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtpost" NEXT="deleted"/>
+                <FIELD NAME="deleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="maxmarks" NEXT="migrated"/>
+                <FIELD NAME="migrated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="deleted" NEXT="unanon"/>
+                <FIELD NAME="unanon" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="migrated" NEXT="submitted"/>
+                <FIELD NAME="submitted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="unanon" NEXT="gradesupdated"/>
+                <FIELD NAME="gradesupdated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submitted"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="turnitintooltwoid" UNIQUE="false" FIELDS="turnitintooltwoid" NEXT="tiiassignid" />
+                <INDEX NAME="tiiassignid" UNIQUE="false" FIELDS="tiiassignid" PREVIOUS="turnitintooltwoid" />
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="turnitintooltwo_users" COMMENT="Turnitin Tools Users" NEXT="turnitintooltwo_courses" PREVIOUS="turnitintooltwo_parts">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="userid"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="turnitin_uid"/>
+                <FIELD NAME="turnitin_uid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="turnitin_utp"/>
+                <FIELD NAME="turnitin_utp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_uid" NEXT="instructor_defaults"/>
+                <FIELD NAME="instructor_defaults" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_utp" NEXT="instructor_rubrics"/>
+                <FIELD NAME="instructor_rubrics" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="instructor_defaults" NEXT="user_agreement_accepted"/>
+                <FIELD NAME="user_agreement_accepted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="instructor_rubrics"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="turnitintooltwo_courses" COMMENT="Turnitin Tools Courses" NEXT="turnitintooltwo_submissions" PREVIOUS="turnitintooltwo_users">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="courseid"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="ownerid"/>
+                <FIELD NAME="ownerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="courseid" NEXT="turnitin_ctl"/>
+                <FIELD NAME="turnitin_ctl" TYPE="text" LENGTH="medium" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="ownerid" NEXT="turnitin_cid"/>
+                <FIELD NAME="turnitin_cid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_ctl" NEXT="course_type"/>
+                <FIELD NAME="course_type" TYPE="char" LENGTH="20" DEFAULT="M" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_cid"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="courseid-course_type" UNIQUE="false" FIELDS="courseid, course_type" />
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="turnitintooltwo_submissions" COMMENT="Turnitin Tools Submissions" PREVIOUS="turnitintooltwo_courses" NEXT="turnitintooltwo_peermarks">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="userid"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="turnitintooltwoid"/>
+                <FIELD NAME="turnitintooltwoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="submission_part"/>
+                <FIELD NAME="submission_part" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitintooltwoid" NEXT="submission_title"/>
+                <FIELD NAME="submission_title" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Title of Submission" PREVIOUS="submission_part" NEXT="submission_type"/>
+                <FIELD NAME="submission_type" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_title" NEXT="submission_filename"/>
+                <FIELD NAME="submission_filename" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Name of Submitted File" PREVIOUS="submission_type" NEXT="submission_objectid"/>
+                <FIELD NAME="submission_objectid" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_filename" NEXT="submission_score"/>
+                <FIELD NAME="submission_score" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_objectid" NEXT="submission_grade"/>
+                <FIELD NAME="submission_grade" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_score" NEXT="submission_gmimaged"/>
+                <FIELD NAME="submission_gmimaged" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_grade" NEXT="submission_attempts"/>
+                <FIELD NAME="submission_attempts" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_gmimaged" NEXT="submission_modified"/>
+                <FIELD NAME="submission_modified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_attempts" NEXT="submission_parent"/>
+                <FIELD NAME="submission_parent" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_modified" NEXT="submission_nmuserid"/>
+                <FIELD NAME="submission_nmuserid" TYPE="char" LENGTH="100" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_parent" NEXT="submission_nmfirstname"/>
+                <FIELD NAME="submission_nmfirstname" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_nmuserid" NEXT="submission_nmlastname"/>
+                <FIELD NAME="submission_nmlastname" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_nmfirstname" NEXT="submission_unanon"/>
+                <FIELD NAME="submission_unanon" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="submission_nmlastname" NEXT="submission_unanonreason"/>
+                <FIELD NAME="submission_unanonreason" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_unanon" NEXT="submission_transmatch"/>
+                <FIELD NAME="submission_transmatch" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_unanonreason" NEXT="submission_acceptnothing"/>
+                <FIELD NAME="submission_acceptnothing" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_transmatch" NEXT="submission_orcapable"/>
+                <FIELD NAME="submission_orcapable" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_acceptnothing" NEXT="submission_hash"/>
+                <FIELD NAME="submission_hash" TYPE="char" LENGTH="100" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_orcapable" NEXT="migration_gradebook"/>
+                <FIELD NAME="migrate_gradebook" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="submission_hash"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="submission_hash" TYPE="unique" FIELDS="submission_hash" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="turnitintooltwoid"/>
+                <INDEX NAME="turnitintooltwoid" UNIQUE="false" FIELDS="turnitintooltwoid" PREVIOUS="userid" NEXT="submission_objectid"/>
+                <INDEX NAME="submission_objectid" UNIQUE="false" FIELDS="submission_objectid" PREVIOUS="turnitintooltwoid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="turnitintooltwo_peermarks" COMMENT="Turnitin Tools Peermark Assignments" PREVIOUS="turnitintooltwo_submissions">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="parent_tii_assign_id"/>
+                <FIELD NAME="parent_tii_assign_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="title"/>
+                <FIELD NAME="title" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="parent_tii_assign_id" NEXT="tiiassignid"/>
+                <FIELD NAME="tiiassignid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="title" NEXT="dtstart"/>
+                <FIELD NAME="dtstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="tiiassignid" NEXT="dtdue"/>
+                <FIELD NAME="dtdue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtstart" NEXT="dtpost"/>
+                <FIELD NAME="dtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtdue" NEXT="maxmarks"/>
+                <FIELD NAME="maxmarks" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtpost" NEXT="instructions"/>
+                <FIELD NAME="instructions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="maxmarks" NEXT="distributed_reviews"/>
+                <FIELD NAME="distributed_reviews" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="instructions" NEXT="selected_reviews"/>
+                <FIELD NAME="selected_reviews" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="distributed_reviews" NEXT="self_review"/>
+                <FIELD NAME="self_review" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="selected_reviews" NEXT="non_submitters_review"/>
+                <FIELD NAME="non_submitters_review" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="self_review"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="parent_tii_assign_id" UNIQUE="false" FIELDS="parent_tii_assign_id" NEXT="tiiassignid"/>
+                <INDEX NAME="tiiassignid" UNIQUE="false" FIELDS="tiiassignid" PREVIOUS="parent_tii_assign_id"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

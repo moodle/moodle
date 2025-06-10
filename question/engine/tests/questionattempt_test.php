@@ -52,6 +52,12 @@ class questionattempt_test extends \advanced_testcase {
         $this->qa = new question_attempt($this->question, $this->usageid);
     }
 
+    protected function tearDown(): void {
+        $this->question = null;
+        $this->useageid = null;
+        $this->qa = null;
+    }
+
     public function test_constructor_sets_maxmark() {
         $qa = new question_attempt($this->question, $this->usageid);
         $this->assertSame($this->question, $qa->get_question(false));

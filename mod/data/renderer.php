@@ -131,12 +131,12 @@ class mod_data_renderer extends plugin_renderer_base {
         $cancelurl = new moodle_url('/mod/data/field.php', ['d' => $datamodule->id]);
         $actionbuttons .= html_writer::tag('a', get_string('cancel') , [
             'href' => $cancelurl->out(false),
-            'class' => 'btn btn-secondary mx-1',
+            'class' => 'btn btn-secondary mr-2',
             'role' => 'button',
         ]);
         $actionbuttons .= html_writer::empty_tag('input', [
             'type' => 'submit',
-            'class' => 'btn btn-primary mx-1',
+            'class' => 'btn btn-primary',
             'value' => get_string('continue'),
         ]);
         $actionbuttons .= html_writer::end_div();

@@ -14,16 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * External API to record users action on the feedback notification.
+ *
+ * @package    core
+ * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_value;
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/externallib.php");
+
+use external_api;
+use external_function_parameters;
+use external_value;
 
 /**
  * The external API to record users action on the feedback notification.
  *
- * @package    core
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

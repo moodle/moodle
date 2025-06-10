@@ -80,7 +80,7 @@ class participants_test extends core_reportbuilder_testcase {
 
         // Update final grade for the user.
         $courseitem = grade_item::fetch_course_item($course->id);
-        $courseitem->update_final_grade($user1->id, 80);
+        $courseitem->update_final_grade($user1->id, 42.5);
 
         // Set some last access value for the user in the course.
         $DB->insert_record('user_lastaccess',
@@ -152,7 +152,7 @@ class participants_test extends core_reportbuilder_testcase {
             '', // Reagreggate.
             '2', // Days taking course.
             '2', // Days until completion.
-            '80.00', // Grade.
+            '42.50', // Grade.
         ], array_values($content[0]));
     }
 
@@ -210,27 +210,6 @@ class participants_test extends core_reportbuilder_testcase {
                 ],
                 'Lionel'
             ],
-            [
-                'completion:timeenrolled',
-                [
-                    'completion:timeenrolled_operator' => date::DATE_NOT_EMPTY,
-                ],
-                'Lionel'
-            ],
-            [
-                'completion:timestarted',
-                [
-                    'completion:timestarted_operator' => date::DATE_NOT_EMPTY,
-                ],
-                'Lionel'
-            ],
-            [
-                'completion:reaggregate',
-                [
-                    'completion:reaggregate_operator' => date::DATE_NOT_EMPTY,
-                ],
-                'Lionel'
-            ],
         ];
     }
 
@@ -275,7 +254,6 @@ class participants_test extends core_reportbuilder_testcase {
         // Mark course as completed for the user.
         $ccompletion = new completion_completion(array('course' => $course->id, 'userid' => $user1->id));
         $ccompletion->mark_enrolled($timestart);
-        $ccompletion->mark_inprogress($timestart);
         $ccompletion->mark_complete($timecompleted);
 
         // Set some last access value for the user in the course.

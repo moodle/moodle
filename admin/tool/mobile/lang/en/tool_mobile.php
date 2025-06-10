@@ -152,5 +152,8 @@ $string['responsivemainmenuitems'] = 'Responsive menu items';
 $string['switchaccount'] = 'Switch account';
 $string['viewqrcode'] = 'View QR code';
 
+// Deprecated since Moodle 3.10.
+$string['mobileappconnected'] = 'Mobile app connected';
+
 // Deprecated since Moodle 3.11.
 $string['openusingembeddedbrowser'] = 'Open using embedded browser';

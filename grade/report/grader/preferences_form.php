@@ -58,9 +58,11 @@ class grader_report_preferences_form extends moodleform {
 
             $preferences['prefshow']['showcalculations'] = $checkbox_default;
 
+            $preferences['prefshow']['showeyecons']       = $checkbox_default;
             if ($canviewhidden) {
                 $preferences['prefshow']['showaverages']  = $checkbox_default;
             }
+            $preferences['prefshow']['showlocks']         = $checkbox_default;
 
             $preferences['prefrows'] = array(
                         'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
@@ -84,15 +86,21 @@ class grader_report_preferences_form extends moodleform {
                                                                           0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
                 $preferences['prefrows']['meanselection']  = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                                    GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
-                                                                   GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'));
+                                                                   // BEGIN LSU Column Average No Zero.
+                                                                   GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'),
+                                                                   GRADE_REPORT_MEAN_GRADED_NO_ZEROS => get_string('meangradednozeros', 'grades'));
+                                                                   // END LSU Column Average No Zero.
+
+
 
                 $advanced = array_merge($advanced, array('averagesdisplaytype', 'averagesdecimalpoints'));
             }
         }
 
-        // Quickgrading use conditional on grade:edit capability.
+        // quickgrading and showquickfeedback are conditional on grade:edit capability
         if (has_capability('moodle/grade:edit', $context)) {
             $preferences['prefgeneral']['quickgrading'] = $checkbox_default;
+            $preferences['prefgeneral']['showquickfeedback'] = $checkbox_default;
         }
 
         // View capability is the lowest permission. Users with grade:manage or grade:edit must also have grader:view
@@ -104,10 +112,12 @@ class grader_report_preferences_form extends moodleform {
             $preferences['prefgeneral']['aggregationposition'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                                        GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                                        GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'));
+            $preferences['prefgeneral']['enableajax'] = $checkbox_default;
 
             $preferences['prefshow']['showuserimage'] = $checkbox_default;
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;
             $preferences['prefshow']['showranges'] = $checkbox_default;
+            $preferences['prefshow']['showanalysisicon'] = $checkbox_default;
 
             if ($canviewhidden) {
                 $preferences['prefrows']['shownumberofgrades'] = $checkbox_default;

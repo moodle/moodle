@@ -236,10 +236,8 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/empty' => 'fa-fw',
             'core:i/enrolmentsuspended' => 'fa-pause',
             'core:i/enrolusers' => 'fa-user-plus',
-            'core:i/excluded' => 'fa-minus-circle',
             'core:i/expired' => 'fa-exclamation text-warning',
             'core:i/export' => 'fa-download',
-            'core:i/link' => 'fa-link',
             'core:i/externallink' => 'fa-external-link',
             'core:i/files' => 'fa-file',
             'core:i/filter' => 'fa-filter',
@@ -295,7 +293,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/open' => 'fa-folder-open',
             'core:i/otherevent' => 'fa-calendar',
             'core:i/outcomes' => 'fa-tasks',
-            'core:i/overriden_grade' => 'fa-edit',
             'core:i/payment' => 'fa-money',
             'core:i/permissionlock' => 'fa-lock',
             'core:i/permissions' => 'fa-pencil-square-o',
@@ -435,7 +432,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/sort_asc' => 'fa-sort-asc',
             'core:t/sort_desc' => 'fa-sort-desc',
             'core:t/sort' => 'fa-sort',
-            'core:t/stealth' => 'fa-low-vision',
             'core:t/stop' => 'fa-stop',
             'core:t/switch_minus' => 'fa-minus',
             'core:t/switch_plus' => 'fa-plus',
@@ -501,8 +497,9 @@ class icon_system_fontawesome extends icon_system_font {
             $data['aria-hidden'] = $icon->attributes['aria-hidden'];
         }
 
-        // Flipping help icon direction in right-to-left languages.
-        if (right_to_left() && $data['key'] == "fa-question-circle text-info") {
+        // Flip question mark icon orientation when the `questioniconfollowlangdirection` lang config string is set to `yes`.
+        $isquestionicon = strpos($data['key'], 'fa-question') !== false;
+        if ($isquestionicon && right_to_left() && get_string('questioniconfollowlangdirection', 'langconfig') === 'yes') {
             $data['extraclasses'] = "fa-flip-horizontal";
         }
 

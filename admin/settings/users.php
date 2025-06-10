@@ -279,6 +279,12 @@ if ($hassiteconfig) {
     );
     $url = new moodle_url('/admin/settings.php?section=supportcontact');
     $url = $url->out();
+
+    // BEGIN LSU FERPA photos.
+    $setting = new admin_setting_configcheckbox('ferpaphotos', new lang_string('ferpaphotos', 'admin'), new lang_string('ferpaphotoshelp', 'admin'), 0);
+    $temp->add($setting);
+    // END LSU FERPA photos.
+
     $setting = new admin_setting_configselect('agedigitalconsentverification',
         new lang_string('agedigitalconsentverification', 'admin'),
         new lang_string('agedigitalconsentverification_desc', 'admin', $url), 0, $options);

@@ -1,0 +1,28 @@
+version 2015122008
+
+If the editor loses focus, drop out of fullscreen. This happens if
+user hit tab key.
+
+version 2015122007
+
+Override the disable buttons function. The html plugin was changed
+in 3.6 to include htmlplus functionality. This resulted in fullscreen
+being disabled when html plugin was invoked. Now fullscreen ignores all
+disable requests as there is not a reason why any editor plugins should
+disable it.
+
+version 2015122006
+
+Add support for Privacy API
+Compatible with Boost 3.5 theme
+
+version 20151220
+
+Enable better compatibility with htmlplus plugin. htmlplus window is
+dynamically resized and does not deactivate plugin.
+
+version 20150513
+
+Add a setting to require the capablity to arrange activities. The function
+is to prevent the fullscreen option being available to students to keep
+the toolbar more minimal.

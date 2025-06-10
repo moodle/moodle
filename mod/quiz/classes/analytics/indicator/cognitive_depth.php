@@ -60,7 +60,7 @@ class cognitive_depth extends activity_base {
      * @return string[]
      */
     protected function feedback_submitted_events() {
-        return ['\mod_quiz\event\attempt_submitted'];
+        return array('\mod_quiz\event\attempt_submitted');
     }
 
     /**

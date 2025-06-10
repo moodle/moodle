@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency scale filter template application.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    none.
+}}
+<div class="scalefiltercontainer">
+    {{#cmcompgradingenabled}}
+    <div class="fitem fitem_fradio fitem_fradiogroup">
+        <div class="fradio radio radio-primary">
+            <span>
+                <input type="radio" name="optionscalefilter" id="scalefiltercoursemodule" value="2" disabled="disabled" aria-labelledby="scalefilterapply">
+                <label for="scalefiltercoursemodule">{{#str}}finalratingcoursemodule, report_lpmonitoring{{/str}}</label>
+            </span>
+        </div>
+    </div>
+    {{/cmcompgradingenabled}}
+    <div class="fitem fitem_fradio fitem_fradiogroup">
+        <div class="fradio radio radio-primary">
+            <span>
+                <input type="radio" name="optionscalefilter" id="scalefiltercourse" value="1" disabled="disabled" aria-labelledby="scalefilterapply">
+                <label for="scalefiltercourse">{{#str}}finalratingcourse, report_lpmonitoring{{/str}}</label>
+            </span>
+        </div>
+    </div>
+    <div class="fitem fitem_fradio femptylabel">
+        <div class="fradio radio radio-primary">
+            <span>
+                <input type="radio" name="optionscalefilter" id="scalefilterplan" value="0" disabled="disabled"  aria-labelledby="scalefilterapply">
+                <label for="scalefilterplan">{{#str}}finalrating, report_lpmonitoring{{/str}}</label>
+            </span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency detail stats in course template.
+
+    Classes required for JS:
+    * competencydialogue
+
+    Context variables required for this template:
+    
+
+    * competencyid - competency id
+    * nbratingtotal - total number of rating
+    * nbratings - number of rating
+    
+    * scalecompetencyitems - scale used in the competency
+      * color - color of the scale value
+      * name - name of scale value
+      * nbratings - number of rating with this scale value
+    
+
+}}
+<div class="tile_count">
+    <div class="tile_stats_count">
+        <table>
+            <tr>
+                <td class="convaschart">
+                    {{#nbratings}}
+                    <canvas class="detail-competency" id="canvas-graph-{{competencyid}}" height="80" width="80"></canvas>
+                    {{/nbratings}}
+                    {{^nbratings}}
+                    <div class="no-data-available">
+                        <span>{{#str}}nodataavailable, report_lpmonitoring{{/str}}</span>
+                    </div>
+                    {{/nbratings}}
+                    <h5>{{#str}}totalnumberrating, report_lpmonitoring{{/str}}</h5>
+                    <div class="count blue incourse">
+                        {{nbratings}}/{{nbratingtotal}}
+                    </div>
+                </td>
+                <td class="scalevalues">
+                    <table class="tile_info" data-type="incourse">
+                        <tr>
+                         <td></td>
+                         <td><span class="nbusers fa fa-bar-chart-o"> </span></td>
+                        </tr>
+                        {{#scalecompetencyitems}}
+                        <tr>        
+                            <td>
+                                <p class="truncate"><i class="fa fa-square" style="color:{{color}}"></i>{{name}}</p>
+                            </td>
+                            <td >
+                                <span class="nbusers {{#nbratings}}bold{{/nbratings}}">{{nbratings}}</span>
+                            </td>
+                        </tr>
+                        {{/scalecompetencyitems}}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

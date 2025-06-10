@@ -8,6 +8,9 @@ viewallmyentries,core_blog
 searchallavailablecourses_desc,core_admin
 search:mycourse,core_search
 calendarurl,core_calendar
+filetypesnotwhitelisted,core_form
+modeloutputdirinfo,core_analytics
+backpackneedsupdate,core_badges
 hidepicture,core_group
 hidepicture,core_moodle
 sitebackpack,core_badges
@@ -68,16 +71,3 @@ match,core_user
 matchofthefollowing,core_user
 placeholdertypeorselect,core_user
 selectfiltertype,core_user
-confirmaddadmin,core_role
-confirmdeladmin,core_role
-showquickfeedback,core_grades
-showquickfeedback_help,core_grades
-enableajax,core_grades
-enableajax_help,core_grades
-showeyecons,core_grades
-showeyecons_help,core_grades
-showlocks,core_grades
-showlocks_help,core_grades
-showanalysisicon,core_grades
-showanalysisicon_desc,core_grades
-showanalysisicon_help,core_grades

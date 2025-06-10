@@ -35,6 +35,7 @@ class state_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_output_course_format_state.php');
+        require_once($CFG->dirroot . '/lib/externallib.php');
     }
 
     /**

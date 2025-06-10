@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\external_api;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
-
 /**
  * External cohort API
  *
@@ -31,6 +22,11 @@ use core_external\util;
  * @copyright  MediaTouch 2000 srl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/externallib.php");
+
 class core_cohort_external extends external_api {
 
     /**
@@ -127,12 +123,12 @@ class core_cohort_external extends external_api {
             }
 
             // Validate format.
-            $cohort->descriptionformat = util::validate_format($cohort->descriptionformat);
+            $cohort->descriptionformat = external_validate_format($cohort->descriptionformat);
             $cohort->id = cohort_add_cohort($cohort);
 
             list($cohort->description, $cohort->descriptionformat) =
-                \core_external\util::format_text($cohort->description, $cohort->descriptionformat,
-                        $context, 'cohort', 'description', $cohort->id);
+                external_format_text($cohort->description, $cohort->descriptionformat,
+                        $context->id, 'cohort', 'description', $cohort->id);
             $cohortids[] = (array)$cohort;
         }
         $transaction->allow_commit();
@@ -143,7 +139,7 @@ class core_cohort_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function create_cohorts_returns() {
@@ -271,8 +267,8 @@ class core_cohort_external extends external_api {
             }
 
             list($cohort->description, $cohort->descriptionformat) =
-                \core_external\util::format_text($cohort->description, $cohort->descriptionformat,
-                        $context, 'cohort', 'description', $cohort->id);
+                external_format_text($cohort->description, $cohort->descriptionformat,
+                        $context->id, 'cohort', 'description', $cohort->id);
 
             $cohortsinfo[] = (array) $cohort;
         }
@@ -283,7 +279,7 @@ class core_cohort_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function get_cohorts_returns() {
@@ -407,8 +403,8 @@ class core_cohort_external extends external_api {
             }
 
             list($cohort->description, $cohort->descriptionformat) =
-                \core_external\util::format_text($cohort->description, $cohort->descriptionformat,
-                        $cohortcontext, 'cohort', 'description', $cohort->id);
+                external_format_text($cohort->description, $cohort->descriptionformat,
+                        $cohortcontext->id, 'cohort', 'description', $cohort->id);
 
             $cohorts[$key] = $cohort;
         }
@@ -419,7 +415,7 @@ class core_cohort_external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function search_cohorts_returns() {
         return new external_single_structure(array(
@@ -538,7 +534,7 @@ class core_cohort_external extends external_api {
             }
 
             if (!empty($cohort->description)) {
-                $cohort->descriptionformat = util::validate_format($cohort->descriptionformat);
+                $cohort->descriptionformat = external_validate_format($cohort->descriptionformat);
             }
 
             cohort_update_cohort($cohort);
@@ -812,7 +808,7 @@ class core_cohort_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function get_cohort_members_returns() {

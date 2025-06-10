@@ -104,12 +104,47 @@ class qbehaviour_informationitem extends question_behaviour {
         return parent::process_comment($pendingstep);
     }
 
+    /**
+     * Handle the 'finish' case of {@see process_action()}.
+     *
+     * @param question_attempt_pending_step $pendingstep step representing the action.
+     * @return bool either {@see question_attempt::KEEP} or {@see question_attempt::DISCARD}.
+     */
     public function process_finish(question_attempt_pending_step $pendingstep) {
+        if ($this->qa->get_state()->is_finished()) {
+            return question_attempt::DISCARD;
+        }
+
+        if (!$this->qa->get_state()->is_active()) {
+            throw new coding_exception('It should be impossible for question_attempt ' . $this->qa->get_database_id() .
+                    ' using ' . get_class($this) . " to receive a 'finish' action while not active. " .
+                    'Failing with an error, rather than continuing and doing undefined processing, ' .
+                    'so the bug can be identified.');
+        }
+
         $pendingstep->set_state(question_state::$finished);
         return question_attempt::KEEP;
     }
 
+    /**
+     * Handle the 'seen' case of {@see process_action()}.
+     *
+     * @param question_attempt_pending_step $pendingstep step representing the action.
+     * @return bool either {@see question_attempt::KEEP} or {@see question_attempt::DISCARD}.
+     */
     public function process_seen(question_attempt_pending_step $pendingstep) {
+        if ($this->qa->get_state()->is_finished()) {
+            return question_attempt::DISCARD;
+        }
+
+        // Assert so we get a clear error message if the assumptions on which this code relies is invalid.
+        if (!$this->qa->get_state()->is_active()) {
+            throw new coding_exception('It should be impossible for question_attempt ' . $this->qa->get_database_id() .
+                    ' using ' . get_class($this) . " to receive a 'seen' action while not active. " .
+                    'Failing with an error, rather than continuing and doing undefined processing, ' .
+                    'so the bug can be identified.');
+        }
+
         $pendingstep->set_state(question_state::$complete);
         return question_attempt::KEEP;
     }

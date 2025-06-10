@@ -620,8 +620,8 @@ class behat_navigation extends behat_base {
         $dividercount = substr_count($page, ' > ');
         if ($dividercount === 0) {
             return ['core', $page];
-        } else if ($dividercount === 1) {
-            list($component, $name) = explode(' > ', $page);
+        } else if ($dividercount >= 1) {
+            [$component, $name] = explode(' > ', $page, 2);
             if ($component === 'core') {
                 throw new coding_exception('Do not specify the component "core > ..." for core pages.');
             }
@@ -941,22 +941,20 @@ class behat_navigation extends behat_base {
      * @param string $onoroff Whehter to switch editing on, or off.
      */
     public function i_am_on_course_homepage_with_editing_mode_set_to(string $coursefullname, string $onoroff): void {
-        $courseid = $this->get_course_id($coursefullname);
-        $url = new moodle_url('/course/view.php', ['id' => $courseid]);
-
-        // Visit the course page.
-        $this->execute('behat_general::i_visit', [$url]);
-
-        switch ($onoroff) {
-            case 'on':
-                $this->execute('behat_navigation::i_turn_editing_mode_on');
-                break;
-            case 'off':
-                $this->execute('behat_navigation::i_turn_editing_mode_off');
-                break;
-            default:
-                throw new \coding_exception("Unknown editing mode '{$onoroff}'. Accepted values are 'on' and 'off'");
+        if ($onoroff !== 'on' && $onoroff !== 'off') {
+            throw new coding_exception("Unknown editing mode '{$onoroff}'. Accepted values are 'on' and 'off'");
         }
+
+        $courseid = $this->get_course_id($coursefullname);
+        $context = context_course::instance($courseid);
+        $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+
+        $editmodeurl = new moodle_url('/editmode.php', [
+            'context' => $context->id,
+            'pageurl' => $courseurl->out(true),
+            'setmode' => ($onoroff === 'on' ? 1 : 0),
+        ]);
+        $this->execute('behat_general::i_visit', [$editmodeurl]);
     }
 
     /**

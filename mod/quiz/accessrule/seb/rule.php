@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_attempt;
-use quizaccess_seb\seb_access_manager;
-use quizaccess_seb\seb_quiz_settings;
-use quizaccess_seb\settings_provider;
-use quizaccess_seb\event\access_prevented;
-
 /**
  * Implementation of the quizaccess_seb plugin.
  *
@@ -30,19 +23,36 @@ use quizaccess_seb\event\access_prevented;
  * @copyright  2019 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb extends access_rule_base {
 
-    /** @var seb_access_manager $accessmanager Instance to manage the access to the quiz for this plugin. */
+use quizaccess_seb\access_manager;
+use quizaccess_seb\quiz_settings;
+use quizaccess_seb\settings_provider;
+use \quizaccess_seb\event\access_prevented;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
+/**
+ * Implementation of the quizaccess_seb plugin.
+ *
+ * @copyright  2020 Catalyst IT
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class quizaccess_seb extends quiz_access_rule_base {
+
+    /** @var access_manager $accessmanager Instance to manage the access to the quiz for this plugin. */
     private $accessmanager;
 
     /**
      * Create an instance of this rule for a particular quiz.
      *
-     * @param \mod_quiz\quiz_settings $quizobj information about the quiz in question.
+     * @param quiz $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
-     * @param seb_access_manager $accessmanager the quiz accessmanager.
+     * @param access_manager $accessmanager the quiz accessmanager.
      */
-    public function __construct(\mod_quiz\quiz_settings $quizobj, int $timenow, seb_access_manager $accessmanager) {
+    public function __construct(quiz $quizobj, int $timenow, access_manager $accessmanager) {
         parent::__construct($quizobj, $timenow);
         $this->accessmanager = $accessmanager;
     }
@@ -51,14 +61,14 @@ class quizaccess_seb extends access_rule_base {
      * Return an appropriately configured instance of this rule, if it is applicable
      * to the given quiz, otherwise return null.
      *
-     * @param \mod_quiz\quiz_settings $quizobj information about the quiz in question.
+     * @param quiz $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
-     * @return access_rule_base|null the rule, if applicable, else null.
+     * @return quiz_access_rule_base|null the rule, if applicable, else null.
      */
-    public static function make(\mod_quiz\quiz_settings $quizobj, $timenow, $canignoretimelimits) {
-        $accessmanager = new seb_access_manager($quizobj);
+    public static function make (quiz $quizobj, $timenow, $canignoretimelimits) {
+        $accessmanager = new access_manager($quizobj);
         // If Safe Exam Browser is not required, this access rule is not applicable.
         if (!$accessmanager->seb_required()) {
             return null;
@@ -110,7 +120,7 @@ class quizaccess_seb extends access_rule_base {
         $settings = settings_provider::filter_plugin_settings((object) $data);
 
         // Validate basic settings using persistent class.
-        $quizsettings = (new seb_quiz_settings())->from_record($settings);
+        $quizsettings = (new quiz_settings())->from_record($settings);
         // Set non-form fields.
         $quizsettings->set('quizid', $quizid);
         $quizsettings->set('cmid', $cmid);
@@ -151,7 +161,7 @@ class quizaccess_seb extends access_rule_base {
      * Save any submitted settings when the quiz settings form is submitted. This
      * is called from {@link quiz_after_add_or_update()} in lib.php.
      *
-     * @param stdClass $quiz the data from the quiz form, including $quiz->id
+     * @param object $quiz the data from the quiz form, including $quiz->id
      *      which is the id of the quiz being saved.
      */
     public static function save_settings($quiz) {
@@ -176,9 +186,9 @@ class quizaccess_seb extends access_rule_base {
         $settings->cmid = $cm->id;
 
         // Get existing settings or create new settings if none exist.
-        $quizsettings = seb_quiz_settings::get_by_quiz_id($quiz->id);
+        $quizsettings = quiz_settings::get_by_quiz_id($quiz->id);
         if (empty($quizsettings)) {
-            $quizsettings = new seb_quiz_settings(0, $settings);
+            $quizsettings = new quiz_settings(0, $settings);
         } else {
             $settings->id = $quizsettings->get('id');
             $quizsettings->from_record($settings);
@@ -204,11 +214,11 @@ class quizaccess_seb extends access_rule_base {
      * Delete any rule-specific settings when the quiz is deleted. This is called
      * from {@link quiz_delete_instance()} in lib.php.
      *
-     * @param stdClass $quiz the data from the database, including $quiz->id
+     * @param object $quiz the data from the database, including $quiz->id
      *      which is the id of the quiz being deleted.
      */
     public static function delete_settings($quiz) {
-        $quizsettings = seb_quiz_settings::get_by_quiz_id($quiz->id);
+        $quizsettings = quiz_settings::get_by_quiz_id($quiz->id);
         // Check that there are existing settings.
         if ($quizsettings !== false) {
             $quizsettings->delete();
@@ -218,7 +228,7 @@ class quizaccess_seb extends access_rule_base {
     /**
      * Return the bits of SQL needed to load all the settings from all the access
      * plugins in one DB query. The easiest way to understand what you need to do
-     * here is probably to read the code of {@see \mod_quiz\access_manager::load_settings()}.
+     * here is probalby to read the code of {@link quiz_access_manager::load_settings()}.
      *
      * If you have some settings that cannot be loaded in this way, then you can
      * use the {@link get_extra_settings()} method instead, but that has
@@ -543,7 +553,7 @@ class quizaccess_seb extends access_rule_base {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $seblink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, true, is_https());
 
-        $buttonlink = html_writer::start_tag('div', ['class' => 'singlebutton']);
+        $buttonlink = html_writer::start_tag('div', array('class' => 'singlebutton'));
         $buttonlink .= html_writer::link($seblink, get_string('seblinkbutton', 'quizaccess_seb'),
             ['class' => 'btn btn-secondary', 'title' => get_string('seblinkbutton', 'quizaccess_seb')]);
         $buttonlink .= html_writer::end_tag('div');
@@ -560,7 +570,7 @@ class quizaccess_seb extends access_rule_base {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $httplink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, false, is_https());
 
-        $buttonlink = html_writer::start_tag('div', ['class' => 'singlebutton']);
+        $buttonlink = html_writer::start_tag('div', array('class' => 'singlebutton'));
         $buttonlink .= html_writer::link($httplink, get_string('httplinkbutton', 'quizaccess_seb'),
             ['class' => 'btn btn-secondary', 'title' => get_string('httplinkbutton', 'quizaccess_seb')]);
         $buttonlink .= html_writer::end_tag('div');

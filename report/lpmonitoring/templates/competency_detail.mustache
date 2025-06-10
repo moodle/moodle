@@ -1,0 +1,215 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency detail template.
+
+    Classes required for JS:
+    * competencydialogue
+
+    Context variables required for this template:
+    * finalrating - The final rating of the competency
+      * compnotrated - true if competency is not rated
+      * compnotproficient - true if competency is not proficient
+      * compproficient - true if competency is proficient
+      * color - color of the scale value
+      * gradename - name of the scale value
+
+    * competencypath - competency path info
+    * hasevidence - true if competency has evidence
+    * nbevidence - number of evidence
+    * hasrating - true if competency has rating in courses
+    * hasratingincms - true if competency has rating in courses modules
+    * cmcompgradingenabled - true if grading in course module competency is enabled
+
+    * nbcoursesrated - number of course rated
+    * nbcoursestotal - courses number
+
+    * nbcmsrated - number of course module rated
+    * nbcmstotal - courses modules number 
+
+    * scalecompetencyitems - scale used in the competency
+      * color - color of the scale value
+      * name - name of scale value
+      * nbcourse - number of courses rated with this scale value
+      * nbcm - number of courses modules rated with this scale value
+    
+
+}}
+<div class="tile_count">
+    <div class="tile_stats_count">
+        <h5 class="count_top truncate" ><i class="fa fa-book"></i> {{#str}}totalnumberrating, report_lpmonitoring{{/str}}</h5>
+        <div class="count blue">
+            <a class="blue totalnbcourses" role="button" title="{{#str}}totalnumberratingincourses, report_lpmonitoring{{/str}}" href="#"  data-competencyid="{{competencyid}}">{{nbcoursesrated}}/{{nbcoursestotal}}</a>
+            <span class="counttitle">{{#str}}incourses, report_lpmonitoring{{/str}}</span>
+        </div>
+        {{#cmcompgradingenabled}}
+        <div class="count blue">
+            <a class="blue totalnbcms" role="button" title="{{#str}}totalnumberratingincms, report_lpmonitoring{{/str}}" href="#"  data-competencyid="{{competencyid}}">{{nbcmsrated}}/{{nbcmstotal}}</a>
+            <span class="counttitle">{{#str}}incms, report_lpmonitoring{{/str}}</span>
+        </div>
+        {{/cmcompgradingenabled}}
+        {{#hasevidence}}
+        <span class="count_top"><i class="fa fa-certificate"></i> {{#str}}userevidence, tool_lp{{/str}}</span>
+        <div class="blue preuve">
+            <a class="blue listevidence" role="button" title="{{#str}}userevidence, tool_lp{{/str}}" data-competencyid="{{competencyid}}" href="#">{{nbevidence}}</a>
+        </div>
+        {{/hasevidence}}
+        
+    </div>
+    <div class="tile_stats_count rating">
+        <h5 class="count_top"><i class="fa fa-bar-chart-o"></i> {{#str}}rating, tool_lp{{/str}}</h5>
+        {{#cmcompgradingenabled}}
+        <ul id="nav-tabs" class="nav nav-tabs detail-comp-tab" role="tablist">
+            <li class="nav-item"><a class="nav-link incourse active" data-toggle="tab" href="#tab-incourses-content-{{competencyid}}" role="tab">{{#str}}incourses, report_lpmonitoring{{/str}}</a></li>
+            <li class="nav-item"><a class="nav-link incm" data-toggle="tab" href="#tab-incms-content-{{competencyid}}" role="tab">{{#str}}incms, report_lpmonitoring{{/str}}</a></li>
+        </ul>
+        {{/cmcompgradingenabled}}
+        <div class="tab-content">
+            <div id="tab-incourses-content-{{competencyid}}" class="tab-pane active fade in" role="tabpanel">
+                <table>
+                    <tr>
+                        <td>
+                            {{#hasrating}}
+                            <canvas class="detail-competency" id="canvas-graph-{{competencyid}}" height="80" width="80"></canvas>
+                            {{/hasrating}}
+                            {{^hasrating}}
+                            <div class="no-data-available">
+                                <span>{{#str}}nodataavailable, report_lpmonitoring{{/str}}</span>
+                            </div>
+                            {{/hasrating}}
+                        </td>
+                        <td>
+                            <table class="tile_info" data-type="incourse">
+                                {{#scalecompetencyitems}}
+                                <tr>
+                                    <td>
+                                        <p class="truncate"><i class="fa fa-square" style="color:{{color}}"></i>{{name}}</p>
+                                    </td>
+                                    <td >
+                                        {{#nbcourse}}
+                                        <a
+                                            class="scaleinfo"
+                                            data-type="incourse"
+                                            data-scalevalue ="{{value}}"
+                                            data-competencyid = "{{competencyid}}"
+                                            title="{{#str}}linkedcourses, tool_lp{{/str}}"
+                                            href="#"
+                                            >
+                                        <span class="nbcourses">{{nbcourse}}</span>
+                                        </a>
+                                        {{/nbcourse}}
+                                        {{^nbcourse}}
+                                            <span class="nbcourses">{{nbcourse}}</span>
+                                        {{/nbcourse}}
+                                    </td>
+                                </tr>
+                                {{/scalecompetencyitems}}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {{#cmcompgradingenabled}}
+            <div id="tab-incms-content-{{competencyid}}" class="tab-pane fade" role="tabpanel">
+                <table>
+                    <tr>
+                        <td>
+                            {{#hasratingincms}}
+                            <canvas class="detail-competency" id="cm-canvas-graph-{{competencyid}}" height="80" width="80"></canvas>
+                            {{/hasratingincms}}
+                            {{^hasratingincms}}
+                            <div class="no-data-available">
+                                <span>{{#str}}nodataavailable, report_lpmonitoring{{/str}}</span>
+                            </div>
+                            {{/hasratingincms}}
+                        </td>
+                        <td>
+                            <table class="tile_info" data-type="incm">
+                                {{#scalecompetencyitems}}
+                                <tr>
+                                    <td>
+                                        <p class="truncate"><i class="fa fa-square" style="color:{{color}}"></i>{{name}}</p>
+                                    </td>
+                                    <td>
+                                        {{#nbcm}}
+                                        <a
+                                            class="scaleinfo"
+                                            data-type="incm"
+                                            data-scalevalue ="{{value}}"
+                                            data-competencyid = "{{competencyid}}"
+                                            title="{{#str}}linkedcms, report_lpmonitoring{{/str}}"
+                                            href="#"
+                                            >
+                                        <span class="nbcms">{{nbcm}}</span>
+                                        </a>
+                                        {{/nbcm}}
+                                        {{^nbcm}}
+                                            <span class="nbcms">{{nbcm}}</span>
+                                        {{/nbcm}}
+                                    </td>
+                                </tr>
+                                {{/scalecompetencyitems}}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {{/cmcompgradingenabled}}
+        </div>
+        
+    </div>
+    <div class="tile_stats_count finalrating">
+        <h5 class="count_top"><i class="fa fa-gavel"></i> {{#str}}finalrating, report_lpmonitoring{{/str}}</h5>
+        <div class="tile-stats">
+            {{#isnotrated}}
+                <div class="count pull-right level-proficiency">{{#str}}notrated, report_lpmonitoring{{/str}}</div>
+                <div class="icon icon-proficiency"><i class="fa fa-question-circle"></i> </div>
+            {{/isnotrated}}
+            {{#isnotproficient}}
+                <div class="count pull-right level-proficiency">{{#str}}notproficient, report_lpmonitoring{{/str}}</div>
+                <div class="icon icon-proficiency"><i class="fa fa-times fail"></i> </div>
+            {{/isnotproficient}}
+            {{#isproficient}}
+                <div class="count pull-right level-proficiency">{{#str}}proficient, report_lpmonitoring{{/str}}</div>
+                <div class="icon icon-proficiency"><i class="fa fa-check green"></i> </div>
+            {{/isproficient}}
+            <div class="count">
+                {{^isnotrated}}
+                <span class="badge cr-scalename truncate" style="background-color: {{finalgradecolor}}">{{finalgradename}}</span>
+                {{/isnotrated}}
+            </div>
+            {{#cangrade}}
+                {{^isnotrated}}
+                    <div class="reset-grade">
+                        <a href="#" title="{{#str}}resetonecompetency, report_lpmonitoring{{/str}}" data-resetgrade-plan="{{plan.id}}" data-competencyid="{{competencyid}}" data-userid="{{plan.userid}}">{{#str}}reset, core{{/str}}</a>
+                        <button class="fa fa-question-circle text-info fa-fw button-resethelp"
+                                data-container="body"
+                                data-trigger="focus"
+                                data-toggle="popover"
+                                data-placement="left"
+                                data-content="{{#str}}resetonecompetency, report_lpmonitoring{{/str}}">
+                        </button>
+                    </div>
+                {{/isnotrated}}
+                <button {{#plan.iscompleted}} disabled {{/plan.iscompleted}} class="btn btn-primary rate-competency" id="rate_{{competencyid}}">{{#str}}rate, tool_lp{{/str}}</button>
+            {{/cangrade}}
+
+        </div>
+    </div>
+</div>
+<!-- filter -->
+{{> report_lpmonitoring/competency_path }}

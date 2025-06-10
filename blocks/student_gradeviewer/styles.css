@@ -1,0 +1,9 @@
+#page-mentor-administration .main_selector {
+    min-width: 250px;
+    max-width: 250px;
+}
+
+#page-mentor-administration div.box .generalbox {
+    width: 70%;
+    margin: auto auto;
+}

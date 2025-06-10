@@ -67,12 +67,12 @@ class custom_report_filters_exporter_test extends advanced_testcase {
         $this->assertTrue($export->hasavailablefilters);
 
         // The root of the available filters property should contain each entity.
-        $this->assertCount(4, $export->availablefilters);
-        [$filterscategory, $filterscourse, $filterstag, $filtersfile] = $export->availablefilters;
+        $this->assertCount(3, $export->availablefilters);
+        [$filterscategory, $filterscourse, $filterstag] = $export->availablefilters;
 
         // Course category filters, assert structure of first item.
         $this->assertEquals('Course category', $filterscategory['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($filterscategory['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $filterscategory['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'course_category:text',
             'visiblename' => 'Category name',
@@ -80,7 +80,7 @@ class custom_report_filters_exporter_test extends advanced_testcase {
 
         // Course filters, assert structure of first item.
         $this->assertEquals('Course', $filterscourse['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($filterscourse['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $filterscourse['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'course:fullname',
             'visiblename' => 'Course full name',
@@ -93,19 +93,11 @@ class custom_report_filters_exporter_test extends advanced_testcase {
 
         // Tag filters, assert structure of first item.
         $this->assertEquals('Tag', $filterstag['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($filterstag['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $filterstag['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'tag:name',
             'visiblename' => 'Tag name',
         ], $filterstag['optiongroup']['values'][0]);
-
-        // File filters, assert structure of first item.
-        $this->assertEquals('Course image', $filtersfile['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($filtersfile['optiongroup']['values']));
-        $this->assertEquals([
-            'value' => 'file:name',
-            'visiblename' => 'Filename',
-        ], $filtersfile['optiongroup']['values'][0]);
 
         $this->assertTrue($export->hasactivefilters);
         $this->assertCount(2, $export->activefilters);

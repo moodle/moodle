@@ -35,12 +35,17 @@ class core_badges_generator extends component_generator_base {
     /**
      * Create badge
      *
-     * TODO: MDL-73648 Use from Behat too
-     *
      * @param array|stdClass $record
+     * @return badge
      */
     public function create_badge($record): badge {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
+
+        $record = (array) $record;
+
+        // Save badge image path for later.
+        $badgeimage = $record['image'] ?? '';
+        unset($record['image']);
 
         $record = (object) array_merge([
             'name' => 'Test badge',
@@ -67,10 +72,87 @@ class core_badges_generator extends component_generator_base {
             'imageauthoremail' => 'author@example.com',
             'imageauthorurl' => 'http://image.example.com/',
             'imagecaption' => 'Image caption'
-        ], (array) $record);
+        ], $record);
 
         $record->id = $DB->insert_record('badge', $record);
+        $badge = new badge($record->id);
 
-        return new badge($record->id);
+        // Process badge image (if supplied).
+        if ($badgeimage !== '') {
+            $file = get_file_storage()->create_file_from_pathname([
+                'contextid' => context_user::instance($USER->id)->id,
+                'userid' => $USER->id,
+                'component' => 'user',
+                'filearea' => 'draft',
+                'itemid' => file_get_unused_draft_itemid(),
+                'filepath' => '/',
+                'filename' => basename($badgeimage),
+            ], "{$CFG->dirroot}/$badgeimage");
+
+            // Copy image to temp file, as it'll be deleted by the following call.
+            badges_process_badge_image($badge, $file->copy_content_to_temp());
+        }
+
+        return $badge;
+    }
+
+    /**
+     * Create badge criteria
+     *
+     * Note that only manual criteria issues by role is currently supported
+     *
+     * @param array|stdClass $record
+     * @throws coding_exception
+     */
+    public function create_criteria($record): void {
+        $record = (array) $record;
+
+        if (!array_key_exists('badgeid', $record)) {
+            throw new coding_exception('Record must contain \'badgeid\' property');
+        }
+        if (!array_key_exists('roleid', $record)) {
+            throw new coding_exception('Record must contain \'roleid\' property');
+        }
+
+        $badge = new badge($record['badgeid']);
+
+        // Create the overall criteria.
+        if (count($badge->criteria) === 0) {
+            award_criteria::build([
+                'badgeid' => $badge->id,
+                'criteriatype' => BADGE_CRITERIA_TYPE_OVERALL,
+            ])->save([
+                'agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+            ]);
+        }
+
+        // Create the manual criteria.
+        award_criteria::build([
+            'badgeid' => $badge->id,
+            'criteriatype' => BADGE_CRITERIA_TYPE_MANUAL,
+        ])->save([
+            'role_' . $record['roleid'] => $record['roleid'],
+            'description' => $record['description'] ?? '',
+        ]);
+    }
+
+    /**
+     * Create issued badge to a user
+     *
+     * @param array|stdClass $record
+     * @throws coding_exception
+     */
+    public function create_issued_badge($record): void {
+        $record = (array) $record;
+
+        if (!array_key_exists('badgeid', $record)) {
+            throw new coding_exception('Record must contain \'badgeid\' property');
+        }
+        if (!array_key_exists('userid', $record)) {
+            throw new coding_exception('Record must contain \'userid\' property');
+        }
+
+        $badge = new badge($record['badgeid']);
+        $badge->issue($record['userid'], true);
     }
 }

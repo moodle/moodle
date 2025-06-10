@@ -244,6 +244,18 @@ reports,core_reportbuilder|/reportbuilder/index.php',
 
     // "htmlsettings" settingpage
     $temp = new admin_settingpage('htmlsettings', new lang_string('htmlsettings', 'admin'));
+    $sitenameintitleoptions = [
+        'shortname' => new lang_string('shortname'),
+        'fullname' => new lang_string('fullname'),
+    ];
+    $sitenameintitleconfig = new admin_setting_configselect(
+        'sitenameintitle',
+        new lang_string('sitenameintitle', 'admin'),
+        new lang_string('sitenameintitle_help', 'admin'),
+        'shortname',
+        $sitenameintitleoptions
+    );
+    $temp->add($sitenameintitleconfig);
     $temp->add(new admin_setting_configcheckbox('formatstringstriptags', new lang_string('stripalltitletags', 'admin'), new lang_string('configstripalltitletags', 'admin'), 1));
     $temp->add(new admin_setting_emoticons());
     $ADMIN->add('appearance', $temp);
@@ -257,13 +269,6 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     $ltemp += get_string_manager()->get_list_of_translations(true);
     $temp->add(new admin_setting_configselect('doclang', get_string('doclang', 'admin'), get_string('configdoclang', 'admin'), '', $ltemp));
     $temp->add(new admin_setting_configcheckbox('doctonewwindow', new lang_string('doctonewwindow', 'admin'), new lang_string('configdoctonewwindow', 'admin'), 0));
-    $temp->add(new admin_setting_configtext(
-        'coursecreationguide',
-        new lang_string('coursecreationguide', 'admin'),
-        new lang_string('coursecreationguide_help', 'admin'),
-        'https://moodle.academy/coursequickstart',
-        PARAM_URL
-    ));
     $ADMIN->add('appearance', $temp);
 
     if (!empty($CFG->enabledashboard)) {
@@ -301,6 +306,7 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', new lang_string('ajaxuse'));
+    $temp->add(new admin_setting_configcheckbox('useexternalyui', new lang_string('useexternalyui', 'admin'), new lang_string('configuseexternalyui', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('yuicomboloading', new lang_string('yuicomboloading', 'admin'), new lang_string('configyuicomboloading', 'admin'), 1));
     $setting = new admin_setting_configcheckbox('cachejs', new lang_string('cachejs', 'admin'), new lang_string('cachejs_help', 'admin'), 1);
     $setting->set_updatedcallback('js_reset_all_caches');

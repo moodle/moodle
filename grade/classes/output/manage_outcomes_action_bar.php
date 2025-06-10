@@ -78,7 +78,7 @@ class manage_outcomes_action_bar extends action_bar {
         // Add a button to the action bar with a link to the 'add new outcome' page.
         $addoutcomelink = new moodle_url('/grade/edit/outcome/edit.php', ['courseid' => $courseid]);
         $addoutcomebutton = new \single_button($addoutcomelink, get_string('outcomecreate', 'grades'),
-            'get', \single_button::BUTTON_PRIMARY);
+            'get', true);
         $data['addoutcomebutton'] = $addoutcomebutton->export_for_template($output);
 
         if ($this->hasoutcomes) {

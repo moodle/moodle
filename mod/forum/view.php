@@ -188,7 +188,7 @@ switch ($forum->get_type()) {
                 $groupid = groups_get_activity_group($cm, true) ?: null;
                 $gradeobj = (object) [
                     'contextid' => $forum->get_context()->id,
-                    'cmid' => $cmid,
+                    'cmid' => $forum->get_course_module_record()->id,
                     'name' => format_string($forum->get_name()),
                     'courseid' => $course->id,
                     'coursename' => format_string($course->shortname),
@@ -206,7 +206,7 @@ switch ($forum->get_type()) {
                 $groupid = groups_get_activity_group($cm, true) ?: null;
                 $gradeobj = (object) [
                     'contextid' => $forum->get_context()->id,
-                    'cmid' => $cmid,
+                    'cmid' => $forum->get_course_module_record()->id,
                     'name' => format_string($forum->get_name()),
                     'courseid' => $course->id,
                     'coursename' => format_string($course->shortname),

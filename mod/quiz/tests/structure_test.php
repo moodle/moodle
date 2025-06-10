@@ -16,6 +16,14 @@
 
 namespace mod_quiz;
 
+use mod_quiz\question\bank\qbank_helper;
+use quiz;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+
 /**
  * Unit tests for quiz events.
  *
@@ -40,12 +48,12 @@ class structure_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 0,
-            'grade' => 100.0, 'sumgrades' => 2, 'preferredbehaviour' => 'immediatefeedback']);
+        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 0,
+            'grade' => 100.0, 'sumgrades' => 2, 'preferredbehaviour' => 'immediatefeedback'));
 
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
 
-        return [$quiz, $cm, $course];
+        return array($quiz, $cm, $course);
     }
 
     /**
@@ -66,14 +74,14 @@ class structure_test extends \advanced_testcase {
      * The elements in the question array are name, page number, and question type.
      *
      * @param array $layout as above.
-     * @return quiz_settings the created quiz.
+     * @return quiz the created quiz.
      */
     protected function create_test_quiz($layout) {
         list($quiz, $cm, $course) = $this->prepare_quiz_data();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
-        $headings = [];
+        $headings = array();
         $slot = 1;
         $lastpage = 0;
         foreach ($layout as $item) {
@@ -90,14 +98,14 @@ class structure_test extends \advanced_testcase {
                     throw new \coding_exception('Page numbers wrong.');
                 }
                 $q = $questiongenerator->create_question($qtype, null,
-                        ['name' => $name, 'category' => $cat->id]);
+                        array('name' => $name, 'category' => $cat->id));
 
                 quiz_add_quiz_question($q->id, $quiz, $page);
                 $lastpage = $page;
             }
         }
 
-        $quizobj = new quiz_settings($quiz, $cm, $course);
+        $quizobj = new quiz($quiz, $cm, $course);
         $structure = structure::create_for_quiz($quizobj);
         if (isset($headings[1])) {
             list($heading, $shuffle) = $this->parse_section_name($headings[1]);
@@ -172,17 +180,17 @@ class structure_test extends \advanced_testcase {
      */
     protected function parse_section_name($heading) {
         if (substr($heading, -1) == '*') {
-            return [substr($heading, 0, -1), 1];
+            return array(substr($heading, 0, -1), 1);
         } else {
-            return [$heading, 0];
+            return array($heading, 0);
         }
     }
 
     public function test_get_quiz_slots() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
@@ -191,9 +199,9 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_quiz_has_one_section_by_default() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $sections = $structure->get_sections();
@@ -206,12 +214,12 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_get_sections() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1*',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2*',
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $sections = $structure->get_sections();
@@ -229,12 +237,12 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_remove_section_heading() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $sections = $structure->get_sections();
@@ -242,18 +250,18 @@ class structure_test extends \advanced_testcase {
         $structure->remove_section_heading($section->id);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_cannot_remove_first_section() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-        ]);
+                array('TF1', 1, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $sections = $structure->get_sections();
@@ -264,11 +272,11 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_move_slot_to_the_same_place_does_nothing() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -276,19 +284,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_end_of_one_page_to_start_of_next() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -296,18 +304,18 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_last_slot_to_previous_page_emptying_the_last_page() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -315,19 +323,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ), $structure);
     }
 
     public function test_end_of_one_section_to_start_of_next() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -335,21 +343,21 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading',
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_start_of_one_section_to_end_of_previous() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading',
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -357,19 +365,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading',
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
     public function test_move_slot_on_same_page() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-                ['TF3', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+                array('TF3', 1, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -377,19 +385,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF3', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF3', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+        ), $structure);
     }
 
     public function test_move_slot_up_onto_previous_page() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(3)->slotid;
@@ -397,19 +405,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF3', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF3', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+        ), $structure);
     }
 
     public function test_move_slot_emptying_a_page_renumbers_pages() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 3, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 3, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -417,19 +425,19 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '3');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+        ), $structure);
     }
 
     public function test_move_slot_too_small_page_number_detected() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 3, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 3, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(3)->slotid;
@@ -439,11 +447,11 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_move_slot_too_large_page_number_detected() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 3, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 3, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
@@ -453,13 +461,13 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_move_slot_within_section() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
@@ -467,23 +475,23 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF2', 1, 'truefalse'],
-                ['TF1', 1, 'truefalse'],
+                array('TF2', 1, 'truefalse'),
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_to_new_section() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -491,46 +499,46 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF3', 2, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_to_start() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(3)->slotid;
         $structure->move_slot($idtomove, 0, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF3', 1, 'truefalse'],
-                ['TF1', 1, 'truefalse'],
+                array('TF3', 1, 'truefalse'),
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_down_to_start_of_second_section() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(2)->slotid;
@@ -538,82 +546,82 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_first_slot_down_to_start_of_page_2() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
         $structure->move_slot($idtomove, 0, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ], $structure);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_first_slot_to_same_place_on_page_1() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
         $structure->move_slot($idtomove, 0, '1');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_first_slot_to_before_page_1() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
         $structure->move_slot($idtomove, 0, '');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_up_to_start_of_second_section() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF3', 3, 'truefalse'],
-                ['TF4', 3, 'truefalse'],
-        ]);
+                array('TF3', 3, 'truefalse'),
+                array('TF4', 3, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(3)->slotid;
@@ -621,27 +629,27 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '2');
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
+                array('TF3', 2, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF4', 3, 'truefalse'],
-        ], $structure);
+                array('TF4', 3, 'truefalse'),
+            ), $structure);
     }
 
     public function test_move_slot_does_not_violate_heading_unique_key() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF3', 3, 'truefalse'],
-                ['TF4', 3, 'truefalse'],
-        ]);
+                array('TF3', 3, 'truefalse'),
+                array('TF4', 3, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $idtomove = $structure->get_question_in_slot(4)->slotid;
@@ -649,34 +657,34 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, 1);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF4', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
+                array('TF4', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF3', 3, 'truefalse'],
-        ], $structure);
+                array('TF3', 3, 'truefalse'),
+        ), $structure);
     }
 
     public function test_quiz_remove_slot() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $structure->remove_slot(2);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF3', 2, 'truefalse'),
+            ), $structure);
     }
 
     public function test_quiz_removing_a_random_question_deletes_the_question() {
@@ -685,9 +693,9 @@ class structure_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+            ));
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
@@ -704,23 +712,23 @@ class structure_test extends \advanced_testcase {
         $structure->remove_slot(2);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+            ), $structure);
         $this->assertFalse($DB->record_exists('question_set_references',
-            ['id' => $randomq->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']));
+            array('id' => $randomq->id, 'component' => 'mod_quiz', 'questionarea' => 'slot')));
     }
 
     /**
      * Unit test to make sue it is not possible to remove all slots in a section at once.
      */
     public function test_cannot_remove_all_slots_in_a_section() {
-        $quizobj = $this->create_test_quiz([
-            ['TF1', 1, 'truefalse'],
-            ['TF2', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+            array('TF1', 1, 'truefalse'),
+            array('TF2', 1, 'truefalse'),
             'Heading 2',
-            ['TF3', 2, 'truefalse'],
-        ]);
+            array('TF3', 2, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $structure->remove_slot(1);
@@ -729,12 +737,12 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_cannot_remove_last_slot_in_a_section() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
                 'Heading 2',
-                ['TF3', 2, 'truefalse'],
-        ]);
+                array('TF3', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $this->expectException(\coding_exception::class);
@@ -742,10 +750,10 @@ class structure_test extends \advanced_testcase {
     }
 
     public function test_can_remove_last_question_in_a_quiz() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-        ]);
+                array('TF1', 1, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $structure->remove_slot(1);
@@ -753,131 +761,131 @@ class structure_test extends \advanced_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $q = $questiongenerator->create_question('truefalse', null,
-                ['name' => 'TF2', 'category' => $cat->id]);
+                array('name' => 'TF2', 'category' => $cat->id));
 
         quiz_add_quiz_question($q->id, $quizobj->get_quiz(), 0);
         $structure = structure::create_for_quiz($quizobj);
 
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF2', 1, 'truefalse'],
-        ], $structure);
+                array('TF2', 1, 'truefalse'),
+        ), $structure);
     }
 
     public function test_add_question_updates_headings() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+        ));
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $q = $questiongenerator->create_question('truefalse', null,
-                ['name' => 'TF3', 'category' => $cat->id]);
+                array('name' => 'TF3', 'category' => $cat->id));
 
         quiz_add_quiz_question($q->id, $quizobj->get_quiz(), 1);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF3', 1, 'truefalse'],
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF3', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+                array('TF2', 2, 'truefalse'),
+        ), $structure);
     }
 
     public function test_add_question_updates_headings_even_with_one_question_sections() {
-        $quizobj = $this->create_test_quiz([
+        $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF3', 3, 'truefalse'],
-        ]);
+                array('TF3', 3, 'truefalse'),
+        ));
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $q = $questiongenerator->create_question('truefalse', null,
-                ['name' => 'TF4', 'category' => $cat->id]);
+                array('name' => 'TF4', 'category' => $cat->id));
 
         quiz_add_quiz_question($q->id, $quizobj->get_quiz(), 1);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
+        $this->assert_quiz_layout(array(
                 'Heading 1',
-                ['TF1', 1, 'truefalse'],
-                ['TF4', 1, 'truefalse'],
+                array('TF1', 1, 'truefalse'),
+                array('TF4', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
+                array('TF2', 2, 'truefalse'),
                 'Heading 3',
-                ['TF3', 3, 'truefalse'],
-        ], $structure);
+                array('TF3', 3, 'truefalse'),
+        ), $structure);
     }
 
     public function test_add_question_at_end_does_not_update_headings() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-        ]);
+                array('TF2', 2, 'truefalse'),
+        ));
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $q = $questiongenerator->create_question('truefalse', null,
-                ['name' => 'TF3', 'category' => $cat->id]);
+                array('name' => 'TF3', 'category' => $cat->id));
 
         quiz_add_quiz_question($q->id, $quizobj->get_quiz(), 0);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
                 'Heading 2',
-                ['TF2', 2, 'truefalse'],
-                ['TF3', 2, 'truefalse'],
-        ], $structure);
+                array('TF2', 2, 'truefalse'),
+                array('TF3', 2, 'truefalse'),
+        ), $structure);
     }
 
     public function test_remove_page_break() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
         $structure = structure::create_for_quiz($quizobj);
 
         $slotid = $structure->get_question_in_slot(2)->slotid;
         $slots = $structure->update_page_break($slotid, repaginate::LINK);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ), $structure);
     }
 
     public function test_add_page_break() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         $slotid = $structure->get_question_in_slot(2)->slotid;
         $slots = $structure->update_page_break($slotid, repaginate::UNLINK);
 
         $structure = structure::create_for_quiz($quizobj);
-        $this->assert_quiz_layout([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 2, 'truefalse'],
-        ], $structure);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+        ), $structure);
     }
 
     public function test_update_question_dependency() {
-        $quizobj = $this->create_test_quiz([
-                ['TF1', 1, 'truefalse'],
-                ['TF2', 1, 'truefalse'],
-        ]);
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+        ));
         $structure = structure::create_for_quiz($quizobj);
 
         // Test adding a dependency.

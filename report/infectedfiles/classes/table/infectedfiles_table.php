@@ -243,7 +243,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Delete All.
         $deleteallparams = ['action' => 'deleteall', 'sesskey' => sesskey()];
         $deleteallurl = new \moodle_url($managefilepage, $deleteallparams);
-        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', \single_button::BUTTON_PRIMARY);
+        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', true);
         $deletebutton->add_confirm_action(get_string('confirmdeleteall', 'report_infectedfiles'));
         echo $OUTPUT->render($deletebutton);
 
@@ -252,7 +252,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Download All.
         $downloadallparams = ['action' => 'downloadall', 'sesskey' => sesskey()];
         $downloadallurl = new \moodle_url($managefilepage, $downloadallparams);
-        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', \single_button::BUTTON_PRIMARY);
+        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', true);
         $downloadbutton->add_confirm_action(get_string('confirmdownloadall', 'report_infectedfiles'));
         echo $OUTPUT->render($downloadbutton);
     }

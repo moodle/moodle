@@ -1,0 +1,38 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_ally/auto_conf_result
+
+    Aut config result.
+
+    Example context (json):
+    {
+        "token": "c2ff355ff38c4db70a85e401aa10ea28",
+        "sampleapicall" : "http://joule2host.dev/webservice/rest/server.php?wstoken=c2ff355ff38c4db70a85e401aa10ea28&wsfunction=tool_ally_get_files&moodlewsrestformat=json"
+    }
+}}
+<div class="snap-system-text">
+    <div class="alert alert-success">{{#str}} autoconfigsuccess, tool_ally {{/str}}</div>
+    {{#str}} autoconfigtoken, tool_ally {{/str}}
+    <div class="ally-pad">
+        {{token}}
+    </div>
+    {{#str}} autoconfigapicall, tool_ally {{/str}}
+    <div class="ally-pad">
+        <a href="{{{sampleapicall}}}">{{sampleapicall}}</a>
+    </div>
+</div>

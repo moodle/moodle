@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * H5P core class.
+ *
+ * @package    core_h5p
+ * @copyright  2019 Sara Arjona <sara@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core_h5p;
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,9 +34,6 @@ use Moodle\H5PHubEndpoints;
 use stdClass;
 use moodle_url;
 use core_h5p\local\library\autoloader;
-
-// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
-// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
 
 /**
  * H5P core class, containing functions and storage shared by the other H5P classes.
@@ -69,7 +74,7 @@ class core extends H5PCore {
     protected function getDependencyPath(array $dependency): string {
         $library = $this->find_library($dependency);
 
-        return "libraries/{$library->id}/" . H5PCore::libraryToFolderName($dependency);
+        return "libraries/{$library->id}/{$library->machinename}-{$library->majorversion}.{$library->minorversion}";
     }
 
     /**
@@ -84,7 +89,7 @@ class core extends H5PCore {
         $context = \context_system::instance();
         foreach ($dependencies as $dependency) {
             $library = $this->find_library($dependency);
-            $roots[self::libraryToFolderName($dependency)] = (moodle_url::make_pluginfile_url(
+            $roots[self::libraryToString($dependency, true)] = (moodle_url::make_pluginfile_url(
                 $context->id,
                 'core_h5p',
                 'libraries',
@@ -407,45 +412,10 @@ class core extends H5PCore {
      * @return string The string name on the form {machineName} {majorVersion}.{minorVersion}.
      */
     public static function record_to_string(stdClass $record, bool $foldername = false): string {
-        if ($foldername) {
-            return static::libraryToFolderName([
-                'machineName' => $record->machinename,
-                'majorVersion' => $record->majorversion,
-                'minorVersion' => $record->minorversion,
-            ]);
-        } else {
-            return static::libraryToString([
-                'machineName' => $record->machinename,
-                'majorVersion' => $record->majorversion,
-                'minorVersion' => $record->minorversion,
-            ]);
-        }
-
+        return static::libraryToString([
+            'machineName' => $record->machinename,
+            'majorVersion' => $record->majorversion,
+            'minorVersion' => $record->minorversion,
+        ], $foldername);
     }
-
-    /**
-     * Small helper for getting the library's ID.
-     * This method is rewritten to use MUC (instead of an static variable which causes some problems with PHPUnit).
-     *
-     * @param array $library
-     * @param string $libString
-     * @return int Identifier, or FALSE if non-existent
-     */
-    public function getLibraryId($library, $libString = null) {
-        if (!$libString) {
-            $libString = self::libraryToString($library);
-        }
-
-        // Check if this information has been saved previously into the cache.
-        $libcache = \cache::make('core', 'h5p_libraries');
-        $librarykey = helper::get_cache_librarykey($libString);
-        $libraryId = $libcache->get($librarykey);
-        if ($libraryId === false) {
-            $libraryId = $this->h5pF->getLibraryId($library['machineName'], $library['majorVersion'], $library['minorVersion']);
-            $libcache->set($librarykey, $libraryId);
-        }
-
-        return $libraryId;
-    }
-
 }

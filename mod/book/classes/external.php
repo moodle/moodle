@@ -25,13 +25,10 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * Book external functions
@@ -94,7 +91,6 @@ class mod_book_external extends external_api {
 
         $chapters = book_preload_chapters($book);
         $firstchapterid = 0;
-        $lastchapterid = 0;
 
         foreach ($chapters as $ch) {
             if ($ch->hidden) {
@@ -103,7 +99,6 @@ class mod_book_external extends external_api {
             if (!$firstchapterid) {
                 $firstchapterid = $ch->id;
             }
-            $lastchapterid = $ch->id;
         }
 
         if (!$chapterid) {
@@ -129,8 +124,7 @@ class mod_book_external extends external_api {
             }
 
             // Trigger the chapter viewed event.
-            $islastchapter = ($chapter->id == $lastchapterid) ? true : false;
-            book_view($book, $chapter, $islastchapter, $course, $cm, $context);
+            book_view($book, $chapter, \mod_book\helper::is_last_visible_chapter($chapterid, $chapters), $course, $cm, $context);
         }
 
         $result = array();
@@ -142,7 +136,7 @@ class mod_book_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function view_book_returns() {
@@ -194,7 +188,7 @@ class mod_book_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $courses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $courses);
 
             // Get the books in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.

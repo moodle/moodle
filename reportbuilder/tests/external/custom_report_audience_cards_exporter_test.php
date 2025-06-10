@@ -54,7 +54,7 @@ class custom_report_audience_cards_exporter_test extends advanced_testcase {
         $menucardsite = reset($menucardsite);
 
         $this->assertNotEmpty($menucardsite['key']);
-        $this->assertGreaterThanOrEqual(4, count($menucardsite['items']));
+        $this->assertGreaterThanOrEqual(4, $menucardsite['items']);
 
         // Test the structure of the first menu card item.
         $menucarditem = reset($menucardsite['items']);

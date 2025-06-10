@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\util as external_util;
-
 /**
  * Form for editing HTML block instances.
  *
@@ -23,7 +21,9 @@ use core_external\util as external_util;
  * @copyright 1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 class block_html extends block_base {
+
     function init() {
         $this->title = get_string('pluginname', 'block_html');
     }
@@ -87,6 +87,9 @@ class block_html extends block_base {
     }
 
     public function get_content_for_external($output) {
+        global $CFG;
+        require_once($CFG->libdir . '/externallib.php');
+
         $bc = new stdClass;
         $bc->title = null;
         $bc->content = '';
@@ -110,15 +113,8 @@ class block_html extends block_base {
             if (isset($this->config->format)) {
                 $format = $this->config->format;
             }
-            [$bc->content, $bc->contentformat] = \core_external\util::format_text(
-                $this->config->text,
-                $format,
-                $this->context,
-                'block_html',
-                'content',
-                null,
-                $filteropt
-            );
+            list($bc->content, $bc->contentformat) =
+                external_format_text($this->config->text, $format, $this->context, 'block_html', 'content', null, $filteropt);
             $bc->files = external_util::get_area_files($this->context->id, 'block_html', 'content', false, false);
 
         }

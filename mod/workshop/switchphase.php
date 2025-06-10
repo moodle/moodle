@@ -65,11 +65,7 @@ $PAGE->set_secondary_active_tab("modulepage");
 //
 echo $OUTPUT->header();
 $continuebtn = new single_button(
-    new moodle_url($PAGE->url, array('confirm' => 1)),
-    get_string('continue'),
-    'post',
-    single_button::BUTTON_PRIMARY
-);
+    new moodle_url($PAGE->url, array('confirm' => 1)), get_string('continue'), 'post', true);
 $continuebtn->class .= ' mr-3';
 echo $OUTPUT->confirm(get_string('switchphase' . $phase . 'info', 'workshop'),
                         $continuebtn, $workshop->view_url());

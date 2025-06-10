@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>lib/Zend/</location>
+        <name>Zend</name>
+        <version></version>
+        <license>New BSD</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

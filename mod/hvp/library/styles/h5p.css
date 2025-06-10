@@ -1,0 +1,640 @@
+/* Import common fonts */
+@import 'font-open-sans.css';
+/* General CSS for H5P. Licensed under the MIT License.*/
+/* Custom H5P font to use for icons. */
+@font-face {
+  font-family: 'h5p';
+  src:  url('../fonts/h5p-core-30.eot?h1atjl');
+  src:  url('../fonts/h5p-core-30.eot?h1atjl#iefix') format('embedded-opentype'),
+    url('../fonts/h5p-core-30.ttf?h1atjl') format('truetype'),
+    url('../fonts/h5p-core-30.woff?h1atjl') format('woff'),
+    url('../fonts/h5p-core-30.svg?h1atjl#h5p-core-30') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'h5p-hub-publish';
+  src: url('../fonts/h5p-hub-publish.eot?wy8ylc');
+  src: url('../fonts/h5p-hub-publish.eot?wy8ylc#iefix') format('embedded-opentype'),
+  url('../fonts/h5p-hub-publish.ttf?wy8ylc') format('truetype'),
+  url('../fonts/h5p-hub-publish.woff?wy8ylc') format('woff'),
+  url('../fonts/h5p-hub-publish.svg?wy8ylc#h5p-hub') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+html.h5p-iframe, html.h5p-iframe > body {
+  font-family: Sans-Serif; /* Use the browser's default sans-serif font. (Since Heletica doesn't look nice on Windows, and Arial on OS X.) */
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.h5p-semi-fullscreen, .h5p-fullscreen, html.h5p-iframe .h5p-container {
+  overflow: hidden;
+}
+.h5p-content {
+  position: relative;
+  background: #fefefe;
+  border: 1px solid #EEE;
+  border-bottom: none;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.h5p-noselect
+{
+  -khtml-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html.h5p-iframe .h5p-content {
+  font-size: 16px;
+  line-height: 1.5em;
+  width: 100%;
+  height: auto;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+html.h5p-iframe .h5p-fullscreen .h5p-content,
+html.h5p-iframe .h5p-semi-fullscreen .h5p-content {
+  height: 100%;
+}
+.h5p-content.h5p-no-frame,
+.h5p-fullscreen .h5p-content,
+.h5p-semi-fullscreen .h5p-content {
+  border: 0;
+}
+.h5p-container {
+  position: relative;
+  z-index: 1;
+}
+.h5p-iframe-wrapper.h5p-fullscreen {
+  background-color: #000;
+}
+body.h5p-semi-fullscreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+.h5p-container.h5p-semi-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 101;
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+}
+
+.h5p-content-controls {
+  margin: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+.h5p-fullscreen .h5p-content-controls {
+  display: none;
+}
+
+.h5p-content-controls > a:link, .h5p-content-controls > a:visited, a.h5p-disable-fullscreen:link, a.h5p-disable-fullscreen:visited {
+  color: #e5eef6;
+}
+
+.h5p-enable-fullscreen:before {
+  font-family: 'H5P';
+  content: "\e88c";
+}
+.h5p-disable-fullscreen:before {
+  font-family: 'H5P';
+  content: "\e891";
+}
+.h5p-enable-fullscreen, .h5p-disable-fullscreen {
+  cursor: pointer;
+  color: #EEE;
+  background: rgb(0,0,0);
+  background: rgba(0,0,0,0.3);
+  line-height: 0.975em;
+  font-size: 2em;
+  width: 1.125em;
+  height: 1em;
+  text-indent: 0.04em;
+}
+.h5p-disable-fullscreen {
+  line-height: 0.925em;
+  width: 1.1em;
+  height: 0.9em;
+}
+
+.h5p-enable-fullscreen:focus,
+.h5p-disable-fullscreen:focus {
+  outline-style: solid;
+  outline-width: 1px;
+  outline-offset: 0.25em;
+}
+
+.h5p-enable-fullscreen:hover, .h5p-disable-fullscreen:hover {
+  background: rgba(0,0,0,0.5);
+}
+.h5p-semi-fullscreen .h5p-enable-fullscreen {
+  display: none;
+}
+
+div.h5p-fullscreen {
+  width: 100%;
+  height: 100%;
+}
+.h5p-iframe-wrapper {
+  width: auto;
+  height: auto;
+}
+
+.h5p-fullscreen .h5p-iframe-wrapper,
+.h5p-semi-fullscreen .h5p-iframe-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.h5p-iframe-wrapper.h5p-semi-fullscreen {
+  width: auto;
+  height: auto;
+  background: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100001;
+}
+.h5p-iframe-wrapper.h5p-semi-fullscreen .buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 20;
+}
+.h5p-iframe-wrapper iframe.h5p-iframe {
+  /* Hack for IOS landscape / portrait */
+  width: 10px;
+  min-width: 100%;
+  *width: 100%;
+  /* End of hack */
+  height: 100%;
+  z-index: 10;
+  overflow: hidden;
+  border: 0;
+  display: block;
+}
+
+.h5p-content ul.h5p-actions {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  list-style: none;
+  padding: 0px 10px;
+  margin: 0;
+  height: 25px;
+  font-size: 12px;
+  background: #FAFAFA;
+  border-top: 1px solid #EEE;
+  border-bottom: 1px solid #EEE;
+  clear: both;
+  font-family: Sans-Serif;
+}
+.h5p-fullscreen .h5p-actions, .h5p-semi-fullscreen .h5p-actions {
+  display: none;
+}
+.h5p-actions > .h5p-button {
+  float: left;
+  cursor: pointer;
+  margin: 0 0.5em 0 0;
+  background: none;
+  padding: 0 0.75em 0 0.25em;
+  vertical-align: top;
+  color: #707070;
+  text-decoration: none;
+  outline: none;
+  line-height: 22px;
+}
+.h5p-actions button:hover {
+  color: #333;
+}
+.h5p-actions button:active,
+.h5p-actions button:focus,
+.h5p-actions .h5p-link:active,
+.h5p-actions .h5p-link:focus {
+  color: #666;
+}
+.h5p-actions button {
+  display: inline-flex;
+  padding: 0;
+  margin: 0;
+  color: #6A6A6A;
+  position: relative;
+
+  /* Disable default button style */
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+
+  line-height: 2;
+}
+.h5p-actions button:focus,
+.h5p-actions .h5p-link:focus {
+  outline-style: solid;
+  outline-width: thin;
+  outline-offset: -2px;
+  outline-color: #5981A1;
+}
+.h5p-actions button:before {
+  font-family: 'H5P';
+  font-size: 20px;
+  line-height: 23px;
+  vertical-align: bottom;
+  padding-right: 0;
+}
+.h5p-actions > .h5p-button.h5p-export > button:before {
+  content: "\e90b";
+}
+.h5p-actions > .h5p-button.h5p-copyrights > button:before {
+  content: "\e88f";
+}
+.h5p-actions > .h5p-button.h5p-embed > button:before {
+  content: "\e892";
+}
+.h5p-actions .h5p-link {
+  float: right;
+  margin-right: 0;
+  font-size: 2.0em;
+  line-height: 23px;
+  position: relative;
+  color: #6a6a6a;
+  text-decoration: none;
+  outline: none;
+}
+.h5p-actions .h5p-link:before {
+  font-family: 'H5P';
+  content: "\e88e";
+  vertical-align: bottom;
+}
+.h5p-actions > li {
+  margin: 0;
+  list-style: none;
+}
+.h5p-popup-dialog {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  z-index: 100;
+  padding: 2em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  opacity: 0;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  background:#000;
+  background:rgba(0,0,0,0.75);
+}
+.h5p-popup-dialog.h5p-open {
+  opacity: 1;
+}
+.h5p-popup-dialog .h5p-inner {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  background: #fff;
+  height: 100%;
+  max-height: 100%;
+  position: relative;
+}
+.h5p-popup-dialog .h5p-inner > h2 {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  background: #eee;
+  display: block;
+  color: #656565;
+  font-size: 1.25em;
+  padding: 0.325em 0.5em 0.25em;
+  line-height: 1.25em;
+  border-bottom: 1px solid #ccc;
+  z-index: 2;
+}
+.h5p-popup-dialog .h5p-inner > h2 > a {
+  font-size: 12px;
+  margin-left: 1em;
+}
+.h5p-embed-dialog .h5p-inner,
+.h5p-reuse-dialog .h5p-inner,
+.h5p-content-user-data-reset-dialog .h5p-inner {
+  min-width: 316px;
+  max-width: 400px;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%);
+}
+.h5p-embed-dialog .h5p-embed-code-container,
+.h5p-embed-size {
+  resize: none;
+  outline: none;
+  width: 100%;
+  padding: 0.375em 0.5em 0.25em;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 2px 0 #d0d0d0 inset;
+  font-size: 0.875em;
+  letter-spacing: 0.065em;
+  font-family: sans-serif;
+  white-space: pre;
+  line-height: 1.5em;
+  height: 2.0714em;
+  background: #f5f5f5;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.h5p-embed-dialog .h5p-embed-code-container:focus {
+  height: 5em;
+}
+.h5p-embed-size {
+  width: 3.5em;
+  text-align: right;
+  margin: 0.5em 0;
+  line-height: 2em;
+}
+.h5p-popup-dialog .h5p-scroll-content {
+  border-top: 2.25em solid transparent;
+  padding: 1em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  color: #555555;
+  z-index: 1;
+}
+.h5p-popup-dialog.h5p-open .h5p-scroll-content {
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+}
+.h5p-popup-dialog .h5p-scroll-content::-webkit-scrollbar {
+  width: 8px;
+}
+.h5p-popup-dialog .h5p-scroll-content::-webkit-scrollbar-track {
+  background: #e0e0e0;
+}
+.h5p-popup-dialog .h5p-scroll-content::-webkit-scrollbar-thumb {
+  box-shadow: 0 0 10px #000 inset;
+  border-radius: 4px;
+}
+.h5p-popup-dialog .h5p-close {
+  cursor: pointer;
+  font-size: 2em;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1.125em;
+  height: 1.125em;
+  line-height: 1.125em;
+  color: #656565;
+  cursor: pointer;
+  text-indent: -0.065em;
+  z-index: 3
+}
+.h5p-popup-dialog .h5p-close:after {
+  font-family: 'H5P';
+  content: "\e894";
+}
+.h5p-popup-dialog .h5p-close:hover:after,
+.h5p-popup-dialog .h5p-close:focus:after {
+  color: #454545;
+}
+.h5p-popup-dialog .h5p-close:active:after {
+  color: #252525;
+}
+.h5p-poopup-dialog h2 {
+  margin: 0.25em 0 0.5em;
+}
+.h5p-popup-dialog h3 {
+  margin: 0.75em 0 0.25em;
+}
+.h5p-popup-dialog dl {
+  margin: 0.25em 0 0.75em;
+}
+.h5p-popup-dialog dt {
+  float: left;
+  margin: 0 0.75em 0 0;
+}
+.h5p-popup-dialog dt:after {
+  content: ':';
+}
+.h5p-popup-dialog dd {
+  margin: 0;
+}
+.h5p-expander {
+  cursor: pointer;
+  font-size: 1.125em;
+  margin: 0.5em 0 0;
+  display: inline-block;
+}
+.h5p-expander:before {
+  content: "+";
+  width: 1em;
+  display: inline-block;
+  font-weight: bold;
+}
+.h5p-expander.h5p-open:before {
+  content: "-";
+  text-indent: 0.125em;
+}
+.h5p-expander:hover,
+.h5p-expander:focus {
+  color: #303030;
+}
+.h5p-expander:active {
+  color: #202020;
+}
+.h5p-expander-content {
+  display: none;
+}
+.h5p-expander-content p {
+  margin: 0.5em 0;
+}
+.h5p-content-copyrights {
+  border-left: 0.25em solid #d0d0d0;
+  margin-left: 0.25em;
+  padding-left: 0.25em;
+}
+.h5p-throbber {
+  background: url('../images/throbber.gif?ver=1.2.1') 10px center no-repeat;
+  padding-left: 38px;
+  min-height: 30px;
+  line-height: 30px;
+}
+.h5p-dialog-ok-button {
+  cursor: default;
+  float: right;
+  outline: none;
+  border: 2px solid #ccc;
+  padding: 0.25em 0.75em 0.125em;
+  background: #eee;
+}
+.h5p-dialog-ok-button:hover,
+.h5p-dialog-ok-button:focus {
+  background: #fafafa;
+}
+.h5p-dialog-ok-button:active {
+  background: #eeffee;
+}
+.h5p-big-button {
+  line-height: 1.25;
+  display: block;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  padding: 1em 1em 1em 3.75em;
+  text-align: left;
+  border: 1px solid #dedede;
+  background: linear-gradient(#ffffff, #f1f1f2);
+  border-radius: 0.25em;
+}
+.h5p-big-button:before {
+  font-family: 'h5p';
+  content: "\e893";
+  line-height: 1;
+  font-size: 3em;
+  color: #2747f7;
+  position: absolute;
+  left: 0.125em;
+  top: 0.125em;
+}
+.h5p-copy-button:before {
+  content: "\e905";
+}
+.h5p-big-button:hover {
+  border: 1px solid #2747f7;
+  background: #eff1fe;
+}
+.h5p-big-button:active {
+  border: 1px solid #dedede;
+  background: #dfe4fe;
+}
+.h5p-button-title {
+  color: #2747f7;
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.h5p-button-description {
+  color: #757575;
+}
+.h5p-horizontal-line-text {
+  border-top: 1px solid #dadada;
+  line-height: 1;
+  color: #474747;
+  text-align: center;
+  position: relative;
+  margin: 1.25em 0;
+}
+.h5p-horizontal-line-text > span {
+  background: white;
+  padding: 0.5em;
+  position: absolute;
+  top: -1em;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.h5p-toast {
+  font-size: 0.75em;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  z-index: 110;
+  position: absolute;
+  padding: 0 0.5em;
+  line-height: 2;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  top: 0;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s;
+}
+.h5p-toast-disabled {
+  opacity: 0;
+  visibility: hidden;
+}
+.h5p-content code,
+.h5peditor code {
+  color: #3d3d3d;
+  background: #e0e0e0;
+  border-radius: 2px;
+  padding: 0 5px;
+}
+.h5p-content pre > code,
+.h5peditor pre > code {
+  background-color: #fafafa;
+  padding: 5px;
+  display: block;
+  line-height: normal;
+  border: 1px solid #c7c7c7;
+  border-left-width: 4px;
+  max-width: 100%;
+  white-space: pre;
+  overflow: auto;
+}
+
+
+/* This is loaded as part of Core and not Editor since this needs to be outside the editor iframe */
+.h5peditor-semi-fullscreen {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 101;
+}
+iframe.h5peditor-semi-fullscreen {
+  background: #fff;
+  z-index: 100001;
+}
+
+.h5p-content.using-mouse *:not(textarea):focus {
+  outline: none !important;
+}
+
+.h5p-content-hub-button:before {
+  font-family: "h5p";
+  margin-right: 0.5em;
+  font-size: 0.7em;
+  line-height: 1;
+}
+
+.h5p-content-hub-button.unpublish:before {
+  content: "\e916";
+}
+
+.h5p-content-hub-button.waiting:before,
+.h5p-content-hub-button.sync:before {
+  content: "\e917";
+}
+
+.h5p-content-hub-button.waiting:before {
+  display: inline-block;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

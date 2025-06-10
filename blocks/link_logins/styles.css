@@ -1,0 +1,19 @@
+#page-blocks-link_logins-link div#notice.snap-continue-cancel {
+  top: auto!important;
+}
+
+.linkusers input#existingusername {
+  width: auto;
+  color: #3a1867;
+  background-color: #fdd023;
+  border: 2px solid #fdd023;
+  border-radius: 5px;
+}
+
+.linkusers input#prospectiveemail {
+  width: auto;
+  color: #fdd023;
+  background-color: #3a1867;
+  border: 2px solid #3a1867;
+  border-radius: 5px;
+}

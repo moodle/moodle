@@ -13,7 +13,6 @@
     $edit        = optional_param('edit', -1, PARAM_BOOL);
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
-    $duplicatesection = optional_param('duplicatesection', 0, PARAM_INT);
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
     $sectionid   = optional_param('sectionid', 0, PARAM_INT);
     $section     = optional_param('section', 0, PARAM_INT);
@@ -138,7 +137,7 @@
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since
     // format.php is not included until after output starts
-    $renderer = $format->get_renderer($PAGE);
+    $format->get_renderer($PAGE);
 
     if ($reset_user_allowed_editing) {
         // ugly hack
@@ -188,12 +187,6 @@
             }
         }
 
-        if (!empty($section) && !empty($coursesections) && !empty($duplicatesection)
-            && has_capability('moodle/course:update', $context) && confirm_sesskey()) {
-            $newsection = $format->duplicate_section($coursesections);
-            redirect(course_get_url($course, $newsection->section));
-        }
-
         if (!empty($section) && !empty($move) &&
                 has_capability('moodle/course:movesections', $context) && confirm_sesskey()) {
             $destsection = $section + $move;
@@ -234,20 +227,52 @@
         $PAGE->set_button($buttons);
     }
 
+    $editingtitle = '';
+    if ($PAGE->user_is_editing()) {
+        // Append this to the page title's lang string to get its equivalent when editing mode is turned on.
+        $editingtitle = 'editing';
+    }
+
     // If viewing a section, make the title more specific
     if ($section and $section > 0 and course_format_uses_sections($course->format)) {
         $sectionname = get_string('sectionname', "format_$course->format");
         $sectiontitle = get_section_name($course, $section);
-        $PAGE->set_title(get_string('coursesectiontitle', 'moodle', array('course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname)));
+        $PAGE->set_title(get_string('coursesectiontitle' . $editingtitle, 'moodle', array(
+            'course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname)
+        ));
     } else {
-        $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->fullname)));
+        $PAGE->set_title(get_string('coursetitle' . $editingtitle, 'moodle', array('course' => $course->fullname)));
     }
 
-    // Add bulk editing control.
-    $bulkbutton = $renderer->bulk_editing_button($format);
-    if (!empty($bulkbutton)) {
-        $PAGE->add_header_action($bulkbutton);
+    // BEGIN LSU Check for async course restore.
+    // Build the SQL to get restoring courses.
+    $sql = 'SELECT * from {backup_controllers}
+        WHERE type = "course"
+            AND operation = "restore"
+            AND purpose = 70
+            AND itemid = '. $course->id.'
+        ORDER BY timecreated DESC
+        LIMIT 1';
+
+    // Get the record.
+    $backup_ctrl = $DB->get_record_sql($sql);
+
+    // Make sure we're a teacher and the course is not done restoring.
+    if (has_capability('moodle/course:update', $context) &&
+        $backup_ctrl->status && $backup_ctrl->status != 1000) {
+        redirect($CFG->wwwroot .'/backup/restorefile.php?contextid='.$context->id,
+            "This course is currently being restored.",
+            null,
+            \core\output\notification::NOTIFY_WARNING);
+    // If we're a student and the course is restoring redirect home and let them know why.
+    } else if (!has_capability('moodle/course:update', $context) &&
+        $backup_ctrl->status && $backup_ctrl->status != 1000) {
+        redirect($CFG->wwwroot,
+            "That course is currently being restored, please check back later.",
+            null,
+            \core\output\notification::NOTIFY_WARNING);
     }
+    // END LSU Check for async course restore.
 
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();

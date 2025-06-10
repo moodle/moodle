@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Test questions</text>
+
+    </category>
+  </question>
+
+<!-- question: 110000  -->
+  <question type="regexp">
+    <name>
+      <text>regexp-001</text>
+    </name>
+    <questiontext format="html">
+      <text>What are the colours of the French flag?</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>OK</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+    <usecase>0</usecase>
+    <usehint>0</usehint>
+    <studentshowalternate>0</studentshowalternate>
+    <answer fraction="100">
+      <text>it's blue, white and red</text>
+      <feedback format="html">
+        <text>That is a very good answer.>
+        </text>
+      </feedback>
+    </answer>
+    <answer fraction="0">
+      <text>--.*blue.*</text>
+      <feedback format="html">
+        <text>Missing blue!>
+        </text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>*</text>
+      <feedback format="html">
+        <text>Try again!</text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>

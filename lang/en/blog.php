@@ -40,7 +40,6 @@ $string['blogaboutthis'] = 'Blog about this {$a->type}';
 $string['blogaboutthiscourse'] = 'Add an entry about this course';
 $string['blogaboutthismodule'] = 'Add an entry about this {$a}';
 $string['blogadministration'] = 'Blog administration';
-$string['blogattachment'] = 'Blog attachment';
 $string['blogdeleteconfirm'] = 'Delete the blog entry \'{$a}\'?';
 $string['blogdisable'] = 'Blogging is disabled!';
 $string['blogentries'] = 'Blog entries';

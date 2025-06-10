@@ -22,15 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->dirroot . '/grade/lib.php');
 require_once($CFG->dirroot . '/grade/report/overview/lib.php');
@@ -98,13 +92,12 @@ class gradereport_overview_external extends external_api {
         $course = get_course(SITEID);
         $context = context_course::instance($course->id);
 
+        // Force a regrade if required.
+        grade_regrade_final_grades_if_required($course);
         // Get the course final grades now.
         $gpr = new grade_plugin_return(array('type' => 'report', 'plugin' => 'overview', 'courseid' => $course->id,
                                         'userid' => $userid));
         $report = new grade_report_overview($userid, $gpr, $context);
-        // Force a regrade if required. As this is the overview report, we need to do all courses
-        // the user is enrolled in, not just $course.
-        $report->regrade_all_courses_if_needed();
         $coursesgrades = $report->setup_courses_data(true);
 
         $grades = array();
@@ -217,7 +210,7 @@ class gradereport_overview_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.2
      */
     public static function view_grade_report_returns() {

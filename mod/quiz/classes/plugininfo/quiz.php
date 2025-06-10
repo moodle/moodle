@@ -46,7 +46,7 @@ class quiz extends base {
 
         // Do the opposite of db/install.php scripts - deregister the report.
 
-        $DB->delete_records('quiz_reports', ['name' => $this->name]);
+        $DB->delete_records('quiz_reports', array('name'=>$this->name));
 
         parent::uninstall_cleanup();
     }

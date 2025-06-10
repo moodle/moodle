@@ -108,6 +108,8 @@ class custom_fields {
      * @return column[]
      */
     public function get_columns(): array {
+        global $DB;
+
         $columns = [];
 
         $categorieswithfields = $this->handler->get_categories_with_fields();
@@ -117,37 +119,42 @@ class custom_fields {
                 $customdatatablealias = database::generate_alias();
 
                 $datacontroller = data_controller::create(0, null, $field);
+
                 $datafield = $datacontroller->datafield();
+                $datafieldsql = "{$customdatatablealias}.{$datafield}";
+
+                // Long text fields should be cast for Oracle, for aggregation support.
+                $columntype = $this->get_column_type($field, $datafield);
+                if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                    $datafieldsql = $DB->sql_order_by_text($datafieldsql, 1024);
+                }
 
                 // Select enough fields to re-create and format each custom field instance value.
-                $selectfields = "{$customdatatablealias}.{$datafield}, {$customdatatablealias}.id,
-                    {$customdatatablealias}.contextid";
+                $selectfields = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
                 if ($datafield === 'value') {
                     // We will take the format into account when displaying the individual values.
                     $selectfields .= ", {$customdatatablealias}.valueformat";
                 }
 
-                $columnname = $field->get_formatted_name();
-                $columntype = $this->get_column_type($field, $datafield);
-
-                $newcolumn = (new column(
+                $columns[] = (new column(
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $columnname),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
                     $this->entityname
                 ))
                     ->add_joins($this->get_joins())
                     ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
                         "ON {$customdatatablealias}.fieldid = " . $field->get('id') . " " .
                         "AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}")
+                    ->add_field($datafieldsql, $datafield)
                     ->add_fields($selectfields)
                     ->set_type($columntype)
                     ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
-                    ->add_callback([$this, 'customfield_value'], $field)
+                    ->add_callback(static function($value, stdClass $row, field_controller $field): string {
+                        return (string) data_controller::create(0, $row, $field)->export_value();
+                    }, $field)
                     // Important. If the handler implements can_view() function, it will be called with parameter $instanceid=0.
                     // This means that per-instance access validation will be ignored.
                     ->set_is_available($this->handler->can_view($field, 0));
-
-                $columns[] = $newcolumn;
             }
         }
         return $columns;
@@ -192,6 +199,8 @@ class custom_fields {
      * @return filter[]
      */
     public function get_filters(): array {
+        global $DB;
+
         $filters = [];
 
         $categorieswithfields = $this->handler->get_categories_with_fields();
@@ -201,15 +210,20 @@ class custom_fields {
                 $customdatatablealias = database::generate_alias();
 
                 $datacontroller = data_controller::create(0, null, $field);
-                $datafield = $datacontroller->datafield();
-                $typeclass = $this->get_filter_class_type($datacontroller);
 
+                $datafield = $datacontroller->datafield();
+                $datafieldsql = "{$customdatatablealias}.{$datafield}";
+                if ($datafield === 'value') {
+                    $datafieldsql = $DB->sql_cast_to_char($datafieldsql);
+                }
+
+                $typeclass = $this->get_filter_class_type($datacontroller);
                 $filter = (new filter(
                     $typeclass,
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get('name')),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
                     $this->entityname,
-                    "{$customdatatablealias}.{$datafield}"
+                    $datafieldsql
                 ))
                     ->add_joins($this->get_joins())
                     ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
@@ -268,18 +282,5 @@ class custom_fields {
         }
 
         return $classtype;
-    }
-
-    /**
-     * Format for custom fields value. We get the correct custom field value using export_value method.
-     *
-     * @param mixed $value Current value.
-     * @param stdClass $row Full row.
-     * @param field_controller $field Field controller object.
-     * @return mixed|null
-     */
-    public function customfield_value($value, stdClass $row, field_controller $field) {
-        $data = data_controller::create(0, (object)$row, $field);
-        return $data->export_value();
     }
 }

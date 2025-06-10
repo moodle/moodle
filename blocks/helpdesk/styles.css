@@ -1,0 +1,49 @@
+#page-blocks-helpdesk-index div.region-content form {
+   text-align: center;
+}
+
+#page-blocks-helpdesk-index div.region-content form input.searchbutton {
+   margin-top: 10px;
+}
+
+#page-blocks-helpdesk-index div.region-content div.box,
+#page-blocks-helpdesk-participants div.region-content div.box,
+#page-blocks-helpdesk div.region-content div.box,
+#page-blocks-helpdesk-index div.region-content div.helpdesk_searchform,
+#page-blocks-helpdesk div.region-content div.helpdesk_searchform {
+   width: 80%;
+   margin: 0 auto 30px auto;
+}
+
+#page-blocks-helpdesk-index div.region-content div.box table, #page-blocks-helpdesk div.region-content div.box table,
+#page-blocks-helpdesk-participants div.region-content div.box table, #page-blocks-helpdesk div.region-content div.box table {
+   width: 100%;
+}
+
+#page-blocks-helpdesk div.region-content div.rolesform select {
+   position: absolute;
+   margin-top: -3.8em;
+}
+
+#page-blocks-helpdesk div.helpdesk_searchform select.select.menuroleid {
+   margin-top: -1.3em;
+   margin-left: 5.5em;
+}
+
+#page-blocks-helpdesk div.groupselector {
+   margin: 5px auto;
+   width: 80%;
+}
+
+#page-blocks-helpdesk div.region-content table .c0 {
+   width: 50px;
+   text-align: center;
+}
+
+#page-blocks-helpdesk-index input.inputbox {
+    width: 40em;
+}
+
+#page-blocks-helpdesk-index div.region-content table th, #page-blocks-helpdesk div.region-content table th {
+   background: transparent url([[pix:theme|navbar]]) 0 -150px repeat-x;
+}

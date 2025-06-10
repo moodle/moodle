@@ -1,0 +1,9 @@
+{
+    "moodle-atto_count-button": {
+        "requires": [
+            "io",
+            "json-parse",
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

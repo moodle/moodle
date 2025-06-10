@@ -16,7 +16,6 @@
 
 namespace core_message;
 
-use core_external\external_api;
 use core_message\tests\helper as testhelper;
 use core_message_external;
 use externallib_advanced_testcase;
@@ -126,7 +125,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messages = array($message1);
 
         $sentmessages = core_message_external::send_instant_messages($messages);
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
         $this->assertEquals(
             get_string('usercantbemessaged', 'message', fullname(\core_user::get_user($message1['touserid']))),
             array_pop($sentmessages)['errormessage']
@@ -138,7 +137,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Send message again. Now it should work properly.
         $sentmessages = core_message_external::send_instant_messages($messages);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
 
         $sentmessage = reset($sentmessages);
 
@@ -187,7 +186,7 @@ class externallib_test extends externallib_advanced_testcase {
         \core_message\api::add_contact($user1->id, $user2->id);
 
         $sentmessages = core_message_external::send_instant_messages($messages);
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
         $this->assertEquals(
             get_string('errormessagetoolong', 'message'),
             array_pop($sentmessages)['errormessage']
@@ -220,7 +219,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messages = array($message1);
 
         $sentmessages = core_message_external::send_instant_messages($messages);
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
 
         $sentmessage = reset($sentmessages);
 
@@ -256,7 +255,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messages = array($message1);
 
         $sentmessages = core_message_external::send_instant_messages($messages);
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
 
         $sentmessage = reset($sentmessages);
 
@@ -294,7 +293,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messages = array($message1);
 
         $sentmessages = core_message_external::send_instant_messages($messages);
-        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $sentmessages = \external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
 
         $sentmessage = reset($sentmessages);
 
@@ -443,7 +442,7 @@ class externallib_test extends externallib_advanced_testcase {
         \core_message\api::create_contact_request($user3->id, $user1->id);
 
         $requests = core_message_external::get_contact_requests($user1->id);
-        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+        $requests = \external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
 
         $this->assertCount(1, $requests);
 
@@ -478,7 +477,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Verify we don't see the contact request from the blocked user User2 in the requests for User1.
         $this->setUser($user1);
         $requests = core_message_external::get_contact_requests($user1->id);
-        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+        $requests = \external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
 
         $this->assertCount(0, $requests);
     }
@@ -494,7 +493,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         $requests = core_message_external::get_contact_requests($user1->id);
-        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+        $requests = \external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
 
         $this->assertEmpty($requests);
     }
@@ -515,7 +514,7 @@ class externallib_test extends externallib_advanced_testcase {
         \core_message\api::create_contact_request($user3->id, $user1->id);
 
         $requests = core_message_external::get_contact_requests($user1->id, 0, 1);
-        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+        $requests = \external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
 
         $this->assertCount(1, $requests);
     }
@@ -573,21 +572,21 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
-        $contactrequestnumber = external_api::clean_returnvalue(
+        $contactrequestnumber = \external_api::clean_returnvalue(
             core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
         $this->assertEquals(0, $contactrequestnumber);
 
         \core_message\api::create_contact_request($user2->id, $user1->id);
 
         $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
-        $contactrequestnumber = external_api::clean_returnvalue(
+        $contactrequestnumber = \external_api::clean_returnvalue(
             core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
         $this->assertEquals(1, $contactrequestnumber);
 
         \core_message\api::create_contact_request($user3->id, $user1->id);
 
         $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
-        $contactrequestnumber = external_api::clean_returnvalue(
+        $contactrequestnumber = \external_api::clean_returnvalue(
             core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
         $this->assertEquals(2, $contactrequestnumber);
 
@@ -595,7 +594,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Web service should ignore sent requests.
         $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
-        $contactrequestnumber = external_api::clean_returnvalue(
+        $contactrequestnumber = \external_api::clean_returnvalue(
             core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
         $this->assertEquals(2, $contactrequestnumber);
     }
@@ -617,7 +616,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Verify we don't see the contact request from the blocked user User2 in the count for User1.
         $this->setUser($user1);
         $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
-        $contactrequestnumber = external_api::clean_returnvalue(
+        $contactrequestnumber = \external_api::clean_returnvalue(
             core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
         $this->assertEquals(0, $contactrequestnumber);
     }
@@ -677,7 +676,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->messagingallusers = 1;
 
         $return = core_message_external::create_contact_request($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
         $this->assertEquals([], $return['warnings']);
 
         $request = $DB->get_records('message_contact_requests');
@@ -708,7 +707,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->messagingallusers = 0;
 
         $return = core_message_external::create_contact_request($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
 
         $warning = reset($return['warnings']);
 
@@ -776,7 +775,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user2);
 
         $return = core_message_external::confirm_contact_request($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::confirm_contact_request_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::confirm_contact_request_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_contact_requests'));
@@ -849,7 +848,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user2);
 
         $return = core_message_external::decline_contact_request($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::decline_contact_request_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::decline_contact_request_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_contact_requests'));
@@ -914,7 +913,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Muting a conversation.
         $return = core_message_external::mute_conversations($user1->id, [$conversation->id]);
-        $return = external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
         $this->assertEquals(array(), $return);
 
         // Get list of muted conversations.
@@ -926,7 +925,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Muting a conversation that is already muted.
         $return = core_message_external::mute_conversations($user1->id, [$conversation->id]);
-        $return = external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(1, $DB->count_records('message_conversation_actions'));
@@ -999,14 +998,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Unmuting a conversation.
         $return = core_message_external::unmute_conversations($user1->id, [$conversation->id]);
-        $return = external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
 
         // Unmuting a conversation which is already unmuted.
         $return = core_message_external::unmute_conversations($user1->id, [$conversation->id]);
-        $return = external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
@@ -1073,7 +1072,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Blocking a user.
         $return = core_message_external::block_user($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
         $this->assertEquals(array(), $return);
 
         // Get list of blocked users.
@@ -1084,7 +1083,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Blocking a user who is already blocked.
         $return = core_message_external::block_user($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(1, $DB->count_records('message_users_blocked'));
@@ -1108,7 +1107,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Blocking a user.
         $return = core_message_external::block_user($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_users_blocked'));
@@ -1172,14 +1171,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Unblocking a user.
         $return = core_message_external::unblock_user($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_users_blocked'));
 
         // Unblocking a user who is already unblocked.
         $return = core_message_external::unblock_user($user1->id, $user2->id);
-        $return = external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
         $this->assertEquals(array(), $return);
 
         $this->assertEquals(0, $DB->count_records('message_users_blocked'));
@@ -1264,25 +1263,25 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         $results = core_message_external::search_contacts('r');
-        $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
+        $results = \external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(5, $results); // Users 2 through 5 + admin
 
         $results = core_message_external::search_contacts('r', true);
-        $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
+        $results = \external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(2, $results);
 
         $results = core_message_external::search_contacts('Kyle', false);
-        $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
+        $results = \external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertEquals($user4->id, $result['id']);
 
         $results = core_message_external::search_contacts('y', false);
-        $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
+        $results = \external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(2, $results);
 
         $results = core_message_external::search_contacts('y', true);
-        $results = external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
+        $results = \external_api::clean_returnvalue(core_message_external::search_contacts_returns(), $results);
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertEquals($user5->id, $result['id']);
@@ -1322,51 +1321,51 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
         // Get unread conversations from user1 to user2.
         $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
         $this->assertEquals($im1, $messages['messages'][0]['id']);
 
         // Get read conversations from user1 to user2.
         $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', MESSAGE_GET_READ, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
         $this->assertEquals($im6, $messages['messages'][0]['id']);
 
         // Get both read and unread conversations from user1 to user2.
         $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', MESSAGE_GET_READ_AND_UNREAD,
             true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(2, $messages['messages']);
 
         // Delete an unread message.
         \core_message\api::delete_message($user1->id, $im1);
 
         $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(0, $messages['messages']);
 
         $this->setUser($user2);
         // Get unread conversations from any user to user2.
         $messages = core_message_external::get_messages($user2->id, 0, 'conversations', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(2, $messages['messages']);
 
         // Conversations from user3 to user2.
         $messages = core_message_external::get_messages($user2->id, $user3->id, 'conversations', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
 
         // Delete the message.
         \core_message\api::delete_message($user2->id, $im4);
 
         $messages = core_message_external::get_messages($user2->id, $user3->id, 'conversations', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(0, $messages['messages']);
 
         $this->setUser($user3);
         // Get unread notifications received by user3.
         $messages = core_message_external::get_messages($user3->id, 0, 'notifications', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(0, $messages['messages']);
 
         // Now, create some notifications...
@@ -1455,32 +1454,32 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
         // Get unread notifications from any user to user1.
         $messages = core_message_external::get_messages($user1->id, 0, 'notifications', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(3, $messages['messages']);
 
         // Get one unread notifications from any user to user1.
         $messages = core_message_external::get_messages($user1->id, 0, 'notifications', MESSAGE_GET_UNREAD, true, 0, 1);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
 
         // Get read notifications from any user to user1.
         $messages = core_message_external::get_messages($user1->id, 0, 'notifications', MESSAGE_GET_READ, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(0, $messages['messages']);
 
         // Get unread both type of messages from any user to user1.
         $messages = core_message_external::get_messages($user1->id, 0, 'both', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(4, $messages['messages']);
 
         // Get unread notifications from no-reply-user to user1.
         $messages = core_message_external::get_messages($user1->id, $userfrom->id, 'notifications', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
 
         // Get notifications send by user1 to any user.
         $messages = core_message_external::get_messages(0, $user1->id, 'notifications', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
         // Check we receive custom data as a unserialisable json.
         $this->assertObjectHasAttribute('datakey', json_decode($messages['messages'][0]['customdata']));
@@ -1493,7 +1492,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->messaging = 0;
 
         $messages = core_message_external::get_messages(0, $user1->id, 'both', MESSAGE_GET_UNREAD, true, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['warnings']);
 
         // Test exceptions.
@@ -1553,7 +1552,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get messages sent from user 1.
         $messages = core_message_external::get_messages(0, $user1->id, 'conversations', MESSAGE_GET_UNREAD, false, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
 
         // Confirm the data is correct.
         $messages = $messages['messages'];
@@ -1587,7 +1586,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get messages sent to user 1.
         $messages = core_message_external::get_messages($user1->id, 0, 'conversations', MESSAGE_GET_UNREAD, false, 0, 0);
-        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $messages = \external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
 
         // Confirm the data is correct.
         $messages = $messages['messages'];
@@ -1632,19 +1631,19 @@ class externallib_test extends externallib_advanced_testcase {
         // Retrieve the list of blocked users.
         $this->setUser($user1);
         $blockedusers = core_message_external::get_blocked_users($user1->id);
-        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $blockedusers = \external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
         $this->assertCount(0, $blockedusers['users']);
 
         // Block the $userblocked and retrieve again the list.
         \core_message\api::block_user($user1->id, $userblocked->id);
         $blockedusers = core_message_external::get_blocked_users($user1->id);
-        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $blockedusers = \external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
         $this->assertCount(1, $blockedusers['users']);
 
         // Remove the $userblocked and check that the list now is empty.
         delete_user($userblocked);
         $blockedusers = core_message_external::get_blocked_users($user1->id);
-        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $blockedusers = \external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
         $this->assertCount(0, $blockedusers['users']);
     }
 
@@ -1675,7 +1674,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messageids = array();
         foreach ($lastmessages as $m) {
             $messageid = core_message_external::mark_message_read($m->id, time());
-            $messageids[] = external_api::clean_returnvalue(core_message_external::mark_message_read_returns(), $messageid);
+            $messageids[] = \external_api::clean_returnvalue(core_message_external::mark_message_read_returns(), $messageid);
         }
 
         // Retrieve all messages sent (they are currently read).
@@ -1734,7 +1733,7 @@ class externallib_test extends externallib_advanced_testcase {
         $notificationids = array();
         foreach ($lastnotifications as $n) {
             $notificationid = core_message_external::mark_notification_read($n->id, time());
-            $notificationids[] = external_api::clean_returnvalue(core_message_external::mark_notification_read_returns(),
+            $notificationids[] = \external_api::clean_returnvalue(core_message_external::mark_notification_read_returns(),
                 $notificationid);
         }
 
@@ -1795,7 +1794,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Delete a message not read, as a user from.
         $result = core_message_external::delete_message($m1to2, $user1->id, false);
-        $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $mua = $DB->get_record('message_user_actions', array('messageid' => $m1to2, 'userid' => $user1->id));
@@ -1803,7 +1802,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try to delete the same message again.
         $result = core_message_external::delete_message($m1to2, $user1->id, false);
-        $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertFalse($result['status']);
 
         // Try to delete a message that does not belong to me.
@@ -1817,7 +1816,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user3);
         // Delete a message not read, as a user to.
         $result = core_message_external::delete_message($m2to3, $user3->id, false);
-        $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $this->assertTrue($DB->record_exists('message_user_actions', array('messageid' => $m2to3, 'userid' => $user3->id,
@@ -1827,7 +1826,7 @@ class externallib_test extends externallib_advanced_testcase {
         $message = $DB->get_record('messages', ['id' => $m3to2]);
         \core_message\api::mark_message_as_read($user3->id, $message, time());
         $result = core_message_external::delete_message($m3to2, $user3->id);
-        $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $this->assertTrue($DB->record_exists('message_user_actions', array('messageid' => $m3to2, 'userid' => $user3->id,
@@ -1861,7 +1860,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, as an admin, try to delete any message.
         $this->setAdminUser();
         $result = core_message_external::delete_message($m3to4, $user4->id, false);
-        $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $this->assertTrue($DB->record_exists('message_user_actions', array('messageid' => $m3to4, 'userid' => $user4->id,
@@ -1984,7 +1983,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_user_preference('message_provider_mod_assign_assign_notification_enabled', 'popup', $user);
 
         $prefs = core_message_external::get_user_notification_preferences();
-        $prefs = external_api::clean_returnvalue(core_message_external::get_user_notification_preferences_returns(), $prefs);
+        $prefs = \external_api::clean_returnvalue(core_message_external::get_user_notification_preferences_returns(), $prefs);
         // Check processors.
         $this->assertGreaterThanOrEqual(2, count($prefs['preferences']['processors']));
         $this->assertEquals($user->id, $prefs['preferences']['userid']);
@@ -2080,7 +2079,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Perform a search with $CFG->messagingallusers disabled.
         set_config('messagingallusers', 0);
         $result = core_message_external::message_search_users($users[1]->id, 'search');
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
 
         // Confirm that we returns contacts and non-contacts.
         $this->assertArrayHasKey('contacts', $result);
@@ -2176,7 +2175,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Perform a search with $CFG->messagingallusers enabled.
         set_config('messagingallusers', 1);
         $result = core_message_external::message_search_users($users[1]->id, 'search');
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
 
         // Confirm that we returns contacts and non-contacts.
         $this->assertArrayHasKey('contacts', $result);
@@ -2240,7 +2239,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Perform a search as user1.
         $this->setUser($user1);
         $result = core_message_external::message_search_users($user1->id, 'One');
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
 
         // Check results are empty.
         $this->assertCount(0, $result['contacts']);
@@ -2266,7 +2265,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Perform a search as user1.
         $this->setUser($user1);
         $result = core_message_external::message_search_users($user1->id, 'search');
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
 
         // Check results are empty.
         $this->assertCount(0, $result['contacts']);
@@ -2307,7 +2306,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Search using a limit of 3.
         // This tests the case where we have more results than the limit for both contacts and non-contacts.
         $result = core_message_external::message_search_users($users[1]->id, 'search', 0, 3);
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
         $contacts = $result['contacts'];
         $noncontacts = $result['noncontacts'];
 
@@ -2327,7 +2326,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, offset to get the next batch of results.
         // We expect to see 2 contacts, and 3 non-contacts.
         $result = core_message_external::message_search_users($users[1]->id, 'search', 3, 3);
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
         $contacts = $result['contacts'];
         $noncontacts = $result['noncontacts'];
         $this->assertCount(2, $contacts);
@@ -2342,7 +2341,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, offset to get the next batch of results.
         // We expect to see 0 contacts, and 2 non-contacts.
         $result = core_message_external::message_search_users($users[1]->id, 'search', 6, 3);
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
         $contacts = $result['contacts'];
         $noncontacts = $result['noncontacts'];
         $this->assertCount(0, $contacts);
@@ -2391,7 +2390,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Perform a search with $CFG->messagingallusers disabled.
         set_config('messagingallusers', 0);
         $result = core_message_external::message_search_users($users[1]->id, 'search');
-        $result = external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::message_search_users_returns(), $result);
         $contacts = $result['contacts'];
         $noncontacts = $result['noncontacts'];
 
@@ -2473,7 +2472,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(), $result);
 
         // Confirm the data is correct.
         $messages = $result['contacts'];
@@ -2531,7 +2530,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
             $result);
 
         // Confirm the data is correct.
@@ -2645,12 +2644,12 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_user_contacts($user1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
             $result);
 
         // Confirm the data is correct.
         $contacts = $result;
-        usort($contacts, [static::class, 'sort_contacts_id']);
+        usort($contacts, ['static', 'sort_contacts_id']);
         $this->assertCount(3, $contacts);
 
         $contact1 = array_shift($contacts);
@@ -2710,12 +2709,12 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_user_contacts($user1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
             $result);
 
         // Confirm the data is correct.
         $contacts = $result;
-        usort($contacts, [static::class, 'sort_contacts_id']);
+        usort($contacts, ['static', 'sort_contacts_id']);
         $this->assertCount(3, $contacts);
 
         $contact1 = array_shift($contacts);
@@ -2786,7 +2785,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         $requests = core_message_external::get_user_contacts($user1->id);
-        $requests = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(), $requests);
+        $requests = \external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(), $requests);
 
         $this->assertEmpty($requests);
     }
@@ -2824,7 +2823,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_conversation_messages($user1->id, $conversation->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
             $result);
 
         // Check the results are correct.
@@ -2897,7 +2896,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_conversation_messages($user1->id, $conversation->id, 0, 0, false, $time - 3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
             $result);
 
         // Check the results are correct.
@@ -2953,7 +2952,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_conversation_messages($user1->id, $conversation->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
             $result);
 
         // Check the results are correct.
@@ -3225,7 +3224,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_unread_conversations_count($user1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
             $result);
 
         $this->assertEquals(3, $result);
@@ -3265,7 +3264,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_unread_conversations_count($user1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
+        $result = \external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
             $result);
 
         $this->assertEquals(3, $result);
@@ -3472,7 +3471,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_message_processor($user1->id, 'popup');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_message_processor_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_message_processor_returns(), $result);
 
         $this->assertNotEmpty($result['systemconfigured']);
         $this->assertNotEmpty($result['userconfigured']);
@@ -3495,7 +3494,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_SITE, $user);
 
         $prefs = core_message_external::get_user_message_preferences();
-        $prefs = external_api::clean_returnvalue(core_message_external::get_user_message_preferences_returns(), $prefs);
+        $prefs = \external_api::clean_returnvalue(core_message_external::get_user_message_preferences_returns(), $prefs);
         $this->assertEquals($user->id, $prefs['preferences']['userid']);
 
         // Check components.
@@ -3588,7 +3587,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::set_favourite_conversations($user1->id, [$conversation1, $conversation2]);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::set_favourite_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::set_favourite_conversations_returns(), $result);
         $this->assertCount(0, $result);
     }
 
@@ -3706,7 +3705,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::unset_favourite_conversations($user1->id, [$conversation1, $conversation2]);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::unset_favourite_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::unset_favourite_conversations_returns(), $result);
         $this->assertCount(0, $result);
     }
 
@@ -3843,7 +3842,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get all conversations for user1.
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         $selfconversation = \core_message\api::get_self_conversation($user1->id);
@@ -3925,7 +3924,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Verify the format of the html message.
         $expectedmessagetext = message_format_message_text($message);
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $messages = $conversations[0]['messages'];
         $this->assertEquals($expectedmessagetext, $messages[0]['text']);
@@ -3946,7 +3945,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get all conversations for user1.
         $result = core_message_external::get_conversations($user1->id, 0, 1);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         // Verify the first conversation.
@@ -3956,21 +3955,21 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Verify the next conversation.
         $result = core_message_external::get_conversations($user1->id, 1, 1);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(1, $conversations);
         $this->assertEquals($gc2->id, $conversations[0]['id']);
 
         // Verify the next conversation.
         $result = core_message_external::get_conversations($user1->id, 2, 1);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(1, $conversations);
         $this->assertEquals($ic2->id, $conversations[0]['id']);
 
         // Skip one and get both empty conversations.
         $result = core_message_external::get_conversations($user1->id, 4, 2);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(2, $conversations);
         $this->assertEquals($gc5->id, $conversations[0]['id']);
@@ -3999,14 +3998,14 @@ class externallib_test extends externallib_advanced_testcase {
         // Verify we can ask for only individual conversations.
         $result = core_message_external::get_conversations($user1->id, 0, 20,
             \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(2, $conversations);
 
         // Verify we can ask for only group conversations.
         $result = core_message_external::get_conversations($user1->id, 0, 20,
             \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(4, $conversations);
 
@@ -4037,7 +4036,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Verify this conversation is returned by the method.
         $this->setUser($user1);
         $result = core_message_external::get_conversations($user1->id, 0, 20);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(1, $conversations);
     }
@@ -4062,7 +4061,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Group conversations are also present, albeit with less members.
         delete_user($user2);
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(7, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]['id']);
@@ -4079,7 +4078,7 @@ class externallib_test extends externallib_advanced_testcase {
         // This user will still be present in the members array, as will the message in the messages array.
         delete_user($user4);
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(7, $conversations);
         $this->assertEquals($gc2->id, $conversations[1]['id']);
@@ -4093,7 +4092,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Group conversations are also present, albeit with less members.
         delete_user($user3);
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(7, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]['id']);
@@ -4151,7 +4150,7 @@ class externallib_test extends externallib_advanced_testcase {
         delete_user($user2);
         $DB->delete_records('user', ['id' => $user2->id]);
         $result = core_message_external::get_conversations($user1->id, 0, 20, 1, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
 
         $conversation = $result['conversations'];
 
@@ -4181,13 +4180,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try to get ONLY favourite conversations, when no favourites exist.
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, true);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertEquals([], $conversations);
 
         // Try to get NO favourite conversations, when no favourites exist.
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         // Consider first conversations is self-conversation.
         $this->assertCount(7, $conversations);
@@ -4199,7 +4198,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get the conversations, first with no restrictions, confirming the favourite status of the conversations.
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(7, $conversations);
         foreach ($conversations as $conv) {
@@ -4210,7 +4209,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now, get ONLY favourite conversations.
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, true);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(3, $conversations);
         foreach ($conversations as $conv) {
@@ -4227,7 +4226,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // And NO favourite conversations.
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(4, $conversations);
         foreach ($conversations as $conv) {
@@ -4265,7 +4264,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
 
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         $this->assertEquals(2, $conversations[0]['membercount']);
@@ -4276,7 +4275,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, disable the conversation linked to the group and verify it's no longer returned.
         $DB->set_field('message_conversations', 'enabled', 0, ['id' => $conversations[0]['id']]);
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
         $this->assertCount(0, $conversations);
     }
@@ -4315,13 +4314,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the WebService.
         $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         // Format original data.
         $coursecontext = \context_course::instance($course1->id);
-        $coursename = \core_external\util::format_string($coursename, $coursecontext->id);
-        $groupname = \core_external\util::format_string($groupname, $coursecontext->id);
+        $coursename = external_format_string($coursename, $coursecontext->id);
+        $groupname = external_format_string($groupname, $coursecontext->id);
 
         $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $conversations[0]['name']);
         $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $conversations[0]['subname']);
@@ -4368,7 +4367,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user2);
         $result = core_message_external::get_conversations($user2->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         $groupconversation = array_shift($conversations);
@@ -4422,7 +4421,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user1);
         $result = core_message_external::get_conversations($user1->id);
-        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
 
         usort($conversations, function($first, $second){
@@ -4510,7 +4509,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $members = core_message_external::get_conversation_members($user1->id, $conversationid, false);
-        external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
 
         // Sort them by id.
         ksort($members);
@@ -4588,7 +4587,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $members = core_message_external::get_conversation_members($user1->id, $conversationid, true);
-        external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
 
         // Sort them by id.
         ksort($members);
@@ -4708,7 +4707,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectMessages();
         $writtenmessages = core_message_external::send_messages_to_conversation($ic1->id, $messages);
 
-        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+        \external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
 
         $this->assertCount(2, $writtenmessages);
         $this->assertObjectHasAttribute('id', $writtenmessages[0]);
@@ -4760,7 +4759,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectMessages();
         $writtenmessages = core_message_external::send_messages_to_conversation($gc2->id, $messages);
 
-        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+        \external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
 
         $this->assertCount(2, $writtenmessages);
         $this->assertObjectHasAttribute('id', $writtenmessages[0]);
@@ -4893,7 +4892,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->expectException('moodle_exception');
         $conv = core_message_external::get_conversation($user1->id, $conversationid + 1);
-        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
     }
 
     /**
@@ -4921,13 +4920,13 @@ class externallib_test extends externallib_advanced_testcase {
         // Get the conversation for user1 and confirm it's favourited.
         $this->setUser($user1);
         $conv = core_message_external::get_conversation($user1->id, $conversation->id);
-        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $conv = \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
         $this->assertTrue($conv['isfavourite']);
 
         // Get the conversation for user2 and confirm it's NOT favourited.
         $this->setUser($user2);
         $conv = core_message_external::get_conversation($user2->id, $conversation->id);
-        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $conv = \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
         $this->assertFalse($conv['isfavourite']);
     }
 
@@ -4969,13 +4968,13 @@ class externallib_test extends externallib_advanced_testcase {
         // Get the conversation for user1 and confirm it's favourited.
         $this->setUser($user1);
         $conv = core_message_external::get_conversation($user1->id, $conversationrecord->id);
-        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $conv = \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
         $this->assertTrue($conv['isfavourite']);
 
         // Get the conversation for user2 and confirm it's NOT favourited.
         $this->setUser($user2);
         $conv = core_message_external::get_conversation($user2->id, $conversationrecord->id);
-        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $conv = \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
         $this->assertFalse($conv['isfavourite']);
     }
 
@@ -5002,7 +5001,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         $conv = core_message_external::get_conversation($user1->id, $conversationid);
-        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
 
         $conv = (array) $conv;
         $this->assertEquals($conversationid, $conv['id']);
@@ -5078,7 +5077,7 @@ class externallib_test extends externallib_advanced_testcase {
             0,
             true
         );
-        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
 
         $conv = (array) $conv;
         $this->assertEquals(false, $conv['isread']);
@@ -5103,7 +5102,7 @@ class externallib_test extends externallib_advanced_testcase {
             0,
             false
         );
-        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
 
         $conv = (array) $conv;
         $this->assertCount(3, $conv['messages']);
@@ -5126,7 +5125,7 @@ class externallib_test extends externallib_advanced_testcase {
             1,
             true
         );
-        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        \external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
 
         $conv = (array) $conv;
         $this->assertCount(1, $conv['messages']);
@@ -5583,7 +5582,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $counts = core_message_external::get_conversation_counts(...$arguments);
-        $counts = external_api::clean_returnvalue(core_message_external::get_conversation_counts_returns(), $counts);
+        $counts = \external_api::clean_returnvalue(core_message_external::get_conversation_counts_returns(), $counts);
 
         $this->assertEquals($expectedcounts['favourites'], $counts['favourites']);
         $this->assertEquals($expectedcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
@@ -5669,7 +5668,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $counts = core_message_external::get_unread_conversation_counts(...$arguments);
-        $counts = external_api::clean_returnvalue(core_message_external::get_unread_conversation_counts_returns(), $counts);
+        $counts = \external_api::clean_returnvalue(core_message_external::get_unread_conversation_counts_returns(), $counts);
 
         $this->assertEquals($expectedunreadcounts['favourites'], $counts['favourites']);
         $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
@@ -5704,7 +5703,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now, user1 deletes message for all users.
         $return = core_message_external::delete_message_for_all_users($messageid1, $user1->id);
-        $return = external_api::clean_returnvalue(core_message_external::delete_message_for_all_users_returns(), $return);
+        $return = \external_api::clean_returnvalue(core_message_external::delete_message_for_all_users_returns(), $return);
         // Check if everything is ok.
         $this->assertEquals(array(), $return);
 
@@ -5831,7 +5830,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_message_external::get_conversation_messages($user1->id, $conversation->id, 0, 0, '', $time + 5);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(), $result);
 
         // Check the results are correct.
         $this->assertEquals($conversation->id, $result['id']);

@@ -1,0 +1,7 @@
+{
+    "plugintypes": {
+        "hotpotattempt": "mod\/hotpot\/attempt",
+        "hotpotsource": "mod\/hotpot\/source",
+        "hotpotreport": "mod\/hotpot\/report"
+    }
+}

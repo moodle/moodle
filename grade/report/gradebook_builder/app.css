@@ -1,0 +1,419 @@
+#page-grade-report-gradebook_builder-index div#page div#page h4#template-name {
+  text-align: center;
+}
+
+#page-grade-report-gradebook_builder-index div#page div#page-header {
+  width: 100%;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.coursetitle, #page-grade-report-gradebook_builder-index div#page div.bor {
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index div#page div#page-top-header {
+  width: 100%;
+}
+
+#page-grade-report-gradebook_builder-index div#page form#category-weights,
+#page-grade-report-gradebook_builder-index div#page div#grade-category-tmpl,
+#page-grade-report-gradebook_builder-index div#page div#grade-item-tmpl,
+#page-grade-report-gradebook_builder-index div#page div#category-weight-tmpl {
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index div#page form#category-weights fieldset div.control-group {
+  margin-top:25px;
+}
+
+#page-grade-report-gradebook_builder-index div#page form#category-weights fieldset div.control-group:first-of-type {
+  margin-top:5px;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.point-blank {
+  display: inline;
+  margin-bottom: 0px;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.point-blank input {
+  margin-bottom: 0px;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.point-blank span.add-on {
+  height: 26px;
+}
+
+#page-grade-report-gradebook_builder-index div#page span.remove-button {
+  border: 1px solid #333;
+  padding: 0px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+#page-grade-report-gradebook_builder-index div#page span.remove-item-label,
+#page-grade-report-gradebook_builder-index div#page span.remove-category-label {
+  float: right;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: 4px;
+  padding: 0.25em;
+  border-radius: 50%;
+  width: 1.5em;
+  height: 1.5em;
+  background-color: #fdd023;
+  color: #461d7c;
+  box-shadow: 0 0 0.25em #461d7c;
+}
+
+#page-grade-report-gradebook_builder-index div#page span.remove-item-label:hover,
+#page-grade-report-gradebook_builder-index div#page span.remove-category-label:hover {
+  background-color: #ffffff;
+  color: #000000;
+  transition: all 0.2s;
+}
+
+
+#page-grade-report-gradebook_builder-index div#page div#builder-start.container-fluid {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin: 0;
+  background-color: #fff;
+}
+
+#page-grade-report-gradebook_builder-index div#page div#grade-categories {
+  font-weight: normal;
+  line-height: 1.5em;
+}
+
+#page-grade-report-gradebook_builder-index div#page .control-group {
+  text-align: left;
+  height: 2.5em;
+}
+
+#page-grade-report-gradebook_builder-index div#page .control-group div.controls {
+  /*float: right;*/
+}
+
+#page-grade-report-gradebook_builder-index div#page input#category-name,
+#page-grade-report-gradebook_builder-index div#page input#grade-item-num-add {
+  /* height: 26px; */
+  padding: .375rem 0 .375rem .75rem;
+  line-height: 1.5em;
+  vertical-align: middle;
+}
+
+#page-grade-report-gradebook_builder-index div#page select#add-item-category {
+  max-width: 8em;
+}   
+
+
+#page-grade-report-gradebook_builder-index div#page div.nowrap {
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 1200px) {
+  #page-grade-report-gradebook_builder-index div#page div.nowrap {
+    zoom: 75%;
+  }
+}
+
+@media only screen and (max-width: 915px) {
+  #page-grade-report-gradebook_builder-index div#page div.nowrap {
+    zoom: 70%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  #page-grade-report-gradebook_builder-index div#page div.nowrap {
+    zoom: 100%;
+  }
+}
+
+
+
+#page-grade-report-gradebook_builder-index div#page div table h4 {
+   text-align: left;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-tiny {
+  width: 30px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-mini {
+  width: 60px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-small {
+  width: 90px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-medium {
+  width: 150px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-large {
+  width: 210px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-xlarge {
+  width: 270px;
+}
+
+#page-grade-report-gradebook_builder-index div#page .input-xxlarge {
+  width: 530px;
+}
+
+#page-grade-report-gradebook_builder-index div#page td {
+  position: static;
+}
+
+#page-grade-report-gradebook_builder-index div#page .pull-right {
+  float: right;
+  clear: none;
+  margin-right: 1em;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-striped tbody tr:nth-child(odd) td {
+  background-color: #f0f0f0;
+} 
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered {
+  border-collapse: inherit;
+  border-spacing: 0;
+  border: 1px solid #ced4da;
+  border-radius: 1rem 1rem 0 0;
+  overflow: hidden;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(odd) th, #page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(odd) th h4 {
+  background-color: #4b4554;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(even) th, #page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(even) th h4 {
+  background-color: #b1abba;
+  font-weight: 400;
+  color: #000000;
+}
+
+/*
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(odd) th span.remove-item-label,
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(odd) th span.remove-category-label {
+  background-color: #b1abba;
+  color: #000000;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(even) th span.remove-item-label,
+#page-grade-report-gradebook_builder-index div#page .table-bordered:nth-of-type(even) th span.remove-category-label {
+  background-color: #4b4554;
+  color: #ffffff;
+}
+*/
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered th,
+#page-grade-report-gradebook_builder-index div#page .table-bordered td {
+} 
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered thead:first-child tr:first-child th,
+#page-grade-report-gradebook_builder-index div#page .table-bordered tbody:first-child tr:first-child th,
+#page-grade-report-gradebook_builder-index div#page .table-bordered tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered thead:first-child tr:first-child th:first-child,
+#page-grade-report-gradebook_builder-index div#page .table-bordered tbody:first-child tr:first-child td:first-child {
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered thead:last-child tr:last-child th:first-child,
+#page-grade-report-gradebook_builder-index div#page .table-bordered tbody:last-child tr:last-child td:first-child {
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered thead:last-child tr:last-child th:last-child,
+#page-grade-report-gradebook_builder-index div#page .table-bordered tbody:last-child tr:last-child td:last-child {
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered thead {
+  overflow: hidden;
+}
+
+#page-grade-report-gradebook_builder-index div#page .table-bordered input.input-mini {
+  width: 2.5em;
+  text-align: right;
+  padding 0 0.1em;
+  margin-right: 0.25em;
+}
+
+#page-grade-report-gradebook_builder-index div#page .linky {
+  color: #461d7c;
+  display: inline-block;
+  padding: 5px 10px;
+  text-align: center;
+  background-color: #eeeeee;
+  border: 1px solid #333333;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+#page-grade-report-gradebook_builder-index div#page .linky:hover {
+  background-color: #461d7c;
+  color: #ffffff;
+}
+
+#page-grade-report-gradebook_builder-index div#page #howto {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 1rem 1rem 0 0;
+  margin-top: 10px;
+  margin-right: 0;
+  text-align: left;
+  overflow: hidden;
+}
+
+#page-grade-report-gradebook_builder-index div#page #howto li {
+  line-height: 1.5em;
+  margin-bottom: .5em;
+}
+
+#page-grade-report-gradebook_builder-index div#page #howto.hider {
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index div#page span.bolder {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#page-grade-report-gradebook_builder-index div#page form.center {
+  text-align: left;
+  margin-top: 15px;
+}
+
+#page-grade-report-gradebook_builder-index div#page h4.main {
+  text-align: left !important;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.help {
+   margin-bottom: 5px;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.instructions {
+   font-weight: bold;
+   text-transform: uppercase;
+   text-align: center;
+   background-color: #fdd023;
+   color: #461d7c;
+   font-size: 2em;
+   padding: 0.25em;
+   border-bottom: 1px solid #ced4da;
+   margin: -0.25em -0.25em 0.25em -0.25em;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.instructions.help {
+  padding-left: 2em;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.help_instructions {
+  margin-bottom: 0.5em;
+}
+
+#page-grade-report-gradebook_builder-index div#page div.help_instructions, #page-grade-report-gradebook_builder-index div#page div.help_instructions~ol {
+  font-size: 0.75em;
+}
+
+#page-grade-report-gradebook_builder-index div#page a.help {
+   background-color: #461d7c;
+   padding: 0.25em auto;
+   border: 1px solid #461d7c;
+   height: 1.5em;
+   width: 1.5em;
+   color: #fdd023;
+   font-size: 1em;
+   text-transform: normal;
+   cursor: pointer;
+   border-radius: 50%;
+   float: right;
+   font-weight: 700;
+   /* box-shadow: inset 1px 1px 3px #fff; */
+}
+
+#page-grade-report-gradebook_builder-index div#page a.help:hover {
+   background-color: #fdd023;
+   color: #461d7c;
+   cursor: pointer;
+   text-decoration: none;
+}
+
+
+#page-grade-report-gradebook_builder-index div#page .well, #page-grade-report-gradebook_builder-index div#page #category-weights h4 {
+  border: none;
+  margin-top: 2em !important;
+}
+
+#page-grade-report-gradebook_builder-index div#page .well h4 {
+  width: 100%;
+  margin: 0 0 0.4em 0;
+}
+
+#page-grade-report-gradebook_builder-index div#page select#add-item-category {
+  display: inline-block;
+  padding: .375rem 1.75rem .375rem .75rem;
+  line-height: 1.5;
+  color: #495057;
+  vertical-align: middle;
+  background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 4 5\'%3E%3Cpath fill=\'%23343a40\' d=\'M2 0L0 2h4zm0 5L0 3h4z\'/%3E%3C/svg%3E") no-repeat right .75rem center;
+  -webkit-background-size: 8px 10px;
+  background-size: 8px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#page-grade-report-gradebook_builder-index div#page form#add-items.well.form-inline {
+  flex-flow: row wrap;
+  align-items: left !important;
+  text-align: left;
+}
+
+#page-grade-report-gradebook_builder-index div#page #moodle-page {
+  width: 100%;
+}
+
+#page-grade-report-gradebook_builder-index div#page form.well:first-of-type {
+  margin-top: 0 !important;
+}
+
+#page-grade-report-gradebook_builder-index #snap-pm-courses #snap-pm-courses-hidden-cards.clearfix div.coursecard {
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index #snap-pm-header.clearfix,
+#page-grade-report-gradebook_builder-index #snap-pm-courses #snap-pm-courses-current-cards.clearfix,
+#page-grade-report-gradebook_builder-index #snap-pm-courses #snap-pm-courses-hidden-cards.clearfix.show div.coursecard { 
+  display: block;
+}
+
+@media (min-width: 992px) {
+  #page-grade-report-gradebook_builder-index div#page #builder-start .col-lg-6 {
+    flex: 0 0 49.9%;
+  }
+  #page-grade-report-gradebook_builder-index #snap-pm-content .col-lg-3 {
+    flex: 0 0 24%;
+  }
+}
+
+@media (min-width: 768px) {
+  #page-grade-report-gradebook_builder-index div#page #builder-start .col-md-7 {
+    flex: 0 0 49.9%;
+    max-width: 50%%;
+  }
+}
+
+#page-grade-report-gradebook_builder-index #moodle-footer {
+  width: 100%;
+}

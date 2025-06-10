@@ -28,14 +28,16 @@ namespace core_calendar\external\export;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/calendar/lib.php');
 
 use context_system;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
 use moodle_exception;
 
 /**
@@ -82,7 +84,7 @@ class token extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \core_external\external_description.
+     * @return external_description.
      * @since  Moodle 3.10
      */
     public static function execute_returns() {

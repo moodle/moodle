@@ -196,25 +196,3 @@ Feature: Quiz user override
       | quiz       | Other quiz | C2     | quiz2    |
     When I am on the "Other quiz" "mod_quiz > User overrides" page logged in as "admin"
     Then the "Add user override" "button" should be disabled
-
-  @javascript
-  Scenario: Should see only enrolled users in user selector
-    Given the following "users" exist:
-      | username | firstname | lastname | email           |
-      | manager  | Max       | Manager  | man@example.com |
-    And the following "role assigns" exist:
-      | user    | role    | contextlevel | reference |
-      | manager | manager | System       |           |
-    And the following "activities" exist:
-      | activity | name      | course | idnumber | groupmode |
-      | quiz     | Test quiz | C1     | quiz1    | 1         |
-    And I log in as "admin"
-    And I set the following system permissions of "Manager" role:
-      | capability       | permission |
-      | mod/quiz:attempt | Allow      |
-    And I log out
-    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
-    And I press "Add user override"
-    And I click on "Override user" "field"
-    And I type "Max Manager"
-    Then I should see "No suggestions"

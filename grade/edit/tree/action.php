@@ -62,9 +62,10 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            if (!$object->can_control_visibility()) {
-                throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
-            }
+
+            // BEGIN LSU Visibility Issues.
+            // END LSU Visibility Issues.
+
             $object->set_hidden(1, true);
         }
         break;
@@ -77,9 +78,10 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            if (!$object->can_control_visibility()) {
-                throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
-            }
+
+            // BEGIN LSU Visibility Issues.
+            // END LSU Visibility Issues.
+
             $object->set_hidden(0, true);
         }
         break;

@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_adminer/security_note
+
+    Show the adminer security note.
+
+    Context variables required for this template:
+    * msgtitle     The localized message title
+    * msg          The localized message
+    * exampletitle The localized example title
+
+    Example context (json):
+    {
+        "disabledsecret": "!!!"
+    }
+}}
+
+<div class="alert alert-warning alert-block d-flex flex-column" role="alert">
+    <div>
+        <strong>{{#str}} securitynote, local_adminer {{/str}}:</strong>
+        {{#str}} securitynote_text, local_adminer {{/str}}
+    </div>
+    <div>
+        <strong>{{#str}} example, local_adminer {{/str}}:</strong>
+    </div>
+    <div>
+        <code>$CFG->local_adminer_secret = '{{#str}} example_key, local_adminer {{/str}}';</code>
+    </div>
+    <div>
+        {{#str}} blockinginfo, local_adminer , {{disabledsecret}}{{/str}}
+    </div>
+    <div>
+        <strong>{{#str}} example, local_adminer {{/str}}:</strong>
+    </div>
+    <div>
+        <code>$CFG->local_adminer_secret = '{{disabledsecret}}';</code>
+    </div>
+</div>

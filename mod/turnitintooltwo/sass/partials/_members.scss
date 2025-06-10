@@ -1,0 +1,26 @@
+.mod_turnitintooltwo_members {
+    // Overwrite datatables CSS for loading message to cover the whole table
+    // accurately. By default datatables centers the loading message vertically
+    // and horizontally but it is only the size of the message meaning a user
+    // can click the content being loaded behind the message as the loading mask
+    // won't cover it all. Fix is to create a loading mask that covers all the
+    // loading content and position the message within the mask
+    .dataTables_wrapper .dataTables_processing {
+        // cover entire table that is loading
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+
+        .loading-message {
+            // position message within loading element
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            right: 0px;
+            margin-top: -10px; // half line-height
+        }
+    }
+}

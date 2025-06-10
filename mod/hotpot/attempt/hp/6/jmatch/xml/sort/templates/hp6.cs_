@@ -1,0 +1,376 @@
+/* A modified CSS3 stylesheet for rounded corners of buttons,
+  the layout boxes in the exercise, dropshadows on buttons and
+  draggable cards in JMatch_Sort drag and drop
+  JMatch_Sort v1.4.2 (auto-highlight of wrong items) by Agnes Simonet
+  Test or Practice mode with auto-highlighting of wrong items
+*/
+
+    /* Modified by Stan Bogdanov */
+   /*  stanbogdanov@yahoo.com   */
+  /*   hp6.cs_                 */
+ /*    v1.7 - JMatch_Sortonly */
+/*     9 November 2013       */
+
+/*
+Changelog
+- JMatch_Sort CSS only; removed others for reduced file size.
+- All -moz-whatever-stuff removed because deprecated
+*/
+
+/* Elements in square brackets are replaced by data based on configuration settings when the exercise is built. */
+
+/* BeginCorePageCSS */
+
+/* Made with executable version [strFullVersionInfo] */
+
+/* Hack to hide a nested Quicktime player from IE, which can't handle it. */
+* html object.MediaPlayerNotForIE {
+	display: none;
+}
+
+body{
+	font-family: [strFontFace];
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	color: [strTextColor];
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+	margin-right: 1%;
+	margin-left: 1%;
+	font-size: [strFontSize];
+}
+
+p{
+	text-align: left;
+	margin: 0px;
+	font-size: 100%;
+}
+
+table,div,span,td{
+	font-size: 100%;
+	color: [strTextColor];
+}
+
+div.Titles{
+	/*padding: 0.15em;*/
+	text-align: center;
+	color: [strTitleColor];
+}
+
+button{
+	font-family: [strFontFace];
+	font-size: 100%;
+	display: inline;
+	padding: 4px 17px;
+	margin:2px;
+}
+
+button:link,
+button:visited,
+button:hover,
+button:focus,
+button:active {
+	outline: none;
+}
+
+.ExerciseTitle{
+	font-size: 120%;
+	color: [strTitleColor];
+}
+
+.ExerciseSubtitle{
+	font-size: 100%;
+	color: [strTitleColor];
+}
+
+div.StdDiv{
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	text-align: center;
+	font-size: 100%;
+	color: [strTextColor];
+	padding: 0.5em;
+	border: 1px solid #ccc;
+	margin-bottom: 1px;
+}
+
+/* EndCorePageCSS */
+
+.Guess{
+	font-weight: bold;
+}
+
+.CorrectAnswer{
+	font-weight: bold;
+}
+
+div#Timer{
+	padding: 0.25em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	color: [strTitleColor];
+	margin-bottom:0.5em;
+}
+
+span#TimerText{
+	padding: 0.25em;
+	border-width: 1px;
+	border-style: solid;
+	font-weight: bold;
+	display: none;
+	color: [strTitleColor];
+}
+
+span.Instructions{
+}
+
+div.ExerciseText{
+}
+
+.FeedbackText, .FeedbackText span.CorrectAnswer, .FeedbackText span.Guess, .FeedbackText span.Answer{
+	color: [strTitleColor];
+}
+
+.LeftItem{
+	font-size: 100%;
+	color: [strTextColor];
+	text-align: left;
+}
+
+.RightItem{
+	font-weight: bold;
+	font-size: 100%;
+	color: [strTextColor];
+}
+
+span.CorrectMark{
+
+}
+
+div.Feedback {
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	left: 33%;
+	width: 34%;
+	top: 33%;
+	z-index: 1;
+	border-style: solid;
+	border-width: 1px;
+	border-color: [strNavBarColor];
+	padding: 5px;
+	text-align: center;
+	color: [strTitleColor];
+	position: absolute;
+	display: none;
+	font-size: 100%;
+	padding: 5px;
+}
+
+[inclReading]
+div.LeftContainer{
+	border-style: none;
+	padding: 2px 0px 2px 0px;
+	float: left;
+	width: 49.8%;
+	margin-bottom: 0px;
+}
+
+div.RightContainer{
+	border-style: none;
+	padding: 2px 0px 2px 0px;
+	float: right;
+	width: 49.8%;
+	margin-bottom: 0px;
+}
+
+.ReadingText{
+	text-align: left;
+}
+
+#ReadingDiv h3.ExerciseSubtitle{
+	color: [strTextColor];
+}
+
+[/inclReading]
+
+div.ExerciseDiv{
+	color: [strTextColor];
+}
+
+.FuncButton {
+	text-align: center;
+	border: 1px solid silver;
+	margin-right:2px;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+	color: [strTextColor];
+	background-color: [strExBGColor];
+[/inclExBGColor]
+
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonUp {
+	text-align: center;
+	border: 1px solid silver;
+	margin-right:2px;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+[/inclExBGColor]
+	background-color: [strNavBarColor];
+	color: [strExBGColor];
+
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonDown {
+	text-align: center;
+	border:1px solid silver;
+	margin-right:2px;
+[inclExBGColor]
+	border-left-color: [strFuncShadeColor];
+	border-top-color: [strFuncShadeColor];
+	border-right-color: [strFuncLightColor];
+	border-bottom-color: [strFuncLightColor];
+	background-color: [strNavBarColor];
+	color: [strExBGColor];
+[/inclExBGColor]
+
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+/*BeginNavBarStyle*/
+
+div.NavButtonBar{
+[inclNavBarColor]	background-color: [strNavBarColor];[/inclNavBarColor]
+	border: 1px solid [strNavShadeColor];
+	text-align: center;
+	margin: 2px 0px 2px 0px;
+	clear: both;
+	font-size: 100%;
+	padding:1px;
+}
+
+.NavButton {
+	border: 1px solid silver;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	background-color: [strNavBarColor];
+	color: [strNavTextColor];
+[/inclNavBarColor]
+	cursor: pointer;
+}
+
+.NavButtonUp {
+	border:1px solid silver;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	color: [strNavBarColor];
+	background-color: [strExBGColor];
+[/inclNavBarColor]
+	cursor: pointer;
+}
+
+.NavButtonDown {
+	border: 1px solid silver;
+[inclNavBarColor]
+	border-left-color: [strNavShadeColor];
+	border-top-color: [strNavShadeColor];
+	border-right-color: [strNavLightColor];
+	border-bottom-color: [strNavLightColor];
+	color: [strNavBarColor];
+	background-color: [strExBGColor];
+[/inclNavBarColor]
+	cursor: pointer;
+}
+
+/*EndNavBarStyle*/
+
+a{
+	color: [strLinkColor];
+}
+
+a:visited{
+	color: [strVLinkColor];
+}
+
+a:hover{
+	color: [strLinkColor];
+}
+
+div.CardStyle {
+	position: absolute;
+	font-family: [strFontFace];
+	font-size: 100%;
+	padding: 5px;
+	border: 1px solid silver;
+	color: [strTextColor];
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	left: -50px;
+	top: -50px;
+	overflow: visible;
+}
+
+.rtl{
+	text-align: right;
+	font-size: 140%;
+}
+
+#CheckButtonDiv {
+	margin-top:0.5em;
+	text-align:center;
+}
+
+/* *********** ajoutй par AS pour JMatch_Box ********* */
+
+div.CardStyleFC {
+	position: absolute;
+	font-family: [strFontFace];
+	font-size: 130%;
+	font-weight: bold;
+	padding: 5px;
+	border: 1px solid #ccc;
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	left: -50px;
+	top: -50px;
+	overflow: visible;
+	text-align : center;
+}
+
+div.CardStyleRC {
+	position: absolute;
+	font-family: [strFontFace];
+	font-size: 100%;
+	padding: 5px;
+	border: 1px solid #ccc;
+	background-color: [strVLinkColor];  /* Visited Link colour for the background of the categories containers*/
+	left: -50px;
+	top: -50px;
+	overflow: visible;
+	text-align : center;
+}
+
+div.CardStyleDC {
+	position: absolute;
+	font-family: [strFontFace];
+	font-size: 100%;
+	padding: 5px;
+	border: 1px solid #ccc;
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	left: -50px;
+	top: -50px;
+	overflow: visible;
+	text-align : center;
+}

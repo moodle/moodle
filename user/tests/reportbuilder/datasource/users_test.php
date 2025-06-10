@@ -441,8 +441,7 @@ class users_test extends core_reportbuilder_testcase {
 
         $this->resetAfterTest();
 
-        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
-        $user = $this->getDataGenerator()->create_user(['profile_field_hi' => 'Hello']);
+        $user = $this->getDataGenerator()->create_user();
 
         $this->datasource_stress_test_columns(users::class);
         $this->datasource_stress_test_columns_aggregation(users::class);

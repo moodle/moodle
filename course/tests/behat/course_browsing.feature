@@ -17,24 +17,20 @@ Feature: Restricting access to course lists
       | English Y1 | ENG1      | ENG |
       | English Y2 | ENG2      | ENG |
       | Humanities Y1 | HUM2   | MISC |
-    Given the following "users" exist:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | user0 | User | Z | user0@example.com |
       | userb | User | B | userb@example.com |
       | usere | User | E | usere@example.com |
-    Given the following "roles" exist:
+    And the following "roles" exist:
       | name            | shortname    | description      | archetype      |
       | Category viewer | coursebrowse | My custom role 1 |                |
+    And the following "role capability" exist:
+        | role         | moodle/category:viewcourselist |
+        | user         | prevent                        |
+        | guest        | prevent                        |
+        | coursebrowse | allow                          |
     Given I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | capability | permission |
-      | moodle/category:viewcourselist | Prevent |
-    And I set the following system permissions of "Guest" role:
-      | capability | permission |
-      | moodle/category:viewcourselist | Prevent |
-    And I set the following system permissions of "Category viewer" role:
-      | capability | permission |
-      | moodle/category:viewcourselist | Allow |
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:
@@ -106,3 +102,11 @@ Feature: Restricting access to course lists
     And I follow "Biology Y1"
     And I should see "You cannot enrol yourself in this course."
     And I log out
+
+  @javascript
+  Scenario: Browse courses as a user who has a disabled enrolment in them
+    Given the following "course enrolments" exist:
+      | user  | course | role    | status |
+      | usere | ENG1   | student | 1      |
+    When I am on the "ENG1" course page logged in as usere
+    Then I should see "You cannot enrol yourself in this course."

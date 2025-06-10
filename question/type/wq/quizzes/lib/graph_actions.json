@@ -1,0 +1,767 @@
+[
+  {
+    "id": "tools",
+    "title": "tt_toolbar"
+  },
+  {
+    "id": "pointers",
+    "title": "tt_pointers"
+  },
+  {
+    "id": "cursorActive",
+    "title": "tt_select",
+    "icon": {
+      "name": "cursor",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "cursorEditBarChart",
+    "title": "tt_barChart",
+    "icon": {
+      "name": "cursor",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPackBars",
+    "title": "tt_newPackBars",
+    "icon": {
+      "name": "bars_add_pack",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newSideBars",
+    "title": "tt_newSideBars",
+    "icon": {
+      "name": "bars_add_group",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deletePackBars",
+    "title": "tt_deletePackBars",
+    "icon": {
+      "name": "bars_delete_pack",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deleteSideBars",
+    "title": "tt_deleteSideBars",
+    "icon": {
+      "name": "bars_delete_group",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "changeBarsPositioning",
+    "title": "tt_stackBars",
+    "icon": {
+      "name": "bars_stack",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "cursorEditPieChart",
+    "title": "tt_pieChart",
+    "icon": {
+      "name": "cursor",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPie",
+    "title": "tt_newPie",
+    "icon": {
+      "name": "pie_add_sector",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deletePie",
+    "title": "tt_deletePie",
+    "icon": {
+      "name": "trash",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPieClockwise",
+    "title": "tt_newPieClockwise",
+    "icon": {
+      "name": "angle",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPieCounterclockwise",
+    "title": "tt_newPieCounterclockwise",
+    "icon": {
+      "name": "angle",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "pie2D3D",
+    "title": "tt_pie3D",
+    "icon": {
+      "name": "pie3d",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "cursorEditLineChart",
+    "title": "tt_lineChart",
+    "icon": {
+      "name": "cursor",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPointsLineChart",
+    "title": "tt_newPointsLineChart",
+    "icon": {
+      "name": "lines_add_points",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newLineLineChart",
+    "title": "tt_newLineLineChart",
+    "icon": {
+      "name": "lines_add_line",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deletePointsLineChart",
+    "title": "tt_deletePointsLineChart",
+    "icon": {
+      "name": "lines_delete_points",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deleteLineLineChart",
+    "title": "tt_deleteLineLineChart",
+    "icon": {
+      "name": "lines_delete_line",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "addPointsLeft",
+    "title": "tt_addPointsLeft",
+    "icon": {
+      "name": "undo",
+      "type": "material"
+    }
+  },
+  {
+    "id": "addPointsRight",
+    "title": "tt_addPointsRight",
+    "icon": {
+      "name": "redo",
+      "type": "material"
+    }
+  },
+  {
+    "id": "fitPlotterToStats",
+    "title": "tt_fitPlotterToStats",
+    "icon": {
+      "name": "fullscreen",
+      "type": "material"
+    }
+  },
+  {
+    "id": "changeOrientationBars",
+    "title": "tt_horizontal",
+    "icon": {
+      "name": "bars_horizontal",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "changeOrientationLines",
+    "title": "tt_horizontal",
+    "icon": {
+      "name": "lines_horizontal",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "pointDiameter",
+    "title": "tt_pointDiameter",
+    "icon": {
+      "name": "point",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "drawStrokes",
+    "title": "tt_handwriting",
+    "icon": {
+      "name": "hand",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "sketch",
+    "title": "tt_sketch",
+    "icon": {
+      "name": "hand",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "elements",
+    "title": "tt_elements"
+  },
+  {
+    "id": "newPoint",
+    "title": "tt_point",
+    "icon": {
+      "name": "point",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "lines",
+    "title": "tt_lines"
+  },
+  {
+    "id": "newLineThroughTwoPoints",
+    "title": "tt_line",
+    "icon": {
+      "name": "line",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newLineSegmentByPoints",
+    "title": "tt_segment",
+    "icon": {
+      "name": "segment",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newRayFromPointThroughPoint",
+    "title": "tt_ray",
+    "icon": {
+      "name": "ray",
+      "type": "svg"
+    }
+  },
+  {
+
+    "id": "midpointOfLineSegment",
+    "title": "tt_midpointOfSegment",
+    "icon": {
+      "name": "midpointsegment",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newLineParallelToLineThroughPoint",
+    "title": "tt_parallelLine",
+    "icon": {
+      "name": "parallel_line",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "mediatrixOfLineSegment",
+    "title": "tt_mediatrixOfSegment",
+    "icon": {
+      "name": "mediatrixsegment",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newLinePerpendicularToLineThroughPoint",
+    "title": "tt_perpendicularLine",
+    "icon": {
+      "name":"perpendicular_line",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newVectorByPoints",
+    "title": "tt_vector",
+    "icon": {
+      "name": "vector",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newParallelogram",
+    "title": "tt_parallelogram",
+    "icon": {
+      "name": "parallelogram",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPolyline",
+    "title": "tt_polyline",
+    "icon": {
+      "name": "polyline",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newPolygon",
+    "title": "tt_polygon",
+    "icon": {
+      "name": "polygon",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "conicSections",
+    "title": "tt_conicSections"
+  },
+  {
+    "id": "curves",
+    "title": "tt_curves"
+  },
+  {
+    "id": "newCircleByCenterAndPoint",
+    "title": "tt_circleCenterAndPoint",
+    "icon": {
+      "name": "circle2",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newCircleByThreePoints",
+    "title": "tt_circleThreePoints",
+    "icon": {
+      "name": "circle3",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newArcByThreePoints",
+    "title": "tt_arc",
+    "icon": {
+      "name": "arc3",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newParabolaByFocusAndDirectrix",
+    "title": "tt_parabola",
+    "icon": {
+      "name": "parabola",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newEllipseByFociAndPoint",
+    "title": "tt_ellipse",
+    "icon": {
+      "name": "ellipse",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newHyperbolaByFociAndPoint",
+    "title": "tt_hyperbola",
+    "icon": {
+      "name": "hyperbola",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newConicByFivePoints",
+    "title": "tt_conic",
+    "icon": {
+      "name": "conic",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newInterpolatingPolynomialByPoints",
+    "title": "tt_interpolatingPolynomial",
+    "icon": {
+      "name": "interpolating_polynomial",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "measures",
+    "title": "tt_measures"
+  },
+  {
+    "id": "newArea",
+    "title": "tt_area",
+    "icon": {
+      "name": "area",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newAngle",
+    "title": "tt_angle",
+    "icon": {
+      "name": "angle",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newLength",
+    "title": "tt_length",
+    "icon": {
+      "name": "length",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "labels",
+    "title": "tt_labels"
+  },
+  {
+    "id": "newFreeLabel",
+    "title": "tt_labels",
+    "icon": {
+      "name": "title",
+      "type": "material"
+    }
+  },
+  {
+    "id": "newElementByLabel",
+    "title": "tt_elementMML",
+    "icon": {
+      "name": "function",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "newImageByPoint",
+    "title": "tt_image",
+    "icon": {
+      "name": "image",
+      "type": "material"
+    }
+  },
+  {
+    "id": "edition",
+    "title": "tt_edition"
+  },
+  {
+    "id": "undo",
+    "title": "tt_undo",
+    "icon": {
+      "name": "undo",
+      "type": "material"
+    }
+  },
+  {
+    "id": "redo",
+    "title": "tt_redo",
+    "icon": {
+      "name": "redo",
+      "type": "material"
+    }
+  },
+  {
+    "id": "menu",
+    "title": "tt_menu"
+  },
+  {
+    "id": "actions",
+    "title": "tt_actions"
+  },
+  {
+    "id": "download",
+    "title": "tt_download",
+    "icon": {
+      "name": "save_alt",
+      "type": "material"
+    }
+  },
+  {
+    "id": "deleteAll",
+    "title": "tt_deleteAll",
+    "icon": {
+      "name": "delete_forever",
+      "type": "material"
+    }
+  },
+  {
+    "id": "restoreInitialContent",
+    "title": "tt_restoreInitialContent",
+    "icon": {
+      "name": "refresh",
+      "type": "material"
+    }
+  },
+  {
+    "id": "showHiddenElements",
+    "title": "tt_showHiddenElements",
+    "icon": {
+      "name": "visibility",
+      "type": "material"
+    }
+  },
+  {
+    "id": "hideElement",
+    "title": "tt_hideElement",
+    "icon": {
+      "name": "visibility_off",
+      "type": "material"
+    }
+  },
+  {
+    "id": "hideLabel",
+    "title": "tt_hideElement",
+    "icon": {
+      "name": "visibility_off",
+      "type": "material"
+    }
+  },
+  {
+    "id": "disposeDisplay",
+    "title": "tt_closeDisplay",
+    "icon": {
+      "name": "close",
+      "type": "material"
+    }
+  },
+  {
+    "id": "settingsSection",
+    "title": "tt_settings"
+  },
+  {
+    "id": "settings",
+    "title": "tt_settings",
+    "icon": {
+      "name": "settings",
+      "type": "material"
+    }
+  },
+  {
+    "id": "view",
+    "title": "tt_view"
+  },
+  {
+    "id": "maximize",
+    "title": "tt_maximize",
+    "icon": {
+      "name": "maximize",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "zoomIn",
+    "title": "tt_zoomIn",
+    "icon": {
+      "name": "zoom_in",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "zoomOut",
+    "title": "tt_zoomOut",
+    "icon": {
+      "name": "zoom_out",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "animateConstruction",
+    "title": "tt_animate",
+    "icon": {
+      "name": "play_arrow",
+      "type": "material"
+    }
+  },
+  {
+    "id": "contextualElement",
+    "title": "tt_contextualElement"
+  },
+  {
+    "id": "contextualLabel",
+    "title": "tt_contextualLabel"
+  },
+  {
+    "id": "fixLabel",
+    "title": "tt_fixLabel",
+    "icon": {
+      "name": "fix_label",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "lineWidth",
+    "title": "tt_lineWidth",
+    "icon": {
+      "name": "line_weight",
+      "type": "material"
+    }
+  },
+  {
+    "id": "lineStyle",
+    "title": "tt_lineStyle",
+    "icon": {
+      "name": "line_style",
+      "type": "material"
+    }
+  },
+  {
+    "id": "lineColor",
+    "title": "tt_lineColor",
+    "icon": {
+      "name": "line_color",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "bold",
+    "title": "tt_bold",
+    "icon": {
+      "name": "format_bold",
+      "type": "material"
+    }
+  },
+  {
+    "id": "italic",
+    "title": "tt_italic",
+    "icon": {
+      "name": "format_italic",
+      "type": "material"
+    }
+  },
+  {
+    "id": "color",
+    "title": "tt_color",
+    "icon": {
+      "name": "text_color",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "fraction",
+    "title": "tt_fraction",
+    "icon": {
+      "name": "frac",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "superscript",
+    "title": "tt_superscript",
+    "icon": {
+      "name": "exp",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "squareRoot",
+    "title": "tt_squareRoot",
+    "icon": {
+      "name": "sqrt",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "nRoot",
+    "title": "tt_nRoot",
+    "icon": {
+      "name": "nRoot",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deleteElement",
+    "title": "tt_delete",
+    "icon": {
+      "name": "trash",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "deleteLabel",
+    "title": "tt_delete",
+    "icon": {
+      "name": "trash",
+      "type": "svg"
+    }
+  },
+  {
+    "id": "constants",
+    "title": "tt_numbers",
+    "value": "π"
+  },
+  {
+    "id": "numberPi",
+    "title": "π",
+    "value": "π"
+  },
+  {
+    "id": "numberE",
+    "title": "e",
+    "value": "e"
+  },
+  {
+    "id": "functions",
+    "title": "tt_functions",
+    "value": "sin"
+  },
+  {
+    "id": "sinus",
+    "title": "sin",
+    "value": "sin"
+  },
+  {
+    "id": "cosinus",
+    "title": "cos",
+    "value": "cos"
+  },
+  {
+    "id": "tangent",
+    "title": "tan",
+    "value": "tan"
+  },
+  {
+    "id": "arcsinus",
+    "title": "arcsin",
+    "value": "arcsin"
+  },
+  {
+    "id": "arccosinus",
+    "title": "arccos",
+    "value": "arccos"
+  },
+  {
+    "id": "arctangent",
+    "title": "arctan",
+    "value": "arctan"
+  },
+  {
+    "id": "logBase",
+    "title": "log<sub style=\"font-size: 7pt; vertical-align: sub; line-height: 0px;\">&#9647;</sub>",
+    "value": "log",
+    "titleHtml": true
+  },
+  {
+    "id": "log",
+    "title": "log",
+    "value": "log",
+    "titleHtml": true
+  },
+  {
+    "id": "ln",
+    "title": "ln",
+    "value": "ln"
+  },
+  {
+    "id": "exp",
+    "title": "exp",
+    "value": "exp"
+  }
+]

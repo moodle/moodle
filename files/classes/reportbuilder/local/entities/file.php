@@ -109,11 +109,12 @@ class file extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$filesalias}.filesize, {$filesalias}.filename")
+            ->add_field("{$filesalias}.filesize")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
             ->set_is_sortable(true)
             ->add_callback(static function($filesize, stdClass $fileinfo): string {
                 // Absent file size and/or directory should not return output.
-                if ($fileinfo->filesize === null || $fileinfo->filename === '.') {
+                if ($fileinfo->filesize === null || $fileinfo->directory) {
                     return '';
                 }
                 return display_size($fileinfo->filesize);
@@ -138,20 +139,21 @@ class file extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$filesalias}.mimetype, {$filesalias}.filename")
+            ->add_field("{$filesalias}.mimetype")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
             ->set_is_sortable(true)
             ->add_callback(static function($mimetype, stdClass $fileinfo): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
                 // Absent mime type and/or directory has pre-determined output.
-                if ($fileinfo->filename === '.') {
-                    return get_string('directory');
-                } else if ($fileinfo->mimetype === null) {
+                if ($fileinfo->mimetype === null && !$fileinfo->directory) {
                     return '';
+                } else if ($fileinfo->directory) {
+                    return get_string('directory');
                 }
 
-                return get_mimetype_description($fileinfo, true);
+                return get_mimetype_description($fileinfo->mimetype);
             });
 
         // Author.

@@ -1,12 +1,6 @@
 This files describes API changes in /mod/workshop - activity modules,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* New function render_action_buttons(): Move render the action buttons from view.php to renderer.php.
-* New function view_submissions_report(): Render the submissions report.
-* New function view_page(): The function handles displaying sections of the page.
-
 === 4.0 ===
 
 * \mod_workshop\event\phase_automatically_switched event is triggered when the phase is automatically switched within

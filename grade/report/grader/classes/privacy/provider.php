@@ -53,10 +53,13 @@ class provider implements
         // There are several user preferences (shared between different courses).
         // Show/hide toggles preferences.
         $items->add_user_preference('grade_report_showcalculations', 'privacy:metadata:preference:grade_report_showcalculations');
+        $items->add_user_preference('grade_report_showeyecons', 'privacy:metadata:preference:grade_report_showeyecons');
         $items->add_user_preference('grade_report_showaverages', 'privacy:metadata:preference:grade_report_showaverages');
+        $items->add_user_preference('grade_report_showlocks', 'privacy:metadata:preference:grade_report_showlocks');
         $items->add_user_preference('grade_report_showuserimage', 'privacy:metadata:preference:grade_report_showuserimage');
         $items->add_user_preference('grade_report_showactivityicons', 'privacy:metadata:preference:grade_report_showactivityicons');
         $items->add_user_preference('grade_report_showranges', 'privacy:metadata:preference:grade_report_showranges');
+        $items->add_user_preference('grade_report_showanalysisicon', 'privacy:metadata:preference:grade_report_showanalysisicon');
         // Special rows preferences.
         $items->add_user_preference('grade_report_rangesdisplaytype', 'privacy:metadata:preference:grade_report_rangesdisplaytype');
         $items->add_user_preference('grade_report_rangesdecimalpoints', 'privacy:metadata:preference:grade_report_rangesdecimalpoints');
@@ -66,9 +69,11 @@ class provider implements
         $items->add_user_preference('grade_report_shownumberofgrades', 'privacy:metadata:preference:grade_report_shownumberofgrades');
         // General preferences.
         $items->add_user_preference('grade_report_quickgrading', 'privacy:metadata:preference:grade_report_quickgrading');
+        $items->add_user_preference('grade_report_showquickfeedback', 'privacy:metadata:preference:grade_report_showquickfeedback');
         $items->add_user_preference('grade_report_studentsperpage', 'privacy:metadata:preference:grade_report_studentsperpage');
         $items->add_user_preference('grade_report_showonlyactiveenrol', 'privacy:metadata:preference:grade_report_showonlyactiveenrol');
         $items->add_user_preference('grade_report_aggregationposition', 'privacy:metadata:preference:grade_report_aggregationposition');
+        $items->add_user_preference('grade_report_enableajax', 'privacy:metadata:preference:grade_report_enableajax');
 
         // There is also one user preference which can be defined on each course.
         $items->add_user_preference('grade_report_grader_collapsed_categories', 'privacy:metadata:preference:grade_report_grader_collapsed_categories');
@@ -89,13 +94,21 @@ class provider implements
             $transformedvalue = null;
             switch ($name) {
                 case 'grade_report_showcalculations':
+                case 'grade_report_showeyecons':
                 case 'grade_report_showaverages':
+                case 'grade_report_showlocks':
                 case 'grade_report_showuserimage':
                 case 'grade_report_showactivityicons':
                 case 'grade_report_showranges':
+                case 'grade_report_showanalysisicon':
                 case 'grade_report_shownumberofgrades':
                 case 'grade_report_quickgrading':
                 case 'grade_report_showonlyactiveenrol':
+                case 'grade_report_showquickfeedback':
+                case 'grade_report_enableajax':
+                    $prefname = $name;
+                    $transformedvalue = transform::yesno($value);
+                    break;
                 case 'grade_report_meanselection':
                     $prefname = $name;
                     switch ($value) {

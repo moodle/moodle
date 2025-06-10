@@ -57,7 +57,7 @@
 }}
 <div
     class="courseindex-section {{#current}}current{{/current}}"
-    id="{{uniqid}}-course-index-section-{{id}}"
+    id="course-index-section-{{id}}"
     data-for="section"
     data-id="{{id}}"
     data-number="{{number}}"
@@ -119,6 +119,6 @@
 </div>
 {{#js}}
 require(['core_courseformat/local/courseindex/section'], function(component) {
-    component.init('{{uniqid}}-course-index-section-{{id}}');
+    component.init('course-index-section-{{id}}');
 });
 {{/js}}

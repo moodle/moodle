@@ -1,0 +1,8 @@
+{
+    "moodle-atto_wiris-button": {
+        "requires": [
+            "moodle-editor_atto-plugin",
+            "get"
+        ]
+    }
+}

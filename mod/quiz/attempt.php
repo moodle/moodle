@@ -22,10 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\output\navigation_panel_attempt;
-use mod_quiz\output\renderer;
-use mod_quiz\quiz_attempt;
-
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -37,7 +33,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
         throw new \moodle_exception('invalidquizid', 'quiz');
     }
     redirect(new moodle_url('/mod/quiz/startattempt.php',
-            ['cmid' => $cm->id, 'sesskey' => sesskey()]));
+            array('cmid' => $cm->id, 'sesskey' => sesskey())));
 }
 
 // Get submitted parameters.
@@ -61,7 +57,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
         redirect($attemptobj->review_url(null, $page));
     } else {
-        throw new moodle_exception('notyourattempt', 'quiz', $quizobj->view_url());
+        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
     }
 }
 
@@ -86,7 +82,6 @@ if ($attemptobj->is_finished()) {
 // Check the access rules.
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
-/** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 $messages = $accessmanager->prevent_access();
 if (!$attemptobj->is_preview_user() && $messages) {
@@ -101,7 +96,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
 $autosaveperiod = get_config('quiz', 'autosaveperiod');
 if ($autosaveperiod) {
     $PAGE->requires->yui_module('moodle-mod_quiz-autosave',
-            'M.mod_quiz.autosave.init', [$autosaveperiod]);
+            'M.mod_quiz.autosave.init', array($autosaveperiod));
 }
 
 // Log this page view.
@@ -112,7 +107,7 @@ $slots = $attemptobj->get_slots($page);
 
 // Check.
 if (empty($slots)) {
-    throw new moodle_exception('noquestionsfound', 'quiz', $quizobj->view_url());
+    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
 // Update attempt page, redirecting the user if $page is not valid.
@@ -126,7 +121,7 @@ $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_
 \core\session\manager::keepalive(); // Try to prevent sessions expiring during quiz attempts.
 
 // Arrange for the navigation to be displayed in the first region on the page.
-$navbc = $attemptobj->get_navigation_panel($output, navigation_panel_attempt::class, $page);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 

@@ -24,6 +24,7 @@
  */
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 require_once('forms.php');
 
@@ -122,3 +123,4 @@ echo $OUTPUT->heading(get_string('addservicefunction', 'webservice', $service->n
 $functions = $webservicemanager->get_external_functions(array($service->id));
 echo $renderer->admin_service_function_list($functions, $service);
 echo $OUTPUT->footer();
+

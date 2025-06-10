@@ -14,19 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_quiz\question;
-
-use mod_quiz\quiz_attempt;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/question/engine/datalib.php');
-
 /**
- * A {@see qubaid_condition} representing all the attempts by one user at a given quiz.
+ * A {@link qubaid_condition} representing all the attempts by one user at a given quiz.
  *
  * @package   mod_quiz
  * @category  question
+ * @copyright 2015 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_quiz\question;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot.'/mod/quiz/attemptlib.php');
+
+/**
+ * A {@link qubaid_condition} representing all the attempts by one user at a given quiz.
+ *
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +48,7 @@ class qubaids_for_users_attempts extends \qubaid_join {
      */
     public function __construct($quizid, $userid, $status = 'finished', $includepreviews = false) {
         $where = 'quiza.quiz = :quizaquiz AND quiza.userid = :userid';
-        $params = ['quizaquiz' => $quizid, 'userid' => $userid];
+        $params = array('quizaquiz' => $quizid, 'userid' => $userid);
 
         if (!$includepreviews) {
             $where .= ' AND preview = 0';
@@ -55,14 +60,14 @@ class qubaids_for_users_attempts extends \qubaid_join {
 
             case 'finished':
                 $where .= ' AND state IN (:state1, :state2)';
-                $params['state1'] = quiz_attempt::FINISHED;
-                $params['state2'] = quiz_attempt::ABANDONED;
+                $params['state1'] = \quiz_attempt::FINISHED;
+                $params['state2'] = \quiz_attempt::ABANDONED;
                 break;
 
             case 'unfinished':
                 $where .= ' AND state IN (:state1, :state2)';
-                $params['state1'] = quiz_attempt::IN_PROGRESS;
-                $params['state2'] = quiz_attempt::OVERDUE;
+                $params['state1'] = \quiz_attempt::IN_PROGRESS;
+                $params['state2'] = \quiz_attempt::OVERDUE;
                 break;
         }
 

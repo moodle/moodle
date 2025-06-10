@@ -1,0 +1,61 @@
+/*
+ * 
+ *************************************************************************
+ **                         Moodle Terms of uses                        **
+ *************************************************************************
+ * @author     David Lowe 
+ * @co-author  Disha Devaiya
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ *
+ * Atto text editor phonetic plugin CSS.
+ */
+.atto_phonetic_library .yui3-tabview-list {
+    border: none;
+}
+
+.atto_phonetic_library .yui3-tab-selected .yui3-tab-label,
+.yui3-skin-sam #atto_phonetic_library .yui3-tab-selected .yui3-tab-label:focus,
+.yui3-skin-sam #atto_phonetic_library .yui3-tab-selected .yui3-tab-label:hover {
+    background: none;
+    color: black;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.atto_phonetic_library button {
+    margin: 0.25%;
+    min-width: 12%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#page-admin-setting-atto_phonetic_settings .form-defaultinfo {
+    max-height: 10em;
+    overflow: auto;
+    padding: 5px;
+    min-width: 206px;
+}
+
+.atto_form .atto_phonetic_preview {
+    margin-bottom: 0; /* Turn off the margin-bottom from the class "well" */
+    font-family: Verdana, Arial, Helvetica, sans-serif;   
+}
+
+.atto_form .atto_phonetic_preview_textarea{
+    width:75%;
+    display:inline-block;
+}
+
+.atto_form .atto_phonetic_preview_textarea textarea{
+    font-size: large;
+}
+.atto_form .atto_phonetic_preview_each_char {
+    font-family: Verdana, Arial, Helvetica, sans-serif;   
+    width:25%;
+    display:inline-block;
+    vertical-align: top;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+.atto_form .atto_phonetic_base_symbol{
+    display:inline-block;
+}

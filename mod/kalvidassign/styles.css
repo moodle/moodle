@@ -1,0 +1,48 @@
+#page-mod-kalvidassign-single_submission #page #page-header .navbar {
+    display:none;
+}
+
+
+#page-mod-kalvidassign-single_submission #page #page-content {
+    min-width: 500px;
+}
+
+
+#page-mod-kalvidassign-view .feedback {
+    border: 1px solid #DDDDDD;
+    margin:10px auto;
+}
+
+#page-mod-kalvidassign-view .feedback .grade {
+    text-align: right;
+    font-weight: bold;
+}
+
+#page-mod-kalvidassign-view .feedback .topic {
+    border-color: #DDDDDD;
+    border-style: solid;
+    border-width: 0 0 1px;
+    padding: 4px;
+}
+
+#page-mod-kalvidassign-view .feedback .topic .fullname {
+    font-weight: bold;
+}
+
+#slider_border {
+    width:  10%;
+    height: 18px;
+    border: 1px solid #000000;
+    overflow: hidden;
+}
+
+#id_add_video {
+    float: none;
+}
+
+#video_thumbnail {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+}

@@ -1,0 +1,132 @@
+.finished {
+    background-image: url('pix/finished.jpg');
+    height: 201px;
+    width: 307px;
+}
+
+.emptyset {
+    color: red;
+}
+
+.graphdeck {
+    background-image: url('pix/cardslice.png');
+    background-repeat: repeat-y;
+}
+
+.error {
+    color: red;
+}
+
+.bar {
+    background-image: url('pix/men.png');
+    background-repeat: repeat-x;
+    border: solid 1px #0b2386;
+}
+
+.flashcard-screenlinks {
+    padding: 10px;
+}
+
+.flashcard-playbutton {
+    display: inline-block;
+    padding: 10px;
+}
+
+.flashcard-question-container {
+    display: block;
+    margin: 10px auto 10px auto;
+}
+
+.flashcard-answer-container {
+    display: block;
+    margin: 10px auto 10px auto;
+}
+
+.flashcard-question {
+    background-position: 50% 50%;
+    border-style: dashed;
+    display: table-cell;
+    height: 400px;
+    padding: 10px 30px;
+    vertical-align: middle;
+    width: 300px;
+}
+
+.flashcard-question-video {
+    background-position: 50% 50%;
+    border-style: dashed;
+    display: table-cell;
+    height: 400px;
+    padding: 10px 30px;
+    vertical-align: middle;
+    width: 600px;
+}
+
+.flashcard-answer {
+    background-position: 50% 50%;
+    border-style: dashed;
+    display: table-cell;
+    height: 400px;
+    padding: 10px 30px;
+    vertical-align: middle;
+    width: 300px;
+}
+
+.flashcard-answer-video {
+    background-position: 50% 50%;
+    border-style: dashed;
+    display: table-cell;
+    height: 400px;
+    padding: 10px 30px;
+    vertical-align: middle;
+    width: 600px;
+}
+
+.flowplayer {
+    background-color: #222;
+    background-size: cover;
+    margin-bottom: 30px;
+    width: 80%;
+}
+
+.flowplayer .fp-controls {
+    background-color: rgba(17, 17, 17, 1);
+}
+
+.flowplayer .fp-timeline {
+    background-color: rgba(204, 204, 204, 1);
+}
+
+.flowplayer .fp-progress {
+    background-color: rgba(0, 167, 200, 1);
+}
+
+.flowplayer .fp-buffer {
+    background-color: rgba(249, 249, 249, 1);
+}
+
+.flashcard-flowplayer video {
+    max-width: 800px;
+}
+
+.flashcard-flowplayer-thumb {
+    max-width: 300px;
+}
+
+#flashcard-card-form .fitemtitle {
+    display: none;
+}
+
+#flashcard-card-form .ftextarea {
+    margin-left: 50px !important;
+}
+
+.flashcard-backtocourse {
+    margin: 8px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.flashcard-card-form .ffilepicker {
+    margin-left: 10px;
+}

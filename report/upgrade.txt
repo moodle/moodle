@@ -1,11 +1,6 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* The method report_progress\local\helper::get_activities_to_show() has an additional parameter $activitysection
-  to support filtering by sections.
-
 === 4.0 ===
 
 * The method report_helper::save_selected_report() has been been deprecated because it is no longer used.

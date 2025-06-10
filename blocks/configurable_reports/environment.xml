@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+    <PLUGIN name="block_configurable_reports">
+        <PHP version="7.4" level="required"/>
+    </PLUGIN>
+</COMPATIBILITY_MATRIX>

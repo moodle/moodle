@@ -1,0 +1,385 @@
+/*
+    Document   : styles_pp
+    Created on : 11-Jan-2013, 14:47:55
+    Author     : John McGettrick
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.forumpost .content .attachments {
+    text-align: left;
+}
+
+.tii_links_container {
+    padding-top: 4px;
+}
+
+.tii_links_container .clear {
+	clear:both;
+}
+
+.tii_links_container .launch_form, .tii_links_container .useragreement_form, .tii_links_container .turnitin_submit_error,
+.tii_links_container .turnitin_eula_link, .tii_links_container #useragreement_form form, .tii_links_container .hidden,
+.tii_links_container .cmid, .tii_links_container .userid, .plagiarism_submission, .pp_turnitin_cmid, .tii_useragreement_form,
+#tii_view_context, .tii_links_container .grademark_forum_launch, .tii_links_container .origreport_forum_launch {
+    display:none;
+}
+
+.tii_links_container .pp_origreport, .tii_links_container .grade_icon, .tii_links_container .tii_error_icon,
+.tii_links_container .row_rubric_view, .tii_links_container .row_peermark_reviews, .tii_links_container .student_read_icon {
+    float: left;
+}
+
+.tii_links_container .pp_grademark_open img:not(.icon) {
+    padding-right: 8px;
+}
+
+.tii_links_container .student_read_icon {
+    padding-top: 6px;
+}
+
+.tii_links_container .row_rubric_view {
+    position: relative;
+    top:5px;
+}
+
+.tii_links_container .row_rubric_view i {
+    line-height: 1 !important;
+    margin-right: 16px;
+}
+
+.tii_links_container .rubric_view_pp_launch {
+    background:url([[pix:plagiarism_turnitin|rubric]]) no-repeat 0px 0px;
+    cursor:pointer;
+    height: 34px;
+    width:32px;
+    display: block;
+}
+
+.tii_links_container .rubric_view_pp_launch_upload {
+    background:url([[pix:plagiarism_turnitin|rubric]]) no-repeat 0px 0px;
+    cursor: pointer;
+    padding: 2px 0px 2px 40px;
+    display: inline;
+    line-height: 28px;
+    margin-left:6px;
+    color: #0070A8;
+}
+
+.tii_disclosure_links {
+    display:block;
+}
+
+.tii_disclosure_links .row_rubric_view {
+    float: none !important;
+    padding-left: 4px;
+}
+
+.tii_disclosure_links .row_rubric_view a {
+    width: 100%;
+    padding-left: 26px;
+}
+
+.tii_links_container a.rubric_view_pp_launch, .tii_links_container a.peermark_reviews_pp_launch {
+    color:#000000;
+}
+
+.tii_links_container .peermark_reviews_pp_launch {
+    background:url([[pix:plagiarism_turnitin|peermark-reviews]]) no-repeat 0px 0px;
+    cursor:pointer;
+    margin-top: 5px;
+    padding: 4px 0 18px 36px;
+    line-height: 28px;
+    display: block;
+}
+
+.tii_links_container .tii_links_container {
+    white-space: nowrap;
+}
+
+.tii_links_container .pp_grademark_open, .tii_links_container .pp_origreport_open {
+    cursor:pointer;
+}
+
+.tii_links_container .pp_grademark_open {
+    padding-top:6px;
+    margin-bottom:6px;
+}
+
+.tii_links_container .pp_origreport {
+    position:relative;
+    top:4px;
+    display:inline;
+    margin-bottom:6px;
+}
+
+.tii_links_container .score_colour {
+    min-width:36px;
+    font-size:12px;
+    display:inline-block;
+    text-align: center;
+    margin-right:8px;
+    padding: 2px 4px;
+}
+
+.tii_links_container .score_colour_ { background: #999999; color:#000000; }
+.tii_links_container .score_colour_0 { background: #4ea3f0; color:#FFFFFF; }
+.tii_links_container .score_colour_25 { background: #70c30f; }
+.tii_links_container .score_colour_50 { background: #ffe225; }
+.tii_links_container .score_colour_75 { background: #ffa400; }
+.tii_links_container .score_colour_100 { background: #f03a3a; color:#FFFFFF; }
+
+.tii_links_container .origreport_score {
+    white-space:nowrap;
+}
+
+.tii_links_container .score_no_orcapable {
+    width:16px;
+    text-align:center;
+    color:#CC0000;
+    background:#CCCCCC;
+    cursor: normal;
+}
+
+.tii_links_container .turnitin_status {
+    white-space:nowrap;
+}
+
+.tii_links_container .turnitin_status img {
+    padding-right:6px;
+}
+
+.tii_links_container .warning, .pp_errors_warning {
+    border: 1px solid #CC0000;
+    padding: 8px;
+    background: #FFE9E8;
+    width: 99%;
+    text-align:center;
+    display:block;
+    margin-bottom:6px;
+}
+
+.tii_links_container .success, .pp_errors_success {
+    border: 1px solid #CC0000;
+    padding: 8px;
+    background: #FFFFFF;
+    width: 100%;
+    text-align:center;
+    margin-bottom:6px;
+}
+
+.tii_links_container .success {
+    display:none;
+}
+
+.pp_errors_success {
+    display:block;
+}
+
+.forumpost .tii_links_container .success {
+    width:96%;
+}
+
+.tii_links_container #ppErrors {
+    width:100%;
+}
+
+#page-admin-plagiarism-turnitin-settings .left {
+    text-align: left;
+}
+
+#page-admin-plagiarism-turnitin-settings .centered_cell {
+    text-align: center;
+}
+
+#page-admin-plagiarism-turnitin-settings .row_peermark_manager {
+    float:left;
+    display:inline;
+}
+
+.plagiarism_turnitin_refresh_grades, .plagiarism_turnitin_refreshing_grades {
+    cursor: pointer;
+    background:url([[pix:plagiarism_turnitin|refresh]]) no-repeat 4px 0px;
+    margin-bottom: 4px;
+    padding: 0 0 0 40px;
+}
+
+.plagiarism_turnitin_refreshing_grades {
+    display: none;
+}
+
+.peermark_manager_launch {
+    background:url([[pix:plagiarism_turnitin|peermark-settings]]) no-repeat 0px 0px;
+    cursor: pointer;
+    padding: 4px 16px 4px 40px;
+    display: inline;
+    line-height: 28px;
+    color: #0070a8;
+}
+.peermark_manager_launch:hover{
+    text-decoration: underline;
+}
+
+.plagiarism_turnitin_quickmark_manager_launch {
+    background:url([[pix:plagiarism_turnitin|quickmark]]) no-repeat 0px 0px;
+    cursor: pointer;
+    padding: 2px 0px 2px 40px;
+    display: inline;
+    line-height: 28px;
+    color: #0070a8;
+}
+.plagiarism_turnitin_quickmark_manager_launch:hover{
+    text-decoration: underline;
+}
+
+.tii_links_container .forum_eula_launch_noscript, .tii_links_container .forum_eula_launch span, .pp_turnitin_eula {
+    cursor:pointer;
+    text-decoration: underline;
+	text-align: center;
+	border: 1px solid #CC0000;
+    padding: 24px 12px 12px;
+	color: #1177d1;
+	margin-top:12px;
+	font-size: 14px;
+	font-weight: bold;
+	display: block;
+}
+
+.pp_turnitin_eula {
+	display: none;
+    margin-bottom:16px;
+    padding-top: 40px;
+    background:url([[pix:plagiarism_turnitin|turnitin-icon]]) no-repeat 50% 6px;
+    background-size:32px;
+}
+
+noscript.turnitin_ula_noscript {
+    border: 1px solid #CC0000;
+    padding: 8px;
+    background: #FFE9E8;
+    width: 99%;
+    text-align:center;
+    display:block;
+    margin:16px 6px;
+	line-height: 28px;
+}
+
+.tii_links_container .turnitin_submit_error {
+    width: auto;
+    margin-top: 12px;
+    display:none;
+}
+
+.tii_links_container .plagiarism_turnitin_resubmit_link {
+    cursor: pointer;
+}
+
+.tii_links_container .tii_error_icon, .tii_links_container .pp_resubmitting img {
+    padding-right:6px;
+}
+
+.tii_links_container .eularedirect {
+    text-align: center;
+}
+
+button.pp-resubmit-files {
+    clear: both;
+    float: right;
+    margin: 10px 0;
+}
+
+.rubric_manager_launch {
+    background:url([[pix:plagiarism_turnitin|rubric]]) no-repeat 0px 0px;
+    cursor: pointer;
+    padding: 2px 0px 2px 40px;
+    display: inline;
+    line-height: 28px;
+    margin-left:6px
+}
+
+.tii_links_container .turnitin_status .icon_size {
+    width: 24px;
+    height: 24px;
+}
+
+.blue {
+    color: #009ACD;
+}
+
+.icon_margin {
+    margin-right: 20px;
+}
+.icon_peermark_manager {
+    color: #009900 !important;
+}
+
+.tii_checkagainstnote, .tii_anonblindmarkingnote, .tii_genspeednote {
+    border: 1px solid #6FCAFF;
+    background: #BBE6FF;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+iframe html{background:none;}
+
+.selectlong {
+    width: 530px;
+}
+
+.connection-test-success,
+.connection-test-failed {
+    background-image: none;
+    color: #FFFFFF;
+    text-shadow: none;
+}
+.connection-test-success button:focus,
+.connection-test-failed button:focus{
+    outline: 0;
+}
+.connection-test-success {
+    background-color: #51a351;
+}
+.connection-test-failed {
+    background-color: #d9534f;
+}
+
+.iframe-ltilaunch {
+    width: 100%;
+    height: 700px;
+}
+
+.iframe-ltilaunch-eula {
+    width: 767px;
+    height: 680px;
+}
+
+.iframe-ltilaunch-rubric {
+    width: 100%;
+    min-width: 840px;
+    height: 680px;
+}
+
+.tii_pp_modal_eula {
+    width: 800px !important;
+    height: 700px;
+    background-color: #EEE !important;
+}
+
+.tii_pp_modal_eula_content {
+    height: 735px;
+}
+
+.tii_pp_modal_rubric {
+    max-width: 1027px !important;
+}
+
+.tii_pp_modal_rubric_content {
+    width: 1032px !important;
+    left: -116px;
+}
+
+.turnitin_setup_download_links label {
+    width: 300px;
+    line-height: 50px;
+    justify-content: left;
+}

@@ -90,7 +90,7 @@ class edit_action_buttons implements templatable, renderable {
 
         if ($this->lesson->can_manage()) {
             $url = new moodle_url('/mod/lesson/edit.php', ['id' => $this->lesson->get_cm()->id]);
-            $editbutton = new single_button($url, get_string('editlesson', 'mod_lesson'), 'get', single_button::BUTTON_PRIMARY);
+            $editbutton = new single_button($url, get_string('editlesson', 'mod_lesson'), 'get', true);
             $url = new moodle_url('/mod/lesson/essay.php', ['id' => $this->lesson->get_cm()->id]);
             $essaybutton = new single_button($url, get_string('manualgrading', 'mod_lesson'), 'get');
             $data += [

@@ -97,9 +97,7 @@ class H5PDevelopment {
       $this->h5pF->saveLibraryData($library, $library['libraryId'] === FALSE);
 
       // Need to decode it again, since it is served from here.
-      $library['metadataSettings'] = isset($library['metadataSettings'])
-        ? json_decode($library['metadataSettings'])
-        : NULL;
+      $library['metadataSettings'] = json_decode($library['metadataSettings']);
 
       $library['path'] = 'development/' . $contents[$i];
       $this->libraries[H5PDevelopment::libraryToString($library['machineName'], $library['majorVersion'], $library['minorVersion'])] = $library;

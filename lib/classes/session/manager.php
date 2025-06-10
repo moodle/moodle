@@ -60,9 +60,6 @@ class manager {
     /** @var array Stores the the SESSION before a request is performed, used to check incorrect read-only modes */
     private static $priorsession = [];
 
-    /** @var array Stores the the SESSION after write_close is called, used to check if it was mutated after the session is closed */
-    private static $sessionatclose = [];
-
     /**
      * @var bool Used to trigger the SESSION mutation warning without actually preventing SESSION mutation.
      * This variable is used to "copy" what the $requireslock parameter  does in start_session().
@@ -388,10 +385,12 @@ class manager {
             'httponly' => $CFG->cookiehttponly,
         ];
 
-        if (self::should_use_samesite_none()) {
-            // If $samesite is empty, we don't want there to be any SameSite attribute.
-            $sessionoptions['samesite'] = 'None';
-        }
+            // BEGIN LSU Samesite Cookie Setting.
+            if (self::force_samesite_none() || self::should_use_samesite_none()) {
+                // If $samesite is empty, we don't want there to be any SameSite attribute.
+                $sessionoptions['samesite'] = 'None';
+            }
+            // END LSU Samesite Cookie Setting.
 
         session_set_cookie_params($sessionoptions);
 
@@ -646,6 +645,58 @@ class manager {
         return false;
     }
 
+    // BEGIN LSU Samesite Cookie Setting.
+    /**
+     * Returns the config value for the forcing samesite cookies.
+     *
+     * @return @bool
+     */
+    private static function force_samesite_none(): bool {
+        global $CFG;
+
+        $force_samesite_none = isset($CFG->force_samesite_none) ? $CFG->force_samesite_none : 0;
+        if ($force_samesite_none == 1) {
+            return true;
+        }
+        return false;
+    }
+    // END LSU Samesite Cookie Setting.
+
+    /**
+     * Conditionally append the SameSite attribute to the session cookie if necessary.
+     *
+     * Contains a hack for versions of PHP lower than 7.3 as there is no API built into PHP cookie API
+     * for adding the SameSite setting.
+     *
+     * This won't change the Set-Cookie headers if:
+     *  - PHP 7.3 or higher is being used. That already adds the SameSite attribute without any hacks.
+     *  - If the samesite setting is empty.
+     *  - If the samesite setting is None but the browser is not compatible with that setting.
+     */
+    private static function append_samesite_cookie_attribute() {
+        if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+            // This hack is only necessary if we weren't able to set the samesite flag via the session_set_cookie_params API.
+            return;
+        }
+
+        // BEGIN LSU Samesite Cookie Setting.
+        if (!self::force_samesite_none() && !self::should_use_samesite_none()) {
+            return;
+        }
+        // END LSU Samesite Cookie Setting.
+
+        $cookies = headers_list();
+        header_remove('Set-Cookie');
+        $setcookiesession = 'Set-Cookie: ' . session_name() . '=';
+
+        foreach ($cookies as $cookie) {
+            if (strpos($cookie, $setcookiesession) === 0) {
+                $cookie .= '; SameSite=None';
+            }
+            header($cookie, false);
+        }
+    }
+
     /**
      * Terminate current user session.
      * @return void
@@ -689,12 +740,6 @@ class manager {
         global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
-            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
-            if (debugging()) {
-                self::$sessionatclose = (array) $_SESSION['SESSION'];
-                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
-            }
-
             // Grab the time when session lock is released.
             $PERF->sessionlock['released'] = microtime(true);
             if (!empty($PERF->sessionlock['gained'])) {
@@ -742,50 +787,6 @@ class manager {
         }
 
         self::$sessionactive = false;
-    }
-
-    /**
-     * Checks if the session has been mutated since it was closed.
-     * In write_close the session is saved to the variable $sessionatclose
-     * If there is a difference between $sessionatclose and the current session,
-     * it means a script has erroneously closed the session too early.
-     * Script is usually called in shutdown_manager
-     */
-    public static function check_mutated_closed_session() {
-        global $ME;
-
-        // Session is still open, mutations are allowed.
-        if (self::$sessionactive) {
-            return;
-        }
-
-        // Detect if session was cleared.
-        if (!isset($_SESSION['SESSION']) && isset(self::$sessionatclose)) {
-            debugging("Script $ME cleared the session after it was closed.");
-            return;
-        } else if (!isset($_SESSION['SESSION'])) {
-            // Else session is empty, nothing to check.
-            return;
-        }
-
-        // Session is closed - compare the current session to the session when write_close was called.
-        $arraydiff = self::array_session_diff(
-            self::$sessionatclose,
-            (array) $_SESSION['SESSION']
-        );
-
-        if ($arraydiff) {
-            $error = "Script $ME mutated the session after it was closed:";
-            foreach ($arraydiff as $key => $value) {
-                $error .= ' $SESSION->' . $key;
-
-                // Extra debugging for cachestore session changes.
-                if (strpos($key, 'cachestore_') === 0 && is_array($value)) {
-                    $error .= ': ' . implode(',', array_keys($value));
-                }
-            }
-            debugging($error);
-        }
     }
 
     /**
@@ -1438,69 +1439,25 @@ class manager {
     }
 
     /**
-     * Compares two arrays and outputs the difference.
+     * Compares two arrays outputs the difference.
      *
-     * Note - checking between objects and array type is only done at the top level.
-     * Any changes in types below the top level will not be detected.
-     * However, if their values are the same, they will be treated as equal.
+     * Note this does not use array_diff_assoc due to
+     * the use of stdClasses in Moodle sessions.
      *
-     * Any changes, such as removals, edits or additions will be detected.
-     *
-     * @param array $previous
-     * @param array $current
+     * @param array $array1
+     * @param array $array2
      * @return array
      */
-    private static function array_session_diff(array $previous, array $current) : array {
-        // To use array_udiff_uassoc, the first array must have the most keys; this ensures every key is checked.
-        // To do this, we first need to sort them by the length of their keys.
-        $arrays = [$current, $previous];
-
-        // Sort them by the length of their keys.
-        usort($arrays, function ($a, $b) {
-            return count(array_keys($b)) - count(array_keys($a));
-        });
-
-        // The largest is the first value in the $arrays, after sorting.
-        // The smallest is then the last one.
-        // If they are the same size, it does not matter which is which.
-        $largest = $arrays[0];
-        $smallest = $arrays[1];
-
-        // Defines a function that casts the values to arrays.
-        // This is so the properties are compared, instead any object's identities.
-        $casttoarray = function ($value) {
-            return json_decode(json_encode($value), true);
-        };
-
-        // Defines a function that compares all keys by their string value.
-        $keycompare = function ($a, $b) {
-            return strcmp($a, $b);
-        };
-
-        // Defines a function that compares all values by first their type, and then their values.
-        // If the value contains any objects, they are cast to arrays before comparison.
-        $valcompare = function ($a, $b) use ($casttoarray) {
-            // First compare type.
-            // If they are not the same type, they are definitely not the same.
-            // Note we do not check types recursively.
-            if (gettype($a) !== gettype($b)) {
-                return 1;
+    private static function array_session_diff(array $array1, array $array2) : array {
+        $difference = [];
+        foreach ($array1 as $key => $value) {
+            if (!isset($array2[$key])) {
+                $difference[$key] = $value;
+            } else if ($array2[$key] !== $value) {
+                $difference[$key] = $value;
             }
+        }
 
-            // Next compare value. Cast any objects to arrays to compare their properties,
-            // instead of the identitiy of the object itself.
-            $v1 = $casttoarray($a);
-            $v2 = $casttoarray($b);
-
-            if ($v1 !== $v2) {
-                return 1;
-            }
-
-            return 0;
-        };
-
-        // Apply the comparison functions to the two given session arrays,
-        // making sure to use the largest array first, so that all keys are considered.
-        return array_udiff_uassoc($largest, $smallest, $valcompare, $keycompare);
+        return $difference;
     }
 }

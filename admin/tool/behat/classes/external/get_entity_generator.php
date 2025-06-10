@@ -25,22 +25,14 @@
 
 namespace tool_behat\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 defined('MOODLE_INTERNAL') || die();
 
-// Ensure we can load Behat and Facebook namespaces in behat libraries.
-require_once($CFG->dirroot . '/vendor/autoload.php');
-require_once($CFG->libdir . '/tests/behat/behat_data_generators.php');
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External function for getting properties of entity generators.
  */
-class get_entity_generator extends external_api {
+class get_entity_generator extends \external_api {
 
     /**
      * Define parameters for external function.
@@ -50,11 +42,11 @@ class get_entity_generator extends external_api {
      * behat_data_generators::parse_entity_type, which validates the format of the parameter and throws an exception if it is not
      * correct.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([
-            'entitytype' => new external_value(PARAM_RAW, 'Entity type that can be created by a generator.'),
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters([
+            'entitytype' => new \external_value(PARAM_RAW, 'Entity type that can be created by a generator.'),
         ]);
     }
 
@@ -86,12 +78,12 @@ class get_entity_generator extends external_api {
      *
      * Return required fields
      *
-     * @return external_single_structure
+     * @return \external_single_structure
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure([
-            'required' => new external_multiple_structure(
-                new external_value(PARAM_TEXT, 'Required field'),
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure([
+            'required' => new \external_multiple_structure(
+                new \external_value(PARAM_TEXT, 'Required field'),
                 'Required fields',
                 VALUE_OPTIONAL
             ),

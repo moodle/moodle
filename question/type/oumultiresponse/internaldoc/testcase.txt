@@ -1,0 +1,28 @@
+1. Go to the question bank in any course, and create a new OU multiresponse question.
+
+2. Question text: "Which of the following are vowels?";
+   No nubmering;
+   Choices a, b, c, d, e and add some feedback to each;
+   Penalty 25%;
+   3 hints, the first with Show num correct, second with show correct and clear wrong;
+       third with all three options on.
+
+3. Save changes.
+
+4. Preview the question in deferred feedback mode. Try a range of responses including
+   Correct, partially correct and wrong.
+
+5. Preview in Interactive mode, marked out of 8. Answer:
+   a, b, c, d, e - should say you have selected too many options.
+   a, b - "you have selected one" and will clear b on Try agian.
+   a, d - "you have selected one" and per-choice feedback shown. Will clear d on Try agian.
+   a, e - correct. Feedback shown. 4 marks.
+
+6. Edit the question. Make some changes. Save. Re-edit and verify that your changes stuck.
+
+7. Export as Moodle XML. Import the file into a new course. verify all settings
+   are transferred accurately.
+
+8. Backup the course. Restore to a new course. Verify all data is copied accurately.
+
+9. Test some aspects of the editing form validation. (E.g. no correct choices.)

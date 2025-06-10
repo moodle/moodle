@@ -148,7 +148,7 @@ class behat_general extends behat_base {
 
         } else if (!empty($url)) {
             // We redirect directly as we can not wait for an automatic redirection.
-            $this->getSession()->getDriver()->getClient()->request('get', $url);
+            $this->getSession()->getDriver()->getClient()->request('GET', $url);
 
         } else {
             // Reload the page if no URL was provided.
@@ -2156,39 +2156,6 @@ EOF;
     }
 
     /**
-     * Checks, that the specified element contains the specified node type a certain amount of times.
-     * When running Javascript tests it also considers that texts may be hidden.
-     *
-     * @Then /^I should see "(?P<elementscount_number>\d+)" node occurrences of type "(?P<node_type>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
-     * @throws ElementNotFoundException
-     * @throws ExpectationException
-     * @param int    $elementscount How many occurrences of the element we look for.
-     * @param string $nodetype
-     * @param string $element Element we look in.
-     * @param string $selectortype The type of element where we are looking in.
-     */
-    public function i_should_see_node_occurrences_of_type_in_element(int $elementscount, string $nodetype, string $element, string $selectortype) {
-
-        // Getting the container where the text should be found.
-        $container = $this->get_selected_node($selectortype, $element);
-
-        $xpath = "/descendant-or-self::$nodetype [count(descendant::$nodetype) = 0]";
-
-        $nodes = $this->find_all('xpath', $xpath, false, $container);
-
-        if ($this->running_javascript()) {
-            $nodes = array_filter($nodes, function($node) {
-                return $node->isVisible();
-            });
-        }
-
-        if ($elementscount != count($nodes)) {
-            throw new ExpectationException('Found '.count($nodes).' elements in column. Expected '.$elementscount,
-                $this->getSession());
-        }
-    }
-
-    /**
      * Manually press enter key.
      *
      * @When /^I press enter/
@@ -2313,4 +2280,36 @@ EOF;
         }
     }
 
+    /**
+     * Check that the page title contains a given string.
+     *
+     * @Given the page title should contain ":title"
+     * @param string $title The string that should be present on the page title.
+     */
+    public function the_page_title_should_contain(string $title): void {
+        $session = $this->getSession();
+        if ($this->running_javascript()) {
+            // When running on JS, the page title can be changed via JS, so it's more reliable to get the actual page title via JS.
+            $actualtitle = $session->evaluateScript("return document.title");
+        } else {
+            $titleelement = $session->getPage()->find('css', 'head title');
+            if ($titleelement === null) {
+                // Throw an exception if a page title is not present on the page.
+                throw new ElementNotFoundException(
+                    $this->getSession(),
+                    '<title> element',
+                    'css',
+                    'head title'
+                );
+            }
+            $actualtitle = $titleelement->getText();
+        }
+
+        if (strpos($actualtitle, $title) === false) {
+            throw new ExpectationException(
+                "'$title' was not found from the current page title '$actualtitle'",
+                $session
+            );
+        }
+    }
 }

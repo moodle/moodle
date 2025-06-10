@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency template selector template.
+
+    Context variables required for this template:
+    * templates
+      * shortname
+      * id
+      * selected
+    * contextpageid
+}}
+
+{{#hastemplates}}
+<div class='pull-left border p-2 mb-2'>
+    <form class="template-selector">
+        <div class="label-template-selector">
+            <label class="col-form-label d-inline" for="templateSelector">{{#str}}template, tool_lp{{/str}}</label>
+        </div>
+        <div class="">
+            <select id="templateSelector" class="form-control custom-select">
+                <option value="">{{#str}}selectlearningplantemplate, report_lpmonitoring{{/str}}</option>
+                {{#templates}}
+                <option value="{{id}}" {{#selected}}selected="true"{{/selected}}>{{shortname}}</option>
+                {{/templates}}
+            </select>
+        </div>
+    </form>
+</div>
+{{/hastemplates}}
+{{^hastemplates}}
+<p class="alert alert-info">
+    {{#str}}notemplates, tool_lp{{/str}}
+</p>
+{{/hastemplates}}
+{{#js}}
+require(['jquery'], function($) {
+    var baseUrl = '{{urlbulkrating}}';
+    $('#templateSelector').on('change', function() {
+        var templateid = $(this).val();
+        var queryStr = '&templateid=' + templateid;
+        document.location = baseUrl + queryStr;
+    });
+});
+{{/js}}

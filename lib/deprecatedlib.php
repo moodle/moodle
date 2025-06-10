@@ -414,7 +414,7 @@ function update_log_display_entry() {
 }
 
 /**
- * @deprecated use the text formatting in a standard way instead (http://docs.moodle.org/dev/Output_functions)
+ * @deprecated use the text formatting in a standard way instead (https://moodledev.io/docs/apis/subsystems/output#output-functions)
  *             this was abused mostly for embedding of attachments
  */
 function filter_text() {
@@ -3201,13 +3201,6 @@ function make_categories_options() {
     debugging($deprecatedtext, DEBUG_DEVELOPER);
 
     return core_course_category::make_categories_list('', 0, ' / ');
-}
-
-/**
- * @deprecated since 3.10
- */
-function message_count_unread_messages() {
-    throw new coding_exception('message_count_unread_messages has been removed.');
 }
 
 /**

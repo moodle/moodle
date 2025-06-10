@@ -7,7 +7,7 @@ Date: 04/05/2015
 ----EXPECTEDPLAIN----
 Sample reply messages:
 
-Thanks for offering to help with QA testing. I've added you to the testers group in the tracker, so you can now pass or fail QA tests. Hopefully the process is fully explained in http://docs.moodle.org/dev/QA_testing but if there's anything you're not sure about, please post in the testing and QA forum.
+Thanks for offering to help with QA testing. I've added you to the testers group in the tracker, so you can now pass or fail QA tests. Hopefully the process is fully explained in https://moodledev.io/general/development/process/testing/qa but if there's anything you're not sure about, please post in the testing and QA forum.
 
 
 Thanks for offering to help with QA testing. Please create an account in the Moodle Tracker and let me know your Tracker username then I can add you to the testers group.
@@ -27,9 +27,10 @@ Sample reply messages:
 
 Thanks for offering to help with QA testing. I've added you to the testers
 group in the tracker, so you can now pass or fail QA tests. Hopefully the
-process is fully explained in http://docs.moodle.org/dev/QA_testing [10]
-but if there's anything you're not sure about, please post in the testing
-and QA forum.
+process is fully explained in
+https://moodledev.io/general/development/process/testing/qa [10] but if
+there's anything you're not sure about, please post in the testing and QA
+forum.
 
 Thanks for offering to help with QA testing. Please create an account in
 the Moodle Tracker and let me know your Tracker username then I can add you
@@ -118,7 +119,7 @@ Sample reply messages:
 
 Thanks for offering to help with QA testing. I've added you to the testers g=
 roup in the tracker, so you can now pass or fail QA tests. Hopefully the pro=
-cess is fully explained in http://docs.moodle.org/dev/QA_testing but if ther=
+cess is fully explained in https://moodledev.io/general/development/process/testing/qa but if ther=
 e's anything you're not sure about, please post in the testing and QA forum.=
 
 
@@ -225,8 +226,8 @@ align: baseline; -webkit-text-size-adjust: none; background-color: rgba(255,=
 o the testers group in the tracker, so you can now pass or fail QA tests. Ho=
 pefully the process is fully explained in <a href=3D"http://docs.moodle.org/=
 dev/QA_testing" x-apple-data-detectors=3D"true" x-apple-data-detectors-type=3D=
-"link" x-apple-data-detectors-result=3D"1">http://docs.moodle.org/dev/QA_tes=
-ting</a> but if there's anything you're not sure about, please post in the t=
+"link" x-apple-data-detectors-result=3D"1">https://moodledev.io/general/development/process/testing/qa=
+</a> but if there's anything you're not sure about, please post in the t=
 esting and QA forum.</span></p><span style=3D"-webkit-text-size-adjust: none=
 ; background-color: rgba(255, 255, 255, 0);"><br><br></span><p dir=3D"ltr" s=
 tyle=3D"margin-top: 0pt; margin-bottom: 0pt;"><span style=3D"font-style: ita=

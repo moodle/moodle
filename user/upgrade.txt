@@ -1,7 +1,14 @@
 This files describes API changes for code that uses the user API.
 
-=== 4.2 ===
+=== 4.1.3 ===
 
+* External function core_user_external::add_user_private_files() now returns moodle_exception when the user quota is exceeded
+
+=== 4.1.2 ===
+
+* New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
+* New `profile_get_user_field` method for returning profile field instance of given type
+* The `profile_field_base::is_visible` method now accepts an optional `$context` argument
 * Added get_internalfield_list() and get_internalfields() in the user_field_mapping class.
   The get_internalfield_list() returns data in an array by grouping profile fields based on field categories,
   used for internal field name dropdown in the user field mapping of Oauth2 services
@@ -11,9 +18,10 @@ This files describes API changes for code that uses the user API.
   The get_profile_field_names() returns the list of valid custom profile user fields.
   The get_profile_field_list() returns the profile fields
   in a format that can be used for choices in a group select menu.
-* New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
-* New `profile_get_user_field` method for returning profile field instance of given type
-* The `profile_field_base::is_visible` method now accepts an optional `$context` argument
+
+=== 4.1.4 ===
+* New method `user_update_device_public_key()`` and accompanying external function core_user_external::update_device_public_key to
+  update a user's app generated public key by device uuid and app id.
 
 === 4.1 ===
 

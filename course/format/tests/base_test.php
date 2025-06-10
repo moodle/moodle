@@ -14,14 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Course related unit tests
  *
  * @package    core_course
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_courseformat\base
  */
 class base_test extends advanced_testcase {
 
@@ -349,6 +348,32 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test that retrieving last section number for a course
+     *
+     * @covers ::get_last_section_number
+     */
+    public function test_get_last_section_number(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Course with two additional sections.
+        $courseone = $this->getDataGenerator()->create_course(['numsections' => 2]);
+        $this->assertEquals(2, course_get_format($courseone)->get_last_section_number());
+
+        // Course without additional sections, section zero is the "default" section that always exists.
+        $coursetwo = $this->getDataGenerator()->create_course(['numsections' => 0]);
+        $this->assertEquals(0, course_get_format($coursetwo)->get_last_section_number());
+
+        // Course without additional sections, manually remove section zero, as "course_delete_section" prevents that. This
+        // simulates course data integrity issues that previously triggered errors.
+        $coursethree = $this->getDataGenerator()->create_course(['numsections' => 0]);
+        $DB->delete_records('course_sections', ['course' => $coursethree->id, 'section' => 0]);
+
+        $this->assertEquals(-1, course_get_format($coursethree)->get_last_section_number());
+    }
+
+    /**
      * Test for the default delete format data behaviour.
      *
      * @covers ::delete_format_data
@@ -415,45 +440,6 @@ class base_test extends advanced_testcase {
                 'usehook' => true,
             ]
         ];
-    }
-
-    /**
-     * Test duplicate_section()
-     * @covers ::duplicate_section
-     */
-    public function test_duplicate_section() {
-        global $DB;
-
-        $this->setAdminUser();
-        $this->resetAfterTest();
-
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $format = course_get_format($course);
-
-        $originalsection = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 1], '*', MUST_EXIST);
-        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
-        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
-        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
-
-        $originalmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $originalsection->id]);
-        $this->assertEquals(3, $originalmodcount);
-
-        $modinfo = get_fast_modinfo($course);
-        $sectioninfo = $modinfo->get_section_info($originalsection->section, MUST_EXIST);
-
-        $newsection = $format->duplicate_section($sectioninfo);
-
-        // Verify properties are the same.
-        foreach ($originalsection as $prop => $value) {
-            if ($prop == 'id' || $prop == 'sequence' || $prop == 'section' || $prop == 'timemodified') {
-                continue;
-            }
-            $this->assertEquals($value, $newsection->$prop);
-        }
-
-        $newmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $newsection->id]);
-        $this->assertEquals($originalmodcount, $newmodcount);
     }
 }
 

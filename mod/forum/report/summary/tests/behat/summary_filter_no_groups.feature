@@ -27,10 +27,10 @@ Feature: Groups report filter is not available if no groups exist
       | user     | group |
       | teacher1 | G1    |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber | groupmode |
-      | forum    | forum1 | C1 first forum  | C1     | forum1C1   | 0         |
-      | forum    | forum2 | C1 second forum | C1     | forum2C1   | 0         |
-      | forum    | forum1 | C2 first forum  | C2     | forum1C2   | 2         |
+      | activity | name   | course | idnumber | groupmode |
+      | forum    | forum1 | C1     | forum1C1   | 0         |
+      | forum    | forum2 | C1     | forum2C1   | 0         |
+      | forum    | forum1 | C2     | forum1C2   | 2         |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message    | created           |
       | teacher1 | forum1 | discussion1 | D1 message | ## 1 month ago ## |

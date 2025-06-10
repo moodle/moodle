@@ -640,7 +640,10 @@ class course_modinfo {
 
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
-        $cachecoursemodinfo->acquire_lock($cachekey);
+        if (!$cachecoursemodinfo->acquire_lock($cachekey)) {
+            throw new moodle_exception('ex_unabletolock', 'cache', '', null,
+                'Unable to lock modinfo cache for course ' . $cachekey);
+        }
         try {
             // Only actually do the build if it's still needed after getting the lock (not if
             // somebody else, who might have been holding the lock, built it already).
@@ -739,19 +742,41 @@ class course_modinfo {
      * @param int $cmid Course module id
      */
     public static function purge_course_module_cache(int $courseid, int $cmid): void {
+        self::purge_course_modules_cache($courseid, [$cmid]);
+    }
+
+    /**
+     * Purge the cache of multiple course modules.
+     *
+     * @param int $courseid Course id
+     * @param int[] $cmids List of course module ids
+     * @return void
+     */
+    public static function purge_course_modules_cache(int $courseid, array $cmids): void {
         $course = get_course($courseid);
         $cache = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
         $cache->acquire_lock($cachekey);
-        $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-        $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
-        if ($hascache) {
-            $coursemodinfo->cacherev = -1;
-            unset($coursemodinfo->modinfo[$cmid]);
-            $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+        try {
             $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+            $hascache = ($coursemodinfo !== false);
+            $updatedcache = false;
+            if ($hascache) {
+                foreach ($cmids as $cmid) {
+                    if (array_key_exists($cmid, $coursemodinfo->modinfo)) {
+                        unset($coursemodinfo->modinfo[$cmid]);
+                        $updatedcache = true;
+                    }
+                }
+                if ($updatedcache) {
+                    $coursemodinfo->cacherev = -1;
+                    $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+                    $cache->get_versioned($cachekey, $course->cacherev);
+                }
+            }
+        } finally {
+            $cache->release_lock($cachekey);
         }
-        $cache->release_lock($cachekey);
     }
 
     /**
@@ -1763,7 +1788,15 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @param moodle_core_renderer $output Output render to use, or null for default (global)
+     * Fetch the module's icon URL.
+     *
+     * This function fetches the course module instance's icon URL.
+     * This method adds a `filtericon` parameter in the URL when rendering the monologo version of the course module icon or when
+     * the plugin declares, via its `filtericon` custom data, that the icon needs to be filtered.
+     * This additional information can be used by plugins when rendering the module icon to determine whether to apply
+     * CSS filtering to the icon.
+     *
+     * @param core_renderer $output Output render to use, or null for default (global)
      * @return moodle_url Icon URL for a suitable icon to put beside this cm
      */
     public function get_icon_url($output = null) {
@@ -1773,6 +1806,7 @@ class cm_info implements IteratorAggregate {
             $output = $OUTPUT;
         }
 
+        $ismonologo = false;
         if (!empty($this->iconurl)) {
             // Support modules setting their own, external, icon image.
             $icon = $this->iconurl;
@@ -1792,6 +1826,18 @@ class cm_info implements IteratorAggregate {
             }
         } else {
             $icon = $output->image_url('monologo', $this->modname);
+            // Activity modules may only have an `icon` icon instead of a `monologo` icon.
+            // So we need to determine if the module really has a `monologo` icon.
+            $ismonologo = core_component::has_monologo_icon('mod', $this->modname);
+        }
+
+        // Determine whether the icon will be filtered in the CSS.
+        // This can be controlled by the module by declaring a 'filtericon' custom data.
+        // If the 'filtericon' custom data is not set, icon filtering will be determined whether the module has a `monologo` icon.
+        // Additionally, we need to cast custom data to array as some modules may treat it as an object.
+        $filtericon = ((array)$this->customdata)['filtericon'] ?? $ismonologo;
+        if ($filtericon) {
+            $icon->param('filtericon', 1);
         }
         return $icon;
     }

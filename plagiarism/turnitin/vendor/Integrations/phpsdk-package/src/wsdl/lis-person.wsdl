@@ -1,0 +1,1407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl11:definitions xmlns:tns="http://www.imsglobal.org/services/lis/pms2p0/wsdl11/sync/imspms_v2p0" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="PersonManagementServiceSyncServices" targetNamespace="http://www.imsglobal.org/services/lis/pms2p0/wsdl11/sync/imspms_v2p0">
+    <wsdl11:documentation>
+        WSDLv1.1 File Information
+        -------------------------
+        Services:       PersonManagementService (Synchronous Communications)
+        Author:         Colin Smythe
+        Date:           31st January, 2010
+        Version:        Final 1.0
+        Status:         Public Draft
+        Description:    The Person Management Service. This forms a part of the IMS GLC Learning Informaton Services v2.0 Specification.
+
+        History:        Release 1.0: This is the first formal release of version 2.0 of this service.  This version supercedes v1.0.
+                        This is an integration of the Person Service from the Learning Information  Services and the 'identification' 
+                        data model from the IMS GLC Learner Information Package v1.0 specification.
+
+        WSDL Binding:   WSDL Binding is based upon the IMS GLC General Web Services Base Profile v1.0
+                        The IMS GLC GWS Basic Profile is derived from the WS-I Basic Profile v1.1.  This
+                        profile uses: WSDL 1.1, SOAP 1.1, HTTP 1.1 and XML 1.0.  Extension profiles to
+                        the IMS GLC GWS Base Profile are available but are not supported using this tool version.
+
+        License:        IPR, License and Distribution Notices
+
+                        This machine readable file is derived from IMS Global Learning Consortium (GLC) specification IMS [spec name] Version [x.x]
+                        found at http://www.imsglobal.org/[xxx] and the original IMS GLC schema binding or code base
+                        http://www.imsglobal.org/[binding document].
+
+                        Recipients of this document are requested to submit, with their comments, notification of any
+                        relevant patent claims or other intellectual property rights of which they may be aware that might be
+                        infringed by the schema binding contained in this document.
+
+                        IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                        rights that might be claimed to pertain to the implementation or use of the technology described in this
+                        document or the extent to which any license under such rights might or might not be available; neither
+                        does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                        procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                        Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                        Copyright © IMS Global Learning Consortium 1999-2010. All Rights Reserved.
+
+                        License Notice for Users
+
+                        Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                        non-exclusive license to use this document. 
+
+                        Distribution Notice for Developers
+
+                        Developers of products or services that are not original incorporators of this document and 
+                        have not changed this document, that is, are distributing a software product that incorporates this 
+                        document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                        display and distribute the contents of this document in any medium for any purpose without fee or 
+                        royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                        copies, or portions thereof.
+
+                        Developers of products or services that are original incorporators of this document and wish 
+                        to provide distribution of this document as is or with modifications and developers of products and 
+                        services that are not original incorporators of this document and have changed this document, are
+                        required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                        paragraphs:-
+
+                        *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                           permission to copy, display and distribute the contents of this document in any medium for any 
+                           purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                           its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                           registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                           instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                           registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                           purposes of third-party or other distribution of your product or service that incorporates this 
+                           document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                        *  If you wish to create and distribute a derived work from this document, you are hereby 
+                           granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                           any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                           notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                           profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                           the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                           granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                           third-party or other distribution of your product or service that incorporates the derived work as long 
+                           as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                        The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                        successors or assigns.
+
+                        THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                        EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                        NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                        ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+        UML Source File Information
+        ---------------------------
+        Choreography:     Sync
+        Transport:        SOAPv1.1
+
+        Source UML File Information
+        ---------------------------
+        The source file information must be supplied as an XMI file (without diagram layout information).
+        The supported UML authoring tools are:
+        (a) Poseidon – v6 (and later)
+
+        Source XSLT File Information
+        ----------------------------
+        XSL Generator:    UMLtoWSDLv1.1Transformv0p9.xsl
+        XSLT Processor:   Xalan
+        Release:          1.0 Beta 3
+        Date:             31st May, 2009
+
+        IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+        ------------------------------------------------
+        This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+        attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+        that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+        claim on the materials created by third party users of this tool.  Details on how to use this tool
+        are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+        Tool Copyright:  2005-2010 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+    </wsdl11:documentation>
+
+    <!-- Declaration of the WSDL type elements ************************************************************ -->
+
+    <wsdl11:types>
+        <xs:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.imsglobal.org/services/lis/pms2p0/wsdl11/sync/imspms_v2p0" version="IMS PMS 2.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+        <!-- Generate Global Attributes *********************************************************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+        <xs:simpleType name="imsx_CodeMajor.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="success"/>
+                <xs:enumeration value="processing"/>
+                <xs:enumeration value="failure"/>
+                <xs:enumeration value="unsupported"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_Severity.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="status"/>
+                <xs:enumeration value="warning"/>
+                <xs:enumeration value="error"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_CodeMinorValue.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="fullsuccess"/>
+                <xs:enumeration value="idalloc"/>
+                <xs:enumeration value="overflowfail"/>
+                <xs:enumeration value="idallocinusefail"/>
+                <xs:enumeration value="invaliddata"/>
+                <xs:enumeration value="incompletedata"/>
+                <xs:enumeration value="partialdatastorage"/>
+                <xs:enumeration value="unknownobject"/>
+                <xs:enumeration value="deletefailure"/>
+                <xs:enumeration value="targetreadfailure"/>
+                <xs:enumeration value="savepointerror"/>
+                <xs:enumeration value="unknownquery"/>
+                <xs:enumeration value="unknownvocab"/>
+                <xs:enumeration value="targetisbusy"/>
+                <xs:enumeration value="unauthorizedrequest"/>
+                <xs:enumeration value="linkfailure"/>
+                <xs:enumeration value="unsupportedLIS"/>
+                <xs:enumeration value="savepointsyncerror"/>
+                <xs:enumeration value="nosourcedids"/>
+                <xs:enumeration value="unsupportedLISIOperation"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="Gender.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="male"/>
+                <xs:enumeration value="female"/>
+                <xs:enumeration value="unknown"/>
+                <xs:enumeration value="other"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="MediaMode.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="uri"/>
+                <xs:enumeration value="entityref"/>
+                <xs:enumeration value="base64"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="ContentRefType.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="text"/>
+                <xs:enumeration value="image"/>
+                <xs:enumeration value="audio"/>
+                <xs:enumeration value="video"/>
+                <xs:enumeration value="application"/>
+                <xs:enumeration value="applet"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:element name="imsx_codeMajor" type="tns:imsx_CodeMajor.Type"/>
+
+        <xs:element name="imsx_severity" type="tns:imsx_Severity.Type"/>
+
+        <xs:element name="imsx_codeMinorFieldValue" type="tns:imsx_CodeMinorValue.Type"/>
+
+        <xs:element name="gender" type="tns:Gender.Type" default="unknown"/>
+
+        <xs:element name="mediamode" type="tns:MediaMode.Type"/>
+
+        <xs:element name="contentRefType" type="tns:ContentRefType.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+        <xs:element name="refAgentInstanceID" type="xs:normalizedString"/>
+
+        <xs:element name="imsx_messageRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_operationRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_description" type="xs:string"/>
+
+        <xs:element name="imsx_codeMinorFieldName" type="xs:string" default="TargetEndSystem"/>
+
+        <xs:element name="imsx_version" type="xs:string" default="V1.0"/>
+
+        <xs:element name="imsx_messageIdentifier" type="xs:string"/>
+
+        <xs:element name="date" type="xs:date"/>
+
+        <xs:element name="primaryroletype" type="xs:boolean"/>
+
+        <xs:element name="language" type="xs:normalizedString"/>
+
+        <xs:element name="textString" type="xs:string"/>
+
+        <xs:element name="instanceVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="mimeType" type="xs:normalizedString"/>
+
+        <xs:element name="extensionNameVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="extensionValueVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="fieldName" type="xs:normalizedString"/>
+
+        <xs:element name="fieldType" type="xs:normalizedString"/>
+
+        <xs:element name="fieldValue" type="xs:normalizedString"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+        <xs:complexType name="Person.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Person data-type is the top-level container for the Person data model.
+                    The data model consists of:
+                    
+                    (1) Zero or more formatted names;
+                    (2) Zero or more partenised names;
+                    (3) Zero or more addresses;
+                    (4) Zero or more contact information sets;
+                    (5) Zero or more demographic sets;
+                    (6) Zero or more agents;
+                    (7) Zero or more roles within the Enterprise;
+                    (8) An optional extension point.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:formname" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:name" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:address" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:contactinfo" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:demographics" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:agent" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:roles" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="PersonCore.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The PersonCore data-type is the top level container for the mandatory 
+                    aspects of the Person data-model.  The data model consists of:
+                    
+                    (1) SourcedId;
+                    (2) Formatted name;
+                    (3) UserId.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedId" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:formname" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:userId" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="PersonRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The PersonRecord complexType is the container for the collation of the Person data structure
+and its sourcedGUID.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:person" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SourcedGUID.Type">
+            <xs:sequence>
+                <xs:element ref="tns:refAgentInstanceID" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:sourcedId" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="PersonRecordSet.Type">
+            <xs:sequence>
+                <xs:element ref="tns:personRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_StatusInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMajor" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_severity" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageRefIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_operationRefIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:imsx_description" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinor" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinor.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinorField.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorFieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinorFieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_RequestHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_ResponseHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_statusInfo" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Address.Type">
+            <xs:sequence>
+                <xs:element ref="tns:addressType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:addressPart" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Name.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Name type is the container for Person.  The name is supplied in a
+                    defined parts.  There is no order of preference of those parts.  Each  
+                    Name is typed e.g. alias, prefered, etc.  An external vocabulary is used  
+                    for the set of types of name.  This vocabulary is contained in the VDEX 
+                    file "ims_names_vocabularyv1p0.xml."
+                    
+                    A separate external vocabulary is used to contain the types of name parts.  This 
+                    vocabulary is contained in the VDEX file "ims_partnames_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:nameType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:partName" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Demographics.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Demographics data-type is the container for the demographics 
+                    information for the Person.  The type of demographics is contained 
+                    in an external vocabulary.  The vocabulary is contained in the VDEX 
+                    file "ims_demographicstype_vocabularyv1p0.xml".
+                    
+                    The set of demographics structrues can be extended using a vocabulary. 
+                    The default vocabulary is contained in the external VDEX file 
+                    "ims_demographics_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:demographicsType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:representation" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:eventDate" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:gender" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:demographicInfo" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Representation.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Representation data-type is a container for information that is used to 
+                    represent the Person e.g. photograph.  An external vocabulary is used to 
+                    define the type of representation.  This vocabulary is contained in the 
+                    VDEX file "ims_representaton_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:representationType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:date" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:description" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="FormName.Type">
+            <xs:sequence>
+                <xs:element ref="tns:formnameType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:formattedName" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ContactInfo.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ContactInfo compexType is the container for the electronic-oriented contact information. 
+The type of contact information is defined in an extenal viocabulary.  the vocabulary is contained 
+in the VDEX file "ims_contactinfo_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:contactinfoType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:contactinfoValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="EnterpriseRoles.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The EnterpriseRole data-type is a container for all of the information used 
+                    to define roles and access within the institution and system.  The system roles 
+                    are defined in an external vocabulary. This vocabulary is contained in the 
+                    VDEX file "ims_systemroles_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:enterpriserolesType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:systemRole" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:institutionRole" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:userId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="UserId.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The UserId data-type is the container for 
+                    the user's access information in the learning 
+                    management system.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:userIdValue" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:userIdType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:password" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:pwEncryptionType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:authenticationType" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="InstitutionRole.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The InstitutionRole data-type is the container used to identify 
+                    the roles of the Person within the institution.  The set of roles is 
+                    defined in an external vocabulary.  This vocabulary is contained 
+                    within the VDEX file "ims_institution_vocabularyv1p0.xml".
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:institutionroletype" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:primaryroletype" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Agent.Type">
+            <xs:sequence>
+                <xs:element ref="tns:agentType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:agentId" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:agentDomain" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:description" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="GUIDSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The GUIDSet data-type is the container for a set of SourcedIds.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Text.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Text data-type is the container for the languge-string tuple.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:language" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:textString" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="BaseValueToken.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ContentType data-type is the container is for the 
+                    structure that is used to identify a value from a named 
+                    vocabulary.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:instanceIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:instanceVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:instanceValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Description.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Description data-type is the container for all of 
+                    the material that is used to describe something.  It has 
+                    short (text), long (text) and full (multimedia) forms.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:shortDescription" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:longDescription" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:fullDescription" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="FullDescription.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The FullDescription data-type is the container for the 
+                    multimedia-based description.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:mediamode" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:contentRefType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:mimeType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:descriptionText" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="BaseValueSingle.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The BaseValueSingle complexType is the container for the structure that is used to identify a name/value 
+pair from a vocabulary (the name is in the vocabulary).
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:instanceIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:instanceVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:instanceName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:instanceValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="IMSExtension.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The IMSExtension data-type is 
+                    the container for the set of 
+                    extensions.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:extensionNameVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionValueVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ExtensionField.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ExtensionField is the data-type 
+                    for the 3-tuples that describe each 
+                    extension field.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:fieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+        <xs:simpleType name="GUID.Type">
+            <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="SequenceIdentifier.Type">
+            <xs:restriction base="xs:dateTime"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="QueryObject.Type">
+            <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the elements ********************************************************************** -->
+
+        <xs:element name="formname" type="tns:FormName.Type"/>
+
+        <xs:element name="name" type="tns:Name.Type"/>
+
+        <xs:element name="address" type="tns:Address.Type"/>
+
+        <xs:element name="contactinfo" type="tns:ContactInfo.Type"/>
+
+        <xs:element name="demographics" type="tns:Demographics.Type"/>
+
+        <xs:element name="agent" type="tns:Agent.Type"/>
+
+        <xs:element name="roles" type="tns:EnterpriseRoles.Type"/>
+
+        <xs:element name="extension" type="tns:IMSExtension.Type"/>
+
+        <xs:element name="userId" type="tns:UserId.Type"/>
+
+        <xs:element name="sourcedGUID" type="tns:SourcedGUID.Type"/>
+
+        <xs:element name="person" type="tns:Person.Type"/>
+
+        <xs:element name="imsx_codeMinor" type="tns:imsx_CodeMinor.Type"/>
+
+        <xs:element name="imsx_codeMinorField" type="tns:imsx_CodeMinorField.Type"/>
+
+        <xs:element name="imsx_statusInfo" type="tns:imsx_StatusInfo.Type"/>
+
+        <xs:element name="addressType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="addressPart" type="tns:BaseValueSingle.Type"/>
+
+        <xs:element name="nameType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="partName" type="tns:BaseValueSingle.Type"/>
+
+        <xs:element name="demographicsType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="representation" type="tns:Representation.Type"/>
+
+        <xs:element name="eventDate" type="tns:BaseValueSingle.Type"/>
+
+        <xs:element name="demographicInfo" type="tns:BaseValueSingle.Type"/>
+
+        <xs:element name="representationType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="description" type="tns:Description.Type"/>
+
+        <xs:element name="formnameType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="formattedName" type="tns:Text.Type"/>
+
+        <xs:element name="contactinfoType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="contactinfoValue" type="tns:Text.Type"/>
+
+        <xs:element name="enterpriserolesType" type="tns:BaseValueSingle.Type"/>
+
+        <xs:element name="systemRole" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="institutionRole" type="tns:InstitutionRole.Type"/>
+
+        <xs:element name="userIdValue" type="tns:Text.Type"/>
+
+        <xs:element name="userIdType" type="tns:Text.Type"/>
+
+        <xs:element name="password" type="tns:Text.Type"/>
+
+        <xs:element name="pwEncryptionType" type="tns:Text.Type"/>
+
+        <xs:element name="authenticationType" type="tns:Text.Type"/>
+
+        <xs:element name="institutionroletype" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="agentType" type="tns:BaseValueToken.Type"/>
+
+        <xs:element name="agentId" type="tns:Text.Type"/>
+
+        <xs:element name="agentDomain" type="tns:Text.Type"/>
+
+        <xs:element name="instanceIdentifier" type="tns:Text.Type"/>
+
+        <xs:element name="instanceValue" type="tns:Text.Type"/>
+
+        <xs:element name="shortDescription" type="tns:Text.Type"/>
+
+        <xs:element name="longDescription" type="tns:Text.Type"/>
+
+        <xs:element name="fullDescription" type="tns:FullDescription.Type"/>
+
+        <xs:element name="descriptionText" type="tns:Text.Type"/>
+
+        <xs:element name="instanceName" type="tns:Text.Type"/>
+
+        <xs:element name="extensionField" type="tns:ExtensionField.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message parameter elements **************************************************** -->
+
+        <xs:element name="sourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="personRecord" type="tns:PersonRecord.Type"/>
+
+        <xs:element name="personCore" type="tns:PersonCore.Type"/>
+
+        <xs:element name="sourcedIdSet" type="tns:GUIDSet.Type"/>
+
+        <xs:element name="fromSavePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="savePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="personRecordSet" type="tns:PersonRecordSet.Type"/>
+
+        <xs:element name="queryObject" type="tns:QueryObject.Type"/>
+
+        <xs:element name="newSourcedId" type="tns:GUID.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message body elements ********************************************************* -->
+
+        <xs:element name="createPersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:personRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createPersonResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyPersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyPersonResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deletePersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deletePersonResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readPersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonCoreRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonCoreResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personCore" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllPersonIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllPersonIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readPersonsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updatePersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:personRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updatePersonResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replacePersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:personRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replacePersonResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverPersonIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverPersonIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changePersonIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changePersonIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the root element(s) *************************************************************** -->
+
+        <xs:element name="imsx_syncRequestHeaderInfo" type="tns:imsx_RequestHeaderInfo.Type"/>
+        <xs:element name="imsx_syncResponseHeaderInfo" type="tns:imsx_ResponseHeaderInfo.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        </xs:schema>
+    </wsdl11:types>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL message elements ********************************************************* -->
+
+    <wsdl11:message name="createPersonRequest">
+        <wsdl11:part name="Parameters" element="tns:createPersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createPersonResponse">
+        <wsdl11:part name="Response" element="tns:createPersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyPersonRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyPersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyPersonResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyPersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deletePersonRequest">
+        <wsdl11:part name="Parameters" element="tns:deletePersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deletePersonResponse">
+        <wsdl11:part name="Response" element="tns:deletePersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonRequest">
+        <wsdl11:part name="Parameters" element="tns:readPersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonResponse">
+        <wsdl11:part name="Response" element="tns:readPersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonCoreRequest">
+        <wsdl11:part name="Parameters" element="tns:readPersonCoreRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonCoreResponse">
+        <wsdl11:part name="Response" element="tns:readPersonCoreResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllPersonIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllPersonIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllPersonIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllPersonIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readPersonIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readPersonIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonsRequest">
+        <wsdl11:part name="Parameters" element="tns:readPersonsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonsResponse">
+        <wsdl11:part name="Response" element="tns:readPersonsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readPersonsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readPersonsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readPersonsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updatePersonRequest">
+        <wsdl11:part name="Parameters" element="tns:updatePersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updatePersonResponse">
+        <wsdl11:part name="Response" element="tns:updatePersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replacePersonRequest">
+        <wsdl11:part name="Parameters" element="tns:replacePersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replacePersonResponse">
+        <wsdl11:part name="Response" element="tns:replacePersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverPersonIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverPersonIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverPersonIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverPersonIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changePersonIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changePersonIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changePersonIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changePersonIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL portType elements ******************************************************** -->
+
+    <wsdl11:portType name="PersonManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the PersonManager interface.  
+            The operations are:
+            
+            1) CreatePerson
+            2) CreateByProxyPerson
+            3) DeletePerson
+            4) ReadPerson
+            5) ReadPersonCore
+            6) ReadAllPersonIds
+            7) ReadPersonIdsFromSavePoint
+            8) ReadPersons
+            9) ReadPersonsFromSavePoint
+            10) UpdatePerson
+            11) ReplacePerson
+            12) DiscoverPersonIds
+            13) ChangePersonIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createPerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                When the source issues the 'createPerson' request the target is instructed to create the populated Person object
+                and to allocate that structure to the 'sourcedId' passed by the source.  If the supplied 'sourcedId' has already been
+                allocated to another object then the request is rejected and the appropriate failure code is returned.  The save-
+                point identifier is set to 'zero' for the Person object in both the source and target.
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createPersonRequest"/>
+            <wsdl11:output message="tns:createPersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyPerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyPersonRequest"/>
+            <wsdl11:output message="tns:createByProxyPersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deletePerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                When the source issues the 'deletePerson' request the target is instructed to delete the identified Person object 
+                and to remove the reference to the Person from any of the related Membership objects.  This is a hard cascaded 
+                delete from which there is no recovery.  If the object identified by the supplied 'sourcedId' cannot be located then 
+                the request is rejected and the appropriate failure code is returned.
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deletePersonRequest"/>
+            <wsdl11:output message="tns:deletePersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readPersonRequest"/>
+            <wsdl11:output message="tns:readPersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonCore">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readPersonCoreRequest"/>
+            <wsdl11:output message="tns:readPersonCoreResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllPersonIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllPersonIdsRequest"/>
+            <wsdl11:output message="tns:readAllPersonIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readPersonIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readPersonIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersons">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readPersonsRequest"/>
+            <wsdl11:output message="tns:readPersonsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readPersonsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readPersonsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updatePerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updatePersonRequest"/>
+            <wsdl11:output message="tns:updatePersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replacePerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replacePersonRequest"/>
+            <wsdl11:output message="tns:replacePersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverPersonIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverPersonIdsRequest"/>
+            <wsdl11:output message="tns:discoverPersonIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changePersonIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changePersonIdentifierRequest"/>
+            <wsdl11:output message="tns:changePersonIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL binding elements ********************************************************* -->
+
+    <wsdl11:binding name="PersonManagerSyncSoapBinding" type="tns:PersonManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createPerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/createPerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createPersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createPersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyPerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/createByProxyPerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyPersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyPersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deletePerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/deletePerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deletePersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deletePersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readPerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readPersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readPersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonCore">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readPersonCore" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readPersonCoreRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readPersonCoreResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllPersonIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readAllPersonIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllPersonIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllPersonIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readPersonIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readPersonIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readPersonIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersons">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readPersons" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readPersonsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readPersonsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readPersonsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/readPersonsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readPersonsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readPersonsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updatePerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/updatePerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updatePersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updatePersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replacePerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/replacePerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replacePersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replacePersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverPersonIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/discoverPersonIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverPersonIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverPersonIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changePersonIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/pms2p0/changePersonIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changePersonIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changePersonIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL service elements ********************************************************* -->
+
+    <wsdl11:service name="PersonManagementServiceSyncService">
+        <wsdl11:documentation>
+            Service Information
+            -------------------
+            Author:         Colin Smythe
+            Date:           31st January, 2010
+            Version:        Final 1.0
+            Status:         Public Draft
+            Description:    The Person Management Service is composed of a single interface.
+            History:        Version 1.0: This is the first formal release of this service.
+        </wsdl11:documentation>
+        <wsdl11:port name="PersonManagerSyncSoapPort" binding="tns:PersonManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-person/"/>
+        </wsdl11:port>
+    </wsdl11:service>
+
+    <!-- ================================================================================================== -->
+
+</wsdl11:definitions>

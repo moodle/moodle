@@ -1,0 +1,137 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_lpmonitoring/user_report_pdf
+
+    User competency report PDF template. This template is rendered
+    and then passed to the TCPDF class to generate the PDF based on
+    simple HTML. Some rudimentary CSS styles are used to make it
+    presentable.
+
+    Context variables required for this template:
+
+    * plans - Plans for the given user from \core_competency\api::list_user_plans($userid).
+    * styles - Rudimentary styles found in /report/lpmonitoring/style/userreportpdf.css.
+    * studentname - The user's full name.
+    * studentid - The user's studentid.
+    * incourses - ucfirst(get_string('incourses', 'report_lpmonitoring'))
+    * incms - ucfirst(get_string('incms', 'report_lpmonitoring'))
+    * pdfreporttitle - The title given to the report.
+    * dategenerated - String describing when the PDF was generated.
+    * pdfimage - Points to a temporary copy of the configured logo.
+}}
+
+<style>
+    {{styles}}
+</style>
+<br />
+<br />
+<table class="logo">
+    <tr>
+        <td class="left"><img src="{{pdfimage}}" /></td>
+        <td class="right">{{pdfreporttitle}}</td>
+    </tr>
+</table>
+<div class="timestamp">
+    <em>{{#str}}name{{/str}} : {{studentname}}<br />
+    {{idfieldname}} : {{studentid}}<br />
+    {{dategenerated}}</em>
+</div>
+<br />
+
+{{# plans }}
+    {{^firstpage}}
+        <br pagebreak="true" />
+    {{/firstpage}}
+
+    <table cellpadding="1">
+        <thead>
+            <tr>
+                <th class="plan" colspan="4"><span class="big">{{#str}}learningplan, report_lpmonitoring{{/str}} : {{planname}}</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{# competencies }}
+                <tr>
+                    <td class="borderright borderleft competency" colspan="4">{{taxonomylabel}} : <em>{{shortname}} ({{ idnumber }})</em></td>
+                </tr>
+                <tr>
+                    <td class="borderright borderleft competency framework" colspan="4">({{#str}}competencyframework, tool_lp{{/str}} : <em>{{framework}}</em>)</td>
+                </tr>
+                <tr>
+                    <td class="competency miniheader borderleft" colspan="2">{{incourses}}</td>
+                    <td class="competency miniheader borderright" colspan="2">{{incms}}</td>
+                </tr>
+
+                {{#scalecompetencyitems}}
+                    <tr class="breakdown2">
+                        <td class="alignright borderleft" style="width: 35%;">{{name}}</td>
+                        <td style="width: 15%;">    {{nbcourse}}</td>
+                        <td class="alignright" style="width: 35%;">{{name}}</td>
+                        <td style="width: 15%;" class="borderright">    {{nbcm}}</td>
+                    </tr>
+                {{/scalecompetencyitems}}
+                <tr class="breakdown bold">
+                    <td class="alignright borderleft"><strong>{{#str}}totalnumberrating, report_lpmonitoring{{/str}}</strong></td>
+                    <td>    {{nbcoursesrated}}/{{nbcoursestotal}}</td>
+                    <td class="alignright"><strong>{{#str}}totalnumberrating, report_lpmonitoring{{/str}}</strong></td>
+                    <td class="borderright">    {{nbcmsrated}}/{{nbcmstotal}}</td>
+                </tr>
+                <tr class="breakdown bold">
+                    <td colspan="2" class="alignright borderleft"><strong>{{#str}}finalrating, report_lpmonitoring{{/str}} : </strong></td>
+
+                    {{#isnotrated}}
+                        <td colspan="2" class="borderright">{{#str}}notrated, report_lpmonitoring{{/str}}
+                    {{/isnotrated}}
+                    {{#isnotproficient}}
+                        <td colspan="2" class="borderright">{{#str}}notproficient, report_lpmonitoring{{/str}}
+                    {{/isnotproficient}}
+                    {{#isproficient}}
+                        <td colspan="2" class="borderright">{{#str}}proficient, report_lpmonitoring{{/str}}
+                    {{/isproficient}}
+                    {{^isnotrated}}
+                         - {{finalgradename}}
+                    {{/isnotrated}}
+
+                    </td>
+                </tr>
+
+                {{^last}}
+                <tr>
+                    <td class="borderleft borderright" colspan="4"></td> 
+                </tr>
+                {{/last}}
+
+                {{#contd}}
+                    </tbody>
+                    </table>
+                        <br pagebreak="true" />
+                    <table cellpadding="1">
+                        <thead>
+                            <tr>
+                                <th class="plan" colspan="4"><span class="big">{{#str}}learningplan, report_lpmonitoring{{/str}} : {{planname}} ({{#str}}contd, report_lpmonitoring{{/str}})</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                {{/contd}}
+
+            {{/competencies}}
+        </tbody>
+    </table>
+    <br />
+    <br />
+{{/plans}}

@@ -65,7 +65,7 @@ class group_observers {
                 quiz_process_group_deleted_in_course($event->courseid);
             }
             if (!empty($event->other['reset_options']['reset_groups_members'])) {
-                quiz_update_open_attempts(['courseid' => $event->courseid]);
+                quiz_update_open_attempts(array('courseid' => $event->courseid));
             }
         }
 
@@ -93,7 +93,7 @@ class group_observers {
      * @return void
      */
     public static function group_member_added($event) {
-        quiz_update_open_attempts(['userid' => $event->relateduserid, 'groupid' => $event->objectid]);
+        quiz_update_open_attempts(array('userid' => $event->relateduserid, 'groupid' => $event->objectid));
     }
 
     /**
@@ -107,7 +107,7 @@ class group_observers {
             // We will take care of that once the course reset ends.
             return;
         }
-        quiz_update_open_attempts(['userid' => $event->relateduserid, 'groupid' => $event->objectid]);
+        quiz_update_open_attempts(array('userid' => $event->relateduserid, 'groupid' => $event->objectid));
     }
 
 }

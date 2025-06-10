@@ -24,7 +24,9 @@
 namespace tool_dataprivacy\external;
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 use core\external\persistent_exporter;
+use Exception;
 use renderer_base;
 use tool_dataprivacy\context_instance;
 use tool_dataprivacy\purpose;

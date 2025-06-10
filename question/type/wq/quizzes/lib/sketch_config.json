@@ -1,0 +1,37 @@
+{
+  "id": "graph",
+  "items": [
+    {
+      "id": "tools",
+      "items": [
+        {
+          "id": "pointers",
+          "items": [
+            {
+              "id": "sketch"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "items": [
+        {
+          "id": "edition",
+          "items": [
+            {
+              "id": "undo"
+            },
+            {
+              "id": "redo"
+            },
+            {
+              "id": "deleteAll"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

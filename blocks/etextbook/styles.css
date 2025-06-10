@@ -1,0 +1,16 @@
+/*
+    Styles for the Etextbook Block. Mostly just centering the image and text
+    Created on: Jul 27, 2016, 3:59:05 PM
+    Author: David Elliott
+*/
+
+.lsulib-etext {
+    margin: 10px 10%;
+    text-align: center;
+
+}
+
+.etextimg {
+    margin: 18px 21%;
+    width: 57%;
+}

@@ -1,7 +1,0 @@
-This files describes API changes in the bigbluebuttonbn code.
-
-=== 4.1 ===
-* External function mod_bigbluebuttonbn\external\meeting_info now return the list of the instance features and whether they are
-  enabled or not.
-* External function mod_bigbluebuttonbn\external\meeting_info may now return guestaccessenabled, guestjoinurl, and guestpassword
-  if the callee can have access to them.

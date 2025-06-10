@@ -20,7 +20,7 @@ Feature: Contact the privacy officer
     And I click on "Send" "button" in the "Contact the privacy officer" "dialogue"
     Then I should see "Your request has been submitted to the privacy officer"
     And I click on "Data requests" "link"
-    And I should see "Hello DPO!" in the "General inquiry" "table_row"
+    And I should see "Hello DPO!" in the "General enquiry" "table_row"
 
   Scenario: Contacting the privacy officer when not enabled
     When I log in as "student1"

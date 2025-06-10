@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/flashcard/db" VERSION="20080510" COMMENT="XMLDB file for Moodle mod/flashcard"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="flashcard" COMMENT="flashcard table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="starttime" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="availability starts"/>
+        <FIELD NAME="endtime" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="availability ends"/>
+        <FIELD NAME="models" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="3" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="autodowngrade" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="if true downgrades automatically cards for lazy users on cron"/>
+        <FIELD NAME="decks" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="3" SEQUENCE="false" COMMENT="number of decks"/>
+        <FIELD NAME="deck2_release" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="96" SEQUENCE="false" COMMENT="time for unseen cards downgrade to deck1"/>
+        <FIELD NAME="deck3_release" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="96" SEQUENCE="false" COMMENT="time for getting the card be downgraded"/>
+        <FIELD NAME="deck4_release" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="96" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="deck1_delay" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="48" SEQUENCE="false" COMMENT="triggers the need of checking cards"/>
+        <FIELD NAME="deck2_delay" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="96" SEQUENCE="false" COMMENT="Triggers the need of checking cards"/>
+        <FIELD NAME="deck3_delay" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="168" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="deck4_delay" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="376" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="questionsmediatype" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="answersmediatype" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="audiostart" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="flipdeck" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me" />
+        <FIELD NAME="custombackfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="customfrontfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="customemptyfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="customreviewfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="customreviewedfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="customreviewemptyfileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="extracss" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Additional css"/>
+        <FIELD NAME="completionallviewed" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="completionallgood" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="remindusers" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for flashcard"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="flashcard_card" COMMENT="A table to distribute cards into decks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
+        <FIELD NAME="flashcardid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the flashcard instance"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="the owner"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the question"/>
+        <FIELD NAME="deck" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="one of the decks in the flashcard"/>
+        <FIELD NAME="lastaccessed" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="last time the card was queried"/>
+        <FIELD NAME="accesscount" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="flashcard_deckdata" COMMENT="holds questions/responses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
+        <FIELD NAME="flashcardid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+        <FIELD NAME="answertext" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Default comment for the field, please edit me"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="flashcard_userdeck_state" COMMENT="holds deck state for each user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="primary key"/>
+        <FIELD NAME="flashcardid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="the flashcard"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="User id"/>
+        <FIELD NAME="deck" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Deck index"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="States if notified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

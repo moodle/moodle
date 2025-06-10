@@ -65,6 +65,15 @@ class convert_submission extends adhoc_task {
         foreach ($users as $userid) {
             mtrace('Converting submission for user id ' . $userid);
 
+            // If the assignment is not vieweable, we should not try to convert the documents
+            // for this submission, as it will cause the adhoc task to fail with a permission
+            // error.
+            //
+            // Comments on MDL-56810 indicate that submission conversion should not be attempted
+            // if the submission is not viewable due to the user not being enrolled.
+            if (!$assign->can_view_submission($userid)) {
+                continue;
+            }
             // Note: Before MDL-71468, the scheduled task version of this
             // task would stop attempting to poll the conversion after a
             // configured number of attempts were made to poll it, see:

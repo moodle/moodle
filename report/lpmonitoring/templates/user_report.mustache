@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User competency report template.
+
+    Classes required for JS:
+    * learningplan
+}}
+<div class="competencyreport body" style="width: 100%">
+    <div>
+
+        <!-- page content -->
+        <div>
+
+            <!-- filter -->
+            {{> report_lpmonitoring/filter_for_user }}
+            
+            <!-- Plan name -->
+            <div id="planInfoContainer">
+                <h3></h3>
+            </div>
+
+            <!-- Details and Report tabs and content -->
+            <ul id="nav-tabs" class="nav nav-tabs hidden" role="tablist">
+                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail-content" role="tab">{{#str}}tabdetail, report_lpmonitoring{{/str}}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#report-content" role="tab">{{#str}}tabreport, report_lpmonitoring{{/str}}</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#summary-content" role="tab">{{#str}}tabsummary, report_lpmonitoring{{/str}}</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="detail-content" class="tab-pane active fade in" role="tabpanel">
+                  <div data-region="list-competencies-section" id="listPlanCompetencies"></div>
+                </div>
+                <div id="report-content" class="tab-pane fade" role="tabpanel">
+                  {{> report_lpmonitoring/datatable }}
+                </div>
+                <div id="summary-content" class="tab-pane fade" role="tabpanel">
+                    {{> report_lpmonitoring/summary }}
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+</div>
+{{#js}}
+require(['report_lpmonitoring/learningplan', 'tool_lp/competencydialogue'], function(report, Compdialogue) {
+    report.init(true, {{cmcompgradingenabled}});
+    Compdialogue.init();
+});
+{{/js}}

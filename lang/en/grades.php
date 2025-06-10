@@ -122,7 +122,7 @@ $string['categorytotalfull'] = '{$a->category} total';
 $string['selectuserlink'] = 'Select a user';
 $string['collapsecriterion'] = 'Collapse criterion';
 $string['compact'] = 'Compact';
-$string['componentcontrolsvisibility'] = 'Whether this grade item is hidden is controlled by the activity settings.';
+$string['componentcontrolsvisibility'] = 'Grade Visibility controlled by activity settings AND gradebook setup edit actions.';
 $string['contract'] = 'Contract category';
 $string['contributiontocoursetotal'] = 'Contribution to course total';
 $string['controls'] = 'Controls';
@@ -176,13 +176,15 @@ $string['editoutcomes'] = 'Edit outcomes';
 $string['editscale'] = 'Edit scale';
 $string['edittree'] = 'Setup';
 $string['editverbose'] = 'Edit {$a->category} {$a->itemmodule} {$a->itemname}';
+$string['enableajax'] = 'Enable AJAX';
+$string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
 $string['enableoutcomes'] = 'Enable outcomes';
 $string['enableoutcomes_help'] = 'If enabled, grade items may be graded using one or more scales tied to outcome statements.';
 $string['encoding'] = 'Encoding';
 $string['encoding_help'] = 'Select the character encoding used for the data. (The standard encoding is UTF-8.) If the wrong encoding is selected by mistake, it will be noticeable when previewing the data for import.';
 $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
-$string['errorcalculationbroken'] = 'Error in the calculation of grade item {$a}.';
+$string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
 $string['errornocalculationallowed'] = 'Calculations are not allowed for this item';
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
@@ -195,6 +197,7 @@ $string['errorupdatinggradecategoryaggregateoutcomes'] = 'Error updating the "In
 $string['errorupdatinggradecategoryaggregation'] = 'Error updating the aggregation type of grade category ID {$a->id}';
 $string['errorupdatinggradeitemaggregationcoef'] = 'Error updating the aggregation coefficient (weight or extra credit) of grade item ID {$a->id}';
 $string['eventgradedeleted'] = 'Grade deleted';
+$string['eventgradeexported'] = 'Grade exported';
 $string['eventgradeitemcreated'] = 'Grade item created';
 $string['eventgradeitemdeleted'] = 'Grade item deleted';
 $string['eventgradeitemupdated'] = 'Grade item updated';
@@ -237,10 +240,6 @@ $string['feedbacks'] = 'Feedbacks';
 $string['feedbacksaved'] = 'Feedback saved';
 $string['feedbackview'] = 'View feedback';
 $string['finalgrade'] = 'Final grade';
-$string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';
-$string['filterbyname'] = 'Filter by name';
-$string['filterfirstactive'] = 'First ({$a->first})';
-$string['filterlastactive'] = 'Last ({$a->last})';
 $string['finalgrade_help'] = 'If the overridden checkbox is ticked, a grade may be added or amended.';
 $string['fixedstudents'] = 'Static students column';
 $string['fixedstudents_help'] = 'Allows grades to scroll horizontally without losing sight of the students column, by making it static.';
@@ -569,8 +568,7 @@ $string['noidnumber'] = 'No ID number';
 $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Received non-numeric value for';
-$string['nonunlockableverbose'] = 'This grade cannot be unlocked until {$a->itemname} is unlocked.';
-$string['nonunhideableverbose'] = 'This grade cannot be unhidden until {$a->itemname} is hidden.';
+$string['nonunlockableverbose'] = 'To unlock this grade, you need to unlock {$a->itemname}.';
 $string['nonweightedpct'] = 'non-weighted %';
 $string['nooutcome'] = 'No outcome';
 $string['nooutcomes'] = 'Outcome items must be linked to a course outcome, but there are no outcomes for this course. Would you like to add one?';
@@ -753,6 +751,9 @@ $string['setting'] = 'Setting';
 $string['settings'] = 'Settings';
 $string['setup'] = 'Setup';
 $string['setweights'] = 'Set weights';
+$string['showanalysisicon'] = 'Show grade analysis icon';
+$string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
+$string['showanalysisicon_help'] = 'If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
 $string['showaverage'] = 'Show average';
 $string['showaverage_help'] = 'Whether to show an average column. Note that participants may be able to estimate others\' grades if the average is calculated from a small number of grades. For performance reasons the average is approximate if it is dependent on any hidden items.';
 $string['showcontributiontocoursetotal'] = 'Show contribution to course total';
@@ -781,6 +782,8 @@ $string['showaverages'] = 'Show column averages';
 $string['showaverages_help'] = 'If enabled, the grader report will contain an additional row displaying the average (mean) for each category and grade item.';
 $string['showcalculations'] = 'Show calculations';
 $string['showcalculations_help'] = 'If enabled, when editing, a calculator icon is shown for each grade item and category with a visual indicator that a grade item is calculated.';
+$string['showeyecons'] = 'Show show/hide icons';
+$string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
 $string['showgroups'] = 'Show groups';
 $string['showhiddenitems'] = 'Show hidden items';
 $string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirely or if the names of hidden grade items are visible to students.
@@ -789,6 +792,8 @@ $string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirel
 * Only hidden until - Grade items with a "hide until" date set are hidden completely until the set date, after which the whole item is shown
 * Do not show - Hidden grade items are completely hidden';
 $string['showhiddenuntilonly'] = 'Only hidden until';
+$string['showlocks'] = 'Show locks';
+$string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
 $string['shownohidden'] = 'Do not show';
 $string['shownooutcomes'] = 'Hide outcomes';
 $string['shownumberofgrades'] = 'Show number of grades in averages';
@@ -797,6 +802,10 @@ $string['showonlyactiveenrol'] = 'Show only active enrolments';
 $string['showonlyactiveenrol_help'] = 'This setting determines, if only active enrolled users will be visible in gradebook report. If enabled suspended users will not be shown in gradebook.';
 $string['showpercentage'] = 'Show percentage';
 $string['showpercentage_help'] = 'Whether to show the percentage value of each grade item.';
+$string['showquickfeedback'] = 'Show quick feedback';
+$string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
+
+Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';
 $string['showranges'] = 'Show ranges';
 $string['showranges_help'] = 'If enabled, the grader report will contain an additional row displaying the range for each category and grade item.';
 $string['showrank'] = 'Show rank';
@@ -893,25 +902,51 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
-$string['aria-toggledropdown'] = 'Toggle the following dropdown';
-
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';
 $string['dropdown'] = 'Drop-down menu';
 $string['tabs'] = 'Tabs';
 $string['combo'] = 'Tabs and drop-down menu';
 
-// Deprecated since Moodle 4.2.
-$string['showanalysisicon'] = 'Show grade analysis icon';
-$string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['showanalysisicon_help'] = 'If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['showlocks'] = 'Show locks';
-$string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
-$string['showeyecons'] = 'Show show/hide icons';
-$string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
-$string['showquickfeedback'] = 'Show quick feedback';
-$string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
+// BEGIN LSU Better Letters.
+$string['letterscustompercents'] = 'Custom Percentages';
+$string['letterscustompercents_help'] = 'Allows for users to enter a value for the percents.';
+$string['lettersdefaultletters'] = 'F,D,C,B,A';
+$string['lettersstrictletter'] = 'Strict Letter names';
+$string['lettersstrictletter_help'] = 'This setting forces the default letter names defined with the selected Letter names.';
+$string['lettersnames'] = 'Letter names';
+$string['lettersname_help'] = 'This setting forces the default letter names defined with this system scale. __Note__: The default letter names are A-F.';
+// END LSU Better Letters.
 
-Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';
-$string['enableajax'] = 'Enable AJAX';
-$string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
+// BEGIN LSU Column Average No Zero.
+$string['meangradednozeros'] = 'Non-empty, non-zero grades';
+// END LSU Column Average No Zero.
+
+// BEGIN LSU Course Category Editable switch.
+$string['coursecateditable'] = 'Course category editable';
+$string['coursecateditable_help'] = 'Disabling will make the course category name an uneditable field.';
+// END LSU Course Category Editable switch.
+
+// BEGIN LSU Drop Lowest Limiting.
+$string['droplow_limit'] = 'Drop the lowest limit';
+$string['droplow_limit_help'] = 'By applying this setting, the drop setting will be ignored until the number of droppable grades are > than the drop number.';
+// END LSU Drop Lowest Limiting.
+
+// BEGIN LSU Manual Grade Raw Grade support.
+$string['manipulatecategories'] = 'Manipulate category totals';
+$string['manipulatecategories_help'] = 'Curve and offset category totals';
+$string['gradeitemmanualrecompute'] = 'Manual item recompute';
+$string['gradeitemmanualrecompute_help'] = 'Allow the gradebook to automatically adjust the raw grade boundaries when editing the real grade boundaries for Manual items.<br /><strong>When enabled, you will have the option of manipulating category totals.</strong>';
+// END LSU Manual Grade Raw Grade support.
+
+// BEGIN LSU Grade Privacy Aggreement.
+$string['privacy_ack'] = 'Student privacy';
+$string['privacy_ack_help'] = 'This setting blocks anyone from downloading student grades without confirming they will comply with all laws and policies regarding student rights.';
+$string['privacy_ack_required'] = 'I understand that I am downloading legally protected student data and will comply with all laws and policies related to the protection of student data.';
+$string['missing_privacy_ack_required'] = 'Please agree to the requirements below before downloading any student data.';
+// END LSU Grade Privacy Aggreement.
+
+// BEGIN LSU SWM unweighted extra credit option
+$string['w_ec'] = 'Weighted ' . $string['aggregationcoefextra'];
+$string['w_ec_help'] = 'By default, '.$string['aggregationcoefextra'].' items in either the '.$string['aggregateweightedmean2'].' or '.$string['aggregatesum'].' grade categories are weighted. Uncheck this option to allow extra credit items to simply add points to the aggregated category total.';
+// END LSU SWM unweighted extra credit option

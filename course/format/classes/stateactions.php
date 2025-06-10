@@ -416,116 +416,14 @@ class stateactions {
                 $allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
                 $coursevisible = ($allowstealth) ? 0 : 1;
             }
-            set_coursemodule_visible($cm->id, $visible, $coursevisible);
+            set_coursemodule_visible($cm->id, $visible, $coursevisible, false);
             course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+        }
+        course_modinfo::purge_course_modules_cache($course->id, $ids);
+        rebuild_course_cache($course->id, false, true);
+
+        foreach ($cms as $cm) {
             $updates->add_cm_put($cm->id);
-        }
-    }
-
-    /**
-     * Duplicate a course modules instances into the same course.
-     *
-     * @param stateupdates $updates the affected course elements track
-     * @param stdClass $course the course object
-     * @param int[] $ids course modules ids to duplicate
-     * @param int|null $targetsectionid optional target section id destination
-     * @param int|null $targetcmid optional target before cm id destination
-     */
-    public function cm_duplicate(
-        stateupdates $updates,
-        stdClass $course,
-        array $ids = [],
-        ?int $targetsectionid = null,
-        ?int $targetcmid = null
-    ): void {
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        $modinfo = get_fast_modinfo($course);
-        $cms = $this->get_cm_info($modinfo, $ids);
-
-        // Check capabilities on every activity context.
-        foreach ($cms as $cmid => $cm) {
-            $modcontext = context_module::instance($cmid);
-            require_all_capabilities(
-                ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'],
-                $modcontext
-            );
-            if (!course_allowed_module($course, $cm->modname)) {
-                throw new moodle_exception('No permission to create that activity');
-            }
-        }
-
-        $targetsection = null;
-        if (!empty($targetsectionid)) {
-            $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
-            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
-        }
-
-        $beforecm = null;
-        if (!empty($targetcmid)) {
-            $this->validate_cms($course, [$targetcmid], __FUNCTION__);
-            $beforecm = $modinfo->get_cm($targetcmid);
-            $targetsection = $modinfo->get_section_info_by_id($beforecm->section, MUST_EXIST);
-        }
-
-        // Duplicate course modules.
-        $affectedcmids = [];
-        foreach ($cms as $cm) {
-            if ($newcm = duplicate_module($course, $cm)) {
-                if ($targetsection) {
-                    moveto_module($newcm, $targetsection, $beforecm);
-                } else {
-                    $affectedcmids[] = $newcm->id;
-                }
-            }
-        }
-
-        if ($targetsection) {
-            $this->section_state($updates, $course, [$targetsection->id]);
-        } else {
-            $this->cm_state($updates, $course, $affectedcmids);
-        }
-    }
-
-    /**
-     * Delete course cms.
-     *
-     * @param stateupdates $updates the affected course elements track
-     * @param stdClass $course the course object
-     * @param int[] $ids section ids
-     * @param int $targetsectionid not used
-     * @param int $targetcmid not used
-     */
-    public function cm_delete(
-        stateupdates $updates,
-        stdClass $course,
-        array $ids = [],
-        ?int $targetsectionid = null,
-        ?int $targetcmid = null
-    ): void {
-
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_capability('moodle/course:manageactivities', $modcontext);
-        }
-
-        $format = course_get_format($course->id);
-        $modinfo = get_fast_modinfo($course);
-        $affectedsections = [];
-
-        $cms = $this->get_cm_info($modinfo, $ids);
-        foreach ($cms as $cm) {
-            $section = $cm->get_section_info();
-            $affectedsections[$section->id] = $section;
-            $format->delete_module($cm, true);
-            $updates->add_cm_remove($cm->id);
-        }
-
-        foreach ($affectedsections as $sectionid => $section) {
-            $updates->add_section_put($sectionid);
         }
     }
 

@@ -24,13 +24,23 @@
 
 namespace tool_policy;
 
+defined('MOODLE_INTERNAL') || die();
+
+use coding_exception;
 use context_system;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use context_user;
+use core\invalid_persistent_exception;
+use dml_exception;
+use external_api;
+use external_description;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
+use external_warnings;
+use invalid_parameter_exception;
 use moodle_exception;
+use restricted_context_exception;
+use tool_policy\api;
 use tool_policy\form\accept_policy;
 
 /**
@@ -96,10 +106,10 @@ class external extends external_api {
                 $version = api::get_policy_version($versionid);
                 $policy['name'] = $version->name;
                 $policy['versionid'] = $versionid;
-                list($policy['content'], $notusedformat) = \core_external\util::format_text(
+                list($policy['content'], $notusedformat) = external_format_text(
                     $version->content,
                     $version->contentformat,
-                    \context_system::instance(),
+                    SYSCONTEXTID,
                     'tool_policy',
                     'policydocumentcontent',
                     $version->id
@@ -123,7 +133,7 @@ class external extends external_api {
     /**
      * Parameter description for get_policy_version().
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_policy_version_returns() {
         return new external_single_structure([
@@ -180,7 +190,7 @@ class external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function submit_accept_on_behalf_returns() {

@@ -122,7 +122,7 @@ class DecisionTreeLeaf
     public function getHTML(?array $columnNames = null): string
     {
         if ($this->isTerminal) {
-            $value = "<b>{$this}->classValue</b>";
+            $value = "<b>${this}->classValue</b>";
         } else {
             $value = $this->value;
             if ($columnNames !== null) {
@@ -132,13 +132,13 @@ class DecisionTreeLeaf
             }
 
             if ((bool) preg_match('/^[<>=]{1,2}/', (string) $value) === false) {
-                $value = "={$value}";
+                $value = "=${value}";
             }
 
-            $value = "<b>{$col} {$value}</b><br>Gini: ".number_format($this->giniIndex, 2);
+            $value = "<b>${col} ${value}</b><br>Gini: ".number_format($this->giniIndex, 2);
         }
 
-        $str = "<table ><tr><td colspan=3 align=center style='border:1px solid;'>{$value}</td></tr>";
+        $str = "<table ><tr><td colspan=3 align=center style='border:1px solid;'>${value}</td></tr>";
 
         if ($this->leftLeaf !== null || $this->rightLeaf !== null) {
             $str .= '<tr>';

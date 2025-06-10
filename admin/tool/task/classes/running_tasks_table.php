@@ -28,7 +28,6 @@ namespace tool_task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
-use core\task\manager;
 
 /**
  * Table to display list of running task.
@@ -48,7 +47,7 @@ class running_tasks_table extends \table_sql {
         $columnheaders = [
             'classname'    => get_string('classname', 'tool_task'),
             'type'         => get_string('tasktype', 'admin'),
-            'time'         => get_string('taskage', 'tool_task'),
+            'time'         => get_string('time'),
             'timestarted'  => get_string('started', 'tool_task'),
             'hostname'     => get_string('hostname', 'tool_task'),
             'pid'          => get_string('pid', 'tool_task'),
@@ -112,7 +111,7 @@ class running_tasks_table extends \table_sql {
         if ($row->type == 'scheduled') {
             $output = \html_writer::span(get_string('scheduled', 'tool_task'), 'badge badge-primary');
         } else if ($row->type == 'adhoc') {
-            $output = \html_writer::span(get_string('adhoc', 'tool_task'), 'badge badge-dark');
+            $output = \html_writer::span(get_string('adhoc', 'tool_task'), 'badge badge-warning');
         } else {
             // This shouldn't ever happen.
             $output = '';
@@ -127,21 +126,7 @@ class running_tasks_table extends \table_sql {
      * @return  string
      */
     public function col_time($row) : string {
-        global $OUTPUT;
-
-        $taskmethod = "{$row->type}_task_from_record";
-        $task = manager::$taskmethod($row);
-
-        $result = $task->get_runtime_result();
-        $extra = '';
-        if ($result->get_status() != $result::OK) {
-            $extra = '<br>';
-            $extra .= $OUTPUT->check_result($result);
-            $extra .= ' ';
-            $extra .= $result->get_details();
-        }
-
-        return format_time($row->time) . $extra;
+        return format_time($row->time);
     }
 
     /**

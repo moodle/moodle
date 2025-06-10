@@ -21,10 +21,10 @@ Feature: Attachments count column data available
       | student2 | C1     | student        |
       | teacher1 | C2     | editingteacher |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber   |
-      | forum    | forum1 | C1 first forum  | C1     | forum1C1   |
-      | forum    | forum2 | C1 second forum | C1     | forum2C1   |
-      | forum    | forum1 | C2 first forum  | C2     | forum1C2   |
+      | activity | name   | course | idnumber   |
+      | forum    | forum1 | C1     | forum1C1   |
+      | forum    | forum2 | C1     | forum2C1   |
+      | forum    | forum1 | C2     | forum1C2   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message  | attachments        | inlineattachments |
       | teacher1 | forum1 | discussion1 | message1 | att1.jpg, att2.txt |                   |

@@ -143,7 +143,7 @@ if ($data = $form->get_data()) {
     redirect($redirect);
 }
 
-$PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
+$PAGE->set_title(get_string('toolsetup', 'lti'));
 $PAGE->set_primary_active_tab('siteadminnode');
 $PAGE->set_secondary_active_tab('ltitoolconfigure');
 $PAGE->navbar->add(get_string('manage_external_tools', 'lti'), new moodle_url('/mod/lti/toolconfigure.php'));

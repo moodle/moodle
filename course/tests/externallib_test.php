@@ -745,18 +745,13 @@ class externallib_test extends externallib_advanced_testcase {
             $coursecontext = context_course::instance($course['id']);
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
-            $this->assertEquals(
-                $course['fullname'],
-                \core_external\util::format_string($dbcourse->fullname, $coursecontext->id)
-            );
-            $this->assertEquals(
-                $course['displayname'],
-                \core_external\util::format_string(get_course_display_name_for_list($dbcourse), $coursecontext->id)
-            );
+            $this->assertEquals($course['fullname'], external_format_string($dbcourse->fullname, $coursecontext->id));
+            $this->assertEquals($course['displayname'], external_format_string(get_course_display_name_for_list($dbcourse),
+                $coursecontext->id));
             // Summary was converted to the HTML format.
             $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
-            $this->assertEquals($course['shortname'], \core_external\util::format_string($dbcourse->shortname, $coursecontext->id));
+            $this->assertEquals($course['shortname'], external_format_string($dbcourse->shortname, $coursecontext->id));
             $this->assertEquals($course['categoryid'], $dbcourse->category);
             $this->assertEquals($course['format'], $dbcourse->format);
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);
@@ -2730,13 +2725,19 @@ class externallib_test extends externallib_advanced_testcase {
         // Expect to receive all the fields.
         $this->assertCount(41, $result['courses'][0]);
         // Check default values for course format topics.
-        $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
+        $this->assertCount(3, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
-            if ($option['name'] == 'hiddensections') {
-                $this->assertEquals(1, $option['value']);
-            } else {
-                $this->assertEquals('coursedisplay', $option['name']);
-                $this->assertEquals(0, $option['value']);
+            switch ($option['name']) {
+                case 'hiddensections':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                case 'coursedisplay':
+                    $this->assertEquals(0, $option['value']);
+                    break;
+                case 'indentation':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                default:
             }
         }
 

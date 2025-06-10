@@ -55,14 +55,11 @@ $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-$currenttab = 'repositories';
-require('tabs.php');
-
 echo $OUTPUT->heading($configstr);
 echo $OUTPUT->box_start();
 
 $params = array();
-$params['context'] = $coursecontext;
+$params['context'] = [$coursecontext];
 $params['currentcontext'] = $PAGE->context;
 $params['userid']   = $USER->id;
 if (!$instances = repository::get_instances($params)) {

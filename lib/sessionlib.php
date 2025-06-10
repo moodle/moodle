@@ -170,7 +170,11 @@ function get_moodle_cookie() {
 
 /**
  * Sets up current user and course environment (lang, etc.) in cron.
- * Do not use outside of cron script!
+ * Note: This function is intended only for use in:
+ * - the cron runner scripts
+ * - individual tasks which extend the adhoc_task and scheduled_task classes
+ * - unit tests related to tasks
+ * - other parts of the cron/task system
  *
  * @param stdClass $user full user object, null means default cron user (admin),
  *                 value 'reset' means reset internal static caches.

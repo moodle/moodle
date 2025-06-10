@@ -1,0 +1,40 @@
+.admin_note {
+    font-size: 0.8em;
+    color: #c10031;
+}
+.reportcounts,
+body.path-admin-report-lsusql a.view-category {
+    font-weight: normal;
+    font-size: 0.65em;
+}
+.region-content .csql_category h3 {
+    font-weight: bold;
+}
+.csql_category .categoryname {
+    padding-left: 18px;
+}
+.csql_category.csql_categoryhidden .categoryname {
+    background-image: url([[pix:moodle|t/collapsed]]);
+    background-repeat: no-repeat;
+    background-position: center left;
+}
+.csql_category.csql_categoryshown .categoryname {
+    background-image: url([[pix:moodle|t/expanded]]);
+    background-repeat: no-repeat;
+    background-position: center left;
+}
+.csql_category .csql_category_reports {
+    margin-left: 18px;
+}
+.csql_category.csql_categoryshown .csql_category_reports {
+    display: block;
+}
+.csql_category.csql_categoryhidden .csql_category_reports {
+    display: none;
+}
+
+#page-admin-report-lsusql-edit #id_querysql {
+    min-width: 100%;
+    font-family: monospace;
+    line-height: 1.4;
+}

@@ -49,9 +49,6 @@
       <directory suffix="_test.php">lib/tests</directory>
       <!-- <directory suffix="_test.php">lib/ajax/tests</directory> -->
     </testsuite>
-    <testsuite name="core_external_testsuite">
-      <directory suffix="_test.php">lib/external/tests</directory>
-    </testsuite>
     <testsuite name="core_favourites_testsuite">
       <directory suffix="_test.php">favourites/tests</directory>
     </testsuite>
@@ -129,6 +126,9 @@
     </testsuite>
     <testsuite name="core_group_testsuite">
       <directory suffix="_test.php">group/tests</directory>
+    </testsuite>
+    <testsuite name="core_external_testsuite">
+      <directory suffix="_test.php">lib/external/tests</directory>
     </testsuite>
     <testsuite name="core_message_testsuite">
       <directory suffix="_test.php">message/tests</directory>

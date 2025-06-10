@@ -116,9 +116,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     } else {
         $newcm->showdescription = 0;
     }
-    if (empty($moduleinfo->beforemod)) {
-        $moduleinfo->beforemod = null;
-    }
 
     // From this point we make database changes, so start transaction.
     $transaction = $DB->start_delegated_transaction();
@@ -180,7 +177,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
-    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section, $moduleinfo->beforemod);
+    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
 
     // Trigger event based on the action we did.
     // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
@@ -388,21 +385,8 @@ function edit_module_post_actions($moduleinfo, $course) {
 
     \course_modinfo::purge_course_module_cache($course->id, $moduleinfo->coursemodule);
     rebuild_course_cache($course->id, true, true);
-
     if ($hasgrades) {
-        // If regrading will be slow, and this is happening in response to front-end UI...
-        if (!empty($moduleinfo->frontend) && grade_needs_regrade_progress_bar($course->id)) {
-            // And if it actually needs regrading...
-            $courseitem = grade_item::fetch_course_item($course->id);
-            if ($courseitem->needsupdate) {
-                // Then don't do it as part of this form save, do it on an extra web request with a
-                // progress bar.
-                $moduleinfo->needsfrontendregrade = true;
-            }
-        } else {
-            // Regrade now.
-            grade_regrade_final_grades($course->id);
-        }
+        grade_regrade_final_grades($course->id);
     }
 
     // To be removed (deprecated) with MDL-67526 (both lines).
@@ -882,7 +866,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
         file_prepare_draft_area($draftid_editor, null, null, null, null, array('subdirs'=>true));
-        $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
+        $data->introeditor = array('text' => '', 'format' => editors_get_preferred_format(), 'itemid' => $draftid_editor);
     }
 
     if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)

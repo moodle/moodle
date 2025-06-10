@@ -25,8 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use mod_assign\output\assign_header;
-use core_external\external_value;
+use \mod_assign\output\assign_header;
 
 // File areas for file feedback assignment.
 define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
@@ -694,7 +693,7 @@ class assign_feedback_file extends assign_feedback_plugin {
     /**
      * Return a description of external params suitable for uploading a feedback file from a webservice.
      *
-     * @return \core_external\external_description|null
+     * @return external_description|null
      */
     public function get_external_parameters() {
         return array(

@@ -32,12 +32,6 @@ use qbank_editquestion\external\update_question_version_status;
  */
 class update_question_version_status_test extends \advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var mixed. */
-    protected $user;
-
     /**
      * Called before every test.
      */

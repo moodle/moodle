@@ -1,0 +1,19 @@
+.link-3xx {
+    background: orange;
+    color: white;
+}
+
+.link-4xx {
+    background: red;
+    color: white;
+}
+
+.link-5xx {
+    background: purple;
+    color: white;
+}
+
+.generaltable .rightalign {
+    text-align: right;
+}
+

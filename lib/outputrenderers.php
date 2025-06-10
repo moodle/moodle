@@ -841,7 +841,7 @@ class core_renderer extends renderer_base {
             $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning m-3 alert');
             $a = new stdClass();
             $a->hour = (int)($timeleft / 3600);
-            $a->min = (int)(($timeleft / 60) % 60);
+            $a->min = (int)(floor($timeleft / 60) % 60);
             $a->sec = (int)($timeleft % 60);
             if ($a->hour > 0) {
                 $output .= get_string('maintenancemodeisscheduledlong', 'admin', $a);
@@ -2055,16 +2055,12 @@ class core_renderer extends renderer_base {
         $displayoptions['cancelstr'] = $displayoptions['cancelstr'] ?? get_string('cancel');
 
         if ($continue instanceof single_button) {
-            // Continue button should be primary if set to secondary type as it is the fefault.
-            if ($continue->type === single_button::BUTTON_SECONDARY) {
-                $continue->type = single_button::BUTTON_PRIMARY;
-            }
+            // ok
+            $continue->primary = true;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), $displayoptions['continuestr'], 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button(new moodle_url($continue), $displayoptions['continuestr'], 'post', true);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, $displayoptions['continuestr'], 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button($continue, $displayoptions['continuestr'], 'post', true);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
@@ -2632,8 +2628,16 @@ class core_renderer extends renderer_base {
         $alt = '';
         if ($userpicture->alttext) {
             if (!empty($user->imagealt)) {
-                $alt = $user->imagealt;
+                $alt = trim($user->imagealt);
             }
+        }
+
+        // If the user picture is being rendered as a link but without the full name, an empty alt text for the user picture
+        // would mean that the link displayed will not have any discernible text. This becomes an accessibility issue,
+        // especially to screen reader users. Use the user's full name by default for the user picture's alt-text if this is
+        // the case.
+        if ($userpicture->link && !$userpicture->includefullname && empty($alt)) {
+            $alt = fullname($user);
         }
 
         if (empty($userpicture->size)) {
@@ -3128,7 +3132,7 @@ EOD;
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $button = new single_button($url, get_string('continue'), 'get', single_button::BUTTON_PRIMARY);
+        $button = new single_button($url, get_string('continue'), 'get', true);
         $button->class = 'continuebutton';
 
         return $this->render($button);
@@ -3173,11 +3177,10 @@ EOD;
      * @param string $urlvar URL parameter name for this initial.
      * @param string $url URL object.
      * @param array $alpha of letters in the alphabet.
-     * @param bool $minirender Return a trimmed down view of the initials bar.
      * @return string the HTML to output.
      */
-    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null, bool $minirender = false) {
-        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha, $minirender);
+    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null) {
+        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha);
         return $this->render($ib);
     }
 
@@ -5575,13 +5578,11 @@ class core_renderer_maintenance extends core_renderer {
         // We need plain styling of confirm boxes on upgrade because we don't know which stylesheet we have (it could be
         // from any previous version of Moodle).
         if ($continue instanceof single_button) {
-            $continue->type = single_button::BUTTON_PRIMARY;
+            $continue->primary = true;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post', true);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, get_string('continue'), 'post',
-                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
+            $continue = new single_button($continue, get_string('continue'), 'post', true);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL' .
                                        ' (string/moodle_url) or a single_button instance.');

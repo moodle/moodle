@@ -87,9 +87,6 @@ abstract class base {
     /** @var int Default paging size */
     private $defaultperpage = self::DEFAULT_PAGESIZE;
 
-    /** @var array $attributes */
-    private $attributes = [];
-
     /**
      * Base report constructor
      *
@@ -746,25 +743,5 @@ abstract class base {
      */
     public function get_default_per_page(): int {
         return $this->defaultperpage;
-    }
-
-    /**
-     * Add report attributes (data-, class, etc.) that will be included in HTML when report is displayed
-     *
-     * @param array $attributes
-     * @return self
-     */
-    public function add_attributes(array $attributes): self {
-        $this->attributes = $attributes + $this->attributes;
-        return $this;
-    }
-
-    /**
-     * Returns the report HTML attributes
-     *
-     * @return array
-     */
-    public function get_attributes(): array {
-        return $this->attributes;
     }
 }

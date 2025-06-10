@@ -142,14 +142,23 @@ class lesson_override_form extends moodleform {
 
                 // Get the list of appropriate users, depending on whether and how groups are used.
                 $userfieldsapi = \core_user\fields::for_name();
-                $userfields = 'u.id, u.email, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-                $groupids = 0;
-                if (!$accessallgroups) {
-                    $groups = groups_get_activity_allowed_groups($cm);
-                    $groupids = array_keys($groups);
+                if ($accessallgroups) {
+                    $users = get_enrolled_users($this->context, '', 0,
+                            'u.id, u.email, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects, $sort);
+                } else if ($groups = groups_get_activity_allowed_groups($cm)) {
+                    $enrolledjoin = get_enrolled_join($this->context, 'u.id');
+                    $userfields = 'u.id, u.email, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+                    list($ingroupsql, $ingroupparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+                    $params = $enrolledjoin->params + $ingroupparams;
+                    $sql = "SELECT $userfields
+                              FROM {user} u
+                              JOIN {groups_members} gm ON gm.userid = u.id
+                                   {$enrolledjoin->joins}
+                             WHERE gm.groupid $ingroupsql
+                                   AND {$enrolledjoin->wheres}
+                          ORDER BY $sort";
+                    $users = $DB->get_records_sql($sql, $params);
                 }
-                $users = get_enrolled_users($this->context, '',
-                        $groupids, $userfields, $sort);
 
                 // Filter users based on any fixed restrictions (groups, profile).
                 $info = new \core_availability\info_module($cm);

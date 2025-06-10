@@ -1,0 +1,104 @@
+.error pre {
+    margin-bottom: -10px;
+}
+.que.regexp .answer {
+    padding: 0.3em;
+    display: inline;
+    color: green;
+}
+.alternateanswers .regexp,
+#alternateanswers .regexp {
+    color: #333;
+    font-weight: bold;
+}
+.que.regexp .answer input {
+    width: 80%;
+}
+.maxtotalpenalties {
+    color: #f00;
+}
+.misplacedword,
+.wrongword,
+.labelmisplacedword,
+.labelwrongword {
+    color: white;
+}
+.misplacedword,
+.labelmisplacedword {
+    background-color: #5cb85c;
+}
+.wrongword,
+.labelwrongword {
+    background-color: #d9534f;
+}
+.labelmisplacedword,
+.labelwrongword {
+    font-size: 75%;
+}
+
+.que.regexp .correctword {
+    color: #00f;
+}
+
+/* must be a monospace font for correct display of erroneous characters position */
+.displayvalidationerrors {
+    font-family: Courier New, Courier, monospace;
+    color: maroon;
+    font-size: 0.9em;
+}
+.alternateanswers ul.square,
+#alternateanswers ul.square {
+    list-style: square;
+}
+.alternateanswers ul {
+    margin: 0;
+}
+.expandalternateanswers {
+    background-color: #ffc;
+}
+
+/* Editing form. */
+body#page-question-type-regexp div[id^=fgroup_id_][id*=answeroptions_] {
+    background: #eee;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-bottom: 0;
+}
+
+body#page-question-type-regexp div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label {
+    font-weight: bold;
+}
+
+body#page-question-type-regexp div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'] {
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+body#page-question-type-regexp div[id^=fitem_id_][id*=fraction_] {
+    background: #eee;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+    border-bottom: 0;
+}
+
+body#page-question-type-regexp div[id^=fitem_id_][id*=feedback_] {
+    background: #eee;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+}
+.btn .helpme[disabled] {
+    display: none;
+}

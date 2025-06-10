@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\conditions;
 
 use core_reportbuilder_generator;
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\manager;
 use core_reportbuilder\report_access_exception;

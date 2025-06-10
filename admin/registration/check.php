@@ -39,7 +39,7 @@ if ($publickey !== false) {
 
 // Encrypt data.
 $message = $CFG->release;
-$success = openssl_public_encrypt(\core_text::convert($message, 'ISO-8859-1', 'UTF-8'), $encrypteddata, $publickeystr);
+$success = openssl_public_encrypt(utf8_encode($message), $encrypteddata, $publickeystr);
 
 if ($success) {
     echo base64_encode($encrypteddata);

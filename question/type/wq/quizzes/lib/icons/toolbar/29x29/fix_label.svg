@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="29px"
+   height="29px"
+   viewBox="0 0 29 29"
+   version="1.1"
+   id="SVGRoot"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="fix_label.svg"
+   inkscape:export-filename="E:\PROJECTS\graph\resources-graph\icons\toolbar\29x29\fix_label.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="12.484092"
+     inkscape:cx="-14.536769"
+     inkscape:cy="14.202221"
+     inkscape:document-units="px"
+     inkscape:current-layer="g4661"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1387"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:grid-bbox="true" />
+  <defs
+     id="defs4675">
+    <linearGradient
+       id="linearGradient5189"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5187" />
+    </linearGradient>
+  </defs>
+  <metadata
+     id="metadata4678">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Capa 1">
+    <g
+       style="display:inline;opacity:1"
+       id="g4661"
+       transform="matrix(1.235788,0,0,1.0926924,-349.99278,-540.37698)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4659"
+         d="m 288.07513,501.10509 14.06123,0.0733 0.0648,6.56559 -5.3351,10e-6 -1.75509,2.26157 c -0.4318,-0.58763 -1.73892,-2.42023 -2.33497,-2.2648 l -4.6904,-0.003 z"
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#2f4b59;stroke-width:1.46362252;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:nodetypes="cccccccc"
+         inkscape:export-filename="E:\PROJECTS\graph\resources-graph\icons\toolbar\29x29\path4659.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <ellipse
+         cy="513.96631"
+         cx="295.14087"
+         style="fill:#2f4b59;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.08113885"
+         id="path2984"
+         rx="2.5415487"
+         ry="2.8743823" />
+    </g>
+  </g>
+</svg>

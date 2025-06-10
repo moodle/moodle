@@ -1,0 +1,125 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/mobile_main_index_page
+
+    Template which defines the main page that displays notices, submissions and the start answering link.
+
+    Context variables required for this template:
+    * questionnaire - object: "intro" and "autonumquestions" strings for first respondent link.
+    * previous - object: "url" and "title" strings for previous link.
+    * respnumber - object: Current positio ("currpos") and "total" number of responses.
+    * next - object: "url" and "title" strings for next link.
+    * lastrespondent - object: "url" and "title" strings for last respondent link.
+    * listlink - string: Url of the link back to the response list.
+    * printaction - string: HTML to launch the print function.
+
+    Example context (json):
+    {
+        "cmid": 985,
+        "userid": 267,
+        "intro": "Welcome to the questionnaire",
+        "autonumquestions": "1",
+        "id": "342",
+        "rid": 0,
+        "surveyid": "23",
+        "action": "index",
+        "pagenum": 0,
+        "nextpage": 1,
+        "prevpage": 0,
+        "completed": "1",
+        "complete_userdate": "Monday, 17 December 2018, 3:34pm",
+        "emptypage": "0",
+        "emptypage_content": "This is an empty page.",
+        "pagequestions": [
+            {
+                "id": 5432,
+                "type_id": 4,
+                "qnum": "Q1",
+                "content": "Answer this question",
+                "required": "1",
+                "fieldkey": "response_1_23",
+                "isselect": "0",
+                "isbool": "0",
+                "isradiobutton": "1",
+                "ischeckbox": "0",
+                "istextessay": "0",
+                "israte": "0",
+                "choices": [
+                    {
+                        "id": 745,
+                        "content": "Red",
+                        "value": " ",
+                        "choice_id": 745,
+                        "min": 0,
+                        "max": 5,
+                        "minstr": "Low",
+                        "maxstr": "High",
+                        "na": 0
+                    }
+                ]
+            }
+        ]
+    }
+}}
+{{=<% %>=}}
+<div>
+    <core-course-module-description description="<%intro%>"
+                                    component="mod_questionnaire" componentId="<%cmid%>"
+                                    pagenum="<%pagenum%>"></core-course-module-description>
+    <%#notifications%>
+    <ion-card>
+        <ion-card-content>
+            <%notifications%>
+        </ion-card-content>
+    </ion-card>
+    <%/notifications%>
+    <%^notifications%>
+    <ion-card>
+        <ion-card-content>
+            <%#resume%>
+            <ion-button expand="block" core-site-plugins-new-content component="mod_questionnaire"
+                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'resume'}">
+                {{ 'plugin.mod_questionnaire.resumesurvey' | translate }}
+            </ion-button>
+            <%/resume%>
+            <%^resume%>
+            <ion-button expand="block" core-site-plugins-new-content component="mod_questionnaire"
+                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'respond'}">
+                {{ 'plugin.mod_questionnaire.answerquestions' | translate }}
+            </ion-button>
+            <%/resume%>
+        </ion-card-content>
+    </ion-card>
+    <%/notifications%>
+    <%#submissions.0%>
+    <ion-card>
+        <ion-card-content>
+            <%#submissions%>
+            <ion-item button core-site-plugins-new-content component="mod_questionnaire" method="mobile_view_activity"
+                [args]="{cmid: <%cmid%>, action: 'review', submissionid: <%submissionid%>}">
+                <ion-label>
+                    {{ 'plugin.mod_questionnaire.submitted' | translate }} <%submissiondate%>
+                </ion-label>
+            </ion-item>
+            <%/submissions%>
+        </ion-card-content>
+    </ion-card>
+    <%/submissions.0%>
+    <%#emptypage%>
+    <%/emptypage%>
+</div>

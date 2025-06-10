@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External message API
  *
@@ -23,17 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
-
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . "/message/lib.php");
 
 /**
@@ -109,7 +102,7 @@ class core_message_external extends external_api {
                 $message['textformat']);
             $createdmessage->text = message_format_message_text((object) [
                 'smallmessage' => $createdmessage->text,
-                'fullmessageformat' => util::validate_format($message['textformat']),
+                'fullmessageformat' => external_validate_format($message['textformat']),
                 'fullmessagetrust' => $createdmessage->fullmessagetrust
             ]);
             $messages[] = $createdmessage;
@@ -121,7 +114,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.6
      */
     public static function send_messages_to_conversation_returns() {
@@ -219,7 +212,7 @@ class core_message_external extends external_api {
             if ($success) {
                 // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead one touser object.
                 $success = message_post_message($USER, $tousers[$message['touserid']],
-                        $message['text'], util::validate_format($message['textformat']));
+                        $message['text'], external_validate_format($message['textformat']));
             }
 
             // Build the resultmsg.
@@ -234,7 +227,6 @@ class core_message_external extends external_api {
             } else {
                 // WARNINGS: for backward compatibility we return this errormessage.
                 //          We should have thrown exceptions as these errors prevent results to be returned.
-                // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultmsg['msgid'] = -1;
                 if (!isset($errormessage)) { // Nobody has set a message error or thrown an exception, let's set it.
                     $errormessage = get_string('messageundeliveredbynotificationsettings', 'error');
@@ -258,7 +250,7 @@ class core_message_external extends external_api {
                 $resultmessage['useridfrom'] = $USER->id;
                 $resultmessage['text'] = message_format_message_text((object) [
                     'smallmessage' => $messagerecords[$id]->smallmessage,
-                    'fullmessageformat' => util::validate_format($messagerecords[$id]->fullmessageformat),
+                    'fullmessageformat' => external_validate_format($messagerecords[$id]->fullmessageformat),
                     'fullmessagetrust' => $messagerecords[$id]->fullmessagetrust
                 ]);
                 return $resultmessage;
@@ -271,7 +263,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.2
      */
     public static function send_instant_messages_returns() {
@@ -353,7 +345,7 @@ class core_message_external extends external_api {
     /**
      * Delete contacts return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function delete_contacts_returns() {
@@ -381,7 +373,7 @@ class core_message_external extends external_api {
      *
      * @param int $userid The id of the user who is blocking
      * @param array $conversationids The list of conversations being muted
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function mute_conversations(int $userid, array $conversationids) {
         global $CFG, $USER;
@@ -415,7 +407,7 @@ class core_message_external extends external_api {
     /**
      * Mute conversations return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function mute_conversations_returns() {
         return new external_warnings();
@@ -473,7 +465,7 @@ class core_message_external extends external_api {
     /**
      * Unmute conversations return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function unmute_conversations_returns() {
         return new external_warnings();
@@ -498,7 +490,7 @@ class core_message_external extends external_api {
      *
      * @param int $userid The id of the user who is blocking
      * @param int $blockeduserid The id of the user being blocked
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function block_user(int $userid, int $blockeduserid) {
         global $CFG, $USER;
@@ -535,7 +527,7 @@ class core_message_external extends external_api {
     /**
      * Block user return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function block_user_returns() {
         return new external_warnings();
@@ -589,7 +581,7 @@ class core_message_external extends external_api {
     /**
      * Unblock user return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function unblock_user_returns() {
         return new external_warnings();
@@ -652,7 +644,7 @@ class core_message_external extends external_api {
     /**
      * Returns the contact requests return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_contact_requests_returns() {
         return new external_multiple_structure(
@@ -785,7 +777,7 @@ class core_message_external extends external_api {
     /**
      * Returns the get conversation members return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_conversation_members_returns() {
         return new external_multiple_structure(
@@ -859,7 +851,7 @@ class core_message_external extends external_api {
     /**
      * Creates a contact request return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function create_contact_request_returns() {
         return new external_single_structure(
@@ -927,7 +919,7 @@ class core_message_external extends external_api {
     /**
      * Confirm a contact request return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function confirm_contact_request_returns() {
         return new external_warnings();
@@ -981,7 +973,7 @@ class core_message_external extends external_api {
     /**
      * Declines a contact request return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function decline_contact_request_returns() {
         return new external_warnings();
@@ -1872,7 +1864,7 @@ class core_message_external extends external_api {
      *
      * @param string $searchtext query string.
      * @param bool $onlymycourses limit the search to the user's courses only.
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function search_contacts($searchtext, $onlymycourses = false) {
@@ -1937,7 +1929,7 @@ class core_message_external extends external_api {
     /**
      * Search contacts return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.5
      */
     public static function search_contacts_returns() {
@@ -1994,7 +1986,7 @@ class core_message_external extends external_api {
      * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = MESSAGE_GET_READ,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
@@ -2226,7 +2218,7 @@ class core_message_external extends external_api {
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @param  int      $timecreatedto  mark message created before this time as read, 0 for all messages
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function mark_all_notifications_as_read($useridto, $useridfrom, $timecreatedto = 0) {
         global $USER;
@@ -2303,7 +2295,7 @@ class core_message_external extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @param  int      $useridto       the user id who received the message
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_unread_conversations_count($useridto) {
         global $USER, $CFG;
@@ -2371,7 +2363,7 @@ class core_message_external extends external_api {
      * Retrieve a list of users blocked
      *
      * @param  int $userid the user whose blocked users we want to retrieve
-     * @return \core_external\external_description
+     * @return external_description
      * @since 2.9
      */
     public static function get_blocked_users($userid) {
@@ -2474,7 +2466,7 @@ class core_message_external extends external_api {
      *
      * @param  int $messageid id of the message (in the message table)
      * @param  int $timeread timestamp for when the message should be marked read
-     * @return \core_external\external_description
+     * @return external_description
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @since 2.9
@@ -2540,7 +2532,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 2.9
      */
     public static function mark_message_read_returns() {
@@ -2574,7 +2566,7 @@ class core_message_external extends external_api {
      *
      * @param int $notificationid id of the notification
      * @param int $timeread timestamp for when the notification should be marked read
-     * @return \core_external\external_description
+     * @return external_description
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      */
@@ -2621,7 +2613,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function mark_notification_read_returns() {
         return new external_single_structure(
@@ -2755,7 +2747,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.6
      */
     public static function delete_conversations_by_id_returns() {
@@ -2784,7 +2776,7 @@ class core_message_external extends external_api {
      * @param  int $messageid the message id
      * @param  int $userid the user id of who we want to delete the message for
      * @param  bool $read if is a message read (default to true)
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.1
      */
@@ -2830,7 +2822,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.1
      */
     public static function delete_message_returns() {
@@ -2873,7 +2865,7 @@ class core_message_external extends external_api {
      * @param  int $userid the user id
      * @param  string $name the name of the processor
      * @param  array $formvalues the form values
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.2
      */
@@ -2911,7 +2903,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.2
      */
     public static function message_processor_config_form_returns() {
@@ -2938,7 +2930,7 @@ class core_message_external extends external_api {
      *
      * @param int $userid
      * @param string $name the name of the processor
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.2
      */
@@ -2977,7 +2969,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.2
      */
     public static function get_message_processor_returns() {
@@ -3117,7 +3109,7 @@ class core_message_external extends external_api {
      * Get the notification preferences for a given user.
      *
      * @param int $userid id of the user, 0 for current user
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.2
      */
@@ -3149,7 +3141,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.2
      */
     public static function get_user_notification_preferences_returns() {
@@ -3179,7 +3171,7 @@ class core_message_external extends external_api {
      * Get the notification preferences for a given user.
      *
      * @param int $userid id of the user, 0 for current user
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.2
      */
@@ -3227,7 +3219,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.2
      */
     public static function get_user_message_preferences_returns() {
@@ -3294,7 +3286,7 @@ class core_message_external extends external_api {
     /**
      * Return a description of the returns for the create_user_favourite_conversations() method.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function set_favourite_conversations_returns() {
         return new external_warnings();
@@ -3353,7 +3345,7 @@ class core_message_external extends external_api {
     /**
      * Unset favourite conversations return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function unset_favourite_conversations_returns() {
         return new external_warnings();
@@ -3425,7 +3417,7 @@ class core_message_external extends external_api {
     /**
      * Get member info return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_member_info_returns() {
         return new external_multiple_structure(
@@ -3490,7 +3482,7 @@ class core_message_external extends external_api {
     /**
      * Get conversation counts return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_conversation_counts_returns() {
         return new external_single_structure(
@@ -3567,7 +3559,7 @@ class core_message_external extends external_api {
     /**
      * Get unread conversation counts return description.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_unread_conversation_counts_returns() {
         return new external_single_structure(
@@ -3606,7 +3598,7 @@ class core_message_external extends external_api {
      *
      * @param  int $messageid the message id
      * @param  int $userid the user id of who we want to delete the message for all users, is no longer used.
-     * @return \core_external\external_description
+     * @return external_description
      * @throws moodle_exception
      * @since 3.7
      */
@@ -3643,7 +3635,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since 3.7
      */
     public static function delete_message_for_all_users_returns() {

@@ -77,7 +77,7 @@ if ($action) {
                 $cancelurl = new moodle_url('/admin/searchareas.php');
                 echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('confirm_' . $action, 'search', $a),
-                    new single_button($actionurl, get_string('continue'), 'post', single_button::BUTTON_PRIMARY),
+                    new single_button($actionurl, get_string('continue'), 'post', true),
                     new single_button($cancelurl, get_string('cancel'), 'get'));
                 echo $OUTPUT->footer();
                 exit;

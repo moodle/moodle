@@ -179,6 +179,7 @@ class api {
                            AND ra.roleid = :roleid
                            AND ra.userid = :userid
                          WHERE cm.cohortid ' . $cohortsql . '
+                           AND u.deleted = 0
                            AND ra.id IS NULL';
 
                 $toadd = $DB->get_records_sql($sql, $params);

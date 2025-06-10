@@ -16,7 +16,7 @@
 
 namespace quizaccess_delaybetweenattempts;
 
-use mod_quiz\quiz_settings;
+use quiz;
 use quizaccess_delaybetweenattempts;
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,7 +43,7 @@ class rule_test extends \basic_testcase {
         $quiz->timeclose = 0;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->timefinish = 10000;
 
@@ -77,7 +77,7 @@ class rule_test extends \basic_testcase {
         $quiz->timeclose = 0;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->timefinish = 10000;
 
@@ -116,7 +116,7 @@ class rule_test extends \basic_testcase {
         $quiz->timeclose = 0;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->timefinish = 10000;
 
@@ -167,7 +167,7 @@ class rule_test extends \basic_testcase {
         $quiz->timeclose = 15000;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->timefinish = 13000;
 
@@ -223,7 +223,7 @@ class rule_test extends \basic_testcase {
         $quiz->timeclose = 0;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->timestart = 9900;
         $attempt->timefinish = 10100;

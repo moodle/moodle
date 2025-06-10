@@ -1,0 +1,166 @@
+/* classes without the que prefix are used in the
+question editing form
+*/
+
+.gapfill .hascorrect {
+    background: lightblue;
+    border: solid thin black;
+}
+
+.gapfill .hasnocorrect {
+    border: solid thin black;
+    box-shadow: 3px 3px #7bc1f7;
+    font-style: italic;
+}
+
+.gapfill .attobackground {
+    background: lightgrey;
+    border-radius: .25rem;
+    border: 1px solid rgba(0, 0, 0, .15);
+    color: #55595c;
+    display: block;
+    height: 100%;
+    left: 0;
+    line-height: 1.25;
+    padding: .5rem .75rem;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.gapfill .item {
+    background: white;
+}
+
+/* elements shown via renderer.php at runtime */
+
+.que.gapfill span.gapfeedbackincorrect {
+    background: #faa;
+    background-color: #faa;
+    border-radius: 0.25em;
+    box-shadow: 2px 2px #7bc1f7;
+    color: darkslategray;
+}
+
+.que.gapfill span.gapfeedbackcorrect {
+    background: #afa;
+    background-color: #afa;
+    border-radius: 0.25em;
+    box-shadow: 2px 2px #7bc1f7;
+    color: darkslategray;
+}
+
+/* the gap where answers are dropped/keyed in */
+.que.gapfill input[type=text] {
+    background: white;
+    border: solid black thin;
+    border-radius: 4px;
+    color: black;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    padding: 1px;
+    display: inline-block;
+    height: inherit;
+}
+
+/* glow a little around the border */
+
+.que.gapfill input.droptarget:hover {
+    box-shadow: 0 0 8px #7bc1f7;
+}
+
+.que.gapfill input.droptarget:focus {
+    box-shadow: 0 0 8px #7bc1f7;
+}
+
+.que.gapfill input.droptarget {
+    text-align: center;
+    cursor: pointer;
+}
+.que.gapfill div.answeroptions {
+    margin-bottom: 15px;
+}
+
+.que.gapfill span.draggable.answers {
+    background: white;
+    border: solid 1px;
+    box-shadow: 3px 3px 4px #000;
+    cursor: pointer;
+    display: inline-block;
+    margin: 1px;
+    margin-right: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: middle;
+    z-index: 3;
+    border-radius: 4px;
+    width: max-content;
+}
+.que.gapfill span.draggable.answers.hide {
+    display: none;
+}
+
+
+.que.gapfill span.draggable.answers:hover {
+    box-shadow: 2px 2px 6px #000;
+}
+
+
+/*Displays the correct answer in delimiters if an
+incorrec answer was entered */
+.que.gapfill span.aftergapfeedback {
+    color: green;
+    font-style: italic;
+    font-weight: bold;
+}
+
+
+/* styling the dropdowns*/
+.que.gapfill.qtext select {
+    border: solid black thin;
+    border-radius: 3px;
+    color: black;
+    padding-bottom: 1px;
+    padding-top: 1px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.gapfilltable td {
+    border: solid;
+    border-width: thin;
+}
+
+.gapfillfirstcol {
+    background-color: #bcbbbb;
+}
+
+.gapfillcol {
+    background-color: lightgray;
+}
+
+.gapfilltable th {
+    background-color: lightgray;
+    border: solid;
+    border-width: thin;
+}
+
+.gapfilltable caption {
+    border-bottom: solid;
+    border-width: thin;
+}
+
+.que.gapfill input.correctduplicate {
+    background-color: #ff0;
+}
+
+.que.gapfill input.correct {
+    background-color: #afa;
+}
+
+.que.gapfill select.incorrect {
+    background-color: #faa;
+}
+.que.gapfill input.incorrect {
+    background-color: #faa;
+}

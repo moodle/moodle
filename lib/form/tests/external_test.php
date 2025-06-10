@@ -26,7 +26,7 @@
 namespace core_form;
 
 use advanced_testcase;
-use core_external\external_api;
+use external_api;
 
 defined('MOODLE_INTERNAL') || die();
 

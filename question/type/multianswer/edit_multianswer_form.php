@@ -58,10 +58,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
     public $reload = false;
     /** @var qtype_numerical_answer_processor used when validating numerical answers. */
     protected $ap = null;
-    /** @var bool */
-    public $regenerate;
-    /** @var array */
-    public $editas;
+
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         $this->regenerate = true;

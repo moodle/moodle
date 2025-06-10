@@ -1,0 +1,9 @@
+{{< core/modal }}
+    {{$title}}
+        {{#str}} turnitineula, plagiarism_turnitin {{/str}}
+    {{/title}}
+    {{$body}}
+        <!-- Modal content -->
+        <iframe frameborder="0" src="{{wwwroot}}/plagiarism/turnitin/extras.php?cmid={{cmid}}&cmd=useragreement&view_context=box_solid" class="iframe-ltilaunch-eula"></iframe>
+    {{/body}}
+{{/ core/modal }}

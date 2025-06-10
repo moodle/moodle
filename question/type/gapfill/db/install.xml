@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/gapfill/db" VERSION="2013070" COMMENT="XMLDB file for Moodle question/type/gapfill"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="question_gapfill" COMMENT="Options for gapfill questions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id" PREVIOUS="id" NEXT="answerdisplay"/>
+        <FIELD NAME="answerdisplay" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Display a shuffled list of answers true/false 1 or 0"  PREVIOUS="question" NEXT="delimitchars" />
+        <FIELD NAME="delimitchars" TYPE="char" LENGTH="2" NOTNULL="false" DEFAULT="[]" SEQUENCE="false" COMMENT="The characters that define fields, generally defaults to [] i.e. The [cat] sat on the [mat] where the fields are [cat] and [mat]" PREVIOUS="answerdisplay" NEXT="casesensitive"/>
+        <FIELD NAME="casesensitive" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="make marking case sensitive, e.g. if the answer is cat Cat will also be accepted as correct" PREVIOUS="delimitchars" NEXT="noduplicates"/>
+        <FIELD NAME="noduplicates" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Discard any duplicate answers given. Useful where multiple fields can take the same value through the use of the or (|) operator." PREVIOUS="casesensitive" NEXT="disableregex"/>
+        <FIELD NAME="disableregex" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="disable use of regular expressions for answer comparisons use plain strcmp" PREVIOUS="noduplicates" NEXT="fixedgapsize"/>
+        <FIELD NAME="fixedgapsize" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="all gaps set to the same size in the renderer" PREVIOUS="disableregex" NEXT="correctfeedback"/>
+        <FIELD NAME="optionsaftertext" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Show options after text" PREVIOUS="fixedgapsize" NEXT="correctfeedback"/>
+        <FIELD NAME="singleuse" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Single use draggables" PREVIOUS="optionsaftertext" NEXT="letterhints"/>
+        <FIELD NAME="letterhints" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Add letters from correct response incrementally in interactive mode" PREVIOUS="optionsaftertext" NEXT="correctfeedback"/>
+        <FIELD NAME="correctfeedback" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="optionsaftertext" NEXT="correctfeedbackformat"/>
+        <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="correctfeedback" NEXT="partiallycorrectfeedback" />
+        <FIELD NAME="partiallycorrectfeedback" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="correctfeedbackformat" NEXT="partiallycorrectfeedbackformat"/>
+        <FIELD NAME="partiallycorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="partiallycorrectfeedback" NEXT="incorrectfeedback"/>
+        <FIELD NAME="incorrectfeedback" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="partiallycorrectfeedbackformat" NEXT="incorrectfeedbackformat"/>
+        <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="incorrectfeedback"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="question_gapfill_settings" COMMENT="per gap settings for the gapfill question type ">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="text" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id (including instance) of each gap" />
+        <FIELD NAME="gaptext" TYPE="text" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="text of the gap including delimiter" />
+        <FIELD NAME="correctfeedback" TYPE="text" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback displayed for correct response" />
+        <FIELD NAME="incorrectfeedback" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback displayed for incorrect response" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="gapfill_gapsettings" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary" />
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

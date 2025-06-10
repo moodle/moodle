@@ -56,23 +56,47 @@ class behat_assignfeedback_editpdf extends behat_base {
      * @When /^I draw on the pdf$/
      */
     public function i_draw_on_the_pdf() {
+        // There appears to be a bug with detecting changes to
+        // annotations. If a PDF is annotated, then the student
+        // updates the submission, if the teacher then draws the
+        // exact same annotations on the new PDF, the readonly
+        // pages are not updated and the student's view of the
+        // annotated PDF still shows the old PDF. So we add some
+        // randomness in this step to ensure the annotations are
+        // different every time.
+        //
+        // This was added to test MDL-75898. See MDL-76659 for
+        // more details about the bug.
+        //
+        // Note - the start, move and end locations must all be different.
+        // If they are the same, it's possible the PDF tool selected does not activate.
+        $startx = 100 + rand(0, 50);
+        $starty = 250 + rand(0, 50);
         $js = ' (function() {
     var instance = M.assignfeedback_editpdf.instance;
-    var event = { clientX: 100, clientY: 250, preventDefault: function() {} };
+    var event = { clientX: ' . $startx . ', clientY: ' . $starty . ', preventDefault: function() {} };
     instance.edit_start(event);
 }()); ';
         $this->execute_script($js);
         sleep(1);
+
+        // Move slightly in one direction.
+        $movex = $startx + 50;
+        $movey = $starty + 30;
         $js = ' (function() {
     var instance = M.assignfeedback_editpdf.instance;
-    var event = { clientX: 150, clientY: 275, preventDefault: function() {} };
+    var event = { clientX: ' . $movex . ', clientY: ' . $movey . ', preventDefault: function() {} };
     instance.edit_move(event);
 }()); ';
         $this->execute_script($js);
         sleep(1);
+
+        // Move a little further to stop.
+        $endx = $movex + 15;
+        $endy = $movey + 15;
         $js = ' (function() {
     var instance = M.assignfeedback_editpdf.instance;
-    var event = { clientX: 200, clientY: 300, preventDefault: function() {} };
+    var event = { clientX: ' . $endx . ', clientY: ' . $endy . ', preventDefault: function() {} };
     instance.edit_end(event);
 }()); ';
         $this->execute_script($js);

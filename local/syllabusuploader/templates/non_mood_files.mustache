@@ -1,0 +1,80 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Local Syllabus Uploader
+ *
+ * @package   local_syllabusuploader
+ * @copyright 2023 onwards LSU Online & Continuing Education
+ * @copyright 2023 onwards Tim Hunt, Robert Russo, David Lowe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+<form method="POST" id="nonmood_file_form">
+<table class="table table-hover table-striped nonmood_files_table">
+    <caption>Files in: {{currentpath}}</caption>
+    <thead>
+        <tr>
+            {{! -------------------- }}
+            {{^fileURL}}
+                {{#sort}}
+                    <th><a href="?dir=desc">{{# str }} syllabusuploader_file_link, local_syllabusuploader {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                {{/sort}}
+                {{^sort}}
+                    <th><a href="?dir=asc">{{# str }} syllabusuploader_file_link, local_syllabusuploader {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                {{/sort}}
+            {{/fileURL}}
+
+            {{! -------------------- }}
+            {{^syllabusuploader_created}}
+                <th>{{# str }} syllabusuploader_filecreated, local_syllabusuploader {{/ str }}</th>
+            {{/syllabusuploader_created}}
+
+            {{! -------------------- }}
+            {{^syllabusuploader_delete}}
+                <th>{{# str }} syllabusuploader_delete, local_syllabusuploader {{/ str }}</th>
+            {{/syllabusuploader_delete}}
+            
+        </tr>
+    </thead>
+    <tbody>
+        {{#non_mood_files}}
+            <tr data-rowid='{{form_value}}' class="nonmood_file_form_{{form_value}}">
+                <input type="hidden" value="{{nonmood_filename}}" name="nonmood_filename"/>
+                <input type="hidden" value="{{nonmood_hash}}" name="nonmood_hash"/>
+                <input type="hidden" value="nonmood" name="syllabusuploader_or_nonmood"/>
+
+                <td><a href = "{{nonmood_fileurl}}" target = "_blank">{{nonmood_filename}}</a></td>
+                <td>{{nonmood_modified}}</td>
+                <td><button type="submit" class="btn btn-danger nonmood_file_delete"><i class="fa fa-trash"></i></button></td>
+            </tr>
+        {{/non_mood_files}}
+        
+        {{^non_mood_files}}
+            <tr>
+                <td colspan="5" align="center">{{# str }} syllabusuploader_nofiles, local_syllabusuploader {{/ str }}</td>
+            </tr>
+        {{/non_mood_files}}
+
+    </tbody>
+</table>
+</form>
+
+{{#js}}
+require(['jquery', 'local_syllabusuploader/events'], function($, EV) {
+    EV.registerSysFileEvents();
+});
+{{/js}}

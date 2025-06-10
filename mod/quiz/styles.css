@@ -265,6 +265,21 @@ table.quizattemptsummary .noreviewmessage {
     margin-right: auto;
 }
 
+#page-mod-quiz-view .generalbox#feedback {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 15px;
+}
+
+#page-mod-quiz-view .generalbox#feedback h2 {
+    margin: 0;
+}
+
+#page-mod-quiz-view .generalbox#feedback h3 {
+    text-align: left;
+}
+
 #page-mod-quiz-view .generalbox#feedback .overriddennotice {
     text-align: center;
     font-size: 0.7em;
@@ -309,6 +324,19 @@ body.path-mod-quiz .gradedattempt,
 body.path-mod-quiz table tbody tr.gradedattempt > td {
     border-color: #bce8f1;
     background-color: #d9edf7;
+}
+
+.quizattemptcounts {
+    clear: left;
+    text-align: center;
+    display: inline;
+    margin-left: 20%;
+}
+
+#page-mod-quiz-view .quizattemptcounts {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 /** Mod quiz summary **/
@@ -366,6 +394,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-comment .mform fieldset {
     margin: 0;
+    border-bottom: none;
 }
 
 #page-mod-quiz-comment .que {
@@ -377,6 +406,7 @@ table.quizreviewsummary td.cell {
     clear: both;
 }
 
+#page-mod-quiz-report div#commands,
 #page-mod-quiz-report .controls {
     text-align: center;
 }
@@ -392,6 +422,10 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-report .negcovar {
     border: medium solid pink;
+}
+
+#page-mod-quiz-report .toggleincludeauto {
+    text-align: center;
 }
 
 #page-mod-quiz-report .gradetheselink {
@@ -423,6 +457,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-report table#attempts {
     clear: both;
+    width: 80%;
     margin: 0.2em auto;
 }
 
@@ -555,6 +590,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit .slotnumber {
+    background-color: #d3d3d3;
     text-align: center;
     margin: 0.1em 0.5em;
     min-width: 2em;
@@ -1066,47 +1102,6 @@ table#categoryquestions {
 /* Base theme needs extra support. */
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
-}
-
-#page-mod-quiz-edit .inplaceeditable {
-    box-sizing: border-box;
-    background: #fdfdfe;
-    display: inline-block;
-    margin: 2px;
-    padding: 0.5em 0 0.5em 0.1em;
-}
-#page-mod-quiz-edit .inplaceeditable.inplaceeditingon input {
-    width: 64px;
-    vertical-align: middle;
-}
-#page-mod-quiz-edit .inplaceeditable-text {
-    color: #000;
-    text-align: right;
-}
-#page-mod-quiz-edit .inplaceeditable .quickeditlink {
-    color: #0f6cbf;
-    text-decoration: none;
-    background-color: transparent;
-    padding-left: 1px;
-    margin: 0;
-}
-#page-mod-quiz-edit .qickeditlink .aalink {
-    color: #0f6cbf;
-    text-align: right;
-    width: 10px;
-    margin: 2px;
-}
-#page-mod-quiz-edit .qickedition {
-    color: #0f6cbf;
-    text-align: right;
-    width: 10px;
-    margin: 2px;
-}
-#page-mod-quiz-edit .qickedition .visibleifjs {
-    text-align: right;
-}
-#page-mod-quiz-edit .qickeditlink {
-    text-align: right;
 }
 
 @media (max-width: 576px) {

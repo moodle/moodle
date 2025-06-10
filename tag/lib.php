@@ -24,8 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-
 /**
  * Return a list of page types
  *
@@ -52,7 +50,7 @@ function tag_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @return \core\output\inplace_editable
  */
 function core_tag_inplace_editable($itemtype, $itemid, $newvalue) {
-    external_api::validate_context(context_system::instance());
+    \external_api::validate_context(context_system::instance());
     if ($itemtype === 'tagname') {
         return \core_tag\output\tagname::update($itemid, $newvalue);
     } else if ($itemtype === 'tagareaenable') {

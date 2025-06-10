@@ -1405,7 +1405,7 @@ class question_type {
 
         $question = new stdClass();
         $question->courseid = $courseid;
-        $question->qtype = $this->name();
+        $question->qtype = $this->qtype;
         return array($form, $question);
     }
 

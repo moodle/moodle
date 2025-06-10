@@ -119,11 +119,12 @@ class analysis_for_subpart {
      * @param int               $questionid which question.
      * @param int               $variantno  which variant.
      * @param string            $subpartid  which sub part.
+     * @param int|null          $calculationtime time when the analysis was done. (Defaults to time()).
      */
-    public function cache($qubaids, $whichtries, $questionid, $variantno, $subpartid) {
+    public function cache($qubaids, $whichtries, $questionid, $variantno, $subpartid, $calculationtime = null) {
         foreach ($this->get_response_class_ids() as $responseclassid) {
             $analysisforclass = $this->get_response_class($responseclassid);
-            $analysisforclass->cache($qubaids, $whichtries, $questionid, $variantno, $subpartid, $responseclassid);
+            $analysisforclass->cache($qubaids, $whichtries, $questionid, $variantno, $subpartid, $calculationtime);
         }
     }
 

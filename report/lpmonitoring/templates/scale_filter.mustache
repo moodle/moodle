@@ -1,0 +1,41 @@
+{{!
+    Competency scale filter template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * competencyframeworkid - the competency framework Id of the scale associated to framework or competency
+    * scaleid - the scale ID
+    * scaleconfiguration - scale configuration with colors
+      * color - the color of the scale value
+      * id - scale value
+      * name - name of the scale value
+}}
+<div class="scalecontainer">
+    {{#scales}}
+    <div class="scaleitem">
+        <label>{{name}}</label>
+        <div class="ln_solid"></div>
+        <div class="">
+            <ul class="to_do">
+                {{#scaleconfiguration}}
+                <li>
+                    <div class="checkbox checkbox-primary">
+                        <input data-scaleid="{{scaleid}}" data-scalevalue="{{id}}" id="scalevalue-{{scaleid}}-{{id}}" type="checkbox" class="styled scalefiltervalues">
+                        <label for="scalevalue-{{scaleid}}-{{id}}"><i class="fa fa-square" style="color:{{color}}"></i> {{name}}</label>
+                    </div>
+                </li>
+                {{/scaleconfiguration}}
+            </ul>
+        </div>
+    </div>
+    {{/scales}}
+    {{^scales}}
+    <div class="span6">
+    <p class="alert alert-info">
+        {{#str}}noscaleavailable, report_lpmonitoring{{/str}}
+    </p>
+    </div>
+    {{/scales}}
+</div>

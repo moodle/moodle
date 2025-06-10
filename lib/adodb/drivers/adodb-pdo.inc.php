@@ -234,7 +234,7 @@ class ADODB_pdo extends ADOConnection {
 			return call_user_func_array(array($this->_driver, 'Concat'), $args);
 		}
 
-		return call_user_func_array(parent::class . '::Concat', $args);
+		return call_user_func_array('parent::Concat', $args);
 	}
 
 	/**
@@ -254,7 +254,7 @@ class ADODB_pdo extends ADOConnection {
 		}
 
 		// No driver specific method defined, use mysql format '?'
-		return call_user_func_array(parent::class . '::param', $args);
+		return call_user_func_array('parent::param', $args);
 	}
 
 	// returns true or false

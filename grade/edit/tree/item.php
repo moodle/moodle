@@ -57,12 +57,12 @@ $heading = get_string('itemsedit', 'grades');
 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (!empty($grade_item->outcomeid) && !empty($CFG->enableoutcomes)) {
-        $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
         redirect($gpr->add_url_params($url));
     }
     if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
         $grade_category = $grade_item->get_item_category();
-        $url = $CFG->wwwroot.'/grade/edit/tree/category.php?id='.$grade_category->id.'&amp;courseid='.$courseid;
+        $url = new moodle_url('/grade/edit/tree/category.php', ['id' => $grade_category->id, 'courseid' => $courseid]);
         redirect($gpr->add_url_params($url));
     }
 
@@ -170,6 +170,13 @@ if ($mform->is_cancelled()) {
     }
 
     if (empty($gradeitem->id)) {
+        // BEGIN LSU Weighted Mean Extra Credit
+        $ectest = isset($data->extracred);
+        if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $ectest == 1) {
+            $gradeitem->aggregationcoef = $gradeitem->aggregationcoef <> 0 ? abs($gradeitem->aggregationcoef) * -1 : -1;
+        }
+        // END LSU Weighted Mean Extra Credit
+
         $gradeitem->itemtype = 'manual'; // All new items to be manual only.
         $gradeitem->insert();
 
@@ -179,7 +186,18 @@ if ($mform->is_cancelled()) {
         }
 
     } else {
+        // BEGIN LSU Weighted Mean Extra Credit
+        $ectest = isset($data->extracred);
+        if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $ectest == 1) {
+            $gradeitem->aggregationcoef = $gradeitem->aggregationcoef <> 0 ? abs($gradeitem->aggregationcoef) * -1 : -1;
+        }
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM && $data->aggregationcoef == 1) {
+            $gradeitem->aggregationcoef2 = 0;
+            $gradeitem->weightoverride = 1;
+        }
+
         $gradeitem->update();
+        // END LSU Weighted Mean Extra Credit
 
         if (!empty($data->rescalegrades) && $data->rescalegrades == 'yes') {
             $newmin = $gradeitem->grademin;
@@ -188,10 +206,9 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    if ($item->cancontrolvisibility) {
-        // Update hiding flag.
-        $gradeitem->set_hidden($hide, true);
-    }
+    // BEGIN LSU Visibility Issues.
+    $gradeitem->set_hidden($hide, true);
+    // END LSU Visibility Issues.
 
     $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
     $gradeitem->set_locked($locked, false, true);

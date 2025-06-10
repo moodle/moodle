@@ -181,8 +181,25 @@ class tgz_extractor {
         $done = 0;
         $beforeprogress = -1;
         while (true) {
-            if ($bufferpos == $bufferlength) {
-                $buffer = gzread($gz, self::READ_BLOCK_SIZE);
+            if ($bufferpos == $bufferlength || $bufferlength - $bufferpos < tgz_packer::TAR_BLOCK_SIZE) {
+                if ($bufferpos == $bufferlength) {
+                    $buffer = gzread($gz, self::READ_BLOCK_SIZE);
+                } else {
+                    // We are not guaranteed to get a full READ_BLOCK_SIZE worth of
+                    // data from gzread, so if the buffer doesn't have enough data for
+                    // a TAR BLOCK, perform another read and realign the buffer.
+                    // A single read should be enough - but its possible to
+                    // still not have TAR_BLOCK_SIZE bytes. Hence the loop
+                    // until we either have enough, or hit EOF.
+                    $buffer = substr($buffer, $bufferpos - $bufferlength);
+                    while (strlen($buffer) < tgz_packer::TAR_BLOCK_SIZE) {
+                        $newbuffer = gzread($gz, self::READ_BLOCK_SIZE);
+                        if (strlen($newbuffer) == 0) {
+                            break;
+                        }
+                        $buffer .= $newbuffer;
+                    }
+                }
                 $bufferpos = 0;
                 $bufferlength = strlen($buffer);
                 if ($bufferlength == 0) {

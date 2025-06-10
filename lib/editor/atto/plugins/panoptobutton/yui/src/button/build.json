@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_panoptobutton-button",
+    "builds": {
+        "moodle-atto_panoptobutton-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

@@ -27,6 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
+use moodle_url;
 
 /**
  * Class for displaying the day on month view.

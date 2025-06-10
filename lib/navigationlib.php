@@ -575,11 +575,20 @@ class navigation_node implements renderable {
 
     /**
      * Sets the title for this node and forces Moodle to utilise it.
-     * @param string $title
+     *
+     * Note that this method is named identically to the public "title" property of the class, which unfortunately confuses
+     * our Mustache renderer, because it will see the method and try and call it without any arguments (hence must be nullable)
+     * before trying to access the public property
+     *
+     * @param string|null $title
+     * @return string
      */
-    public function title($title) {
-        $this->title = $title;
-        $this->forcetitle = true;
+    public function title(?string $title = null): string {
+        if ($title !== null) {
+            $this->title = $title;
+            $this->forcetitle = true;
+        }
+        return (string) $this->title;
     }
 
     /**
@@ -1645,8 +1654,7 @@ class global_navigation extends navigation_node {
             $this->search_for_active_node();
         }
 
-        // If the user is not logged in modify the navigation structure as detailed
-        // in {@link http://docs.moodle.org/dev/Navigation_2.0_structure}
+        // If the user is not logged in modify the navigation structure.
         if (!isloggedin()) {
             $activities = clone($this->rootnodes['site']->children);
             $this->rootnodes['site']->remove();
@@ -3638,6 +3646,7 @@ class navbar extends navigation_node {
         } else if ($this->hasitems !== false) {
             return true;
         }
+        $outcome = false;
         if (count($this->children) > 0 || count($this->prependchildren) > 0) {
             // There have been manually added items - there are definitely items.
             $outcome = true;
@@ -4671,6 +4680,31 @@ class settings_navigation extends navigation_node {
             }
         }
 
+        // BEGIN LSU Grade Report Shortcut Enhancement
+        // Add view grade report is permitted.
+        $reportavailable = false;
+        if (has_capability('moodle/grade:viewall', $coursecontext)) {
+            $reportavailable = true;
+        } else if (!empty($course->showgrades)) {
+            $reports = core_component::get_plugin_list('gradereport');
+            if (is_array($reports) && count($reports)>0) {     // Get all installed reports
+                arsort($reports); // user is last, we want to test it first
+                foreach ($reports as $plugin => $plugindir) {
+                    if (has_capability('gradereport/'.$plugin.':view', $coursecontext)) {
+                        //stop when the first visible plugin is found
+                        $reportavailable = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($reportavailable) {
+            $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
+            $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
+        }
+        // End LSU Grade Report Shortcut Enhancement
+
         // Check if we can view the gradebook's setup page.
         if ($adminoptions->gradebook) {
             $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $course->id));
@@ -4861,11 +4895,20 @@ class settings_navigation extends navigation_node {
         }
 
         // Restore this activity
+        // BEGIN LSU course restore limits to course ceators.
         $featuresfunc = $this->page->activityname.'_supports';
-        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/restore:restoreactivity', $this->page->cm->context)) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
+        if (function_exists($featuresfunc) 
+            && $featuresfunc(FEATURE_BACKUP_MOODLE2)) {
+            $teachersrestore = isset($CFG->teachersrestore) ? $CFG->teachersrestore : false;
+            if (($teachersrestore
+                && has_capability('moodle/restore:restoreactivity', $this->page->cm->context))
+                || (has_capability('moodle/restore:restoreactivity', $this->page->cm->context)
+                && has_capability('moodle/course:create', $this->context))) {
+                $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$this->page->cm->context->id));
+                $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
+            }
         }
+        // END LSU course restore limits to course ceators.
 
         // Allow the active advanced grading method plugin to append its settings
         $featuresfunc = $this->page->activityname.'_supports';
@@ -5519,10 +5562,22 @@ class settings_navigation extends navigation_node {
         }
 
         // Restore.
-        if (has_capability('moodle/restore:restorecourse', $catcontext)) {
+        // BEGIN LSU course restore limits to course ceators.
+        $teachersrestore = isset($CFG->teachersrestore) ? $CFG->teachersrestore : false;
+        if (($teachersrestore
+            && has_capability('moodle/restore:restorecourse', $catcontext))
+            || (has_capability('moodle/restore:restorecourse', $catcontext)
+            && has_capability('moodle/course:create', $catcontext))) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid' => $catcontext->id));
-            $categorynode->add(get_string('restorecourse', 'admin'), $url, self::TYPE_SETTING, null, 'restorecourse', new pix_icon('i/restore', ''));
+            $categorynode->add(
+                get_string('restorecourse', 'admin'),
+                $url,
+                self::TYPE_SETTING,
+                null,
+                'restorecourse',
+                new pix_icon('i/restore', ''));
         }
+        // END LSU course restore limits to course ceators.
 
         // Let plugins hook into category settings navigation.
         $pluginsfunction = get_plugins_with_function('extend_navigation_category_settings', 'lib.php');

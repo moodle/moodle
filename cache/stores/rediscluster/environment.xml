@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+  <PLUGIN name="cachestore_rediscluster">
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="redis" level="required">
+      </PHP_EXTENSION>
+    </PHP_EXTENSIONS>
+  </PLUGIN>
+</COMPATIBILITY_MATRIX>

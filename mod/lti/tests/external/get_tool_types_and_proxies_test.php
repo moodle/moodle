@@ -16,8 +16,6 @@
 
 namespace mod_lti\external;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -50,7 +48,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
         $this->generate_tool_type(1, $proxy->id);
 
         $data = get_tool_types_and_proxies::execute(0, false, 50, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(1, $data['types']);
         $type = $data['types'][0];
@@ -73,7 +71,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false,  5, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(2, $data['types']);
         $this->assertCount(3, $data['proxies']);
@@ -91,7 +89,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false, 5, 10);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(2, $data['types']);
         $this->assertCount(0, $data['proxies']);
@@ -109,7 +107,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false,  0, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(10, $data['types']);
         $this->assertCount(10, $data['proxies']);

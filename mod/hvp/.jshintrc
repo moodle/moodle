@@ -1,0 +1,10 @@
+{
+  "esversion": 6,
+  "globals": {
+    "H5PDataView": true,
+    "H5P": true,
+    "H5PIntegration": true,
+    "HVPSettingsHideKey": true,
+    "console": true
+  }
+}

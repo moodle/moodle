@@ -1,0 +1,10 @@
+{
+    "name": "ecampbell/moodle-atto_wordimport",
+    "type": "moodle-atto",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "wordimport"
+    }
+}

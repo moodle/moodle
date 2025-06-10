@@ -22,7 +22,6 @@
  */
 
 import Pending from 'core/pending';
-import {registerManager, init as defaultInit} from 'core/sticky-footer';
 
 const SELECTORS = {
     STICKYFOOTER: '.stickyfooter',
@@ -36,8 +35,6 @@ const CLASSES = {
 let initialized = false;
 
 let previousScrollPosition = 0;
-
-let enabled = false;
 
 /**
  * Return the current page scroll position.
@@ -57,9 +54,6 @@ const getScrollPosition = () => {
  * @package
  */
 const scrollSpy = () => {
-    if (!enabled) {
-        return;
-    }
     // Ignore scroll if page size is not small.
     if (document.body.clientWidth >= 768) {
         return;
@@ -67,29 +61,17 @@ const scrollSpy = () => {
     // Detect if scroll is going down.
     let scrollPosition = getScrollPosition();
     if (scrollPosition > previousScrollPosition) {
-        hideStickyFooter();
+        disableStickyFooter();
     } else {
-        showStickyFooter();
+        enableStickyFooter();
     }
     previousScrollPosition = scrollPosition;
 };
 
 /**
- * Return if the sticky footer must be enabled by default or not.
- * @returns {Boolean} true if the sticky footer is enabled automatic.
+ * Enable sticky footer in the page.
  */
-const isDisabledByDefault = () => {
-    const footer = document.querySelector(SELECTORS.STICKYFOOTER);
-    if (!footer) {
-        return false;
-    }
-    return !!footer.dataset.disable;
-};
-
-/**
- * Show the sticky footer in the page.
- */
-const showStickyFooter = () => {
+export const enableStickyFooter = () => {
     // We need some seconds to make sure the CSS animation is ready.
     const pendingPromise = new Pending('theme_boost/sticky-footer:enabling');
     const footer = document.querySelector(SELECTORS.STICKYFOOTER);
@@ -102,28 +84,12 @@ const showStickyFooter = () => {
 };
 
 /**
- * Hide the sticky footer in the page.
- */
-const hideStickyFooter = () => {
-    document.body.classList.remove(CLASSES.HASSTICKYFOOTER);
-    const page = document.querySelector(SELECTORS.PAGE);
-    page?.classList.remove(CLASSES.HASSTICKYFOOTER);
-};
-
-/**
- * Enable sticky footer in the page.
- */
-export const enableStickyFooter = () => {
-    enabled = true;
-    showStickyFooter();
-};
-
-/**
  * Disable sticky footer in the page.
  */
 export const disableStickyFooter = () => {
-    enabled = false;
-    hideStickyFooter();
+    document.body.classList.remove(CLASSES.HASSTICKYFOOTER);
+    const page = document.querySelector(SELECTORS.PAGE);
+    page?.classList.remove(CLASSES.HASSTICKYFOOTER);
 };
 
 /**
@@ -132,19 +98,10 @@ export const disableStickyFooter = () => {
 export const init = () => {
     // Prevent sticky footer in behat.
     if (initialized || document.body.classList.contains('behat-site')) {
-        defaultInit();
         return;
     }
     initialized = true;
-    if (!isDisabledByDefault()) {
-        enableStickyFooter();
-    }
+    enableStickyFooter();
     const content = document.querySelector(SELECTORS.PAGE) ?? document.body;
-
     content.addEventListener("scroll", scrollSpy);
-
-    registerManager({
-        enableStickyFooter,
-        disableStickyFooter,
-    });
 };

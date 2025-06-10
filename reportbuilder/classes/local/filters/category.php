@@ -61,8 +61,7 @@ class category extends base {
     public function get_sql_filter(array $values): array {
         global $DB;
 
-        $fieldsql = $this->filter->get_field_sql();
-        $params = $this->filter->get_field_params();
+        [$fieldsql, $params] = $this->filter->get_field_sql_and_params();
 
         $category = (int) ($values["{$this->name}_value"] ?? 0);
         $subcategories = !empty($values["{$this->name}_subcategories"]);
@@ -79,6 +78,11 @@ class category extends base {
 
         // Sub-category matching on path of selected category.
         if ($subcategories) {
+
+            // We need to re-use the original filter SQL here, while ensuring parameter uniqueness is preserved.
+            [$fieldsql, $params1] = $this->filter->get_field_sql_and_params(1);
+            $params = array_merge($params, $params1);
+
             $paramcategorypath = database::generate_param_name();
             $params[$paramcategorypath] = "%/{$category}/%";
             $sql .= " OR {$fieldsql} IN (

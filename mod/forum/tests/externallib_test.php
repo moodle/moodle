@@ -16,7 +16,6 @@
 
 namespace mod_forum;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_forum_external;
 
@@ -195,7 +194,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $forums = mod_forum_external::get_forums_by_courses(array($course1->id, $course2->id));
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $forums = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(2, $forums);
         foreach ($forums as $forum) {
             $this->assertEquals($expectedforums[$forum['id']], $forum);
@@ -203,7 +202,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $forums = mod_forum_external::get_forums_by_courses();
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $forums = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(2, $forums);
         foreach ($forums as $forum) {
             $this->assertEquals($expectedforums[$forum['id']], $forum);
@@ -215,7 +214,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $forums = mod_forum_external::get_forums_by_courses();
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $forums = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(1, $forums);
         $this->assertEquals($expectedforums[$forum1->id], $forums[0]);
         $this->assertTrue($forums[0]['cancreatediscussions']);
@@ -223,12 +222,12 @@ class externallib_test extends externallib_advanced_testcase {
         // Change the type of the forum, the user shouldn't be able to add discussions.
         $DB->set_field('forum', 'type', 'news', array('id' => $forum1->id));
         $forums = mod_forum_external::get_forums_by_courses();
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $forums = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertFalse($forums[0]['cancreatediscussions']);
 
         // Call for the second course we unenrolled the user from.
         $forums = mod_forum_external::get_forums_by_courses(array($course2->id));
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $forums = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(0, $forums);
     }
 
@@ -265,11 +264,11 @@ class externallib_test extends externallib_advanced_testcase {
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         $response = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
-        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $response = \external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
         $this->assertTrue($response['userstate']['favourited']);
 
         $response = mod_forum_external::toggle_favourite_state($discussion1->id, 0);
-        $response = external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
+        $response = \external_api::clean_returnvalue(mod_forum_external::toggle_favourite_state_returns(), $response);
         $this->assertFalse($response['userstate']['favourited']);
 
         $this->setUser(0);
@@ -318,11 +317,11 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setAdminUser();
         $response = mod_forum_external::set_pin_state($discussion1->id, 1);
-        $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
+        $response = \external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
         $this->assertTrue($response['pinned']);
 
         $response = mod_forum_external::set_pin_state($discussion1->id, 0);
-        $response = external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
+        $response = \external_api::clean_returnvalue(mod_forum_external::set_pin_state_returns(), $response);
         $this->assertFalse($response['pinned']);
     }
 
@@ -494,7 +493,7 @@ class externallib_test extends externallib_advanced_testcase {
             'subject' => $discussion1reply2->subject,
             'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply2->subject}",
             'message' => $message,
-            'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+            'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'unread' => null,
             'isdeleted' => false,
             'isprivatereply' => false,
@@ -553,7 +552,7 @@ class externallib_test extends externallib_advanced_testcase {
             'subject' => $discussion1reply1->subject,
             'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
             'message' => $message,
-            'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+            'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'unread' => null,
             'isdeleted' => false,
             'isprivatereply' => false,
@@ -601,7 +600,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test a discussion with two additional posts (total 3 posts).
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC', true);
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(3, count($posts['posts']));
 
         // Unset the initial discussion post.
@@ -611,7 +610,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check we receive the unread count correctly on tracked forum.
         forum_tp_count_forum_unread_posts($forum2cm, $course1, true);    // Reset static cache.
         $result = mod_forum_external::get_forums_by_courses(array($course1->id));
-        $result = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $result);
         foreach ($result as $f) {
             if ($f['id'] == $forum2->id) {
                 $this->assertEquals(1, $f['unreadpostscount']);
@@ -620,31 +619,31 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test discussion without additional posts. There should be only one post (the one created by the discussion).
         $posts = mod_forum_external::get_discussion_posts($discussion2->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(1, count($posts['posts']));
 
         // Test discussion tracking on not tracked forum.
         $result = mod_forum_external::view_forum_discussion($discussion1->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEmpty($result['warnings']);
 
         // Test posts have not been marked as read.
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         foreach ($posts['posts'] as $post) {
             $this->assertNull($post['unread']);
         }
 
         // Test discussion tracking on tracked forum.
         $result = mod_forum_external::view_forum_discussion($discussion3->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEmpty($result['warnings']);
 
         // Test posts have been marked as read.
         $posts = mod_forum_external::get_discussion_posts($discussion3->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         foreach ($posts['posts'] as $post) {
             $this->assertFalse($post['unread']);
         }
@@ -652,7 +651,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check we receive 0 unread posts.
         forum_tp_count_forum_unread_posts($forum2cm, $course1, true);    // Reset static cache.
         $result = mod_forum_external::get_forums_by_courses(array($course1->id));
-        $result = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $result);
         foreach ($result as $f) {
             if ($f['id'] == $forum2->id) {
                 $this->assertEquals(0, $f['unreadpostscount']);
@@ -723,7 +722,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test where some posts have been marked as deleted.
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $deletedsubject = get_string('forumsubjectdeleted', 'mod_forum');
         $deletedmessage = get_string('forumbodydeleted', 'mod_forum');
 
@@ -802,14 +801,14 @@ class externallib_test extends externallib_advanced_testcase {
             -1, $options);
 
         $posts = mod_forum_external::get_discussion_posts($discussion['discussionid'], 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $post = $posts['posts'][0];
         $this->assertCount(0, $post['messageinlinefiles']);
         $this->assertEmpty($post['messageinlinefiles']);
 
         $posts = mod_forum_external::get_discussion_posts($discussion['discussionid'], 'modified', 'DESC',
             true);
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $post = $posts['posts'][0];
         $this->assertCount(1, $post['messageinlinefiles']);
         $this->assertEquals('fakeimage.png', $post['messageinlinefiles'][0]['filename']);
@@ -858,7 +857,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // We still see only the original post.
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(1, count($posts['posts']));
 
         // Add a new reply, the user is going to be able to see only the original post and their new post.
@@ -869,7 +868,7 @@ class externallib_test extends externallib_advanced_testcase {
         $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(2, count($posts['posts']));
 
         // Now, we can fake the time of the user post, so he can se the rest of the discussion posts.
@@ -877,7 +876,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->update_record('forum_posts', $discussion1reply2);
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(3, count($posts['posts']));
     }
 
@@ -996,7 +995,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id.
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $expectedreturn = array(
             'discussions' => array($expecteddiscussions),
             'warnings' => array()
@@ -1035,7 +1034,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertTrue($discussions['discussions'][0]['canlock']);
     }
 
@@ -1067,7 +1066,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setAdminUser();
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1076,7 +1075,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1200,7 +1199,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $expectedreturn = array(
             'discussions' => array($expecteddiscussions),
             'warnings' => array()
@@ -1221,7 +1220,7 @@ class externallib_test extends externallib_advanced_testcase {
         $t = mod_forum_external::toggle_favourite_state($discussion1->id, 1);
         $expectedreturn['discussions'][0]['starred'] = true;
         $discussions = mod_forum_external::get_forum_discussions($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.
@@ -1246,7 +1245,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $discussions = mod_forum_external::get_forum_discussions($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertTrue($discussions['discussions'][0]['canlock']);
     }
 
@@ -1364,7 +1363,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by last post date in descending order by default.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion3->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
@@ -1375,7 +1374,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_LASTPOST_ASC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by last post date in ascending order.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
@@ -1383,7 +1382,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_CREATED_DESC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by discussion creation date in descending order.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion3->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
@@ -1391,7 +1390,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_CREATED_ASC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by discussion creation date in ascending order.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion2->id);
@@ -1399,7 +1398,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_REPLIES_DESC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by the number of replies in descending order.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion1->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion3->id);
@@ -1407,7 +1406,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_REPLIES_ASC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by the number of replies in ascending order.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
         $this->assertEquals($discussions['discussions'][1]['discussion'], $discussion3->id);
@@ -1419,7 +1418,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by last post date in descending order by default.
         // Pinned discussions should be at the top of the list.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
@@ -1428,7 +1427,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing forum id and sort order parameter.
         $discussions = mod_forum_external::get_forum_discussions($forum1->id, $discussionlistvault::SORTORDER_LASTPOST_ASC);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         // Discussions should be ordered by last post date in ascending order.
         // Pinned discussions should be at the top of the list.
         $this->assertEquals($discussions['discussions'][0]['discussion'], $discussion2->id);
@@ -1479,10 +1478,10 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($otheruser->id, $course->id);
 
         $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
-        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+        $createdpost = \external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
 
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(2, count($posts['posts']));
 
@@ -1506,7 +1505,7 @@ class externallib_test extends externallib_advanced_testcase {
         foreach ($formats as $format) {
             $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost,
                 'with some format', 'some formatted here...', $options, $format);
-            $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+            $createdpost = \external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
             $dbformat = $DB->get_field('forum_posts', 'messageformat', ['id' => $createdpost['postid']]);
             $this->assertEquals($format, $dbformat);
         }
@@ -1517,7 +1516,7 @@ class externallib_test extends externallib_advanced_testcase {
         $options = [['name' => 'topreferredformat', 'value' => true]];
         $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost,
             'interesting subject', 'with some https://example.com link', $options, FORMAT_MOODLE);
-        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+        $createdpost = \external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
         $dbpost = $DB->get_record('forum_posts', ['id' => $createdpost['postid']]);
         // Format HTML and content converted, we should get.
         $this->assertEquals(FORMAT_HTML, $dbpost->messageformat);
@@ -1558,10 +1557,10 @@ class externallib_test extends externallib_advanced_testcase {
                      . '" alt="inlineimage">.';
         $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost, 'new post inline attachment',
                                                                $dummytext, $options);
-        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+        $createdpost = \external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
 
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         // Can't guarantee order of posts during tests.
         $postfound = false;
@@ -1636,7 +1635,7 @@ class externallib_test extends externallib_advanced_testcase {
         mod_forum_external::add_discussion_post($discussion1->firstpost, 'some subject', 'some text here...');
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(2, count($posts['posts']));
         // The user should be subscribed to the discussion after adding a discussion post.
@@ -1649,7 +1648,7 @@ class externallib_test extends externallib_advanced_testcase {
         mod_forum_external::add_discussion_post($discussion1->firstpost, 'some subject 1', 'some text here 1...');
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(3, count($posts['posts']));
         // The user should still be subscribed to the discussion after adding a discussion post.
@@ -1660,7 +1659,7 @@ class externallib_test extends externallib_advanced_testcase {
         mod_forum_external::add_discussion_post($discussion2->firstpost, 'some subject 2', 'some text here 2...');
 
         $posts = mod_forum_external::get_discussion_posts($discussion2->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(2, count($posts['posts']));
         // The user should still not be subscribed to the discussion after adding a discussion post.
@@ -1676,7 +1675,7 @@ class externallib_test extends externallib_advanced_testcase {
             $options);
 
         $posts = mod_forum_external::get_discussion_posts($discussion2->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(3, count($posts['posts']));
         // The user should now be subscribed to the discussion after adding a discussion post.
@@ -1714,10 +1713,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setAdminUser();
         $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...');
-        $createddiscussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
+        $createddiscussion = \external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1732,7 +1731,7 @@ class externallib_test extends externallib_advanced_testcase {
                                                                                          'value' => true)));
         $discussion3 = mod_forum_external::add_discussion($forum->id, 'the non pinnedsubject', 'some 3 text here...');
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertCount(3, $discussions['discussions']);
         $this->assertEquals($discussion2pinned['discussionid'], $discussions['discussions'][0]['discussion']);
 
@@ -1774,10 +1773,10 @@ class externallib_test extends externallib_advanced_testcase {
                          array('name' => 'attachmentsid', 'value' => $draftidattach));
         $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the inline attachment subject',
                                                                 $dummytext, -1, $options);
-        $createddiscussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
+        $createddiscussion = \external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(4, $discussions['discussions']);
         $this->assertCount(0, $createddiscussion['warnings']);
@@ -1858,10 +1857,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Nost add the discussion using a valid group.
         $discussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...', $group->id);
-        $discussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
+        $discussion = \external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1870,10 +1869,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now add a discussions without indicating a group. The function should guess the correct group.
         $discussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...');
-        $discussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
+        $discussion = \external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(2, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1886,10 +1885,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now add a discussions without indicating a group. The function should guess the correct group (the first one).
         $discussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...');
-        $discussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
+        $discussion = \external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(3, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -1938,13 +1937,13 @@ class externallib_test extends externallib_advanced_testcase {
         // Set the lock.
         self::setAdminUser();
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
-        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertTrue($result['locked']);
         $this->assertNotEquals(0, $result['times']['locked']);
 
         // Unset the lock.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
-        $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertFalse($result['locked']);
         $this->assertEquals('0', $result['times']['locked']);
     }
@@ -1972,7 +1971,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
 
         $result = mod_forum_external::can_add_discussion($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertFalse($result['canpindiscussions']);
         $this->assertTrue($result['cancreateattachment']);
@@ -1980,7 +1979,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Disable attachments.
         $DB->set_field('forum', 'maxattachments', 0, array('id' => $forum->id));
         $result = mod_forum_external::can_add_discussion($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertFalse($result['canpindiscussions']);
         $this->assertFalse($result['cancreateattachment']);
@@ -1988,7 +1987,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setAdminUser();
         $result = mod_forum_external::can_add_discussion($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertTrue($result['canpindiscussions']);
         $this->assertTrue($result['cancreateattachment']);
@@ -2013,12 +2012,12 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
 
         $result = mod_forum_external::can_add_discussion($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertFalse($result['status']);
 
         self::setAdminUser();
         $result = mod_forum_external::can_add_discussion($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertTrue($result['status']);
     }
 
@@ -2094,7 +2093,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Retrieve the rating for the post as student.
         $this->setUser($user1);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertCount(1, $posts['ratinginfo']['ratings']);
         $this->assertTrue($posts['ratinginfo']['ratings'][0]['canviewaggregate']);
         $this->assertFalse($posts['ratinginfo']['canviewall']);
@@ -2105,7 +2104,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Retrieve the rating for the post as teacher.
         $this->setUser($teacher);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertCount(1, $posts['ratinginfo']['ratings']);
         $this->assertTrue($posts['ratinginfo']['ratings'][0]['canviewaggregate']);
         $this->assertTrue($posts['ratinginfo']['canviewall']);
@@ -2134,7 +2133,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setUser($student);
         $result = mod_forum_external::get_forum_access_information($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
 
         // Check default values for capabilities.
         $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
@@ -2156,7 +2155,7 @@ class externallib_test extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $result = mod_forum_external::get_forum_access_information($forum->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_forum_access_information_returns(), $result);
         unset($result['warnings']);
         foreach ($result as $capname => $capvalue) {
             if (in_array($capname, $enabledcaps)) {
@@ -2214,7 +2213,7 @@ class externallib_test extends externallib_advanced_testcase {
                     'value' => true,
                 ],
             ]);
-        $post = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $post);
+        $post = \external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $post);
         $privatereply = $DB->get_record('forum_posts', array('id' => $post['postid']));
         $this->assertEquals($student1->id, $privatereply->privatereplyto);
         // Bump the time of the private reply to ensure order.
@@ -2225,28 +2224,28 @@ class externallib_test extends externallib_advanced_testcase {
         // The teacher will receive their private reply.
         self::setUser($teacher1);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(2, count($posts['posts']));
         $this->assertTrue($posts['posts'][0]['isprivatereply']);
 
         // Another teacher on the course will also receive the private reply.
         self::setUser($teacher2);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(2, count($posts['posts']));
         $this->assertTrue($posts['posts'][0]['isprivatereply']);
 
         // The student will receive the private reply.
         self::setUser($student1);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(2, count($posts['posts']));
         $this->assertTrue($posts['posts'][0]['isprivatereply']);
 
         // Another student will not receive the private reply.
         self::setUser($student2);
         $posts = mod_forum_external::get_discussion_posts($discussion->id, 'id', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(1, count($posts['posts']));
         $this->assertFalse($posts['posts'][0]['isprivatereply']);
 
@@ -2299,7 +2298,7 @@ class externallib_test extends externallib_advanced_testcase {
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
 
         $this->assertCount(2, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -2312,12 +2311,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get posts now.
         $posts = mod_forum_external::get_discussion_posts($discussion2->id, 'modified', 'DESC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // Admin message is fully trusted.
         $this->assertEquals($dangeroustext, $posts['posts'][0]['message']);
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // Student message is not trusted.
         $this->assertEquals($cleantext, $posts['posts'][0]['message']);
     }
@@ -2360,7 +2359,7 @@ class externallib_test extends externallib_advanced_testcase {
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
 
         $discussions = mod_forum_external::get_forum_discussions($forum->id);
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
 
         $this->assertCount(2, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
@@ -2373,12 +2372,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get posts now.
         $posts = mod_forum_external::get_discussion_posts($discussion2->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // Admin message is not trusted because enabletrusttext is disabled.
         $this->assertEquals($cleantext, $posts['posts'][0]['message']);
 
         $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'ASC');
-        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $posts = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         // Student message is not trusted.
         $this->assertEquals($cleantext, $posts['posts'][0]['message']);
     }
@@ -2406,7 +2405,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user);
         $result = mod_forum_external::delete_post($discussion->firstpost);
-        $result = external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEquals(0, $DB->count_records('forum_posts', array('id' => $discussion->firstpost)));
         $this->assertEquals(0, $DB->count_records('forum_discussions', array('id' => $discussion->id)));
@@ -2445,7 +2444,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user);
         $result = mod_forum_external::delete_post($post->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::delete_post_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEquals(1, $DB->count_records('forum_posts', array('discussion' => $discussion->id)));
         $this->assertEquals(1, $DB->count_records('forum_discussions', array('id' => $discussion->id)));
@@ -2648,7 +2647,7 @@ class externallib_test extends externallib_advanced_testcase {
                         'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
                         'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
                         $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
-                        'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+                        'messageformat' => 1,   // This value is usually changed by external_format_text() function.
                         'unread' => null,
                         'isdeleted' => false,
                         'isprivatereply' => false,
@@ -2714,7 +2713,7 @@ class externallib_test extends externallib_advanced_testcase {
                         'replysubject' => get_string('re', 'mod_forum') . " {$discussion1firstpostobject->subject}",
                         'message' => file_rewrite_pluginfile_urls($discussion1firstpostobject->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion1firstpostobject->id),
-                        'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+                        'messageformat' => 1,   // This value is usually changed by external_format_text() function.
                         'unread' => null,
                         'isdeleted' => false,
                         'isprivatereply' => false,
@@ -2791,7 +2790,7 @@ class externallib_test extends externallib_advanced_testcase {
                         'replysubject' => get_string('re', 'mod_forum') . " {$discussion2reply1->subject}",
                         'message' => file_rewrite_pluginfile_urls($discussion2reply1->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion2reply1->id),
-                        'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+                        'messageformat' => 1,   // This value is usually changed by external_format_text() function.
                         'unread' => null,
                         'isdeleted' => false,
                         'isprivatereply' => false,
@@ -2857,7 +2856,7 @@ class externallib_test extends externallib_advanced_testcase {
                         'replysubject' => get_string('re', 'mod_forum') . " {$discussion2firstpostobject->subject}",
                         'message' => file_rewrite_pluginfile_urls($discussion2firstpostobject->message, 'pluginfile.php',
                             $forum1context->id, 'mod_forum', 'post', $discussion2firstpostobject->id),
-                        'messageformat' => 1,   // This value is usually changed by \core_external\util::format_text() function.
+                        'messageformat' => 1,   // This value is usually changed by external_format_text() function.
                         'unread' => null,
                         'isdeleted' => false,
                         'isprivatereply' => false,
@@ -2915,7 +2914,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Test discussions with one additional post each (total 2 posts).
         // Also testing that we get the parent posts too.
         $discussions = mod_forum_external::get_discussion_posts_by_userid($user2->id, $forum1->cmid, 'modified', 'DESC');
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $discussions);
 
         $this->assertEquals(2, count($discussions['discussions']));
 
@@ -2942,7 +2941,7 @@ class externallib_test extends externallib_advanced_testcase {
         groups_add_member($group2->id, $teacher->id);
         self::setUser($teacher);
         $discussions = mod_forum_external::get_discussion_posts_by_userid($user2->id, $forum1->cmid, 'modified', 'DESC');
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $discussions);
+        $discussions = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $discussions);
         // Discussion is only 1 record (group 2).
         $this->assertEquals(1, count($discussions['discussions']));
         $this->assertEquals($expectedposts['discussions'][1], $discussions['discussions'][0]);
@@ -2968,7 +2967,7 @@ class externallib_test extends externallib_advanced_testcase {
         $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
         $this->setUser($user);
         $result = mod_forum_external::get_discussion_post($discussion->firstpost);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
         $this->assertEquals($discussion->firstpost, $result['post']['id']);
         $this->assertFalse($result['post']['hasparent']);
         $this->assertEquals($discussion->message, $result['post']['message']);
@@ -3003,7 +3002,7 @@ class externallib_test extends externallib_advanced_testcase {
         $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
         $this->setUser($user);
         $result = mod_forum_external::get_discussion_post($post->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
         $this->assertEquals($post->id, $result['post']['id']);
         $this->assertTrue($result['post']['hasparent']);
         $this->assertEquals($post->message, $result['post']['message']);
@@ -3041,7 +3040,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check other user post.
         $this->setUser($otheruser);
         $result = mod_forum_external::get_discussion_post($post->id);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
         $this->assertEquals($post->id, $result['post']['id']);
         $this->assertTrue($result['post']['hasparent']);
         $this->assertEquals($post->message, $result['post']['message']);
@@ -3094,7 +3093,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check attachment area.
         $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment');
-        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
         $this->assertCount(2, $result['files']);
         $this->assertEquals($filename, $result['files'][0]['filename']);
         $this->assertCount(5, $result['areaoptions']);
@@ -3102,13 +3101,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check again using existing draft item id.
         $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment', $result['draftitemid']);
-        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
         $this->assertCount(2, $result['files']);
 
         // Keep only certain files in the area.
         $filestokeep = array(array('filename' => $filename, 'filepath' => '/'));
         $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'attachment', $result['draftitemid'], $filestokeep);
-        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
         $this->assertCount(1, $result['files']);
         $this->assertEquals($filename, $result['files'][0]['filename']);
 
@@ -3117,7 +3116,7 @@ class externallib_test extends externallib_advanced_testcase {
         $filerecordinline['filename'] = 'fakeimage.png';
         $fs->create_file_from_string($filerecordinline, 'fake image.');
         $result = mod_forum_external::prepare_draft_area_for_post($post->id, 'post');
-        $result = external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::prepare_draft_area_for_post_returns(), $result);
         $this->assertCount(1, $result['files']);
         $this->assertEquals($filerecordinline['filename'], $result['files'][0]['filename']);
         $this->assertCount(5, $result['areaoptions']);
@@ -3153,12 +3152,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = mod_forum_external::update_discussion_post($discussion->firstpost, $subject, $message, $messageformat,
             $options);
-        $result = external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
         $this->assertTrue($result['status']);
 
         // Get the post from WS.
         $result = mod_forum_external::get_discussion_post($discussion->firstpost);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_discussion_post_returns(), $result);
         $this->assertEquals($subject, $result['post']['subject']);
         $this->assertEquals($message, $result['post']['message']);
         $this->assertEquals($messageformat, $result['post']['messageformat']);
@@ -3237,14 +3236,14 @@ class externallib_test extends externallib_advanced_testcase {
         ];
 
         $result = mod_forum_external::update_discussion_post($newpost->id, '', $message, $messageformat, $options);
-        $result = external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::update_discussion_post_returns(), $result);
         $this->assertTrue($result['status']);
         // Check subscription status.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion->id, $cm));
 
         // Get the post from WS.
         $result = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'DESC', true);
-        $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $result);
         $found = false;
         foreach ($result['posts'] as $post) {
             if ($post['id'] == $newpost->id) {
@@ -3321,7 +3320,7 @@ class externallib_test extends externallib_advanced_testcase {
         ]);
 
         // Update discussion post subject.
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             mod_forum_external::update_discussion_post_returns(),
             mod_forum_external::update_discussion_post($discussion->firstpost, '0')
         );
@@ -3354,7 +3353,7 @@ class externallib_test extends externallib_advanced_testcase {
         ]);
 
         // Update discussion post message.
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             mod_forum_external::update_discussion_post_returns(),
             mod_forum_external::update_discussion_post($discussion->firstpost, '', '0', FORMAT_HTML)
         );
@@ -3387,7 +3386,7 @@ class externallib_test extends externallib_advanced_testcase {
         ]);
 
         // Update discussion post message & messageformat.
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             mod_forum_external::update_discussion_post_returns(),
             mod_forum_external::update_discussion_post($discussion->firstpost, '', 'Update discussion message', FORMAT_MOODLE)
         );

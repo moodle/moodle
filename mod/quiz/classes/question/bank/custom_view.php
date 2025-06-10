@@ -201,7 +201,7 @@ class custom_view extends \core_question\local\bank\view {
         echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             // Add selected questions to the quiz.
-            $params = [
+            $params = array(
                 'type' => 'submit',
                 'name' => 'add',
                 'class' => 'btn btn-primary',
@@ -210,7 +210,7 @@ class custom_view extends \core_question\local\bank\view {
                 'data-togglegroup' => 'qbank',
                 'data-toggle' => 'action',
                 'disabled' => true,
-            ];
+            );
             echo \html_writer::empty_tag('input', $params);
         }
         echo \html_writer::end_tag('div');

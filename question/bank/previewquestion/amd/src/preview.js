@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {initForm as initQuestionEngineForm} from 'core_question/question_engine';
+import $ from 'jquery';
 
 /**
  * Set up the actions.
@@ -33,16 +33,90 @@ import {initForm as initQuestionEngineForm} from 'core_question/question_engine'
  */
 export const init = (redirect, url) => {
     if (!redirect) {
-        const closeButton = document.getElementById('close-previewquestion-page');
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault();
+        let closeButton = document.getElementById('close-previewquestion-page');
+        closeButton.onclick = () => {
             if (window.opener === null) {
                 location.href = url;
             } else {
                 window.close();
             }
-        });
+        };
     }
     // Set up the form to be displayed.
-    initQuestionEngineForm('#responseform');
+    setupQuestionForm('responseform');
+};
+
+/**
+ * Set up the form element to be displayed.
+ *
+ * @method setupQuestionForm
+ * @param {string} formElement The form element.
+ */
+const setupQuestionForm = (formElement) => {
+    let form = document.getElementById(formElement);
+    if (form) {
+        // Turning off browser autocomplete.
+        autocompleteOff(form);
+        // Stop a question form being submitted more than once.
+        preventRepeatSubmission(form);
+        // Removes any '.questionflagsavebutton's, since we have JavaScript to toggle.
+        removeClass('.questionflagsavebutton', form);
+        // Scroll to the position indicated by scrollpos= in the URL, if it is there.
+        scrollToSavedPos(form);
+    }
+};
+
+/**
+ * Set the autocomplete off.
+ *
+ * @method autocompleteOff
+ * @param {object} form The form element.
+ */
+const autocompleteOff = (form) => {
+    form.setAttribute("autocomplete", "off");
+};
+
+/**
+ * Event handler to stop a question form being submitted more than once.
+ *
+ * @method preventRepeatSubmission
+ * @param {object} form The form element.
+ */
+const preventRepeatSubmission = (form) => {
+    form.addEventListener("submit", function() {
+        $(this).submit(function() {
+            return false;
+        });
+        return true;
+    });
+};
+
+/**
+ *  Removes a class inside an element.
+ *
+ * @method removeClass
+ * @param {string} classname Class name.
+ * @param {object} form The form element.
+ */
+const removeClass = (classname, form) => {
+    form.querySelectorAll(classname).forEach(e => e.remove());
+};
+
+/**
+ *  If there is a parameter like scrollpos=123 in the URL, scroll to that saved position.
+ *  (Note: Moodle 4.0 and above do NOT support Internet Explorer 11 and below.)
+ *
+ * @method scrollToSavedPos
+ * @param {object} form The form element.
+ */
+const scrollToSavedPos = (form) => {
+    let matches = window.location.href.match(/^.*[?&]scrollpos=(\d*)(?:&|$|#).*$/, '$1');
+    if (matches) {
+        // DOMContentLoaded is the effective one here. I am leaving the immediate call to
+        // window.scrollTo in case it reduces flicker.
+        window.scrollTo(0, matches[1]);
+        form.addEventListener("DOMContentLoaded", () => {
+            window.scrollTo(0, matches[1]);
+        });
+    }
 };

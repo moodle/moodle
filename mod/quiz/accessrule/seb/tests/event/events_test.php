@@ -16,7 +16,7 @@
 
 namespace quizaccess_seb\event;
 
-use mod_quiz\quiz_settings;
+use quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -53,7 +53,7 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $quiz = $this->create_test_quiz($this->course, \quizaccess_seb\settings_provider::USE_SEB_CONFIG_MANUALLY);
-        $accessmanager = new \quizaccess_seb\seb_access_manager(new quiz_settings($quiz,
+        $accessmanager = new \quizaccess_seb\access_manager(new quiz($quiz,
             get_coursemodule_from_id('quiz', $quiz->cmid), $this->course));
 
         // Set up event with data.
@@ -103,7 +103,7 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $quiz = $this->create_test_quiz($this->course, \quizaccess_seb\settings_provider::USE_SEB_CONFIG_MANUALLY);
-        $accessmanager = new \quizaccess_seb\seb_access_manager(new quiz_settings($quiz,
+        $accessmanager = new \quizaccess_seb\access_manager(new quiz($quiz,
             get_coursemodule_from_id('quiz', $quiz->cmid), $this->course));
 
         // Set up event with data.

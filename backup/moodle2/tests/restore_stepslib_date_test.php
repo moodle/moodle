@@ -16,9 +16,6 @@
 
 namespace core_backup;
 
-use mod_quiz\quiz_attempt;
-use mod_quiz\quiz_settings;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -382,7 +379,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = quiz_settings::create($quiz->id, $user1->id);
+        $quizobj = \quiz::create($quiz->id, $user1->id);
 
         // Start the attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -396,7 +393,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Process some responses from the student.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $prefix1 = $quba->get_field_prefix(1);
         $prefix2 = $quba->get_field_prefix(2);
@@ -407,7 +404,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
 
         $questionattemptstepdates = [];
@@ -422,7 +419,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
 
         // Get the quiz for this new restored course.
         $quizdata = $DB->get_record('quiz', ['course' => $newcourseid]);
-        $quizobj = \mod_quiz\quiz_settings::create($quizdata->id, $user1->id);
+        $quizobj = \quiz::create($quizdata->id, $user1->id);
 
         $questionusage = $DB->get_record('question_usages', [
                 'component' => 'mod_quiz',

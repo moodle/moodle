@@ -520,7 +520,7 @@ EOF;
                     'or that your web server is correctly set up and started.';
 
                 $this->find(
-                        "xpath", "//head/child::title[normalize-space(.)='" . behat_util::BEHATSITENAME . "']",
+                        "xpath", "//head/child::title[contains(., '" . behat_util::BEHATSITENAME . "')]",
                         new ExpectationException($message, $session)
                     );
 

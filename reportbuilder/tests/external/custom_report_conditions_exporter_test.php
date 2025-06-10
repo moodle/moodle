@@ -54,12 +54,12 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
         $this->assertTrue($export->hasavailableconditions);
 
         // The root of the available conditions property should contain each entity.
-        $this->assertCount(4, $export->availableconditions);
-        [$conditionscategory, $conditionscourse, $conditionstag, $conditionsfile] = $export->availableconditions;
+        $this->assertCount(3, $export->availableconditions);
+        [$conditionscategory, $conditionscourse, $conditionstag] = $export->availableconditions;
 
         // Course category conditions, assert structure of first item.
         $this->assertEquals('Course category', $conditionscategory['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($conditionscategory['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $conditionscategory['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'course_category:name',
             'visiblename' => 'Select category',
@@ -67,7 +67,7 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
 
         // Course conditions, assert structure of first item.
         $this->assertEquals('Course', $conditionscourse['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($conditionscourse['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $conditionscourse['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'course:fullname',
             'visiblename' => 'Course full name',
@@ -78,19 +78,11 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
 
         // Tag conditions, assert structure of first item.
         $this->assertEquals('Tag', $conditionstag['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($conditionstag['optiongroup']['values']));
+        $this->assertGreaterThanOrEqual(1, $conditionstag['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'tag:name',
             'visiblename' => 'Tag name',
         ], $conditionstag['optiongroup']['values'][0]);
-
-        // File conditions, assert structure of first item.
-        $this->assertEquals('Course image', $conditionsfile['optiongroup']['text']);
-        $this->assertGreaterThanOrEqual(1, count($conditionsfile['optiongroup']['values']));
-        $this->assertEquals([
-            'value' => 'file:name',
-            'visiblename' => 'Filename',
-        ], $conditionsfile['optiongroup']['values'][0]);
 
         // The active conditions are contained inside form HTML, just assert there's something present.
         $this->assertTrue($export->hasactiveconditions);

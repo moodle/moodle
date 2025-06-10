@@ -14,19 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_h5p;
-
-use core_external\external_api;
-use core_external\external_files;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 /**
  * This is the external API for this component.
  *
  * @package    core_h5p
+ * @copyright  2019 Carlos Escobedo <carlos@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core_h5p;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/externallib.php');
+
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_files;
+use external_warnings;
+
+/**
+ * This is the external API for this component.
+ *
  * @copyright  2019 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -140,7 +151,7 @@ class external extends external_api {
      * get_trusted_h5p_file return
      *
      * @since  Moodle 3.8
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_trusted_h5p_file_returns() {
         return new external_single_structure(

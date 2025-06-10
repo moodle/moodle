@@ -709,12 +709,17 @@ function set_downloadcontent(int $id, bool $downloadcontent): bool {
  * has been moved to {@link set_section_visible()} which was the only place from which
  * the parameter was used.
  *
+ * If $rebuildcache is set to false, the calling code is responsible for ensuring the cache is purged
+ * and rebuilt as appropriate. Consider using this if set_coursemodule_visible is called multiple times
+ * (e.g. in a loop).
+ *
  * @param int $id of the module
  * @param int $visible state of the module
  * @param int $visibleoncoursepage state of the module on the course page
+ * @param bool $rebuildcache If true (default), perform a partial cache purge and rebuild.
  * @return bool false when the module was not found, true otherwise
  */
-function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1) {
+function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1, bool $rebuildcache = true) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
@@ -771,8 +776,10 @@ function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1) {
         }
     }
 
-    \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
-    rebuild_course_cache($cm->course, false, true);
+    if ($rebuildcache) {
+        \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+        rebuild_course_cache($cm->course, false, true);
+    }
     return true;
 }
 
@@ -1457,20 +1464,22 @@ function course_update_section($course, $section, $data) {
     // If section visibility was changed, hide the modules in this section too.
     if ($changevisibility && !empty($section->sequence)) {
         $modules = explode(',', $section->sequence);
+        $cmids = [];
         foreach ($modules as $moduleid) {
             if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
+                $cmids[] = $cm->id;
                 if ($data['visible']) {
                     // As we unhide the section, we use the previously saved visibility stored in visibleold.
-                    set_coursemodule_visible($moduleid, $cm->visibleold, $cm->visibleoncoursepage);
+                    set_coursemodule_visible($moduleid, $cm->visibleold, $cm->visibleoncoursepage, false);
                 } else {
                     // We hide the section, so we hide the module but we store the original state in visibleold.
-                    set_coursemodule_visible($moduleid, 0, $cm->visibleoncoursepage);
+                    set_coursemodule_visible($moduleid, 0, $cm->visibleoncoursepage, false);
                     $DB->set_field('course_modules', 'visibleold', $cm->visible, ['id' => $moduleid]);
-                    \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
                 }
                 \core\event\course_module_updated::create_from_cm($cm)->trigger();
             }
         }
+        \course_modinfo::purge_course_modules_cache($courseid, $cmids);
         rebuild_course_cache($courseid, false, true);
     }
 }
@@ -1828,15 +1837,10 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2) &&
             course_allowed_module($mod->get_course(), $mod->modname)) {
         $actions['duplicate'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, ['duplicate' => $mod->id]),
+            new moodle_url($baseurl, array('duplicate' => $mod->id)),
             new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
             $str->duplicate,
-            [
-                'class' => 'editing_duplicate',
-                'data-action' => ($courseformat->supports_components()) ? 'cmDuplicate' : 'duplicate',
-                'data-sectionreturn' => $sr,
-                'data-id' => $mod->id,
-            ]
+            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
         );
     }
 
@@ -1853,15 +1857,10 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     // Delete.
     if ($hasmanageactivities) {
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, ['delete' => $mod->id]),
-            new pix_icon('t/delete', '', 'moodle', ['class' => 'iconsmall']),
+            new moodle_url($baseurl, array('delete' => $mod->id)),
+            new pix_icon('t/delete', '', 'moodle', array('class' => 'iconsmall')),
             $str->delete,
-            [
-                'class' => 'editing_delete',
-                'data-action' => ($usecomponents) ? 'cmDelete' : 'delete',
-                'data-sectionreturn' => $sr,
-                'data-id' => $mod->id,
-            ]
+            array('class' => 'editing_delete', 'data-action' => 'delete', 'data-sectionreturn' => $sr)
         );
     }
 
@@ -2236,7 +2235,7 @@ function create_course($data, $editoroptions = NULL) {
     if ($editoroptions) {
         // summary text is updated later, we need context to store the files first
         $data->summary = '';
-        $data->summary_format = FORMAT_HTML;
+        $data->summary_format = $data->summary_editor['format'];
     }
 
     // Get default completion settings as a fallback in case the enablecompletion field is not set.
@@ -3128,9 +3127,10 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
                 'ajaxurl' => $config->resourceurl,
                 'config' => $config,
             )), null, true);
+    }
 
-        // Require various strings for the command toolbox.
-        $PAGE->requires->strings_for_js(array(
+    // Require various strings for the command toolbox
+    $PAGE->requires->strings_for_js(array(
             'moveleft',
             'deletechecktype',
             'deletechecktypename',
@@ -3157,23 +3157,22 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'totopofsection',
         ), 'moodle');
 
-        // Include section-specific strings for formats which support sections.
-        if (course_format_uses_sections($course->format)) {
-            $PAGE->requires->strings_for_js(array(
-                    'showfromothers',
-                    'hidefromothers',
-                ), 'format_' . $course->format);
-        }
-
-        // For confirming resource deletion we need the name of the module in question.
-        foreach ($usedmodules as $module => $modname) {
-            $PAGE->requires->string_for_js('pluginname', $module);
-        }
-
-        // Load drag and drop upload AJAX.
-        require_once($CFG->dirroot.'/course/dnduploadlib.php');
-        dndupload_add_to_course($course, $enabledmodules);
+    // Include section-specific strings for formats which support sections.
+    if (course_format_uses_sections($course->format)) {
+        $PAGE->requires->strings_for_js(array(
+                'showfromothers',
+                'hidefromothers',
+            ), 'format_' . $course->format);
     }
+
+    // For confirming resource deletion we need the name of the module in question
+    foreach ($usedmodules as $module => $modname) {
+        $PAGE->requires->string_for_js('pluginname', $module);
+    }
+
+    // Load drag and drop upload AJAX.
+    require_once($CFG->dirroot.'/course/dnduploadlib.php');
+    dndupload_add_to_course($course, $enabledmodules);
 
     $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
 
@@ -3369,8 +3368,6 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
  *
  * @param object $course course object.
  * @param object $cm course module object to be duplicated.
- * @param int $sectionid section ID new course module will be placed in.
- * @param bool $changename updates module name with text from duplicatedmodule lang string.
  * @since Moodle 2.8
  *
  * @throws Exception
@@ -3380,7 +3377,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
  *
  * @return cm_info|null cminfo object if we sucessfully duplicated the mod and found the new cm.
  */
-function duplicate_module($course, $cm, int $sectionid = null, bool $changename = true): ?cm_info {
+function duplicate_module($course, $cm) {
     global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
@@ -3456,22 +3453,15 @@ function duplicate_module($course, $cm, int $sectionid = null, bool $changename 
         // Proceed with activity renaming before everything else. We don't use APIs here to avoid
         // triggering a lot of create/update duplicated events.
         $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
-        if ($changename) {
-            // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
-            // from original name that was valid, so the copy should be too.
-            $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
-            $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
-        }
+        // Add ' (copy)' language string postfix to duplicated module.
+        $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
+        set_coursemodule_name($newcm->id, $newname);
 
-        $section = $DB->get_record('course_sections', ['id' => $sectionid ?? $cm->section, 'course' => $cm->course]);
-        if (isset($sectionid)) {
-            moveto_module($newcm, $section);
-        } else {
-            $modarray = explode(",", trim($section->sequence));
-            $cmindex = array_search($cm->id, $modarray);
-            if ($cmindex !== false && $cmindex < count($modarray) - 1) {
-                moveto_module($newcm, $section, $modarray[$cmindex + 1]);
-            }
+        $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
+        $modarray = explode(",", trim($section->sequence));
+        $cmindex = array_search($cm->id, $modarray);
+        if ($cmindex !== false && $cmindex < count($modarray) - 1) {
+            moveto_module($newcm, $section, $modarray[$cmindex + 1]);
         }
 
         // Update calendar events with the duplicated module.
@@ -3769,7 +3759,7 @@ function core_course_drawer(): string {
     }
 
     // Show course index to users can access the course only.
-    if (!can_access_course($PAGE->course)) {
+    if (!can_access_course($PAGE->course, null, '', true)) {
         return '';
     }
 
@@ -4021,7 +4011,16 @@ function course_get_user_administration_options($course, $context) {
                         count(filter_get_available_in_context($context)) > 0;
     $options->reports = has_capability('moodle/site:viewreports', $context);
     $options->backup = has_capability('moodle/backup:backupcourse', $context);
-    $options->restore = has_capability('moodle/restore:restorecourse', $context);
+
+    // BEGIN LSU course restore limits to course ceators.
+    $teachersrestore = isset($CFG->teachersrestore) ? $CFG->teachersrestore : false;
+    if (!$teachersrestore) {
+        $options->restore = has_capability('moodle/restore:restorecourse', $context) && has_capability('moodle/course:create', $context);
+    } else {
+        $options->restore = has_capability('moodle/restore:restorecourse', $context);
+    }
+    // END LSU course restore limits to course ceators.
+
     $options->copy = \core_course\management\helper::can_copy_course($course->id);
     $options->files = ($course->legacyfiles == 2 && has_capability('moodle/course:managefiles', $context));
 
@@ -4767,7 +4766,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     $basefields = [
         'id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
         'shortname', 'fullname', 'timeaccess', 'component', 'visible',
-        'showactivitydates', 'showcompletionconditions', 'pdfexportfont'
+        'showactivitydates', 'showcompletionconditions',
     ];
 
     if (empty($sort)) {

@@ -135,6 +135,101 @@ class messagelib_test extends \advanced_testcase {
     }
 
     /**
+     * Test message_count_unread_messages.
+     * TODO: MDL-69643
+     */
+    public function test_message_count_unread_messages() {
+        // Create users to send and receive message.
+        $userfrom1 = $this->getDataGenerator()->create_user();
+        $userfrom2 = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        $this->assertEquals(0, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
+
+        // Send fake messages.
+        $this->send_fake_message($userfrom1, $userto);
+        $this->send_fake_message($userfrom2, $userto);
+
+        $this->assertEquals(2, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
+
+        $this->assertEquals(1, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test message_count_unread_messages with read messages.
+     */
+    public function test_message_count_unread_messages_with_read_messages() {
+        global $DB;
+
+        // Create users to send and receive messages.
+        $userfrom1 = $this->getDataGenerator()->create_user();
+        $userfrom2 = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        $this->assertEquals(0, message_count_unread_messages($userto));
+
+        // Send fake messages.
+        $messageid = $this->send_fake_message($userfrom1, $userto);
+        $this->send_fake_message($userfrom2, $userto);
+
+        // Mark message as read.
+        $message = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($userto->id, $message);
+
+        // Should only count the messages that weren't read by the current user.
+        $this->assertEquals(1, message_count_unread_messages($userto));
+        $this->assertDebuggingCalledCount(2);
+
+        $this->assertEquals(0, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test message_count_unread_messages with deleted messages.
+     */
+    public function test_message_count_unread_messages_with_deleted_messages() {
+        global $DB;
+
+        // Create users to send and receive messages.
+        $userfrom1 = $this->getDataGenerator()->create_user();
+        $userfrom2 = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        $this->assertEquals(0, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
+
+        // Send fake messages.
+        $messageid = $this->send_fake_message($userfrom1, $userto);
+        $this->send_fake_message($userfrom2, $userto);
+
+        // Delete a message.
+        \core_message\api::delete_message($userto->id, $messageid);
+
+        // Should only count the messages that weren't deleted by the current user.
+        $this->assertEquals(1, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
+        $this->assertEquals(0, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test message_count_unread_messages with sent messages.
+     */
+    public function test_message_count_unread_messages_with_sent_messages() {
+        $userfrom = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        $this->send_fake_message($userfrom, $userto);
+
+        // Ensure an exception is thrown.
+        $this->assertEquals(0, message_count_unread_messages($userfrom));
+        $this->assertDebuggingCalled();
+    }
+
+    /**
      * Test message_search_users.
      */
     public function test_message_search_users() {

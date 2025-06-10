@@ -45,8 +45,6 @@ class question_engine_attempt_upgrader {
     protected $questionloader;
     /** @var question_engine_assumption_logger */
     protected $logger;
-    /** @var stdClass */
-    protected $qsession;
 
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         global $OUTPUT;
@@ -281,9 +279,6 @@ class question_engine_attempt_upgrader {
 class question_engine_upgrade_question_loader {
     protected $cache = array();
     protected $datasetcache = array();
-
-    /** @var base_logger */
-    protected $logger;
 
     public function __construct($logger) {
         $this->logger = $logger;

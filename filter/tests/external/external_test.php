@@ -26,9 +26,8 @@
 
 namespace core_filters\external;
 
-use core_external\external_api;
-use core_filters\external;
 use externallib_advanced_testcase;
+use core_filters\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -78,7 +77,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'coursecat', 'instanceid' => $category->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['filters']); // No filters, all disabled.
         $this->assertEmpty($result['warnings']);
 
@@ -88,7 +87,7 @@ class external_test extends externallib_advanced_testcase {
         filter_set_global_state($firstfilter, TEXTFILTER_ON);
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'coursecat', 'instanceid' => $category->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled.
         $this->assertEquals(TEXTFILTER_INHERIT, $result['filters'][0]['localstate']); // Inherits the parent context status.
@@ -97,7 +96,7 @@ class external_test extends externallib_advanced_testcase {
         // Set off the same filter at local context level.
         filter_set_local_state($firstfilter, \context_coursecat::instance($category->id)->id, TEXTFILTER_OFF);
         $result = external::get_available_in_context(array(array('contextlevel' => 'coursecat', 'instanceid' => $category->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled globally.
         $this->assertEquals(TEXTFILTER_OFF, $result['filters'][0]['localstate']); // It is not available in this context.
@@ -122,7 +121,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'course', 'instanceid' => $course->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['filters']); // No filters, all disabled at global level.
         $this->assertEmpty($result['warnings']);
 
@@ -132,7 +131,7 @@ class external_test extends externallib_advanced_testcase {
         filter_set_global_state($firstfilter, TEXTFILTER_ON);
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'course', 'instanceid' => $course->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled.
         $this->assertEquals(TEXTFILTER_INHERIT, $result['filters'][0]['localstate']); // Inherits the parent context status.
@@ -141,7 +140,7 @@ class external_test extends externallib_advanced_testcase {
         // Set off the same filter at local context level.
         filter_set_local_state($firstfilter, \context_course::instance($course->id)->id, TEXTFILTER_OFF);
         $result = external::get_available_in_context(array(array('contextlevel' => 'course', 'instanceid' => $course->id)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled globally.
         $this->assertEquals(TEXTFILTER_OFF, $result['filters'][0]['localstate']); // It is not available in this context.
@@ -168,7 +167,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'module', 'instanceid' => $forum->cmid)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['filters']); // No filters, all disabled at global level.
         $this->assertEmpty($result['warnings']);
 
@@ -178,7 +177,7 @@ class external_test extends externallib_advanced_testcase {
         filter_set_global_state($firstfilter, TEXTFILTER_ON);
 
         $result = external::get_available_in_context(array(array('contextlevel' => 'module', 'instanceid' => $forum->cmid)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled.
         $this->assertEquals(TEXTFILTER_INHERIT, $result['filters'][0]['localstate']); // Inherits the parent context status.
@@ -187,7 +186,7 @@ class external_test extends externallib_advanced_testcase {
         // Set off the same filter at local context level.
         filter_set_local_state($firstfilter, \context_module::instance($forum->cmid)->id, TEXTFILTER_OFF);
         $result = external::get_available_in_context(array(array('contextlevel' => 'module', 'instanceid' => $forum->cmid)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($firstfilter, $result['filters'][0]['filter']); // OK, the filter is enabled globally.
         $this->assertEquals(TEXTFILTER_OFF, $result['filters'][0]['localstate']); // It is not available in this context.
@@ -197,7 +196,7 @@ class external_test extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $result = external::get_available_in_context(array(array('contextlevel' => 'module', 'instanceid' => $forum->cmid)));
-        $result = external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_available_in_context_returns(), $result);
         $this->assertNotEmpty($result['warnings']);
         $this->assertEquals('context', $result['warnings'][0]['item']);
         $this->assertEquals($forum->cmid, $result['warnings'][0]['itemid']);

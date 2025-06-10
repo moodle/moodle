@@ -35,6 +35,35 @@ Feature: View activity completion information in the book activity
     When I am on the "Music history" "book activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 
+  Scenario: View automatic completion items with last section hidden
+    Given the following "activity" exists:
+      | activity       | book        |
+      | course         | C1          |
+      | idnumber       | arth1       |
+      | name           | Art history |
+      | completion     | 2           |
+      | completionview | 1           |
+    And the following "mod_book > chapters" exist:
+      | book        | title          | content        | pagenum | subchapter | hidden |
+      | Art history | First chapter  | First chapter  | 1       | 0          | 0      |
+      | Art history | Second chapter | Second chapter | 2       | 0          | 0      |
+      | Art history | Sub chapter 1  | Sub chapter    | 3       | 1          | 0      |
+      | Art history | Sub chapter 2  | Sub chapter    | 4       | 1          | 0      |
+      | Art history | Sub chapter 3  | Sub chapter    | 5       | 1          | 1      |
+    When I am on the "Art history" "book activity" page logged in as student1
+    And I should see "First chapter"
+    And the "View" completion condition of "Art history" is displayed as "todo"
+    And I follow "Next"
+    And I should see "Second chapter"
+    And the "View" completion condition of "Art history" is displayed as "todo"
+    And I follow "Next"
+    And I should see "Sub chapter 1"
+    And the "View" completion condition of "Art history" is displayed as "todo"
+    And I follow "Next"
+    And I should see "Sub chapter 2"
+    And I should not see "Next"
+    Then the "View" completion condition of "Art history" is displayed as "done"
+
   @javascript
   Scenario: Use manual completion
     Given I am on the "Music history" "book activity editing" page logged in as teacher1

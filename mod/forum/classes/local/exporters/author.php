@@ -172,7 +172,7 @@ class author extends exporter {
 
                     return [
                         'id' => $group->id,
-                        'name' => $group->name,
+                        'name' => format_string($group->name, true, ['context' => $context]),
                         'urls' => [
                             'image' => $imageurl ? $imageurl->out(false) : null,
                             'group' => $groupurl ? $groupurl->out(false) : null

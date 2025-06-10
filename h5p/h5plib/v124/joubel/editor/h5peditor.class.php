@@ -407,7 +407,7 @@ class H5peditor {
 
     // Get list of JS and CSS files that belongs to the dependencies
     $files = $this->h5p->getDependenciesFiles($libraries, $prefix);
-    $libraryName = H5PCore::libraryToFolderName($library);
+    $libraryName = H5PCore::libraryToString(compact('machineName', 'majorVersion', 'minorVersion'), true);
     if ($this->hasPresave($libraryName) === true) {
       $this->addPresaveFile($files, $library, $prefix);
     }
@@ -629,13 +629,11 @@ class H5peditor {
       // Check if icon is available locally:
       if ($local_lib->has_icon) {
         // Create path to icon:
-        $library_folder = H5PCore::libraryToFolderName([
+        $library_folder = H5PCore::libraryToString(array(
           'machineName' => $local_lib->machine_name,
           'majorVersion' => $local_lib->major_version,
-          'minorVersion' => $local_lib->minor_version,
-          'patchVersion' => $local_lib->patch_version,
-          'patchVersionInFolderName' => $local_lib->patch_version_in_folder_name
-        ]);
+          'minorVersion' => $local_lib->minor_version
+        ), TRUE);
         $icon_path = $this->h5p->h5pF->getLibraryFileUrl($library_folder, 'icon.svg');
       }
 
@@ -753,7 +751,7 @@ class H5peditor {
    * @param string $prefix
    */
   public function addPresaveFile(&$assets, $library, $prefix = ''){
-    $path = 'libraries' . '/' . H5PCore::libraryToFolderName($library);
+    $path = 'libraries' . '/' . H5PCore::libraryToString($library, true);
     if( array_key_exists('path', $library)){
       $path = $library['path'];
     }

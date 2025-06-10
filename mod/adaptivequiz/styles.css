@@ -1,0 +1,76 @@
+.adaptivequiz-summarylist {
+    float: left;
+}
+.adaptivequiz-summarylist dt {
+    font-weight: bold;
+}
+.adaptivequiz-attemptgraph {
+    clear: both;
+}
+
+#adpq_scoring_table table {
+    float: left;
+    margin-right: 20px;
+}
+
+#adpq_scoring_table {
+    clear: both;
+}
+
+.adpq_download {
+    text-align: center;
+    margin: 10px;
+}
+
+/* Styles related to the question analysis reporting */
+table.adpq_answers_table thead th.section {
+    text-align: left;
+    padding-top: 30px;
+}
+table.adpq_answers_table thead:first-child th.section {
+    padding-top: inherit;
+}
+.adpq_correct {
+    color: green;
+}
+.adpq_incorrect {
+    color: red;
+}
+.adpq_highlevel .adpq_incorrect {
+    font-weight: bold;
+}
+.adpq_lowlevel .adpq_correct {
+    font-weight: bold;
+}
+/**/
+.usersattemptstable-wrapper {
+    margin-top: 1rem;
+}
+.usersattemptstable {
+    margin-bottom: 0.75rem !important;
+}
+
+.attempt-controls-or-notification-container {
+    padding-top: 10px;
+}
+
+#page-mod-adaptivequiz-view .attempt-progress-container {
+    margin-bottom: 25px;
+    padding-top: 10px;
+}
+
+#page-mod-adaptivequiz-view .attempt-progress .progress-bar-wrapper {
+    width: 60%;
+    border-radius: 0.5rem;
+    background-color: #dee2e6;
+}
+
+#page-mod-adaptivequiz-view .attempt-progress .progress-bar-inner {
+    height: 0.8rem;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+#page-mod-adaptivequiz-view .attempt-progress .no-out-of {
+    font-weight: 700;
+    font-size: 1.25rem;
+}

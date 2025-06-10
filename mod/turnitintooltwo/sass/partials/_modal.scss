@@ -1,0 +1,56 @@
+/*
+    1. Styles within modal
+    2. Styles for actual colorbox modal
+    3. Styles for close bar at the top
+*/
+
+/*
+ * 1. Within the modal
+ */
+
+.mod_turnitintooltwo #id_submissiontext {
+    width: 80%;
+    height: 320px;
+}
+
+/*
+ * 2. Colorbox modal iframe
+ */
+#colorbox {
+    margin-top: 60px;
+    outline: 0 !important;
+    overflow: visible !important;
+}
+
+.cboxIframe {
+    border-radius: 5px;
+}
+
+#cboxContent {
+    margin-top: 0 !important;
+}
+
+/*
+ * 3. Modal close bar
+ */
+#tii_close_bar {
+    position: fixed;
+    z-index: 9999;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 45px;
+    background: rgba(0, 0, 0, .3);
+
+    a {
+        color: #fff;
+        display: block;
+        background: #000;
+        width: 100px;
+        text-align: center;
+        float: right;
+        text-decoration: none;
+        height: 45px;
+        line-height: 43px;
+    }
+}

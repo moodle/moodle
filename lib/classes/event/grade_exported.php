@@ -14,20 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Grade report viewed event.
- *
- * @package    core
- * @copyright  2016 Zane Karl <zkarl@oid.ucla.edu>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * Grade report viewed event class.
+ * Abstract grade report exported event class.
  *
  * @package    core
  * @since      Moodle 3.2
@@ -55,7 +45,7 @@ abstract class grade_exported extends base {
     public static function get_export_type() {
         $classname = explode('\\', get_called_class());
         $exporttype = explode('_', $classname[0]);
-        return $exporttype[1];
+        return $exporttype[1] ?? '';
     }
 
     /**
@@ -64,7 +54,13 @@ abstract class grade_exported extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventgradeexported', 'gradeexport_'. self::get_export_type());
+        $component = 'gradeexport_' . self::get_export_type();
+        if (get_string_manager()->string_exists('eventgradeexported', $component)) {
+            return get_string('eventgradeexported', $component);
+        }
+
+        // Fallback to generic name.
+        return get_string('eventgradeexported', 'core_grades');
     }
 
     /**

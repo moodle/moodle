@@ -90,6 +90,7 @@ if (!array_key_exists($type, $xhprof_legal_image_types)) {
 // Start moodle modification: use own XHProfRuns implementation.
 // $xhprof_runs_impl = new XHProfRuns_Default();
 $xhprof_runs_impl = new moodle_xhprofrun();
+$xhprof_runs_impl->set_reducedata(xhprof_get_bool_param('reducedata', 1)); // Reduce data by default.
 // End moodle modification.
 
 if (!empty($run)) {

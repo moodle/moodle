@@ -54,8 +54,6 @@ class qformat_default {
     protected $importcontext = null;
     /** @var bool $displayprogress Whether to display progress. */
     public $displayprogress = true;
-    /** @var context[] */
-    public $contexts;
 
     // functions to indicate import/export functionality
     // override to return true if implemented
@@ -168,7 +166,7 @@ class qformat_default {
 
     /**
      * set an array of contexts.
-     * @param context[] $contexts
+     * @param array $contexts Moodle course variable
      */
     public function setContexts($contexts) {
         $this->contexts = $contexts;
@@ -476,9 +474,6 @@ class qformat_default {
             $questionversion->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
             $questionversion->id = $DB->insert_record('question_versions', $questionversion);
 
-            $event = \core\event\question_created::create_from_question_instance($question, $this->importcontext);
-            $event->trigger();
-
             if (isset($question->questiontextitemid)) {
                 $question->questiontext = file_save_draft_area_files($question->questiontextitemid,
                         $this->importcontext->id, 'question', 'questiontext', $question->id,
@@ -506,6 +501,8 @@ class qformat_default {
             // Now to save all the answers and type-specific options
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
+            $event = \core\event\question_created::create_from_question_instance($question, $this->importcontext);
+            $event->trigger();
 
             if (core_tag_tag::is_enabled('core_question', 'question')) {
                 // Is the current context we're importing in a course context?

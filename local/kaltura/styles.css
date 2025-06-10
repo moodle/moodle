@@ -1,0 +1,31 @@
+#contentframe {
+    border-style: none;
+}
+
+#panelcontentframecontainer {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .kaltura-player-container {
+        width: 100%;
+        position: relative;
+        /* aspect ratio - 16:9 */
+        padding-top: 56.25%;
+        /* player's control bar */
+        padding-bottom: 30px;
+    }
+
+    .kaltura-player-iframe {
+        position: absolute;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}

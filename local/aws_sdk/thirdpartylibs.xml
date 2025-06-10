@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/aws</location>
+        <name>AWS SDK for PHP</name>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+        <version>3.19.26</version>
+    </library>
+    <library>
+        <location>vendor</location>
+        <name>Composer</name>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+        <version></version>
+    </library>
+    <library>
+        <location>vendor/guzzlehttp</location>
+        <name>Guzzle</name>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+        <version>6.2.2</version>
+    </library>
+    <library>
+        <location>vendor/mtdowling</location>
+        <name>JMESPath</name>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+        <version>2.3.0</version>
+    </library>
+    <library>
+        <location>vendor/psr</location>
+        <name>PSR Http Message</name>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+        <version>1.0.1</version>
+    </library>
+</libraries>

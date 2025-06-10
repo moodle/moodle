@@ -1,0 +1,58 @@
+.ally-config-row {
+    margin: 1em 0;
+}
+.ally-pad {
+    margin: 1em 0;
+}
+
+#page-admin-tool-ally-lti-view iframe#contentframe {
+    padding: 1em;
+}
+
+#dt-allylog th {
+    white-space: nowrap;
+}
+
+#dt-allylog div[name="HeaderSettings"] {
+    display: none;
+}
+
+#dt-allylog label[name="PageSizeSelect"] {
+    font-weight: 500;
+    display: inline-block;
+}
+
+#dt-allylog .-page-size-select {
+    display: block;
+    width: 100%;
+}
+
+#dt-allylog .pagination {
+    display: flex;
+    list-style: none;
+}
+
+#dt-allylog .page-link {
+    padding:  .5rem;
+}
+
+#dt-allylog .row {
+    display: flex;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+#dt-allylog .col-sm-6 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    align-self:center;
+}
+
+@media (min-width: 768px) {
+    #dt-allylog .col-sm-6 {
+        float: left;
+        width: 50%;
+    }
+}

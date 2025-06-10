@@ -1,0 +1,9 @@
+{{< core/modal }}
+    {{$title}}
+        {{#str}} launchpeermarkreviews, plagiarism_turnitin {{/str}}
+    {{/title}}
+    {{$body}}
+        <!-- Modal content -->
+        <iframe frameborder="0" src="{{wwwroot}}/plagiarism/turnitin/ajax.php?cmid={{cmid}}&action=peermarkreviews&view_context=box" id="peermark_reviews_launch" class="peermark_reviews iframe-ltilaunch"></iframe>
+    {{/body}}
+{{/ core/modal }}

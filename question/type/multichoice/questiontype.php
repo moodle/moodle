@@ -244,6 +244,13 @@ class qtype_multichoice extends question_type {
             return null;
         }
 
+        if (empty($questiondata->options->answers)) {
+            // A multi-choice question with no choices is senseless,
+            // but, seemingly, it can happen (presumably as a side-effect of bugs).
+            // Therefore, ensure it does not lead to errors here.
+            return null;
+        }
+
         // Single choice questions - average choice fraction.
         $totalfraction = 0;
         foreach ($questiondata->options->answers as $answer) {

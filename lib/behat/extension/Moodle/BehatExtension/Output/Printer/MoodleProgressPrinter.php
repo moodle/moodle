@@ -115,7 +115,7 @@ final class MoodleProgressPrinter implements SetupPrinter {
             $printer->writeln();
             $printer->write(
                 "{+failed}Chained steps are deprecated. " .
-                "See https://docs.moodle.org/dev/Acceptance_testing/" .
+                "See https://moodledev.io/general/development/tools/behat/" .
                 "Migrating_from_Behat_2.5_to_3.x_in_Moodle#Changes_required_in_context_file{-failed}"
             );
         }

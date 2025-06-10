@@ -53,7 +53,6 @@
 <div class="ml-auto dropdown">
     {{#settingsselector}}
         <button class="dropdown-toggle btn btn-outline-secondary"
-                role="button"
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 tabindex="0"
@@ -67,6 +66,7 @@
         <a href="#" class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link {{#settings.togglemoreicon}}btn-icon colour-inherit text-decoration-none d-flex align-items-center justify-content-center{{/settings.togglemoreicon}}"
            role="button"
            data-toggle="dropdown"
+           data-boundary="window"
            aria-haspopup="true"
            tabindex="0"
            aria-controls="forum-action-menu-{{id}}-menu"

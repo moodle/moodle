@@ -1,0 +1,131 @@
+notifications:
+  email: false
+
+language: php
+
+sudo: required
+
+addons:
+  postgresql: "9.6"
+
+services:
+  - postgresql
+
+jobs:
+    # Enable fast finish.
+    # This will fail the build if a single job fails (except those in allow_failures).
+    # It will not stop the jobs from running.
+    fast_finish: true
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+php:
+  # - 7.0
+  - 7.1
+  # - 7.2
+  # - 7.3
+  - 7.4
+
+env:
+  global:
+    - IGNORE_PATHS=classes/privacy,ignore,node_modules,integration,render
+    # - IGNORE_NAMES=ignore_name.php
+    # - MUSTACHE_IGNORE_NAMES=broken.mustache
+    # - PROFILE=chrome
+    - COVERAGE=false
+    - PHPUNIT_IGNORE_PATHS=classes/privacy,ignore,node_modules,integration,render
+    - DB=pgsql
+
+  matrix:
+    - MOODLE_BRANCH=MOODLE_311_STABLE
+    - MOODLE_BRANCH=MOODLE_310_STABLE
+    - MOODLE_BRANCH=MOODLE_39_STABLE
+    - MOODLE_BRANCH=MOODLE_38_STABLE
+    - MOODLE_BRANCH=MOODLE_37_STABLE
+    - MOODLE_BRANCH=MOODLE_36_STABLE
+    - MOODLE_BRANCH=MOODLE_35_STABLE
+
+matrix:
+  exclude:
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_311_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.1
+      env: MOODLE_BRANCH=MOODLE_311_STABLE
+    - php: 7.4
+      env: MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.4
+      env: MOODLE_BRANCH=MOODLE_36_STABLE
+    - php: 7.4
+      env: MOODLE_BRANCH=MOODLE_37_STABLE
+
+
+before_install:
+  - nvm install 14.15.0;
+  - nvm use 14.15.0;
+  - phpenv config-rm xdebug.ini
+  - cd ../..
+  - composer selfupdate
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci add-plugin wiris/moodle-filter_wiris
+  - moodle-plugin-ci add-plugin wiris/moodle-atto_wiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_wq
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_essaywiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_matchwiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_multianswerwiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_multichoicewiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_shortanswerwiris
+  - moodle-plugin-ci add-plugin --branch $TRAVIS_BRANCH wiris/moodle-qtype_truefalsewiris
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+  # - moodle-plugin-ci shifter
+  # - moodle-plugin-ci validate
+  - moodle-plugin-ci grunt
+  # - if [ "$MOODLE_BRANCH" = MOODLE_35_STABLE ]; then
+  #     moodle-plugin-ci grunt;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_36_STABLE ]; then
+  #     moodle-plugin-ci grunt;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_37_STABLE ]; then
+  #     moodle-plugin-ci grunt;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_38_STABLE ]; then
+  #     moodle-plugin-ci grunt -t eslint;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_39_STABLE ]; then
+  #     moodle-plugin-ci grunt -t eslint;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_310_STABLE ]; then
+  #     moodle-plugin-ci grunt -t eslint;
+  #   fi
+  # - if [ "$MOODLE_BRANCH" = MOODLE_311_STABLE ]; then
+  #     moodle-plugin-ci grunt -t eslint;
+  #   fi
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat
+  # - moodle-plugin-ci behat --profile $PROFILE
+

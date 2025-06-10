@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="plagiarism/turnitin/db" VERSION="20150401" COMMENT="XMLDB file for Moodle plagiarism/turnitin plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="plagiarism_turnitin_files" COMMENT="info about submitted files" NEXT="plagiarism_turnitin_config">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cm"/>
+                <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="cm" NEXT="submitter"/>
+                <FIELD NAME="submitter" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="identifier"/>
+                <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="submitter" NEXT="externalid"/>
+                <FIELD NAME="externalid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="identifier" NEXT="itemid"/>
+                <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="externalid" NEXT="statuscode"/>
+                <FIELD NAME="statuscode" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="itemid" NEXT="similarityscore"/>
+                <FIELD NAME="similarityscore" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="statuscode" NEXT="attempt"/>
+                <FIELD NAME="attempt" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="similarityscore" NEXT="transmatch"/>
+                <FIELD NAME="transmatch" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attempt" NEXT="lastmodified"/>
+                <FIELD NAME="lastmodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="transmatch" NEXT="grade"/>
+                <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="lastmodified" NEXT="submissiontype"/>
+                <FIELD NAME="submissiontype" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="grade" NEXT="orcapable" />
+                <FIELD NAME="orcapable" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="submissiontype" NEXT="errorcode"/>
+                <FIELD NAME="errorcode" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="orcapable" NEXT="errormsg"/>
+                <FIELD NAME="errormsg" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="errorcode" NEXT="student_read"/>
+                <FIELD NAME="student_read" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="errormsg" NEXT="gm_feedback"/>
+                <FIELD NAME="gm_feedback" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="student_read" NEXT="duedate_report_refresh"/>
+                <FIELD NAME="duedate_report_refresh" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 => Report does not need updating, 1 => Originality report needs to be updated, 2 => Report has been updated" PREVIOUS="gm_feedback"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="cm"/>
+                <KEY NAME="cm" TYPE="foreign" FIELDS="cm" REFTABLE="course_modules" REFFIELDS="id" ONDELETE="cascade" PREVIOUS="primary" NEXT="userid"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" ONDELETE="cascade" PREVIOUS="cm"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="externalid" UNIQUE="false" FIELDS="externalid" />
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="plagiarism_turnitin_config" COMMENT="info about plugin config" PREVIOUS="plagiarism_turnitin_files" NEXT="plagiarism_turnitin_courses">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cm"/>
+                <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cm" NEXT="value"/>
+                <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="config_hash"/>
+                <FIELD NAME="config_hash" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="value"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="cm"/>
+                <KEY NAME="cm" TYPE="foreign" FIELDS="cm" REFTABLE="course_modules" REFFIELDS="id" ONDELETE="cascade" PREVIOUS="primary"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="plagiarism_turnitin_users" COMMENT="Plagiarism Plugin Users" NEXT="plagiarism_turnitin_courses" PREVIOUS="plagiarism_turnitin_config">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="userid"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="turnitin_uid"/>
+                <FIELD NAME="turnitin_uid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="turnitin_utp"/>
+                <FIELD NAME="turnitin_utp" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_uid" NEXT="instructor_rubrics"/>
+                <FIELD NAME="instructor_rubrics" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_utp" NEXT="user_agreement_accepted"/>
+                <FIELD NAME="user_agreement_accepted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" PREVIOUS="instructor_rubrics"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="plagiarism_turnitin_courses" COMMENT="Turnitin Plagiarism Plugin Courses" PREVIOUS="plagiarism_turnitin_config" NEXT="plagiarism_turnitin_peermark">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="courseid"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="turnitin_ctl"/>
+                <FIELD NAME="turnitin_ctl" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="courseid" NEXT="turnitin_cid"/>
+                <FIELD NAME="turnitin_cid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="turnitin_ctl"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="courseid" UNIQUE="true" FIELDS="courseid" />
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="plagiarism_turnitin_peermark" COMMENT="Turnitin Plagiarism Peermark Assignments" PREVIOUS="plagiarism_turnitin_courses">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="parent_tii_assign_id"/>
+                <FIELD NAME="parent_tii_assign_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="title"/>
+                <FIELD NAME="title" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="parent_tii_assign_id" NEXT="tiiassignid"/>
+                <FIELD NAME="tiiassignid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="title" NEXT="dtstart"/>
+                <FIELD NAME="dtstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="tiiassignid" NEXT="dtdue"/>
+                <FIELD NAME="dtdue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtstart" NEXT="dtpost"/>
+                <FIELD NAME="dtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtdue" NEXT="maxmarks"/>
+                <FIELD NAME="maxmarks" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="dtpost"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="parent_tii_assign_id" UNIQUE="false" FIELDS="parent_tii_assign_id" NEXT="tiiassignid"/>
+                <INDEX NAME="tiiassignid" UNIQUE="false" FIELDS="tiiassignid" PREVIOUS="parent_tii_assign_id"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

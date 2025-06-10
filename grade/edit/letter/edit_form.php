@@ -31,6 +31,9 @@ require_once $CFG->libdir.'/formslib.php';
 class edit_letter_form extends moodleform {
 
     public function definition() {
+        // BEGIN LSU Better Letters
+        global $DB;
+        // END LSU Better Letters
         $mform =& $this->_form;
 
         [
@@ -49,9 +52,31 @@ class edit_letter_form extends moodleform {
         $gradeletter       = get_string('gradeletter', 'grades');
         $gradeboundary     = get_string('gradeboundary', 'grades');
 
+        // BEGIN LSU Better Letters
+        $strict = get_config('moodle', 'grade_letters_strict');
+        $default = get_config('moodle', 'grade_letters_names');
+
+        if ($default && $scale = $DB->get_record('scale', array('id' => $default))) {
+            $default_letters = $scale->scale;
+        } else {
+           $default_letters = get_string('lettersdefaultletters', 'grades');
+        }
+
+        $default_letters = array_reverse(explode(',', $default_letters));
+        $letters = array('' => get_string('unused', 'grades')) +
+            array_combine($default_letters, $default_letters);
+        // END LSU Better Letters
+
         // The fields to create the grade letter/boundary.
         $elements = [];
-        $elements[] = $mform->createElement('text', 'gradeletter', "{$gradeletter} {no}");
+        // BEGIN LSU Better Letters
+        if ($strict) {
+            $elements[] = $mform->createElement('select', "gradeletter", "{$gradeletter} {no}", $letters);
+        } else {
+            $elements[] = $mform->createElement('text', 'gradeletter', "{$gradeletter} {no}");
+        }
+        // END LSU Better Letters
+
         $elements[] = $mform->createElement('static', '', '', '&ge;');
         $elements[] = $mform->createElement('float', 'gradeboundary', "{$gradeboundary} {no}");
         $elements[] = $mform->createElement('static', '', '', '%');
@@ -63,6 +88,9 @@ class edit_letter_form extends moodleform {
         if (!$admin) {
             $options['gradeletter']['disabledif'] = ['override', 'notchecked'];
             $options['gradeboundary']['disabledif'] = ['override', 'notchecked'];
+            // BEGIN LSU Better Letters
+            $mform->disabledIf("{$gradeletter}{no}", "{$gradeboundary}{no}", 'eq', -1);
+            // END LSU Better Letters
         }
 
         // Create our repeatable elements, each one a group comprised of the fields defined previously.

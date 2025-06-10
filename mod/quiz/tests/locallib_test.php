@@ -24,8 +24,8 @@
  */
 namespace mod_quiz;
 
-use mod_quiz\output\renderer;
-use mod_quiz\question\display_options;
+use quiz_attempt;
+use mod_quiz_display_options;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -60,31 +60,30 @@ class locallib_test extends \advanced_testcase {
 
     public function quiz_attempt_state_data_provider() {
         return [
-            [quiz_attempt::IN_PROGRESS, null, null, display_options::DURING],
-            [quiz_attempt::FINISHED, -90, null, display_options::IMMEDIATELY_AFTER],
-            [quiz_attempt::FINISHED, -7200, null, display_options::LATER_WHILE_OPEN],
-            [quiz_attempt::FINISHED, -7200, 3600, display_options::LATER_WHILE_OPEN],
-            [quiz_attempt::FINISHED, -30, 30, display_options::IMMEDIATELY_AFTER],
-            [quiz_attempt::FINISHED, -90, -30, display_options::AFTER_CLOSE],
-            [quiz_attempt::FINISHED, -7200, -3600, display_options::AFTER_CLOSE],
-            [quiz_attempt::FINISHED, -90, -3600, display_options::AFTER_CLOSE],
-            [quiz_attempt::ABANDONED, -10000000, null, display_options::LATER_WHILE_OPEN],
-            [quiz_attempt::ABANDONED, -7200, 3600, display_options::LATER_WHILE_OPEN],
-            [quiz_attempt::ABANDONED, -7200, -3600, display_options::AFTER_CLOSE],
+            [quiz_attempt::IN_PROGRESS, null, null, mod_quiz_display_options::DURING],
+            [quiz_attempt::FINISHED, -90, null, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -7200, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -30, 30, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -90, -30, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -90, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::ABANDONED, -10000000, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
         ];
     }
 
     /**
      * @dataProvider quiz_attempt_state_data_provider
      *
-     * @param string $attemptstate as in the quiz_attempts.state DB column.
-     * @param int|null $relativetimefinish time relative to now when the attempt finished, or null for 0.
-     * @param int|null $relativetimeclose time relative to now when the quiz closes, or null for 0.
-     * @param int $expectedstate expected result. One of the display_options constants.
-     * @covers ::quiz_attempt_state
+     * @param unknown $attemptstate as in the quiz_attempts.state DB column.
+     * @param unknown $relativetimefinish time relative to now when the attempt finished, or null for 0.
+     * @param unknown $relativetimeclose time relative to now when the quiz closes, or null for 0.
+     * @param unknown $expectedstate expected result. One of the mod_quiz_display_options constants/
      */
-    public function test_quiz_attempt_state(string $attemptstate,
-            ?int $relativetimefinish, ?int $relativetimeclose, int $expectedstate) {
+    public function test_quiz_attempt_state($attemptstate,
+            $relativetimefinish, $relativetimeclose, $expectedstate) {
 
         $attempt = new \stdClass();
         $attempt->state = $attemptstate;
@@ -146,9 +145,9 @@ class locallib_test extends \advanced_testcase {
 
         $this->setAdminUser();
         // Setup test data.
-        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id],
-                                                            ['completion' => 2, 'completionview' => 1]);
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
         $context = \context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
@@ -165,7 +164,7 @@ class locallib_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_quiz\event\course_module_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $moodleurl = new \moodle_url('/mod/quiz/view.php', ['id' => $cm->id]);
+        $moodleurl = new \moodle_url('/mod/quiz/view.php', array('id' => $cm->id));
         $this->assertEquals($moodleurl, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
@@ -299,7 +298,7 @@ class locallib_test extends \advanced_testcase {
         $course = $generator->create_course();
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(['course' => $course->id]);
-        $group = $this->getDataGenerator()->create_group(['courseid' => $quiz->course]);
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $quiz->course));
         $groupid = $group->id;
         $userid = $user->id;
 
@@ -339,10 +338,10 @@ class locallib_test extends \advanced_testcase {
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         // Both quizzes close in two hours.
-        $quiz1 = $quizgenerator->create_instance(['course' => $course->id, 'timeclose' => $basetimestamp + 7200]);
-        $quiz2 = $quizgenerator->create_instance(['course' => $course->id, 'timeclose' => $basetimestamp + 7200]);
-        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
-        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $quiz1 = $quizgenerator->create_instance(array('course' => $course->id, 'timeclose' => $basetimestamp + 7200));
+        $quiz2 = $quizgenerator->create_instance(array('course' => $course->id, 'timeclose' => $basetimestamp + 7200));
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
 
         $student1id = $student1->id;
         $student2id = $student2->id;
@@ -350,20 +349,20 @@ class locallib_test extends \advanced_testcase {
         $teacherid = $teacher->id;
 
         // Users enrolments.
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($student1id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($student2id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($student3id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($teacherid, $course->id, $teacherrole->id, 'manual');
 
         // Create groups.
-        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
-        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         $group1id = $group1->id;
         $group2id = $group2->id;
-        $this->getDataGenerator()->create_group_member(['userid' => $student1id, 'groupid' => $group1id]);
-        $this->getDataGenerator()->create_group_member(['userid' => $student2id, 'groupid' => $group2id]);
+        $this->getDataGenerator()->create_group_member(array('userid' => $student1id, 'groupid' => $group1id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $student2id, 'groupid' => $group2id));
 
         // Group 1 gets an group override for quiz 1 to close in three hours.
         $record1 = (object) [
@@ -378,7 +377,7 @@ class locallib_test extends \advanced_testcase {
         $this->setUser($student1id);
         $params = new \stdClass();
 
-        $comparearray = [];
+        $comparearray = array();
         $object = new \stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 10800; // The overriden timeclose for quiz 1.
@@ -397,7 +396,7 @@ class locallib_test extends \advanced_testcase {
         $this->setUser($student3id);
         $params = new \stdClass();
 
-        $comparearray = [];
+        $comparearray = array();
         $object = new \stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 7200; // The original timeclose for quiz 1.
@@ -424,7 +423,7 @@ class locallib_test extends \advanced_testcase {
         // Quiz 2 closes in two hours.
         $this->setUser($student2id);
 
-        $comparearray = [];
+        $comparearray = array();
         $object = new \stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 14400; // The overriden timeclose for quiz 1.
@@ -443,7 +442,7 @@ class locallib_test extends \advanced_testcase {
         // Quiz 1 and quiz 2 close in two hours.
         $this->setUser($teacherid);
 
-        $comparearray = [];
+        $comparearray = array();
         $object = new \stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 1.
@@ -491,18 +490,18 @@ class locallib_test extends \advanced_testcase {
 
         // Create tags.
         foreach ($alltags as $tagname) {
-            $tagrecord = [
+            $tagrecord = array(
                 'isstandard' => 1,
                 'flag' => 0,
                 'rawname' => $tagname,
                 'description' => $tagname . ' desc'
-            ];
+            );
             $tagobjects[$tagname] = $this->getDataGenerator()->create_tag($tagrecord);
         }
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -510,13 +509,13 @@ class locallib_test extends \advanced_testcase {
 
         // Setup standard questions.
         for ($i = 0; $i < $qnum; $i++) {
-            $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+            $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
             quiz_add_quiz_question($question->id, $quiz);
         }
         // Setup random questions.
         for ($i = 0; $i < $randomqnum; $i++) {
             // Just create a standard question first, so there would be enough questions to pick a random question from.
-            $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+            $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
             $tagids = [];
             if (!empty($questiontags[$i])) {
                 foreach ($questiontags[$i] as $tagname) {
@@ -526,7 +525,7 @@ class locallib_test extends \advanced_testcase {
             quiz_add_random_questions($quiz, 0, $cat->id, 1, false, $tagids);
         }
 
-        return [$quiz, $tagobjects];
+        return array($quiz, $tagobjects);
     }
 
     public function test_quiz_override_summary() {
@@ -535,7 +534,7 @@ class locallib_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
-        /** @var renderer $renderer */
+        /** @var mod_quiz_renderer $renderer */
         $renderer = $PAGE->get_renderer('mod_quiz');
 
         // Course with quiz and a group - plus some others, to verify they don't get counted.
@@ -649,7 +648,7 @@ class locallib_test extends \advanced_testcase {
         $recipient = $this->getDataGenerator()->create_user(['email' => 'student@example.com']);
 
         // Allow recipent to receive email confirm submission.
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         assign_capability('mod/quiz:emailconfirmsubmission', CAP_ALLOW, $studentrole->id,
             \context_course::instance($course->id), true);
         $this->getDataGenerator()->enrol_user($recipient->id, $course->id, $studentrole->id, 'manual');

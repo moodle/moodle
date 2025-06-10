@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use quizaccess_seb\seb_quiz_settings;
+use quizaccess_seb\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -73,7 +73,7 @@ class restore_quizaccess_seb_subplugin extends restore_mod_quiz_access_subplugin
         unset($data->id);
         $data->timecreated = $data->timemodified = time();
         $data->usermodified = $USER->id;
-        $DB->insert_record(quizaccess_seb\seb_quiz_settings::TABLE, $data);
+        $DB->insert_record(quizaccess_seb\quiz_settings::TABLE, $data);
 
         // Process attached files.
         $this->add_related_files('quizaccess_seb', 'filemanager_sebconfigfile', null);
@@ -112,7 +112,7 @@ class restore_quizaccess_seb_subplugin extends restore_mod_quiz_access_subplugin
         }
 
         // Update the restored quiz settings to use restored template.
-        $DB->set_field(\quizaccess_seb\seb_quiz_settings::TABLE, 'templateid', $template->get('id'), ['quizid' => $quizid]);
+        $DB->set_field(\quizaccess_seb\quiz_settings::TABLE, 'templateid', $template->get('id'), ['quizid' => $quizid]);
     }
 
 }

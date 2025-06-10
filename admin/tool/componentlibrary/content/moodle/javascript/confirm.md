@@ -16,7 +16,7 @@ to the element that will trigger the confirmation modal.
 
 ## Source files
 
-* `lib/amd/src/utility.js` ({{< jsdoc module="core/utility" >}})
+* `lib/amd/src/confirm.js` ({{< jsdoc module="core/confirm" >}})
 * `lib/templates/modal.mustache`
 
 ## Usage
@@ -82,33 +82,23 @@ echo $OUTPUT->single_button('#', get_string('delete'), 'get', [
 
 ### Basic confirmation modal
 
-#### Simple Modal
-
 {{< example >}}
-<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["ok", "core"]'
-data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["ok", "core"]'>Show confirmation modal</button>
+<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["delete", "core"]'
+data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]'>Show confirmation modal</button>
 {{< /example >}}
-
-#### Delete Modal
-
-{{< example >}}
-<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-type="delete" data-confirmation-title-str='["delete", "core"]'
-data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]'>Show delete modal</button>
-{{< /example >}}
-
 
 ### Confirmation modal with a toast
 
 {{< example >}}
-<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["save", "core"]'
-data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["save", "core"]' data-confirmation-toast="true"
-data-confirmation-toast-confirmation-str='["saved", "core_question", "My question"]'>Show confirmation modal</button>
+<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["delete", "core"]'
+data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]' data-confirmation-toast="true"
+data-confirmation-toast-confirmation-str='["deleteblockinprogress", "block", "Online users"]'>Show confirmation modal</button>
 {{< /example >}}
 
 ### Confirmation modal with redirect
 
 {{< example >}}
-<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["save", "core"]'
-data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["save", "core"]'
+<button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["delete", "core"]'
+data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]'
 data-confirmation-destination="http://moodle.com">Show confirmation modal</button>
 {{< /example >}}

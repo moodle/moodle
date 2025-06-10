@@ -20,13 +20,13 @@ Feature: Import course's contents into another course
   Scenario: Import course's contents to another course
     Given I log in as "teacher1"
     And the following "activities" exist:
-      | activity | name               | intro                        | course | idnumber   | section |
-      | data     | Test database name | Test database description    | C1     | database1  | 2       |
-      | forum    | Test forum name    | Test forum name description  | C1     | forum1     | 1       |
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Comments" block
-    And I add the "Recent blog entries" block
-    And I turn editing mode off
+      | activity | name               | course | idnumber   |
+      | data     | Test database name | C1     | database1  |
+      | forum    | Test forum name    | C1     | forum1     |
+    And the following "blocks" exist:
+      | blockname   | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments    | Course       | C1        | course-view-*   | side-pre      |
+      | blog_recent | Course       | C1        | course-view-*   | side-pre      |
     When I import "Course 1" course into "Course 2" course using this options:
     Then I should see "Test database name"
     And I should see "Test forum name"

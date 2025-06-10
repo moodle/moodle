@@ -77,6 +77,7 @@ class restore_decode_processor {
      */
     public function execute() {
         // Iterate over all contents, visiting them
+        /** @var restore_decode_content $content */
         foreach ($this->contents as $content) {
             $content->process($this);
         }

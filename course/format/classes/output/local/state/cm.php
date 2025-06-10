@@ -72,7 +72,8 @@ class cm implements renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
-        global $CFG, $USER;
+        global $USER, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         $format = $this->format;
         $section = $this->section;
@@ -82,17 +83,16 @@ class cm implements renderable {
         $data = (object)[
             'id' => $cm->id,
             'anchor' => "module-{$cm->id}",
-            'name' => \core_external\util::format_string($cm->name, $cm->context, true),
+            'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
             'stealth' => $cm->is_stealth(),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,
             'hascmrestrictions' => $this->get_has_restrictions(),
-            'modname' => get_string('pluginname', 'mod_' . $cm->modname),
-            'indent' => $cm->indent,
             'module' => $cm->modname,
             'plugin' => 'mod_' . $cm->modname,
+            'indent' => ($format->uses_indentation()) ? $cm->indent : 0,
         ];
 
         // Check the user access type to this cm.
@@ -116,8 +116,6 @@ class cm implements renderable {
             $completiondata = $completioninfo->get_data($cm);
             $data->completionstate = $completiondata->completionstate;
         }
-
-        $data->allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
 
         return $data;
     }

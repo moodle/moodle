@@ -418,16 +418,14 @@ class subscriptions {
 
         // Retrieve the forum context if it wasn't specified.
         $context = forum_get_context($forum->id, $context);
+
         if (self::is_forcesubscribed($forum)) {
-            $results = self::get_potential_subscribers($context, $groupid, $fields);
+            $results = \mod_forum\subscriptions::get_potential_subscribers($context, $groupid, $fields, "u.email ASC");
 
         } else {
             // Only active enrolled users or everybody on the frontpage.
             list($esql, $params) = get_enrolled_sql($context, '', $groupid, true);
             $params['forumid'] = $forum->id;
-
-            list($sort, $sortparams) = users_order_by_sql('u');
-            $params = array_merge($params, $sortparams);
 
             if ($includediscussionsubscriptions) {
                 $params['sforumid'] = $forum->id;
@@ -447,7 +445,7 @@ class subscriptions {
                         JOIN {user} u ON u.id = subscriptions.userid
                         JOIN ($esql) je ON je.id = u.id
                         WHERE u.auth <> 'nologin' AND u.suspended = 0 AND u.confirmed = 1
-                        ORDER BY $sort";
+                        ORDER BY u.email ASC";
 
             } else {
                 $sql = "SELECT $fields
@@ -456,7 +454,7 @@ class subscriptions {
                         JOIN {forum_subscriptions} s ON s.userid = u.id
                         WHERE
                           s.forum = :forumid AND u.auth <> 'nologin' AND u.suspended = 0 AND u.confirmed = 1
-                        ORDER BY $sort";
+                        ORDER BY u.email ASC";
             }
             $results = $DB->get_records_sql($sql, $params);
         }

@@ -1,0 +1,1 @@
+This is another test file to be submitted to Turnitin. It is used in the behat tests and needs to have more than twenty words so that it returns a Similarity Report.

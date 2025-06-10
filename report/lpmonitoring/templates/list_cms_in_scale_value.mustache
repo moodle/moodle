@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    List courses modules associated to a scale value in competency template
+
+    Context variables required for this template:
+    * scalecompetencyitem
+        * name of the scale value
+        * color associated to the scale value
+        * listcms courses modules list
+            * cmname course module name
+            * coursename course shortname
+            * url course module url
+            * cmicon image url of the course module
+            * nbnotes number of comments (associated to competency rating)
+            * grade grade in course module
+
+}}
+<div class="lpmonitoringdialogue">
+<table class="cmsbyscalevalue dataTable" id="listscalecmcompetency-{{competencyid}}">
+    <caption class="cr-caption">
+        {{#str}}rating, tool_lp{{/str}} <span class="badge cr-scalename truncate" style="background-color: {{scalecompetencyitem.color}}">{{scalecompetencyitem.name}}</span>
+    </caption>
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}activities{{/str}}</th>
+            <th scope="col">{{#str}}comment, report_lpmonitoring{{/str}}</th>
+            <th scope="col">{{#str}}grade{{/str}}</th>
+            <th scope="col">{{#str}}course, report_lpmonitoring{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#scalecompetencyitem.listcms}}
+        <tr>
+            <td><a target="_blank" href="{{{url}}}" title="{{cmname}}"><img src="{{cmicon}}" > {{cmname}}</a></td>
+            <td><i class="fa fa-commenting-o"></i>  {{nbnotes}}</td>
+            <td>{{grade}}</td>
+            <td>{{coursename}}</td>
+        </tr>
+        {{/scalecompetencyitem.listcms}}
+    </tbody>
+</table>
+</div>

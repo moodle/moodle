@@ -1,0 +1,7 @@
+.block_turnitin .centered_cell {
+	text-align:center;
+}
+
+.block_turnitin #block_loading {
+	display:none;
+}

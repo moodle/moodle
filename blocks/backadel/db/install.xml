@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/backadel/db" VERSION="20080403" COMMENT="XMLDB file for Moodle blocks/backadel"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_backadel_statuses" COMMENT="Stores the status of pending operations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="coursesid"/>
+        <FIELD NAME="coursesid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="mdl_course id" PREVIOUS="id" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="BACKUP" SEQUENCE="false" ENUM="true" ENUMVALUES="'BACKUP', 'SUCCESS', 'FAIL'" COMMENT="status of operation" PREVIOUS="coursesid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

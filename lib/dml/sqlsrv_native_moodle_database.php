@@ -1317,6 +1317,16 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return true;
     }
 
+    /**
+     * Return SQL for casting to char of given field/expression
+     *
+     * @param string $field Table field or SQL expression to be cast
+     * @return string
+     */
+    public function sql_cast_to_char(string $field): string {
+        return "CAST({$field} AS NVARCHAR(MAX))";
+    }
+
 
     public function sql_cast_char2int($fieldname, $text = false) {
         if (!$text) {
@@ -1440,7 +1450,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $arr = func_get_args();
 
         foreach ($arr as $key => $ele) {
-            $arr[$key] = ' CAST('.$ele.' AS NVARCHAR(255)) ';
+            $arr[$key] = $this->sql_cast_to_char($ele);
         }
         $s = implode(' + ', $arr);
 

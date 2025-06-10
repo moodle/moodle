@@ -1,0 +1,1721 @@
+.competencyreport h3 {
+    font-size: 18px;
+    font-weight: 400;
+}
+.competencyreport .form-group {
+    margin-bottom: 10px;
+}
+.competencyreport .scaleitem > label {
+    font-weight: bold;
+}
+.competencyreport .mform .fitem .fgroup button:first-child {
+    margin-left : 0;
+}
+.competencyreport .form-control:focus {
+    border-color: #ccd0d7;
+    box-shadow: none !important;
+}
+.competencyreport .x_panel {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 0;
+    display: inline-block;
+    opacity: 1;
+    transition: all 250ms ease-in-out;
+}
+.competencyreport .x_title {
+    border-bottom: 1px solid transparent;
+    padding: 2px 5px;
+    transition: all 250ms ease-in-out;
+}
+.competencyreport .panel-collapsed .x_title {
+    border-bottom-color: #cfd1d5;
+}
+.competencyreport .x_title h4 a:hover {
+    text-decoration: none;
+}
+.competencyreport .x_title .filter {
+    width: 40%;
+    float: right;
+}
+.competencyreport .x_title h4 {
+    margin: 5px 0 6px;
+    display: inline-block;
+    font-size: 18px;
+    line-height: 1.2em;
+    font-weight: 400;
+    transition: all 250ms ease-in-out 0s;
+}
+.competencyreport .panel-collapsed .x_title h4 {
+    max-width: calc(100% - 150px);
+}
+.competencyreport .x_title span {
+    color: #333;
+}
+.competencyreport .x_title h4 small {
+    font-size: 14px;
+}
+.competencyreport .x_content {
+    padding: 0 5px 6px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    float: left;
+    clear: both;
+}
+.competencyreport .toggle {
+    float: left;
+    margin: 0;
+    padding-top: 16px;
+    width: 70px;
+}
+.competencyreport .toggle a {
+    padding: 15px 15px 0;
+    margin: 0;
+    cursor: pointer;
+}
+.competencyreport .toggle a i {
+    font-size: 26px;
+}
+.competencyreport .nav.child_menu > li > a {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    padding: 9px;
+}
+.competencyreport a.collapse-link {
+    display: inline-block;
+    padding: 5px;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: top;
+    width: 16px;
+}
+.competencyreport a.collapse-link:hover {
+    background: #f5f7fa;
+}
+.competencyreport .clearfix::after,
+.competencyreport form::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: auto;
+    visibility: hidden;
+}
+.competencyreport ul.to_do {
+    padding: 0;
+}
+.competencyreport ul.to_do li {
+    border-radius: 3px;
+    position: relative;
+    padding: 0;
+    margin-bottom: 2px;
+    list-style: none;
+}
+.competencyreport ul.to_do p {
+    margin: 0;
+}
+.competencyreport #userInfoContainer {
+    text-align: left;
+}
+.competencyreport .widget_profile_box {
+    background: #1375c7;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 14px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: flex-start;
+}
+.competencyreport .widget_profile_box * {
+    color: #fff;
+}
+.competencyreport .widget_profile_box div,
+.competencyreport .widget_profile_box h3 {
+    display: inline-block;
+    line-height: 61px;
+    height: 61px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.competencyreport .widget_profile_box h3 {
+    margin: 0 0 0 5px;
+}
+.competencyreport .widget_profile_box h3 img {
+    display: inline-block;
+    overflow: hidden;
+    text-indent: -10000px;
+    margin-bottom: 2px;
+    -webkit-filter: brightness(1.7);
+    filter: url([[pix:report_lpmonitoring|white]]#white);
+}
+.competencyreport .widget_profile_box .plan-name {
+    margin-right: 5px;
+    width: 40%;
+    overflow: hidden;
+}
+.competencyreport .widget_profile_box #plan-user-info {
+    font-size: 14px;
+    position: relative;
+    top: -10px;
+    flex: 2 0 auto;
+}
+.competencyreport .widget_profile_box #plan-user-info #spinerprofile {
+    display: none;
+    left: 16px;
+    position: absolute;
+    line-height: 81px;
+    z-index: 1;
+}
+.competencyreport .widget_profile_box #plan-user-info.loading #spinerprofile {
+    display: block;
+}
+.competencyreport .widget_profile_box .img-wrapper {
+    height: 81px;
+    width: 81px;
+}
+.competencyreport .widget_profile_box #plan-user-info.loading .img-wrapper:before {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 81px;
+    left: 0;
+    position: absolute;
+    width: 81px;
+}
+.competencyreport .widget_profile_box #plan-user-info .img-wrapper .img-circle.profile_img {
+    display: block;
+    background: #fff;
+    border: 1px solid rgba(32, 85, 130, 0.6);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 5px;
+    width: 81px;
+    height: 81px;
+}
+.competencyreport .widget_profile_box a.navigatetoplan {
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    box-sizing: border-box;
+    font-size: 10px;
+    line-height: 61px;
+    position: relative;
+    text-align: center;
+    width: 102px;
+    overflow: hidden;
+}
+.competencyreport .widget_profile_box a.nexplan {
+    padding-right: 10px;
+}
+.competencyreport .widget_profile_box a.nexplan i {
+    right: 5px;
+}
+.competencyreport .widget_profile_box a.prevplan {
+    padding-left: 10px;
+}
+.competencyreport .widget_profile_box a.prevplan i {
+    left: 5px;
+}
+.competencyreport .widget_profile_box a.navigatetoplan img {
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
+    display: block;
+    margin: 0 auto;
+}
+.competencyreport .widget_profile_box a.navigatetoplan i {
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+}
+.competencyreport .widget_profile_box a.navigatetoplan .user-profile-small {
+    display: inline-block;
+    line-height: 61px;
+    vertical-align: middle;
+    white-space: normal;
+}
+.competencyreport .widget_profile_box a.navigatetoplan .user-profile-small p {
+    line-height: 11px;
+    margin: 0;
+    width: 90px;
+}
+
+@media (min-width: 1350px){
+    .competencyreport .compstats .competency-detail {
+        flex: 0 1 315px;
+        margin-right: 20px;
+        min-width: 315px;
+    }
+}
+@media (min-width: 380px) and (max-width: 1350px) {
+    .competencyreport .compstats .competency-detail {
+        flex: 0 1 400px;
+        margin-right: 20px;
+        min-width: 400px;
+    }
+}
+@media (min-width: 100px) and (max-width: 370px) {
+    .competencyreport .compstats .competency-detail {
+        flex: 0 1 235px;
+        min-width: 235px;
+    }
+}
+@media (max-width: 998px) {
+    .competencyreport .widget_profile_box {
+        flex-flow : row wrap;
+        height: auto;
+        text-align: center;
+        padding: 0 40px;
+    }
+    .competencyreport .widget_profile_box div,
+    .competencyreport .widget_profile_box h3 {
+        display: block;
+        height: auto;
+        line-height: 1.2em;
+        margin: 0 auto;
+    }
+    .competencyreport .widget_profile_box h3 {
+        width: 100%;
+        white-space: normal;
+    }
+    .competencyreport .widget_profile_box .plan-name {
+        width: 100%;
+        margin: 10px 0;
+    }
+    .competencyreport .widget_profile_box #plan-user-info {
+        height: auto;
+        width: 100%;
+    }
+    .competencyreport .widget_profile_box a.navigatetoplan {
+        position: absolute;
+        width: 40px;
+        top: 0;
+        bottom: 0;
+        height: auto;
+    }
+    .competencyreport .widget_profile_box a.nexplan {
+        right: 0;
+    }
+    .competencyreport .widget_profile_box a.prevplan {
+        left: 0;
+        border-left: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .competencyreport .widget_profile_box a.navigatetoplan .user-profile-small {
+        display: none;
+    }
+    .competencyreport .widget_profile_box #plan-user-info {
+        top: 0;
+        margin-bottom: 10px;
+    }
+    .competencyreport .widget_profile_box a.navigatetoplan i,
+    .competencyreport .widget_profile_box #plan-user-info #spinerprofile {
+        left: 0;
+        right: 0;
+    }
+    .competencyreport .widget_profile_box #plan-user-info.loading .img-wrapper::before {
+        left: auto;
+        margin: 0 auto;
+    }
+}
+.competencyreport .green {
+    color: #4cae4c !important;
+}
+.competencyreport .blue {
+    color: #3590db;
+}
+.competencyreport .fail {
+    color: #ac2925 !important;
+}
+.competencyreport .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+.competencyreport .truncate,
+.badge.cr-scalename.truncate {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.competencyreport .x_panel table td p {
+    font-size: 12px;
+}
+.competencyreport .preuve {
+    font-weight: 600;
+    line-height: 25px;
+    font-size: 22px;
+}
+.competencyreport .modal-dialog td span.badge {
+    font-size: 12px;
+}
+.competencyreport .widget_stats {
+    min-height: 60px;
+    padding: 1px 5px;
+}
+@media (min-width: 768px) {
+    .competencyreport .tile_count .tile_stats_count .count {
+        font-size: 28px;
+    }
+}
+.competencyreport .tile_count {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    margin-bottom: 0;
+    margin-top: 4px;
+}
+.competencyreport .tile_count .tile_stats_count {
+    padding: 0 10px 0 20px;
+    position: relative;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+.competencyreport .tile_count .tile_stats_count table {
+    width: 100%;
+}
+.competencyreport .tile_count .rating {
+    -webkit-flex-grow: 2;
+    flex-grow: 2;
+}
+.competencyreport .tile_count .finalrating {
+    min-width: 250px;
+}
+@media (min-width: 992px) {
+    .competencyreport .tile_count .tile_stats_count {
+        margin-bottom: 0;
+        border-bottom: 0;
+        padding-bottom: 2px;
+    }
+    .competencyreport .tile_count .tile_stats_count:first-child {
+        border-left: 0;
+    }
+    .competencyreport .tile_count .tile_stats_count .count {
+        font-size: 28px;
+    }
+}
+.competencyreport .tile_count .tile_stats_count .count {
+    font-size: 28px;
+    line-height: 47px;
+    font-weight: 600;
+}
+@media (min-width: 992px) and (max-width: 1100px) {
+    .competencyreport .tile_count .tile_stats_count .count {
+        font-size: 28px;
+    }
+}
+.competencyreport .tile_count .tile_stats_count h5 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #cfd1d5;
+}
+@media (min-width: 768px) {
+    .competencyreport .tile_count .tile_stats_count h5 {
+        font-size: 15px;
+    }
+}
+.competencyreport .btn {
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+.competencyreport .btn-primary {
+  background: #1375c7;
+}
+.competencyreport .btn-primary:hover,
+.competencyreport .btn-primary:focus,
+.competencyreport .btn-primary:active,
+.competencyreport .btn-primary.active,
+.competencyreport .btn-primary.disabled,
+.competencyreport .btn-primary[disabled] {
+  background: #1453c7;
+}
+.competencyreport .tile-stats {
+    min-height: 125px;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding-bottom: 5px;
+}
+.competencyreport .tile-stats .icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 53px;
+    top: 22px;
+    z-index: 1;
+}
+.competencyreport .tile-stats .icon i {
+    margin: 0;
+    font-size: 60px;
+    line-height: 0;
+    vertical-align: bottom;
+    padding: 0;
+}
+.competencyreport .tile-stats .count {
+    font-size: 38px;
+    font-weight: bold;
+    line-height: 1.65857;
+}
+.competencyreport .tile-stats .reset-grade {
+    position: absolute;
+    top: 100px;
+    right: 10px;
+}
+.competencyreport .tile-stats .count,
+.competencyreport .tile-stats h4,
+.competencyreport .tile-stats p {
+    position: relative;
+    margin: 0;
+    margin-left: 10px;
+    z-index: 0;
+    padding: 0;
+}
+.competencyreport .tile-stats h4 {
+    color: #bab8b8;
+}
+.competencyreport .tile-stats p {
+    margin-top: 5px;
+    font-size: 12px;
+}
+.competencyreport .tile-stats > .dash-box-footer {
+    position: relative;
+    text-align: center;
+    margin-top: 5px;
+    padding: 3px 0;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+.competencyreport .tile-stats > .dash-box-footer:hover {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.15);
+}
+.competencyreport .tile-stats > .dash-box-footer:hover {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.15);
+}
+.competencyreport .navbar-right {
+    margin-right: 0;
+}
+.competencyreport .ln_solid {
+    border-top: 1px solid #e5e5e5;
+    color: #fff;
+    background-color: #fff;
+    height: 1px;
+    margin: 0 0 20px;
+}
+.competencyreport table.tile_info {
+    padding: 10px 15px;
+}
+.competencyreport table.tile_info td {
+    text-align: left;
+    padding: 0;
+    font-size: 15px;
+}
+.competencyreport #listPlanCompetencies table.tile_info tr:hover {
+    background: #f5f5f5;
+}
+.competencyreport .compstats table.tile_info tr:not(:first-child):hover {
+    background: #f5f5f5;
+}
+.competencyreport table.tile_info td:first-child {
+    width: 83%;
+}
+.competencyreport table.tile_info td p {
+    margin: 0;
+    line-height: 17px;
+}
+.competencyreport table.tile_info td i {
+    margin: 0 8px;
+    font-size: 17px;
+    float: left;
+    line-height: 17px;
+}
+.competencyreport table.tile_info td a {
+    cursor: pointer;
+    font-weight: bold;
+    overflow: auto;
+}
+.competencyreport table.tile_info td a,
+.competencyreport table.tile_info td span.nbcourses,
+.competencyreport table.tile_info td span.nbcms,
+.competencyreport table.tile_info td span.nbusers{
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    vertical-align: middle;
+}
+.competencyreport table.tile_info td span {
+    line-height: 28px;
+}
+.competencyreport table.tile_info span.right {
+    margin-right: 0;
+    float: right;
+    position: absolute;
+    right: 4%;
+}
+.competencyreport .h1,
+.competencyreport .h2,
+.competencyreport .h3,
+.competencyreport .h4,
+.competencyreport .h5,
+.competencyreport .h6,
+.competencyreport h1,
+.competencyreport h2,
+.competencyreport h3,
+.competencyreport h4,
+.competencyreport h5,
+.competencyreport h6 {
+    color: inherit;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+}
+.competencyreport .nav {
+    margin-bottom: 5px;
+}
+.competencyreport .rate-competency {
+    position: relative;
+    top: 10px;
+    left: 5px;
+}
+.competencyreport .tile_stats_count .tile-stats .level-proficiency {
+    font-size: 13px;
+    margin-right: 5px;
+    width: 80px;
+    text-align: center;
+    line-height: 1.5em;
+    margin-top: 17px;
+}
+.competencyreport .tile_stats_count .tile-stats .icon-proficiency {
+    clear: both;
+    margin-top: 30px;
+    height: 0;
+    width: 0;
+}
+.competencyreport .tile_stats_count .tile-stats .icon-proficiency i {
+    font-size: 35px;
+}
+.competencyreport .fautocomplete .form-autocomplete-downarrow {
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    top: 0;
+}
+.competencyreport .fautocomplete span[data-value=""] {
+    padding: 0;
+}
+.competencyreport .fautocomplete input[type="text"] {
+    margin-bottom: 2px;
+}
+.competencyreport .fautocomplete .badge-info span {
+    padding: 2px 4px;
+}
+
+.competencyreport #loaderscalevalues {
+    width: 197px;
+    text-align: center;
+}
+
+.competencyreport #scalevalues .fitemtitle.proficient label small {
+    color: #666;
+}
+.competencyreport .disabled-option {
+    display: none;
+}
+.competencyreport .disabled-option .fautocomplete input,
+.competencyreport .disabled-option .fautocomplete select {
+    background: #eee;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.competencyreport .disabled-option .fautocomplete .form-autocomplete-downarrow {
+    display: none;
+}
+.competencyreport #learningplanSelectorReport {
+    //margin-top: 29px;
+}
+.competencyreport #studentselectorreport {
+    margin-top: 25px;
+}
+.competencyreport label.templabel {
+    text-align: left;
+    padding-left: 0;
+}
+.competencyreport button .fa-spin {
+    margin-left: 7px;
+    position: static;
+    display: none;
+}
+.competencyreport button.loading .fa-spin {
+    display: inline-table;
+}
+.competencyreport span.user-nav-separator {
+    display: block;
+    border-left: 2px solid #fff;
+    height: 50px;
+}
+.competencyreport .level {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 30px;
+    min-width: 20px;
+    opacity: 0;
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    transition: all 250ms ease-in-out 0s;
+    visibility: hidden;
+}
+.competencyreport .fa-certificate,
+.competencyreport .fa-question-circle {
+    color: #999;
+}
+.competencyreport .panel-collapsed .x_content {
+    display: none;
+}
+.competencyreport .panel-collapsed .level {
+    opacity: 1;
+    visibility: visible;
+}
+.competencyreport .form-autocomplete-suggestions {
+    z-index: 40;
+}
+#listPlanCompetencies {
+    clear: both;
+}
+#listPlanCompetencies p.alert-info {
+    font-size: 15px;
+    margin-top: 20px;
+}
+.competencyreport canvas.detail-competency {
+    margin: 1px 1px 1px 0;
+    width: 80px;
+    height: 80px;
+}
+.competencyreport .breadcrumb > li + li::before {
+    color: #666;
+    content: "/ ";
+    padding: 0 5px;
+}
+.competencyreport .no-data-available {
+    border-radius: 50%;
+    text-align: center;
+    background: rgb(255, 255, 255);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    line-height: 1.2;
+    border: 2px solid rgb(204, 204, 204);
+    padding: 0.1em;
+    height: 74px;
+    width: 74px;
+    white-space: normal;
+}
+.competencyreport .no-data-available span {
+    font-size: 0.8em;
+}
+/* Important, the following selectors must not be prefixed with the class ".competency" because of their use in dialogues. */
+.cr-caption {
+    max-width: 100%;
+}
+.badge.cr-scalename {
+    color: #000;
+    font-size: 13px;
+    text-shadow: none;
+    vertical-align: middle;
+}
+.finalrating .badge.cr-scalename.truncate {
+    max-width: calc(100% - 100px);
+}
+.badge.cr-scalename.light-color {
+    color: #fff;
+}
+
+@media (min-width: 1200px) {
+    .competencyreport .scalecontainer {
+        margin-top: 5px;
+    }
+    .competencyreport #scalevalues .fitemtitle.proficient {
+        padding-top: 0;
+        margin-top : -2px;
+    }
+    .competencyreport #loaderscalevalues {
+        width: 462px;
+    }
+}
+.competencyreport .templatelist input {
+    width:35%;
+}
+.competencyreport .compstats {
+    display: flex;
+    flex-flow: row wrap;
+}
+.competencyreport div.stats .x_title {
+    border-bottom-color: #cfd1d5;
+}
+.competencyreport td.convaschart {
+    padding-top: 30px;
+    vertical-align: top;
+}
+.competencyreport .loaderstatscompetency {
+    text-align: center;
+    width: 100%;
+    min-height: 190px;
+}
+.competencyreport .loaderstatscompetency {
+    display: none;
+}
+.competencyreport .loaderstatscompetency i.fa-refresh {
+    line-height: 190px;
+    vertical-align: middle;
+}
+.competencyreport .loading .loaderstatscompetency {
+    display: block;
+}
+
+.competencyreport .plan-info-report {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+.competencyreport .plan-info-report:empty {
+    border-bottom: none;
+}
+.competencyreport .report-stats-competencies {
+    background: #fff none repeat scroll 0 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1em 1.5em;
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+.competencyreport .report-stats-competencies .space-block-stats {
+    padding-bottom: 0.5em;
+    flex: 1 0 auto;
+}
+.competencyreport .plan-info-report .report-stats-competencies .stats-cmp-proficient {
+    font-size: 12px;
+}
+.competencyreport .plan-info-report .report-stats-competencies .stats-display-rating {
+    position: relative;
+    font-size: 12px;
+}
+.competencyreport .plan-info-report .report-stats-competencies .stats-display-rating .resetdisplayrating {
+    position: absolute;
+    top: -56px;
+    left: 23px;
+}
+.competencyreport .plan-info-report .report-stats-competencies .count-stats {
+    font-size: 2.9em;
+    font-weight: 600;
+    line-height: 47px;
+}
+.competencyreport .plan-info-report > div.report-stats-competencies {
+    width: 165px;
+}
+.competencyreport .plan-info-report .report-stats-competencies .empty-value {
+    color: #cfd1d5;
+}
+.competencyreport .reset-grade a, .competencyreport .reset-grade-all a {
+    font-size: 12px;
+}
+.competencyreport .reset-grade-all {
+    text-align: right;
+}
+.competencyreport .collapsible-actions {
+    text-align: right;
+    position: relative;
+    color:#555;
+    align-self: end;
+    min-width: 120px;
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+.competencyreport .compstats .competency-detail .totalnbusers {
+    font-size: 0.8em;
+}
+.competencyreport .compstats .competency-detail .count {
+    line-height: 15px;
+    padding-left: 5px;
+}
+.competencyreport .compstats .competency-detail h5 {
+    border: medium none;
+    font-size: 11px;
+    margin: 10px 0;
+    max-width: 130px;
+    padding: 0;
+    padding: 0 0 0 5px;
+}
+.competencyreport .compstats .competency-detail td.convaschart {
+    width: 30%;
+}
+.competencyreport .compstats .competency-detail td.scalevalues {
+    vertical-align: top;
+}
+.competencyreport .compstats .competency-detail .tile_count .rating {
+    flex-grow: unset;
+    width: 100%;
+}
+.competencyreport .compstats .tile_count .tile_stats_count {
+    padding: 0;
+}
+.competencyreport .borderbottom {
+    border-bottom: 1px solid #cfd1d5;
+    margin-top: 1.5em;
+}
+.lpmonitoringdialogue .stats-rated-column {
+    min-width: 20%;
+}
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.first:not(.page-item),
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.previous:not(.page-item) {
+    position: relative;
+    padding-left: 24px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.next:not(.page-item),
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.last:not(.page-item) {
+    position: relative;
+    padding-right: 24px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.first:not(.page-item):before,
+.lpmonitoringdialogue div.dataTables_paginate a.previous:not(.page-item):before {
+    display: block;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    left: 10px;
+    position: absolute;
+    top: 2px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.next:not(.page-item):after,
+.lpmonitoringdialogue div.dataTables_paginate a.last:not(.page-item):after {
+    display: block;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    position: absolute;
+    right: 10px;
+    top: 2px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.first:not(.page-item):before {
+    content: "\f100";
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.previous:not(.page-item):before {
+    content: "\f104";
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.next:not(.page-item):after {
+    content: "\f105";
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.last:not(.page-item):after {
+    content: "\f101";
+}
+.lpmonitoringdialogue .dataTables_wrapper {
+    position: relative;
+    clear: both;
+    *zoom: 1;
+    zoom: 1;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_length {
+    float: left;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_filter input {
+    margin-left: 0.5em;
+}
+.lpmonitoringdialogue table.dataTable thead th {
+    position: relative;
+    background-image: none !important;
+}
+
+.lpmonitoringdialogue table.dataTable thead th.sorting:after,
+.lpmonitoringdialogue table.dataTable thead th.sorting_asc:after,
+.lpmonitoringdialogue table.dataTable thead th.sorting_desc:after {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    display: block;
+    font-family: FontAwesome;
+}
+
+.lpmonitoringdialogue table.dataTable thead th.sorting:after {
+    content: "\f0dc";
+    color: #ddd;
+    font-size: 0.8em;
+    padding-top: 0.12em;
+}
+.lpmonitoringdialogue table.dataTable thead th.sorting_asc:after {
+    content: "\f0de";
+}
+.lpmonitoringdialogue table.dataTable thead th.sorting_desc:after {
+    content: "\f0dd";
+}
+
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting:after,
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting_asc:after,
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting_desc:after {
+    content: "";
+}
+.lpmonitoringdialogue table.dataTable thead .sorting_asc,
+.lpmonitoringdialogue table.dataTable thead .sorting_desc,
+.lpmonitoringdialogue table.dataTable thead .sorting {
+    cursor: pointer;
+}
+.lpmonitoringdialogue .dataTables_paginate {
+    text-align: center;
+}
+.competencyreport .main_container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+.competencyreport .main_container .button-bulkdefaultrating {
+    width: auto;
+    align-self: flex-end;
+}
+.competencyreport ul.form-autocomplete-suggestions li {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.competencyreport ul.form-autocomplete-suggestions li:not(:first-child):not(:last-child) {
+    border-bottom: 0.5px solid #ccc;
+}
+.competencyreport .form-autocomplete-suggestions li::before {
+    content: "";
+}
+.competencyreport .form-autocomplete-suggestions li>span.userplan-fullname {
+    margin-right: 1rem;
+}
+.competencyreport .form-autocomplete-suggestions li>span.nbratinguser {
+    margin-left: auto;
+    margin-right: 0.5rem;
+}
+.competencyreport .compstats .tile_count .tile_stats_count .incourse {
+    font-size: 1.6em;
+}
+.competencyreport .status-icon {
+    font-size: 1.5em;
+}
+.competencyreport .status-icon .draft {
+  color: #ff7200;
+}
+.competencyreport .status-icon .waiting {
+  color: #00cce4;
+}
+.competencyreport .status-icon .review {
+  color: #833fff;
+}
+.competencyreport .status-icon .active {
+  color: #00d30f;
+}
+.competencyreport .status-icon .complete {
+  color: #0078ff;
+}
+.competencyreport .x_title small {
+    color: #333;
+}
+.competencyreport .mform .fitem_fradiogroup {
+    margin-bottom: 0px;
+}
+.lpmonitoringdialogue .dataTables_filter input {
+    background-clip: padding-box;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+}
+.lpmonitoringdialogue table caption {
+    caption-side: top;
+    color: unset;
+}
+/** default pagination for datatables plugin**/
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.first,
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.previous {
+    position: relative;
+    padding-left: 24px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.next,
+.lpmonitoringdialogue div.dataTables_paginate a.paginate_button.last {
+    position: relative;
+    padding-right: 24px;
+}
+
+.lpmonitoringdialogue div.dataTables_paginate a.first:before,
+.lpmonitoringdialogue div.dataTables_paginate a.previous:before {
+    display: block;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    left: 10px;
+    position: absolute;
+    top: 2px;
+}
+.lpmonitoringdialogue div.dataTables_paginate a.next:after,
+.lpmonitoringdialogue div.dataTables_paginate a.last:after {
+    display: block;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    position: absolute;
+    right: 10px;
+    top: 2px;
+}
+.lpmonitoringdialogue div.dataTables_paginate a.first:before {
+    content: "\f100";
+}
+.lpmonitoringdialogue div.dataTables_paginate a.previous:before {
+    content: "\f104";
+}
+.lpmonitoringdialogue div.dataTables_paginate a.next:after {
+    content: "\f105";
+}
+.lpmonitoringdialogue div.dataTables_paginate a.last:after {
+    content: "\f101";
+}
+.lpmonitoringdialogue .dataTables_wrapper {
+    position: relative;
+    clear: both;
+    *zoom: 1;
+    zoom: 1;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_length {
+    float: left;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_filter input {
+    margin-left: 0.5em;
+}
+.lpmonitoringdialogue table.dataTable thead th {
+    position: relative;
+    background-image: none !important;
+}
+
+.lpmonitoringdialogue table.dataTable thead th.sorting:after,
+.lpmonitoringdialogue table.dataTable thead th.sorting_asc:after,
+.lpmonitoringdialogue table.dataTable thead th.sorting_desc:after {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    display: block;
+    font-family: FontAwesome;
+}
+
+.lpmonitoringdialogue table.dataTable thead th.sorting:after {
+    content: "\f0dc";
+    color: #ddd;
+    font-size: 0.8em;
+    padding-top: 0.12em;
+}
+.lpmonitoringdialogue table.dataTable thead th.sorting_asc:after {
+    content: "\f0de";
+}
+.lpmonitoringdialogue table.dataTable thead th.sorting_desc:after {
+    content: "\f0dd";
+}
+
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting:after,
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting_asc:after,
+.lpmonitoringdialogue div.dataTables_scrollBody table.dataTable thead th.sorting_desc:after {
+    content: "";
+}
+.lpmonitoringdialogue table.dataTable thead .sorting_asc,
+.lpmonitoringdialogue table.dataTable thead .sorting_desc,
+.lpmonitoringdialogue table.dataTable thead .sorting {
+    cursor: pointer;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:not(.page-item),
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:not(.page-item):hover,
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:not(.page-item):active {
+    background: transparent none repeat scroll 0 0;
+    border: 1px solid transparent;
+    box-shadow: none;
+    color: #666 !important;
+    cursor: default;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button:not(.page-item) {
+    box-sizing: border-box;
+    color: #333333 !important;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1.5em;
+    margin-left: 2px;
+    min-width: 1.5em;
+    padding: 0.2em 0.6em;
+    text-align: center;
+    text-decoration: none !important;
+    border-radius: 3px;
+}
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button.current:not(.page-item),
+.lpmonitoringdialogue .dataTables_wrapper .dataTables_paginate .paginate_button.current:not(.page-item):hover {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, white 0%, gainsboro 100%) repeat scroll 0 0;
+    border: 1px solid #cacaca;
+    color: #333333 !important;
+}
+.lpmonitoringdialogue .dataTables_paginate {
+    text-align: center;
+}
+.competencyreport .form-inline .radio
+{
+    margin-bottom: 8px;
+}
+.competencyreport .radio input {
+    display: inline;
+    width: 1%;
+}
+.competencyreport:not(.boost) .input-group-addon {
+    background-color: #eceeef;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    color: #55595c;
+    display: table-cell;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 0;
+    padding: 0.2rem 0.5rem;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+.competencyreport:not(.boost) .form-inline .input-group {
+    display: inline-table;
+    vertical-align: middle;
+    width: auto;
+}
+.competencyreport:not(.boost) .input-group {
+    border-collapse: separate;
+    display: table;
+    position: relative;
+    width: 100%;
+}
+.competencyreport:not(.boost) .input-group input {
+    border-bottom-right-radius: 0;
+    border-right: 0 none;
+    border-top-right-radius: 0;
+}
+.competencyreport:not(.boost) .row {
+    margin-left: 0;
+}
+.button-dispayratinghelp, .button-resethelp {
+    background: transparent;
+    background-color: transparent;
+    border: none;
+    left: 85px;
+}
+
+/** report table **/
+.competencyreport .nav-tabs {
+    margin-top: 30px;
+}
+
+.competencyreport .table-scroll {
+  position: relative;
+  width:100%;
+  z-index: 1;
+  margin: auto;
+  overflow: scroll;
+  height: 500px;
+}
+.competencyreport .table-scroll table {
+  width: 98%;
+  margin: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.competencyreport .table-scroll th,
+.competencyreport .table-scroll td {
+  padding: 3px 3px;
+  border: 1px solid #000;
+  background: #fff;
+  vertical-align: top;
+}
+.competencyreport .table-scroll thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  min-width: 150px;
+}
+.competencyreport .table-scroll th:first-child,
+.competencyreport .table-scroll td:first-child {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+.competencyreport .table-scroll thead th:first-child,
+.competencyreport .table-scroll tfoot th:first-child {
+  z-index: 5;
+  min-width: 300px;
+}
+.competencyreport .dataTables_filter {
+    display: none;
+}
+#report-content .filter-report-custom {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 30px;
+}
+#report-content .filter-report-custom .radio-primary, #summary-content .filter-report-custom .radio-primary {
+    float: left;
+    margin-right: 30px;
+}
+#report-content .table-scroll .breadcrumb.tile_stats_count {
+    font-size: 0.8em;
+    margin-top: 2px;
+    font-weight: lighter;
+}
+#report-content #table-search-column,
+#report-content #table-search {
+    float: right;
+}
+#report-content #table-search-column {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    clear: both;
+}
+#report-content .filtersearchhidden,
+#report-content .switchsearchhidden, #summary-content .switchsearchhidden {
+    display: none !important;
+}
+#report-content .table-scroll td {
+    vertical-align: middle;
+    padding: 6px;
+}
+#report-content  .filtercolumn {
+    position: absolute;
+    bottom: 05px;
+    clear: both;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+}
+#report-content  select.filtercolumn {
+    width: 130px;
+}
+#report-content .datatablescalefilter {
+    float: right;
+    clear: both;
+}
+#report-content .datatablescalefilter label {
+    float: right;
+    margin-bottom: 0.1rem;
+    margin-top: 1rem;
+}
+#report-content input.filtercolumn {
+    width: 240px;
+    position: relative;
+    margin-bottom: 5px;
+    margin-top: 15px
+}
+#report-content a.nowrapcm {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+#report-content .table-scroll td.evaluation a,
+#report-content .table-scroll td.evaluation.notrated,
+#report-content .table-scroll td.evaluation.notrated a {
+    color: #000;
+}
+
+/** full navigation **/
+.toggle-lp-list-users {
+    padding-top: 5px!important;
+    padding-bottom: 5px !important;
+    padding-right: 3px !important;
+    width: 35px;
+    padding-left: 3px !important;
+    margin-bottom: 10px;
+    height: 60px;
+    display: inline-block;
+    background-color: #1375c7 !important;
+    display: block;
+    float: left;
+    margin-top: 13px;
+    border-radius: 6px;
+    height: 62px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.toggle-lp-list-users i {
+    font-size: 25px;
+    margin-bottom: 3px;
+    display: block;
+    color: #fff !important;
+}
+[data-region="blocks-lp-list-users"].lp-list-users-closed {
+    margin-left: -320px;
+}
+[data-region="blocks-lp-list-users"] {
+    -moz-transition: margin .8s ease;
+    -webkit-transition: margin .8s ease;
+    -ms-transition: margin .8s ease;
+    -o-transition: margin .8s ease;
+    transition: margin .8s ease;
+    max-width: 240px;
+    float: left;
+    margin-left: 0;
+    margin-top: 13px;
+}
+.plan-info-container.closed .plan-info-detail {
+    width: 95%;
+}
+.plan-info-container.nonavigation .plan-info-detail {
+    width: 100%;
+}
+.plan-info-detail {
+    float: left;
+    width: 80%;
+    -moz-transition: width .8s ease;
+    -webkit-transition: width .8s ease;
+    -ms-transition: width .8s ease;
+    -o-transition: width .8s ease;
+    transition: width .8s ease;
+}
+.plan-info-container .table-list-users span.nav-small {
+    font-size: 0.7em;
+    display: inline;
+}
+.plan-info-container .table-list-users span.nav-small.badge {
+    display: inline-block;
+}
+.plan-info-container .table-list-users .nav-list-users-displayinfo {
+    display: inline-block;
+    float: right;
+}
+.plan-info-container .table-list-users .nav-list-users-displayinfo i.fa {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #262626;
+}
+.table-list-users {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 4px;
+    border-collapse: collapse;
+    overflow: hidden;
+    color: #262626;
+}
+.competencyreport .table-list-users img {
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
+    display: block;
+    margin: 0 auto;
+}
+.table-list-users tr.selected {
+    background-color: #bedbff !important;
+}
+.table-list-users tr {
+    cursor: pointer;
+}
+.table-list-users td {
+    border: none !important;
+    font-size: 0.9em;
+    padding-left: 1px;
+    padding-right: 1px;
+}
+.table-list-users td span.fullname-td {
+    display: inline-block;
+    width: 165px;
+    overflow: hidden;
+}
+.table-list-users td.img-user {
+    width: 30px
+}
+.drawer-open-left .plan-info-detail {
+    width: 70%;
+}
+@media (max-width: 1199px) {
+    [data-region="blocks-lp-list-users"] {
+        max-width: 100%;
+        width: 100%;
+    }
+    [data-region="blocks-lp-list-users"].lp-list-users-closed {
+        margin-left: 0;
+    }
+    .drawer-open-left .plan-info-detail,
+    .plan-info-detail {
+        width: 100%;
+    }
+}
+@media (max-width: 1500px) and (min-width: 1199px) {
+    .plan-info-detail {
+        width: 70%;
+    }
+    .drawer-open-left .plan-info-detail {
+        width: 65%;
+    }
+    .plan-info-container.closed .plan-info-detail {
+        width: 90%;
+    }
+}
+@media (min-width: 1800px) {
+    .drawer-open-left .plan-info-detail {
+        width: 80%;
+    }
+}
+.competencyreport .count {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.competencyreport .count span.counttitle {
+    color: #555;
+    font-size: 0.5em;
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 300;
+}
+ul.detail-comp-tab li a::first-letter {
+    text-transform: capitalize;
+}
+.competencyreport .nav-tabs.detail-comp-tab {
+    margin-top: 10px;
+}
+.template-selector {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: flex-start;
+}
+.template-selector .label-template-selector {
+    margin-right: 20px;
+}
+.scale-comp-container {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
+}
+.scale-comp-container .scale-comp-item {
+    flex: 0 1 315px;
+    -webkit-flex: 0 1 315px;
+    -ms-flex: 0 1 315px;
+    margin-right: 15px;
+    min-width: 315px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: column wrap;
+    -webkit-flex-flow: column wrap;
+    justify-content: space-between;
+}
+.scale-comp-container .scale-comp-item .donotapplybulk {
+    margin: 5px;
+}
+.scale-comp-container .scale-comp-item .donotapplybulk label {
+    color: #31708f;
+}
+.scale-comp-container .scale-comp-item .donotapplybulk label input {
+    margin-right: 5px;
+}
+#savescalesvalues [data-region="scale-buttons"] input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+#savescalesvalues input[type="submit"] {
+    float: right;
+}
+.scale-comp-container .scale-comp-item table caption {
+    font-size: 14px;
+    line-height: 20px;
+}
+.scale-comp-container .scale-comp-item table.disabled {
+    opacity: 0.5;
+}
+.filter-report-custom .report-filterscale {
+    float: right;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    height: auto;
+    padding: .5rem .5rem;
+    clear: both;
+}
+#table-search-columns,
+#filter-report-data {
+    float: right;
+}
+#table-search-columns {
+    width: 245px;
+}
+
+/* button radio */
+#reportFilter #id_displayinfo .fcontainer .fitem_fradio .form-inline{
+    display: block !important;
+}
+
+/* round sahpe image */
+#plan-user-info .profile_img {
+    border-radius: 50% !important;
+}
+/*nav bar navigation of learning plan*/
+#page-report-lpmonitoring-index .plan-info-container .plan-info-detail #nav-tabs:not(.hidden)
+{
+    display: flex !important;
+}
+/* left arrow of navigation in learning plan */
+#page #page-content #region-main-box #users-list-full-navigation .fa-angle-double-left:before {
+    padding-left: 5px;
+}
+#page #page-content #region-main-box #users-list-full-navigation .fa-angle-double-right:before {
+    padding-left: 7px;
+}
+
+/* button close in messages of evidence in pop up of learning plans*/
+.evidence .pull-xs-right a img {
+    float: right;
+    padding-top: 15px;
+    padding-right: 5px;
+}
+
+/* list of student's learning plan accordion */
+#page-report-lpmonitoring-index #region-main {
+    padding: 0.5rem !important;
+}
+
+/* pop up message evidence */
+.moodle-dialogue-base .evidence {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-left: 25px;
+}
+/* search filter */
+.filter-report-custom > .col-md-3 {
+    float: right;
+}
+.filter-datatable-right {
+    justify-content: flex-end;
+    flex-flow: column;
+    align-items: flex-end;
+}
+
+/*summary table*/
+.summary-table thead th.total-cell, .summary-table thead th.course-cell, .summary-table thead th.cm-cell {
+    vertical-align: middle;
+}
+.competencyreport .table-scroll .summary-parent th, .competencyreport .table-scroll .summary-parent td {
+    background-color: #D9D9D9;
+}
+.lpmonitoringdialogue .row {
+    width: 100%;
+}
+.lpmonitoringdialogue ul.pagination {
+    flex-flow: row;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+.lpmonitoringdialogue .dataTables_wrapper.dt-bootstrap .row div {
+    width: 100%;
+}
+.summary-table td.course-cell,
+.summary-table td.total-cell,
+.summary-table td.cm-cell {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1.2rem;
+}
+.summary-table tr:not(.summary-parent) .light-color,
+#report-content .table-scroll td.evaluation a.light-color {
+    color: #FFF;
+}
+
+@media (max-width: 998px) {
+    .competencyreport .form-autocomplete-suggestions li {
+        flex-direction: column;
+    }
+    .competencyreport .form-autocomplete-suggestions li>span.userplan-fullname {
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+    .competencyreport .form-autocomplete-suggestions li>span.nbratinguser {
+        margin: 0;
+    }
+}
+#reportFilter,
+.competencyreport .plan-info-container {
+    width: 100%;
+}
+.lpmonitoringdialogue .dataTables_wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.lpmonitoringdialogue .dataTables_paginate.paging_simple_numbers {
+    margin-top: 1rem;
+}
+
+.competencyreport .scalevalue input[aria-labelledby="scalevalues"] {
+    width: unset;
+}
+#page-report-lpmonitoring-index .comment-list,
+#page-report-lpmonitoring-index .comment-ctrl {
+    font-size: 1rem;
+}
+#page-report-lpmonitoring-stats .competencyreport {
+    width: 100%;
+    max-width: 100%;
+}

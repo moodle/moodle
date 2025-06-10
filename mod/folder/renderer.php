@@ -60,7 +60,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         $canmanagecourseactivities = has_capability('moodle/course:manageactivities', $context);
         if ($canmanagefolderfiles && ($folder->display != FOLDER_DISPLAY_INLINE || !$canmanagecourseactivities)) {
             $editbutton = new single_button(new moodle_url('/mod/folder/edit.php', ['id' => $cm->id]),
-                get_string('edit'), 'post', single_button::BUTTON_PRIMARY);
+                get_string('edit'), 'post', true);
             $editbutton->class = 'navitem';
             $buttons .= $this->render($editbutton);
         }

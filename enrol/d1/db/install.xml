@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/d1/db" VERSION="20220824" COMMENT="XMLDB file for d1 Moodle enrollment"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_d1_students" COMMENT="The user mapping table.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lsuid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="d1id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="key_d1s_id" TYPE="primary" FIELDS="id" COMMENT="Primary Key"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_d1s_id" UNIQUE="true" FIELDS="idnumber"/>
+        <INDEX NAME="ix_d1s_un" UNIQUE="true" FIELDS="username"/>
+        <INDEX NAME="ix_d1s_em" UNIQUE="true" FIELDS="email"/>
+        <INDEX NAME="ix_d1s_d1" UNIQUE="true" FIELDS="d1id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_d1_enrolls" COMMENT="Moodle d1 Enrollments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="courseidnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="12" NOTNULL="true" DEFAULT="unenroll" SEQUENCE="false"/>
+        <FIELD NAME="enrollstart" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enrollend" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="key_d1e_id" TYPE="primary" FIELDS="id" COMMENT="PRIMARY KEY"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_d1e_co" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="ix_d1e_st" UNIQUE="false" FIELDS="studentsid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -160,7 +160,7 @@ class standard_action_bar implements renderable, templatable {
             return null;
         }
         $btn = new single_button(new moodle_url('/mod/glossary/edit.php', ['cmid' => $this->cm->id]),
-            get_string('addsingleentry', 'glossary'), 'post', single_button::BUTTON_PRIMARY);
+            get_string('addsingleentry', 'glossary'), 'post', true);
 
         return $btn->export_for_template($output);
     }

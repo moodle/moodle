@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+<style type="text/css">
+<![CDATA[
+	.st0{stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:55;}
+	.st1{fill:url(#SVGID_3_);}
+	.st2{fill:#FFFFFF;}
+	.st3{fill:url(#SVGID_1_);stroke:#F57900;}
+	.st4{opacity:0.75;fill:url(#SVGID_2_);enable-background:new    ;}
+	.st5{stroke:#1F1F1F;stroke-miterlimit:20;}
+	.st6{fill:#454545;}
+]]>
+</style>
+<g>
+	<rect x="2.5" y="0.5" class="st2" width="19" height="23"/>
+	<path class="st6" d="M21,1v22H3V1H21 M22,0H2v24h20V0L22,0z"/>
+</g>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="764.1211" y1="-1091.2002" x2="764.1211" y2="-1102.0837" gradientTransform="matrix(0.9946 -0.1039 -0.1039 -0.9946 -862.2496 -1003.5676)">
+	<stop  offset="0" style="stop-color:#F57900"/>
+	<stop  offset="1" style="stop-color:#FCE94F"/>
+</linearGradient>
+<rect x="4.41" y="2.635" class="st3" width="15.183" height="16.299"/>
+<radialGradient id="SVGID_2_" cx="294.6084" cy="-1134.2236" r="6.9666" gradientTransform="matrix(3.2114 -0.3603 -0.1226 -1.2595 -1081.9224 -1315.3284)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#FFFFFF"/>
+	<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+</radialGradient>
+<path class="st4" d="M4.898,3.272h14.118l0.055,4.31C6.148,6.914,7.07,6.961,4.898,19.573V3.272z"/>
+<radialGradient id="SVGID_3_" cx="754.3838" cy="-1039.3896" r="2.028" gradientTransform="matrix(1.2433 -0.1395 -0.1299 -1.3349 -1063.7867 -1274.7223)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#FFFFFF"/>
+	<stop  offset="0.81" style="stop-color:#FFFFFF"/>
+	<stop  offset="0.84" style="stop-color:#FDF4A7"/>
+	<stop  offset="1" style="stop-color:#FCE94F;stop-opacity:0"/>
+</radialGradient>
+<polygon class="st1" points="6.337,5.062 11.373,4.498 11.9,9.905 6.865,10.472 "/>
+<path class="st5" d="M16.366,14.555c0.216,0.363,0.508,0.752,0.928,1.146v0.83h-4.771c0.248-0.186,0.49-0.412,0.733-0.684
+	l0.022-0.023l0.021-0.027c0.583-0.719,0.76-0.72,1.154-0.72C15.066,15.077,15.682,15.02,16.366,14.555 M8.445,15.398
+	c0.271,0.502,0.568,0.869,0.866,1.131H7.145c0.321-0.434,0.606-0.637,1.232-1.081C8.399,15.434,8.422,15.416,8.445,15.398
+	 M16.785,12.152c-2.062,2.954-2.459,0.226-4.5,2.747c-0.53,0.593-1.001,0.852-1.415,0.852c-0.825,0-1.427-1.031-1.828-2.498
+	c-2.272,1.77-2.48,1.498-3.621,3.482v1.188h13.203v-2.883C17.202,13.964,17.261,13.098,16.785,12.152L16.785,12.152z"/>
+<path class="st0" d="M5.853,17.861v-0.385c0.723-1.535,0.995-1.771,1.995-2.658c0.213-0.188,0.455-0.4,0.733-0.657
+	c0.555,1.784,1.314,2.687,2.261,2.687c0.65,0,1.317-0.464,1.98-1.383c0.839-1.281,1.224-1.281,1.756-1.281
+	c0.71,0,1.384-0.108,2.229-1.182c0.233,0.752,0.573,1.579,1.428,2.473v2.385H5.853V17.861z"/>
+</svg>

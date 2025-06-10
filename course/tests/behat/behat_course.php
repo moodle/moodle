@@ -215,8 +215,8 @@ class behat_course extends behat_base {
         // Clicks add activity or resource section link.
         $sectionnode = $this->find('xpath', $sectionxpath);
         $this->execute('behat_general::i_click_on_in_the', [
-            "//button[@data-action='open-chooser' and not(@data-beforemod)]",
-            'xpath',
+            get_string('addresourceoractivity', 'moodle'),
+            'button',
             $sectionnode,
             'NodeElement',
         ]);
@@ -1039,7 +1039,7 @@ class behat_course extends behat_base {
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('delete'), "button", "Confirm", "dialogue")
+                array(get_string('yes'), "button", "Confirm", "dialogue")
             );
         } else {
             $this->execute("behat_forms::press_button", get_string('yes'));
@@ -1092,14 +1092,8 @@ class behat_course extends behat_base {
                     "/ancestor::li[contains(concat(' ', normalize-space(@class), ' '), ' section ')]" .
                     "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
 
-            // Component based courses do not use lightboxes anymore but js depending.
-            $sectionreadyxpath = "//*[contains(@id,'page-content')]" .
-                    "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' stateready ')]";
-
-            $duplicationreadyxpath = "$hiddenlightboxxpath | $sectionreadyxpath";
-            $this->execute(
-                "behat_general::wait_until_exists",
-                [$this->escape($duplicationreadyxpath), "xpath_element"]
+            $this->execute("behat_general::wait_until_exists",
+                    array($this->escape($hiddenlightboxxpath), "xpath_element")
             );
 
             // Close the original activity actions menu.
@@ -1173,7 +1167,7 @@ class behat_course extends behat_base {
     protected function get_activity_element($element, $selectortype, $activityname) {
         $activitynode = $this->get_activity_node($activityname);
 
-        $exception = new ElementNotFoundException($this->getSession(), "'{$element}' '{$selectortype}' in '{$activityname}'");
+        $exception = new ElementNotFoundException($this->getSession(), "'{$element}' '{$selectortype}' in '${activityname}'");
         return $this->find($selectortype, $element, $exception, $activitynode);
     }
 

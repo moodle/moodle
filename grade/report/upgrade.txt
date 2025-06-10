@@ -1,13 +1,6 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-* 'Show grade analysis icon' setting has been removed from grader report (link is moved to grade action menu)
-* 'Show locks' setting has been removed from grader report (link is moved to grade action menu)
-* 'Show show/hide icons' setting has been removed from grader report (link is moved to grade action menu)
-* 'Enable AJAX' interface has been deprecated for grader report
-* 'Quick feedback' interface has been deprecated for grader report
-
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).
   - locked: Whether the grade item is locked.

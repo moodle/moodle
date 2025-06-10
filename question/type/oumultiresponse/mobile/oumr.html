@@ -1,0 +1,24 @@
+<section ion-list *ngIf="question.text || question.text === ''" class="qtype-oumultiresponse">
+    <ion-item text-wrap>
+        <p>
+            <core-format-text [component]="component" [componentId]="componentId" [text]="question.text"></core-format-text>
+        </p>
+        <p *ngIf="question.prompt">
+            <core-format-text [component]="component" [componentId]="componentId" [text]="question.prompt"></core-format-text>
+        </p>
+    </ion-item>
+    <ng-container>
+        <ion-item text-wrap *ngFor="let option of question.options" [ngClass]="option.qclass">
+            <ion-label>
+                <core-format-text [component]="component" [componentId]="componentId" [text]="option.text"></core-format-text>
+                <p *ngIf="option.feedback" class="core-question-feedback-container">
+                    <core-format-text [text]="option.feedback"></core-format-text>
+                </p>
+            </ion-label>
+            <ion-checkbox [attr.name]="option.name" [(ngModel)]="option.checked" [disabled]="option.disabled"
+                    item-end></ion-checkbox>
+            <!-- ion-checkbox doesn't use an input. Create a hidden input to hold the value. -->
+            <input item-content type="hidden" [ngModel]="option.checked" [attr.name]="option.name">
+        </ion-item>
+    </ng-container>
+</section>

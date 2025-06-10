@@ -1,0 +1,8 @@
+.coursesizedownload {
+    display: inline-block;
+    float: right;
+}
+
+#page-admin-report-coursesize-index .lastupdate {
+    font-size: small;
+}

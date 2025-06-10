@@ -46,6 +46,10 @@ class manager {
      */
     const ADHOC_TASK_QUEUE_MODE_FILLING = 1;
 
+    // BEGIN LSU LTG patch for tasks to run now.
+    const MR_CONFIG_FILE_VAR = "MR_CONFIG_FILENAME";
+    // END LSU LTG patch for tasks to run now.
+
     /**
      * @var array A cached queue of adhoc tasks
      */
@@ -1388,8 +1392,16 @@ class manager {
             $classname = get_class($task);
             $taskarg   = escapeshellarg("--execute={$classname}") . " " . escapeshellarg("--force");
 
+            // BEGIN LSU LTG patch for tasks to run now.
+            $setconfig = '';
+            if (!empty($_SERVER['MR_CONFIG_FILENAME'])) {
+                $configfile = $_SERVER['MR_CONFIG_FILENAME'];
+                $setconfig = self::MR_CONFIG_FILE_VAR . "=" . $configfile;
+            }
+
             // Build the CLI command.
-            $command = "{$phpbinary} {$scriptpath} {$taskarg}";
+            $command = "{$setconfig} {$phpbinary} {$scriptpath} {$taskarg}";
+            // END LSU LTG patch for tasks to run now.
 
             // Execute it.
             passthru($command);

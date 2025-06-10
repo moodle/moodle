@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor</location>
+        <name>Composer dependencies</name>
+        <version></version>
+        <license>Apache/MIT/BSD-3-Clause</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/firebase/php-jwt</location>
+        <name>firebase/php-jwt</name>
+        <version>3.0.0</version>
+        <license>BSD-3-Clause</license>
+        <licenseversion>1.0</licenseversion>
+    </library>
+</libraries>

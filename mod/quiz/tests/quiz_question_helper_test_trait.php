@@ -13,8 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-use mod_quiz\quiz_attempt;
-use mod_quiz\quiz_settings;
 
 /**
  * Helper trait for quiz question unit tests.
@@ -69,11 +67,11 @@ trait quiz_question_helper_test_trait {
         // Create a couple of questions.
         $cat = $questiongenerator->create_question_category($override);
 
-        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         // Create another version.
         $questiongenerator->update_question($saq);
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         // Create two version.
         $questiongenerator->update_question($numq);
         $questiongenerator->update_question($numq);
@@ -90,8 +88,8 @@ trait quiz_question_helper_test_trait {
     protected function add_one_random_question($questiongenerator, \stdClass $quiz, $override = []): void {
         // Create a random question.
         $cat = $questiongenerator->create_question_category($override);
-        $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
-        $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
+        $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
+        $questiongenerator->create_question('essay', null, array('category' => $cat->id));
         quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
     }
 
@@ -107,7 +105,7 @@ trait quiz_question_helper_test_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = quiz_settings::create($quiz->id, $user->id);
+        $quizobj = quiz::create($quiz->id, $user->id);
 
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

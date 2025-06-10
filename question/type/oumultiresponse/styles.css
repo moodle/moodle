@@ -1,0 +1,94 @@
+.que.oumultiresponse .answer .specificfeedback {
+    display: inline;
+    padding: 0 0.7em;
+    background: #fff3bf;
+}
+.que.oumultiresponse .answer div.r0,
+.que.oumultiresponse .answer div.r1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+.que.oumultiresponse .answer div.r0 label,
+.que.oumultiresponse .answer div.r1 label,
+.que.oumultiresponse .answer div.r0 div.specificfeedback,
+.que.oumultiresponse .answer div.r1 div.specificfeedback {
+    /* In Chrome and IE, the text-indent above is applied to any embedded table
+       cells or <li>s, which screws up the intended layout. This fixes it again. */
+    text-indent: 0;
+}
+
+.que.oumultiresponse .answer div.r0 label,
+.que.oumultiresponse .answer div.r1 label {
+    flex: 1 1;
+}
+
+.que.oumultiresponse .answer div.r0 div.specificfeedback,
+.que.oumultiresponse .answer div.r1 div.specificfeedback {
+    display: flex;
+    flex: 1 1 100%;
+}
+
+.que.oumultiresponse .answer div.r0 input,
+.que.oumultiresponse .answer div.r1 input {
+    margin: 0 5px;
+    padding: 0;
+    width: 15px;
+}
+
+.que.oumultiresponse .answer div.r0 span.answernumber,
+.que.oumultiresponse .answer div.r1 span.answernumber {
+    white-space: nowrap;
+}
+
+/* Fix positioning of icons in Moodle 3.5+. */
+.que.oumultiresponse .answer div.r0 .icon.fa-check,
+.que.oumultiresponse .answer div.r1 .icon.fa-check,
+.que.oumultiresponse .answer div.r0 .icon.fa-remove,
+.que.oumultiresponse .answer div.r1 .icon.fa-remove {
+    text-indent: 0;
+}
+
+/* Editing form. */
+/* Top */
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=answer_],
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=hint_] {
+    background: #eee;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-bottom: 0;
+}
+
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=_answer_] .fitemtitle,
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=hint_] .fitemtitle {
+    font-weight: bold;
+}
+/* Middle */
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=correctanswer_] {
+    background: #eee;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+    border-bottom: 0;
+}
+/* Bottom */
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=feedback_],
+body#page-question-type-oumultiresponse div[id^=fgroup_id_][id*=hintoptions_] {
+    background: #eee;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+}
+
+body#page-question-type-oumultiresponse div[id^=fitem_id_][id*=penalty] {
+    margin-bottom: 2em;
+}

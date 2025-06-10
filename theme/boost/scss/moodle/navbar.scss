@@ -168,3 +168,8 @@
 .pagelayout-embedded #page {
     margin-top: 0;
 }
+
+// Make navbar height available for non-sass use.
+:root {
+    --navbar-height: #{$navbar-height};
+}

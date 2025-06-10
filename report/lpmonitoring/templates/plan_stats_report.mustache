@@ -1,0 +1,180 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Statistics for learning plan.
+
+
+    Context variables required for this template:
+    * plan
+        * statusname
+        * canmanage
+        * displayrating
+        * stats
+            * nbcompetenciesproficient
+            * nbcompetenciesnotproficient
+            * nbcompetenciesnotrated
+            * nbtags
+            * commentarea
+
+    Classes required for JS : 
+    * tags_popup
+      
+}}
+<div class="report-stats-competencies">
+    <div class="space-block-stats"></div>
+    <div>
+        <div class="status-icon blue">
+            {{#plan.isdraft}}
+                <span class="draft fa-stack fa-lg fa-lg">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                </span>
+            {{/plan.isdraft}}
+            {{#plan.isactive}}
+                <span class="active fa-stack fa-lg fa-lg">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-power-off fa-stack-1x fa-inverse"></i>
+                </span>
+            {{/plan.isactive}}
+            {{#plan.iscompleted}}
+                <span class="complete fa-stack fa-lg fa-lg">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                </span>
+            {{/plan.iscompleted}}
+            {{#plan.iswaitingforreview}}
+                <span class="waiting fa-stack fa-lg fa-lg">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-clock-o fa-stack-1x fa-inverse"></i>
+                </span>
+            {{/plan.iswaitingforreview}}
+            {{#plan.isinreview}}
+                <span class="review fa-stack fa-lg fa-lg">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-search fa-stack-1x fa-inverse"></i>
+                </span>
+            {{/plan.isinreview}}
+            
+        </div>
+        <div class="stats-cmp-proficient plan-status"><span>{{#str}}status, tool_lp{{/str}}:  </span><span style="font-weight: bold">{{plan.statusname}}</span></div>
+    </div>
+</div>
+<div class="report-stats-competencies">
+    <div class="space-block-stats"></div>
+    <div>
+        <div class="count-stats blue proficient-stats">{{plan.stats.nbcompetenciesproficient}}/{{plan.stats.nbcompetenciestotal}}</div>
+        <div class="stats-cmp-proficient">{{#str}}proficientcompetencies, report_lpmonitoring{{/str}}</div>
+    </div>
+</div>
+<div class="report-stats-competencies">
+    <div class="space-block-stats"></div>
+    <div>
+        <div class="count-stats 
+
+             {{#plan.stats.nbcompetenciesnotproficient}}
+             blue
+             {{/plan.stats.nbcompetenciesnotproficient}}
+             {{^plan.stats.nbcompetenciesnotproficient}}
+             empty-value 
+             {{/plan.stats.nbcompetenciesnotproficient}}
+              notproficient-stats">{{plan.stats.nbcompetenciesnotproficient}}</div>
+        <div class="stats-cmp-proficient">{{#str}}notproficientcompetencies, report_lpmonitoring{{/str}}</div>
+    </div>
+</div>
+<div class="report-stats-competencies">
+    <div class="space-block-stats"><span></div>
+    <div>
+        <div class="count-stats 
+             {{#plan.stats.nbcompetenciesnotrated}}
+             blue
+             {{/plan.stats.nbcompetenciesnotrated}}
+             {{^plan.stats.nbcompetenciesnotrated}}
+             empty-value 
+             {{/plan.stats.nbcompetenciesnotrated}}
+              notrated-stats">{{plan.stats.nbcompetenciesnotrated}}</div>
+        <div class="stats-cmp-proficient">{{#str}}notratedcompetencies, report_lpmonitoring{{/str}}</div>
+    </div>
+</div>
+
+{{#plan.stats.commentarea}}
+    {{#canpostorhascomments}}
+        <div class="report-stats-competencies">
+            <div class="space-block-stats"><span></div>
+            <div>
+                <div class="count-stats comments-stats blue" data-comments-plan="{{plan.id}}">{{count}}</div>
+                <div class="stats-cmp-proficient">{{#str}}comments, report_lpmonitoring{{/str}}</div>
+                <a class="stats-cmp-proficient" role="button" data-action="managecommentsmodal" title="{{#str}}commentseditshort, report_lpmonitoring{{/str}}" href="#"><i class="fa fa-comment"></i> {{#str}}commentseditshort, report_lpmonitoring{{/str}}</a>
+            </div>
+        </div>
+    {{/canpostorhascomments}}
+{{/plan.stats.commentarea}}
+
+{{#plan.cangrade}}
+    <div class="report-stats-competencies">
+        <div class="space-block-stats"><span></div>
+        <div>
+            <div class="count-stats tags-stats blue" data-tags-plan="{{plan.id}}">{{plan.stats.nbtags}}</div>
+            <div class="stats-cmp-proficient">{{#str}}tags, report_lpmonitoring{{/str}}</div>
+            <a class="stats-cmp-proficient" role="button" data-action="managetagsmodal" title="{{#str}}tagseditshort, report_lpmonitoring{{/str}}" href="#"><i class="fa fa-tags"></i> {{#str}}tagseditshort, report_lpmonitoring{{/str}}</a>
+        </div>
+    </div>
+    {{#plan.isactive}}
+    {{#plan.isdisplayratingenabled}}
+    <div class="report-stats-competencies displayratings">
+        <div class="space-block-stats"><span></div>
+        <div>
+            <div class="switcher-container">
+                <label class="switch">
+                <input type="checkbox"
+                       data-displayrating-plan="{{plan.id}}"
+                        {{#plan.displayrating}}checked{{/plan.displayrating}} />
+                <div class="slider round">
+                    <span class="on">{{#str}}yes{{/str}}{{displayrating}}</span>
+                    <span class="off">{{#str}}no{{/str}}{{displayrating}}</span>
+                </div>
+                </label>
+            </div>
+            <div class="stats-display-rating">
+                <div class="resetdisplayrating {{^plan.canresetdisplayrating}}hidden{{/plan.canresetdisplayrating}}">
+                    <a href="#" title="{{#str}}resetoneplandisplayrating, tool_lp{{/str}}" data-canresetdisplayrating-plan="{{plan.id}}">{{#str}}reset, core{{/str}}</a>
+                    <button class="icon fa fa-question-circle text-info fa-fw button-dispayratinghelp"
+                            data-container="body"
+                            data-trigger="focus"
+                            data-toggle="popover"
+                            data-placement="left"
+                            data-content="{{#str}}resetoneplandisplayrating, tool_lp{{/str}}">
+                    </button>
+                </div> 
+                {{#str}}ratingsdisplay, tool_lp{{/str}}
+            </div>
+        </div>
+    </div>
+    {{/plan.isdisplayratingenabled}}
+    {{/plan.isactive}}
+{{/plan.cangrade}}
+
+
+{{#js}}
+    require(['report_lpmonitoring/tags_popup'], function(TagsPopup) {
+        TagsPopup.init('[data-action=managetagsmodal]', '.tags-stats', {{plan.usercontext}}, {{plan.id}});
+    });
+    {{#plan.stats.commentarea}}
+        require(['report_lpmonitoring/comments_popup'], function(CommentsPopup) {
+            CommentsPopup.init('[data-action=managecommentsmodal]', '.comments-stats', {{plan.id}});
+        });
+    {{/plan.stats.commentarea}}
+{{/js}}

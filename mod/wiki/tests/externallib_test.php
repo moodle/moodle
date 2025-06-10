@@ -16,7 +16,6 @@
 
 namespace mod_wiki;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_wiki_external;
 
@@ -205,14 +204,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_wiki_external::get_wikis_by_courses(array($course2->id, $this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedwikis, $result['wikis']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_wiki_external::get_wikis_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedwikis, $result['wikis']);
         $this->assertCount(0, $result['warnings']);
 
@@ -222,7 +221,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_wiki_external::get_wikis_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedwikis, $result['wikis']);
 
         // Call for the second course we unenrolled the user from, expected warning.
@@ -241,14 +240,14 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = mod_wiki_external::get_wikis_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedwikis, $result['wikis']);
 
         // Admin also should get all the information.
         self::setAdminUser();
 
         $result = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedwikis, $result['wikis']);
 
         // Now, prohibit capabilities.
@@ -257,7 +256,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Default student role allows to view wiki and create pages.
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
-        $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
+        $wikis = \external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
         $this->assertEquals('Test wiki 1', $wikis['wikis'][0]['intro']);
         $this->assertEquals(1, $wikis['wikis'][0]['cancreatepages']);
 
@@ -267,7 +266,7 @@ class externallib_test extends externallib_advanced_testcase {
         \course_modinfo::clear_instance_cache(null);
 
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
-        $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
+        $wikis = \external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
         $this->assertEquals(0, count($wikis['wikis']));
 
         // Prohibit capability = mod:wiki:createpage on Course1 for students.
@@ -277,7 +276,7 @@ class externallib_test extends externallib_advanced_testcase {
         \course_modinfo::clear_instance_cache(null);
 
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
-        $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
+        $wikis = \external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
         $this->assertFalse($wikis['wikis'][0]['cancreatepages']);
 
     }
@@ -312,7 +311,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_wiki_external::view_wiki($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::view_wiki_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::view_wiki_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -370,7 +369,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_wiki_external::view_page($this->firstpage->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::view_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::view_page_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -437,7 +436,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedsubwikis[] = $expectedsubwiki;
 
         $result = mod_wiki_external::get_subwikis($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwikis_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwikis_returns(), $result);
         $this->assertEquals($expectedsubwikis, $result['subwikis']);
         $this->assertCount(0, $result['warnings']);
 
@@ -611,17 +610,17 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages[] = $expectedfirstpage;
 
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that groupid param is ignored since the wiki isn't using groups.
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 1234);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that userid param is ignored since the wiki is collaborative.
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 1234, 1234);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Add a new page to the wiki and test again. We'll use a custom title so it's returned first if sorted by title.
@@ -636,13 +635,13 @@ class externallib_test extends externallib_advanced_testcase {
         array_unshift($expectedpages, $expectednewpage); // Add page to the beginning since it orders by title by default.
 
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Now we'll order by ID. Since first page was created first it'll have a lower ID.
         $expectedpages = array($expectedfirstpage, $expectednewpage);
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 0, 0, array('sortby' => 'id'));
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that WS doesn't return page content if includecontent is false, it returns the size instead.
@@ -652,7 +651,7 @@ class externallib_test extends externallib_advanced_testcase {
             unset($expectedpages[$i]['contentformat']);
         }
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 0, 0, array('sortby' => 'id', 'includecontent' => 0));
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -667,7 +666,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Perform a request before creating any page to check that an empty array is returned if subwiki doesn't exist.
         $result = mod_wiki_external::get_subwiki_pages($indwiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals(array(), $result['pages']);
 
         // Create first pages as student and teacher.
@@ -685,7 +684,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedteacherpage);
 
         $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->teacher->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that the teacher can see the student's pages.
@@ -697,19 +696,19 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedstudentpage);
 
         $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Now check that student can get his pages.
         $this->setUser($this->student);
 
         $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that not using userid uses current user.
         $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -733,18 +732,18 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Let's check that not using groupid returns the same result (current group).
         $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that teacher can view a group pages without belonging to it.
         $this->setUser($this->teacher);
         $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that teacher can get the pages from all participants.
@@ -756,7 +755,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, 0);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -780,7 +779,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that with visible groups a student can get the pages of groups he doesn't belong to.
@@ -792,7 +791,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, $this->group2->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that with visible groups a student can get the pages of all participants.
@@ -804,7 +803,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, 0);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -827,18 +826,18 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that not using userid uses current user.
         $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that the teacher can see the student pages.
         $this->setUser($this->teacher);
         $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that a student can see pages from another user that belongs to his groups.
@@ -851,7 +850,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student2->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -874,7 +873,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, $this->group1->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that student can see teacher pages in visible groups, even if the user doesn't belong to the group.
@@ -886,7 +885,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, $this->group2->id, $this->teacher->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
         // Check that with visible groups a student can get the pages of all participants.
@@ -898,7 +897,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpages = array($expectedpage);
 
         $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, 0, $this->teacher->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
@@ -991,7 +990,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpage['tags'][1]['isstandard'] = (bool) $expectedpage['tags'][1]['isstandard'];
 
         $result = mod_wiki_external::get_page_contents($this->firstpage->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
         $this->assertEquals($expectedpage, $result['page']);
 
         // Add a new page to the wiki and test with it.
@@ -1003,7 +1002,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedpage['tags'] = array();
 
         $result = mod_wiki_external::get_page_contents($newpage->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
         $this->assertEquals($expectedpage, $result['page']);
     }
 
@@ -1034,13 +1033,13 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = mod_wiki_external::get_page_contents($this->fpsepg1indstu->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
         $this->assertEquals($expectedfpsepg1indstu, $result['page']);
 
         // Check that teacher can view a group pages without belonging to it.
         $this->setUser($this->teacher);
         $result = mod_wiki_external::get_page_contents($this->fpsepg1indstu->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
         $this->assertEquals($expectedfpsepg1indstu, $result['page']);
     }
 
@@ -1049,7 +1048,7 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_subwiki_files_no_files() {
         $result = mod_wiki_external::get_subwiki_files($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(0, $result['files']);
         $this->assertCount(0, $result['warnings']);
     }
@@ -1094,7 +1093,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the WS and check that it returns this file.
         $result = mod_wiki_external::get_subwiki_files($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(1, $result['files']);
         $this->assertEquals($expectedfile, $result['files'][0]);
 
@@ -1112,7 +1111,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the WS and check that it returns both files file.
         $result = mod_wiki_external::get_subwiki_files($this->wiki->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(2, $result['files']);
         // The new file is returned first because they're returned in alphabetical order.
         $this->assertEquals($expectedfile, $result['files'][0]);
@@ -1149,14 +1148,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the WS and check that it returns this file.
         $result = mod_wiki_external::get_subwiki_files($this->wikivisind->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(1, $result['files']);
         $this->assertEquals($expectedfile, $result['files'][0]);
 
         // Now check that a teacher can see it too.
         $this->setUser($this->teacher);
         $result = mod_wiki_external::get_subwiki_files($this->wikivisind->id, $this->group1->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_subwiki_files_returns(), $result);
         $this->assertCount(1, $result['files']);
         $this->assertEquals($expectedfile, $result['files'][0]);
     }
@@ -1187,7 +1186,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = mod_wiki_external::get_page_for_editing($newpage->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
 
         // Set expected result: Section Page content.
@@ -1198,7 +1197,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = mod_wiki_external::get_page_for_editing($newpage->id, '<span>Title1</span>');
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
     }
 
@@ -1222,7 +1221,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1', true);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
 
         // Test the section is locked.
@@ -1244,7 +1243,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test the other section is not locked.
         $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title2', true);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
 
         // Back to the original user to test version change when editing.
@@ -1256,7 +1255,7 @@ class externallib_test extends externallib_advanced_testcase {
             'version' => '2'
         );
         $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1', true);
-        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
     }
 
@@ -1277,7 +1276,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test on existing subwiki.
         $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', $this->fpsepg1indstu->subwikiid);
-        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
         $this->assertIsInt($result['pageid']);
 
         $version = wiki_get_current_version($result['pageid']);
@@ -1299,7 +1298,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->create_group_member(array('userid' => $this->student->id, 'groupid' => $this->group2->id));
         $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', null, $this->wikisepind->id, $this->student->id,
             $this->group2->id);
-        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
         $this->assertIsInt($result['pageid']);
 
         $version = wiki_get_current_version($result['pageid']);
@@ -1352,7 +1351,7 @@ class externallib_test extends externallib_advanced_testcase {
         $newpagecontent = $sectioncontent.'<h1><span>Title2</span></h1>Text inside section';
 
         $result = mod_wiki_external::edit_page($newpage->id, $newpagecontent);
-        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
         $this->assertIsInt($result['pageid']);
 
         $version = wiki_get_current_version($result['pageid']);
@@ -1363,7 +1362,7 @@ class externallib_test extends externallib_advanced_testcase {
         $section = '<span>Title2</span>';
 
         $result = mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
-        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
         $this->assertIsInt($result['pageid']);
 
         $expected = $sectioncontent . $newsectioncontent;

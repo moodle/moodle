@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<role>
+  <shortname>robot</shortname>
+  <name>Robot</name>
+  <description>&lt;p&gt;Role for the link checker robot&lt;br&gt;&lt;/p&gt;</description>
+  <archetype/>
+  <contextlevels>
+    <level>system</level>
+    <level>coursecat</level>
+    <level>course</level>
+    <level>module</level>
+    <level>block</level>
+  </contextlevels>
+  <allowassign/>
+  <allowoverride>
+    <shortname>robotnofollow</shortname>
+    <shortname>robot</shortname>
+  </allowoverride>
+  <allowswitch/>
+  <permissions>
+    <allow>block/online_users:viewlist</allow>
+    <allow>mod/assign:view</allow>
+    <allow>mod/book:read</allow>
+    <allow>mod/book:viewhiddenchapters</allow>
+    <allow>mod/data:viewentry</allow>
+    <allow>mod/feedback:view</allow>
+    <allow>mod/folder:view</allow>
+    <allow>mod/quiz:view</allow>
+    <allow>mod/resource:view</allow>
+    <allow>mod/survey:readresponses</allow>
+    <allow>mod/url:view</allow>
+    <allow>mod/wiki:viewpage</allow>
+    <allow>mod/workshop:view</allow>
+    <allow>moodle/course:view</allow>
+    <allow>moodle/course:viewhiddenactivities</allow>
+    <allow>moodle/course:viewhiddencourses</allow>
+    <allow>moodle/course:viewhiddensections</allow>
+    <allow>moodle/course:viewscales</allow>
+    <allow>moodle/site:viewparticipants</allow>
+  </permissions>
+</role>

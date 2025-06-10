@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\filters;
 
 use advanced_testcase;
 use lang_string;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\filter;
 
 /**
@@ -87,5 +88,38 @@ class category_test extends advanced_testcase {
 
         $categories = $DB->get_fieldset_select('course_categories', 'name', $select, $params);
         $this->assertEqualsCanonicalizing($expectedcategories, $categories);
+    }
+
+    /**
+     * Test getting filter SQL with parameters
+     */
+    public function test_get_sql_filter_parameters(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $category1 = $this->getDataGenerator()->create_category(['name' => 'One']);
+        $category2 = $this->getDataGenerator()->create_category(['name' => 'Two', 'parent' => $category1->id]);
+        $category3 = $this->getDataGenerator()->create_category(['name' => 'Three']);
+
+        // Rather convoluted filter SQL, but enough to demonstrate usage of a parameter that gets used twice in the query.
+        $paramzero = database::generate_param_name();
+        $filter = new filter(
+            category::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            "id + :{$paramzero}",
+            [$paramzero => 0]
+        );
+
+        // When including sub-categories, the filter SQL is included twice (for the category itself, plus to find descendents).
+        [$select, $params] = category::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_value' => $category1->id,
+            $filter->get_unique_identifier() . '_subcategories' => true,
+        ]);
+
+        $categories = $DB->get_fieldset_select('course_categories', 'id', $select, $params);
+        $this->assertEqualsCanonicalizing([$category1->id, $category2->id], $categories);
     }
 }

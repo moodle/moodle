@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+  <XMLDB PATH="blocks/helpdesk/db" VERSION="20191022" COMMENT="XMLDB file for Moodle blocks/helpdesk">
+    <TABLES>
+      <TABLE NAME="block_helpdesk" COMMENT="Default comment for block_helpdesk, please edit me">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        </KEYS>
+      </TABLE>
+    </TABLES>
+  </XMLDB>

@@ -1,0 +1,21 @@
+{
+  "name": "turnitin/moodle-plagiarism_turnitin",
+  "license": "GPL-3.0",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "preferred-install": {
+      "integrations/phpsdk-package": "dist"
+    },
+    "secure-http": false
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://bin-repo.iparadigms.com/artifactory/integrations-composer"
+    }
+  ],
+  "require": {
+    "integrations/phpsdk-package": "1.3.4"
+  }
+}

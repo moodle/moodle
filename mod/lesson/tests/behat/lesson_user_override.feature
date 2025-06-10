@@ -329,7 +329,7 @@ Feature: Lesson user override
   Scenario: Create a user override when the lesson is not available to the student
     Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Availability" to "Hide from students"
+    And I set the field "Availability" to "Hide on course page"
     And I click on "Save and display" "button"
     When I navigate to "Overrides" in current page administration
     And I follow "Add user override"

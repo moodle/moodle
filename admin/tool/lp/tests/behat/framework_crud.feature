@@ -128,3 +128,18 @@ Feature: Manage competency frameworks
     Then I should see "Competency framework updated"
     And I should see "Science Year-6 Edited"
     And I should see "sc-y-6"
+
+  Scenario: Duplicate a competency framework
+    Given the following lp "frameworks" exist:
+      | shortname | idnumber |
+      | CF1       | CF1      |
+    And the following lp "competencies" exist:
+      | shortname | framework |
+      | C1        | CF1       |
+    And I navigate to "Competencies > Competency frameworks" in site administration
+    # Duplicate the selected competency framework
+    When I click on "Duplicate" of edit menu in the "CF1" row
+    # Confirm that the selected framework was duplicated by clicking on the link
+    And I click on "CF1 (copy) (CF1_1)" "link"
+    # Confirm that the corresponding competency also exists in the duplicated framework
+    Then I should see "C1"

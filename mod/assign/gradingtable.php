@@ -789,7 +789,7 @@ class assign_grading_table extends table_sql implements renderable {
         $group = false;
         $this->get_group_and_submission($row->id, $group, $submission, -1);
         if ($group) {
-            return $group->name;
+            return format_string($group->name, true, ['context' => $this->assignment->get_context()]);
         } else if ($this->assignment->get_instance()->preventsubmissionnotingroup) {
             $usergroups = $this->assignment->get_all_groups($row->id);
             if (count($usergroups) > 1) {
@@ -1419,7 +1419,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         $menu = new action_menu();
         $menu->set_owner_selector('.gradingtable-actionmenu');
-        $menu->set_constraint('.gradingtable > .no-overflow');
+        $menu->set_boundary('window');
         $menu->set_menu_trigger(get_string('edit'));
         foreach ($actions as $action) {
             $menu->add($action);

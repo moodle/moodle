@@ -24,10 +24,6 @@
  */
 namespace core_webservice;
 
-use core_external\external_api;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
 use webservice;
 
 defined('MOODLE_INTERNAL') || die();
@@ -129,7 +125,7 @@ class lib_test extends \advanced_testcase {
         // Check the contents of service methods.
         foreach ($servicemethods as $method) {
             // Get the external function info.
-            $function = external_api::external_function_info($method->name);
+            $function = \external_api::external_function_info($method->name);
 
             // Check input params.
             foreach ($function->parameters_desc->keys as $name => $keydesc) {

@@ -24,11 +24,11 @@ Feature: Course level forum summary report
       | student2 | C2     | student        |
       | student3 | C2     | student        |
     And the following "activities" exist:
-      | activity | name   | description | course | idnumber |
-      | forum    | forum1 | C1 forum 1  | C1     | forum1   |
-      | forum    | forum2 | C1 forum 2  | C1     | forum2   |
-      | forum    | forum3 | C1 forum 3  | C1     | forum3   |
-      | forum    | forum4 | C2 forum 1  | C2     | forum4   |
+      | activity | name   | course | idnumber |
+      | forum    | forum1 | C1     | forum1   |
+      | forum    | forum2 | C1     | forum2   |
+      | forum    | forum3 | C1     | forum3   |
+      | forum    | forum4 | C2     | forum4   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message      | created                 |
       | teacher1 | forum1 | discussion1 | Discussion 1 | ##2018-01-14 09:00:00## |
@@ -100,9 +100,7 @@ Feature: Course level forum summary report
     Given the following "permission overrides" exist:
       | capability               | permission | role    | contextlevel | reference |
       | forumreport/summary:view | Allow      | student | Course       | C1        |
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "forum1" "forum activity" page logged in as student1
     And I navigate to "Reports" in current page administration
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                 |

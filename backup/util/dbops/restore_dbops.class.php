@@ -578,16 +578,11 @@ abstract class restore_dbops {
             CONTEXT_SYSTEM => CONTEXT_COURSE,
             CONTEXT_COURSECAT => CONTEXT_COURSE);
 
+        /** @var restore_controller $rc */
         $rc = restore_controller_dbops::load_controller($restoreid);
-        $restoreinfo = $rc->get_info();
+        $plan = $rc->get_plan();
+        $after35 = $plan->backup_release_compare('3.5', '>=') && $plan->backup_version_compare(20180205, '>');
         $rc->destroy(); // Always need to destroy.
-        $backuprelease = $restoreinfo->backup_release; // The major version: 2.9, 3.0, 3.10...
-        preg_match('/(\d{8})/', $restoreinfo->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $after35 = false;
-        if (version_compare($backuprelease, '3.5', '>=') && $backupbuild > 20180205) {
-            $after35 = true;
-        }
 
         // For any contextlevel, follow this process logic:
         //
@@ -1172,10 +1167,9 @@ abstract class restore_dbops {
      * @param string $restoreid Restore ID
      * @param int $userid Default userid for files
      * @param \core\progress\base $progress Object used for progress tracking
-     * @param int $courseid Course ID
      */
     public static function create_included_users($basepath, $restoreid, $userid,
-            \core\progress\base $progress, int $courseid = 0) {
+            \core\progress\base $progress) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         $progress->start_progress('Creating included users');
@@ -1296,9 +1290,6 @@ abstract class restore_dbops {
                         }
                     }
                 }
-
-                // Trigger event that user was created.
-                \core\event\user_created::create_from_user_id_on_restore($newuserid, $restoreid, $courseid)->trigger();
 
                 // Process tags
                 if (core_tag_tag::is_enabled('core', 'user') && isset($user->tags)) { // If enabled in server and present in backup.

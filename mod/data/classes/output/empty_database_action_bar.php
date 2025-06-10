@@ -60,7 +60,7 @@ class empty_database_action_bar implements templatable, renderable {
 
             $importentrieslink = new moodle_url('/mod/data/import.php', $params);
             $importentriesbutton = new \single_button($importentrieslink,
-                get_string('importentries', 'mod_data'), 'get');
+                get_string('importentries', 'mod_data'), 'get', false);
             $data['importentriesbutton'] = $importentriesbutton->export_for_template($output);
         }
 

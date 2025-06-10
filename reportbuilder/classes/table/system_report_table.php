@@ -24,8 +24,12 @@ use core_table\local\filter\filterset;
 use html_writer;
 use moodle_exception;
 use stdClass;
-use core_reportbuilder\{manager, system_report};
+use core_reportbuilder\manager;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\report\action;
+use core_reportbuilder\local\report\column;
+
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * System report dynamic table class
@@ -35,9 +39,6 @@ use core_reportbuilder\local\models\report;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class system_report_table extends base_report_table {
-
-    /** @var system_report $report */
-    protected $report;
 
     /** @var string Unique ID prefix for the table */
     private const UNIQUEID_PREFIX = 'system-report-table-';
@@ -72,13 +73,8 @@ class system_report_table extends base_report_table {
      * @param array $parameters
      */
     private function load_report_instance(int $reportid, array $parameters): void {
-        global $PAGE;
-
         $this->persistent = new report($reportid);
         $this->report = manager::get_report_from_persistent($this->persistent, $parameters);
-
-        // TODO: can probably be removed pending MDL-72974.
-        $PAGE->set_context($this->persistent->get_context());
 
         $fields = $this->report->get_base_fields();
         $maintable = $this->report->get_main_table();
@@ -101,13 +97,6 @@ class system_report_table extends base_report_table {
         }
 
         $columnheaders = $columnsattributes = [];
-
-        // Check whether report has checkbox toggle defined, note that select all is excluded during download.
-        if (($checkbox = $this->report->get_checkbox_toggleall(true)) && !$this->is_downloading()) {
-            $columnheaders['selectall'] = $PAGE->get_renderer('core')->render($checkbox);
-            $this->no_sorting('selectall');
-        }
-
         $columnindex = 1;
         foreach ($columns as $identifier => $column) {
             $column->set_index($columnindex++);
@@ -206,8 +195,6 @@ class system_report_table extends base_report_table {
      * @return array
      */
     public function format_row($row) {
-        global $PAGE;
-
         $this->report->row_callback((object) $row);
 
         // Walk over the row, and for any key that matches one of our column aliases, call that columns format method.
@@ -219,12 +206,6 @@ class system_report_table extends base_report_table {
             }
         });
 
-        // Check whether report has checkbox toggle defined.
-        if ($checkbox = $this->report->get_checkbox_toggleall(false, (object) $row)) {
-            $row['selectall'] = $PAGE->get_renderer('core')->render($checkbox);
-        }
-
-        // Now check for any actions.
         if ($this->report->has_actions()) {
             $row['actions'] = $this->format_row_actions((object) $row);
         }

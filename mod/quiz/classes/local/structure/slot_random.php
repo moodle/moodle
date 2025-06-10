@@ -16,8 +16,6 @@
 
 namespace mod_quiz\local\structure;
 
-use context_module;
-
 /**
  * Class slot_random, represents a random question slot type.
  *
@@ -90,7 +88,7 @@ class slot_random {
             if (empty($this->record->quizid)) {
                 throw new \coding_exception('quizid is not set.');
             }
-            $this->quiz = $DB->get_record('quiz', ['id' => $this->record->quizid]);
+            $this->quiz = $DB->get_record('quiz', array('id' => $this->record->quizid));
         }
 
         return $this->quiz;
@@ -153,7 +151,7 @@ class slot_random {
     public function insert($page) {
         global $DB;
 
-        $slots = $DB->get_records('quiz_slots', ['quizid' => $this->record->quizid],
+        $slots = $DB->get_records('quiz_slots', array('quizid' => $this->record->quizid),
                 'slot', 'id, slot, page');
         $quiz = $this->get_quiz();
 
@@ -175,7 +173,7 @@ class slot_random {
             $lastslotbefore = 0;
             foreach (array_reverse($slots) as $otherslot) {
                 if ($otherslot->page > $page) {
-                    $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, ['id' => $otherslot->id]);
+                    $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, array('id' => $otherslot->id));
                 } else {
                     $lastslotbefore = $otherslot->slot;
                     break;
@@ -212,7 +210,7 @@ class slot_random {
         // Log slot created event.
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
         $event = \mod_quiz\event\slot_created::create([
-            'context' => context_module::instance($cm->id),
+            'context' => \context_module::instance($cm->id),
             'objectid' => $this->record->id,
             'other' => [
                 'quizid' => $quiz->id,

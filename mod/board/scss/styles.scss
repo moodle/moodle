@@ -1,0 +1,358 @@
+@import "../../theme/boost/scss/bootstrap/functions";
+@import "../../theme/boost/scss/bootstrap/variables";
+@import "../../theme/boost/scss/bootstrap/mixins";
+
+/* stylelint-disable selector-list-comma-newline-after */
+.mod_board {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    overflow-x: auto;
+    padding-left: 6px;
+    padding-right: 6px;
+
+    .board_column {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        flex-basis: 200px;
+        min-width: 200px;
+        background: #eaeaea;
+        margin: 12px 4px;
+        border-radius: 0.5em;
+        &[data-locked="true"] {
+            .move_note {
+                display: none;
+            }
+        }
+    }
+
+    .board_column_empty {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        order: 1;
+        margin: 12px 4px;
+        flex-basis: 60px;
+        min-width: 60px;
+        max-width: 60px;
+    }
+
+    .board_column_header {
+        display: flex;
+        margin: 10px 5px 0 5px;
+        padding: 10px;
+        font-size: 1.1em;
+        font-weight: 800;
+        position: relative;
+        .mod_board_column_name {
+            cursor: pointer;
+            float: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: calc(100% - 20px);
+        }
+        .mod_board_column_sort {
+            cursor: pointer;
+            float: left;
+            width: 20px;
+            margin-top: 5px;
+        }
+        .mod_board_remove {
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            color: #333;
+            cursor: pointer;
+            &:hover,
+            &:focus {
+                opacity: 0.8;
+            }
+        }
+        .icon {
+            margin-top: 5px;
+        }
+    }
+
+    .board_column_content,
+    .board_column_newcontent {
+        margin: 2px 4px;
+    }
+
+    .board_column_content {
+        min-height: 10px;
+        /* for sortable on empty columns */
+    }
+
+    .board_button {
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 0 4px 8px;
+        background: #fbfbfb;
+        &:hover,
+        &:focus {
+            background: #fff;
+        }
+        .button_content {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.2em;
+            padding: 5px;
+        }
+    }
+
+    .mod_board_spacer_button {
+        width: 10px;
+    }
+    .mod_board_note_attachment .mod_board_type {
+        width: auto;
+    }
+
+    .delete_note,
+    .move_note,
+    .edit_note {
+        padding: 2px 8px 0;
+    }
+
+    .board_note {
+        margin: 4px 4px 8px;
+        position: relative;
+        padding: 8px;
+        background: #fbfbfb;
+        border-radius: 0.2em;
+    }
+
+    .mod_board_note_border {
+        border-top: 1px solid lightgray;
+        padding-bottom: 10px;
+    }
+
+    .mod_board_note_content {
+        .mod_board_note_text {
+            font-size: 0.9em;
+        }
+        .mod_board_note_heading {
+            min-height: 22px;
+            line-height: 22px;
+            width: 100%;
+            padding-bottom: 5px;
+            font-weight: 600;
+        }
+        .mod_board_note_heading > textarea {
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+        .mod_board_note_attachment {
+            padding-top: 10px;
+            margin: 0;
+            .mod_board_file {
+                line-height: 1.2;
+            }
+            .mod_board_type_icon {
+                font-size: 20px;
+                padding: 4px 3px;
+                border: 1px solid lightgray;
+            }
+            .mod_board_with_type_icon {
+                flex: 1;
+                max-width: initial;
+            }
+        }
+    }
+
+    .mod_board_rating {
+        color: #333;
+        margin-top: 10px;
+        padding: 2px 8px 0 0;
+        &:hover,
+        &:focus {
+            opacity: 0.8;
+        }
+    }
+
+    .board_column_empty .board_button {
+        margin: 5px;
+        .button_content {
+            font-size: 1.5em;
+        }
+    }
+
+    .mod_board_editablenote .mod_board_rating {
+        right: 25px;
+    }
+
+    .mod_board_remove_attachment {
+        position: relative;
+        width: 100%;
+        text-align: right;
+        .mod_board_remove_attachment_button {
+            padding: 3px;
+            margin-right: 2px;
+            color: #333;
+            cursor: pointer;
+        }
+    }
+
+    .mod_board_editablenote .mod_board_note_text,
+    .mod_board_rateablenote .mod_board_note_text {
+        min-height: 18px;
+    }
+    .mod_board_editablenote .mod_board_note_content {
+        cursor: pointer;
+        &:hover,
+        &:focus {
+            background: #fff;
+        }
+    }
+}
+
+.path-mod-board {
+    .mod_board_note_text {
+        word-break: break-word;
+    }
+    .comment {
+        .comment-input {
+            font-size: 0.8rem;
+            align-self: center;
+        }
+
+        .comment-input:empty:before {
+            font-size: 0.8rem;
+            color: #222;
+            cursor: text;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            /* stylelint-disable-next-line declaration-no-important */
+            border-bottom-color: #000 !important;
+        }
+
+        .emoji-picker-container {
+            position: absolute;
+            top: 40px;
+            left: 0;
+        }
+
+        .emoji-picker {
+            height: 200px;
+        }
+
+        .emoji-picker .card-header .btn {
+            border-radius: 0;
+        }
+
+        .emoji-picker .card-footer {
+            /* stylelint-disable-next-line declaration-no-important */
+            display: none !important;
+        }
+
+        .emoji-picker .picker-row {
+            height: 20px;
+        }
+
+        .emoji-picker .picker-row .category-name {
+            font-size: 1rem;
+            line-height: 20px;
+        }
+    }
+
+    .mod_board_preview {
+        padding-top: 5px;
+        border-top: 1px solid lightgray;
+        margin-top: 10px;
+        width: 100%;
+        overflow-wrap: break-word;
+
+        &.mod_board_notext {
+            padding-top: 0;
+            border-top: 0;
+            margin-top: 0;
+        }
+
+        .mod_board_preview_element {
+            width: 100%;
+        }
+
+        &.wrapper_image .mod_board_preview_element {
+            max-width: 100%;
+            max-height: calc(100vh - 100px);
+            margin: auto;
+            display: block;
+            width: auto;
+        }
+
+        &.wrapper_youtube {
+            padding-top: 0;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        iframe.mod_board_preview_element {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .mod_board_note_buttons {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .mod_board_attachment_button {
+        text-align: center;
+        border: 3px solid lightblue;
+        background: lightblue;
+        padding: 8px 15px;
+        font-size: 150%;
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 2px;
+    }
+
+    .mod_board_attachment_button.selected {
+        border: 3px solid blue;
+    }
+
+    .mod_board_attachment_button:hover,
+    .mod_board_attachment_button:focus {
+        opacity: 0.8;
+    }
+    .modal-content .stretched-link::after {
+        content: unset;
+    }
+    .modal-footer [data-action="cancel"] {
+        order: 1;
+    }
+    .cell {
+        max-width: 300px;
+        word-break: break-word;
+    }
+}
+.modtype_board div.flex-fill {
+    width: 100%;
+}
+
+.modtype_board div.contentwithoutlink {
+    /* stylelint-disable-next-line declaration-no-important */
+    display: block !important;
+    width: 100%;
+}
+
+iframe.mod_board-iframe {
+    overflow-x: auto;
+}
+
+.pagelayout-embedded.path-mod-board {
+    .activity-header {
+        display: none;
+    }
+}

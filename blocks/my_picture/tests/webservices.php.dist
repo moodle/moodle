@@ -1,0 +1,73 @@
+<?php
+
+
+/**
+ * copy this file to be named webservices.php
+ * 
+ * replace the example values below with your own
+ */
+class ExampleWebService implements photoWebservice {
+    public function info_url() {
+        return 'https://example.com/%s';
+    }
+
+    public function ready_url() {
+        return 'https://example.com/recently_updated/%s';
+    }
+
+    public function update_url() {
+        return 'https://example.com/%s/update';
+    }
+
+    public function webservice_url() {
+        return 'https://example.com/%s?skip_place_holder=true';
+    }
+    
+    /**
+     *
+     * @return array of attributes to be used in generating a Moodle user
+     */
+    public function getMoodleUserDetailsForKnownUser(){
+        return array(
+            'username' => 'user1', 
+            'firstname'=> 'joe',
+            'lastname' => 'student',
+            'idnumber' => '1234567'
+            );
+    }
+    
+    /**
+     *
+     * @return string json expected to be returned from the Webservice
+     * for the known test user
+     */
+    public function getWebserviceJsonDetailsForKnownUser(){
+        return json_encode(array(
+            'first_name'        => 'joe',
+            'middle_name'       => '',
+            'last_name'         => 'student',
+            'id_number'         => '1234567',
+            'photo_file_name'   => '1234567.jpg',
+            'photo_content_type'=> 'image/jpeg',
+            'photo_file_size'   => '321',
+            'photo_updated_at'  => '2013-06-18T13:06:22-05:00',
+        ));
+    }
+
+    /**
+     *
+     * @return array of valid user IDs
+     */
+    public function getValidUserIds() {
+        return array(1,2,3,4,5,6,7,8,9);
+    }
+
+    public function getIdnumberWithoutPicture() {
+        return 'idnumberThatDoesNotHaveAPicture';
+    }
+    
+    public function getFakeId() {
+        return 'id#'.rand(0,9999);
+    }
+}
+?>

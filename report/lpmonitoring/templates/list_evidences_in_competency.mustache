@@ -1,0 +1,43 @@
+{{!
+    List evidence in competency template
+
+    Context variables required for this template:
+    * listevidence - evidence list
+        * name - evidence name
+        * hasurlorfiles - true if has file or url
+        * files - list of file
+        * url - url evidence if exist
+
+}}
+<div class="lpmonitoringdialogue">
+<table class="dataTable" id="listevidencecompetency-{{competencyid}}">
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}name{{/str}}</th>
+            <th scope="col">{{#str}}summary{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#listevidence}}
+        <tr>
+            <td><a href="{{{userevidenceurl}}}" target="_blank" title="{{name}}">{{name}}</a></td>
+            <td>
+                {{^hasurlorfiles}}
+                    -
+                {{/hasurlorfiles}}
+                {{#hasurlorfiles}}
+                    <ul class="user-evidence-documents">
+                        {{#url}}
+                            <li>{{#pix}}url, tool_lp{{/pix}} <a href="{{url}}" title="{{url}}">{{urlshort}}</a></li>
+                        {{/url}}
+                        {{#files}}
+                            <li><img src="{{iconurl}}" alt=""> <a href="{{url}}" title="{{filename}}">{{filenameshort}}</a></li>
+                        {{/files}}
+                    </ul>
+                {{/hasurlorfiles}}
+            </td>
+        </tr>
+        {{/listevidence}}
+    </tbody>
+</table>
+</div>

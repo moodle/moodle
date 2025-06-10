@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_ally/wrapper
+
+    Ally anchor / image wrapper template.
+
+    Context variables required for this template:
+    * isimage - If true renders markup for an image.
+    * url - The file url URL.
+    * fileid - The ID.
+    * html - The html of the element to be wrapped.
+    * canviewfeedback - If true renders feedback placeholder.
+    * candownload - If true renders download placeholder.
+
+    Example context (json):
+    {
+        "isimage": false,
+        "url": "#",
+        "fileid": "ABCD123",
+        "html: : "",
+        "canviewfeedback" : true,
+        "candownload" : true
+    }
+}}
+{{#isimage}}
+<span class="filter-ally-wrapper ally-image-wrapper">
+    {{{html}}}
+    <span class="ally-image-cover" data-file-id="{{fileid}}"></span>
+    <span class="ally-actions" aria-hidden="true">
+        {{#canviewfeedback}}
+            <span class="ally-feedback" data-file-id="{{fileid}}" data-file-url="{{url}}"></span>
+        {{/canviewfeedback}}
+    </span>
+</span>
+{{/isimage}}
+{{^isimage}}
+<span class="filter-ally-wrapper ally-anchor-wrapper">
+    {{{html}}}
+    <span class="ally-actions" aria-hidden="true">
+        {{#canviewfeedback}}
+        <span class="ally-feedback" data-file-id="{{fileid}}" data-file-url="{{url}}"></span>
+        {{/canviewfeedback}}
+        {{#candownload}}
+        <span class="ally-download" data-file-id="{{fileid}}" data-file-url="{{url}}"></span>
+        {{/candownload}}
+    </span>
+</span>
+{{/isimage}}

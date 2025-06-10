@@ -1,0 +1,9 @@
+{{< core/modal }}
+    {{$title}}
+        {{#str}} launchrubricview, plagiarism_turnitin {{/str}}
+    {{/title}}
+    {{$body}}
+        <!-- Modal content -->
+        <iframe frameborder="0" src="{{wwwroot}}/plagiarism/turnitin/ajax.php?cmid={{cmid}}&action=rubricview&view_context=box" id="rubric_manager_launch" class="rubric_view iframe-ltilaunch-rubric"></iframe>
+    {{/body}}
+{{/ core/modal }}

@@ -27,8 +27,7 @@ H5PEditor.language.core = {
   addEntity: 'Legg til :entity',
   tooLong: 'Feltets verdi er for lang, den må være på :max tegn eller mindre.',
   invalidFormat: 'Feltets verdi er på et ugyldig format eller bruker ulovlige tegn.',
-  confirmChangeLibrary:
-    'Ved å gjøre dette mister du alt arbeid gjort med nåværende innholdstype. Er du sikker på at du ønsker å bytte innholdstype?',
+  confirmChangeLibrary: 'Ved å gjøre dette mister du alt arbeid gjort med nåværende innholdstype. Er du sikker på at du ønsker å bytte innholdstype?',
   commonFields: 'Innstillinger og tekster',
   commonFieldsDescription: 'Her kan du redigere innstillinger eller oversette tekster som brukes i dette innholdet.',
   uploading: 'Laster opp fil, vennligst vent...',
@@ -55,8 +54,7 @@ H5PEditor.language.core = {
   enterVideoTitle: 'Lim inn YouTube lenke eller annen videokilde URL',
   uploadAudioTitle: 'Last opp lydfil',
   uploadVideoTitle: 'Last opp videofil',
-  addVideoDescription:
-    'H5P støtter alle eksterne videokilder på formatene mp4, webm eller ogv, slik som Vimeo Pro, og har støtte for YouTube-lenker og Panopto-lenker.',
+  addVideoDescription: 'H5P støtter alle eksterne videokilder på formatene mp4, webm eller ogv, slik som Vimeo Pro, og har støtte for YouTube-lenker og Panopto-lenker.',
   insert: 'Sett inn',
   cancel: 'Avbryt',
   height: 'Høyde',
@@ -76,8 +74,7 @@ H5PEditor.language.core = {
   uploadTabLabel: 'Last opp',
   uploadPlaceholder: 'Ingen fil er valgt',
   uploadInstructionsTitle: 'Last opp en .h5p fil.',
-  uploadInstructionsContent:
-    'Du kan starte med eksempler fra <a href="https://h5p.org/content-types-and-applications" target="blank">H5P.org</a>.',
+  uploadInstructionsContent: 'Du kan starte med eksempler fra <a href="https://h5p.org/content-types-and-applications" target="blank">H5P.org</a>.',
   uploadFileButtonLabel: 'Last opp en fil',
   uploadFileButtonChangeLabel: 'Bytt fil',
   uploadingThrobber: 'Laster opp...',
@@ -87,8 +84,7 @@ H5PEditor.language.core = {
   h5pFileWrongExtensionTitle: '.h5p fil ble ikke funnet.',
   h5pFileWrongExtensionContent: 'Du må laste opp en fil med fil-endelsen .h5p',
   h5pFileValidationFailedTitle: 'Kunne ikke validere H5P filen.',
-  h5pFileValidationFailedContent:
-    'Pass på at .h5p filen du laster opp inneholder valid H5P innhold. H5P filer som bare inneholder biblioteker skal lastes opp på bibliotekssiden og kan ikke lastes opp som innhold.',
+  h5pFileValidationFailedContent: 'Pass på at .h5p filen du laster opp inneholder valid H5P innhold. H5P filer som bare inneholder biblioteker skal lastes opp på bibliotekssiden og kan ikke lastes opp som innhold.',
   h5pFileUploadServerErrorTitle: 'H5P filen kunne ikke bli lastet opp.',
   h5pFileUploadServerErrorContent: 'En uventet feil har oppstått. Sjekk din server log for detaljer.',
   contentTypeSectionAll: 'Alle innholdstyper',
@@ -134,8 +130,7 @@ H5PEditor.language.core = {
   warningChangeBrowsingToSeeResults: 'Klikk <em>Alle</em> for å få en liste over alle innholdstyper du kan installere.',
   warningUpdateAvailableTitle: 'En ny versjon av :contentType er tilgjengelig.',
   warningUpdateAvailableBody: 'Oppdater til siste versjon for en best mulig opplevelse.',
-  licenseDescription:
-    'Noen av egenskapene til denne lisensen indikeres under. Klikk på informasjonsikonet for å lese lisensteksten.',
+  licenseDescription: 'Noen av egenskapene til denne lisensen indikeres under. Klikk på informasjonsikonet for å lese lisensteksten.',
   licenseModalTitle: 'License Details',
   licenseModalSubtitle: 'Velg en lisens for å se en oversikt over riktig bruk',
   licenseUnspecified: 'Uspesifisert',
@@ -155,15 +150,12 @@ H5PEditor.language.core = {
   screenshots: 'Skjermbilder',
   reloadButtonLabel: 'Last på nytt',
   videoQuality: 'Navn på videokvalitet',
-  videoQualityDescription:
-    'Dette navnet hjelper brukeren med å identifisere den aktuelle videokvaliteten. F.eks. 1080p, 720p, HD or Mobile',
+  videoQualityDescription: 'Dette navnet hjelper brukeren med å identifisere den aktuelle videokvaliteten. F.eks. 1080p, 720p, HD or Mobile',
   videoQualityDefaultLabel: 'Kvalitet :index',
   noContentTypesAvailable: 'Ingen innholdstyper er tilgjengelig',
-  noContentTypesAvailableDesc:
-    'Nettstedet ditt har problemer med å koble til H5P.org og liste tilgjengelige innholdstyper.',
+  noContentTypesAvailableDesc: 'Nettstedet ditt har problemer med å koble til H5P.org og liste tilgjengelige innholdstyper.',
   contentTypeCacheOutdated: 'Innholdstype-listen er utdatert',
-  contentTypeCacheOutdatedDesc:
-    'Nettstedet ditt har problemer med å koble til H5P.org for å se etter innholdstype-oppdateringer. Det kan hende at du ikke får oppdatert eller installert nye innholdstyper.',
+  contentTypeCacheOutdatedDesc: 'Nettstedet ditt har problemer med å koble til H5P.org for å se etter innholdstype-oppdateringer. Det kan hende at du ikke får oppdatert eller installert nye innholdstyper.',
   tryAgain: 'Prøv på nytt',
   getHelp: 'Get help',
   untitled: 'Untitled :libraryTitle',
@@ -178,23 +170,20 @@ H5PEditor.language.core = {
   confirmRemoveAuthor: 'Are you sure you would like to remove this author?',
   addNewChange: 'Add new change',
   confirmDeleteChangeLog: 'Are you sure you would like to delete this change log entry?',
-  changelogDescription:
-    'Some licenses require that changes made to the original work, or derivatives are logged and displayed. You may log your changes here for licensing reasons or just to allow yourself and others to keep track of the changes made to this content.',
+  changelogDescription: 'Some licenses require that changes made to the original work, or derivatives are logged and displayed. You may log your changes here for licensing reasons or just to allow yourself and others to keep track of the changes made to this content.',
   logThisChange: 'Log this change',
   newChangeHasBeenLogged: 'New change has been logged',
   loggedChanges: 'Logged changes',
   noChangesHaveBeenLogged: 'No changes have been logged',
   errorHeader: 'En feil har oppstått',
-  errorCalculatingMaxScore:
-    'Kunne ikke kalkulerer maks poengsum for denne innholdstypen. Maks poengsum er antatt til å være 0. Kontakt administrator dersom dette ikke er korrekt.',
+  errorCalculatingMaxScore: 'Kunne ikke kalkulerer maks poengsum for denne innholdstypen. Maks poengsum er antatt til å være 0. Kontakt administrator dersom dette ikke er korrekt.',
   maxScoreSemanticsMissing: 'Kunne ikke finne den forventede semantikken i den valgte innholdstypen.',
   copyButton: 'Kopier',
   copiedButton: 'Kopiert',
   pasteButton: 'Lim inn',
   pasteAndReplaceButton: 'Paste & Replace',
   pasteContent: 'Replace Content',
-  confirmPasteContent:
-    'By doing this you will replace the current content with the content from your clipboard. The current content will be lost. Are you sure you wish to continue?',
+  confirmPasteContent: 'By doing this you will replace the current content with the content from your clipboard. The current content will be lost. Are you sure you wish to continue?',
   confirmPasteButtonText: 'Replace content',
   copyToClipboard: 'Copy H5P content to the clipboard',
   copiedToClipboard: 'Content is copied to the clipboard',
@@ -204,10 +193,8 @@ H5PEditor.language.core = {
   pasteError: 'Cannot paste from clipboard',
   pasteContentNotSupported: 'The content in the H5P clipboard is not supported in this context',
   pasteContentRestricted: 'The content in the clipboard has been restricted on this site',
-  pasteTooOld:
-    'The content in the H5P clipboard is of a lower version (:clip) than what is supported in this context (:local), if possible try to have the content you want to paste upgraded, copy it again and try pasting it here.',
-  pasteTooNew:
-    'The content in the H5P clipboard is of a higher version (:clip) than what is supported in this context (:local), if possible try to have this content upgraded first, and then try pasting the content here again.',
+  pasteTooOld: 'The content in the H5P clipboard is of a lower version (:clip) than what is supported in this context (:local), if possible try to have the content you want to paste upgraded, copy it again and try pasting it here.',
+  pasteTooNew: 'The content in the H5P clipboard is of a higher version (:clip) than what is supported in this context (:local), if possible try to have this content upgraded first, and then try pasting the content here again.',
   ok: 'OK',
   avTablistLabel: 'Sett inn via',
   tabTitleBasicFileUpload: 'Filopplasting',
@@ -220,12 +207,10 @@ H5PEditor.language.core = {
   language: 'Språk',
   noLanguagesSupported: 'Ingen språk støttet',
   changeLanguage: 'Bytt språk til :language?',
-  thisWillPotentially:
-    'Dette kan potensielt tilbakestille all teksten og oversettelsene. Du kan ikke omgjøre dette. Innholdet vil ikke bli endret. Vil du fortsette?',
+  thisWillPotentially: "Dette kan potensielt tilbakestille all teksten og oversettelsene. Du kan ikke omgjøre dette. Innholdet vil ikke bli endret. Vil du fortsette?",
   notAllTextsChanged: 'Ikke alle tekstene ble endret, det er kun delvis støtte for :language.',
-  contributeTranslations:
-    'Hvis du vil fullføre oversettelsen for :language kan du lære mer om <a href=":url" target="_new">bidra med oversettelser til H5P</a>',
-  unknownLibrary: "Dessverre var ikke den valgte '%lib'-innholdstypen installert på dette systemet.",
+  contributeTranslations: 'Hvis du vil fullføre oversettelsen for :language kan du lære mer om <a href=":url" target="_new">bidra med oversettelser til H5P</a>',
+  unknownLibrary: 'Dessverre var ikke den valgte \'%lib\'-innholdstypen installert på dette systemet.',
   proceedButtonLabel: 'Proceed to save',
   enterFullscreenButtonLabel: 'Enter fullscreen',
   exitFullscreenButtonLabel: 'Exit fullscreen',
@@ -243,38 +228,41 @@ H5PEditor.language.core = {
     level: {
       dropdownLabel: 'Level',
       dialogHeader: 'Select level of education',
-      dialogButtonLabel: 'Filter level of education',
+      dialogButtonLabel: 'Filter level of education'
     },
     language: {
       dropdownLabel: 'Language',
       dialogHeader: 'Select language(s)',
       dialogButtonLabel: 'Filter languages',
-      searchPlaceholder: 'Select one or more languages',
+      searchPlaceholder: 'Select one or more languages'
     },
     reviewed: {
       dropdownLabel: 'Reviewed',
       dialogHeader: 'Reviewed Content',
       dialogButtonLabel: 'Filter',
-      optionLabel: 'Show only reviewed content',
+      optionLabel: 'Show only reviewed content'
     },
     contentTypes: {
       dropdownLabel: 'Content types',
       dialogHeader: 'Select Content type(s)',
       dialogButtonLabel: 'Filter Content Types',
-      searchPlaceholder: 'Select one or more content types',
+      searchPlaceholder: 'Select one or more content types'
     },
     disciplines: {
       dropdownLabel: 'Discipline',
       dialogHeader: 'Select Your Discipline',
       dialogButtonLabel: 'Filter Disciplines',
-      searchPlaceholder: 'Select one or more disciplines',
+      searchPlaceholder: 'Select one or more disciplines'
     },
     licenses: {
       dropdownLabel: 'License',
       dialogHeader: 'Select preferred rights of use',
       dialogButtonLabel: 'Filter licenses',
-      options: { modified: 'Can be modified', commercial: 'Allows commercial use' },
-    },
+      options: {
+        modified: 'Can be modified',
+        commercial: 'Allows commercial use'
+      }
+    }
   },
   clearFilters: 'Clear all filters',
   contentSearchFieldPlaceholder: 'Search for Content',

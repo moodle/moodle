@@ -20,7 +20,7 @@ Moodle is widely used around the world by universities, schools, companies and
 all manner of organisations and individuals.
 
 Moodle is provided freely as open source software, under the GNU General Public
-License <https://docs.moodle.org/dev/License>.
+License <https://moodledev.io/general/license>.
 
 Moodle is written in PHP and JavaScript and uses an SQL database for storing
 the data.

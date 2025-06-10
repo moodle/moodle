@@ -28,8 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\quiz_attempt;
-
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -45,7 +43,7 @@ $previous      = optional_param('previous',      false, PARAM_BOOL);
 $next          = optional_param('next',          false, PARAM_BOOL);
 $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
-$mdlscrollto   = optional_param('mdlscrollto', '', PARAM_RAW);
+$scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
 $cmid          = optional_param('cmid', null, PARAM_INT);
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
@@ -62,8 +60,8 @@ if ($page == -1) {
     $nexturl = $attemptobj->summary_url();
 } else {
     $nexturl = $attemptobj->attempt_url(null, $page);
-    if ($mdlscrollto !== '') {
-        $nexturl->param('mdlscrollto', $mdlscrollto);
+    if ($scrollpos !== '') {
+        $nexturl->param('scrollpos', $scrollpos);
     }
 }
 
@@ -73,7 +71,7 @@ require_sesskey();
 
 // Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
-    throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
+    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
 }
 
 // Check capabilities.
@@ -83,7 +81,14 @@ if (!$attemptobj->is_preview_user()) {
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
-    throw new moodle_exception('attemptalreadyclosed', 'quiz', $attemptobj->view_url());
+    throw new moodle_quiz_exception($attemptobj->get_quizobj(),
+            'attemptalreadyclosed', null, $attemptobj->review_url());
+}
+
+// If this page cannot be accessed, notify user and send them to the correct page.
+if (!$finishattempt && !$attemptobj->check_page_access($thispage)) {
+    throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
+            $attemptobj->attempt_url(null, $attemptobj->get_currentpage()));
 }
 
 // Process the attempt, getting the new status for the attempt.

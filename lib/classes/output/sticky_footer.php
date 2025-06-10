@@ -47,11 +47,6 @@ class sticky_footer implements named_templatable, renderable {
     protected $stickyclasses = 'justify-content-end';
 
     /**
-     * @var bool if the footer should auto enable or not.
-     */
-    protected $autoenable = true;
-
-    /**
      * @var array extra HTML attributes (attribute => value).
      */
     protected $attributes = [];
@@ -78,15 +73,6 @@ class sticky_footer implements named_templatable, renderable {
      */
     public function set_content(string $stickycontent) {
         $this->stickycontent = $stickycontent;
-    }
-
-    /**
-     * Set the auto enable value.
-     *
-     * @param bool $autoenable the footer content
-     */
-    public function set_auto_enable(bool $autoenable) {
-        $this->autoenable = $autoenable;
     }
 
     /**
@@ -125,15 +111,11 @@ class sticky_footer implements named_templatable, renderable {
                 'value' => $value,
             ];
         }
-        $data = [
+        return [
             'stickycontent' => (string)$this->stickycontent,
             'stickyclasses' => $this->stickyclasses,
             'extras' => $extras,
         ];
-        if (!$this->autoenable) {
-            $data['disable'] = true;
-        }
-        return $data;
     }
 
     /**

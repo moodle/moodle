@@ -1,0 +1,3403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl11:definitions xmlns:tns="http://www.imsglobal.org/services/lis/cmsv1p0/wsdl11/sync/imscms_v1p0" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="CourseManagementServiceSyncServices" targetNamespace="http://www.imsglobal.org/services/lis/cmsv1p0/wsdl11/sync/imscms_v1p0">
+    <wsdl11:documentation>
+        WSDLv1.1 File Information
+        -------------------------
+        Services:       CourseManagementService (Synchronous Communications)
+        Author:         Colin Smythe
+        Date:           31st January, 2010
+        Version:        Final 1.0
+        Status:         Public Draft
+        Description:    The Course Management Service.
+
+        History:        Version 1.0: This is the first formal release of this service.
+
+        WSDL Binding:   WSDL Binding is based upon the IMS GLC General Web Services Base Profile v1.0
+                        The IMS GLC GWS Basic Profile is derived from the WS-I Basic Profile v1.1.  This
+                        profile uses: WSDL 1.1, SOAP 1.1, HTTP 1.1 and XML 1.0.  Extension profiles to
+                        the IMS GLC GWS Base Profile are available but are not supported using this tool version.
+
+        License:        IPR, License and Distribution Notices
+
+                        This machine readable file is derived from IMS Global Learning Consortium (GLC) specification 
+                        IMS Course Management Service binding Version 1.0 found at http://www.imsglobal.org/lis and the 
+                        original IMS GLC schema binding or code base http://www.imsglobal.org/lis.
+
+                        Recipients of this document are requested to submit, with their comments, notification of any
+                        relevant patent claims or other intellectual property rights of which they may be aware that might be
+                        infringed by the schema binding contained in this document.
+
+                        IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                        rights that might be claimed to pertain to the implementation or use of the technology described in this
+                        document or the extent to which any license under such rights might or might not be available; neither
+                        does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                        procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                        Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                        Copyright (c) IMS Global Learning Consortium 1999-2010. All Rights Reserved.
+
+                        License Notice for Users
+
+                        Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                        non-exclusive license to use this document. 
+
+                        Distribution Notice for Developers
+
+                        Developers of products or services that are not original incorporators of this document and 
+                        have not changed this document, that is, are distributing a software product that incorporates this 
+                        document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                        display and distribute the contents of this document in any medium for any purpose without fee or 
+                        royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                        copies, or portions thereof.
+
+                        Developers of products or services that are original incorporators of this document and wish 
+                        to provide distribution of this document as is or with modifications and developers of products and 
+                        services that are not original incorporators of this document and have changed this document, are
+                        required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                        paragraphs:-
+
+                        *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                           permission to copy, display and distribute the contents of this document in any medium for any 
+                           purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                           its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                           registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                           instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                           registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                           purposes of third-party or other distribution of your product or service that incorporates this 
+                           document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                        *  If you wish to create and distribute a derived work from this document, you are hereby 
+                           granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                           any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                           notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                           profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                           the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                           granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                           third-party or other distribution of your product or service that incorporates the derived work as long 
+                           as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                        The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                        successors or assigns.
+
+                        THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                        EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                        NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                        ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+        UML Source File Information
+        ---------------------------
+        Choreography:     Sync
+        Transport:        SOAPv1.1
+
+        Source UML File Information
+        ---------------------------
+        The source file information must be supplied as an XMI file (without diagram layout information).
+        The supported UML authoring tools are:
+        (a) Poseidon – v6 (and later)
+
+        Source XSLT File Information
+        ----------------------------
+        XSL Generator:    UMLtoWSDLv1.1Transformv0p9.xsl
+        XSLT Processor:   Xalan
+        Release:          1.0 Beta 3
+        Date:             31st May, 2009
+
+        IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+        ------------------------------------------------
+        This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+        attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+        that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+        claim on the materials created by third party users of this tool.  Details on how to use this tool
+        are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+        Tool Copyright:  2005-2010 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+    </wsdl11:documentation>
+
+    <!-- Declaration of the WSDL type elements ************************************************************ -->
+
+    <wsdl11:types>
+        <xs:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.imsglobal.org/services/lis/cmsv1p0/wsdl11/sync/imscms_v1p0" version="IMS CMS 1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+        <!-- Generate Global Attributes *********************************************************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+        <xs:simpleType name="imsx_CodeMajor.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="success"/>
+                <xs:enumeration value="processing"/>
+                <xs:enumeration value="failure"/>
+                <xs:enumeration value="unsupported"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_Severity.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="status"/>
+                <xs:enumeration value="warning"/>
+                <xs:enumeration value="error"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_CodeMinorValue.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="fullsuccess"/>
+                <xs:enumeration value="nosourcedids"/>
+                <xs:enumeration value="idalloc"/>
+                <xs:enumeration value="overflowfail"/>
+                <xs:enumeration value="idallocinusefail"/>
+                <xs:enumeration value="invaliddata"/>
+                <xs:enumeration value="incompletedata"/>
+                <xs:enumeration value="partialdatastorage"/>
+                <xs:enumeration value="unknownobject"/>
+                <xs:enumeration value="deletefailure"/>
+                <xs:enumeration value="targetreadfailure"/>
+                <xs:enumeration value="savepointsyncerror"/>
+                <xs:enumeration value="savepointerror"/>
+                <xs:enumeration value="unknownquery"/>
+                <xs:enumeration value="unknownvocab"/>
+                <xs:enumeration value="targetisbusy"/>
+                <xs:enumeration value="unknownextension"/>
+                <xs:enumeration value="unauthorizedrequest"/>
+                <xs:enumeration value="linkfailure"/>
+                <xs:enumeration value="unsupportedLIS"/>
+                <xs:enumeration value="unsupportedLISoperation"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="MediaMode.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="uri"/>
+                <xs:enumeration value="entityref"/>
+                <xs:enumeration value="base64"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="ContentRefType.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="text"/>
+                <xs:enumeration value="image"/>
+                <xs:enumeration value="audio"/>
+                <xs:enumeration value="video"/>
+                <xs:enumeration value="application"/>
+                <xs:enumeration value="applet"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:element name="imsx_codeMajor" type="tns:imsx_CodeMajor.Type"/>
+
+        <xs:element name="imsx_severity" type="tns:imsx_Severity.Type"/>
+
+        <xs:element name="imsx_codeMinorFieldValue" type="tns:imsx_CodeMinorValue.Type"/>
+
+        <xs:element name="mediamode" type="tns:MediaMode.Type"/>
+
+        <xs:element name="contentRefType" type="tns:ContentRefType.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+        <xs:element name="refAgentInstanceID" type="xs:normalizedString"/>
+
+        <xs:element name="imsx_messageRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_operationRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_description" type="xs:string"/>
+
+        <xs:element name="imsx_codeMinorFieldName" type="xs:string" default="TargetEndSystem"/>
+
+        <xs:element name="imsx_version" type="xs:string" default="V1.0"/>
+
+        <xs:element name="imsx_messageIdentifier" type="xs:string"/>
+
+        <xs:element name="maxNumberofStudents" type="xs:integer"/>
+
+        <xs:element name="numberofStudents" type="xs:integer"/>
+
+        <xs:element name="mimeType" type="xs:normalizedString"/>
+
+        <xs:element name="begin" type="xs:dateTime"/>
+
+        <xs:element name="end" type="xs:dateTime"/>
+
+        <xs:element name="restrict" type="xs:boolean"/>
+
+        <xs:element name="adminPeriod" type="xs:normalizedString"/>
+
+        <xs:element name="enrollAccept" type="xs:boolean"/>
+
+        <xs:element name="enrollAllowed" type="xs:boolean"/>
+
+        <xs:element name="language" type="xs:normalizedString"/>
+
+        <xs:element name="textString" type="xs:string"/>
+
+        <xs:element name="metadataNameVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="metadataTypeVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="extensionNameVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="extensionValueType" type="xs:anyURI"/>
+
+        <xs:element name="fieldName" type="xs:normalizedString"/>
+
+        <xs:element name="fieldType" type="xs:normalizedString"/>
+
+        <xs:element name="fieldValue" type="xs:normalizedString"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+        <xs:complexType name="CourseTemplate.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The CourseTemplate datatype is the top-level container 
+                    for the Course Template data model.  A CourseTemplate 
+                    is a general course that exists across terms, semesters, etc. 
+                    It is an abstract course representation.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:catalogDescription" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:courseNumber" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:status" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:defaultCredits" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:org" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:listofTopics" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:listofPrerequisites" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ListofTopics.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ListofTopics complexType is the container for the list of topics 
+that are covered in a Course derived from the CourseTemplate.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:topic" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ListofPrerequisites.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ListofPrerequisities complexType is the container for the set 
+of pre-reqisities fr the CourseTemplae.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:prerequisite" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseTemplateRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The CourseTemplateRecord complexType is the container for the association between the 
+GUID of the CourseTemlate and the object itself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:courseTemplate" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseTemplateRecordSet.Type">
+            <xs:sequence>
+                <xs:element ref="tns:courseTemplateRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SourcedGUID.Type">
+            <xs:sequence>
+                <xs:element ref="tns:refAgentInstanceID" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:sourcedId" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_StatusInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMajor" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_severity" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageRefIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_operationRefIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:imsx_description" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinor" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinor.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinorField.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorFieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinorFieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_RequestHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_ResponseHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_statusInfo" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseSection.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The CourseSection data-type is a way to represent a group of 
+                    people associated with a course or class.  These groups may include 
+                    everyone in the class or course, or may be subsets of that whole 
+                    group.  CourseSections may have sub-sections (these are created as 
+                    separate Group objects linked using a relationship).
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:parentOfferingId" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:catalogDescription" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:status" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:defaultCredits" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:category" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:maxNumberofStudents" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:numberofStudents" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:org" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:timeFrame" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:enrollControl" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:location" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:notes" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:meeting" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseSectionRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The CourseSectionRecord is the container for the 
+                    relationship between the GUID for the 
+                    CourseSectionRecord object and the object itself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:courseSection" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseSectionRecordSet.Type">
+            <xs:sequence>
+                <xs:element ref="tns:courseSectionRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseOffering.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The CourseOffering data-type is the container for the ocurrence 
+                    of a course in a specific session e.g. term, semester, etc.  A 
+                    CourseTemplate can have several CourseOfferings and each 
+                    CourseOffering can have several CourseSections.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:parentTemplateId" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:catalogDescription" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:status" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:defaultCredits" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:academicSession" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:org" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:timeFrame" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:enrollControl" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseOfferingRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The CourseOfferingRecord complexType is the container for the relationship between 
+the GUID of the CourseOffering object and the object itself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:courseOffering" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="CourseOfferingRecordSet.Type">
+            <xs:sequence>
+                <xs:element ref="tns:courseOfferingRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="GUIDSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The GUIDSet data-type is the container for a set 
+                    of SourcedIds.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Description.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Description data-type is the container for all of 
+                    the material that is used to describe something.  It has 
+                    short (text), long (text) and full (multimedia) forms.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:shortDescription" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:longDescription" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:fullDescription" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="FullDescription.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The FullDescription type is the container for the 
+                    multimedia-based description.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:mediamode" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:contentRefType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:mimeType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:descriptionText" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Org.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Org data-type is the container for data 
+                    about the organization that 'owns' the course 
+                    structure.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:orgName" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:orgUnit" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:type" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:id" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="TimeFrame.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The TimeFrame data-type is the container for time 
+                    information about the course component.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:begin" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:end" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:restrict" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:adminPeriod" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="EnrollControl.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The EnrollControl data-type is the container for the data 
+                    that is used to control enrollment on the associated 
+                    activity.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:enrollAccept" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:enrollAllowed" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Text.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Text data-type is the container for a language 
+                    specific string.  The language is denoted using the 
+                    ISO 639 code set.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:language" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:textString" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Metadata.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Metadata data-type is the container for meta-data 
+                    that is used to describe an object.  At the current time 
+                    this is just a set of name/type/value triples.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:metadataNameVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:metadataTypeVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="IMSExtension.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The IMSExtension data-type is the container for 
+                    the set of extension information.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:extensionNameVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionValueType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ExtensionField.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ExtensionField complexType is the container for each of the extension 
+points.  This is a name/type/value triple.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:fieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SectionAssociation.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The SectionAssociation data-type is used to identifiy a set of 
+                    associated CourseSections.  This includes the label, title and 
+                    status of the SectionAssociation.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:status" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:courseSectionIdList" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ListofCourseSectionIds.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ListofCourseSectionIds data-type is the container for the 
+                    list of associated CourseSections.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:courseSectionId" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SectionAssociationRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The SectionAssociationRecord is the container for the 
+                    relationship between the GUID of the SectionAssociation 
+                    object and the object itself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:sectionAssociation" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SectionAssociationRecordSet.Type">
+            <xs:sequence>
+                <xs:element ref="tns:sectionAssociationRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+        <xs:simpleType name="GUID.Type">
+            <xs:restriction base="xs:normalizedString"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="SequenceIdentifier.Type">
+            <xs:restriction base="xs:dateTime"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="QueryObject.Type">
+            <xs:restriction base="xs:normalizedString"/>
+        </xs:simpleType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the elements ********************************************************************** -->
+
+        <xs:element name="label" type="tns:Text.Type"/>
+
+        <xs:element name="title" type="tns:Text.Type"/>
+
+        <xs:element name="catalogDescription" type="tns:Description.Type"/>
+
+        <xs:element name="courseNumber" type="tns:Text.Type"/>
+
+        <xs:element name="defaultCredits" type="tns:Text.Type"/>
+
+        <xs:element name="org" type="tns:Org.Type"/>
+
+        <xs:element name="listofTopics" type="tns:ListofTopics.Type"/>
+
+        <xs:element name="listofPrerequisites" type="tns:ListofPrerequisites.Type"/>
+
+        <xs:element name="recordInfo" type="tns:Metadata.Type"/>
+
+        <xs:element name="extension" type="tns:IMSExtension.Type"/>
+
+        <xs:element name="topic" type="tns:Text.Type"/>
+
+        <xs:element name="prerequisite" type="tns:Text.Type"/>
+
+        <xs:element name="sourcedGUID" type="tns:SourcedGUID.Type"/>
+
+        <xs:element name="courseTemplate" type="tns:CourseTemplate.Type"/>
+
+        <xs:element name="imsx_codeMinor" type="tns:imsx_CodeMinor.Type"/>
+
+        <xs:element name="imsx_codeMinorField" type="tns:imsx_CodeMinorField.Type"/>
+
+        <xs:element name="imsx_statusInfo" type="tns:imsx_StatusInfo.Type"/>
+
+        <xs:element name="category" type="tns:Text.Type"/>
+
+        <xs:element name="timeFrame" type="tns:TimeFrame.Type"/>
+
+        <xs:element name="enrollControl" type="tns:EnrollControl.Type"/>
+
+        <xs:element name="location" type="tns:Text.Type"/>
+
+        <xs:element name="notes" type="tns:Text.Type"/>
+
+        <xs:element name="meeting" type="tns:Text.Type"/>
+
+        <xs:element name="courseSection" type="tns:CourseSection.Type"/>
+
+        <xs:element name="courseOffering" type="tns:CourseOffering.Type"/>
+
+        <xs:element name="shortDescription" type="tns:Text.Type"/>
+
+        <xs:element name="longDescription" type="tns:Text.Type"/>
+
+        <xs:element name="fullDescription" type="tns:FullDescription.Type"/>
+
+        <xs:element name="descriptionText" type="tns:Text.Type"/>
+
+        <xs:element name="orgName" type="tns:Text.Type"/>
+
+        <xs:element name="orgUnit" type="tns:Text.Type"/>
+
+        <xs:element name="type" type="tns:Text.Type"/>
+
+        <xs:element name="id" type="tns:Text.Type"/>
+
+        <xs:element name="extensionField" type="tns:ExtensionField.Type"/>
+
+        <xs:element name="courseSectionIdList" type="tns:ListofCourseSectionIds.Type"/>
+
+        <xs:element name="sectionAssociation" type="tns:SectionAssociation.Type"/>
+
+        <xs:element name="dataSource" type="tns:GUID.Type"/>
+
+        <xs:element name="parentOfferingId" type="tns:GUID.Type"/>
+
+        <xs:element name="parentTemplateId" type="tns:GUID.Type"/>
+
+        <xs:element name="courseSectionId" type="tns:GUID.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message parameter elements **************************************************** -->
+
+        <xs:element name="sourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="courseTemplateRecord" type="tns:CourseTemplateRecord.Type"/>
+
+        <xs:element name="sourcedIdSet" type="tns:GUIDSet.Type"/>
+
+        <xs:element name="fromSavePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="savePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="courseTemplateRecordSet" type="tns:CourseTemplateRecordSet.Type"/>
+
+        <xs:element name="queryObject" type="tns:QueryObject.Type"/>
+
+        <xs:element name="newSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="courseOfferingRecord" type="tns:CourseOfferingRecord.Type"/>
+
+        <xs:element name="academicSession" type="tns:Text.Type"/>
+
+        <xs:element name="courseOfferingRecordSet" type="tns:CourseOfferingRecordSet.Type"/>
+
+        <xs:element name="status" type="xs:normalizedString"/>
+
+        <xs:element name="courseSectionRecord" type="tns:CourseSectionRecord.Type"/>
+
+        <xs:element name="courseSectionRecordSet" type="tns:CourseSectionRecordSet.Type"/>
+
+        <xs:element name="sectionAssociationRecord" type="tns:SectionAssociationRecord.Type"/>
+
+        <xs:element name="sectionAssociationRecordSet" type="tns:SectionAssociationRecordSet.Type"/>
+
+        <xs:element name="sectionAssociationSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="courseSectionSourcedId" type="tns:GUID.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message body elements ********************************************************* -->
+
+        <xs:element name="createCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseTemplateRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseTemplateResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseTemplateRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseTemplateResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteCourseTemplateResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplateResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseTemplateRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllCourseTemplateIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllCourseTemplateIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplateIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplateIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplatesRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplatesResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseTemplateRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplatesFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseTemplatesFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseTemplateRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingIdsForCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingIdsForCourseTemplateResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseTemplateRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseTemplateResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceCourseTemplateRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseTemplateRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceCourseTemplateResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverCourseTemplateIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverCourseTemplateIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseTemplateIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseTemplateIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseOfferingRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseOfferingResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseOfferingRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseOfferingResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseOfferingFromCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:academicSession"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseOfferingFromCourseOfferingResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="deleteCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteCourseOfferingResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseOfferingRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllCourseOfferingIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllCourseOfferingIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllActiveCourseOfferingIdsForAcademicSessionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:academicSession"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllActiveCourseOfferingIdsForAcademicSessionResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionIdsForCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionIdsForCourseOfferingResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseOfferingRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseOfferingsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseOfferingRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseOfferingRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseOfferingResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="updateCourseOfferingStatusRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:status"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseOfferingStatusResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseOfferingRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceCourseOfferingResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverCourseOfferingIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverCourseOfferingIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseOfferingIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseOfferingIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseSectionRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseSectionResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyCourseSectionResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseSectionFromCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:academicSession"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createCourseSectionFromCourseSectionResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="deleteCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteCourseSectionResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllCourseSectionIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllCourseSectionIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readCourseSectionsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseSectionRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseSectionResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="updateCourseSectionStatusRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:status"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateCourseSectionStatusResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:courseSectionRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceCourseSectionResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverCourseSectionIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverCourseSectionIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseSectionIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeCourseSectionIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createSectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:sectionAssociationRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createSectionAssociationResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxySectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxySectionAssociationResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteSectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteSectionAssociationResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllSectionAssociationIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllSectionAssociationIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readSectionAssociationsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="addCourseSectionIdRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationSourcedId"/>
+                    <xs:element ref="tns:courseSectionSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="addCourseSectionIdResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="removeCourseSectionIdRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionAssociationSourcedId"/>
+                    <xs:element ref="tns:courseSectionSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="removeCourseSectionIdResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="updateSectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:sectionAssociationRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateSectionAssociationResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceSectionAssociationRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:sectionAssociationRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceSectionAssociationResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverSectionAssociationIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverSectionAssociationIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeSectionAssociationIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeSectionAssociationIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the root element(s) *************************************************************** -->
+
+        <xs:element name="imsx_syncRequestHeaderInfo" type="tns:imsx_RequestHeaderInfo.Type"/>
+        <xs:element name="imsx_syncResponseHeaderInfo" type="tns:imsx_ResponseHeaderInfo.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        </xs:schema>
+    </wsdl11:types>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL message elements ********************************************************* -->
+
+    <wsdl11:message name="createCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:createCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:createCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:deleteCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:readCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseTemplateIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllCourseTemplateIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseTemplateIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllCourseTemplateIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplateIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseTemplateIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplateIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseTemplateIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplatesRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseTemplatesRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplatesResponse">
+        <wsdl11:part name="Response" element="tns:readCourseTemplatesResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplatesFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseTemplatesFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseTemplatesFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseTemplatesFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingIdsForCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseOfferingIdsForCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingIdsForCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:readCourseOfferingIdsForCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:updateCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:updateCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseTemplateRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceCourseTemplateRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseTemplateResponse">
+        <wsdl11:part name="Response" element="tns:replaceCourseTemplateResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseTemplateIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverCourseTemplateIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseTemplateIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverCourseTemplateIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseTemplateIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeCourseTemplateIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseTemplateIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeCourseTemplateIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:createCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:createCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseOfferingFromCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:createCourseOfferingFromCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseOfferingFromCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:createCourseOfferingFromCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:deleteCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:readCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseOfferingIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllCourseOfferingIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseOfferingIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllCourseOfferingIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseOfferingIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseOfferingIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllActiveCourseOfferingIdsForAcademicSessionRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllActiveCourseOfferingIdsForAcademicSessionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllActiveCourseOfferingIdsForAcademicSessionResponse">
+        <wsdl11:part name="Response" element="tns:readAllActiveCourseOfferingIdsForAcademicSessionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionIdsForCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseSectionIdsForCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionIdsForCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:readCourseSectionIdsForCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingsRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseOfferingsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingsResponse">
+        <wsdl11:part name="Response" element="tns:readCourseOfferingsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseOfferingsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseOfferingsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseOfferingsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:updateCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:updateCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseOfferingStatusRequest">
+        <wsdl11:part name="Parameters" element="tns:updateCourseOfferingStatusRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseOfferingStatusResponse">
+        <wsdl11:part name="Response" element="tns:updateCourseOfferingStatusResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:replaceCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseOfferingIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverCourseOfferingIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseOfferingIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverCourseOfferingIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseOfferingIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeCourseOfferingIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseOfferingIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeCourseOfferingIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:createCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:createCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseSectionFromCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:createCourseSectionFromCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createCourseSectionFromCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:createCourseSectionFromCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:deleteCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:readCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseSectionIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllCourseSectionIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllCourseSectionIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllCourseSectionIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseSectionIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseSectionIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionsRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseSectionsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionsResponse">
+        <wsdl11:part name="Response" element="tns:readCourseSectionsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readCourseSectionsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readCourseSectionsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readCourseSectionsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:updateCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:updateCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseSectionStatusRequest">
+        <wsdl11:part name="Parameters" element="tns:updateCourseSectionStatusRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateCourseSectionStatusResponse">
+        <wsdl11:part name="Response" element="tns:updateCourseSectionStatusResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:replaceCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseSectionIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverCourseSectionIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverCourseSectionIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverCourseSectionIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseSectionIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeCourseSectionIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeCourseSectionIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeCourseSectionIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createSectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:createSectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createSectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:createSectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxySectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxySectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxySectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:createByProxySectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteSectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteSectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteSectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:deleteSectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:readSectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:readSectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllSectionAssociationIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllSectionAssociationIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllSectionAssociationIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllSectionAssociationIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readSectionAssociationIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readSectionAssociationIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationsRequest">
+        <wsdl11:part name="Parameters" element="tns:readSectionAssociationsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationsResponse">
+        <wsdl11:part name="Response" element="tns:readSectionAssociationsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readSectionAssociationsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readSectionAssociationsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readSectionAssociationsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="addCourseSectionIdRequest">
+        <wsdl11:part name="Parameters" element="tns:addCourseSectionIdRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="addCourseSectionIdResponse">
+        <wsdl11:part name="Response" element="tns:addCourseSectionIdResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="removeCourseSectionIdRequest">
+        <wsdl11:part name="Parameters" element="tns:removeCourseSectionIdRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="removeCourseSectionIdResponse">
+        <wsdl11:part name="Response" element="tns:removeCourseSectionIdResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateSectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:updateSectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateSectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:updateSectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceSectionAssociationRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceSectionAssociationRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceSectionAssociationResponse">
+        <wsdl11:part name="Response" element="tns:replaceSectionAssociationResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverSectionAssociationIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverSectionAssociationIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverSectionAssociationIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverSectionAssociationIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeSectionAssociationIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeSectionAssociationIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeSectionAssociationIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeSectionAssociationIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL portType elements ******************************************************** -->
+
+    <wsdl11:portType name="CourseTemplateManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the CourseTemplateManager interface.  
+            The operations are:
+            
+            1) CreateCourseTemplate
+            2) CreateByProxyCourseTemplate
+            3) DeleteCourseTemplate
+            4) ReadCourseTemplate
+            5) ReadAllCourseTemplateIds
+            6) ReadCourseTemplateIdsFromSavePoint
+            7) ReadCourseTemplates
+            8) ReadCourseYTemplatesFromSavePoint
+            9) ReadCourseOfferingIdsForCourseTemplate
+            10) UpdateCourseTemplate
+            11) ReplaceCourseTemplate
+            12) DiscoverCourseTemplateIds
+            13) ChangeCourseTemplateIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createCourseTemplateRequest"/>
+            <wsdl11:output message="tns:createCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyCourseTemplateRequest"/>
+            <wsdl11:output message="tns:createByProxyCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteCourseTemplateRequest"/>
+            <wsdl11:output message="tns:deleteCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseTemplateRequest"/>
+            <wsdl11:output message="tns:readCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseTemplateIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllCourseTemplateIdsRequest"/>
+            <wsdl11:output message="tns:readAllCourseTemplateIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplateIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseTemplateIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseTemplateIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplates">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseTemplatesRequest"/>
+            <wsdl11:output message="tns:readCourseTemplatesResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplatesFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseTemplatesFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseTemplatesFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingIdsForCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseOfferingIdsForCourseTemplateRequest"/>
+            <wsdl11:output message="tns:readCourseOfferingIdsForCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateCourseTemplateRequest"/>
+            <wsdl11:output message="tns:updateCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseTemplate">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceCourseTemplateRequest"/>
+            <wsdl11:output message="tns:replaceCourseTemplateResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseTemplateIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverCourseTemplateIdsRequest"/>
+            <wsdl11:output message="tns:discoverCourseTemplateIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseTemplateIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeCourseTemplateIdentifierRequest"/>
+            <wsdl11:output message="tns:changeCourseTemplateIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+    <wsdl11:portType name="CourseOfferingManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the CourseOfferingManager interface.  
+            The operations are:
+            
+            1) CreateCourseOffering
+            2) CreateByProxyCourseOffering
+            3) CreateCourseOfferingFromCourseOffering
+            4) DeleteCourseOffering
+            5) ReadCourseOffering
+            6) ReadAllCourseOfferingIds
+            7) ReadCourseOfferingIdsFromSavePoint
+            8) ReadAllActiveCourseOfferingIdsForAcademicSession
+            9) ReadCourseSectionIdsForCourseOffering
+            10) ReadCourseOfferings
+            11) ReadCoureOfferingsFromSavePoint
+            12) UpdateCourseOffering
+            13) UpdateCourseOfferingStatus
+            14) ReplaceCourseOffering
+            15) DiscoverCourseOfferingIds
+            16) ChangeCourseOfferingIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createCourseOfferingRequest"/>
+            <wsdl11:output message="tns:createCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyCourseOfferingRequest"/>
+            <wsdl11:output message="tns:createByProxyCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createCourseOfferingFromCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createCourseOfferingFromCourseOfferingRequest"/>
+            <wsdl11:output message="tns:createCourseOfferingFromCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteCourseOfferingRequest"/>
+            <wsdl11:output message="tns:deleteCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseOfferingRequest"/>
+            <wsdl11:output message="tns:readCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseOfferingIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllCourseOfferingIdsRequest"/>
+            <wsdl11:output message="tns:readAllCourseOfferingIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseOfferingIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseOfferingIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllActiveCourseOfferingIdsForAcademicSession">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllActiveCourseOfferingIdsForAcademicSessionRequest"/>
+            <wsdl11:output message="tns:readAllActiveCourseOfferingIdsForAcademicSessionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionIdsForCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseSectionIdsForCourseOfferingRequest"/>
+            <wsdl11:output message="tns:readCourseSectionIdsForCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferings">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseOfferingsRequest"/>
+            <wsdl11:output message="tns:readCourseOfferingsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseOfferingsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseOfferingsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateCourseOfferingRequest"/>
+            <wsdl11:output message="tns:updateCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseOfferingStatus">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateCourseOfferingStatusRequest"/>
+            <wsdl11:output message="tns:updateCourseOfferingStatusResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceCourseOfferingRequest"/>
+            <wsdl11:output message="tns:replaceCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseOfferingIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverCourseOfferingIdsRequest"/>
+            <wsdl11:output message="tns:discoverCourseOfferingIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseOfferingIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeCourseOfferingIdentifierRequest"/>
+            <wsdl11:output message="tns:changeCourseOfferingIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+    <wsdl11:portType name="CourseSectionManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the CourseSectionManager interface.  
+            The operations are:
+            
+            1) CreateCourseSection
+            2) CreateByProxyCourseSection
+            3) CreateCourseSectionFromCourseSection
+            4) DeleteCourseSection
+            5) ReadCourseSection
+            6) ReadAllCourseSectionIds
+            7) ReadCourseSectiondsFromSavePoint
+            8) ReadCourseSections
+            9) eadCourseSectionsFromSavePoint
+            10) UpdateCourseSection
+            11) UpdateCourseSectionStatus
+            12) ReplaceCourseSection
+            13) DiscoverCourseSectionIds
+            14) ChangeCourseSectionIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createCourseSectionRequest"/>
+            <wsdl11:output message="tns:createCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyCourseSectionRequest"/>
+            <wsdl11:output message="tns:createByProxyCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createCourseSectionFromCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createCourseSectionFromCourseSectionRequest"/>
+            <wsdl11:output message="tns:createCourseSectionFromCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteCourseSectionRequest"/>
+            <wsdl11:output message="tns:deleteCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseSectionRequest"/>
+            <wsdl11:output message="tns:readCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseSectionIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllCourseSectionIdsRequest"/>
+            <wsdl11:output message="tns:readAllCourseSectionIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseSectionIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseSectionIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSections">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseSectionsRequest"/>
+            <wsdl11:output message="tns:readCourseSectionsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readCourseSectionsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readCourseSectionsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateCourseSectionRequest"/>
+            <wsdl11:output message="tns:updateCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseSectionStatus">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateCourseSectionStatusRequest"/>
+            <wsdl11:output message="tns:updateCourseSectionStatusResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceCourseSectionRequest"/>
+            <wsdl11:output message="tns:replaceCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseSectionIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverCourseSectionIdsRequest"/>
+            <wsdl11:output message="tns:discoverCourseSectionIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseSectionIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeCourseSectionIdentifierRequest"/>
+            <wsdl11:output message="tns:changeCourseSectionIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+    <wsdl11:portType name="SectionAssociationManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the SectionAssociationManager interface.  
+            The operations are:
+            
+            1) CreateSectionAssociation
+            2) CreateByProxySectionAssociation
+            3) DeleteSectionAssociation
+            4) ReadSectionAssociation
+            5) ReadAllSectionAssociationIds
+            6) ReadSectionAssociationsFromSavePoint
+            7) ReadSectionAssociations
+            8) ReadSectionAssociationsFromSavePoint
+            9) AddCourseSectionId
+            10) RemoveCourseSectionId
+            11) UpdateSectionAssociation
+            12) ReplaceSectionAssociation
+            13) DiscoverSectionAssociationIds
+            14) ChangeSectionAssociationIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createSectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createSectionAssociationRequest"/>
+            <wsdl11:output message="tns:createSectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxySectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxySectionAssociationRequest"/>
+            <wsdl11:output message="tns:createByProxySectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteSectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteSectionAssociationRequest"/>
+            <wsdl11:output message="tns:deleteSectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readSectionAssociationRequest"/>
+            <wsdl11:output message="tns:readSectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllSectionAssociationIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllSectionAssociationIdsRequest"/>
+            <wsdl11:output message="tns:readAllSectionAssociationIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociationIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readSectionAssociationIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readSectionAssociationIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociations">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readSectionAssociationsRequest"/>
+            <wsdl11:output message="tns:readSectionAssociationsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociationsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readSectionAssociationsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readSectionAssociationsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="addCourseSectionId">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:addCourseSectionIdRequest"/>
+            <wsdl11:output message="tns:addCourseSectionIdResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="removeCourseSectionId">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:removeCourseSectionIdRequest"/>
+            <wsdl11:output message="tns:removeCourseSectionIdResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateSectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateSectionAssociationRequest"/>
+            <wsdl11:output message="tns:updateSectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceSectionAssociation">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceSectionAssociationRequest"/>
+            <wsdl11:output message="tns:replaceSectionAssociationResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverSectionAssociationIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverSectionAssociationIdsRequest"/>
+            <wsdl11:output message="tns:discoverSectionAssociationIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeSectionAssociationIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeSectionAssociationIdentifierRequest"/>
+            <wsdl11:output message="tns:changeSectionAssociationIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL binding elements ********************************************************* -->
+
+    <wsdl11:binding name="CourseTemplateManagerSyncSoapBinding" type="tns:CourseTemplateManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createByProxyCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/deleteCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseTemplateIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readAllCourseTemplateIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllCourseTemplateIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllCourseTemplateIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplateIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseTemplateIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseTemplateIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseTemplateIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplates">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseTemplates" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseTemplatesRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseTemplatesResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseTemplatesFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseTemplatesFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseTemplatesFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseTemplatesFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingIdsForCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseOfferingIdsForCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseOfferingIdsForCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseOfferingIdsForCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseTemplate">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/replaceCourseTemplate" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceCourseTemplateRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceCourseTemplateResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseTemplateIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/discoverCourseTemplateIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverCourseTemplateIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverCourseTemplateIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseTemplateIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/changeCourseTemplateIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeCourseTemplateIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeCourseTemplateIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+    <wsdl11:binding name="CourseOfferingManagerSyncSoapBinding" type="tns:CourseOfferingManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createByProxyCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createCourseOfferingFromCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createCourseOfferingFromCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createCourseOfferingFromCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createCourseOfferingFromCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/deleteCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseOfferingIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readAllCourseOfferingIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllCourseOfferingIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllCourseOfferingIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseOfferingIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseOfferingIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseOfferingIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllActiveCourseOfferingIdsForAcademicSession">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readAllActiveCourseOfferingIdsForAcademicSession" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllActiveCourseOfferingIdsForAcademicSessionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllActiveCourseOfferingIdsForAcademicSessionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionIdsForCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseSectionIdsForCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseSectionIdsForCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseSectionIdsForCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferings">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseOfferings" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseOfferingsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseOfferingsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseOfferingsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseOfferingsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseOfferingsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseOfferingsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseOfferingStatus">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateCourseOfferingStatus" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateCourseOfferingStatusRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateCourseOfferingStatusResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/replaceCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseOfferingIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/discoverCourseOfferingIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverCourseOfferingIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverCourseOfferingIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseOfferingIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/changeCourseOfferingIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeCourseOfferingIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeCourseOfferingIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+    <wsdl11:binding name="CourseSectionManagerSyncSoapBinding" type="tns:CourseSectionManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createByProxyCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createCourseSectionFromCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createCourseSectionFromCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createCourseSectionFromCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createCourseSectionFromCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/deleteCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllCourseSectionIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readAllCourseSectionIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllCourseSectionIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllCourseSectionIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseSectionIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseSectionIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseSectionIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSections">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseSections" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseSectionsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseSectionsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readCourseSectionsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readCourseSectionsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readCourseSectionsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readCourseSectionsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateCourseSectionStatus">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateCourseSectionStatus" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateCourseSectionStatusRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateCourseSectionStatusResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/replaceCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverCourseSectionIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/discoverCourseSectionIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverCourseSectionIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverCourseSectionIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeCourseSectionIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/changeCourseSectionIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeCourseSectionIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeCourseSectionIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+    <wsdl11:binding name="SectionAssociationManagerSyncSoapBinding" type="tns:SectionAssociationManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createSectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createSectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createSectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createSectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxySectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/createByProxySectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxySectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxySectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteSectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/deleteSectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteSectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteSectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readSectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readSectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readSectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllSectionAssociationIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readAllSectionAssociationIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllSectionAssociationIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllSectionAssociationIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociationIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readSectionAssociationIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readSectionAssociationIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readSectionAssociationIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociations">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readSectionAssociations" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readSectionAssociationsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readSectionAssociationsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readSectionAssociationsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/readSectionAssociationsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readSectionAssociationsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readSectionAssociationsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="addCourseSectionId">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/addCourseSectionId" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:addCourseSectionIdRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:addCourseSectionIdResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="removeCourseSectionId">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/removeCourseSectionId" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:removeCourseSectionIdRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:removeCourseSectionIdResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateSectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/updateSectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateSectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateSectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceSectionAssociation">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/replaceSectionAssociation" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceSectionAssociationRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceSectionAssociationResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverSectionAssociationIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/discoverSectionAssociationIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverSectionAssociationIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverSectionAssociationIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeSectionAssociationIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/cmsv1p0/changeSectionAssociationIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeSectionAssociationIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeSectionAssociationIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL service elements ********************************************************* -->
+
+    <wsdl11:service name="CourseManagementServiceSyncService">
+        <wsdl11:documentation>
+            Service Information
+            -------------------
+            Author:         Colin Smythe
+            Date:           31st January, 2010
+            Version:        Final 1.0
+            Status:         Public Draft
+            Description:    The Course Management Service is composed of three interfaces 
+                            each of which has several operations.
+            History:        Version 1.0: This is the first formal release of this service.
+        </wsdl11:documentation>
+        <wsdl11:port name="CourseTemplateManagerSyncSoapPort" binding="tns:CourseTemplateManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-coursetemplate/"/>
+        </wsdl11:port>
+        <wsdl11:port name="CourseOfferingManagerSyncSoapPort" binding="tns:CourseOfferingManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-courseoffering/"/>
+        </wsdl11:port>
+        <wsdl11:port name="CourseSectionManagerSyncSoapPort" binding="tns:CourseSectionManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-coursesection/"/>
+        </wsdl11:port>
+        <wsdl11:port name="SectionAssociationManagerSyncSoapPort" binding="tns:SectionAssociationManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-sectionassociation/"/>
+        </wsdl11:port>
+    </wsdl11:service>
+
+    <!-- ================================================================================================== -->
+
+</wsdl11:definitions>

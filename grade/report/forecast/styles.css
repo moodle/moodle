@@ -1,0 +1,82 @@
+.path-grade-report-forecast #graded_users_selector {
+    float: right;
+    margin-bottom: 5px;
+}
+.path-grade-report-forecast #graded_users_selector .singleselect label {
+    display: inline-block;
+}
+
+.path-grade-report-forecast .user-grade {
+    width: 100%;
+    /*border: 1px solid;*/
+}
+.path-grade-report-forecast .user-grade thead th {
+    vertical-align: bottom;
+}
+.path-grade-report-forecast .user-grade th {
+    text-align:left;
+}
+.path-grade-report-forecast .user-grade td {
+    min-width: 4.5em;
+    vertical-align: top;
+}
+.dir-rtl.path-grade-report-forecast .user-grade td {
+    direction: ltr;
+}
+.dir-rtl.path-grade-report-forecast table.user-grade {
+    border-collapse: separate;
+}
+.path-grade-report-forecast .user-grade .b1l {
+    padding: 0;
+    width:24px;
+    min-width: 24px;
+}
+.path-grade-report-forecast .user-grade tbody .column-itemname {
+    padding-left: 0;
+    padding-right: 8px
+}
+.path-grade-report-forecast .user-grade .column-itemname.item,
+.path-grade-report-forecast .user-grade .gradeitemdescription {
+    font-weight: normal;
+    padding-left: 24px;
+}
+.path-grade-report-forecast .user-grade .column-itemname.baggt,
+.path-grade-report-forecast .user-grade .column-itemname.baggb {
+    padding-left: 24px;
+}
+.path-grade-report-forecast .user-grade .baggt,
+.path-grade-report-forecast .user-grade .baggb {
+    font-weight: bold;
+}
+
+.dir-rtl.path-grade-report-forecast #graded_users_selector {
+    float: left;
+}
+.dir-rtl.path-grade-report-forecast .user-grade th {
+    text-align:right;
+}
+.dir-rtl.path-grade-report-forecast .user-grade tbody .column-itemname {
+    padding-right: 0;
+    padding-left: 8px;
+}
+.dir-rtl.path-grade-report-forecast .user-grade .column-itemname.item,
+.dir-rtl.path-grade-report-forecast .user-grade .gradeitemdescription {
+    padding-right: 24px;
+}
+.dir-rtl.path-grade-report-forecast .user-grade .column-itemname.baggt,
+.dir-rtl.path-grade-report-forecast .user-grade .column-itemname.baggb {
+    padding-right: 24px;
+}
+
+.path-grade-report-forecast .modal {
+    display: none;
+}
+
+.path-grade-report-forecast.mobiledevice .modal {
+    height: 90%;
+    overflow-y: auto;
+}
+
+.path-grade-report-forecast img.transparent {
+    background-color: transparent!important;
+}

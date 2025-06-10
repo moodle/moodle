@@ -1,0 +1,265 @@
+name: Moodle Plugin CI Tests
+
+# The workflow is triggered on push to the stable branch, main branch, pull requests and every day at 6:30 UTC.
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Adds an additional tags to the tests. It needs the && to concat other tags and a starting @. Usage: "&&@mtmoodle-x"'
+        required: false
+        default: ''
+  push:
+    branches:
+      - stable
+      - main
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: "15 6 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: "postgres"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.0", "8.1", "8.2", "8.3"]
+        moodle-branch:
+          [
+            "MOODLE_38_STABLE",
+            "MOODLE_39_STABLE",
+            "MOODLE_311_STABLE",
+            "MOODLE_400_STABLE",
+            "MOODLE_401_STABLE",
+            "MOODLE_402_STABLE",
+            "MOODLE_403_STABLE",
+            "MOODLE_404_STABLE",
+            "MOODLE_405_STABLE",
+            "main",
+          ]
+        database: [pgsql]
+        browser: ["chrome", "firefox"]
+        exclude:
+          # Exclude Moodle+PHP incompatible versions
+          # See: https://docs.moodle.org/dev/Moodle_and_PHP
+
+          - moodle-branch: "MOODLE_402_STABLE"
+            php: "7.4"
+          - moodle-branch: "MOODLE_403_STABLE"
+            php: "7.4"
+          - moodle-branch: "MOODLE_404_STABLE"
+            php: "7.4"
+          - moodle-branch: "MOODLE_405_STABLE"
+            php: "7.4"
+          - moodle-branch: "main"
+            php: "7.4"
+
+          - moodle-branch: "MOODLE_38_STABLE"
+            php: "8.0"
+          - moodle-branch: "MOODLE_39_STABLE"
+            php: "8.0"
+          - moodle-branch: "MOODLE_404_STABLE"
+            php: "8.0"
+          - moodle-branch: "MOODLE_405_STABLE"
+            php: "8.0"
+          - moodle-branch: "main"
+            php: "8.0"
+
+          - moodle-branch: "MOODLE_38_STABLE"
+            php: "8.1"
+          - moodle-branch: "MOODLE_39_STABLE"
+            php: "8.1"
+          - moodle-branch: "MOODLE_311_STABLE"
+            php: "8.1"
+          - moodle-branch: "MOODLE_400_STABLE"
+            php: "8.1"
+          - moodle-branch: "main"
+            php: "8.1"
+
+
+          - moodle-branch: "MOODLE_38_STABLE"
+            php: "8.2"
+          - moodle-branch: "MOODLE_39_STABLE"
+            php: "8.2"
+          - moodle-branch: "MOODLE_311_STABLE"
+            php: "8.2"
+          - moodle-branch: "MOODLE_400_STABLE"
+            php: "8.2"
+          - moodle-branch: "MOODLE_401_STABLE"
+            php: "8.2"
+          - moodle-branch: "main"
+            php: "8.2"
+
+          - moodle-branch: "MOODLE_38_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_39_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_311_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_400_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_401_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_402_STABLE"
+            php: "8.3"
+          - moodle-branch: "MOODLE_403_STABLE"
+            php: "8.3"
+
+    steps:
+      # 0. Initial step.
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      # 0.1 Log
+      - name: Set branch name
+        id: get_branch
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
+      - name: Log info
+        run: |
+          curl ifconfig.me
+          echo "PHP: ${{ matrix.php }}"
+          echo "Moodle: ${{ matrix.moodle-branch }}"
+          echo "Database: ${{ matrix.database }}"
+          echo "Browser: ${{ matrix.browser }}"
+          echo "Branch: ${{ env.BRANCH_NAME }}"
+
+      # 1. Setup PHP using the matrix described on the strategy section.
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=10000
+          coverage: none
+
+      - name: Setup Node.js
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+      # 2. Setup Moodle-plugin-ci
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo NVM_DIR=$NVM_DIR >> $GITHUB_ENV
+        env:
+          IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          COVERAGE: false
+          CODECHECKER_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          PHPUNIT_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+
+      # 3.1 Install Filter plugin
+      - name: Add MathType filter plugin
+        id: install-plugin-filter
+        continue-on-error: true
+        run: |
+          moodle-plugin-ci add-plugin --branch ${{ env.BRANCH_NAME }} wiris/moodle-filter_wiris
+      - name: Add MathType filter plugin using the main branch
+        if: steps.install-plugin-filter.outcome != 'success'
+        run: |
+          moodle-plugin-ci add-plugin --branch main wiris/moodle-filter_wiris
+
+      # 3.2 Install Atto plugin ( Not used )
+
+      # 3.3 Install Tiny plugin
+      - name: Add MathType plugin for TinyMCE
+        id: install-plugin-tiny
+        if: contains(fromJson('["MOODLE_401_STABLE", "MOODLE_402_STABLE", "MOODLE_403_STABLE", "MOODLE_404_STABLE"]'), matrix.moodle-branch)
+
+        continue-on-error: true
+        run: |
+          moodle-plugin-ci add-plugin --branch ${{ env.BRANCH_NAME }} wiris/moodle-tiny_wiris
+      - name: Add MathType plugin for TinyMCE using the main branch
+        if: contains(fromJson('["MOODLE_401_STABLE", "MOODLE_402_STABLE", "MOODLE_403_STABLE", "MOODLE_404_STABLE"]'), matrix.moodle-branch) && steps.install-plugin-tiny.outcome != 'success'
+        run: |
+          moodle-plugin-ci add-plugin --branch main wiris/moodle-tiny_wiris
+
+      - name: Add legacy MathType plugin for TinyMCE
+        if: contains(fromJson('["MOODLE_38_STABLE", "MOODLE_39_STABLE", "MOODLE_311_STABLE", "MOODLE_400_STABLE"]'), matrix.moodle-branch)
+        run: |
+          moodle-plugin-ci add-plugin --branch main wiris/moodle-tinymce_tiny_mce_wiris
+
+      # 3.4 Install wirisquizzes
+      - name: Add Wiris Quizzes plugin
+        id: install-plugin-quizzes
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          moodle-plugin-ci add-plugin --branch ${{ env.BRANCH_NAME }} wiris/moodle-qtype_wq
+      - name: Add Wiris Quizzes plugin using the main branch
+        if: steps.install-plugin-quizzes.outcome != 'success'
+        run: |
+          moodle-plugin-ci add-plugin --branch main wiris/moodle-qtype_wq
+
+      # 4. Install Moodle-plugin-ci
+      - name: Install moodle-plugin-ci
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+
+      # 5.1 PHPUnit tests
+      - name: PHPUnit tests
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpunit ./plugin
+
+      # 5.2 Moodle Code Validator
+      - name: Validating
+        if: ${{ always() }}
+        run: moodle-plugin-ci validate ./plugin
+
+      # 6 Behat tests
+
+      # Run Behat tests on all Moodle branches.
+      # Known tags: @3.x_plugin, @4.0_plugin, @4.x_plugin
+      # Run Behat tests on all Moodle branches.
+      - name: Behat features for ( ${{ matrix.moodle-branch }} on PHP ${{ matrix.php }} )
+        id: behat
+        if: ${{ always() }}
+        run: |
+          case "${{ matrix.moodle-branch }}" in
+            "MOODLE_38_STABLE"|"MOODLE_39_STABLE"|"MOODLE_311_STABLE")
+              TAG="@3.x_atto${{ github.event.inputs.tags }}"
+              ;;
+            "MOODLE_400_STABLE")
+              TAG="@4.0_atto${{ github.event.inputs.tags }}"
+              ;;
+            "MOODLE_401_STABLE"|"MOODLE_402_STABLE"|"MOODLE_403_STABLE"|"MOODLE_404_STABLE"|"MOODLE_405_STABLE"|"main")
+              TAG="@4.x_atto${{ github.event.inputs.tags }}"
+              ;;
+            *)
+              TAG="@atto${{ github.event.inputs.tags }}"
+              ;;
+          esac
+          moodle-plugin-ci behat --tags=$TAG --profile ${{ matrix.browser }} --auto-rerun=2 --verbose -vvv
+      - name: Upload Behat Faildump
+        if: ${{ failure() && steps.behat.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Behat Faildump (${{ join(matrix.*, ', ') }})
+          path: ${{ github.workspace }}/moodledata/behat_dump
+          retention-days: 1
+          if-no-files-found: ignore

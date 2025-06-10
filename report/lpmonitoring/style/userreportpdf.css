@@ -1,0 +1,78 @@
+table.logo {
+    border: none;
+    width: 100%;
+    border-bottom: none;
+}
+
+table.logo td.left {
+    width: 25%;
+}
+
+table.logo td.right {
+    width: 75%;
+    line-height: 30px;
+    text-align: right;
+}
+
+table {
+    width: 100%;
+    margin-top: 2em;
+    border-bottom: 1px solid [[setting:bordercolour]];
+}
+
+img {
+    height: 30px;
+}
+
+div.timestamp {
+    text-align: right;
+    font-size: 0.85em;
+}
+
+.miniheader {
+    text-align: center;
+}
+
+th.plan {
+    text-align: center;
+    border: 1px solid [[setting:bordercolour]];
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+td.competency {
+    background-color: #e8e8e8;
+    text-align: center;
+}
+
+td.framework {
+    font-size: 0.7em;
+}
+
+td.alignright {
+    text-align: right;
+}
+
+tr.bold td {
+    font-weight: bold;
+}
+
+.borderleft {
+    border-left: 1px solid [[setting:bordercolour]];
+}
+
+.borderright {
+    border-right: 1px solid [[setting:bordercolour]];
+}
+
+.bordertop {
+    border-top: 1px solid [[setting:bordercolour]];
+}
+
+.borderbottom {
+    border-bottom: 1px solid [[setting:bordercolour]];
+}
+
+tr.breakdown td {
+    background-color: #f8f8f8;
+}

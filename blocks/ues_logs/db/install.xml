@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/ues_logs/db" VERSION="20111026" COMMENT="XMLDB file for the UES loggin block."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_ues_logs" COMMENT="Table storing Add / Drop Tracking.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="2" NOTNULL="true" DEFAULT="AD" SEQUENCE="false" PREVIOUS="sectionid" NEXT="timestamp"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="action"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtouser"/>
+        <KEY NAME="useridtouser" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="useridtouser"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="false" FIELDS="userid, sectionid" NEXT="usesecact"/>
+        <INDEX NAME="usesecact" UNIQUE="false" FIELDS="userid, sectionid, action" PREVIOUS="usesec" NEXT="usesecacttim"/>
+        <INDEX NAME="usesecacttim" UNIQUE="true" FIELDS="userid, sectionid, action, timestamp" PREVIOUS="usesecact" NEXT="usesectim"/>
+        <INDEX NAME="usesectim" UNIQUE="false" FIELDS="userid, sectionid, timestamp" PREVIOUS="usesecacttim"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

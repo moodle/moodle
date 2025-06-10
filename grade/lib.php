@@ -441,11 +441,14 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
         $userfullname = fullname($user);
+        // BEGIN LSU Show emails in user dropdown.
+        $useremail = $user->email;
         if ($user->suspendedenrolment) {
-            $menususpendedusers[$user->id] = $userfullname;
+            $menususpendedusers[$user->id] = $userfullname  . ' (' . $useremail . ')';
         } else {
-            $menu[$user->id] = $userfullname;
+            $menu[$user->id] = $userfullname . ' (' . $useremail . ')';
         }
+        // END LSU Show emails in user dropdown.
     }
     $gui->close();
 
@@ -770,8 +773,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             break;
         }
         foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
+            if (is_a($plugin, grade_plugin_info::class)) {
+                if ($plugin_type === $active_type && $active_plugin == $plugin->id) {
                     $plugin_info['strings']['active_plugin_str'] = $plugin->string;
                 }
             }
@@ -779,6 +782,37 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
 
     return $plugin_info;
+}
+
+/**
+ * Load a valid list of gradable users in a course.
+ *
+ * @param int $courseid The course ID.
+ * @param int|null $groupid The group ID (optional).
+ * @return array $users A list of enrolled gradable users.
+ */
+function get_gradable_users(int $courseid, ?int $groupid = null): array {
+    global $CFG;
+
+    $context = context_course::instance($courseid);
+    // Create a graded_users_iterator because it will properly check the groups etc.
+    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+    $onlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol) ||
+        !has_capability('moodle/course:viewsuspendedusers', $context);
+
+    $course = get_course($courseid);
+    $gui = new graded_users_iterator($course, null, $groupid);
+    $gui->require_active_enrolment($onlyactiveenrol);
+    $gui->init();
+
+    // Flatten the users.
+    $users = [];
+    while ($user = $gui->next_user()) {
+        $users[$user->user->id] = $user->user;
+    }
+    $gui->close();
+
+    return $users;
 }
 
 /**
@@ -849,7 +883,7 @@ class grade_plugin_info {
  * @param string|null $headerhelpidentifier The help string identifier if required.
  * @param string|null $headerhelpcomponent The component for the help string.
  * @param stdClass|null $user The user object for use with the user context header.
- * @param actionbar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
+ * @param action_bar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
  *                                  to true. If $actionbar is not explicitly defined, the general action bar
  *                                  (\core_grades\output\general_action_bar) will be used by default.
  * @param boolean $showtitle If set to false just show course full name as a title.
@@ -858,7 +892,7 @@ class grade_plugin_info {
 function print_grade_page_head(int $courseid, string $active_type, ?string $active_plugin = null, $heading = false,
        bool $return = false, $buttons = false, bool $shownavigation = true, ?string $headerhelpidentifier = null,
        ?string $headerhelpcomponent = null, ?stdClass $user = null, ?action_bar $actionbar = null, $showtitle = true) {
-    global $CFG, $OUTPUT, $PAGE;
+    global $CFG, $OUTPUT, $PAGE, $USER;
 
     // Put a warning on all gradebook pages if the course has modules currently scheduled for background deletion.
     require_once($CFG->dirroot . '/course/lib.php');
@@ -891,7 +925,19 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
     } else {
         $PAGE->set_pagelayout('admin');
     }
-    $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
+    $coursecontext = context_course::instance($courseid);
+    // Title will be constituted by information starting from the unique identifying information for the page.
+    if (in_array($active_type, ['report', 'settings'])) {
+        $uniquetitle = $stractive_plugin;
+    } else {
+        $uniquetitle = $stractive_type . ': ' . $stractive_plugin;
+    }
+    $titlecomponents = [
+        $uniquetitle,
+        get_string('grades'),
+        $coursecontext->get_context_name(false),
+    ];
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titlecomponents));
     $PAGE->set_heading($title);
     $PAGE->set_secondary_active_tab('grades');
 
@@ -939,15 +985,16 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
 
     $output = '';
     // Add a help dialogue box if provided.
-    if (isset($headerhelpidentifier)) {
+    if (isset($headerhelpidentifier) && !empty($heading)) {
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
-    } else {
-        if (isset($user)) {
-            $renderer = $PAGE->get_renderer('core_grades');
-            $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
-        } else {
-            $output = $OUTPUT->heading($heading);
-        }
+    } else if (isset($user)) {
+        $renderer = $PAGE->get_renderer('core_grades');
+        // If the user is viewing their own grade report, no need to show the "Message"
+        // and "Add to contact" buttons in the user heading.
+        $showuserbuttons = $user->id != $USER->id;
+        $output = $renderer->user_heading($user, $courseid, $showuserbuttons);
+    } else if (!empty($heading)) {
+        $output = $OUTPUT->heading($heading);
     }
 
     if ($return) {
@@ -956,8 +1003,7 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         echo $output;
     }
 
-    $returnval .= print_natural_aggregation_upgrade_notice($courseid, context_course::instance($courseid), $PAGE->url,
-        $return);
+    $returnval .= print_natural_aggregation_upgrade_notice($courseid, $coursecontext, $PAGE->url, $return);
 
     if ($return) {
         return $returnval;
@@ -1222,10 +1268,9 @@ class grade_plugin_return {
      * Add return tracking params into url
      *
      * @param moodle_url $url A URL
-     *
-     * @return string $url with return tracking params
+     * @return moodle_url with return tracking params
      */
-    public function add_url_params(moodle_url $url) {
+    public function add_url_params(moodle_url $url): moodle_url {
         if (empty($this->type)) {
             return $url;
         }
@@ -1711,23 +1756,6 @@ class grade_structure {
     }
 
     /**
-     * Returns a link leading to the grade analysis page
-     *
-     * @param grade_grade $grade
-     * @param string $gradeanalysisstring Language string
-     * @return string|null
-     */
-    public function get_grade_analysis_link(grade_grade $grade, string $gradeanalysisstring): ?string {
-        $url = $this->get_grade_analysis_url($grade);
-        if (is_null($url)) {
-            return null;
-        }
-
-        return html_writer::link($url, $gradeanalysisstring,
-            ['class' => 'dropdown-item', 'aria-label' => $gradeanalysisstring, 'role' => 'menuitem']);
-    }
-
-    /**
      * Returns an action menu for the grade.
      *
      * @param grade_grade $grade A grade_grade object
@@ -1746,8 +1774,8 @@ class grade_structure {
 
         if ($menuitems) {
             $menu = new action_menu($menuitems);
-            $icon = $OUTPUT->pix_icon('i/dropdown', get_string('actions'));
-            $extraclasses = 'btn btn-icon icon-size-2 bg-secondary d-flex align-items-center justify-content-center';
+            $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+            $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
             $menu->set_menu_trigger($icon, $extraclasses);
             $menu->set_menu_left();
 
@@ -1933,40 +1961,6 @@ class grade_structure {
     }
 
     /**
-     * Returns a link leading to the edit grade/grade item/category page
-     *
-     * @param array  $element An array representing an element in the grade_tree
-     * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
-     * @return string|null
-     */
-    public function get_edit_link(array $element, object $gpr, array $langstrings): ?string {
-        $url = null;
-        $title = '';
-        if (!has_capability('moodle/grade:manage', $this->context)) {
-            if (!($element['type'] == 'grade') || !has_capability('moodle/grade:edit', $this->context)) {
-                return null;
-            }
-        }
-
-        $object = $element['object'];
-
-        if ($element['type'] == 'grade') {
-            if (empty($object->id)) {
-                $url = new moodle_url('/grade/edit/tree/grade.php',
-                    ['courseid' => $this->courseid, 'itemid' => $object->itemid, 'userid' => $object->userid]);
-            } else {
-                $url = new moodle_url('/grade/edit/tree/grade.php',
-                    ['courseid' => $this->courseid, 'id' => $object->id]);
-            }
-            $title = $langstrings[0];
-        }
-        $gpr->add_url_params($url);
-        return html_writer::link($url, $title,
-            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
-    }
-
-    /**
      * Return hiding icon for give element
      *
      * @param array  $element An array representing an element in the grade_tree
@@ -1977,9 +1971,8 @@ class grade_structure {
     public function get_hiding_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
-        if (!$element['object']->can_control_visibility()) {
-            return $returnactionmenulink ? null : '';
-        }
+        // BEGIN LSU Visibility Issues.
+        // END LSU Visibility Issues.
 
         if (!has_capability('moodle/grade:manage', $this->context) and
             !has_capability('moodle/grade:hide', $this->context)) {
@@ -2022,50 +2015,6 @@ class grade_structure {
         }
 
         return $hideicon;
-    }
-
-    /**
-     * Returns a link with url to hide/unhide grade/grade item/grade category
-     *
-     * @param array  $element An array representing an element in the grade_tree
-     * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
-     * @return string|null
-     */
-    public function get_hiding_link(array $element, object $gpr, array $langstrings): ?string {
-        if (!$element['object']->can_control_visibility() ||
-            (!has_capability('moodle/grade:manage', $this->context) &&
-                !has_capability('moodle/grade:hide', $this->context))) {
-            return null;
-        }
-
-        $url = new moodle_url('/grade/edit/tree/action.php',
-            ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
-        $url = $gpr->add_url_params($url);
-
-        if ($element['object']->is_hidden()) {
-            $url->param('action', 'show');
-            $title = $langstrings[0];
-        } else {
-            $url->param('action', 'hide');
-            $title = $langstrings[1];
-        }
-
-        $url = html_writer::link($url, $title,
-            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
-
-        if ($element['type'] == 'grade') {
-            $item = $element['object']->grade_item;
-            if ($item->hidden) {
-                $strparamobj = new stdClass();
-                $strparamobj->itemname = $item->get_name(true, true);
-                $strnonunhideable = get_string('nonunhideableverbose', 'grades', $strparamobj);
-                $url = html_writer::span($title, 'text-muted dropdown-item',
-                    ['title' => $strnonunhideable, 'aria-label' => $title, 'role' => 'menuitem']);
-            }
-        }
-
-        return $url;
     }
 
     /**
@@ -2123,54 +2072,6 @@ class grade_structure {
         }
 
         return $action;
-    }
-
-    /**
-     * Returns link to lock/unlock grade/grade item/grade category
-     *
-     * @param array  $element An array representing an element in the grade_tree
-     * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
-     *
-     * @return string|null
-     */
-    public function get_locking_link(array $element, object $gpr, array $langstrings): ?string {
-
-        $title = '';
-        $url = new moodle_url('/grade/edit/tree/action.php',
-            ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
-        $url = $gpr->add_url_params($url);
-
-        if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
-            // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
-            $strparamobj = new stdClass();
-            $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
-            $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-            $title = $langstrings[0];
-            return html_writer::span($title, 'text-muted dropdown-item', ['title' => $strnonunlockable,
-                'aria-label' => $title, 'role' => 'menuitem']);
-        } else if ($element['object']->is_locked()) {
-            $title = $langstrings[0];
-            if (!has_capability('moodle/grade:manage', $this->context) &&
-                !has_capability('moodle/grade:unlock', $this->context)) {
-                return html_writer::span($title, 'text-muted dropdown-item',
-                    ['aria-label' => $title, 'role' => 'menuitem']);
-            } else {
-                $url->param('action', 'unlock');
-            }
-        } else {
-            $title = $langstrings[1];
-            if (!has_capability('moodle/grade:manage', $this->context) &&
-                !has_capability('moodle/grade:lock', $this->context)) {
-                return html_writer::span($title, 'text-muted dropdown-item',
-                    ['aria-label' => $title, 'role' => 'menuitem']);
-            } else {
-                $url->param('action', 'lock');
-            }
-        }
-
-        return html_writer::link($url, $title,
-            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
     }
 
     /**

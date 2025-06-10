@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_kalturamedia-button",
+  "builds": {
+    "moodle-atto_kalturamedia-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

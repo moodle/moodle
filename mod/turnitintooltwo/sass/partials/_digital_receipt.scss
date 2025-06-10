@@ -1,0 +1,35 @@
+.mod_turnitintooltwo_digital_receipt {
+    display: inline-block;
+    width: 150px;
+}
+
+#mod_turnitintooltwo #box_receipt {
+    padding:20px;
+}
+
+#mod_turnitintooltwo #box_receipt .icon {
+    width:64px;
+    height:64px;
+}
+
+#mod_turnitintooltwo_digital_receipt_box {
+    padding: 20px;
+    background: #fff;
+
+    .mod_turnitintooltwo_logo {
+        display: block;
+        margin: 0 auto;
+        width: 214px;
+        height: 68px;
+    }
+
+    #mod_turnitintooltwo_receipt_print {
+        text-align: right;
+        display: block;
+    }
+
+}
+
+#mod_turnitintooltwo_upload_success {
+    color: $bright-red;
+}

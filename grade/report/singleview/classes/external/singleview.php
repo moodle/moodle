@@ -16,14 +16,18 @@
 
 namespace gradereport_singleview\external;
 
+use coding_exception;
 use context_course;
 use core_course_external;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
+use invalid_parameter_exception;
+use moodle_exception;
 use moodle_url;
+use restricted_context_exception;
 use grade_tree;
 
 defined('MOODLE_INTERNAL') || die;
@@ -76,7 +80,7 @@ class singleview extends core_course_external {
         $coursecontext = context_course::instance($params['courseid']);
         parent::validate_context($coursecontext);
 
-        $gtree = new grade_tree($params['courseid'], false, false, null, !$CFG->enableoutcomes);
+        $gtree = new grade_tree($params['courseid'], false, true, null, !$CFG->enableoutcomes);
         $gradeableitems = $gtree->get_items();
 
         $gradeitems = array_map(function ($gradeitem) use ($PAGE, $USER, $params) {
@@ -94,7 +98,6 @@ class singleview extends core_course_external {
 
             return $item;
         }, $gradeableitems);
-        sort($gradeitems);
 
         return [
             'gradeitems' => $gradeitems,

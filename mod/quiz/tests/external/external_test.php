@@ -26,13 +26,12 @@
 
 namespace mod_quiz\external;
 
-use core_external\external_api;
+use core_question\local\bank\question_version_status;
 use externallib_advanced_testcase;
-use mod_quiz\question\display_options;
-use mod_quiz\quiz_attempt;
-use mod_quiz\quiz_settings;
 use mod_quiz_external;
-use moodle_exception;
+use mod_quiz_display_options;
+use quiz;
+use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -84,30 +83,6 @@ class testable_mod_quiz_external extends mod_quiz_external {
  */
 class external_test extends externallib_advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \stdClass activity record. */
-    protected $quiz;
-
-    /** @var \context_module context instance. */
-    protected $context;
-
-    /** @var \stdClass */
-    protected $cm;
-
-    /** @var \stdClass user record. */
-    protected $student;
-
-    /** @var \stdClass user record. */
-    protected $teacher;
-
-    /** @var \stdClass user role record. */
-    protected $studentrole;
-
-    /** @var \stdClass  user role record. */
-    protected $teacherrole;
-
     /**
      * Set up for every test
      */
@@ -118,7 +93,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
+        $this->quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $this->course->id));
         $this->context = \context_module::instance($this->quiz->cmid);
         $this->cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
 
@@ -127,8 +102,8 @@ class external_test extends externallib_advanced_testcase {
         $this->teacher = self::getDataGenerator()->create_user();
 
         // Users enrolments.
-        $this->studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $this->teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         // Allow student to receive messages.
         $coursecontext = \context_course::instance($this->course->id);
         assign_capability('mod/quiz:emailnotifysubmission', CAP_ALLOW, $this->teacherrole->id, $coursecontext, true);
@@ -152,9 +127,9 @@ class external_test extends externallib_advanced_testcase {
 
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = ['course' => $this->course->id,
+        $data = array('course' => $this->course->id,
                       'sumgrades' => 2,
-                      'preferredbehaviour' => $behaviour];
+                      'preferredbehaviour' => $behaviour);
         $data = array_merge($data, $extraoptions);
         $quiz = $quizgenerator->create_instance($data);
         $context = \context_module::instance($quiz->cmid);
@@ -163,22 +138,22 @@ class external_test extends externallib_advanced_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
-        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
         if ($includeqattachments) {
-            $question = $questiongenerator->create_question('essay', null, ['category' => $cat->id, 'attachments' => 1,
-                'attachmentsrequired' => 1]);
+            $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id, 'attachments' => 1,
+                'attachmentsrequired' => 1));
             quiz_add_quiz_question($question->id, $quiz);
         }
 
-        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
+        $quizobj = quiz::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
-        $item = \grade_item::fetch(['courseid' => $this->course->id, 'itemtype' => 'mod',
-                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null]);
+        $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
         $item->gradepass = 80;
         $item->update();
 
@@ -195,15 +170,15 @@ class external_test extends externallib_advanced_testcase {
 
             if ($finishattempt) {
                 // Process some responses from the student.
-                $tosubmit = [1 => ['answer' => '3.14']];
+                $tosubmit = array(1 => array('answer' => '3.14'));
                 $attemptobj->process_submitted_actions(time(), false, $tosubmit);
 
                 // Finish the attempt.
                 $attemptobj->process_finish(time(), false);
             }
-            return [$quiz, $context, $quizobj, $attempt, $attemptobj, $quba];
+            return array($quiz, $context, $quizobj, $attempt, $attemptobj, $quba);
         } else {
-            return [$quiz, $context, $quizobj];
+            return array($quiz, $context, $quizobj);
         }
 
     }
@@ -240,17 +215,17 @@ class external_test extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $allusersfields = ['id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
+        $allusersfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
                                 'timeopen', 'timeclose', 'grademethod', 'section', 'visible', 'groupmode', 'groupingid',
                                 'attempts', 'timelimit', 'grademethod', 'decimalpoints', 'questiondecimalpoints', 'sumgrades',
-                                'grade', 'preferredbehaviour', 'hasfeedback'];
-        $userswithaccessfields = ['attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+                                'grade', 'preferredbehaviour', 'hasfeedback');
+        $userswithaccessfields = array('attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
                                         'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                         'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                         'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                         'completionattemptsexhausted', 'completionpass', 'autosaveperiod', 'hasquestions',
-                                        'overduehandling', 'graceperiod', 'canredoquestions', 'allowofflineattempts'];
-        $managerfields = ['shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet'];
+                                        'overduehandling', 'graceperiod', 'canredoquestions', 'allowofflineattempts');
+        $managerfields = array('shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet');
 
         // Add expected coursemodule and other data.
         $quiz1 = $this->quiz;
@@ -285,18 +260,18 @@ class external_test extends externallib_advanced_testcase {
             $expected2[$field] = $quiz2->{$field};
         }
 
-        $expectedquizzes = [$expected2, $expected1];
+        $expectedquizzes = array($expected2, $expected1);
 
         // Call the external function passing course ids.
-        $result = mod_quiz_external::get_quizzes_by_courses([$course2->id, $this->course->id]);
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = mod_quiz_external::get_quizzes_by_courses(array($course2->id, $this->course->id));
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedquizzes, $result['quizzes']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_quiz_external::get_quizzes_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedquizzes, $result['quizzes']);
         $this->assertCount(0, $result['warnings']);
 
@@ -306,11 +281,11 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_quiz_external::get_quizzes_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedquizzes, $result['quizzes']);
 
         // Call for the second course we unenrolled the user from, expected warning.
-        $result = mod_quiz_external::get_quizzes_by_courses([$course2->id]);
+        $result = mod_quiz_external::get_quizzes_by_courses(array($course2->id));
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
@@ -323,14 +298,14 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = mod_quiz_external::get_quizzes_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedquizzes, $result['quizzes']);
 
         // Admin also should get all the information.
         self::setAdminUser();
 
-        $result = mod_quiz_external::get_quizzes_by_courses([$this->course->id]);
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = mod_quiz_external::get_quizzes_by_courses(array($this->course->id));
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedquizzes, $result['quizzes']);
 
         // Now, prevent access.
@@ -342,7 +317,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->update_record('quiz', $quiz2);
 
         $result = mod_quiz_external::get_quizzes_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(2, $result['quizzes']);
         // We only see a limited set of fields.
         $this->assertCount(5, $result['quizzes'][0]);
@@ -366,7 +341,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::view_quiz(0);
             $this->fail('Exception expected due to invalid mod_quiz instance id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
 
@@ -376,7 +351,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::view_quiz($this->quiz->id);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -387,7 +362,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_quiz_external::view_quiz($this->quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_quiz_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_quiz_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -397,7 +372,7 @@ class external_test extends externallib_advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_quiz\event\course_module_viewed', $event);
         $this->assertEquals($this->context, $event->get_context());
-        $moodlequiz = new \moodle_url('/mod/quiz/view.php', ['id' => $this->cm->id]);
+        $moodlequiz = new \moodle_url('/mod/quiz/view.php', array('id' => $this->cm->id));
         $this->assertEquals($moodlequiz, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
@@ -412,7 +387,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::view_quiz($this->quiz->id);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -428,7 +403,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_user_attempts($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
@@ -440,21 +415,21 @@ class external_test extends externallib_advanced_testcase {
 
         // Test filters. Only finished.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'finished', false);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
 
         // Test filters. All attempts.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'all', false);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
 
         // Test filters. Unfinished.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'unfinished', false);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(0, $result['attempts']);
 
@@ -469,26 +444,26 @@ class external_test extends externallib_advanced_testcase {
 
         // Test filters. All attempts.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'all', false);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(2, $result['attempts']);
 
         // Test filters. Unfinished.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'unfinished', false);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
 
         // Test manager can see user attempts.
         $this->setUser($this->teacher);
         $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
 
         $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id, 'all');
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(2, $result['attempts']);
         $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
@@ -514,7 +489,7 @@ class external_test extends externallib_advanced_testcase {
         // Student cannot see the grades.
         $this->setUser($this->student);
         $result = mod_quiz_external::get_user_attempts($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
@@ -527,7 +502,7 @@ class external_test extends externallib_advanced_testcase {
         // Test manager can see user grades.
         $this->setUser($this->teacher);
         $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
 
         $this->assertCount(1, $result['attempts']);
         $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
@@ -570,8 +545,8 @@ class external_test extends externallib_advanced_testcase {
         quiz_add_quiz_question($question->id, $quizapi2);
 
         // Create quiz object.
-        $quizapiobj1 = quiz_settings::create($quizapi1->id, $this->student->id);
-        $quizapiobj2 = quiz_settings::create($quizapi2->id, $this->student->id);
+        $quizapiobj1 = quiz::create($quizapi1->id, $this->student->id);
+        $quizapiobj2 = quiz::create($quizapi2->id, $this->student->id);
 
         // Set grade to pass.
         $item = \grade_item::fetch([
@@ -605,7 +580,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_user_best_grade($quizapi1->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // No grades yet.
         $this->assertFalse($result['hasgrade']);
@@ -625,7 +600,7 @@ class external_test extends externallib_advanced_testcase {
         $attemptobj->process_finish($timenow, false);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi1->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // Now I have grades.
         $this->assertTrue($result['hasgrade']);
@@ -647,7 +622,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi1->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         $this->assertTrue($result['hasgrade']);
         $this->assertEquals(100.0, $result['grade']);
@@ -667,7 +642,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_user_best_grade($quizapi2->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // No grades yet.
         $this->assertFalse($result['hasgrade']);
@@ -687,7 +662,7 @@ class external_test extends externallib_advanced_testcase {
         $attemptobj->process_finish($timenow, false);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi2->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // Now I have grades but I will not be allowed to see it.
         $this->assertFalse($result['hasgrade']);
@@ -697,7 +672,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi2->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         $this->assertTrue($result['hasgrade']);
         $this->assertEquals(100.0, $result['grade']);
@@ -707,29 +682,29 @@ class external_test extends externallib_advanced_testcase {
     }
     /**
      * Test get_combined_review_options.
-     * This is a basic test, this is already tested in display_options_testcase.
+     * This is a basic test, this is already tested in mod_quiz_display_options_testcase.
      */
     public function test_get_combined_review_options() {
         global $DB;
 
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = ['course' => $this->course->id,
-                      'sumgrades' => 1];
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 1);
         $quiz = $quizgenerator->create_instance($data);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
+        $quizobj = quiz::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
-        $item = \grade_item::fetch(['courseid' => $this->course->id, 'itemtype' => 'mod',
-                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null]);
+        $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
         $item->gradepass = 80;
         $item->update();
 
@@ -745,26 +720,26 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $result = mod_quiz_external::get_combined_review_options($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
 
         // Expected values.
-        $expected = [
-            "someoptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 0],
-                ["name" => "marks", "value" => 2],
-            ],
-            "alloptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 0],
-                ["name" => "marks", "value" => 2],
-            ],
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
             "warnings" => [],
-        ];
+        );
 
         $this->assertEquals($expected, $result);
 
@@ -772,27 +747,27 @@ class external_test extends externallib_advanced_testcase {
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
 
-        $expected = [
-            "someoptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 1],
-                ["name" => "marks", "value" => 2],
-            ],
-            "alloptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 1],
-                ["name" => "marks", "value" => 2],
-            ],
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
             "warnings" => [],
-        ];
+        );
 
         // We should see now the overall feedback.
         $result = mod_quiz_external::get_combined_review_options($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
         $this->assertEquals($expected, $result);
 
         // Start a new attempt, but not finish it.
@@ -803,33 +778,33 @@ class external_test extends externallib_advanced_testcase {
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
-        $expected = [
-            "someoptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 1],
-                ["name" => "marks", "value" => 2],
-            ],
-            "alloptions" => [
-                ["name" => "feedback", "value" => 1],
-                ["name" => "generalfeedback", "value" => 1],
-                ["name" => "rightanswer", "value" => 1],
-                ["name" => "overallfeedback", "value" => 0],
-                ["name" => "marks", "value" => 2],
-            ],
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
             "warnings" => [],
-        ];
+        );
 
         $result = mod_quiz_external::get_combined_review_options($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
         $this->assertEquals($expected, $result);
 
         // Teacher, for see student options.
         $this->setUser($this->teacher);
 
         $result = mod_quiz_external::get_combined_review_options($quiz->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
 
         $this->assertEquals($expected, $result);
 
@@ -858,7 +833,7 @@ class external_test extends externallib_advanced_testcase {
         $quiz->timeclose = time() - DAYSECS;
         $DB->update_record('quiz', $quiz);
         $result = mod_quiz_external::start_attempt($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
 
         $this->assertEquals([], $result['attempt']);
         $this->assertCount(1, $result['warnings']);
@@ -870,15 +845,15 @@ class external_test extends externallib_advanced_testcase {
         $DB->update_record('quiz', $quiz);
 
         try {
-            mod_quiz_external::start_attempt($quiz->id, [["name" => "quizpassword", "value" => 'bad']]);
+            mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'bad')));
             $this->fail('Exception expected due to invalid passwod.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals(get_string('passworderror', 'quizaccess_password'), $e->errorcode);
         }
 
         // Now, try everything correct.
-        $result = mod_quiz_external::start_attempt($quiz->id, [["name" => "quizpassword", "value" => 'abc']]);
-        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+        $result = mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
+        $result = \external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
 
         $this->assertEquals(1, $result['attempt']['attempt']);
         $this->assertEquals($this->student->id, $result['attempt']['userid']);
@@ -889,9 +864,9 @@ class external_test extends externallib_advanced_testcase {
         // We are good, try to start a new attempt now.
 
         try {
-            mod_quiz_external::start_attempt($quiz->id, [["name" => "quizpassword", "value" => 'abc']]);
+            mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
             $this->fail('Exception expected due to attempt not finished.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('attemptstillinprogress', $e->errorcode);
         }
 
@@ -900,7 +875,7 @@ class external_test extends externallib_advanced_testcase {
         // Process some responses from the student.
         $timenow = time();
         $attemptobj = quiz_attempt::create($attemptid);
-        $tosubmit = [1 => ['answer' => '3.14']];
+        $tosubmit = array(1 => array('answer' => '3.14'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.
@@ -909,8 +884,8 @@ class external_test extends externallib_advanced_testcase {
         $attemptobj->process_finish($timenow, false);
 
         // We should be able to start a new attempt.
-        $result = mod_quiz_external::start_attempt($quiz->id, [["name" => "quizpassword", "value" => 'abc']]);
-        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+        $result = mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
+        $result = \external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
 
         $this->assertEquals(2, $result['attempt']['attempt']);
         $this->assertEquals($this->student->id, $result['attempt']['userid']);
@@ -946,7 +921,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Invalid attempt.
         try {
-            $params = ['attemptid' => -1, 'page' => 0];
+            $params = array('attemptid' => -1, 'page' => 0);
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to invalid attempt id.');
         } catch (\dml_missing_record_exception $e) {
@@ -954,7 +929,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         // Test OK case.
-        $params = ['attemptid' => $attempt->id, 'page' => 0];
+        $params = array('attemptid' => $attempt->id, 'page' => 0);
         $result = testable_mod_quiz_external::validate_attempt($params);
         $this->assertEquals($attempt->id, $result[0]->get_attempt()->id);
         $this->assertEquals([], $result[1]);
@@ -964,11 +939,11 @@ class external_test extends externallib_advanced_testcase {
         $DB->update_record('quiz', $quiz);
 
         try {
-            $params = ['attemptid' => $attempt->id, 'page' => 0,
-                            'preflightdata' => [["name" => "quizpassword", "value" => 'bad']]];
+            $params = array('attemptid' => $attempt->id, 'page' => 0,
+                            'preflightdata' => array(array("name" => "quizpassword", "value" => 'bad')));
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to invalid passwod.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals(get_string('passworderror', 'quizaccess_password'), $e->errorcode);
         }
 
@@ -984,7 +959,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to page out of range.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('Invalid page number', $e->errorcode);
         }
 
@@ -1001,7 +976,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to passed dates.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('attempterror', $e->errorcode);
         }
 
@@ -1012,7 +987,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             testable_mod_quiz_external::validate_attempt($params, false);
             $this->fail('Exception expected due to attempt finished.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('attemptalreadyclosed', $e->errorcode);
         }
 
@@ -1037,7 +1012,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to not your attempt.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('notyourattempt', $e->errorcode);
         }
     }
@@ -1053,7 +1028,7 @@ class external_test extends externallib_advanced_testcase {
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
 
         // Set correctness mask so questions state can be fetched only after finishing the attempt.
-        $DB->set_field('quiz', 'reviewcorrectness', display_options::IMMEDIATELY_AFTER, ['id' => $quiz->id]);
+        $DB->set_field('quiz', 'reviewcorrectness', mod_quiz_display_options::IMMEDIATELY_AFTER, array('id' => $quiz->id));
 
         $quizobj = $attemptobj->get_quizobj();
         $quizobj->preload_questions();
@@ -1064,7 +1039,7 @@ class external_test extends externallib_advanced_testcase {
 
         // We receive one question per page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
 
         $this->assertEquals($attempt, (object) $result['attempt']);
         $this->assertEquals(1, $result['nextpage']);
@@ -1085,7 +1060,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now try the last page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 1);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
 
         $this->assertEquals($attempt, (object) $result['attempt']);
         $this->assertEquals(-1, $result['nextpage']);
@@ -1107,7 +1082,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now we should receive the question state.
         $result = mod_quiz_external::get_attempt_review($attempt->id, 1);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
         $this->assertEquals('gaveup', $result['questions'][0]['state']);
 
         // Change setting and expect two pages.
@@ -1126,7 +1101,7 @@ class external_test extends externallib_advanced_testcase {
 
         // We receive two questions per page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
         $this->assertCount(2, $result['questions']);
         $this->assertEquals(-1, $result['nextpage']);
 
@@ -1170,7 +1145,7 @@ class external_test extends externallib_advanced_testcase {
 
         // We receive one question per page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
 
         $this->assertEquals($attempt, (object) $result['attempt']);
         $this->assertCount(1, $result['questions']);
@@ -1180,7 +1155,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now try the last page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 1);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
 
         $this->assertEquals($attempt, (object) $result['attempt']);
         $this->assertCount(1, $result['questions']);
@@ -1200,7 +1175,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check the state, flagged and mark data is correct.
         $this->assertEquals('todo', $result['questions'][0]['state']);
@@ -1224,10 +1199,10 @@ class external_test extends externallib_advanced_testcase {
         $this->assertCount(4, (array) json_decode($result['questions'][0]['settings']));
 
         // Submit a response for the first question.
-        $tosubmit = [1 => ['answer' => '3.14']];
+        $tosubmit = array(1 => array('answer' => '3.14'));
         $attemptobj->process_submitted_actions(time(), false, $tosubmit);
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1258,22 +1233,22 @@ class external_test extends externallib_advanced_testcase {
 
         // Response for slot 1.
         $prefix = $quba->get_field_prefix(1);
-        $data = [
-            ['name' => 'slots', 'value' => 1],
-            ['name' => $prefix . ':sequencecheck',
-                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()],
-            ['name' => $prefix . 'answer', 'value' => 1],
-        ];
+        $data = array(
+            array('name' => 'slots', 'value' => 1),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
 
         $this->setUser($this->student);
 
         $result = mod_quiz_external::save_attempt($attempt->id, $data);
-        $result = external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
         $this->assertTrue($result['status']);
 
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1293,20 +1268,20 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, second slot.
         $prefix = $quba->get_field_prefix(2);
-        $data = [
-            ['name' => 'slots', 'value' => 2],
-            ['name' => $prefix . ':sequencecheck',
-                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()],
-            ['name' => $prefix . 'answer', 'value' => 1],
-        ];
+        $data = array(
+            array('name' => 'slots', 'value' => 2),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
 
         $result = mod_quiz_external::save_attempt($attempt->id, $data);
-        $result = external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
         $this->assertTrue($result['status']);
 
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1329,24 +1304,24 @@ class external_test extends externallib_advanced_testcase {
 
         // Response for slot 1.
         $prefix = $quba->get_field_prefix(1);
-        $data = [
-            ['name' => 'slots', 'value' => 1],
-            ['name' => $prefix . ':sequencecheck',
-                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()],
-            ['name' => $prefix . 'answer', 'value' => 1],
-        ];
+        $data = array(
+            array('name' => 'slots', 'value' => 1),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
 
         $this->setUser($this->student);
 
         $result = mod_quiz_external::process_attempt($attempt->id, $data);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
 
         $result = mod_quiz_external::get_attempt_data($attempt->id, 2);
 
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1366,21 +1341,21 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, second slot.
         $prefix = $quba->get_field_prefix(2);
-        $data = [
-            ['name' => 'slots', 'value' => 2],
-            ['name' => $prefix . ':sequencecheck',
-                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()],
-            ['name' => $prefix . 'answer', 'value' => 1],
-            ['name' => $prefix . ':flagged', 'value' => 1],
-        ];
+        $data = array(
+            array('name' => 'slots', 'value' => 2),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+            array('name' => $prefix . ':flagged', 'value' => 1),
+        );
 
         $result = mod_quiz_external::process_attempt($attempt->id, $data);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
 
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         // Check it's marked as completed the two first questions.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1390,35 +1365,35 @@ class external_test extends externallib_advanced_testcase {
 
         // Add files in the attachment response.
         $draftitemid = file_get_unused_draft_itemid();
-        $filerecordinline = [
+        $filerecordinline = array(
             'contextid' => \context_user::instance($this->student->id)->id,
             'component' => 'user',
             'filearea'  => 'draft',
             'itemid'    => $draftitemid,
             'filepath'  => '/',
             'filename'  => 'faketxt.txt',
-        ];
+        );
         $fs = get_file_storage();
         $fs->create_file_from_string($filerecordinline, 'fake txt contents 1.');
 
         // Last slot.
         $prefix = $quba->get_field_prefix(3);
-        $data = [
-            ['name' => 'slots', 'value' => 3],
-            ['name' => $prefix . ':sequencecheck',
-                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()],
-            ['name' => $prefix . 'answer', 'value' => 'Some test'],
-            ['name' => $prefix . 'answerformat', 'value' => FORMAT_HTML],
-            ['name' => $prefix . 'attachments', 'value' => $draftitemid],
-        ];
+        $data = array(
+            array('name' => 'slots', 'value' => 3),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 'Some test'),
+            array('name' => $prefix . 'answerformat', 'value' => FORMAT_HTML),
+            array('name' => $prefix . 'attachments', 'value' => $draftitemid),
+        );
 
         $result = mod_quiz_external::process_attempt($attempt->id, $data);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
 
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
         $this->assertEquals('complete', $result['questions'][0]['state']);
         $this->assertEquals('complete', $result['questions'][1]['state']);
@@ -1435,8 +1410,8 @@ class external_test extends externallib_advanced_testcase {
 
         // Finish the attempt.
         $sink = $this->redirectMessages();
-        $result = mod_quiz_external::process_attempt($attempt->id, [], true);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = mod_quiz_external::process_attempt($attempt->id, array(), true);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::FINISHED, $result['state']);
         $messages = $sink->get_messages();
         $message = reset($messages);
@@ -1465,8 +1440,8 @@ class external_test extends externallib_advanced_testcase {
         $quiz->overduehandling = 'graceperiod';
         $DB->update_record('quiz', $quiz);
 
-        $result = mod_quiz_external::process_attempt($attempt->id, []);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = mod_quiz_external::process_attempt($attempt->id, array());
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::OVERDUE, $result['state']);
 
         // Force grace period for time limit.
@@ -1483,8 +1458,8 @@ class external_test extends externallib_advanced_testcase {
         quiz_start_new_attempt($quizobj, $quba, $attempt, 2, $timenow - 10);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
-        $result = mod_quiz_external::process_attempt($attempt->id, []);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = mod_quiz_external::process_attempt($attempt->id, array());
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::OVERDUE, $result['state']);
 
         // New attempt.
@@ -1499,8 +1474,8 @@ class external_test extends externallib_advanced_testcase {
         $quiz->timeclose = $timenow - HOURSECS;
         $DB->update_record('quiz', $quiz);
 
-        $result = mod_quiz_external::process_attempt($attempt->id, []);
-        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $result = mod_quiz_external::process_attempt($attempt->id, array());
+        $result = \external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::ABANDONED, $result['state']);
 
     }
@@ -1518,7 +1493,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Invalid attempt, invalid id.
         try {
-            $params = ['attemptid' => -1];
+            $params = array('attemptid' => -1);
             testable_mod_quiz_external::validate_attempt_review($params);
             $this->fail('Exception expected due invalid id.');
         } catch (\dml_missing_record_exception $e) {
@@ -1527,17 +1502,17 @@ class external_test extends externallib_advanced_testcase {
 
         // Invalid attempt, not closed.
         try {
-            $params = ['attemptid' => $attempt->id];
+            $params = array('attemptid' => $attempt->id);
             testable_mod_quiz_external::validate_attempt_review($params);
             $this->fail('Exception expected due not closed attempt.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('attemptclosed', $e->errorcode);
         }
 
         // Test ok case (finished attempt).
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true, true);
 
-        $params = ['attemptid' => $attempt->id];
+        $params = array('attemptid' => $attempt->id);
         testable_mod_quiz_external::validate_attempt_review($params);
 
         // Teacher should be able to view the review of one student's attempt.
@@ -1550,10 +1525,10 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($anotherstudent);
         try {
-            $params = ['attemptid' => $attempt->id];
+            $params = array('attemptid' => $attempt->id);
             testable_mod_quiz_external::validate_attempt_review($params);
             $this->fail('Exception expected due missing permissions.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('noreviewattempt', $e->errorcode);
         }
     }
@@ -1584,7 +1559,7 @@ class external_test extends externallib_advanced_testcase {
         $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
 
         $result = mod_quiz_external::get_attempt_review($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
 
         // Two questions, one completed and correct, the other gave up.
         $this->assertEquals(50, $result['grade']);
@@ -1604,7 +1579,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Only first page.
         $result = mod_quiz_external::get_attempt_review($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
 
         $this->assertEquals(50, $result['grade']);
         $this->assertEquals(1, $result['attempt']['attempt']);
@@ -1637,7 +1612,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_quiz_external::view_attempt($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -1651,14 +1626,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
         // Now, force the quiz with QUIZ_NAVMETHOD_SEQ (sequential) navigation method.
-        $DB->set_field('quiz', 'navmethod', QUIZ_NAVMETHOD_SEQ, ['id' => $quiz->id]);
+        $DB->set_field('quiz', 'navmethod', QUIZ_NAVMETHOD_SEQ, array('id' => $quiz->id));
         // Quiz requiring preflightdata.
-        $DB->set_field('quiz', 'password', 'abcdef', ['id' => $quiz->id]);
-        $preflightdata = [["name" => "quizpassword", "value" => 'abcdef']];
+        $DB->set_field('quiz', 'password', 'abcdef', array('id' => $quiz->id));
+        $preflightdata = array(array("name" => "quizpassword", "value" => 'abcdef'));
 
         // See next page.
         $result = mod_quiz_external::view_attempt($attempt->id, 1, $preflightdata);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -1668,7 +1643,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::view_attempt($attempt->id, 0);
             $this->fail('Exception expected due to try to see a previous page.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_quiz_exception $e) {
             $this->assertEquals('Out of sequence access', $e->errorcode);
         }
 
@@ -1690,7 +1665,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_quiz_external::view_attempt_summary($attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -1700,17 +1675,17 @@ class external_test extends externallib_advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_quiz\event\attempt_summary_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $moodlequiz = new \moodle_url('/mod/quiz/summary.php', ['attempt' => $attempt->id]);
+        $moodlequiz = new \moodle_url('/mod/quiz/summary.php', array('attempt' => $attempt->id));
         $this->assertEquals($moodlequiz, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
 
         // Quiz requiring preflightdata.
-        $DB->set_field('quiz', 'password', 'abcdef', ['id' => $quiz->id]);
-        $preflightdata = [["name" => "quizpassword", "value" => 'abcdef']];
+        $DB->set_field('quiz', 'password', 'abcdef', array('id' => $quiz->id));
+        $preflightdata = array(array("name" => "quizpassword", "value" => 'abcdef'));
 
         $result = mod_quiz_external::view_attempt_summary($attempt->id, $preflightdata);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
         $this->assertTrue($result['status']);
 
     }
@@ -1731,7 +1706,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_quiz_external::view_attempt_review($attempt->id, 0);
-        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_review_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::view_attempt_review_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -1741,7 +1716,7 @@ class external_test extends externallib_advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_quiz\event\attempt_reviewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $moodlequiz = new \moodle_url('/mod/quiz/review.php', ['attempt' => $attempt->id]);
+        $moodlequiz = new \moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->id));
         $this->assertEquals($moodlequiz, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
@@ -1764,14 +1739,14 @@ class external_test extends externallib_advanced_testcase {
         $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
         // Add a fake inline image to the feedback text.
         $filename = 'shouldbeanimage.jpg';
-        $filerecordinline = [
+        $filerecordinline = array(
             'contextid' => $this->context->id,
             'component' => 'mod_quiz',
             'filearea'  => 'feedback',
             'itemid'    => $feedback->id,
             'filepath'  => '/',
             'filename'  => $filename,
-        ];
+        );
         $fs = get_file_storage();
         $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
 
@@ -1782,18 +1757,18 @@ class external_test extends externallib_advanced_testcase {
         $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
 
         $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 50);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
         $this->assertEquals('Feedback text 1', $result['feedbacktext']);
         $this->assertEquals($filename, $result['feedbackinlinefiles'][0]['filename']);
         $this->assertEquals(FORMAT_HTML, $result['feedbacktextformat']);
 
         $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 30);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
         $this->assertEquals('Feedback text 2', $result['feedbacktext']);
         $this->assertEquals(FORMAT_HTML, $result['feedbacktextformat']);
 
         $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 10);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
         $this->assertEquals('', $result['feedbacktext']);
         $this->assertEquals(FORMAT_MOODLE, $result['feedbacktextformat']);
     }
@@ -1806,16 +1781,16 @@ class external_test extends externallib_advanced_testcase {
 
         // Create a new quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = ['course' => $this->course->id];
+        $data = array('course' => $this->course->id);
         $quiz = $quizgenerator->create_instance($data);
 
         $this->setUser($this->student);
 
         // Default restrictions (none).
         $result = mod_quiz_external::get_quiz_access_information($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
 
-        $expected = [
+        $expected = array(
             'canattempt' => true,
             'canmanage' => false,
             'canpreview' => false,
@@ -1826,14 +1801,14 @@ class external_test extends externallib_advanced_testcase {
             'activerulenames' => ['quizaccess_openclosedate'],
             'preventaccessreasons' => [],
             'warnings' => []
-        ];
+        );
 
         $this->assertEquals($expected, $result);
 
         // Now teacher, different privileges.
         $this->setUser($this->teacher);
         $result = mod_quiz_external::get_quiz_access_information($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
 
         $expected['canmanage'] = true;
         $expected['canpreview'] = true;
@@ -1851,7 +1826,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->update_record('quiz', $quiz);
 
         $result = mod_quiz_external::get_quiz_access_information($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
 
         // Access is limited by time and password, but only the password limit has a description.
         $this->assertCount(1, $result['accessrules']);
@@ -1871,31 +1846,31 @@ class external_test extends externallib_advanced_testcase {
 
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = ['course' => $this->course->id,
-                      'sumgrades' => 2];
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 2);
         $quiz = $quizgenerator->create_instance($data);
 
         // Create some questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
         // Add new question types in the category (for the random one).
-        $question = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
-        $question = $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
+        $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
 
         quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
-        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
+        $quizobj = quiz::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
-        $item = \grade_item::fetch(['courseid' => $this->course->id, 'itemtype' => 'mod',
-                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null]);
+        $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
         $item->gradepass = 80;
         $item->update();
 
@@ -1903,13 +1878,13 @@ class external_test extends externallib_advanced_testcase {
 
         // Default restrictions (none).
         $result = mod_quiz_external::get_attempt_access_information($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_access_information_returns(), $result);
 
-        $expected = [
+        $expected = array(
             'isfinished' => false,
             'preventnewattemptreasons' => [],
             'warnings' => []
-        ];
+        );
 
         $this->assertEquals($expected, $result);
 
@@ -1928,7 +1903,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Process some responses from the student.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $tosubmit = [1 => ['answer' => '3.14']];
+        $tosubmit = array(1 => array('answer' => '3.14'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.
@@ -1938,7 +1913,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Can we start a new attempt? We shall not!
         $result = mod_quiz_external::get_attempt_access_information($quiz->id, $attempt->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_access_information_returns(), $result);
 
         // Now new attemps allowed.
         $this->assertCount(1, $result['preventnewattemptreasons']);
@@ -1955,34 +1930,38 @@ class external_test extends externallib_advanced_testcase {
 
         // Create a new quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = ['course' => $this->course->id];
+        $data = array('course' => $this->course->id);
         $quiz = $quizgenerator->create_instance($data);
 
         // Create some questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $question = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $question = $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('multichoice', null,
+                ['category' => $cat->id, 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
         quiz_add_quiz_question($question->id, $quiz);
 
         $this->setUser($this->student);
 
         $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
 
-        $expected = [
+        $expected = array(
             'questiontypes' => ['essay', 'numerical', 'shortanswer', 'truefalse'],
             'warnings' => []
-        ];
+        );
 
         $this->assertEquals($expected, $result);
 
@@ -2017,7 +1996,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
 
         $expected = ['numerical', 'shortanswer', 'truefalse'];
         ksort($result['questiontypes']);
@@ -2030,7 +2009,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
-        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
 
         // The new question from the new category is returned as a potential random question for the quiz.
         $expected = ['essay', 'numerical', 'shortanswer', 'truefalse'];
@@ -2052,7 +2031,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::view_attempt($attemptobj->get_attemptid(), 3, []);
             $this->fail('Exception expected due to out of sequence access.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
         }
     }
@@ -2083,7 +2062,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 2);
             $this->fail('Exception expected due to out of sequence access.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
         }
         // Now we moved to page 1, we should see page 2 and 1 but not 0 or 3.
@@ -2092,14 +2071,14 @@ class external_test extends externallib_advanced_testcase {
         try {
             mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 0);
             $this->fail('Exception expected due to out of sequence access.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
         }
 
         try {
             mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 3);
             $this->fail('Exception expected due to out of sequence access.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
         }
 
@@ -2112,9 +2091,9 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Prepare quiz for sequential navigation tests
      *
-     * @return quiz_settings
+     * @return quiz
      */
-    private function prepare_sequential_quiz(): quiz_settings {
+    private function prepare_sequential_quiz(): quiz {
         // Create a new quiz with 5 questions and one attempt started.
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -2137,10 +2116,10 @@ class external_test extends externallib_advanced_testcase {
             quiz_add_quiz_question($question->id, $quiz, $pageindex);
         }
 
-        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
+        $quizobj = quiz::create($quiz->id, $this->student->id);
         // Set grade to pass.
-        $item = \grade_item::fetch(['courseid' => $this->course->id, 'itemtype' => 'mod',
-            'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null]);
+        $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+            'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
         $item->gradepass = 80;
         $item->update();
         return $quizobj;
@@ -2149,19 +2128,14 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Create question attempt
      *
-     * @param quiz_settings $quizobj
+     * @param quiz $quizobj
      * @param int|null $userid
      * @param bool|null $ispreview
      * @return quiz_attempt
-     * @throws moodle_exception
+     * @throws \moodle_exception
      */
-    private function create_quiz_attempt_object(
-        quiz_settings $quizobj,
-        ?int $userid = null,
-        ?bool $ispreview = false
-    ): quiz_attempt {
+    private function create_quiz_attempt_object(quiz $quizobj, ?int $userid = null, ?bool $ispreview = false): quiz_attempt {
         global $USER;
-
         $timenow = time();
         // Now, do one attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

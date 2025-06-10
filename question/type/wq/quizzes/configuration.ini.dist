@@ -1,0 +1,137 @@
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+;                                                                             ;
+; Copy this file to configuration.ini and edit it in order to configure your  ;
+; installation of Wiris Quizzes.                                              ;
+;                                                                             ;
+; Then uncomment the lines of the values you want to overwrite. The default   ;
+; value for every property is shown below.                                    ;
+;                                                                             ;
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+
+;
+; URL where to load the Wiris Cas applet.
+
+;quizzes.wiris.url = "http://www.wiris.net/demo/wiris"
+
+;
+; URL where to load the CalcMe.
+
+;quizzes.calc.url = "https://calcme.com"
+
+;
+; URL where to load the MathType.
+
+;quizzes.editor.url = "http://www.wiris.net/demo/editor"
+
+;
+; URL where to load the MathType Handwriting.
+
+;quizzes.hand.url = "http://www.wiris.net/demo/hand"
+
+;
+; URL where to connect to Wiris Quizzes service.
+
+;quizzes.service.url = "http://www.wiris.net/demo/quizzes"
+
+;
+; URL to connect to the WirisQuizzes new API (beta)
+
+;quizzes.api.url = "https://www.wiris.net/demo/quizzes/api"
+
+;
+; URL where to get the JNLP file for Wiris Cas app.
+
+;quizzes.wirislauncher.url = "http://stateful.wiris.net/demo/wiris"
+
+;
+; URL to the Wiris Quizzes proxy service. It is used to call remote services
+; and to get images and resources from JavaScript. 
+; Not to be confused by the HTTP proxy this server may need to access the 
+; internet.
+
+;quizzes.proxy.url = "quizzes/service.php"
+
+;
+; Path where to save the cached image files. It can be safely deleted. If you
+; have MathType Plugin installed, the same cache folder is a good place.
+
+;quizzes.cache.dir = "/var/wiris/cache"
+
+;
+; Maximum number of concurrent connections to Wiris Quizzes web service. For some 
+; reason the remote server may not respond or have a large delay. If there are
+; so many connections, it would be possible to consume all child process of
+; your web server. This option prevents this possibility.
+; Set value -1 to disable this mechanism.
+
+;quizzes.maxconnections = "20"
+
+;
+; If this local server needs to use a proxy computer (eg a firewall) to access
+; the internet, then provide the proxy host name or IP address. Otherwise leave
+; it blank or commented.
+; Not to be confused with the URL to access remote resources from JavaScript.
+
+;quizzes.httpproxy.host = "proxy.example.com"
+
+;
+; HTTP proxy server port.
+
+;quizzes.httpproxy.port = "8080"
+
+;
+; If this local server needs to use a proxy to access the internet and further
+; the proxy needs authentication, then provide the username.
+
+;quizzes.httpproxy.user = "mary"
+
+;
+; HTTP proxy authentication password.
+
+;quizzes.httpproxy.pass = "secret"
+
+;
+; Client's referer URL to be sent to quizzes service. Set to the client's
+; application domain so the services server can identify the client.
+
+;quizzes.referer.url = ""
+
+;
+; Enable Handwriting as input field type.
+
+;quizzes.hand.enabled = "true"
+
+;
+; Enable CalcMe for algorithm edition
+
+;quizzes.calc.enabled = "true"
+
+;
+; Log correct answers for Handwriting training.
+;
+;quizzes.hand.logtraces = "false"
+
+;
+; Wiris Graph URL.
+;
+;quizzes.graph.url = "http://www.wiris.net/demo/graph"
+
+;
+; The identifier of your license to use Wiris Quizzes. Will be used to track usage
+; in the future, but it is not required right now.
+;
+;quizzes.license.id = ""
+
+;
+; Logging level for Quizzes telemetry service integration.
+; Possible values: NONE, ERROR, WARNING, INFO, DEBUG.
+;
+
+;quizzes.logging.level = "WARNING";
+
+;
+; Default tracking configuration for Quizzes telemetry service integration.
+;
+
+;quizzes.tracking.enabled = "true";
+

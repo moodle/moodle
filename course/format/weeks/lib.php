@@ -49,6 +49,10 @@ class format_weeks extends core_courseformat\base {
         return true;
     }
 
+    public function uses_indentation(): bool {
+        return (get_config('format_weeks', 'indentation')) ? true : false;
+    }
+
     /**
      * Generate the title for this section page
      * @return string the page title
@@ -83,6 +87,7 @@ class format_weeks extends core_courseformat\base {
      * @return string The default value for the section name.
      */
     public function get_default_section_name($section) {
+        global $CFG;
         if ($section->section == 0) {
             // Return the general section.
             return get_string('section0name', 'format_weeks');
@@ -91,6 +96,21 @@ class format_weeks extends core_courseformat\base {
 
             // We subtract 24 hours for display purposes.
             $dates->end = ($dates->end - 86400);
+
+            // BEGIN LSU daylight savings time fix.
+            $sped = new DateTime(userdate($dates->start), new DateTimeZone($CFG->timezone));
+
+            // Build the boolian based on if the provided date is in DST or not.
+            $dst = (bool) $sped->format('I');
+
+            // If we're NOT in DST, add some time.
+            if (!$dst) {
+
+                // Add 1 hour and 1 second to make sure start and end dates are correct.
+                $dates->start = ($dates->start + 3601);
+                $dates->end = ($dates->end + 3601);
+            }
+            // END LSU daylight savings time fix.
 
             $dateformat = get_string('strftimedateshort');
             $weekday = userdate($dates->start, $dateformat);
@@ -402,14 +422,25 @@ class format_weeks extends core_courseformat\base {
         } else {
             $sectionnum = $section;
         }
-        $oneweekseconds = 604800;
-        // Hack alert. We add 2 hours to avoid possible DST problems. (e.g. we go into daylight
-        // savings and the date changes.
-        $startdate = $startdate + 7200;
+
+        // Create a DateTime object for the start date.
+        $startdateobj = new DateTime("@$startdate");
+
+        // Calculate the interval for one week.
+        $oneweekinterval = new DateInterval('P7D');
+
+        // Calculate the interval for the specified number of sections.
+        for ($i = 1; $i < $sectionnum; $i++) {
+            $startdateobj->add($oneweekinterval);
+        }
+
+        // Calculate the end date.
+        $enddateobj = clone $startdateobj;
+        $enddateobj->add($oneweekinterval);
 
         $dates = new stdClass();
-        $dates->start = $startdate + ($oneweekseconds * ($sectionnum - 1));
-        $dates->end = $dates->start + $oneweekseconds;
+        $dates->start = $startdateobj->getTimestamp();
+        $dates->end = $enddateobj->getTimestamp();
 
         return $dates;
     }
@@ -611,7 +642,9 @@ class format_weeks extends core_courseformat\base {
      */
     public function get_config_for_external() {
         // Return everything (nothing to hide).
-        return $this->get_format_options();
+        $formatoptions = $this->get_format_options();
+        $formatoptions['indentation'] = get_config('format_weeks', 'indentation');
+        return $formatoptions;
     }
 }
 

@@ -72,5 +72,5 @@ function customfield_textarea_pluginfile($course, $cm, $context, $filearea, $arg
     }
 
     // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering.
-    send_file($file, 86400, 0, $forcedownload, $options);
+    send_stored_file($file, DAYSECS, 0, $forcedownload, $options);
 }

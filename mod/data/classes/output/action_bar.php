@@ -198,7 +198,10 @@ class action_bar {
 
         // Reset all templates action.
         $resetallurl = new moodle_url($this->currenturl);
-        $resetallurl->param('action', 'resetalltemplates');
+        $resetallurl->params([
+            'action' => 'resetalltemplates',
+            'sesskey' => sesskey(),
+        ]);
         $presetsactions->add(new \action_menu_link(
             $resetallurl,
             null,

@@ -48,7 +48,6 @@ export default class Component extends DndSection {
             LOCKED: 'editinprogress',
             RESTRICTIONS: 'restrictions',
             PAGEITEM: 'pageitem',
-            OVERLAYBORDERS: 'overlay-preview-borders',
         };
 
         // We need our id to watch specific events.
@@ -64,7 +63,7 @@ export default class Component extends DndSection {
      * @return {Component}
      */
     static init(target, selectors) {
-        return new this({
+        return new Component({
             element: document.getElementById(target),
             selectors,
         });
@@ -164,23 +163,5 @@ export default class Component extends DndSection {
         if (this.pageItem && !this.reactive.isEditing) {
             this.element.scrollIntoView({block: "nearest"});
         }
-    }
-
-    /**
-     * Overridden version of the component addOverlay async method.
-     *
-     * The course index is not compatible with overlay elements.
-     */
-    async addOverlay() {
-        this.element.classList.add(this.classes.OVERLAYBORDERS);
-    }
-
-    /**
-     * Overridden version of the component removeOverlay.
-     *
-     * The course index is not compatible with overlay elements.
-     */
-    removeOverlay() {
-        this.element.classList.remove(this.classes.OVERLAYBORDERS);
     }
 }

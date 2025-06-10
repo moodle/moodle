@@ -16,14 +16,11 @@
 
 namespace core_grades\external;
 
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\restricted_context_exception;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_multiple_structure;
 use moodle_url;
 use core_user;
 
@@ -128,16 +125,16 @@ class get_enrolled_users_for_search_widget extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'users' => new external_multiple_structure(self::user_description()),
-            'warnings' => new external_warnings(),
+            'warnings' => new \external_warnings(),
         ]);
     }
 
     /**
      * Create user return value description.
      *
-     * @return external_description
+     * @return \external_description
      */
-    public static function user_description(): external_description {
+    public static function user_description(): \external_description {
         $userfields = [
             'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
             'profileimage' => new external_value(

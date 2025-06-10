@@ -43,6 +43,13 @@ $uninstalllang      = optional_param_array('uninstalllang', array(), PARAM_LANG)
 $confirmtounistall  = optional_param('confirmtouninstall', '', PARAM_SAFEPATH);  // uninstallation confirmation
 $purgecaches        = optional_param('purgecaches', false, PARAM_BOOL);  // explicit caches reset
 
+// Filter the uninstall language list.
+// If the list contains a language which is not installed, it is replaced with an empty string.
+// When we try to uninstall an empty string, we uninstall every language.
+$uninstalllang = array_filter($uninstalllang, function($lang) {
+    return !empty($lang);
+});
+
 if ($purgecaches) {
     require_sesskey();
     get_string_manager()->reset_caches();
@@ -69,11 +76,12 @@ if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($p
     if (is_array($pack) && count($pack) > 1) {
         // Installing multiple languages can take a while - perform it asynchronously in the background.
         $controller->schedule_languagepacks_installation($pack);
-
+        $controller->redirect($PAGE->url);
     } else {
         // Single language pack to be installed synchronously. It should be reasonably quick and can be used for debugging, too.
         core_php_time_limit::raise();
         $controller->install_languagepacks($pack);
+        $controller->redirect($PAGE->url);
     }
 }
 
@@ -102,7 +110,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
         foreach ($uninstalllang as $ulang) {
             $controller->uninstall_language($ulang);
         }
-
+        $controller->redirect($PAGE->url);
     }
 }
 

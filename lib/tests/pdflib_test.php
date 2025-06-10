@@ -66,35 +66,4 @@ class pdflib_test extends \advanced_testcase {
         $this->assertGreaterThan(100000, strlen($res));
         $this->assertLessThan(120000, strlen($res));
     }
-
-    /**
-     * Test get_export_fontlist function.
-     *
-     * @covers ::get_export_fontlist
-     *
-     * @return void
-     */
-    public function test_get_export_fontlist(): void {
-        global $CFG;
-        require_once($CFG->libdir.'/pdflib.php');
-
-        $this->resetAfterTest();
-
-        $pdf = new \pdf();
-        $fontlist = $pdf->get_export_fontlist();
-        $this->assertCount(1, $fontlist);
-        $this->assertArrayHasKey('freesans', $fontlist);
-
-        $CFG->pdfexportfont = [
-            'kozminproregular' => 'Kozmin Pro Regular',
-            'stsongstdlight' => 'STSong stdlight',
-            'invalidfont' => 'Invalid'
-        ];
-        $fontlist = $pdf->get_export_fontlist();
-        $this->assertCount(2, $fontlist);
-        $this->assertArrayNotHasKey('freesans', $fontlist);
-        $this->assertArrayHasKey('kozminproregular', $fontlist);
-        $this->assertArrayHasKey('stsongstdlight', $fontlist);
-        $this->assertArrayNotHasKey('invalidfont', $fontlist);
-    }
 }

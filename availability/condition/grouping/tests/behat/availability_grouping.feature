@@ -22,15 +22,16 @@ Feature: availability_grouping
     And the following "group members" exist:
       | user     | group |
       | student1 | GI1   |
+    # Basic setup.
+    And the following "activities" exist:
+      | activity | course | name  |
+      | page     | C1     | P1    |
+      | page     | C1     | P2    |
 
   @javascript
   Scenario: Test condition
-    # Basic setup.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-
     # Start to add a Page. If there aren't any groupings, there's no Grouping option.
-    And I add a "Page" to section "1"
+    Given I am on the "P1" "page activity editing" page logged in as "teacher1"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     Then "Grouping" "button" should not exist in the "Add restriction..." "dialogue"
@@ -44,7 +45,7 @@ Feature: availability_grouping
       | name | course | idnumber |
       | GX1  | C1     | GXI1     |
       | GX2  | C1     | GXI2     |
-    And I add a "Page" to section "1"
+    And I am on the "P1" "page activity editing" page
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     Then "Grouping" "button" should exist in the "Add restriction..." "dialogue"
@@ -53,18 +54,10 @@ Feature: availability_grouping
     Given I click on "Grouping" "button"
     And I set the field "Grouping" to "GX1"
     And I click on ".availability-item .availability-eye img" "css_element"
-    And I set the following fields to these values:
-      | Name         | P1 |
-      | Description  | x  |
-      | Page content | x  |
     And I click on "Save and return to course" "button"
 
     # Page P2 with grouping GX2.
-    And I add a "Page" to section "2"
-    And I set the following fields to these values:
-      | Name         | P2 |
-      | Description  | x  |
-      | Page content | x  |
+    And I am on the "P2" "page activity editing" page
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grouping" "button"
@@ -73,21 +66,17 @@ Feature: availability_grouping
     And I click on "Save and return to course" "button"
 
     # Log back in as student.
-    When I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" "course" page logged in as "student1"
 
     # No pages should appear yet.
     Then I should not see "P1" in the "region-main" "region"
     And I should not see "P2" in the "region-main" "region"
 
     # Add group to grouping and log out/in again.
-    And I log out
     And the following "grouping groups" exist:
       | grouping | group  |
       | GXI1     | GI1    |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" "course" page logged in as "student1"
 
     # P1 should show but not B2.
     Then I should see "P1" in the "region-main" "region"
@@ -129,14 +118,10 @@ Feature: availability_grouping
     # The activity names filter is enabled because it triggered a bug in older versions.
     And the "activitynames" filter is "on"
     And the "activitynames" filter applies to "content and headings"
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I turn editing mode on
-    And I open "Test assign" actions menu
-    And I choose "Edit settings" in the open action menu
+    And I am on the "Test assign" "assign activity editing" page logged in as "teacher1"
     And I expand all fieldsets
     And I press "Add group/grouping access restriction"
     And I press "Save and return to course"
-    And I log out
 
     # Student sees information about no access to group, with group name in correct language.
     When I am on the "C1" "Course" page logged in as "student1"

@@ -61,7 +61,7 @@ Disabled toggle with extra classes.
 
 ## Use toggle as a template block
 
-It is also possible to include *core/toggle* in any other template using [blocks](https://docs.moodle.org/dev/Templates#Blocks), instead of rendering it with a context.
+It is also possible to include *core/toggle* in any other template using [blocks](https://moodledev.io/docs/guides/templates#blocks), instead of rendering it with a context.
 The parameters that you can define are:
 * id: Unique id for the toggle input.
 * extraclasses: Any extra classes added to the toggle input outer container.

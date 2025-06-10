@@ -23,7 +23,9 @@ class File
     const COMPUTE = 1;
     const SEND = 2;
 
-    private const CHUNKED_READ_BLOCK_SIZE = 1048576;
+    // BEGIN LSU Fix for S3 sucking fat ass.
+    private const CHUNKED_READ_BLOCK_SIZE = 1024;
+    // END LSU Fix for S3 sucking fat ass.
 
     /**
      * @var string

@@ -94,6 +94,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/updatecourses',
         get_string('updatecourses', 'enrol_imsenterprise'), get_string('updatecourses_desc', 'enrol_imsenterprise'), 0));
 
+    // BEGIN LSU
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/updatecourseslong',
+        get_string('updatecourseslong', 'enrol_imsenterprise'), get_string('updatecourses_desclong', 'enrol_imsenterprise'), 0));
+    // END LSU
+
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcategories',
         get_string('createnewcategories', 'enrol_imsenterprise'), get_string('createnewcategories_desc', 'enrol_imsenterprise'),
         0));
@@ -149,6 +154,11 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imscapitafix',
         get_string('usecapitafix', 'enrol_imsenterprise'), get_string('usecapitafix_desc', 'enrol_imsenterprise'), 0));
+
+    // BEGIN LSU IMS Profile Field support.
+    $settings->add(new admin_setting_configtext('enrol_imsenterprise/profilefield',
+        get_string('profilefield', 'enrol_imsenterprise'), get_string('profilefielddesc', 'enrol_imsenterprise'), ''));
+    // END LSU IMS Profile Field support.
 
     $importurl = new moodle_url('/enrol/imsenterprise/importnow.php', array('sesskey' => sesskey()));
     $importnowstring = get_string('aftersaving...', 'enrol_imsenterprise').' ';

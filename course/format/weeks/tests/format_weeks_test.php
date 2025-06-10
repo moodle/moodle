@@ -16,8 +16,6 @@
 
 namespace format_weeks;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -151,7 +149,7 @@ class format_weeks_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
 
         $res = \core_external::update_inplace_editable('format_weeks', 'sectionname', $section->id, 'New section name');
-        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('New section name', $res['value']);
         $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
     }
@@ -221,8 +219,8 @@ class format_weeks_test extends \advanced_testcase {
         $courseform = new \testable_course_edit_form(null, $args);
         $courseform->definition_after_data();
 
-        // format_weeks::get_section_dates is adding 2h to avoid DST problems, we need to replicate it here.
-        $enddate = $params['startdate'] + (WEEKSECS * $params['numsections']) + 7200;
+        // Calculate the expected end date.
+        $enddate = $params['startdate'] + (WEEKSECS * $params['numsections']);
 
         $weeksformat = course_get_format($course->id);
         $this->assertEquals($enddate, $weeksformat->get_default_course_enddate($courseform->get_quick_form()));

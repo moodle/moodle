@@ -24,8 +24,8 @@ Feature: Collapse course sections
       | assign   | Assignment 2 | Test assignment description2 | C1     | assign2  | 2       | 1          |
       | book     | Book 2       |                              | C1     | book2    | 2       | 1          |
       | book     | Book 3       |                              | C1     | book3    | 3       | 1          |
-      | forum    | Forum 4      | Test forum description4      | C1     | forum4   | 4       | 1          |
-      | forum    | Forum 5      | Test forum description5      | C1     | forum5   | 5       | 1          |
+      | forum    | Forum 4      |                              | C1     | forum4   | 4       | 1          |
+      | forum    | Forum 5      |                              | C1     | forum5   | 5       | 1          |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
@@ -40,16 +40,17 @@ Feature: Collapse course sections
     And I set the field "x[year]" to "2013"
     And I press "Save changes"
     And I hide section "5"
-    And I log out
 
   @javascript
   Scenario: No chevron on site home
-    Given I log in as "admin"
+    Given the following activity" exists:
+      | activity | forum                              |
+      | course   | Acceptance test site               |
+      | section  | 1                                  |
+      | name     | Test forum post backup name        |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Test forum post backup name        |
-      | Description | Test forum post backup description |
     And I click on "Edit summary" "link" in the "region-main" "region"
     And I click on "Custom" "checkbox"
     And I set the field "New value for Section name" to "New section name"
@@ -143,8 +144,7 @@ Feature: Collapse course sections
 
   @javascript
   Scenario: Users don't see chevron on one section per page for Topics format
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -165,8 +165,7 @@ Feature: Collapse course sections
 
   @javascript
   Scenario: Users don't see chevron on one section per page for Weeks format
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -179,9 +178,7 @@ Feature: Collapse course sections
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     Then "1 May - 7 May" "section" should not exist
     And "15 May - 21 May" "section" should not exist
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should not see "Forum 4"

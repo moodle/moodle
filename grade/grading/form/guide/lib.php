@@ -22,11 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_format_value;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/grade/grading/form/lib.php');
@@ -962,7 +957,7 @@ class gradingform_guide_instance extends gradingform_instance {
             if (!empty($this->validationerrors)) {
                 foreach ($this->validationerrors as $id => $err) {
                     $a = new stdClass();
-                    $a->criterianame = format_text($criteria[$id]['shortname'], FORMAT_HTML);
+                    $a->criterianame = s($criteria[$id]['shortname']);
                     $a->maxscore = $criteria[$id]['maxscore'];
                     if ($this->validationerrors[$id]['score'] < 0) {
                         $html .= html_writer::tag('div', get_string('err_scoreisnegative', 'gradingform_guide', $a),

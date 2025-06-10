@@ -24,28 +24,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$messageproviders = [
+$messageproviders = array(
     // Notify teacher that a student has submitted a quiz attempt.
-    'submission' => [
+    'submission' => array(
         'capability' => 'mod/quiz:emailnotifysubmission'
-    ],
+    ),
 
     // Confirm a student's quiz attempt.
-    'confirmation' => [
+    'confirmation' => array(
         'capability' => 'mod/quiz:emailconfirmsubmission',
-        'defaults' => [
+        'defaults' => array(
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ],
-    ],
+        ),
+    ),
 
     // Warning to the student that their quiz attempt is now overdue, if the quiz
     // has a grace period.
-    'attempt_overdue' => [
+    'attempt_overdue' => array(
         'capability' => 'mod/quiz:emailwarnoverdue',
-        'defaults' => [
+        'defaults' => array(
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ],
-    ],
+        ),
+    ),
 
     'attempt_grading_complete' => [
         'capability' => 'mod/quiz:emailnotifyattemptgraded',
@@ -53,4 +53,4 @@ $messageproviders = [
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
-];
+);

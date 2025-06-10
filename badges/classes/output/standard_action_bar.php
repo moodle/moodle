@@ -89,7 +89,7 @@ class standard_action_bar extends base_action_bar {
 
         if ($this->showaddbadge && has_capability('moodle/badges:createbadge', $this->page->context)) {
             $buttons[] = new single_button(new moodle_url('/badges/newbadge.php', $params),
-                get_string('newbadge', 'core_badges'), 'post', single_button::BUTTON_PRIMARY);
+                get_string('newbadge', 'core_badges'), 'post', true);
         }
 
         foreach ($buttons as $key => $button) {

@@ -47,6 +47,22 @@ class behat_grade extends behat_base {
     }
 
     /**
+     * Enters a quick feedback via the gradebook for a specific grade item and user when viewing
+     * the 'Grader report' with editing mode turned on.
+     *
+     * @Given /^I give the feedback "(?P<grade_number>(?:[^"]|\\")*)" to the user "(?P<username_string>(?:[^"]|\\")*)" for the grade item "(?P<grade_activity_string>(?:[^"]|\\")*)"$/
+     * @param string $feedback
+     * @param string $userfullname the user's fullname as returned by fullname()
+     * @param string $itemname
+     */
+    public function i_give_the_feedback($feedback, $userfullname, $itemname) {
+        $gradelabel = $userfullname . ' ' . $itemname;
+        $fieldstr = get_string('useractivityfeedback', 'gradereport_grader', $gradelabel);
+
+        $this->execute('behat_forms::i_set_the_field_to', array($this->escape($fieldstr), $this->escape($feedback)));
+    }
+
+    /**
      * Changes the settings of a grade item or category or the course.
      *
      * Teacher must be either on the grade setup page or on the Grader report page with editing mode turned on.
@@ -60,7 +76,7 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')][not(contains(@class,'grader'))]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
                 $this->execute("behat_action_menu::i_open_the_action_menu_in",
                         array("//tr[contains(.,$gradeitem)]",

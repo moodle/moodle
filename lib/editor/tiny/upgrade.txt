@@ -1,7 +1,7 @@
 This files describes API changes in /lib/editor/tiny/* - TinyMCE editor,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
+=== 4.1.1 ===
 
 * A list of placeholder selectors was created and can be accessed by placeholderSelectors options. The purpose of this list
   is to indicate the contents that are only shown in the editor and not to the users, by that way, we can decide to apply or

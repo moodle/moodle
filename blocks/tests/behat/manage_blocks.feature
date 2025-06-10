@@ -22,9 +22,11 @@ Feature: Block appearances
       | book    | Test book name         |
       | title   | Book title             |
       | content | Book content test test |
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments  | Course       | C1        | course-view-*   | side-pre      |
     And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
-    And I add the "Comments" block
     And I configure the "Comments" block
     And I set the following fields to these values:
       | Display on page types | Any page |

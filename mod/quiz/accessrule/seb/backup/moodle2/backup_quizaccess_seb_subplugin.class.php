@@ -58,7 +58,7 @@ class backup_quizaccess_seb_subplugin extends backup_mod_quiz_access_subplugin {
         $subplugintemplatesettings = new backup_nested_element('quizaccess_seb_template', null, $templatekeys);
 
         // Get quiz settings keys to save.
-        $settings = new \quizaccess_seb\seb_quiz_settings();
+        $settings = new \quizaccess_seb\quiz_settings();
         $blanksettingsarray = (array) $settings->to_record();
         unset($blanksettingsarray['id']); // We don't need to save reference to settings record in current instance.
         // We don't need to save the data about who last modified the settings as they will be overwritten on restore. Also
@@ -77,7 +77,7 @@ class backup_quizaccess_seb_subplugin extends backup_mod_quiz_access_subplugin {
         $subpluginquizsettings->add_child($subplugintemplatesettings);
 
         // Set source to populate the settings data by referencing the ID of quiz being backed up.
-        $subpluginquizsettings->set_source_table(quizaccess_seb\seb_quiz_settings::TABLE, ['quizid' => $quizid]);
+        $subpluginquizsettings->set_source_table(quizaccess_seb\quiz_settings::TABLE, ['quizid' => $quizid]);
 
         $subpluginquizsettings->annotate_files('quizaccess_seb', 'filemanager_sebconfigfile', null);
 

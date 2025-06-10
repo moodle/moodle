@@ -22,7 +22,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use externallib_advanced_testcase;
-use core_external\external_api;
+use external_api;
 use mod_data\manager;
 
 /**

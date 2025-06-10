@@ -30,8 +30,7 @@ Feature: Grade item validation
       | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Letter scale |
       | Scale | Disappointing, Good, Very good, Excellent                                                           |
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> MI 1 |

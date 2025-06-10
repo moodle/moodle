@@ -14,6 +14,8 @@ import {eventTypes} from './events';
 
 let currentTour = null;
 let tourId = null;
+let restartTourAndKeepProgress = false;
+let currentStepNo = null;
 
 /**
  * Find the first matching tour.
@@ -73,6 +75,20 @@ export const init = async(tourDetails, filters) => {
         if (resetLink) {
             e.preventDefault();
             resetTourState(tourId);
+        }
+    });
+
+    // Watch for the resize event.
+    window.addEventListener("resize", () => {
+        // Only listen for the running tour.
+        if (currentTour && currentTour.tourRunning) {
+            clearTimeout(window.resizedFinished);
+            window.resizedFinished = setTimeout(() => {
+                // Wait until the resize event has finished.
+                currentStepNo = currentTour.getCurrentStepNumber();
+                restartTourAndKeepProgress = true;
+                resetTourState(tourId);
+            }, 250);
         }
     });
 };
@@ -187,7 +203,13 @@ const startBootstrapTour = (tourId, template, tourConfig) => {
     });
 
     currentTour = new BootstrapTour(tourConfig);
-    return currentTour.startTour();
+    let startAt = 0;
+    if (restartTourAndKeepProgress && currentStepNo) {
+        startAt = currentStepNo;
+        restartTourAndKeepProgress = false;
+        currentStepNo = null;
+    }
+    return currentTour.startTour(startAt);
 };
 
 /**

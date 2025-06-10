@@ -80,7 +80,7 @@ M.gradingform_guideeditor.editmode = function(el, editmode) {
     if (editmode && !ta.hasClass('hiddenelement')) {
         return;
     }
-    var pseudotablink = '<input type="text" size="1" class="pseudotablink"/>',
+    var pseudotablink = '<span class="pseudotablink" tabindex="0"></span>',
         taplain = ta.next('.plainvalue'),
         tbplain = null,
         tb = el.one('.score input[type=text]')

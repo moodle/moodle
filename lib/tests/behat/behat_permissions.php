@@ -47,22 +47,47 @@ class behat_permissions extends behat_base {
      * @param TableNode $table
      */
     public function i_set_the_following_system_permissions_of_role($rolename, $table) {
+        // Applied in the System context.
+        $context = \context_system::instance();
 
-        $parentnodes = get_string('users', 'admin') . ' > ' .
-            get_string('permissions', 'role');
+        // Translate the specified rolename into a role.
+        $rolenames = role_get_names($context);
+        $matched = array_filter($rolenames, function($role) use ($rolename) {
+            return ($role->localname === $rolename) || ($role->shortname === $rolename) || ($role->description === $rolename);
+        });
 
-        // Go to home page.
-        $this->execute("behat_general::i_am_on_homepage");
+        if (count($matched) === 0) {
+            throw new ExpectationException("Unable to find a role with name '{$rolename}'", $this->getSession());
+        } else if (count($matched) > 1) {
+            throw new ExpectationException("Multiple roles matched '{$rolename}'", $this->getSession());
+        }
 
-        // Navigate to course management page via navigation block.
-        $this->execute("behat_navigation::i_navigate_to_in_site_administration",
-            array($parentnodes . ' > ' . get_string('defineroles', 'role'))
+        $role = reset($matched);
+
+        $permissionmap = [
+            get_string('inherit', 'role') => 'inherit',
+            get_string('allow', 'role') => 'allow',
+            get_string('prevent', 'role') => 'prevent',
+            get_string('prohibit', 'role') => 'prohibit',
+        ];
+
+        $columns = ['role'];
+        $newtabledata = [$role->shortname];
+        foreach ($table as $data) {
+            $columns[] = $data['capability'];
+            $newtabledata[] = $permissionmap[$data['permission']];
+        }
+
+        $this->execute(
+            'behat_data_generators::the_following_entities_exist',
+            [
+                'role capabilities',
+                new TableNode([
+                    0 => $columns,
+                    1 => $newtabledata,
+                ])
+            ]
         );
-
-        $this->execute("behat_general::click_link", "Edit " . $this->escape($rolename) . " role");
-        $this->execute("behat_permissions::i_fill_the_capabilities_form_with_the_following_permissions", $table);
-
-        $this->execute('behat_forms::press_button', get_string('savechanges'));
     }
 
     /**

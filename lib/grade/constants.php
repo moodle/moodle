@@ -239,6 +239,13 @@ define('GRADE_REPORT_MEAN_ALL', 0);
  */
 define('GRADE_REPORT_MEAN_GRADED', 1);
 
+// BEGIN LSU Column Average No Zero.
+/**
+ * GRADE_REPORT_MEAN_GRADED_NO_ZEROS - Only include grade items where the student has a grade greater than 0 when calculating the mean.
+ */
+define('GRADE_REPORT_MEAN_GRADED_NO_ZEROS', 2);
+// END LSU Column Average No Zero.
+
 /**
  * GRADE_MIN_MAX_FROM_GRADE_ITEM - Get the grade min/max from the grade item.
  */

@@ -1,9 +1,5 @@
 This files describes API changes in /admin/*.
 
-=== 4.2 ===
-
-* A new admin setting coursecreationguide allows admins to configure the URL of the Quickstart guide for admins and managers.
-
 === 4.1 ===
 
 * A new admin setting supportavailability allows admins to configure who the "contact site support" feature is available to

@@ -1,0 +1,346 @@
+/*
+ This file is part of Moodle
+
+ Moodle is free software: you can redistribute it and or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Moodle is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Moodle.  If not, see <www.gnu.org>.
+
+**
+ * @package    block_backadel
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    www.gnu.org GNU GPL v3 or later
+ */
+
+/* body */
+.blocks-backadel {
+text-align: center;
+}
+
+/* work-arund for MDL-12077 */
+.path-blocks-backadel .notifyproblem {
+display: none;
+}
+
+.path-blocks-backadel .error {
+color: #FF0000;
+}
+
+.path-blocks-backadel .changes_saved {
+color: #008000;
+}
+
+/*many forms*/
+.path-blocks-backadel #name_row input {
+width: 90%;
+background-color: #ffffff;
+border: 1px solid #999999;
+}
+
+#page-blocks-backadel-results.path-blocks-backadel form input[type="submit"] {
+display: block;
+float: right;
+margin: 0 10px 10px 0;
+padding: 3px 10px;
+font-size: 13px;
+}
+
+.path-blocks-backadel .name_label {
+background-color: transparent;
+}
+
+.path-blocks-backadel .constraint input {
+min-width: 200px;
+width: 50%;
+margin-left: 10px;
+background-color: #ffffff;
+border: 1px solid #999999;
+}
+
+.path-blocks-backadel select {
+background-color: #ffffff;
+border: 1px solid #999999;
+}
+
+.path-blocks-backadel .constraint img {
+vertical-align: middle;
+}
+
+.path-blocks-backadel .constraint select {
+margin-left: 5px;
+}
+
+.path-blocks-backadel  #button input {
+width: auto;
+}
+
+/* the whole form */
+.path-blocks-backadel form {
+margin: 0 auto 40px auto;
+background-color: #ffffff;
+border: 1px solid #dddddd;
+}
+
+/* row containing the name field and its label */
+.path-blocks-backadel #name_row {
+padding: 10px;
+background-color: #2e1352;
+color: #fff;
+border-bottom: 1px solid #dddddd;
+}
+
+/* row containing the ANY/ALL select and its labels */
+.path-blocks-backadel #anyall_row {
+padding: 10px;
+text-align: right;
+background-color: transparent;
+}
+
+/* the group of constraint rows */
+.path-blocks-backadel #group_constraints {
+text-align: right;
+background-color: transparent;
+}
+
+/* a single constraint with its search terms */
+.path-blocks-backadel .constraint {
+margin-bottom: 10px;
+padding: 10px;
+background-color: transparent;
+}
+
+
+.path-blocks-backadel #c1_constraint, .path-blocks-backadel #c3_constraint, .path-blocks-backadel #c5_constraint, .path-blocks-backadel #c7_constraint, .path-blocks-backadel #c9_constraint {
+background-color: #eeeeee;
+border-top: 1px solid #dddddd;
+border-bottom: 1px solid #dddddd;
+padding-top: 15px;
+padding-bottom: 15px;
+}
+
+/* a search term row including the OR and input rows */
+.path-blocks-backadel .search_term {
+background-color: transparent;
+}
+
+/* the row containing the input field with the remove image */
+.path-blocks-backadel .search_term_input {
+background-color: transparent;
+}
+
+/* the 'OR' line above an added search term */
+.path-blocks-backadel .search_term_or {
+margin-right: 25%;
+background-color: transparent;
+}
+
+/* the submit button */
+.path-blocks-backadel #button {
+margin: 10px auto 20px auto;
+text-align: center;
+}
+
+/* The Saved Searches */
+.path-blocks-backadel table {
+margin: 0;
+width: 100%;
+background-color: transparent;
+margin-bottom: 10px;
+}
+
+.path-blocks-backadel table th {
+padding: 10px;
+   background: #eee url([[pix:theme|navbar]]) 0 -150px repeat-x;
+text-align: center;
+color: #000;
+}
+
+.path-blocks-backadel table tr {
+border-bottom: 1px solid #dddddd;
+background-color: transparent;
+}
+
+.path-blocks-backadel table tr td {
+padding: 5px;
+background-color: transparent;
+}
+
+.path-blocks-backadel table td {
+text-align: left;
+}
+
+#blocks-backadel-delete .selectallnoneposition, #blocks-backadel-index .saved_query_button, #blocks-backadel-config .saved_query_button {
+text-align: center;
+margin: 0 auto 20px auto;
+}
+
+#blocks-backadel-failed form {
+  padding-bottom: 20px;
+}
+
+.path-blocks-backadel .odd td, .path-blocks-backadel .yui-dt-odd td {
+background-color: #eeeeee;
+}
+
+#blocks-backadel-failed td.yui-dt-last {
+ text-align: center;
+  width: 5em;
+}
+
+.path-blocks-backadel td.rightcolumns {
+border: 1px solid #dddddd;
+border-left: none;
+border-top: none;
+border-right: none;
+}
+
+.path-blocks-backadel td.leftcolumns {
+width: 2em;
+text-align: center;
+border: 1px solid #dddddd;
+border-left: none;
+border-top: none;
+}
+
+.path-blocks-backadel td.yui-dt-col-delete {
+border: 1px solid #dddddd;
+text-align: center;
+width: 5em;
+border-left: none;
+border-top: none;
+border-right: none;
+}
+
+.path-blocks-backadel td.yui-dt-col-fullname {
+border: 1px solid #dddddd;
+border-left: none;
+border-top: none;
+}
+
+.path-blocks-backadel td.yui-dt-col-shortname {
+border: 1px solid #dddddd;
+border-left: none;
+border-top: none;
+}
+
+/* error divs */
+.path-blocks-backadel .backadel_error {
+color: #FF0000;
+}
+
+/* adimin config area */
+
+#blocks-backadel-config form {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+}
+
+#blocks-backadel-config table, #blocks-backadel-config table td {
+  border: 1px solid #cecece;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+#blocks-backadel-config td.rightcolumn {
+  text-align: left;
+  padding-left: 10px;
+}
+
+#blocks-backadel-config td.leftcolumn {
+  width: 20em;
+  border-right: 1px solid #cecece;
+  text-align: right;
+  padding: 10px;
+}
+
+#blocks-backadel-config td.rightcolumn input, #blocks-backadel-config td.rightcolumn select {
+  background-color: #ffffff;
+  border: 1px solid #999999;
+}
+
+div.backadel_table {
+  text-align: center;
+}
+
+.backadel_table a {
+  display: inline-block;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-width: 600px;
+  width: 70%;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  font-weight: bold;
+  color: #590da7;
+}
+
+.backadel_table a:hover {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-width: 600px;
+  width: 70%;
+  background-color: #590da7;
+  text-decoration: none;
+  border: 1px solid #dddddd;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.path-blocks-backadel form {
+  box-shadow: 0 0 10px #ccc;
+  -moz-box-shadow: 0 0 10px #ccc;
+  -webkit-box-shadow: 0 0 10px #ccc;
+}
+
+.path-blocks-backadel a.backadel.toggle_link {
+   display: inline-block;
+   background: #eeeeee url([[pix:theme|input_button]]) 0 -142px repeat-x;
+   padding: 2px 10px;
+   border: 1px solid #461d7c;
+   color: #2e1352;
+   cursor: pointer;
+   border-radius: 3px;
+   -moz-border-radius: 3px;
+   -webkit-border-radius: 3px;
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   margin: 0 0 10px 10px;
+}
+
+.path-blocks-backadel a.backadel.toggle_link:hover {
+   background-color: #461d7c;
+   background-position: 0 -50px;
+   color: #ffffff;
+   cursor: pointer;
+   text-decoration: none;
+}
+
+.block_backadel div.icon {
+   float: left;
+   vertical-align: middle;
+}
+
+#page-blocks-backadel-index img.icon {
+   margin-left: .5rem;
+   margin-right: 0;
+}
+
+.path-blocks.path-blocks-backadel input {
+  float: right;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.path-blocks.path-blocks-backadel form {
+  padding-bottom: 1.5em;
+}

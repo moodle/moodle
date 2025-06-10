@@ -17,7 +17,6 @@
 namespace core_form;
 
 use context;
-use core_external\external_api;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -62,10 +61,11 @@ abstract class dynamic_form extends \moodleform {
 
         $this->_ajaxformdata = $ajaxformdata;
         if ($isajaxsubmission) {
+            require_once($CFG->libdir . '/externallib.php');
             // This form was created from the WS that needs to validate user access to it and set page context.
             // It has to be done before calling parent constructor because elements definitions may need to use
             // format_string functions and other methods that expect the page to be set up.
-            external_api::validate_context($this->get_context_for_dynamic_submission());
+            \external_api::validate_context($this->get_context_for_dynamic_submission());
             $PAGE->set_url($this->get_page_url_for_dynamic_submission());
             $this->check_access_for_dynamic_submission();
         }
@@ -76,7 +76,7 @@ abstract class dynamic_form extends \moodleform {
     /**
      * Returns context where this form is used
      *
-     * This context is validated in {@see external_api::validate_context()}
+     * This context is validated in {@see \external_api::validate_context()}
      *
      * If context depends on the form data, it is available in $this->_ajaxformdata or
      * by calling $this->optional_param()

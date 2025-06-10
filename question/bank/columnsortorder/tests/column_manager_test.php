@@ -40,19 +40,6 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  */
 class column_manager_test extends advanced_testcase {
 
-
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \core_question\local\bank\view  */
-    protected $questionbank;
-
-    /** @var array  */
-    protected $columns;
-
-    /** @var \qbank_columnsortorder\column_manager  */
-    protected $columnmanager;
-
     /**
      * Setup testcase.
      */

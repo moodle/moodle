@@ -33,7 +33,7 @@ import {get_string as getString} from 'core/str';
 prefetchStrings('mod_data', ['mapping:dialogtitle:usepreset']);
 
 const selectors = {
-    selectPreset: '[data-action="selectpreset"]',
+    selectPresetButton: 'input[name="selectpreset"]',
 };
 
 /**
@@ -48,10 +48,10 @@ export const init = () => {
  */
 const registerEventListeners = () => {
     document.addEventListener('click', (event) => {
-        const preset = event.target.closest(selectors.selectPreset);
-        if (preset) {
+        const usepreset = event.target.closest(selectors.selectPresetButton);
+        if (usepreset) {
             event.preventDefault();
-            showMappingDialogue(preset);
+            showMappingDialogue(usepreset);
         }
     });
 };

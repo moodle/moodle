@@ -158,30 +158,7 @@ export default class {
     }
 
     /**
-     * Generate a file draggable structure.
-     *
-     * This method is used when files are dragged on the browser.
-     *
-     * @param {*} state the state object
-     * @param {*} dataTransfer the current data tranfer data
-     * @returns {Object|null}
-     */
-    fileDraggableData(state, dataTransfer) {
-        const files = [];
-        // Browsers do not provide the file list until the drop event.
-        if (dataTransfer.files?.length > 0) {
-            dataTransfer.files.forEach(file => {
-                files.push(file);
-            });
-        }
-        return {
-            type: 'files',
-            files,
-        };
-    }
-
-    /**
-     * Generate a completion export data from the cm element.
+     * Generate a compoetion export data from the cm element.
      *
      * @param {Object} state the current state.
      * @param {Object} cminfo the course module state data.
@@ -222,19 +199,5 @@ export default class {
             });
         });
         return items;
-    }
-
-    /**
-     * Check is some activities of a list can be stealth.
-     *
-     * @param {Object} state the current state.
-     * @param {Number[]} cmIds the module ids to check
-     * @returns {Boolean} if any of the activities can be stealth.
-     */
-    canUseStealth(state, cmIds) {
-        return cmIds.some(cmId => {
-            const cminfo = state.cm.get(cmId);
-            return cminfo?.allowstealth ?? false;
-        });
     }
 }

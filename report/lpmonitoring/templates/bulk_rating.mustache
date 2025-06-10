@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_lpmonitoring/bulk_rating
+
+    Context variables required for this template:
+    * datascalecompetencies - object containing:
+        * compid - competency id
+        * idnumber - competency idnumber
+        * scaleid - scale id
+        * scalevalues - object containing:
+            * value - scale item value
+            * name - scale item name
+            * proficient - boolean True if proficient
+            * default - boolean True if default
+    * templateid - template id
+    * hascompetencies - boolean
+ }}
+{{#hascompetencies}}
+    <div class='clearfix'></div>
+    <p class="alert alert-info">
+        {{#str}}noticebulkrating, report_lpmonitoring{{/str}}
+    </p>
+    {{#submitdisabled}}
+    <div class='clearfix'></div>
+    <p class="alert alert-warning">
+        {{#str}}taskratingrunning, report_lpmonitoring{{/str}}
+    </p>
+    {{/submitdisabled}}
+    <div class='clearfix'></div>
+    <form id="savescalesvalues">
+    <div class="scale-comp-container">
+    {{#datascalecompetencies}}
+    <div class="scale-comp-item">
+    <table class="table table-condensed enabled" id="rating_table_comp{{compid}}">
+        <caption class="cr-caption">
+            <a href="#"
+                data-action="competency-dialogue"
+                data-includecourses="true"
+                data-id="{{compid}}"
+                title="{{idnumber}}"
+                role="button">
+                {{idnumber}} - {{compshortname}}
+            </a>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}scalevalue, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}default, tool_lp{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#scalevalues}}
+            <tr class="tool_lp_scale_config">
+                <td>{{name}}</td>
+                <td><input type="radio" name="scale_{{compid}}" data-compid="{{compid}}" value="{{value}}" {{#default}}checked="checked"{{/default}} />
+                {{#proficient}}
+                <span aria-selected="true" class="badge badge-info" >
+                {{#str}}proficient, tool_lp{{/str}}
+                </span>
+                {{/proficient}}
+                </td>
+            </tr>
+            {{/scalevalues}}
+        </tbody>
+    </table>
+    <div class="donotapplybulk">
+        <label><input type="checkbox" data-compid="{{compid}}" />{{#str}}donotapplybulk, report_lpmonitoring{{/str}}</label>
+    </div>
+    </div>
+    {{/datascalecompetencies}}
+    </div>
+    <div id="msg-success-cmrating"class="alert alert-success alert-block fade in hidden">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{#str}}successtaskmsg, report_lpmonitoring{{/str}}
+    </div>
+    <div data-region="scale-buttons" class="m-t-1 pull-xs-right">
+        <div>
+            <label><input type="checkbox" name="forcerating" value="1"/>{{#str}}forcerating, report_lpmonitoring{{/str}}</label>      
+        </div>
+        <input type="submit" class="btn btn-primary" data-action="submit" value="{{#str}}save{{/str}}" {{#submitdisabled}}disabled{{/submitdisabled}} />
+    </div>
+    </form>
+{{/hascompetencies}}
+{{^hascompetencies}}
+<div class='clearfix'></div>
+<p class="alert alert-info">
+    {{#str}}nocompetenciesintemplate, tool_lp{{/str}}
+</p>
+{{/hascompetencies}}
+<div class="clearfix"></div>
+{{#js}}
+require(['tool_lp/competencydialogue', 'report_lpmonitoring/bulkrating'], function(Compdialogue, BulkRating) {
+    Compdialogue.init();
+    BulkRating.init({{templateid}});
+});
+{{/js}}

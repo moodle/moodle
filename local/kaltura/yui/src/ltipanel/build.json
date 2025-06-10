@@ -1,0 +1,10 @@
+{
+  "name": "moodle-local_kaltura-ltipanel",
+  "builds": {
+    "moodle-local_kaltura-ltipanel": {
+      "jsfiles": [
+        "ltipanel.js"
+      ]
+    }
+  }
+}

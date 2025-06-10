@@ -72,11 +72,12 @@ class core_renderer extends \core_renderer {
      * @return string A rendered context header.
      */
     public function context_header($headerinfo = null, $headinglevel = 1): string {
-        global $DB, $USER, $CFG;
+        global $DB, $USER, $CFG, $SITE;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
         $imagedata = null;
+        $subheader = null;
         $userbuttons = null;
 
         // Make sure to use the heading if it has been set.
@@ -157,11 +158,16 @@ class core_renderer extends \core_renderer {
         $prefix = null;
         if ($context->contextlevel == CONTEXT_MODULE) {
             if ($this->page->course->format === 'singleactivity') {
-                $heading = $this->page->course->fullname;
+                $heading = format_string($this->page->course->fullname, true, ['context' => $context]);
             } else {
                 $heading = $this->page->cm->get_formatted_name();
-                $imagedata = html_writer::img($this->page->cm->get_icon_url()->out(false), '',
-                    ['class' => 'icon activityicon', 'aria-hidden' => 'true']);
+                $iconurl = $this->page->cm->get_icon_url();
+                $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
+                $iconattrs = [
+                    'class' => "icon activityicon $iconclass",
+                    'aria-hidden' => 'true'
+                ];
+                $imagedata = html_writer::img($iconurl->out(false), '', $iconattrs);
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
                 $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
@@ -171,6 +177,7 @@ class core_renderer extends \core_renderer {
                 }
             }
         }
+
 
         $contextheader = new \context_header($heading, $headinglevel, $imagedata, $userbuttons, $prefix);
         return $this->render_context_header($contextheader);

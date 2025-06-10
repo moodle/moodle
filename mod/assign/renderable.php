@@ -291,6 +291,8 @@ class assign_feedback_status implements renderable {
     public $returnparams = array();
     /** @var bool canviewfullnames */
     public $canviewfullnames = false;
+    /** @var string gradingcontrollergrade The grade information rendered by a grade controller */
+    public $gradingcontrollergrade;
 
     /**
      * Constructor
@@ -303,6 +305,7 @@ class assign_feedback_status implements renderable {
      * @param string $returnaction The action required to return to this page
      * @param array $returnparams The list of params required to return to this page
      * @param bool $canviewfullnames
+     * @param string $gradingcontrollergrade The grade information rendered by a grade controller
      */
     public function __construct($gradefordisplay,
                                 $gradeddate,
@@ -312,7 +315,8 @@ class assign_feedback_status implements renderable {
                                 $coursemoduleid,
                                 $returnaction,
                                 $returnparams,
-                                $canviewfullnames) {
+                                $canviewfullnames,
+                                $gradingcontrollergrade = '') {
         $this->gradefordisplay = $gradefordisplay;
         $this->gradeddate = $gradeddate;
         $this->grader = $grader;
@@ -322,6 +326,7 @@ class assign_feedback_status implements renderable {
         $this->returnaction = $returnaction;
         $this->returnparams = $returnparams;
         $this->canviewfullnames = $canviewfullnames;
+        $this->gradingcontrollergrade = $gradingcontrollergrade;
     }
 }
 

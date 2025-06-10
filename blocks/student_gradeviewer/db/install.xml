@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/student_gradeviewer/db" VERSION="20120613" COMMENT="XMLDB file for Moodle blocks/student_gradeviewer"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_academic_mentors" COMMENT="The relationship table for the academic mentors" NEXT="enrol_person_mentors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="path"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="NA" SEQUENCE="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="enrol_usepat_uix" UNIQUE="true" FIELDS="userid, path"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_person_mentors" COMMENT="The relationship for mentors to mentees" PREVIOUS="enrol_academic_mentors" NEXT="enrol_sports_mentors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="path"/>
+        <FIELD NAME="path" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="enrol_usepat_uix" UNIQUE="true" FIELDS="userid, path"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_sports_mentors" COMMENT="Table for sport mentor relationships" PREVIOUS="enrol_person_mentors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="path"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="enrol_usepat_uix" UNIQUE="true" FIELDS="userid, path"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

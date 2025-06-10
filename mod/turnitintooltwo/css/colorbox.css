@@ -1,0 +1,105 @@
+/*
+    ColorBox Core Style:
+    The following CSS is consistent between example themes and should not be altered.
+*/
+#colorbox, #cboxOverlay, #cboxWrapper{position:absolute; top:0; left:0; z-index:9999; overflow:hidden;}
+#cboxOverlay{position:fixed; width:100%; height:100%;}
+#cboxMiddleLeft, #cboxBottomLeft{clear:left;}
+#cboxContent{position:relative;}
+#cboxLoadedContent{overflow:auto;}
+#cboxTitle{margin:0;}
+#cboxLoadingOverlay, #cboxLoadingGraphic{position:absolute; top:0; left:0; width:100%; height:100%;}
+#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow{cursor:pointer;}
+.cboxPhoto{float:left; margin:auto; border:0; display:block; max-width:none;}
+.cboxIframe{width:100%; height:100%; display:block; border:0;}
+#colorbox, #cboxContent, #cboxLoadedContent{box-sizing:content-box; -moz-box-sizing:content-box; -webkit-box-sizing:content-box;}
+
+/*
+    User Style:
+    Change the following styles to modify the appearance of ColorBox.  They are
+    ordered & tabbed in a way that represents the nesting of the generated HTML.
+*/
+#cboxOverlay{background:#000;}
+#colorbox{}
+    #cboxContent{margin-top:32px; overflow:visible;}
+        .cboxIframe{background:none;}/*#FFF*/
+        #cboxError{padding:50px; border:1px solid #ccc;}
+        #cboxLoadedContent{background:none; padding:1px;}
+        #cboxLoadingGraphic{background:url(../pix/colorbox/loading.gif) no-repeat center center;}
+        #cboxLoadingOverlay{background:none;}
+        #cboxTitle{position:absolute; top:-22px; left:0; color:#000; display:none !important;}
+        #cboxCurrent{position:absolute; top:-22px; right:205px; text-indent:-9999px;}
+        #cboxClose{text-indent:-9999px; width:20px; height:20px; position:absolute; top:-20px; background:url(../pix/colorbox/controls.png) no-repeat 0 0;}
+        #cboxClose{background-position:-50px 0px; right:0;}
+        #cboxClose:hover{background-position:-50px -25px;}
+
+
+iframe html{background:none;}
+
+/* Messages Inbox, Migration, Upload, Rubric and Quickmark boxes */
+.messages #cboxLoadedContent, .messages .cboxIframe, .rubric_manager #cboxLoadedContent, .rubric_manager .cboxIframe, .quickmark_manager #cboxLoadedContent, .quickmark_manager .cboxIframe,
+.peermark_reviews #cboxLoadedContent, .peermark_reviews .cboxIframe, .peermark_manager #cboxLoadedContent, .peermark_manager .cboxIframe { background:none; }
+
+.migration #cboxLoadedContent, .migration #cboxIframe, .downloadpdf_window #cboxLoadedContent, .downloadpdf_window .cboxIframe,
+.gmpdfzip_window #cboxLoadedContent, .gmpdfzip_window .cboxIframe, .course_creation #cboxLoadedContent, .course_creation #cboxIframe {
+    background: #FFF;
+}
+
+#cboxClose { text-indent:-36px; display:none; }
+
+.messages #cboxClose, .tii_unanonymise_reveal_form #cboxClose, .downloadpdf_window #cboxClose, .gmpdfzip_window #cboxClose, .rubric_manager #cboxClose,
+.rubric_view #cboxClose, .quickmark_manager #cboxClose, .peermark_manager #cboxClose, .peermark_reviews #cboxClose, .course_creation #cboxClose,
+.tii_unanonymise_reveal_form #cboxClose, .tii_unanonymise_reveal_form #cboxClose, .migration #cboxClose {
+    display:none !important;
+}
+
+.upload #cboxClose {
+    top: 2px;
+}
+
+.upload #cboxClose .closeText {
+    position: relative;
+    top: 2px;
+}
+
+.tii_unanonymise_reveal_form #cboxLoadedContent, .edit_end_date_form #cboxLoadedContent {
+    height:100%;
+    overflow: hidden !important;
+}
+
+#cboxOverlay{
+    z-index:9997;
+}
+
+.loading_gif {
+    padding:16px;
+    margin:0 auto;
+    position: absolute;
+    top: 48%;
+    left: 48%;
+    background:url(../pix/colorbox/loading.gif) no-repeat center center #000;
+    height: 32px;
+    width: 32px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    -khtml-border-radius: 12px;
+    border-radius: 12px;
+    z-index:9998;
+}
+
+.tii_unanonymise_reveal_form #cboxClose, .edit_end_date_form #cboxClose {
+    top: 4px;
+    right:4px;
+}
+
+.edit_end_date_form #cboxLoadedContent .mform .fitem .fitemtitle  {
+    width: 25%;
+}
+
+.edit_end_date_form #cboxLoadedContent .mform .fitem .felement {
+    width: 70%;
+}
+
+.edit_end_date_form #cboxLoadedContent .mform .fitem fieldset.felement {
+    margin-left: 25%;
+}

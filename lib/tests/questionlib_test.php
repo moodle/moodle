@@ -323,6 +323,33 @@ class questionlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test deleting a broken question whose category refers to a missing context
+     */
+    public function test_question_delete_question_missing_context() {
+        global $DB;
+
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $context = $coursecategory->get_context();
+
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $generator->create_question_category(['contextid' => $context->id]);
+        $question = $generator->create_question('shortanswer', null, ['category' => $questioncategory->id]);
+
+        // Now delete the context, to simulate what happens in old sites where
+        // referential integrity has failed.
+        $DB->delete_records('context', ['id' => $context->id]);
+
+        question_delete_question($question->id);
+
+        $this->assertDebuggingCalled('Deleting question ' . $question->id .
+            ' which is no longer linked to a context. Assuming system context ' .
+            'to avoid errors, but this may mean that some data like ' .
+            'files, tags, are not cleaned up.');
+        $this->assertFalse($DB->record_exists('question', ['id' => $question->id]));
+    }
+
+    /**
      * This function tests the question_category_delete_safe function.
      */
     public function test_question_category_delete_safe() {
@@ -1998,6 +2025,7 @@ class questionlib_test extends \advanced_testcase {
      */
     public function find_next_unused_idnumber_cases(): array {
         return [
+            [null, null],
             ['id', null],
             ['id1a', null],
             ['id001', 'id002'],
@@ -2020,10 +2048,10 @@ class questionlib_test extends \advanced_testcase {
      * Test core_question_find_next_unused_idnumber in the case when there are no other questions.
      *
      * @dataProvider find_next_unused_idnumber_cases
-     * @param string $oldidnumber value to pass to core_question_find_next_unused_idnumber.
+     * @param string|null $oldidnumber value to pass to core_question_find_next_unused_idnumber.
      * @param string|null $expectednewidnumber expected result.
      */
-    public function test_core_question_find_next_unused_idnumber(string $oldidnumber, ?string $expectednewidnumber) {
+    public function test_core_question_find_next_unused_idnumber(?string $oldidnumber, ?string $expectednewidnumber) {
         $this->assertSame($expectednewidnumber, core_question_find_next_unused_idnumber($oldidnumber, 0));
     }
 

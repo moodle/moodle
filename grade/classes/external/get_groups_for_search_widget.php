@@ -16,14 +16,22 @@
 
 namespace core_grades\external;
 
+use coding_exception;
 use context_course;
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_description;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
+use invalid_parameter_exception;
+use moodle_exception;
+use restricted_context_exception;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir.'/externallib.php');
 
 /**
  * External group report API implementation
@@ -55,12 +63,8 @@ class get_groups_for_search_widget extends external_api {
      * @param int $courseid
      * @param string $actionbaseurl The base URL for the group action.
      * @return array Groups and warnings to pass back to the calling widget.
-     * @throws coding_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws restricted_context_exception
      */
-    protected static function execute(int $courseid, string $actionbaseurl): array {
+    public static function execute(int $courseid, string $actionbaseurl): array {
         global $DB, $USER, $COURSE;
 
         $params = self::validate_parameters(

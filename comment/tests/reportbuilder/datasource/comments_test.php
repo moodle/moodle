@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace core_comment\reportbuilder\datasource;
 
+use comment;
 use context_course;
-use core_comment_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{date, text};
@@ -40,6 +40,14 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 class comments_test extends core_reportbuilder_testcase {
 
     /**
+     * Require test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/comment/lib.php");
+    }
+
+    /**
      * Test default datasource
      */
     public function test_datasource_default(): void {
@@ -49,14 +57,12 @@ class comments_test extends core_reportbuilder_testcase {
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
 
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
+        $comment = new comment((object) [
             'context' => $coursecontext,
             'component' => 'block_comments',
             'area' => 'page_comments',
-            'content' => 'Cool',
         ]);
+        $comment->add('Cool');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -85,14 +91,12 @@ class comments_test extends core_reportbuilder_testcase {
         $courseurl = course_get_url($course);
         $coursecontext = context_course::instance($course->id);
 
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
+        $comment = new comment((object) [
             'context' => $coursecontext,
             'component' => 'block_comments',
             'area' => 'page_comments',
-            'content' => 'Cool',
         ]);
+        $comment->add('Cool');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -171,14 +175,12 @@ class comments_test extends core_reportbuilder_testcase {
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
 
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
+        $comment = new comment((object) [
             'context' => $coursecontext,
             'component' => 'block_comments',
             'area' => 'page_comments',
-            'content' => 'Cool',
         ]);
+        $comment->add('Cool');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -215,14 +217,12 @@ class comments_test extends core_reportbuilder_testcase {
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
 
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
+        $comment = new comment((object) [
             'context' => $coursecontext,
             'component' => 'block_comments',
             'area' => 'page_comments',
-            'content' => 'Cool',
         ]);
+        $comment->add('Cool');
 
         $this->datasource_stress_test_columns(comments::class);
         $this->datasource_stress_test_columns_aggregation(comments::class);

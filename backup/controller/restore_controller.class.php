@@ -384,9 +384,6 @@ class restore_controller extends base_controller {
 
         // Release the session so other tabs in the same session are not blocked.
         if ($this->get_releasesession() === backup::RELEASESESSION_YES) {
-            // Preemptively reset the navcache before closing, so it remains the same on shutdown.
-            navigation_cache::destroy_volatile_caches();
-
             \core\session\manager::write_close();
         }
 

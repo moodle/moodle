@@ -36,7 +36,6 @@ $update = optional_param('update', 0, PARAM_INT);
 $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
 $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 $sectionreturn = optional_param('sr', null, PARAM_INT);
-$beforemod = optional_param('beforemod', 0, PARAM_INT);
 
 $url = new moodle_url('/course/modedit.php');
 $url->param('sr', $sectionreturn);
@@ -74,7 +73,6 @@ if (!empty($add)) {
     $data->return = 0;
     $data->sr = $sectionreturn;
     $data->add = $add;
-    $data->beforemod = $beforemod;
     if (!empty($type)) { //TODO: hopefully will be removed in 2.0
         $data->type = $type;
     }
@@ -166,9 +164,6 @@ if ($mform->is_cancelled()) {
         redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
 } else if ($fromform = $mform->get_data()) {
-    // Mark that this is happening in the front-end UI. This is used to indicate that we are able to
-    // do regrading with a progress bar and redirect, if necessary.
-    $fromform->frontend = true;
     if (!empty($fromform->update)) {
         list($cm, $fromform) = update_moduleinfo($cm, $fromform, $course, $mform);
     } else if (!empty($fromform->add)) {
@@ -179,21 +174,14 @@ if ($mform->is_cancelled()) {
 
     if (isset($fromform->submitbutton)) {
         $url = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule, 'forceview' => 1));
-        if (!empty($fromform->showgradingmanagement)) {
-            $url = $fromform->gradingman->get_management_url($url);
+        if (empty($fromform->showgradingmanagement)) {
+            redirect($url);
+        } else {
+            redirect($fromform->gradingman->get_management_url($url));
         }
     } else {
-        $url = course_get_url($course, $cw->section, array('sr' => $sectionreturn));
+        redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
-
-    // If we need to regrade the course with a progress bar as a result of updating this module,
-    // redirect first to the page that will do this.
-    if (isset($fromform->needsfrontendregrade)) {
-        $url = new moodle_url('/course/modregrade.php', ['id' => $fromform->coursemodule,
-                'url' => $url->out_as_local_url(false)]);
-    }
-
-    redirect($url);
     exit;
 
 } else {

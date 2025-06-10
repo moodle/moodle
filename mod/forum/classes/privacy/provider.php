@@ -658,7 +658,7 @@ class provider implements
              LEFT JOIN {groups} g ON g.id = d.groupid
              LEFT JOIN {forum_discussion_subs} dsub ON dsub.discussion = d.id AND dsub.userid = :dsubuserid
              LEFT JOIN {forum_posts} p ON p.discussion = d.id
-                 WHERE f.id {$foruminsql}
+                 WHERE f.id ${foruminsql}
                    AND (
                         d.userid    = :discussionuserid OR
                         p.userid    = :postuserid OR

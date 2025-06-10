@@ -150,7 +150,7 @@ class override_actionmenu implements templatable, renderable {
         } else if ($action === 'adduser' && !$this->show_useroverride()) {
             $options = ['disabled' => 'true'];
         }
-        $overridebutton = new single_button($url, $text, 'post', single_button::BUTTON_PRIMARY, $options);
+        $overridebutton = new single_button($url, $text, 'post', true, $options);
 
         $urlselect = $this->get_select_menu();
         return [

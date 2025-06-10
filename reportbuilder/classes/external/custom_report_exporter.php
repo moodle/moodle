@@ -93,14 +93,6 @@ class custom_report_exporter extends persistent_exporter {
             'filtersapplied' => ['type' => PARAM_INT],
             'filterspresent' => ['type' => PARAM_BOOL],
             'filtersform' => ['type' => PARAM_RAW],
-            'attributes' => [
-                'type' => [
-                    'name' => ['type' => PARAM_TEXT],
-                    'value' => ['type' => PARAM_TEXT]
-                ],
-                'multiple' => true,
-            ],
-            'classes' => ['type' => PARAM_TEXT],
             'editmode' => ['type' => PARAM_BOOL],
             'sidebarmenucards' => [
                 'type' => custom_report_column_cards_exporter::read_properties_definition(),
@@ -138,7 +130,6 @@ class custom_report_exporter extends persistent_exporter {
 
         $filterspresent = false;
         $filtersform = '';
-        $attributes = [];
 
         if ($this->editmode) {
             $table = custom_report_table::create($this->persistent->get('id'));
@@ -156,16 +147,6 @@ class custom_report_exporter extends persistent_exporter {
             if ($filterspresent) {
                 $filtersform = $this->generate_filters_form()->render();
             }
-
-            // Get the report classes and attributes.
-            $reportattributes = $report->get_attributes();
-            if (isset($reportattributes['class'])) {
-                $classes = $reportattributes['class'];
-                unset($reportattributes['class']);
-            }
-            $attributes = array_map(static function($key, $value): array {
-                return ['name' => $key, 'value' => $value];
-            }, array_keys($reportattributes), $reportattributes);
         }
 
         // If we are editing we need all this information for the template.
@@ -192,8 +173,6 @@ class custom_report_exporter extends persistent_exporter {
             'filtersapplied' => $report->get_applied_filter_count(),
             'filterspresent' => $filterspresent,
             'filtersform' => $filtersform,
-            'attributes' => $attributes,
-            'classes' => $classes ?? '',
             'editmode' => $this->editmode,
             'javascript' => '',
         ] + $editordata;

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/psr/log</location>
+        <name>PSR Log</name>
+        <version>1.0.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendorjs/vue.js</location>
+        <name>Vue js</name>
+        <version>2.5.16</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendorjs/vuerouter.js</location>
+        <name>Vue js</name>
+        <version>2.5.3</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendorjs/vuedatatable.js</location>
+        <name>Vue js</name>
+        <version>2.3.1</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor</location>
+        <name>Composer dependencies</name>
+        <version></version>
+        <license></license>
+        <licenseversion></licenseversion>
+    </library>
+
+</libraries>

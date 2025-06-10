@@ -1,0 +1,24 @@
+div.wirisanswerfielddecoration.wirisembeddeddecoration.wirisincorrect,
+div.wirisanswerfielddecoration.wiriseditordecoration.wirisincorrect div.wiriseditorwrapper {
+    background-image: url([[pix:core|i/grade_incorrect]]) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+div.wirisanswerfielddecoration.wirisembeddeddecoration.wiriscorrect,
+div.wirisanswerfielddecoration.wiriseditordecoration.wiriscorrect div.wiriseditorwrapper {
+    background-image: url([[pix:core|i/grade_correct]]) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+div.wirisanswerfielddecoration.wirisembeddeddecoration.wirispartiallycorrect,
+div.wirisanswerfielddecoration.wiriseditordecoration.wirispartiallycorrect div.wiriseditorwrapper {
+    background-image: url([[pix:core|i/grade_partiallycorrect]]) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+div.rightanswer .wrsUI_app.wrsUI_graph {
+    max-width: 800px;
+    height: 453px;
+}
+
+div .answer .wrsUI_quizzesAnswerField .wrsUI_mathTypeComponent .wrsUI_inlineMathEditor {
+    display: flex;
+    flex-direction: row;
+}

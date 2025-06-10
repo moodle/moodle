@@ -19,6 +19,8 @@ namespace core;
 /**
  * Unit tests for format_text defined in weblib.php.
  *
+ * @covers ::format_text
+ *
  * @package   core
  * @category  test
  * @copyright 2015 The Open University
@@ -86,6 +88,42 @@ class weblib_format_text_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals('<div class="text_to_html"><p>:-)</p></div>',
                 format_text('<p>:-)</p>', FORMAT_MOODLE, array('filter' => false)));
+    }
+
+    /**
+     * Make sure that nolink tags and spans prevent linking in filters that support it.
+     */
+    public function test_format_text_nolink() {
+        global $CFG;
+        $this->resetAfterTest();
+        filter_set_global_state('activitynames', TEXTFILTER_ON);
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+        $page = $this->getDataGenerator()->create_module('page',
+            ['course' => $course->id, 'name' => 'Test 1']);
+        $cm = get_coursemodule_from_instance('page', $page->id, $page->course, false, MUST_EXIST);
+        $pageurl = $CFG->wwwroot. '/mod/page/view.php?id=' . $cm->id;
+
+        $this->assertSame(
+            '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
+            format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context]));
+
+        $this->assertSame(
+            '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
+            format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context, 'noclean' => true]));
+
+        $this->assertSame(
+            '<p>Read Test 1.</p>',
+            format_text('<p><nolink>Read Test 1.</nolink></p>', FORMAT_HTML, ['context' => $context, 'noclean' => false]));
+
+        $this->assertSame(
+            '<p>Read Test 1.</p>',
+            format_text('<p><nolink>Read Test 1.</nolink></p>', FORMAT_HTML, ['context' => $context, 'noclean' => true]));
+
+        $this->assertSame(
+            '<p><span class="nolink">Read Test 1.</span></p>',
+            format_text('<p><span class="nolink">Read Test 1.</span></p>', FORMAT_HTML, ['context' => $context]));
     }
 
     public function test_format_text_overflowdiv() {

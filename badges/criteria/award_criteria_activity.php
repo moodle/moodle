@@ -236,6 +236,7 @@ class award_criteria_activity extends award_criteria {
      * @return array list($join, $where, $params)
      */
     public function get_completed_criteria_sql() {
+        global $DB;
         $join = '';
         $where = '';
         $params = array();
@@ -257,18 +258,41 @@ class award_criteria_activity extends award_criteria {
             }
             return array($join, $where, $params);
         } else {
-            foreach ($this->params as $param) {
-                $join .= " LEFT JOIN {course_modules_completion} cmc{$param['module']} ON
-                          cmc{$param['module']}.userid = u.id AND
-                          cmc{$param['module']}.coursemoduleid = :completedmodule{$param['module']} AND
-                          ( cmc{$param['module']}.completionstate = :completionpass{$param['module']} OR
-                            cmc{$param['module']}.completionstate = :completionfail{$param['module']} OR
-                            cmc{$param['module']}.completionstate = :completioncomplete{$param['module']} )";
-                $where .= " AND cmc{$param['module']}.coursemoduleid IS NOT NULL ";
-                $params["completedmodule{$param['module']}"] = $param['module'];
-                $params["completionpass{$param['module']}"] = COMPLETION_COMPLETE_PASS;
-                $params["completionfail{$param['module']}"] = COMPLETION_COMPLETE_FAIL;
-                $params["completioncomplete{$param['module']}"] = COMPLETION_COMPLETE;
+            // Get all cmids of modules related to the criteria.
+            $cmids = array_map(fn ($x) => $x['module'], $this->params);
+            list($cmcmodulessql, $paramscmc) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+
+            // Create a sql query to get all users who have worked on these course modules.
+            $sql = "SELECT DISTINCT userid FROM {course_modules_completion} cmc "
+            . "WHERE coursemoduleid " . $cmcmodulessql . " AND "
+            . "( cmc.completionstate IN ( :completionpass, :completionfail, :completioncomplete ) )";
+            $paramscmcs = [
+                'completionpass' => COMPLETION_COMPLETE_PASS,
+                'completionfail' => COMPLETION_COMPLETE_FAIL,
+                'completioncomplete' => COMPLETION_COMPLETE
+            ];
+            $paramscmc = array_merge($paramscmc, $paramscmcs);
+            $userids = $DB->get_records_sql($sql, $paramscmc);
+
+            // Now check each user if the user has a completion of each module.
+            $useridsbadgeable = array_keys(array_filter(
+                $userids,
+                function ($user) use ($cmcmodulessql, $paramscmc, $cmids) {
+                    global $DB;
+                    $params = array_merge($paramscmc, ['userid' => $user->userid]);
+                    $select = "coursemoduleid " . $cmcmodulessql . " AND userid = :userid";
+                    $cmidsuser = $DB->get_fieldset_select('course_modules_completion', 'coursemoduleid', $select, $params);
+                    return empty(array_diff($cmidsuser, $cmids));
+                }
+            ));
+
+            // Finally create a where statement (if neccessary) with all userids who are allowed to get the badge.
+            // This list also includes all users who have previously received the badge. These are filtered out in the badge.php.
+            $join = "";
+            $where = "";
+            if (!empty($useridsbadgeable)) {
+                list($wherepart, $params) = $DB->get_in_or_equal($useridsbadgeable, SQL_PARAMS_NAMED);
+                $where = " AND u.id " . $wherepart;
             }
             return array($join, $where, $params);
         }

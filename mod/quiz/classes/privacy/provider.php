@@ -34,7 +34,6 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\manager;
-use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -277,7 +276,7 @@ class provider implements
         $quizzes = $DB->get_recordset_sql($sql, $params);
         foreach ($quizzes as $quiz) {
             list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'quiz');
-            $quizobj = new \mod_quiz\quiz_settings($quiz, $cm, $course);
+            $quizobj = new \quiz($quiz, $cm, $course);
             $context = $quizobj->get_context();
 
             $quizdata = \core_privacy\local\request\helper::get_context_data($context, $contextlist->get_user());
@@ -354,7 +353,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
+        $quizobj = \quiz::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         // Handle the 'quizaccess' subplugin.
@@ -393,7 +392,7 @@ class provider implements
             }
 
             // Fetch the details of the data to be removed.
-            $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
+            $quizobj = \quiz::create($cm->instance);
             $quiz = $quizobj->get_quiz();
             $user = $contextlist->get_user();
 
@@ -441,7 +440,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
+        $quizobj = \quiz::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         $userids = $userlist->get_userids();
@@ -527,7 +526,7 @@ class provider implements
 
                 // Store the quiz attempt data.
                 $data = (object) [
-                    'state' => quiz_attempt::state_name($attempt->state),
+                    'state' => \quiz_attempt::state_name($attempt->state),
                 ];
 
                 if (!empty($attempt->timestart)) {

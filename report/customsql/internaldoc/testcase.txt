@@ -1,0 +1,143 @@
+Ad-hoc database queries
+
+This report plugin allows Administrators to set up arbitrary database queries
+to act as ad-hoc reports. Reports can run as follows:
+
+Manual: Run a query on demand,
+Scheduled: queries that are scheduled to run automatically (monthly, weekly, daily).
+
+User interface contains the following form elements
+----------------------------------------------------
+01) 'Query name' (text): The name of the query.
+
+02) 'Description' (HTML editor): The description of the query.
+
+03) 'Query SQL' (text): The sql query text (with or without parameter.
+
+04) 'Verify the Query SQL text and update the form' (button): refresh button for
+submitting the form and displaying the parameter names which are labelled with
+parameter-names (text),
+
+05) 'Notes': some text about place holders (Reports can contain placeholders,
+in which case, the user running the report is presented with a form where they
+can enter the values to substitute for the placeholders before running the report).
+
+06) 'Who can access this query' (select menu): access level options
+
+07) 'Run' (select menu): whether run the query on-demand or scheduled (Daily, weekly, Monthly)
+
+08 'at' (select menu): full hour on the day
+
+09) 'Type of result' (checkbox): 'The query returns one row, accumulate the results one row at a time'
+checked/unchecked.
+
+10) 'Automatically email to' (text): a comma separated list of user names. When enabled,
+and email system is setup, sends email to the each user in the list.
+
+11) 'What to email' (select menu): options that are pout into the email body.
+
+Conditions
+----------
+When Query SQL text {03) contains parameters, the query runs only on demond and
+08, 09, 10 and 11 are disabled.
+
+'at' (08) is enabled only when , Run (07) is set to 'Daily'.
+
+
+Testing
+-------
+
+Settings
+--------
+Database: Making sure the relevant database tables are populated with some data
+for your queries.
+
+Users: set up an admin and a student, setup 3 other users each with one of the
+capabilities listed in (06) 'Who can access this query' from the user interface.
+user1: 'Anyone who can view this report (report/customsql:view)'
+user2: 'Users who can see system reports (moodle/site:viewreports)'
+user3: 'Only administrators (moodle/site:config)'
+
+Case 1
+------
+
+1) Go to: Site administration -> Reports -> Ad-hoc database queries
+
+2) Press 'Add a new query' button or click on 'Edit this query' icon to edit an
+existing query.
+
+3) Give the query a name or modify the naem of an existing query
+
+4) write a description for the query
+
+5) place your sql query in 'Query SQL' field. Note, the table name can be written
+in {} without the prefix or with the word 'prefix_' and not in {}. For instance,
+following queries are identical:
+q1) SELECT * FROM {report_customsql_queries} csql WHERE csql.runable = 'manual'
+q2) SELECT * FROM perifx_report_customsql_queries csql WHERE csql.runable = 'manual'
+
+6) Press 'Verify the Query SQL text and update the form' button if you have used
+parameters in your query. Then the parameter fields will appear for their values
+to be entered.
+
+7) If there are parameters in the query, enter the values.
+
+8) From 'Who can access this query' menu, choose a capability.
+
+9) From 'Run' menu, choose 'On_demand', you will notice that the rest of the form
+elements are disabled.
+
+10) press save changes.
+
+You should be able to see the result of your query in a table format and a link
+to download the result as a csv file.
+
+
+
+Case 2
+------
+
+1) Go to: Site administration -> Reports -> Ad-hoc database queries
+
+2) Press 'Add a new query' button or click on 'Edit this query' icon to edit an
+existing query.
+
+3) Give the query a name or modify the name of an existing query
+
+4) write a description for the query
+
+5) place your sql query in 'Query SQL' field. Note, the table name can be written
+in {} without the prefix or with the word 'prefix_' and not in {}. For instance,
+following queries are identical:
+q1) SELECT * FROM {report_customsql_queries} csql WHERE csql.runable = 'manual'
+q2) SELECT * FROM perifx_report_customsql_queries csql WHERE csql.runable = 'manual'
+
+6) Press 'Verify the Query SQL text and update the form' button if you have used
+parameters in your query. Then the parameter fields will appear for their values
+to be entered.
+
+7) If there are parameters in the query, enter the values.
+
+8) From 'Who can access this query' menu, choose a capability.
+
+9) From 'Run' menu, choose 'Daily'
+
+10) From 'at' menu, choose the hour
+
+11) check/uncheck the 'Type of result' checkbox
+
+12) Give a comma separated list of users (OUCUs) in 'Automatically email to' field,
+Notice, the user receiving email must exist and have the capability chosen in (8).
+
+13) From the menuw 'What to email' choose the desired option.
+
+11) press save changes
+
+On cron run when the condition is met, ehci users in (12) receive an email.
+Notice, the email is in HTML format and the content depends on (13).
+
+Case ...
+---------
+Considering the settings there are other cases we can experiment with.
+
+This file needs to be updated to allow for Categories.

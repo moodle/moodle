@@ -16,9 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Functions and classes for comments management
+ *
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * comment_manager is helper class to manage moodle comments in admin page (Reports->Comments)
  *
- * @package   core_comment
+ * @package   core
  * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -136,14 +145,9 @@ class comment_manager {
      * Print comments
      * @param int $page
      * @return bool return false if no comments available
-     *
-     * @deprecated since Moodle 4.2 - please do not use this function any more
      */
     public function print_comments($page = 0) {
         global $OUTPUT, $CFG, $OUTPUT, $DB;
-
-        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
-            'See \'comments\' system report class for replacement', DEBUG_DEVELOPER);
 
         $count = $DB->count_records('comments');
         $comments = $this->get_comments($page);

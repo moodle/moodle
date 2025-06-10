@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/onenote/db" VERSION="20141105" COMMENT="XMLDB file for Moodle local/onenote plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_onenote_user_sections" COMMENT="to store OneNote section id's for each user for each course">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="user id"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Course id of the enrolled course"/>
+        <FIELD NAME="section_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Section id of the Onenote section"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_onenote_assign_pages" COMMENT="to store OneNote page id's for submissions and fedbacks for student's assignments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="user id"/>
+        <FIELD NAME="assign_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="assignment id"/>
+        <FIELD NAME="submission_student_page_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="OneNote page id for stodent's copy of student's submission"/>
+        <FIELD NAME="feedback_student_page_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="OneNote page id for student's copy of teacher's feedback"/>
+        <FIELD NAME="submission_teacher_page_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="OneNote page id for teacher's copy of student's submission"/>
+        <FIELD NAME="feedback_teacher_page_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="OneNote page id for teacher's copy of teacher's feedback"/>
+        <FIELD NAME="teacher_lastviewed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time stamp of the last time a teacher viewed the OneNote submission."/>
+        <FIELD NAME="student_lastmodified" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A hash of the student OneNote copy."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

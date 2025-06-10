@@ -19,7 +19,6 @@
  *
  * portfolio_plugin_pull_base and portfolio_plugin_push_base
  * which both in turn inherit from portfolio_plugin_base.
- * {@link http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin}
  *
  * @package    core_portfolio
  * @copyright  2008 Penny Leach <penny@catalyst.net.nz>,

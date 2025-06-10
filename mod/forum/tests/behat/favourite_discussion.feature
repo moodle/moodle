@@ -15,21 +15,17 @@ Feature: A student can favourite a discussion via the forum settings menu
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And I am on the "Course 1" Course page logged in as admin
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 |
-      | Message | Discussion contents 1, first message |
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 1 |
-      | Message | Discussion contents 1, second message |
-    And I log out
+      | idnumber | forum1          |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name         | message                              |
+      | admin    | forum1 | Discussion 1 | Discussion contents 1, first message |
+    And the following "mod_forum > posts" exist:
+      | user     | parentsubject | subject                 | message                               |
+      | admin    | Discussion 1  | Reply 1 to discussion 1 | Discussion contents 1, second message |
+      | student1 | Discussion 1  | Reply 2 to discussion 1 | Discussion contents 1, third message  |
 
   Scenario: Student can favourite a discussion from within an individual discussion
-    Given I am on the "Course 1" Course page logged in as student1
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 2 to discussion 1 |
-      | Message | Discussion contents 1, third message |
-    And I wait until the page is ready
+    Given I am on the "Test forum name" "forum activity" page logged in as student1
     When I open the action menu in "[data-container='discussion-tools']" "css_element"
     And I click on "[title='Star this discussion']" "css_element"
     And I wait "3" seconds
@@ -37,11 +33,7 @@ Feature: A student can favourite a discussion via the forum settings menu
     And I click on "[title='Unstar this discussion']" "css_element"
 
   Scenario: Student can favourite a discussion from the discussion list
-    Given I am on the "Course 1" Course page logged in as student1
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 2 to discussion 1 |
-      | Message | Discussion contents 1, third message |
-    When I am on the "Test forum name" "forum activity" page
+    When I am on the "Test forum name" "forum activity" page logged in as student1
     And I click on "Discussion 1" action menu
     And I click on "[title='Star this discussion']" "css_element"
     And I click on "Discussion 1" action menu

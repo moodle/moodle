@@ -129,6 +129,7 @@ class grade_edit_tree {
         $actionsmenu = new action_menu();
         $actionsmenu->set_menu_trigger(get_string('edit'));
         $actionsmenu->set_owner_selector('grade-item-' . $eid);
+        $actionsmenu->set_boundary('window');
 
         if (!$is_category_item && ($icon = $this->gtree->get_edit_icon($element, $this->gpr, true))) {
             $actionsmenu->add($icon);
@@ -311,8 +312,8 @@ class grade_edit_tree {
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
-            $headercell->attributes['title'] = $object->stripped_name;
             $headercell->attributes['class'] = 'cell column-rowspan rowspan ' . $levelclass;
+            $headercell->attributes['aria-hidden'] = 'true';
             $headercell->rowspan = $row_count + 1;
             $row->cells[] = $headercell;
 
@@ -337,6 +338,7 @@ class grade_edit_tree {
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'emptyrow colspan ' . $levelclass;
+            $endcell->attributes['aria-hidden'] = 'true';
 
             $returnrows[] = new html_table_row(array($endcell));
 
@@ -408,13 +410,22 @@ class grade_edit_tree {
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef' || $aggcoef == 'aggregationcoefextraweight') {
 
+            // BEGIN LSU Weighted Mean Extra Credit
+            if ($aggcoef == 'aggregationcoefweight' && $item->aggregationcoef < 0) {
+                $ec = get_string('aggregationhintextra', 'grades');
+                return $ec;
+            }
+            // END LSU Weighted Mean Extra Credit
+
             return $OUTPUT->render_from_template('core_grades/weight_field', [
                 'id' => $item->id,
                 'itemname' => $itemname,
                 'value' => self::format_number($item->aggregationcoef)
             ]);
 
-        } else if ($aggcoef == 'aggregationcoefextraweightsum') {
+        // BEGIN LSU Weighted Mean Extra Credit
+        } else if ($aggcoef == 'aggregationcoefextraweightsum' || $aggcoef == 'aggregationcoefweight') {
+        // END LSU Weighted Mean Extra Credit
 
             $tpldata = [
                 'id' => $item->id,
@@ -543,6 +554,11 @@ class grade_edit_tree {
             if ($coefstring == 'aggregationcoefweight' || $coefstring == 'aggregationcoefextraweightsum' ||
                     $coefstring == 'aggregationcoefextraweight') {
                 $this->uses_weight = true;
+
+                // BEGIN LSU Weighted Mean Extra Credit
+                $this->uses_extra_credit = true;
+                // END LSU Weighted Mean Extra Credit
+
             }
 
             foreach($element['children'] as $child_el) {
@@ -588,9 +604,15 @@ class grade_edit_tree {
         if (empty($gradecategory->id)) {
             $gradecategory->insert();
 
+        // BEGIN LSU Weighted Mean Extra Credit.
         } else {
+            $ectest = isset($data->grade_item_extracred);
+            if ($ectest == 1) {
+                $data->grade_item_aggregationcoef = -1;
+            }
             $gradecategory->update();
         }
+        // END LSU Weighted Mean Extra Credit.
 
         // GRADE ITEM.
         // Grade item data saved with prefix "grade_item_".
@@ -696,6 +718,17 @@ class grade_edit_tree {
         $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
         $gradeitem->set_locked($locked, false, true);
 
+        // BEGIN LSU Weighted Mean Extra Credit.
+        $ectest = isset($data->grade_item_extracred);
+        $parentcategory = $gradeitem->get_parent_category();
+
+        if ($gradeitem->itemtype == 'category' && $parentcategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $ectest == 1) {
+            $gradeitem->aggregationcoef = $gradeitem->aggregationcoef <> 0 ? abs($gradeitem->aggregationcoef) * -1 : -1;
+            $gradeitem->weightoverride = 0;
+            $gradeitem->aggregationcoef2 = 0;
+        }
+        // END LSU Weighted Mean Extra Credit.
+
         $gradeitem->update(); // We don't need to insert it, it's already created when the category is created.
 
         // Set parent if needed.
@@ -748,13 +781,11 @@ abstract class grade_edit_tree_column {
     public function get_category_cell($category, $levelclass, $params) {
         $cell = clone($this->categorycell);
         $cell->attributes['class'] .= ' ' . $levelclass;
-        $cell->attributes['text'] = '';
         return $cell;
     }
 
     public function get_item_cell($item, $params) {
         $cell = clone($this->itemcell);
-        $cell->attributes['text'] = '';
         if (isset($params['level'])) {
             $level = $params['level'] + (($item->itemtype == 'category' || $item->itemtype == 'course') ? 0 : 1);
             $cell->attributes['class'] .= ' level' . $level;
@@ -861,6 +892,31 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
         $item = $category->get_grade_item();
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
         $categorycell->text = grade_edit_tree::get_weight_input($item);
+
+        // BEGIN LSU Weighted Mean Extra Credit
+        $parent_cat = $item->load_parent_category();
+        $isextracredit = false;
+        if ($item->aggregationcoef > 0) {
+            // For category grade items, we need the grandparent category.
+            // The parent is just category the grade item represents.
+            if ($item->is_category_item()) {
+                $grandparent_cat = $parent_cat->get_parent_category();
+                if ($grandparent_cat->is_extracredit_used() && $grandparent_cat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                    $isextracredit = true;
+                }
+            } else if ($parent_cat->is_extracredit_used() && $parent_cat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                $isextracredit = true;
+            }
+        } else if ($parent_cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $item->aggregationcoef < 0) {
+            $isextracredit = true;
+        } else if ($item->aggregationcoef < 0) {
+            $isextracredit = true;
+        }
+        if ($isextracredit) {
+                $categorycell->text = get_string('aggregationhintextra', 'grades');
+        }
+        // END LSU Weighted Mean Extra Credit
+
         return $categorycell;
     }
 
@@ -879,6 +935,30 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
                 && ($object->gradetype != GRADE_TYPE_SCALE || !empty($CFG->grade_includescalesinaggregation))) {
             $itemcell->text = grade_edit_tree::get_weight_input($item);
         }
+
+        // BEGIN LSU Weighted Mean Extra Credit
+        $parent_cat = $object->load_parent_category();
+        $isextracredit = false;
+        if ($item->aggregationcoef > 0) {
+            // For category grade items, we need the grandparent category.
+            // The parent is just category the grade item represents.
+            if ($item->is_category_item()) {
+                $grandparent_cat = $parent_cat->get_parent_category();
+                if ($grandparent_cat->is_extracredit_used() && $grandparent_cat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                    $isextracredit = true;
+                }
+            } else if ($parent_cat->is_extracredit_used() && $parent_cat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                $isextracredit = true;
+            }
+        } else if ($parent_cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $item->aggregationcoef < 0) {
+            $isextracredit = true;
+        } else if ($item->aggregationcoef < 0) {
+            $isextracredit = true;
+        }
+        if ($isextracredit) {
+                $itemcell->text = get_string('aggregationhintextra', 'grades');
+        }
+        // END LSU Weighted Mean Extra Credit
 
         return $itemcell;
     }
@@ -936,16 +1016,26 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             // The parent is just category the grade item represents.
             if ($item->is_category_item()) {
                 $grandparentcat = $parentcat->get_parent_category();
-                if ($grandparentcat->is_extracredit_used()) {
+
+                // BEGIN LSU Weighted Mean Extra Credit
+                if ($grandparentcat->is_extracredit_used() && $grandparentcat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                // END LSU Weighted Mean Extra Credit
+
                     $isextracredit = true;
                 }
-            } else if ($parentcat->is_extracredit_used()) {
+
+            // BEGIN LSU Weighted Mean Extra Credit
+            } else if ($parentcat->is_extracredit_used() && $parentcat->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN) {
+            // END LSU Weighted Mean Extra Credit
+
                 $isextracredit = true;
             }
         }
         if ($isextracredit) {
             $grademax .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
-                array('title' => get_string('aggregationcoefextrasum', 'grades')));
+                // BEGIN LSU Weighted Mean Extra Credit
+                array('title' => get_string('aggregationhintextra', 'grades')));
+                // END LSU Weighted Mean Extra Credit
         }
 
         $itemcell = parent::get_item_cell($item, $params);
@@ -1028,7 +1118,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         }
         // Build the master checkbox.
         $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-            'id' => $togglegroup,
+            'id' => 'select_category_' . $category->id,
             'name' => $togglegroup,
             'value' => 1,
             'classes' => 'itemselect ignoredirty',

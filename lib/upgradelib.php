@@ -1222,7 +1222,8 @@ function external_update_descriptions($component) {
     $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
-        \core_external\util::delete_service_descriptions($component);
+        require_once($CFG->dirroot.'/lib/externallib.php');
+        external_delete_descriptions($component);
         return;
     }
 
@@ -1574,7 +1575,7 @@ function upgrade_started($preinstall=false) {
             $strupgrade  = get_string('upgradingversion', 'admin');
             $PAGE->set_pagelayout('maintenance');
             upgrade_init_javascript();
-            $PAGE->set_title($strupgrade.' - Moodle '.$CFG->target_release);
+            $PAGE->set_title($strupgrade . moodle_page::TITLE_SEPARATOR . 'Moodle ' . $CFG->target_release);
             $PAGE->set_heading($strupgrade);
             $PAGE->navbar->add($strupgrade);
             $PAGE->set_cacheable(false);
@@ -2524,6 +2525,26 @@ function check_igbinary322_version(environment_results $result) {
 }
 
 /**
+ * This function checks that the database prefix ($CFG->prefix) is <= 10
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if the prefix check is passing ok.
+ */
+function check_db_prefix_length(environment_results $result) {
+    global $CFG;
+
+    $prefixlen = strlen($CFG->prefix) ?? 0;
+    if ($prefixlen > 10) {
+        $parameters = (object)['current' => $prefixlen, 'maximum' => 10];
+        $result->setFeedbackStr(['dbprefixtoolong', 'admin', $parameters]);
+        $result->setInfo('db prefix too long');
+        $result->setStatus(false);
+        return $result;
+    }
+    return null; // All, good. By returning null we hide the check.
+}
+
+/**
  * Assert the upgrade key is provided, if it is defined.
  *
  * The upgrade key can be defined in the main config.php as $CFG->upgradekey. If
@@ -2784,6 +2805,32 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
             $result->setFeedbackStr('xmlrpcwebserviceenabled');
             return $result;
         }
+    }
+
+    return null;
+}
+
+/**
+ * Check whether the mod_assignment is currently being used.
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_mod_assignment(environment_results $result): ?environment_results {
+    global $DB, $CFG;
+
+    // Check the number of records.
+    if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
+        $result->setInfo('Assignment 2.2 is in use');
+        $result->setFeedbackStr('modassignmentinuse');
+        return $result;
+    }
+
+    // Check for mod_assignment subplugins.
+    if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
+        $result->setInfo('Assignment 2.2 subplugins present');
+        $result->setFeedbackStr('modassignmentsubpluginsexist');
+        return $result;
     }
 
     return null;

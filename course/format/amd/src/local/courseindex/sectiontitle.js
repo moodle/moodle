@@ -56,7 +56,7 @@ export default class Component extends DndSectionItem {
      * @return {Component}
      */
     static init(target, selectors) {
-        return new this({
+        return new Component({
             element: document.getElementById(target),
             selectors,
         });

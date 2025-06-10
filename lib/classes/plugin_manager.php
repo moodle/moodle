@@ -1729,7 +1729,7 @@ class core_plugin_manager {
             'qformat' => array('blackboard', 'learnwise', 'examview'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
-            'cachestore' => array('memcache', 'memcached'),
+            'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'filter' => array('censor'),
             'media' => array('swf'),
@@ -1821,7 +1821,7 @@ class core_plugin_manager {
             ),
 
             'cachestore' => array(
-                'file', 'mongodb', 'session', 'static', 'apcu', 'redis'
+                'file', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
             ),
 
             'calendartype' => array(
@@ -2035,6 +2035,7 @@ class core_plugin_manager {
                 'h5p',
                 'media',
                 'recordrtc',
+                'link'
             ],
 
             'tinymce' => array(

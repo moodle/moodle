@@ -26,18 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
 use mod_lesson\external\lesson_summary_exporter;
-use core_external\external_api;
-use core_external\external_files;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
 
 /**
  * Lesson external functions
@@ -137,7 +129,7 @@ class mod_lesson_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the lessons in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -153,7 +145,7 @@ class mod_lesson_external extends external_api {
 
                 $exporter = new lesson_summary_exporter($lessonrecord, array('context' => $context));
                 $lesson = $exporter->export($PAGE->get_renderer('core'));
-                $lesson->name = \core_external\util::format_string($lesson->name, $context);
+                $lesson->name = external_format_string($lesson->name, $context);
                 $returnedlessons[] = $lesson;
             }
         }
@@ -233,7 +225,7 @@ class mod_lesson_external extends external_api {
 
         // Password protected lesson code.
         if ($passwordrestriction = $lesson->get_password_restriction_status($params['password'])) {
-            $error = ["passwordprotectedlesson" => \core_external\util::format_string($lesson->name, $lesson->context)];
+            $error = ["passwordprotectedlesson" => external_format_string($lesson->name, $lesson->context->id)];
             if (!$return) {
                 throw new moodle_exception(key($error), 'lesson', '', current($error));
             }
@@ -1002,18 +994,13 @@ class mod_lesson_external extends external_api {
         $canmanage = $lesson->can_manage();
         // If we are managers or the menu block is enabled and is a content page visible always return contents.
         if ($returncontents || $canmanage || (lesson_displayleftif($lesson) && $page->displayinmenublock && $page->display)) {
-            $pagedata->title = \core_external\util::format_string($page->title, $context);
+            $pagedata->title = external_format_string($page->title, $context->id);
 
             $options = array('noclean' => true);
-            [$pagedata->contents, $pagedata->contentsformat] = \core_external\util::format_text(
-                $page->contents,
-                $page->contentsformat,
-                $context,
-                'mod_lesson',
-                'page_contents',
-                $page->id,
-                $options
-            );
+            list($pagedata->contents, $pagedata->contentsformat) =
+                external_format_text($page->contents, $page->contentsformat, $context->id, 'mod_lesson', 'page_contents', $page->id,
+                    $options);
+
         }
         return $pagedata;
     }
@@ -1308,7 +1295,7 @@ class mod_lesson_external extends external_api {
                 $pagedata = self::get_page_fields($page, true);
 
                 // Files.
-                $contentfiles = util::get_area_files($context->id, 'mod_lesson', 'page_contents', $page->id);
+                $contentfiles = external_util::get_area_files($context->id, 'mod_lesson', 'page_contents', $page->id);
 
                 // Answers.
                 $answers = array();
@@ -1316,8 +1303,8 @@ class mod_lesson_external extends external_api {
                 foreach ($pageanswers as $a) {
                     $answer = array(
                         'id' => $a->id,
-                        'answerfiles' => util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
-                        'responsefiles' => util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
+                        'answerfiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
+                        'responsefiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
                     );
                     // For managers, return all the information (including correct answers, jumps).
                     // If the teacher enabled offline attempts, this information will be downloaded too.
@@ -1328,24 +1315,12 @@ class mod_lesson_external extends external_api {
                         }
 
                         $options = array('noclean' => true);
-                        [$answer['answer'], $answer['answerformat']] = \core_external\util::format_text(
-                            $a->answer,
-                            $a->answerformat,
-                            $context,
-                            'mod_lesson',
-                            'page_answers',
-                            $a->id,
-                            $options
-                        );
-                        [$answer['response'], $answer['responseformat']] = \core_external\util::format_text(
-                            $a->response,
-                            $a->responseformat,
-                            $context,
-                            'mod_lesson',
-                            'page_responses',
-                            $a->id,
-                            $options
-                        );
+                        list($answer['answer'], $answer['answerformat']) =
+                            external_format_text($a->answer, $a->answerformat, $context->id, 'mod_lesson', 'page_answers', $a->id,
+                                $options);
+                        list($answer['response'], $answer['responseformat']) =
+                            external_format_text($a->response, $a->responseformat, $context->id, 'mod_lesson', 'page_responses',
+                                $a->id, $options);
                     }
                     $answers[] = $answer;
                 }

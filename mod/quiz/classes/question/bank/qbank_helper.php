@@ -22,7 +22,8 @@ use qubaid_condition;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/engine/bank.php');
+require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
+require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**
  * Helper class for question bank and its associated data.
@@ -107,7 +108,6 @@ class qbank_helper {
                        slot.id AS slotid,
                        slot.page,
                        slot.maxmark,
-                       slot.displaynumber,
                        slot.requireprevious,
                        qsr.filtercondition,
                        qv.status,
@@ -134,7 +134,9 @@ class qbank_helper {
              -- just before the commit that added this comment.
              -- For relevant question_bank_entries, this gets the latest non-draft slot number.
              LEFT JOIN (
-                   SELECT lv.questionbankentryid, MAX(lv.version) AS version
+                   SELECT lv.questionbankentryid,
+                          MAX(CASE WHEN lv.status <> :draft THEN lv.version END) AS usableversion,
+                          MAX(lv.version) AS anyversion
                      FROM {quiz_slots} lslot
                      JOIN {question_references} lqr ON lqr.usingcontextid = :quizcontextid2 AND lqr.component = 'mod_quiz'
                                         AND lqr.questionarea = 'slot' AND lqr.itemid = lslot.id
@@ -142,13 +144,14 @@ class qbank_helper {
                     WHERE lslot.quizid = :quizid2
                           $slotidtest2
                       AND lqr.version IS NULL
-                      AND lv.status <> :draft
                  GROUP BY lv.questionbankentryid
              ) latestversions ON latestversions.questionbankentryid = qr.questionbankentryid
 
              LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                                       -- Either specified version, or latest ready version.
-                                       AND qv.version = COALESCE(qr.version, latestversions.version)
+                                       -- Either specified version, or latest usable version, or a draft version.
+                                       AND qv.version = COALESCE(qr.version,
+                                           latestversions.usableversion,
+                                           latestversions.anyversion)
              LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              LEFT JOIN {question} q ON q.id = qv.questionid
 

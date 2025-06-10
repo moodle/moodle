@@ -156,7 +156,7 @@ Feature: H5P file upload to content bank for non admins
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     Then I should see "Of which countries"
-    Then I should not see "missing-main-library"
+    Then I should not see "missing-required-library"
     And I switch to the main frame
     Given I log out
     And I log in as "admin"
@@ -178,4 +178,4 @@ Feature: H5P file upload to content bank for non admins
     And I should see "filltheblanks.h5p"
     And I click on "filltheblanks.h5p" "link"
     And I switch to "h5p-player" class iframe
-    And I should see "missing-main-library"
+    And I should see "missing-required-library"

@@ -48,8 +48,12 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
         throw new \moodle_exception('cannotaccessgroup', 'grades');
     }
 }
+
+// BEGIN LSU idnumber requirement stupidity.
 $mform = new grade_export_form(null, array('publishing' => true, 'simpleui' => true, 'multipledisplaytypes' => false,
-        'idnumberrequired' => true, 'updategradesonly' => true));
+        'idnumberrequired' => false, 'updategradesonly' => true));
+// END LSU idnumber requirement stupidity.
+
 $formdata = $mform->get_data();
 $export = new grade_export_xml($course, $groupid, $formdata);
 

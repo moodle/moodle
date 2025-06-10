@@ -27,6 +27,8 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
+use renderer_base;
+use moodle_url;
 
 /**
  * Class for normalising the date data.

@@ -462,7 +462,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I am on site homepage
     And I change window size to "large"
     And I follow "Log in"
-    When I press "Log in as a guest"
+    When I press "Access as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
     # Confirm when navigating, the pop-up policies are displayed.
     When I am on the "My courses" page
@@ -563,9 +563,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And the following "users" exist:
       | username | firstname | lastname | email            |
       | user1    | User      | 1        | user1@example.com    |
-    When I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "User 1"
+    When I am on the "user1" "user > profile" page logged in as "admin"
     And I follow "Log in as"
     Then I should see "You are logged in as User 1"
     And I press "Continue"
@@ -604,8 +602,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "User 1"
+    And I am on the "user1" "user > profile" page
     And I follow "Log in as"
     Then I should see "You are logged in as User 1"
     And I press "Continue"
@@ -626,7 +623,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I am on site homepage
     And I follow "Log in"
     # First log in as a guest
-    And I press "Log in as a guest"
+    And I press "Access as a guest"
     # Now sign up
     And I follow "Log in"
     When I click on "Create new account" "link"

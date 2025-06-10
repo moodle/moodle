@@ -270,6 +270,28 @@ class edit_item_form extends moodleform {
             $gradeitem->parent_category = $parentcategory;
         }
 
+        // BEGIN LSU Weighted Mean Extra Credit.
+        $mform->hideIf('extracred', 'weightoverride', 'checked');
+        $mform->hideIf('weightoverride', 'extracred', 'checked');
+        $mform->hideIf('aggregationcoef', 'extracred', 'checked');
+        $mform->hideIf('aggregationcoef2', 'extracred', 'checked');
+        if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM) {
+            //$mform->hideIf('aggregationcoef', 'weightoverride', 'notchecked');
+        }
+        $mform->hideIf('aggregationcoef2', 'weightoverride', 'notchecked');
+
+        $mform->hideIf('extracred', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('weightoverride', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('aggregationcoef', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('aggregationcoef2', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
+
+        $mform->hideIf('extracred', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('weightoverride', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('aggregationcoef', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('aggregationcoef2', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
+        // END LSU Weighted Mean Extra Credit.
+
+
         if (!$gradeitem->is_raw_used()) {
             $mform->removeElement('plusfactor');
             $mform->removeElement('multfactor');
@@ -336,7 +358,9 @@ class edit_item_form extends moodleform {
 
         // If we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
         if ($id && $mform->elementExists('parentcategory')) {
-            $mform->hardFreeze('parentcategory');
+              // BEGIN LSU Category moves.
+              // $mform->hardFreeze('parentcategory');
+              // END LSU Category moves.
         }
 
         $parentcategory->apply_forced_settings();
@@ -350,36 +374,130 @@ class edit_item_form extends moodleform {
             $coefstring = $gradeitem->get_coefstring();
 
             if ($coefstring !== '') {
-                if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
-                    // The advcheckbox is not compatible with disabledIf!
-                    $coefstring = 'aggregationcoefextrasum';
-                    $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
+                // BEGIN LSU Weighted Mean Extra Credit
+                if ($coefstring == 'aggregationcoefextrasum'
+                    || ($coefstring == 'aggregationcoefweight' && $gradeitem->aggregationcoef < 0)
+                    || $coefstring == 'aggregationcoefextraweightsum') {
+                    // END LSU Weighted Mean Extra Credit
+                    // BEGIN LSU Gradebook Enhancement.
+                    if ($coefstring == 'aggregationcoefextraweightsum') {
+                        $element =& $mform->createElement('checkbox',
+                            'aggregationcoef',
+                            get_string('aggregationcoefextrasum', 'grades'));
+                    } else {
+                        $element =& $mform->createElement('checkbox',
+                            'aggregationcoef',
+                            get_string($coefstring, 'grades'));
+                    }
+                    if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM) {
+                        $mform->hideIf('aggregationcoef', 'weightoverride', 'notchecked');
+                    }
+                    // END LSU Gradebook Enhancement.
                 } else {
                     $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+                    // BEGIN LSU Gradebook Enhancement.
+                    if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM) {
+                      $mform->hideIf('aggregationcoef', 'weightoverride', 'notchecked');
+                    }
+                    $mform->hideIf('weightoverride', 'extracred', 'checked');
+                    $mform->hideIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+                    $mform->hideIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
+                    $mform->hideIf('extracred', 'gradetype', 'eq', GRADE_TYPE_NONE);
+                    $mform->hideIf('extracred', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+                    if ((float)$gradeitem->aggregationcoef <> 1) {
+                        $mform->removeElement('weightoverride');
+                    }
+                    // END LSU Gradebook Enhancement.
                 }
+                // BEGIN LSU Gradebook Enhancement.
                 if ($mform->elementExists('parentcategory')) {
                     $mform->insertElementBefore($element, 'parentcategory');
                 } else {
                     $mform->insertElementBefore($element, 'id');
                 }
-                $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
+                if ($coefstring == 'aggregationcoefextraweightsum') {
+                    $mform->addHelpButton('aggregationcoef', 'aggregationcoefextrasum', 'grades');
+                } else {
+                    $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
+                }
+                // END LSU Gradebook Enhancement.
             }
+            // BEGIN LSU Gradebook Enhancement.
+            if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM) {
+                $mform->hideIf('aggregationcoef', 'weightoverride', 'notchecked');
+            }
+            // END LSU Gradebook Enhancement.
             $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
             $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-            $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parentcategory->id);
+            //$mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parentcategory->id);
         }
 
         // Remove fields used by natural weighting if the parent category is not using natural weighting.
         // Or if the item is a scale and scales are not used in aggregation.
         if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM
                 || (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE)) {
-            if ($mform->elementExists('weightoverride')) {
-                $mform->removeElement('weightoverride');
+            // BEGIN LSU Weighted Mean Extra Credit
+            if ($parentcategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $gradeitem->aggregationcoef >= 0) {
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
+                }
+                $element =& $mform->createElement('checkbox', 'extracred', get_string('aggregationcoefextrasum', 'grades'));
+                $mform->hideIf('extracred', 'weightoverride', 'checked');
+                if ($mform->elementExists('parentcategory')) {
+                    $mform->insertElementBefore($element, 'parentcategory');
+                } else {
+                    $mform->insertElementBefore($element, 'id');
+                }
+
+            } else if ($parentcategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN && $gradeitem->aggregationcoef < 0) {
+                if ($mform->elementExists('weightoverride')) {
+                    $mform->removeElement('weightoverride');
+                }
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
+                }
+                if ($mform->elementExists('aggregationcoef')) {
+                    $mform->removeElement('aggregationcoef');
+                }
+                $element =& $mform->createElement('checkbox', 'extracred', get_string('aggregationcoefextrasum', 'grades'));
+                if ($mform->elementExists('parentcategory')) {
+                    $mform->insertElementBefore($element, 'parentcategory');
+                } else {
+                    $mform->insertElementBefore($element, 'id');
+                }
+                if ($gradeitem->aggregationcoef < 0) {
+                    $mform->setDefault('extracred','1');
+                }
+            } else {
+                if ($mform->elementExists('weightoverride')) {
+                    $mform->removeElement('weightoverride');
+                }
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
+                }
             }
-            if ($mform->elementExists('aggregationcoef2')) {
-                $mform->removeElement('aggregationcoef2');
+        } else if ($parentcategory->aggregation == GRADE_AGGREGATE_SUM) {
+            if ($gradeitem->weightoverride > 0) {
+                $mform->setDefault('weightoverride', 1);
+                $mform->hideIf('aggregationcoef', 'weightoverride', 'checked');
+                $mform->hideIf('weightoverride', 'aggregationcoef', 'checked');
+
+            } else if ($gradeitem->aggregationcoef < 0 || $gradeitem->aggregationcoef2 < 0) {
+                $mform->setDefault('aggregationcoef','1');
+            }
+            $mform->hideIf('aggregationcoef', 'weightoverride', 'checked');
+            $mform->hideIf('weightoverride', 'aggregationcoef', 'checked');
+
+            if ($gradeitem->weightoverride == 1 && $gradeitem->aggregationcoef2 == 0 && $gradeitem->aggregationcoef == 1) {
+                if ($mform->elementExists('weightoverride')) {
+                    $mform->removeElement('weightoverride');
+                }
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
+                }
             }
         }
+            // END LSU Weighted Mean Extra Credit
 
         if ($category = $gradeitem->get_item_category()) {
             if ($category->aggregation == GRADE_AGGREGATE_SUM) {

@@ -1,0 +1,39 @@
+/*
+Located at mod/turnitintooltwo/settings_extras.php?cmd=courses
+*/
+
+.mod_turnitintooltwo_edit_course_end_date_form {
+    padding: 12px 12px 0;
+    background: $white;
+    height: 100%;
+    overflow: hidden;
+
+    #edit_end_date_desc {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .fitemtitle {
+        float: none !important;
+        text-align: center !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .fdate_selector {
+        float: none !important;
+        display: block !important;
+        margin: 0 auto !important;
+        width: 256px !important;
+    }
+
+    .fbutton {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    #id_save_end_date {
+        margin: 0 auto !important;
+        display: block !important;
+    }
+}

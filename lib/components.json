@@ -73,7 +73,6 @@
         "edufields": null,
         "enrol": "enrol",
         "error": null,
-        "external": "lib/external",
         "favourites": "favourites",
         "filepicker": null,
         "fileconverter": "files\/converter",

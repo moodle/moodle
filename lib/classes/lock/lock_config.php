@@ -60,7 +60,7 @@ class lock_config {
             $dbtype = clean_param($DB->get_dbfamily(), PARAM_ALPHA);
 
             // DB Specific lock factory is preferred - should support auto-release.
-            $lockfactoryclass = "\\core\\lock\\{$dbtype}_lock_factory";
+            $lockfactoryclass = "\\core\\lock\\${dbtype}_lock_factory";
             if (!class_exists($lockfactoryclass)) {
                 $lockfactoryclass = '\core\lock\file_lock_factory';
             }

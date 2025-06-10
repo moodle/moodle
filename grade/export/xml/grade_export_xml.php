@@ -41,7 +41,9 @@ class grade_export_xml extends grade_export {
      */
     public function process_form($formdata) {
         if (!isset($formdata->itemids)) {
-            $formdata->itemids = self::EXPORT_SELECT_NONE;
+            // BEGIN LSU idnumber requirement stupidity.
+            // $formdata->itemids = self::EXPORT_SELECT_NONE;
+            // END LSU idnumber requirement stupidity.
         }
 
         parent::process_form($formdata);
@@ -108,8 +110,17 @@ class grade_export_xml extends grade_export {
                 }
 
                 // only need id number
-                $gradeitemidnumber = self::xml_export_idnumber($grade_item->idnumber);
-                fwrite($handle, "\t\t<assignment>{$gradeitemidnumber}</assignment>\n");
+
+                // BEGIN LSU idnumber requirement stupidity.
+                // Some jackass put this in here without telling anyone or thinking of repercussions.
+                if (isset($grade_item->idnumber) && !is_null($grade_item->idnumber) && $grade_item->idnumber != '') {
+                    $gradeitemidnumber = self::xml_export_idnumber($grade_item->idnumber);
+                    fwrite($handle, "\t\t<assignment>{$gradeitemidnumber}</assignment>\n");
+                } else {
+                    fwrite($handle,  "\t\t<assignment>{$grade_item->idnumber}</assignment>\n");
+                }
+                // END LSU idnumber requirement stupidity.
+
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
                 $useridnumber = self::xml_export_idnumber($user->idnumber);
                 fwrite($handle, "\t\t<student>{$useridnumber}</student>\n");

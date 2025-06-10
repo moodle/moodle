@@ -1,0 +1,120 @@
+/*
+ * Listbar - Contains datatables links, dropdowns and search
+ */
+
+.mod_turnitintooltwo_listbar-container {
+    display: table;
+    width: 100%;
+}
+
+.mod_turnitintooltwo_listbar {
+    background: #fff;
+    border: 1px solid $border-color;
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    padding: 10px;
+
+    label,
+    input,
+    select {
+        margin: 0;
+    }
+
+    select,
+    input {
+        height: 30px;
+        padding: 0 5px;
+        border: 1px solid #EFEFEF;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        background: #fff;
+    }
+
+    .mod_turnitintooltwo_refresh_link,
+    .mod_turnitintooltwo_refreshing_link,
+    .mod_turnitintooltwo_nonsubmitters_link {
+        float: right;
+        margin-left: 30px;
+        padding: 5px 0;
+        width: 195px;
+    }
+
+    .mod_turnitintooltwo_nonsubmitters_link {
+        text-decoration: none;
+        display: none;
+    }
+
+    /*
+     * Messages inbox link in listbar
+     */
+    .mod_turnitintooltwo_messages_inbox {
+        float: right;
+        margin-left: 30px;
+        padding: 5px 0;
+        text-decoration: none;
+    }
+
+    .mod_turnitintooltwo_messages_loading {
+        float: none !important;
+        margin: 0 !important;
+    }
+
+    // Zip file download links
+    .mod_turnitintooltwo_zip_downloads {
+        float: left;
+        position: relative;
+        top: 4px;
+        height: 22px;
+
+        img {
+            position: relative;
+            top: 4px;
+            left: -2px;
+        }
+
+        div.mod_turnitintooltwo_origchecked_zip_open,
+        a.mod_turnitintooltwo_gmpdfzip_box {
+            padding: 3px 16px;
+            display: block;
+        }
+
+        a.mod_turnitintooltwo_gmpdfzip_box:hover {
+            background: $hover-blue;
+            color: $white;
+        }
+
+        .mod_turnitintooltwo_zip_open {
+            display: inline;
+        }
+
+        .mod_turnitintooltwo_dropdown-menu .mod_turnitintooltwo_origchecked_zip_open:hover {
+            background-color: $hover-blue;
+            display: block;
+            line-height: 20px;
+            color: $white;
+            font-weight: normal;
+        }
+
+        .mod_turnitintooltwo_dropdown-menu {
+            white-space: nowrap;
+            margin-top: 2px !important;
+        }
+    }
+
+    /*
+     * DataTables filter (search bar)
+     */
+    .dataTables_filter {
+        float: right !important;
+        text-align: left !important;
+    }
+
+    /*
+     * DataTables length (how many per page)
+     */
+    .dataTables_length {
+        float: left !important;
+    }
+}

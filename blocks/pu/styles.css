@@ -1,0 +1,97 @@
+.block_pu span {
+  display: inline-block;
+  font-size: 0.75em;
+  margin-bottom: .75em;  
+}
+
+.block_pu span:first-of-type {
+  margin-bottom: .25em;
+}
+
+.block_pu span.intro {
+  font-weight: 700;
+  font-size: 1em;
+}
+
+.block_pu span.litem {
+  display: list-item;
+  list-style-type: disc;
+  margin-left: 1em;
+}
+
+#page-block-pu div.pu_you_sure {
+  border: 2px solid #fdd023;
+  border-radius: 2em;
+  background-color: #3C1867;
+  height: auto;
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+#page-block-pu span.pu_you_sure {
+  display: inline-block;
+  width: 100%;
+  padding: 0 1rem;
+  margin: 3rem auto;
+  font-size: 1.4em;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+#page-block-pu div.pu_you_sure ul {
+  text-align: left;
+  font-size: 75%;
+  font-weight: 400;
+  margin-top: 1em;
+}
+
+#page-block-pu div.pu_retry {
+  float: left;
+  width: 50%;
+  text-align: left;
+}
+
+#page-block-pu div.pu_replace {
+  float: right;
+  width: 50%;
+  text-align: right;
+}
+
+#page-block-pu div.pu_retry a:hover, #page-block-pu div.pu_replace a:hover {
+  text-decoration: none !important;
+}
+
+.block_pu a.pu_retry, .block_pu a.pu_used {
+  margin-left: 1em;
+  margin-top: -.2em;
+}
+
+.block_pu a.pu_retry:hover , .block_pu a.pu_used:hover, .block_pu a.pu_new:hover {
+  text-decoration: none !important;
+}
+
+.block_pu span.pu_active {
+  font-weight: 700;
+}
+
+.block_pu span.pu_past {
+  color: #666666;
+  font-weight: 100;
+}
+
+#page-block-pu .pu_course {
+  margin-bottom: 1em;
+  min-width: 800px;
+}
+
+#page-block-pu .codecount {
+  display: inline-block;
+  margin: 0;
+}
+
+#page-block-pu .invalidcount {
+  float: right;
+  width: 50%;
+  margin-top: 1.5em;
+  margin-bottom: 0;
+}

@@ -27,6 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use \core_calendar\local\event\container;
+use \core_course\external\course_summary_exporter;
 use \renderer_base;
 require_once($CFG->dirroot . '/course/lib.php');
 /**
@@ -116,13 +117,9 @@ class calendar_event_exporter extends event_exporter_base {
         $today = $this->related['type']->timestamp_to_date_array($this->related['today']);
 
         if ($hascourse) {
-            $values['popupname'] = \core_external\util::format_string(
-                $this->event->get_name(),
-                \context_course::instance($course->id),
-                true
-            );
+            $values['popupname'] = external_format_string($this->event->get_name(), \context_course::instance($course->id), true);
         } else {
-            $values['popupname'] = \core_external\util::format_string($this->event->get_name(), \context_system::instance(), true);
+            $values['popupname'] = external_format_string($this->event->get_name(), \context_system::instance(), true);
         }
 
         $times = $this->event->get_times();

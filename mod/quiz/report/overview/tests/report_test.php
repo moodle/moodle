@@ -18,10 +18,10 @@ namespace quiz_overview;
 
 use core_question\local\bank\question_version_status;
 use mod_quiz\external\submit_question_version;
-use mod_quiz\quiz_attempt;
 use question_engine;
-use mod_quiz\quiz_settings;
-use mod_quiz\local\reports\attempts_report;
+use quiz;
+use quiz_attempt;
+use quiz_attempts_report;
 use quiz_overview_options;
 use quiz_overview_report;
 use quiz_overview_table;
@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
+require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/tests/helpers.php');
@@ -70,9 +71,9 @@ class report_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $course->id,
+        $quiz = $quizgenerator->create_instance(array('course' => $course->id,
                 'grademethod' => QUIZ_GRADEHIGHEST, 'grade' => 100.0, 'sumgrades' => 10.0,
-                'attempts' => 10]);
+                'attempts' => 10));
 
         // Add one question.
         /** @var core_question_generator $questiongenerator */
@@ -104,25 +105,25 @@ class report_test extends \advanced_testcase {
 
         // The test data.
         $timestamp = 1234567890;
-        $attempts = [
-            [$quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED],
-            [$quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED],
-            [$quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED],
-            [$quiz, $student1, 4, null, quiz_attempt::ABANDONED],
-            [$quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS],
-            [$quiz, $student2, 1, null, quiz_attempt::ABANDONED],
-            [$quiz, $student2, 2, null, quiz_attempt::ABANDONED],
-            [$quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED],
-            [$quiz, $student2, 4, null, quiz_attempt::ABANDONED],
-            [$quiz, $student2, 5, null, quiz_attempt::ABANDONED],
-        ];
+        $attempts = array(
+            array($quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 4, null, quiz_attempt::ABANDONED),
+            array($quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS),
+            array($quiz, $student2, 1, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 2, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED),
+            array($quiz, $student2, 4, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 5, null, quiz_attempt::ABANDONED),
+        );
 
         // Load it in to quiz attempts table.
         foreach ($attempts as $attemptdata) {
             list($quiz, $student, $attemptnumber, $sumgrades, $state) = $attemptdata;
             $timestart = $timestamp + $attemptnumber * 3600;
 
-            $quizobj = quiz_settings::create($quiz->id, $student->id);
+            $quizobj = quiz::create($quiz->id, $student->id);
             $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
             $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
@@ -159,7 +160,7 @@ class report_test extends \advanced_testcase {
                     $update->timemodified = $timestart + 1200;
                     $update->sumgrades = $quba->get_total_mark();
                     $DB->update_record('quiz_attempts', $update);
-                    $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade($student->id);
+                    quiz_save_best_grade($attemptobj->get_quiz(), $student->id);
                     break;
             }
         }
@@ -170,22 +171,22 @@ class report_test extends \advanced_testcase {
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
         $studentsjoins = get_enrolled_with_capabilities_join($context, '',
-                ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']);
+                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'));
         $empty = new \core\dml\sql_join();
 
         // Set the options.
         $reportoptions = new quiz_overview_options('overview', $quiz, $cm, null);
-        $reportoptions->attempts = attempts_report::ENROLLED_ALL;
+        $reportoptions->attempts = quiz_attempts_report::ENROLLED_ALL;
         $reportoptions->onlygraded = true;
-        $reportoptions->states = [quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED];
+        $reportoptions->states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED);
 
         // Now do a minimal set-up of the table class.
         $q->slot = 1;
         $q->maxmark = 10;
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
-                $empty, $studentsjoins, [1 => $q], null);
+                $empty, $studentsjoins, array(1 => $q), null);
         $table->download = $isdownloading; // Cannot call the is_downloading API, because it gives errors.
-        $table->define_columns(['fullname']);
+        $table->define_columns(array('fullname'));
         $table->sortable(true, 'uniqueid');
         $table->define_baseurl(new \moodle_url('/mod/quiz/report.php'));
         $table->setup();
@@ -312,7 +313,7 @@ class report_test extends \advanced_testcase {
         $quizattemptsreport = new \testable_quiz_attempts_report();
 
         // Create the new attempt and initialize the question sessions.
-        $quizobj = quiz_settings::create($quiz->id, $student->id);
+        $quizobj = quiz::create($quiz->id, $student->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $attempt = quiz_create_attempt($quizobj, 1, null, $timestart, false, $student->id);
@@ -358,7 +359,7 @@ class report_test extends \advanced_testcase {
         quiz_add_quiz_question($q2->id, $quiz, 0, 10);
 
         // Attempt the quiz, submitting response 'toad'.
-        $quizobj = quiz_settings::create($quiz->id);
+        $quizobj = quiz::create($quiz->id);
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions(time(), false, [1 => ['answer' => 'toad']]);

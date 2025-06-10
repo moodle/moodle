@@ -23,6 +23,7 @@
  */
 
 namespace mod_quiz\output;
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * The question_chooser renderable class.

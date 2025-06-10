@@ -11,13 +11,12 @@ body {
     position: fixed;
     right: 0;
     left: 0;
-    height: $stickyfooter-height;
-    bottom: calc(#{$stickyfooter-height} * -1);
+    height: $navbar-height + 1px;
+    bottom: -$navbar-height;
     transition: bottom .5s;
     z-index: $zindex-dropdown;
     overflow: hidden;
     box-shadow: 0 0 1rem rgba($black, .15);
-    font-size: calc(#{$font-size-base} * 1.10);
 }
 
 .hasstickyfooter .stickyfooter {
@@ -30,9 +29,6 @@ body {
     margin-bottom: map-get($spacers, 1);
 }
 
-.stickyfooter .btn {
-    font-size: calc(#{$font-size-base} * 1.10);
-}
 
 /* Breakpoints fixes. */
 

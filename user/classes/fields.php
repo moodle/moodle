@@ -377,9 +377,13 @@ class fields {
                 $allowed = false;
                 if ($allowcustom) {
                     require_once($CFG->dirroot . '/user/profile/lib.php');
+
+                    // Ensure the field exists (it may have been deleted since user identity was configured).
                     $field = profile_get_custom_field_data_by_shortname($matches[1], false);
-                    $fieldinstance = profile_get_user_field($field->datatype, $field->id, 0, $field);
-                    $allowed = $fieldinstance->is_visible($context);
+                    if ($field !== null) {
+                        $fieldinstance = profile_get_user_field($field->datatype, $field->id, 0, $field);
+                        $allowed = $fieldinstance->is_visible($context);
+                    }
                 }
                 if (!$allowed) {
                     unset($extra[$key]);

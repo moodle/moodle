@@ -23,15 +23,9 @@
  * @since Moodle 2.7
  */
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 defined('MOODLE_INTERNAL') || die;
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/gradelib.php");
 require_once("$CFG->dirroot/grade/edit/tree/lib.php");
 require_once("$CFG->dirroot/grade/querylib.php");
@@ -178,7 +172,7 @@ class core_grades_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.7
      */
     public static function update_grades_returns() {
@@ -274,7 +268,7 @@ class core_grades_external extends external_api {
      * @todo MDL-71325 This will be deleted in Moodle 4.3.
      * @see core_grades\external\create_gradecategories::create_gradecategories()
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.10
      */
     public static function create_gradecategory_returns() {

@@ -27,9 +27,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_settings;
-
 define('AJAX_SCRIPT', true);
 // Services can declare 'readonlysession' in their config located in db/services.php, if not present will default to false.
 define('READ_ONLY_SESSION', true);
@@ -39,6 +36,7 @@ if (!empty($_GET['nosessionupdate'])) {
 }
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/externallib.php');
 
 define('PREFERRED_RENDERER_TARGET', RENDERER_TARGET_GENERAL);
 

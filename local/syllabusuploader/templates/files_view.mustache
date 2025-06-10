@@ -1,0 +1,94 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Proctor U
+ *
+ * @package   local_syllabusuploader
+ * @copyright 2023 onwards LSU Online & Continuing Education
+ * @copyright 2023 onwards Tim Hunt, Robert Russo, David Lowe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="local_syllabusuploader_container">
+    <table class="table table-hover table-striped syllabusuploader_files_table">
+        <caption>Files in Moodle</caption>
+        <thead>
+            <tr>
+                {{! -------------------- }}
+                {{^syllabusuploader_filename}}
+                    <th>{{# str }} syllabusuploader_filename, local_syllabusuploader {{/ str }}</th>
+                {{/syllabusuploader_filename}}
+
+                {{! -------------------- }}
+                {{^syllabusuploader_created}}
+                    <th>{{# str }} syllabusuploader_filecreated, local_syllabusuploader {{/ str }}</th>
+                {{/syllabusuploader_created}}
+
+                {{! -------------------- }}
+                {{^syllabusuploader_modified}}
+                    <th>{{# str }} syllabusuploader_filemodified, local_syllabusuploader {{/ str }}</th>
+                {{/syllabusuploader_modified}}
+
+                {{! -------------------- }}
+                {{^syllabusuploader_copy}}
+                    <th>{{# str }} syllabusuploader_copy, local_syllabusuploader {{/ str }}</th>
+                {{/syllabusuploader_copy}}
+
+                {{! -------------------- }}
+                {{^syllabusuploader_delete}}
+                    <th>{{# str }} syllabusuploader_delete, local_syllabusuploader {{/ str }}</th>
+                {{/syllabusuploader_delete}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#syllabusuploader_data}}
+            <form method="POST" id="syllabusuploader_file_form_{{suid}}">
+                <tr data-rowid='{{suid}}'>
+                    <input type="hidden" value="{{suid}}" name="syllabusuploader_file_id"/>
+                    <input type="hidden" value="{{fileid}}" name="mdl_file_id"/>
+                    <input type="hidden" value="su" name="syllabusuploader_or_nonmood"/>
+
+                    <td>{{syllabusuploader_filename}}</td>
+                    <td>{{syllabusuploader_filecreated}}</td>
+                    <td>{{syllabusuploader_filemodified}}</td>
+                    <td><button class="btn btn-primary syllabusuploader_file_copy"><i class="fa fa-copy"></i></button></td>
+                    <td><button type="submit" class="btn btn-danger syllabusuploader_file_delete"><i class="fa fa-trash"></i></button></td>
+                </tr>
+            </form>
+            {{/syllabusuploader_data}}
+            {{^syllabusuploader_data}}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} syllabusuploader_nofiles, local_syllabusuploader {{/ str }}</td>
+                </tr>
+            {{/syllabusuploader_data}}
+        </tbody>
+    </table>
+    <span class="pull-right">
+        <a href="{{syllabusuploader_url}}/local/syllabusuploader/uploader.php" class="btn btn-info">Add New File</a>
+    </span>
+    <span class="non_mood_files_refresher">
+        {{> local_syllabusuploader/non_mood_files}}
+    </span>
+</div>
+
+{{#js}}
+require(['jquery', 'local_syllabusuploader/events'], function($, EV) {
+    EV.registerMooFileEvents();
+});
+{{/js}}
+

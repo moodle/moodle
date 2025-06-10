@@ -153,14 +153,10 @@ Feature: Apply tour filters to a tour
       | Course 1 | C1        | topics | 1                |
       | Course 2 | C2        | topics | 1                |
     And the following "activities" exist:
-      | activity | course | name           | firstpagetitle | wikimode      |
-      | wiki     | C1     | Test wiki name | First page     | collaborative |
+      | activity | course | name            | firstpagetitle | wikimode      | idnumber | intro                  | type    |
+      | wiki     | C1     | Test wiki name  | First page     | collaborative |          |                        |         |
+      | forum    | C2     | Test forum name |                |               | 001      | Test forum description | general |
     And I log in as "admin"
-    And I am on "Course 2" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Test forum name                |
-      | Forum type  | Standard forum for general use |
-      | Description | Test forum description         |
     And I add a new user tour with:
       | Name               | Wiki tour                |
       | Description        | A tour with both matches |

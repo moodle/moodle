@@ -1,0 +1,99 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    List competencies template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * planid
+    * hascompetencies
+    * competency
+        * shortname
+        * idnumber
+        * id
+    * usercompetency
+        * compnotrated
+        * compnotproficient
+        * compproficient
+        * userid
+    * plan
+        * statusname
+        * stats
+            * nbcompetenciesproficient
+            * nbcompetenciesnotproficient
+            * nbcompetenciesnotrated
+            * nbcompetenciesrated
+}}
+{{#hascompetencies}}
+<div class="borderbottom">
+    <div id ="plan-stats-report" class="plan-info-report">
+        {{ > report_lpmonitoring/plan_stats_report }}
+    </div>
+    {{#plan.cangrade}}
+        {{#plan.stats.nbcompetenciesrated}}
+            <div class="reset-grade-all">
+                <a href="#" title="{{#str}}resetallratings_help, report_lpmonitoring{{/str}}" data-resetgrade-plan="{{plan.id}}" data-userid="{{plan.user.id}}">{{#str}}resetallratings, report_lpmonitoring{{/str}}</a>
+                <button class="fa fa-question-circle text-info fa-fw button-resethelp"
+                        data-container="body"
+                        data-trigger="focus"
+                        data-toggle="popover"
+                        data-placement="left"
+                        data-content="{{#str}}resetallratings_help, report_lpmonitoring{{/str}}">
+                </button>
+            </div>
+        {{/plan.stats.nbcompetenciesrated}}
+    {{/plan.cangrade}}
+    <div class="collapsible-actions">
+        <a role="button" href="#" class="collapseexpand expand-all" title="{{#str}}clicktohideshow{{/str}}">{{#str}}expandall{{/str}}</a>
+    </div>
+</div>
+{{/hascompetencies}}
+
+{{#competencies_list}}
+<div class="competency-detail" id="comp-{{competency.id}}">
+    <div class="x_panel tile panel-collapsed">
+        <div class="x_title">
+            <a role="button" class="collapse-link" href="#" title="{{#str}}clicktohideshow{{/str}}"><i class="fa fa-chevron-right"></i></a>
+            <h4 class="truncate">
+                <a href="#"
+                   data-user-competency="true"
+                   data-userid="{{plan.user.id}}"
+                   data-competencyid="{{competency.id}}"
+                   data-planid="{{plan.id}}"
+                   title="{{competency.shortname}}"
+                   role="button">
+                    {{competency.shortname}} <em>
+                        <small>{{competency.idnumber}}</small>
+                    </em>
+                </a>
+            </h4>
+            <span class="level">
+                {{ > report_lpmonitoring/competency_proficiency }}
+            </span>
+        </div>
+        <div class="x_content">
+        </div>
+    </div>
+</div>
+{{/competencies_list}}
+{{^competencies_list}}
+    <p class="alert alert-info">
+        {{#str}}nocompetenciesinlearningplan, tool_lp{{/str}}
+    </p>
+{{/competencies_list}}

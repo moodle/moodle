@@ -108,6 +108,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
             list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname, null,
                     ['placeinput', 'place' . $placeno, 'group' . $place->group]);
             $output .= $html;
+            $question->places[$placeno]->fieldname = $fieldname;
         }
 
         $output .= html_writer::end_div();

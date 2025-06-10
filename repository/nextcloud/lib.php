@@ -857,7 +857,7 @@ class repository_nextcloud extends repository {
         echo $OUTPUT->header();
 
         $button = new single_button($url, get_string('logintoaccount', 'repository', $this->get_name()),
-            'post', single_button::BUTTON_PRIMARY);
+            'post', true);
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';
         $button = $OUTPUT->render($button);

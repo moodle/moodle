@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/pu/db" VERSION="20170914" COMMENT="XMLDB file for block blocks/pu"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="block_pu_codes" COMMENT="Stores ProctorU coupon codes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="couponcode" TYPE="char" LENGTH="125" NOTNULL="true" SEQUENCE="false" COMMENT="The coupon code provided by ProctorU"/>
+        <FIELD NAME="used" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this coupon code has been used"/>
+        <FIELD NAME="valid" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether or not this coupon code is valid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_pu_guildmaps" COMMENT="Stores GUILD mappings.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The course the GUILD user is associated with"/>
+        <FIELD NAME="user" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The GUILD user enrolled in the GUILD course"/>
+        <FIELD NAME="current" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether or not this user/course pairing is still current"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="user" TYPE="foreign" FIELDS="user" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_pu_codemaps" COMMENT="Stores GUILD student/course to ProctorU coupon code mappings.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="code" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT=""/>
+        <FIELD NAME="guild" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT=""/>
+        <FIELD NAME="updater" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The user who last updated this record"/>
+        <FIELD NAME="updatedate" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp for when this record was last updated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="code" TYPE="foreign" FIELDS="code" REFTABLE="pu_codes" REFFIELDS="id"/>
+        <KEY NAME="guild" TYPE="foreign" FIELDS="guild" REFTABLE="pu_guildmaps" REFFIELDS="id"/>
+        <KEY NAME="updater" TYPE="foreign" FIELDS="updater" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_pu_overrides" COMMENT="Stores ProctorU exam number overrides.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The course the override is associated with"/>
+        <FIELD NAME="codecount" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The number of overridden exams"/>
+        <FIELD NAME="invalidcount" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The number of overridden invalid codes"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_pu_file" COMMENT="Upload files to process">
+      <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
+          <FIELD NAME="fileid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+          <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+          <FIELD NAME="itemid" TYPE="text" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+          <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+          <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+          <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="file" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

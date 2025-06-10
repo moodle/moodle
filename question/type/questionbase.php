@@ -139,12 +139,13 @@ abstract class question_definition {
      * Constructor. Normally to get a question, you call
      * {@link question_bank::load_question()}, but questions can be created
      * directly, for example in unit test code.
+     * @return unknown_type
      */
     public function __construct() {
     }
 
     /**
-     * @return string the name of the question type (for example multichoice) that this
+     * @return the name of the question type (for example multichoice) that this
      * question is.
      */
     public function get_type_name() {

@@ -26,7 +26,6 @@ namespace core_courseformat;
 
 use navigation_node;
 use moodle_page;
-use cm_info;
 use core_component;
 use course_modinfo;
 use html_writer;
@@ -38,7 +37,7 @@ use coding_exception;
 use moodle_url;
 use lang_string;
 use completion_info;
-use core_external\external_api;
+use external_api;
 use stdClass;
 use cache;
 use core_courseformat\output\legacy_renderer;
@@ -226,6 +225,18 @@ abstract class base {
             self::$instances = array();
         }
     }
+    /**
+     * Reset the current user for all courses.
+     *
+     * The course format cache resets every time the course cache resets but
+     * also when the user changes their language, all course editors
+     *
+     * @return void
+     */
+    public static function session_cache_reset_all(): void {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statecache->purge();
+    }
 
     /**
      * Reset the current user course format cache.
@@ -285,15 +296,6 @@ abstract class base {
      */
     public final function get_courseid() {
         return $this->courseid;
-    }
-
-    /**
-     * Returns the course context.
-     *
-     * @return context_course the course context
-     */
-    final public function get_context(): context_course {
-        return context_course::instance($this->courseid);
     }
 
     /**
@@ -369,7 +371,7 @@ abstract class base {
      * This method ensures that 3rd party course format plugins that still use 'numsections' continue to
      * work but at the same time we no longer expect formats to have 'numsections' property.
      *
-     * @return int
+     * @return int The last section number, or -1 if sections are entirely missing
      */
     public function get_last_section_number() {
         $course = $this->get_course();
@@ -378,6 +380,12 @@ abstract class base {
         }
         $modinfo = get_fast_modinfo($course);
         $sections = $modinfo->get_section_info_all();
+
+        // Sections seem to be missing entirely. Avoid subsequent errors and return early.
+        if (count($sections) === 0) {
+            return -1;
+        }
+
         return (int)max(array_keys($sections));
     }
 
@@ -1467,19 +1475,6 @@ abstract class base {
     }
 
     /**
-     * Wrapper for course_delete_module method.
-     *
-     * Format plugins can override this method to provide their own implementation of course_delete_module.
-     *
-     * @param cm_info $cm the course module information
-     * @param bool $async whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
-     * @throws moodle_exception
-     */
-    public function delete_module(cm_info $cm, bool $async = false) {
-        course_delete_module($cm->id, $async);
-    }
-
-    /**
      * Prepares the templateable object to display section name
      *
      * @param \section_info|\stdClass $section
@@ -1726,41 +1721,5 @@ abstract class base {
         $course = $this->get_course();
         // By default, formats store some most display specifics in a user preference.
         $DB->delete_records('user_preferences', ['name' => 'coursesectionspreferences_' . $course->id]);
-    }
-
-    /**
-     * Duplicate a section
-     *
-     * @param section_info $originalsection The section to be duplicated
-     * @return section_info The new duplicated section
-     * @since Moodle 4.2
-     */
-    public function duplicate_section(section_info $originalsection): section_info {
-        if (!$this->uses_sections()) {
-            throw new moodle_exception('sectionsnotsupported', 'core_courseformat');
-        }
-
-        $course = $this->get_course();
-        $oldsectioninfo = get_fast_modinfo($course)->get_section_info($originalsection->section);
-        $newsection = course_create_section($course, $oldsectioninfo->section + 1); // Place new section after existing one.
-
-        if (!empty($originalsection->name)) {
-            $newsection->name = get_string('duplicatedsection', 'moodle', $originalsection->name);
-        } else {
-            $newsection->name = $originalsection->name;
-        }
-        $newsection->summary = $originalsection->summary;
-        $newsection->summaryformat = $originalsection->summaryformat;
-        $newsection->visible = $originalsection->visible;
-        $newsection->availability = $originalsection->availability;
-        course_update_section($course, $newsection, $newsection);
-
-        $modinfo = $this->get_modinfo();
-        foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
-            $originalcm = $modinfo->cms[$modnumber];
-            duplicate_module($course, $originalcm, $newsection->id, false);
-        }
-
-        return get_fast_modinfo($course)->get_section_info_by_id($newsection->id);
     }
 }

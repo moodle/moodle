@@ -1,0 +1,66 @@
+#
+# Whenever a new tag starting with "v" is pushed, add the tagged version
+# to the Moodle Plugins directory at https://moodle.org/plugins
+#
+# revision: 2021070201
+#
+name: Releasing in the Plugins directory
+
+on:
+  push:
+    tags:
+      - v*
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to be released'
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release-at-moodle-org:
+    runs-on: ubuntu-latest
+    env:
+      PLUGIN: qtype_multichoicewiris
+      CURL: curl -s
+      ENDPOINT: https://moodle.org/webservice/rest/server.php
+      TOKEN: ${{ secrets.MOODLE_ORG_TOKEN }}
+      FUNCTION: local_plugins_add_version
+
+    steps:
+      - name: Call the service function
+        id: add-version
+        run: |
+          if [[ ! -z "${{ github.event.inputs.tag }}" ]]; then
+            TAGNAME="${{ github.event.inputs.tag }}"
+          elif [[ $GITHUB_REF = refs/tags/* ]]; then
+            TAGNAME="${GITHUB_REF##*/}"
+          fi
+          if [[ -z "${TAGNAME}" ]]; then
+            echo "No tag name has been provided!"
+            exit 1
+          fi
+          ZIPURL="https://api.github.com/repos/${{ github.repository }}/zipball/${TAGNAME}"
+          RESPONSE=$(${CURL} ${ENDPOINT} --data-urlencode "wstoken=${TOKEN}" \
+                                         --data-urlencode "wsfunction=${FUNCTION}" \
+                                         --data-urlencode "moodlewsrestformat=json" \
+                                         --data-urlencode "frankenstyle=${PLUGIN}" \
+                                         --data-urlencode "zipurl=${ZIPURL}" \
+                                         --data-urlencode "vcssystem=git" \
+                                         --data-urlencode "vcsrepositoryurl=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+                                         --data-urlencode "vcstag=${TAGNAME}" \
+                                         --data-urlencode "changelogurl=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commits/${TAGNAME}" \
+                                         --data-urlencode "altdownloadurl=${ZIPURL}")
+          echo "::set-output name=response::${RESPONSE}"
+
+      - name: Evaluate the response
+        id: evaluate-response
+        env:
+          RESPONSE: ${{ steps.add-version.outputs.response }}
+        run: |
+          jq <<< ${RESPONSE}
+          jq --exit-status ".id" <<< ${RESPONSE} > /dev/null

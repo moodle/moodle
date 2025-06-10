@@ -1,0 +1,25 @@
+{
+    "name": "Integrations/phpsdk-package",
+    "description": "PHP SDK loadable as a package via composer",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Paul Dawson",
+            "email": "pdawson@turnitin.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.4",
+        "nategood/httpful": "^0.2.20"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "brianium/paratest": "~0.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "Integrations\\PhpSdk\\": "src"
+        }
+    }
+}

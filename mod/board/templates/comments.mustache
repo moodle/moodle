@@ -1,0 +1,44 @@
+{{!
+    This file is part of The Moodle simplednd module.
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_board/comments
+
+    This template renders the header.
+
+    Example context (json):
+    {
+        "id": 2,
+        "content": "This is a comment too",
+        "date": "Wednesday, 2 January 2019, 12:00 AM",
+        "candelete": true
+    }
+}}
+{{#comments}}
+    <div class="comment border rounded border-light p-2 mb-2">
+        <div class="comment-header d-flex small text-muted">
+            <div class="mb-3">{{date}}</div>
+            {{#candelete}}
+                <a href="#" data-action="deletecomment" class="btn btn-icon d-flex align-items-center justify-content-center icon-no-margin ml-auto" data-commentid="{{id}}">
+                    {{#pix}}i/delete, core, {{#str}}deletecomment, mod_board{{/str}}{{/pix}}
+                </a>
+            {{/candelete}}
+        </div>
+        <div class="comment-content small">
+            {{{content}}}
+        </div>
+    </div>
+{{/comments}}

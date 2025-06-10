@@ -1,0 +1,29 @@
+li.modtype_library {
+}
+
+li.modtype_library img {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+
+.modtype_library p {
+}
+
+.snap-activity.modtype_library {
+}
+
+.snap-activity.modtype_library img {
+  width: 75px;
+  height: 75px;
+  float: right;
+  margin-right: 3px;
+}
+
+.snap-activity.modtype_library p {
+  margin-right: 100px;
+}
+
+.modtype_library div.activityinstance > div.snap-header-card > div.snap-header-card-icons {
+  width: 100%;
+}

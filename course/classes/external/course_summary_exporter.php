@@ -117,10 +117,6 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_BOOL,
                 'null' => NULL_ALLOWED
             ],
-            'pdfexportfont' => [
-                'type' => PARAM_TEXT,
-                'null' => NULL_ALLOWED
-            ],
         );
     }
 

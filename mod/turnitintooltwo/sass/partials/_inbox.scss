@@ -1,0 +1,73 @@
+/*
+ * Tabs on inbox page - this is overriding jquery datatables styles.
+ */
+.mod_turnitintooltwo .ui-widget-header {
+    background: $light-grey !important;
+    border: 0 !important;
+    margin-bottom: 6px !important;
+}
+
+.mod_turnitintooltwo .ui-widget-content {
+    border: 0 !important;
+}
+
+.mod_turnitintooltwo .ui-tabs .ui-tabs-panel {
+    padding: 0 !important;
+}
+
+.mod_turnitintooltwo .ui-tabs .ui-tabs-nav {
+    padding: 10px 10px 0 !important;
+}
+
+/*
+ * Unanonymise form in modal
+ */
+.mod_turnitintooltwo_unanonymise_form {
+    background: #FFFFFF;
+    padding: 12px 12px 0;
+    height: 100%;
+    overflow: hidden
+}
+
+#mod_turnitintooltwo_unanonymise_desc {
+    text-align: center;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.mod_turnitintooltwo_unanonymise_form textarea {
+    height: 90px;
+    width: 80%;
+}
+
+/*
+ * Email non submitters form
+ */
+
+.mod_turnitintooltwo_nonsubmittersform textarea {
+    height: 90px;
+    width: 80%;
+}
+
+.mod_turnitintooltwo_general_warning {
+    margin-top: 8px;
+}
+
+.mod_turnitintooltwo_nonsubmittersformsuccessmsg {
+    text-align: center;
+    padding-top: 46px;
+}
+
+#mod_turnitintooltwo_download_links {
+    margin-left: 15px;
+    top: -5px;
+}
+
+#mod_turnitintooltwo_rubric_view_form {
+    padding-left: 6px;
+}
+
+.mod_turnitintooltwo_peermark-loading-span img.icon {
+    margin-right: 0px;
+}

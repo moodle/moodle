@@ -53,7 +53,7 @@ class testable_all_calculated_for_qubaid_condition extends \core_question\statis
 class testable_question_statistics extends \core_question\statistics\questions\calculator {
 
     /**
-     * @var stdClass[]
+     * @var object[]
      */
     protected $lateststeps;
 
@@ -74,7 +74,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
      *              - $summarks    array of total marks for each usage, indexed by usage id
      */
     protected function get_latest_steps($qubaids) {
-        $summarks = [];
+        $summarks = array();
         $fakeusageid = 0;
         foreach ($this->lateststeps as $step) {
             // The same 'sumgrades' field is available in step data for every slot, we will ignore all slots but slot 1.
@@ -88,7 +88,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
             $step->questionusageid = $fakeusageid;
         }
 
-        return [$this->lateststeps, $summarks];
+        return array($this->lateststeps, $summarks);
     }
 
     protected function cache_stats($qubaids) {
@@ -118,27 +118,27 @@ class statistics_test extends \basic_testcase {
         $this->qstats = $calculator->calculate(null);
 
         // Values expected are taken from contrib/tools/quiz_tools/stats.xls.
-        $facility = [0, 0, 0, 0, null, null, null, 41.19318182, 81.36363636,
+        $facility = array(0, 0, 0, 0, null, null, null, 41.19318182, 81.36363636,
             71.36363636, 65.45454545, 65.90909091, 36.36363636, 59.09090909, 50,
-            59.09090909, 63.63636364, 45.45454545, 27.27272727, 50];
+            59.09090909, 63.63636364, 45.45454545, 27.27272727, 50);
         $this->qstats_q_fields('facility', $facility, 100);
-        $sd = [0, 0, 0, 0, null, null, null, 1912.733589, 251.2738111,
+        $sd = array(0, 0, 0, 0, null, null, null, 1912.733589, 251.2738111,
             322.6312277, 333.4199022, 337.5811591, 492.3659639, 503.2362797,
-            511.7663157, 503.2362797, 492.3659639, 509.6471914, 455.8423058, 511.7663157];
+            511.7663157, 503.2362797, 492.3659639, 509.6471914, 455.8423058, 511.7663157);
         $this->qstats_q_fields('sd', $sd, 1000);
-        $effectiveweight = [0, 0, 0, 0, 0, 0, 0, 26.58464457, 3.368456046,
+        $effectiveweight = array(0, 0, 0, 0, 0, 0, 0, 26.58464457, 3.368456046,
             3.253955259, 7.584083694, 3.79658376, 3.183278505, 4.532356904,
-            7.78856243, 10.08351572, 8.381139345, 8.727645713, 7.946277111, 4.769500946];
+            7.78856243, 10.08351572, 8.381139345, 8.727645713, 7.946277111, 4.769500946);
         $this->qstats_q_fields('effectiveweight', $effectiveweight);
-        $discriminationindex = [null, null, null, null, null, null, null,
+        $discriminationindex = array(null, null, null, null, null, null, null,
             25.88327077, 1.170256965, -4.207816809, 28.16930644, -2.513606859,
             -12.99017581, -8.900638238, 8.670004606, 29.63337745, 15.18945843,
-            16.21079629, 15.52451404, -8.396734802];
+            16.21079629, 15.52451404, -8.396734802);
         $this->qstats_q_fields('discriminationindex', $discriminationindex);
-        $discriminativeefficiency = [null, null, null, null, null, null, null,
+        $discriminativeefficiency = array(null, null, null, null, null, null, null,
             27.23492723, 1.382386552, -4.691171307, 31.12404354, -2.877487579,
             -17.5074184, -10.27568922, 10.86956522, 34.58997279, 17.4790556,
-            20.14359793, 22.06477733, -10];
+            20.14359793, 22.06477733, -10);
         $this->qstats_q_fields('discriminativeefficiency', $discriminativeefficiency);
     }
 
@@ -177,7 +177,7 @@ class statistics_test extends \basic_testcase {
 
     public function get_records_from_csv($filename) {
         $filecontents = file($filename, FILE_IGNORE_NEW_LINES);
-        $records = [];
+        $records = array();
         // Skip the first line containing field names.
         $keys = $this->get_fields_from_csv(array_shift($filecontents));
         while (null !== ($line = array_shift($filecontents))) {

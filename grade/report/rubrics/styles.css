@@ -1,0 +1,15 @@
+.rubrics_points {
+    font-weight: bold;
+}
+
+.rubrics_level {
+    font-style: italic;
+}
+
+#fitem_id_assignmentid,
+#fitem_id_displaylevel,
+#fitem_id_displayremark,
+#fitem_id_displaysummary,
+#fitem_id_displayemail {
+    margin-bottom: 0;
+}

@@ -23,9 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_attempt;
-use quizaccess_seb\seb_access_manager;
+use quizaccess_seb\access_manager;
 use quizaccess_seb\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
@@ -172,9 +170,9 @@ trait quizaccess_seb_test_helper_trait {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
-        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($numq->id, $quiz);
 
         return $quiz;
@@ -191,7 +189,7 @@ trait quizaccess_seb_test_helper_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = mod_quiz\quiz_settings::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -202,7 +200,7 @@ trait quizaccess_seb_test_helper_trait {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -212,7 +210,7 @@ trait quizaccess_seb_test_helper_trait {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();
@@ -239,21 +237,21 @@ trait quizaccess_seb_test_helper_trait {
     /**
      * Get access manager for testing.
      *
-     * @return \quizaccess_seb\seb_access_manager
+     * @return \quizaccess_seb\access_manager
      */
     protected function get_access_manager() {
-        return new seb_access_manager(new mod_quiz\quiz_settings($this->quiz,
+        return new access_manager(new \quiz($this->quiz,
             get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course));
     }
 
     /**
      * A helper method to make the rule form the currently created quiz and  course.
      *
-     * @return access_rule_base|null
+     * @return \quiz_access_rule_base|null
      */
     protected function make_rule() {
         return \quizaccess_seb::make(
-            new mod_quiz\quiz_settings($this->quiz, get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course),
+            new \quiz($this->quiz, get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course),
             0,
             true
         );

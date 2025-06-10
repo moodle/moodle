@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_link/modal
+
+    Modal to manage a link within the Tiny Editor.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "elementid": "exampleId",
+        "setLinkOnElement": false,
+        "showfilepicker": true,
+        "urltext": "Abc",
+        "url": "https://moodle.org/",
+        "newwindow": false
+    }
+}}
+{{< core/modal }}
+
+    {{$title}}
+        {{#str}} createlink, tiny_link {{/str}}
+    {{/title}}
+
+    {{$body}}
+        <form class="mform" id="{{uniqid}}">
+            <div class="mb-1">
+                <label for="{{elementid}}_tiny_link_urltext">{{#str}} texttodisplay, tiny_link {{/str}}</label>
+                <input
+                class="form-control fullwidth text-ltr w-100 tiny_link_urltext"
+                id="{{elementid}}_tiny_link_urltext" type="text"
+                data-use-link-as-text="{{#urltext}}false{{/urltext}}{{^urltext}}true{{/urltext}}"
+                {{#setLinkOnElement}}data-link-on-element="1"{{/setLinkOnElement}}
+                value="{{urltext}}"/>
+            </div>
+            <div class="mb-1">
+                <label for="{{elementid}}_tiny_link_urlentry">{{#str}} enterurl, tiny_link {{/str}}</label>
+                {{#showfilepicker}}
+                    <div class="input-group input-append w-100">
+                        <input class="form-control fullwidth text-ltr tiny_link_urlentry" id="{{elementid}}_tiny_link_urlentry" type="text" value="{{url}}"/>
+                        <span class="input-group-append">
+                        <button class="btn btn-secondary openlinkbrowser" type="button">{{#str}} browserepositories, tiny_link {{/str}}</button>
+                    </span>
+                    </div>
+                {{/showfilepicker}}
+                {{^showfilepicker}}
+                    <input class="form-control fullwidth text-ltr tiny_link_urlentry" id="{{elementid}}_tiny_link_urlentry" type="text" value="{{url}}"/>
+                {{/showfilepicker}}
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input tiny_link_newwindow" id="{{elementid}}_tiny_link_newwindow" {{#newwindow}}checked{{/newwindow}}/>
+                <label class="form-check-label" for="{{elementid}}_tiny_link_newwindow">{{#str}} openinnewwindow, tiny_link {{/str}}</label>
+            </div>
+        </form>
+    {{/body}}
+
+    {{$footer}}
+        <button type="button" class="btn btn-primary" data-action="save">
+            {{#isupdating}}
+                {{#str}} updatelink, tiny_link {{/str}}
+            {{/isupdating}}
+            {{^isupdating}}
+                {{#str}} createlink, tiny_link {{/str}}
+            {{/isupdating}}
+        </button>
+    {{/footer}}
+
+{{/ core/modal }}

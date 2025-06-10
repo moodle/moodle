@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_vidgridbutton-button",
+    "builds": {
+        "moodle-atto_vidgridbutton-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

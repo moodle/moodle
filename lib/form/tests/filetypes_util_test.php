@@ -484,4 +484,26 @@ class filetypes_util_test extends advanced_testcase {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->get_unknown_file_types($filetypes));
     }
+
+    /**
+     * Test that a debugging noticed is displayed when calling is_whitelisted().
+     */
+    public function test_deprecation_is_whitelisted() {
+
+        $util = new filetypes_util();
+        $this->assertTrue($util->is_whitelisted('txt', 'text/plain'));
+        $this->assertDebuggingCalled('filetypes_util::is_whitelisted() is deprecated. ' .
+            'Please use filetypes_util::is_listed() instead.', DEBUG_DEVELOPER);
+    }
+
+    /**
+     * Test that a debugging noticed is displayed when calling get_not_whitelisted().
+     */
+    public function test_deprecation_get_not_whitelisted() {
+
+        $util = new filetypes_util();
+        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
+        $this->assertDebuggingCalled('filetypes_util::get_not_whitelisted() is deprecated. ' .
+            'Please use filetypes_util::get_not_listed() instead.', DEBUG_DEVELOPER);
+    }
 }

@@ -1,0 +1,10 @@
+{
+  "moodle-local_kaltura-ltitinymcepanel": {
+    "requires": [
+        "base",
+        "node",
+        "panel",
+        "node-event-simulate"
+    ]
+  }
+}

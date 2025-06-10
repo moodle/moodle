@@ -1,4 +1,4 @@
-@mod @mod_quiz @core @core_badges @_file_upload @javascript
+@mod @mod_quiz @core @core_badges @javascript
 Feature: Award badges based on activity completion
   In order to ensure a student has learned the material before being marked complete
   As a teacher
@@ -38,15 +38,13 @@ Feature: Award badges based on activity completion
     And user "student2" has attempted "Test quiz name" with responses:
       | slot | response |
       |   1  | False    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I change window size to "large"
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Course Badge |
-      | Description | Course badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And the following "core_badges > Badge" exists:
+      | name        | Course Badge                 |
+      | status      | 0                            |
+      | type        | 2                            |
+      | course      | C1                           |
+      | description | Course badge description     |
+      | image       | badges/tests/behat/badge.png |
 
   Scenario: Student earns a badge using activity completion, but does not get passing grade
     Given I am on the "Course 1" course page logged in as teacher1

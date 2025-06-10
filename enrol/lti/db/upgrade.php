@@ -188,7 +188,9 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         $table->add_key('lticontextid', XMLDB_KEY_FOREIGN, ['lticontextid'], 'enrol_lti_context', ['id']);
 
         // Add unique index on resourcelinkid, ltideploymentid.
-        $table->add_index('resourcelinkdid-ltideploymentid', XMLDB_INDEX_UNIQUE, ['resourcelinkid', 'ltideploymentid']);
+	// BEGIN LSU Aurora mysql 5.7 install fix
+        // $table->add_index('resourcelinkdid-ltideploymentid', XMLDB_INDEX_UNIQUE, ['resourcelinkid', 'ltideploymentid']);
+	// END LSU Aurora mysql 5.7 install fix
 
         // Conditionally launch create table for enrol_lti_resource_link.
         if (!$dbman->table_exists($table)) {
@@ -216,7 +218,9 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         $table->add_key('ltideploymentid', XMLDB_KEY_FOREIGN, ['ltideploymentid'], 'enrol_lti_deployment', ['id']);
 
         // Add unique index on ltideploymentid, contextid.
-        $table->add_index('ltideploymentid-contextid', XMLDB_INDEX_UNIQUE, ['ltideploymentid', 'contextid']);
+	// BEGIN LSU Aurora mysql 5.7 install fix
+        // $table->add_index('ltideploymentid-contextid', XMLDB_INDEX_UNIQUE, ['ltideploymentid', 'contextid']);
+	// END LSU Aurora mysql 5.7 install fix
 
         // Conditionally launch create table for enrol_lti_context.
         if (!$dbman->table_exists($table)) {
@@ -396,7 +400,9 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
         // Launch add unique key uniqueid.
         $key = new xmldb_key('uniqueid', XMLDB_KEY_UNIQUE, ['uniqueid']);
-        $dbman->add_key($table, $key);
+	// BEGIN LSU Aurora mysql 5.7 install fix
+        // $dbman->add_key($table, $key);
+	// END LSU Aurora mysql 5.7 install fix
 
         // Define field status to be added to enrol_lti_app_registration with a default value of 1 (to set existing rows).
         $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'uniqueid');

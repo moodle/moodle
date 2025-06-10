@@ -157,7 +157,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * @return array associative array ($number => $unit)
      */
     public function seconds_to_unit($seconds) {
-        if ($seconds == 0) {
+        if (empty($seconds)) {
             return [0, $this->_options['defaultunit']];
         }
         foreach ($this->get_units_used() as $unit => $notused) {

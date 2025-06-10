@@ -16,11 +16,6 @@
 
 namespace mod_assign\external;
 
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 /**
  * External function to notify Moodle that an assignment submission is starting.
  *
@@ -34,12 +29,12 @@ class start_submission extends external_api {
     /**
      * Describes the parameters for submission_start.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      * @since Moodle 4.0
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters ([
-                'assignid' => new external_value(PARAM_INT, 'Assignment instance id'),
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters ([
+                'assignid' => new \external_value(PARAM_INT, 'Assignment instance id'),
             ]
         );
     }
@@ -106,13 +101,13 @@ class start_submission extends external_api {
     /**
      * Describes the submission_start return value.
      *
-     * @return external_single_structure
+     * @return \external_single_structure
      * @since Moodle 4.0
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure([
-            'submissionid' => new external_value(PARAM_INT, 'New submission ID.'),
-            'warnings' => new external_warnings(),
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure([
+            'submissionid' => new \external_value(PARAM_INT, 'New submission ID.'),
+            'warnings' => new \external_warnings(),
         ]);
     }
 }

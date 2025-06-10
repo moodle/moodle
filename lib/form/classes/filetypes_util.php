@@ -430,10 +430,23 @@ class filetypes_util {
     }
 
     /**
-     * @deprecated since Moodle 3.10 MDL-69050 - please use {@see is_listed} instead.
+     * Should the given file type be considered as a part of the given list.
+     *
+     * If multiple types are provided, all of them must be part of the
+     * list. Empty type is part of any list. Any type is part of an
+     * empty list.
+     *
+     * @deprecated since Moodle 3.10 MDL-69050 - please use {@see self::is_listed()} instead.
+     * @param string|array $types File type or list of types to be checked.
+     * @param string|array $list An array or string listing the types to check against.
+     * @return boolean
      */
-    public function is_whitelisted() {
-        throw new \coding_exception('\core_form\filetypes_util::is_whitelisted() has been removed.');
+    public function is_whitelisted($types, $list) {
+
+        debugging('filetypes_util::is_whitelisted() is deprecated. Please use filetypes_util::is_listed() instead.',
+            DEBUG_DEVELOPER);
+
+        return $this->is_listed($types, $list);
     }
 
     /**
@@ -463,10 +476,21 @@ class filetypes_util {
     }
 
     /**
-     * @deprecated since Moodle 3.10 MDL-69050 - please use {@see get_not_listed} instead.
+     * Returns all types that are not part of the given list.
+     *
+     * This is similar check to the {@see self::is_listed()} but this one actually returns the extra types.
+     *
+     * @deprecated since Moodle 3.10 MDL-69050 - please use {@see self::get_not_whitelisted()} instead.
+     * @param string|array $types File type or list of types to be checked.
+     * @param string|array $list An array or string listing the types to check against.
+     * @return array Types not present in the list.
      */
-    public function get_not_whitelisted() {
-        throw new \coding_exception('\core_form\filetypes_util::get_not_whitelisted() has been removed.');
+    public function get_not_whitelisted($types, $list) {
+
+        debugging('filetypes_util::get_not_whitelisted() is deprecated. Please use filetypes_util::get_not_listed() instead.',
+            DEBUG_DEVELOPER);
+
+        return $this->get_not_listed($types, $list);
     }
 
     /**

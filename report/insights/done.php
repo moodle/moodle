@@ -37,7 +37,7 @@ if (!\core_analytics\manager::is_analytics_enabled()) {
     exit(0);
 }
 
-$PAGE->set_title(get_site()->fullname);
+$PAGE->set_title(get_string('insights', 'report_insights'));
 $PAGE->set_url(new \moodle_url('/report/insights/done.php'));
 
 echo $OUTPUT->header();

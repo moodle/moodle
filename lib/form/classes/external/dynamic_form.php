@@ -16,10 +16,14 @@
 
 namespace core_form\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
+use core_search\engine_exception;
+use external_api;
+use external_function_parameters;
+use external_value;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir.'/externallib.php');
 
 /**
  * Implements the external functions provided by the core_form subsystem.
@@ -75,6 +79,13 @@ class dynamic_form extends external_api {
 
         // Render actual form.
 
+        if ($form->no_submit_button_pressed()) {
+            // If form has not been submitted, we have to recreate the form for being able to properly handle non-submit action
+            // like "repeat elements" to include additional JS.
+            /** @var \core_form\dynamic_form $form */
+            $form = new $formclass(null, null, 'post', '', [], true, $formdata, true);
+            $form->set_data_for_dynamic_submission();
+        }
         // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
         $OUTPUT->header();
 
@@ -87,10 +98,10 @@ class dynamic_form extends external_api {
 
     /**
      * Return for modal
-     * @return external_single_structure
+     * @return \external_single_structure
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure(
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure(
             array(
                 'submitted' => new external_value(PARAM_BOOL, 'If form was submitted and validated'),
                 'data' => new external_value(PARAM_RAW, 'JSON-encoded return data from form processing method', VALUE_OPTIONAL),

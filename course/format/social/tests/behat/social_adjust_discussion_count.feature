@@ -105,11 +105,10 @@ Feature: Change number of discussions displayed
       | Message | This is forum post one |
     And I press "Post to forum"
     And I wait to be redirected
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "course editing" page logged in as teacher1
 
   Scenario: When number of discussions is decreased fewer discussions appear
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | numdiscussions | 5 |
     When I press "Save and display"
     Then I should see "This is forum post one"
@@ -117,8 +116,7 @@ Feature: Change number of discussions displayed
     And I should not see "This is forum post six"
 
   Scenario: When number of discussions is decreased to less than 1 only 1 discussion should appear
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | numdiscussions | -1 |
     When I press "Save and display"
     Then I should see "This is forum post one"
@@ -126,8 +124,7 @@ Feature: Change number of discussions displayed
     And I should not see "This is forum post ten"
 
   Scenario: When number of discussions is increased more discussions appear
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | numdiscussions | 9 |
     When I press "Save and display"
     Then I should see "This is forum post one"

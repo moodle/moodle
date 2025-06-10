@@ -44,13 +44,13 @@ class restore_date_test extends \restore_date_testcase {
         // Create questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         // Add to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
 
         // Create an attempt.
         $timestamp = 100;
-        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
+        $quizobj = \quiz::create($quiz->id);
         $attempt = quiz_create_attempt($quizobj, 1, false, $timestamp, false);
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

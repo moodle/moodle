@@ -1,0 +1,190 @@
+.mod_turnitintooltwo_part_details {
+    font-size: 13px;
+    margin-bottom:0px;
+    width:100%;
+    border: 1px solid $border-color;
+
+    tr {
+        border-right: 1px solid $border-color;
+    }
+
+    th {
+        padding: 6px 12px 6px;
+        border-bottom: 1px solid $border-color;
+    }
+
+    td {
+        border: 1px solid $border-color;
+        border-top: 0;
+        padding: 12px 12px 4px;
+    }
+
+    td.data,
+    td.export_data,
+    td.rubric_qm {
+        text-align: center;
+    }
+
+    td.export_data {
+        padding-top:12px;
+    }
+
+    td.introduction_cell {
+        border:0;
+        padding:0;
+    }
+
+    td.peermarks {
+        border:0;
+    }
+
+    td.peermark_assignments_cell {
+        padding:0;
+        border:0;
+    }
+
+    .editable-click {
+        border:none;
+        position: relative;
+        padding-right: 24px;
+
+        &:before {
+            position:absolute;
+            font-family: FontAwesome;
+            top:0;
+            right:0;
+            font-size: 1.33333em !important;
+            color: $dark-grey !important;
+            line-height: 0.75em;
+            vertical-align: -15%;
+            content: "\f040";
+            display: inline-block;
+            font-style: normal;
+            font-weight: normal;
+            font-size-adjust: none;
+            font-stretch: normal;
+            font-feature-settings: normal;
+            font-language-override: normal;
+            font-kerning: auto;
+            font-synthesis: weight style;
+            font-variant: normal;
+            font-size: inherit;
+            text-rendering: auto;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        &:hover {
+            border-bottom: 0 !important;
+        }
+    }
+
+    /*
+     * Introduction (summary section)
+     */
+     .introduction,
+     .peermark_instructions {
+        padding: 6px 10px;
+        border-bottom: 1px solid $border-color;
+        display: none;
+    }
+
+    .introduction h2 {
+        margin: 8px 0;
+    }
+
+    .introduction p {
+        margin: 6px 0;
+    }
+
+    /*
+     * Export options
+     */
+    .row_export_xls,
+    .row_export_pdf,
+    .row_export_orig,
+    .mod_turnitintooltwo_zip_open,
+    .row_rubric_manager,
+    .row_quickmark_manager {
+        display:inline;
+    }
+
+    .toggle_peermark_instructions img {
+        display: block;
+    }
+
+    .toggle_summary,
+    .toggle_peermarks,
+    .toggle_peermark_instructions {
+        cursor: pointer;
+        float:left;
+        position: relative;
+        top:-3px;
+        margin-right:8px;
+    }
+
+    .peermark_header {
+        margin-bottom:8px;
+        float:left;
+    }
+}
+
+#turnitin_sync_all_grades {
+    float: right;
+    font-size: 16px;
+}
+
+.turnitin_sync_grades, .turnitin_syncing_grades {
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.turnitin_syncing_grades {
+    display: none;
+}
+
+.mod_turnitintooltwo_peermark_details {
+    width: 100%;
+    border-top: 1px solid $border-color;
+
+    td {
+        padding:8px 12px;
+        border-bottom-width: 0;
+    }
+
+    td.peermark_instructions_cell {
+        border:0;
+        padding:0;
+    }
+}
+
+.mod_turnitintooltwo_quickmark_manager_launch {
+    padding: 2px 0 2px 30px;
+    height: 20px;
+    color: #0070A8 !important;
+}
+
+.mod_turnitintooltwo_rubric_manager_launch,
+.mod_turnitintooltwo_rubric_view_launch {
+    padding:4px 0px 4px 0px;
+    line-height: 22px;
+    color: #0070A8 !important;
+}
+
+.tii_peermark_manager_launch {
+    color: #009900 !important;
+}
+
+.tii_peermark_reviews_launch {
+    color: #009900 !important;
+}
+
+.tii_peermark_manager_launch,
+.tii_peermark_reviews_launch {
+    padding: 4px 0 4px 46px;
+    height: 22px;
+}
+
+.mod_turnitintooltwo .peermark_loading_row {
+    text-align: center;
+    margin:0 auto 8px;
+}

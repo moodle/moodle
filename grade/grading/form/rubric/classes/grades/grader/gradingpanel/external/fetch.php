@@ -32,12 +32,12 @@ use coding_exception;
 use context;
 use core_grades\component_gradeitem as gradeitem;
 use core_grades\component_gradeitems;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
 use stdClass;
 use moodle_exception;
 require_once($CFG->dirroot.'/grade/grading/form/rubric/lib.php');
@@ -316,15 +316,7 @@ class fetch extends external_api {
             'trusted' => false,
             'filter' => true,
         ];
-        [$newtext] = \core_external\util::format_text(
-            $text,
-            $format,
-            $context,
-            'grading',
-            $filearea,
-            $definitionid,
-            $formatoptions
-        );
+        [$newtext, ] = external_format_text($text, $format, $context, 'grading', $filearea, $definitionid, $formatoptions);
         return $newtext;
     }
 }

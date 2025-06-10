@@ -1,0 +1,55 @@
+.path-blocks-simple_restore .region-content {
+   text-align: center;
+}
+
+.path-blocks-simple_restore .box.generalbox, .path-blocks-simple_restore .region-content table {
+   margin: 0 auto 30px auto;
+   box-shadow: 0 0 10px #bbbbbb;
+   width: 70%;
+   min-width: 500px;
+   text-align: left;
+}
+
+.path-blocks-simple_restore .region-content table td a {
+   overflow: hidden;
+   white-space:nowrap;
+}
+
+#page-blocks-simple_restore-list #region-main {
+  max-width: none;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable {
+  table-layout: fixed !important;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable .c0 {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  width: auto;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable .c1 {
+  width: 6em;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable .c2 {
+  width: 15em;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable tr:hover .c0 {
+  overflow: visible !important;
+}
+
+#page-blocks-simple_restore-list #region-main table.generaltable tr:hover .c1, #page-blocks-simple_restore-list #region-main table.generaltable tr:hover .c2 {
+  color: transparent !important;
+}
+
+
+.restore_template_progress_hider div.backup_progress.clearfix {
+  visibility: hidden;
+}

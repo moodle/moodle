@@ -16,7 +16,6 @@
 
 namespace core_group;
 
-use core_external\external_api;
 use core_group_external;
 use externallib_advanced_testcase;
 
@@ -79,7 +78,7 @@ class externallib_test extends externallib_advanced_testcase {
         $groups = core_group_external::create_groups(array($group1, $group2));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groups = external_api::clean_returnvalue(core_group_external::create_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::create_groups_returns(), $groups);
 
         // Checks against DB values
         $this->assertEquals(2, count($groups));
@@ -231,7 +230,7 @@ class externallib_test extends externallib_advanced_testcase {
         $groups = core_group_external::get_groups(array($group1->id, $group2->id));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groups = external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
 
         // Checks against DB values
         $this->assertEquals(2, count($groups));
@@ -398,7 +397,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function without specifying the optional parameter.
         $groupings = core_group_external::get_groupings(array($grouping->id));
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+        $groupings = \external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
 
         $this->assertEquals(1, count($groupings));
 
@@ -422,7 +421,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function specifying that groups are returned.
         $groupings = core_group_external::get_groupings(array($grouping->id), true);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+        $groupings = \external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
         $this->assertEquals(1, count($groupings));
         $this->assertEquals(2, count($groupings[0]['groups']));
         foreach ($groupings[0]['groups'] as $group) {
@@ -564,7 +563,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student1);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups.
         $this->assertCount(2, $groups['groups']);
         $this->assertEquals($course->id, $groups['groups'][0]['courseid']);
@@ -572,7 +571,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check that I only see my groups inside the given grouping.
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id, $grouping->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups in the grouping.
         $this->assertCount(1, $groups['groups']);
         $this->assertEquals($group1->id, $groups['groups'][0]['id']);
@@ -580,13 +579,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check optional parameters (all student 1 courses and current user).
         $groups = core_group_external::get_course_user_groups();
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups in all my courses.
         $this->assertCount(3, $groups['groups']);
 
         $this->setUser($student2);
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups.
         $this->assertCount(1, $groups['groups']);
 
@@ -596,17 +595,17 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in given course.
         $this->assertCount(2, $groups['groups']);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in given course.
         $this->assertCount(1, $groups['groups']);
 
         $groups = core_group_external::get_course_user_groups(0, $student1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
         $this->assertCount(2, $groups['groups']); // Teacher only see groups in first course.
         $this->assertCount(1, $groups['warnings']); // Enrolment warnings.
@@ -615,7 +614,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Enrol teacher in second course.
         $this->getDataGenerator()->enrol_user($teacher->id, $anothercourse->id, $teacherrole->id);
         $groups = core_group_external::get_course_user_groups(0, $student1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
         $this->assertCount(3, $groups['groups']);
 
@@ -624,20 +623,20 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Student can's see other students group.
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('cannotmanagegroups', $groups['warnings'][0]['warningcode']);
 
         // Not enrolled course.
         $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('1', $groups['warnings'][0]['warningcode']);
 
         $this->setUser($teacher);
         // Check user checking not enrolled in given course.
         $groups = core_group_external::get_course_user_groups($emptycourse->id, $student1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('notenrolled', $groups['warnings'][0]['warningcode']);
     }
@@ -706,7 +705,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Retrieve my groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         $this->assertFalse($groups['canaccessallgroups']);
 
@@ -723,20 +722,20 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($teacher);
         // Retrieve other users groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $student->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         // We are checking the $student passed as parameter so this will return false.
         $this->assertFalse($groups['canaccessallgroups']);
 
         // Check warnings. Trying to get groups for a user not enrolled in course.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $otherstudent->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertFalse($groups['canaccessallgroups']);
 
         // Checking teacher groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id);
-        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         // Teachers by default can access all groups.
         $this->assertTrue($groups['canaccessallgroups']);
@@ -771,7 +770,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student);
 
         $data = core_group_external::get_activity_groupmode($cm1->id);
-        $data = external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
+        $data = \external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
         $this->assertEquals(VISIBLEGROUPS, $data['groupmode']);
 
         try {

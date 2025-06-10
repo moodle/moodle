@@ -1,0 +1,44 @@
+body.wirisplugincleancache {
+    width: 600px;
+    margin: auto;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    background-color: #e0e0e0;
+    text-align: center;
+}
+
+h2.wirisplugincleancache {
+    color: #4d626e;
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+div {
+    display: block;
+}
+
+div.wirismaincontainer {
+    padding: 1em;
+    margin-top: 10px;
+    background-color: white;
+}
+
+div.wirisplugincleancacheform {
+    margin: 0 auto;
+    display: inline-block;
+    text-align: right;
+}
+
+div.wirisplugincleancacheresults {
+    text-align: center;
+    vertical-align: middle;
+}
+
+span.wirisplugincleancachewarning {
+    color: red;
+}
+
+span.wirisplugincleancachetextform {
+    text-align: left;
+}

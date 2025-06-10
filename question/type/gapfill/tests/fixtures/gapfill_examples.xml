@@ -1,0 +1,1729 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Gapfill sample questions</text>
+
+    </category>
+  </question>
+
+<!-- question: 127  -->
+  <question type="gapfill">
+    <name>
+      <text>Alternative_Delimiters</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: large;">This question is designed to demonstrate that the gaps can be delimited by characters other than the default square braces. This is useful for questions about programming languages for example where the questions are about arrays in a language that uses square braces. Enter 1 into the gap for the first try to see the hints.</span></p>
+<p><span style="font-size: medium;">Make the following php code print out the string "cat"</span></p>
+<p><span style="font-size: medium;">$ar= array('cat','mat');</span><br><span style="font-size: medium;">print $ar[{0}];</span></p>
+<p> </p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>0</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p><img src="data:image/png;base64,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" alt="" />Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Hint:What number do array places count from?</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Hint:Remember that php arrays count from zero not one (like most programming languages)</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 128  -->
+  <question type="gapfill">
+    <name>
+      <text>AnyOrderDDrop</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">The question uses the no duplicates option. This means a field may accept a range of words but if the same word is entered into more than one field it will only gain one mark for that word. The question syntax uses using the broken bar | operator to indicate the or operation, i.e. the answer can be this or that. So here it has been entered as [gold|silver|bronze] . Here is the question.</span></p>
+<p><span style="font-size: medium;">What are the medals that can be won in the olympic games?</span></p>
+<p><span style="font-size: medium;">Enter the same value twice or, e.g. gold, gold, silver. It will mark all answers correct with a tick, but if you notice the score will be 2 rather than three.</span></p>
+<p><span style="font-size: medium;">{gold|silver|bronze} {gold|silver|bronze} {gold|silver|bronze}</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>brown</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>pink</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>green</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct. Note how the actual mark matches the number of unique correct answers whatever the number of ticks is.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Try again</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 129  -->
+  <question type="gapfill">
+    <name>
+      <text>AnyOrderGapfill</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">The question uses the no duplicates option. This means a field may accept a range of words but if the same word is entered into more than one field it will only gain one mark for that word. The question syntax uses using the broken bar | operator to indicate the or operation, i.e. the answer can be this or that. So here it has been entered as [gold|silver|bronze] . Here is the question.</span></p>
+<p><span style="font-size: medium;">What are the medals that can be won in the olympic games?</span></p>
+<p><span style="font-size: medium;">Enter the same value twice or, e.g. gold, gold, silver. It will mark all answers correct with a tick, but if you notice the score will be 2 rather than three.</span></p>
+<p><span style="font-size: medium;">{gold|silver|bronze} {gold|silver|bronze} {gold|silver|bronze}</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>gold|silver|bronze</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct. Note how the actual mark matches the number of unique correct answers whatever the number of ticks is.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Try again</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 130  -->
+  <question type="gapfill">
+    <name>
+      <text>CaseSensitive</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">The complete phrase is "The cat sat on the mat", This version case the case sensitivity option checked so the words cat and mat must be entered as Cat and Mat.</span></p>
+<p><span style="font-size: medium;">The [Cat] sat on the [Mat]</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>1</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>Cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>Mat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>1</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 131  -->
+  <question type="gapfill">
+    <name>
+      <text>Correct_empty_gaps with !!</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<span style="font-size: medium;"><p>Use of the double !! indicates that a gap must be left blank be considered correct. The !! fields get a mark if left blank and can be thought of as distractors.&nbsp;</p></span>
+
+<table class="gapfilltable" rules="rows" border="2">
+<tbody>
+<tr>
+<td>Canine</td>
+<td>[dog]</td>
+</tr>
+<tr>
+<td>Feline</td>
+<td>[cat]</td>
+</tr>
+<tr>
+<td>Bovine</td>
+<td>[!!]</td>
+</tr>
+</tbody>
+</table>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>dog</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>!!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>mouse</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 132  -->
+  <question type="gapfill">
+    <name>
+      <text>Crossword</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><strong>Accross:</strong></p>
+<p>3:Capital city of the UK</p>
+<p>4 Grape based alcololic drink</p>
+<p><strong>Down</strong></p>
+<p>2.Celestial body visitied by Apollo 11</p>
+<p>1. Melody part of song (rhymes with 2 down)</p>
+<table class="text-center gapfillcol" border="1">
+<tbody>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>1</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>2</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>[T]</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>[M]</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>[U]</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>3</td>
+<td>[L]</td>
+<td>[O]</td>
+<td>[N]</td>
+<td>[D]</td>
+<td>[O]</td>
+<td>[N]</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>[O]</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>[E]</td>
+</tr>
+<tr>
+<td>&nbsp;4 &nbsp;</td>
+<td>[W]</td>
+<td>[I]</td>
+<td>[N]</td>
+<td>[E]</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>15.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>T</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>M</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>U</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>L</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>O</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>N</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>D</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>O</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>N</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>O</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>E</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>W</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>I</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>N</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>E</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="html">
+      <text>Your answer is correct.</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Your answer is partially correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>Your answer is incorrect.</text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 133  -->
+  <question type="gapfill">
+    <name>
+      <text>Disable RegEx for Math, HTML and Code questions</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">This question has disabled regular expressions. This means that special characters used in regular expressions such as &lt; / * . etc  will have no meaning which can be useful when creating questions for maths and programming or HTML (which of course uses the &lt; and &gt; characters extensively).</span></p>
+<p><span style="font-family: courier new,courier,monospace; font-size: medium;">2[+]2=4<br />4[/]2=2</span></p>
+<p><span style="font-size: medium;">The option for disable regex can be found in the More Options in the question editing form.</span></p>
+<p><span style="font-size: medium;">Complete the syntax for this for loop in PHP</span></p>
+<p><span style="font-size: medium; font-family: courier new,courier,monospace;">for($i=0;$i[&lt;]10;$++){</span></p>
+<p><span style="font-size: medium; font-family: courier new,courier,monospace;">print($i);</span></p>
+<p><span style="font-size: medium; font-family: courier new,courier,monospace;">}</span></p>
+<p> </p>
+<p> </p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>+</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>/</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[&lt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>One more try</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 134  -->
+  <question type="gapfill">
+    <name>
+      <text>DragAndDrop</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<table border="0">
+<tbody>
+<tr>
+<td><img src="data:image/png;base64,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" alt=""></td>
+<td><span style="font-size: medium;">The complete phrase is "The cat sat on the mat". This question has been created simply by surrounding the "missing" words with square braces like this</span></td>
+</tr>
+</tbody>
+</table>
+<p><span style="font-size: medium;">The [cat] sat on the [mat]</span></p>
+<p><span style="font-size: medium;">Although this is a "drag and drop" version, you can simply type into the fields, which may be useful when using a mobile browser. Note the draggable clues are shuffled each time a new quiz session starts. The Options after text option has been checked so the draggable option answers appear after the text.<br></span></p>
+<p><span style="font-size: medium;">Drag the correct words into the gaps.</span></p>
+<p><span style="font-size: medium;">The {cat} sat on the {mat}</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>This text is from the general feedback section of the question editing form.</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>1</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>mat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>rat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>bat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>rug</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>hat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>1</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect. You need to brush up on your knowledge of feelines in the domestic sphere.</p>
+<p><img src="data:image/png;base64,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" alt="" /></p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Hint1: The answer refers to a feline and a floor covering. Note how the incorrect answers are cleared after you press the try again button. This hint DOES show the number of correct answers and so each field has an indicator of correctness or incorrectness via tick/cross colour</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Hint2: The answer refers to a domestic feline and a floor covering that rhymes with bat. The show number of correct responses option is not ticked for this.</p>]]></text>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 135  -->
+  <question type="gapfill">
+    <name>
+      <text>DropDownMathSymbols</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>This demonstrates comparing basic maths symbols and depends on DisableRegex (regular expressions) being checked.</p>
+<p>What is the greater than symbol [&gt;]</p>
+<p>What is the less than symbol [&lt;]</p>
+<p>What is the addition symbol [+]</p>
+<p>What is the minus symbol [-]</p>
+<p>What is the multiply symbol [*]</p><p><br></p>
+<p> </p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>5.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dropdown</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[&gt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[&lt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>+</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>-</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>*</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>?</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dropdown</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 136  -->
+  <question type="gapfill">
+    <name>
+      <text>DropDowns</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<table border="0">
+<tbody>
+<tr>
+<td>
+<p><span style="font-size: medium;"><img src="data:image/png;base64,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" alt="" /></span></p>
+</td>
+<td>
+<p> </p>
+<p><span style="font-size: medium;">The complete phrase is "The cat sat on the mat", but this time the word options are in dropdowns.</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><span style="font-size: medium;">The [cat] sat on the [mat]</span></p>
+<p><span style="font-size: medium;"> </span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dropdown</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>mat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>bat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>rug</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dropdown</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go. There is no indication of what answers are correct or incorrect because the show the number of correct responses box is not checked in hint 1.</p>]]></text>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>One last time. The Show the number of correct responses box was checked and so you have the background colour and symbols (tick/cross) to indicate which answers were correct.</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 137  -->
+  <question type="gapfill">
+    <name>
+      <text>Fixed Gapsize</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>This question has the fixedgapsize setting checked so that all gaps are the size of the biggest gap. This means that the size of the gap does not give a clue to the correct answer.</p>
+<p>The [kangaroo] is a native of Australia, the Kiwi is a native of [New] Zealand</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>kangaroo</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>New</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>old</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>Panda</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 138  -->
+  <question type="gapfill">
+    <name>
+      <text>Gapfill (no prompts)</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">The complete phrase is "The cat sat on the mat", This version has no prompts (i.e. no dragdrop or dropdowns displayed).</span></p>
+<p><span style="font-size: medium;">A question can be converted from showing prompts to no prompts by a simple selection in the question edit screen. This can be used to create an easy (with prompts version) and then copying it, making that change and you will then have a harder (no prompts) version.</span></p>
+<p><span style="font-size: medium;">The [cat] sat on the [mat]</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>mat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>One last try</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 139  -->
+  <question type="gapfill">
+    <name>
+      <text>GroupTablesHorizontal</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[This question has Fixed Gap Size and No Duplicates set. The Canine row values include a !! to allow for one field to be left blank in order to get all 4 marks.&nbsp; <br><table class="gapfilltable" rules="rows" border="2">
+<tbody>
+</tbody><colgroup>
+    <col class="gapfillfirstcol">
+    <col class="gapfillcol">
+    <col class="gapfillcol">
+ </colgroup>
+<tbody><tr><td>Feline</td><td>[tiger|lion]</td><td>[tiger|lion]</td></tr>
+<tr><td>Canine</td><td>[dog|!!]</td><td>[dog|!!]</td></tr>
+</tbody>
+</table>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>4.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>tiger|lion</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>tiger|lion</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>dog|!!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>dog|!!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>cow</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>mouse</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Your answer is partially correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>Your answer is incorrect.</text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 140  -->
+  <question type="gapfill">
+    <name>
+      <text>GroupTablesVertical</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">You can offer groups of answer fields to be dragged in its appropriate category or group. For example a language teacher might offer words that are dragged into the gender categories or biologists could offer options to be dragged into the categories of animals, e.g. canine, feline and . The key to this is using the | (or) operator. The second canine column contains the double not !! as follows [dog|!!] to allow a blank as a correct option.</span></p>
+<table class="gapfilltable" border="2" rules="rows">
+<tbody>
+<tr><th><span style="font-size: medium;">Feline</span></th><th><span style="font-size: medium;">Canine</span></th></tr>
+<tr>
+<td><span style="font-size: medium;">{tiger|lion}</span></td>
+<td><span style="font-size: medium;">{dog|!!}</span></td>
+</tr>
+<tr>
+<td><span style="font-size: medium;">{tiger|lion}</span></td>
+<td><span style="font-size: medium;">{dog|!!}</span></td>
+</tr>
+</tbody>
+</table>
+<p> </p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>4.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>tiger|lion</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>dog|!!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>tiger|lion</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>dog|!!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>rat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>swallow</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>kangaroo</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>1</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <hint format="html">
+      <text><![CDATA[<p>Try again</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Have another go</p>]]></text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
+  </question>
+
+<!-- question: 141  -->
+  <question type="gapfill">
+    <name>
+      <text>Images in tables (fruit)</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<table class="gapfilltable" border="2" rules="rows"><colgroup> <col class="gapfillcol" /> <col class="gapfillcol" /> </colgroup>
+<tbody>
+<tr>
+<td><img src="@@PLUGINFILE@@/apple.png" alt="" width="40" height="51" /></td>
+<td>[apple]</td>
+</tr>
+<tr>
+<td><img src="@@PLUGINFILE@@/pear.png" alt="" width="40" height="55" /></td>
+<td>[pear]</td>
+</tr>
+</tbody>
+</table>]]></text>
+<file name="apple.png" path="/" encoding="base64">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</file>
+<file name="pear.png" path="/" encoding="base64">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</file>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>apple</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>pear</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>orange</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>pineapple</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>1</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 142  -->
+  <question type="gapfill">
+    <name>
+      <text>Maths Operators</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>What is the greater than sign [&gt;]</p>
+<p>What is the less than sign [&lt;]</p>
+<p>What is the addition symbol [+]</p>
+<p>What is the subtraction symbol [-]</p>
+<p>What is the multiplication symbol? [*]</p>
+[10² ]=100<br>Note that the raising to powers and backslash were entered using the HTML unicode strings.<br>For example the squared string is &amp;#178; However these must be entered into the editor with HTML mode turned off otherwise it will "interpret" the strings, i.e. put in &amp;amp instead of plain &amp; and it will not display correctly at runtime.<br><br><br>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>6.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[&gt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[&lt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>+</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>-</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>*</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>10²</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>?</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>!</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>/</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>10³</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 143  -->
+  <question type="gapfill">
+    <name>
+      <text>Multi Word Answers</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p style="margin: 0px 0px 10px; color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14.666666984558105px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">This illustrates answers containing more than one word</p>
+<p style="margin: 0px 0px 10px; color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14.666666984558105px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">The answer is "the black cat sat on the soft mat"</p>
+<p style="margin: 0px 0px 10px; color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14.666666984558105px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">The [black cat] sat on the [soft mat]</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>black cat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>soft mat</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 144  -->
+  <question type="gapfill">
+    <name>
+      <text>Other scripts and accents</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>The gapfill question type can be used with non ASCII characters. For example the Cyrillic alphabet. </p>
+<p>Moscow is the capital of [Россия]</p>
+<p>The french word garçon has an accent on the letter c [garçon]</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>Россия</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>garçon</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>France</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>garcon</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 145  -->
+  <question type="gapfill">
+    <name>
+      <text>RegularExpressions</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">This question illustrates that following a letter with a question mark ? will make it optional. The following gap will accept colours, colour, colors and colors as correct answers, so allowing both US and UK spelling of the word. If you look at the source of this question this gap contains <span style="font-size: medium;">colou?rs?</span> </span></p>
+<p><span style="font-size: medium;">Red, Green and Blue are examples of {colou?rs?}</span></p>
+<p><span style="font-size: medium;">This gap illustrates how you can "escape" the special characters used in regular expressions such as the dollar sign by preceeding them with a backslash i.e. \$.  The correct answer for this gap is the $ symbol. <br /></span></p>
+<p><span style="font-size: medium;">The special character that indicates the start of a variable in PHP is the {\$} sign. (enter the $ sign)</span></p>
+<p><span style="font-size: medium;">The HTML tag to start a paragraph is {\&lt;p\&gt;}  (enter &lt;p&gt;)<br /></span></p>
+<p><span style="font-size: medium;"><span style="font-size: medium;">Note there is an option under more options to switch off regular expression for the whole question, but escaping is useful where you need some regex processing.<br /></span></span></p>
+<p><span style="font-size: medium;"><span style="font-size: medium;">You can ensure any spare spaces between words are ignored with \s</span></span></p>
+<p><span style="font-size: medium;"><span style="font-size: medium;">The correct answer here is black and white but it will accept the words with one or more spaces between them {black\s+and\s+white}. <br /></span></span></p>
+<p><span style="font-size: medium;"><span style="font-size: medium;">Moodle has two short answer question types that support regular expressions</span></span></p>
+<p><strong><span style="font-size: medium;"><span style="font-size: medium;">Preg</span></span></strong></p>
+<p><a href="http://docs.moodle.org/25/en/question/type/preg" target="_blank"><span style="font-size: medium;"><span style="font-size: medium;">http://docs.moodle.org/25/en/question/type/preg</span></span></a></p>
+<p><span style="font-size: medium;"><span style="font-size: medium;">and</span></span></p>
+<p><strong><span style="font-size: medium;"><span style="font-size: medium;">Regular Expression Short Answer</span></span></strong></p>
+<p><a href="https://moodle.org/plugins/view.php?plugin=qtype_regexp" target="_blank"><span style="font-size: medium;"><span style="font-size: medium;">https://moodle.org/plugins/view.php?plugin=qtype_regexp</span></span></a></p>
+<p> </p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>4.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>gapfill</answerdisplay>
+    <delimitchars>{}</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>colou?rs?</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>\$</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[\&lt;p\&gt;]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>black\s+and\s+white</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>{}</delimitchars>
+    <answerdisplay>gapfill</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 146  -->
+  <question type="gapfill">
+    <name>
+      <text>Troubleshooting</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>You can troubleshoot a question by clicking the "fill in correct responses" button in preview mode.</p>
+<p>This question does not [<span>work</span>] because there are hidden html tags within the field, you can view (and delete) the hidden div tags by clicking the HTML button on the editor bar.</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text><![CDATA[<span>work</span>]]></text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>0</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+<!-- question: 147  -->
+  <question type="gapfill">
+    <name>
+      <text>UsingCommas</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><span style="font-size: medium;">Answers may contain commas and commas can be used in distractors by escaping them with the backslash like this \,</span></p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><span style="font-size: medium;">What are the colors of the French flag?</span></p>
+</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAeCAIAAADlxgqWAAACT0lEQVRYhWPYvXu3jZWDspyOvLQWBMlJaUKQjISGtLg6BEmKqkmJqctLaxoZmpgRDUz09fWlJHRFhPVERXRFhPEwDMTFrPX0li5dyuDh5iPN46QjnK0lCENCGEgQSroYVC5dvH430WDz7JmzNeWm8jFM5WeYyseAn5HFzWSkosygrqyvJpBsKTGJGBTjuPTxvff/iQZfr1y4YqlxRoSBGLRQgEGOmZFBTUlvkDhokQCDHDMDg5qSnvpgc9CgC6FB56CRFGXXLl1zMjynwHteWeCCmshFDdGLmmIXtcQvaknCkPhFTbEL6qIXVIWWyfDKszLR1kHfbt+4Fe55xVyNGLRGR06Rg422UUamg4ZqCNlIT070WPHk4YeBd5CN9BRX1Rm++nOLojY+e/RxIKPMSnKSk9L0AON5oRYLw60WlcRsormDVBR0sYaQleRkZ+XpAUbzwqwWhcPQgDnITm6Kp9ZsSKiE099BaFHmqDgtwGh+mOUiNNcMQAhZS09205gZhuGOgXGQjfRkLx0s0TRgUeatMzvMEp9r6OcgDcEUD81Z+J1CRwcp6hrIZIaYEwgb+jlITUXfWr2AGNfQyUHqqvq2GoWDyEEaaga2moPJQYMuhDTVDQeJg1ZDHOTu6qUjH+CsW+2iV+2iV+OiB2fUIDGg7Ej39rVrth0kGuxaunips8UCbbmF2nILtOXwM8qVJY3VVBi2bdtmYmQpLqIoJqQAR6JCCiKC8iKCCmhIUkxRQ11Th2igpaamJiKkKsCHidQE+ZGRupCAmZbmooULAUqDxLmD9mgKAAAAAElFTkSuQmCC" alt="" /></td>
+</tr>
+</tbody>
+</table>
+<p><span style="font-size: medium;">It's [ blue, white, red ]</span></p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <answerdisplay>dragdrop</answerdisplay>
+    <delimitchars>[]</delimitchars>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>blue, white, red</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>orange\, white\, red</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>green\, white\, black</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <delimitchars>[]</delimitchars>
+    <answerdisplay>dragdrop</answerdisplay>
+    <casesensitive>0</casesensitive>
+    <noduplicates>0</noduplicates>
+    <disableregex>1</disableregex>
+    <fixedgapsize>0</fixedgapsize>
+    <optionsaftertext>0</optionsaftertext>
+    <!-- Gapfill release:1.95 version:2017062601 Moodle version:2016052302.09 release:3.1.2+ (Build: 20161020) -->
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+  </question>
+
+</quiz>

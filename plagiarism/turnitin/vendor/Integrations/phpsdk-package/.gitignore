@@ -1,0 +1,10 @@
+logs/
+.idea/
+vendor/
+tests/_reports
+docs/
+sandbox/*
+!sandbox/.gitkeep
+!sandbox/example.php
+.DS_Store
+.envfile

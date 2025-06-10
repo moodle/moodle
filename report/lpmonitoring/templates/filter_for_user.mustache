@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency filter for user template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * plans
+      * name
+      * id
+}}
+<form class="mform" id="reportFilter" accept-charset="utf-8" autocomplete="off">
+    <fieldset id="id_displayinfo" class="clearfix collapsible">
+        <legend class="ftoggler">
+            <a title="{{#str}}clicktohideshow{{/str}}" href="#" class="fheader" role="button" aria-controls="id_displayinfo" aria-expanded="true">{{#str}}filter, report_lpmonitoring{{/str}}</a>
+        </legend>
+        <div class="fcontainer clearfix">
+            <div class="studentfilter">
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="studentPlansSelectorReport">{{#str}}learningplans, tool_lp{{/str}}</label>
+                    </div>
+                    <div class="felement fselect col-md-9">
+                        <select id="studentPlansSelectorReport" class="custom-select">
+                            <option value="">{{#str}}selectlearningplan, report_lpmonitoring{{/str}}</option>
+                            {{#plans}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/plans}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fitem form-group row">
+                <div class="fitemtitle col-md-3"></div>
+                <div class="felement col-md-9">
+                    <button id="submitFilterReportButton" type="submit" class="btn btn-primary" disabled>
+                        {{#str}}apply, report_lpmonitoring{{/str}}
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>

@@ -37,6 +37,7 @@ class core_role_admins_existing_selector extends user_selector_base {
         if (is_null($name)) {
             $name = 'removeselect';
         }
+        $options['multiselect'] = false;
         $options['includecustomfields'] = true;
         parent::__construct($name, $options);
     }

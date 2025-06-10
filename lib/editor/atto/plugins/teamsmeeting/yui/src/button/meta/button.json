@@ -1,0 +1,7 @@
+{
+    "moodle-atto_teamsmeeting-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

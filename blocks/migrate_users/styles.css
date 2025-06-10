@@ -1,0 +1,17 @@
+#page-blocks-migrate_users-migrate div#notice.snap-continue-cancel {
+  top: auto!important;
+}
+
+.migrateusers input#userfrom {
+  width: auto;
+  background-color: #e6ffe6;
+  border: 2px solid green;
+  border-radius: 5px;
+}
+
+.migrateusers input#userto {
+  width: auto;
+  background-color: #ffe6e6;
+  border: 2px solid red;
+  border-radius: 5px;
+}

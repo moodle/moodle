@@ -54,8 +54,9 @@ class fillin extends result {
         // There are two way in which H5P could force case sensitivity, with extensions
         // or using options in the correctpatterns. By default it is case sensible.
         $casesensitive = $extensions['https://h5p.org/x-api/case-sensitivity'] ?? true;
-        if (!empty($this->result->correctpattern) && strpos($this->result->correctpattern, '{case_matters=false}') !== null) {
-                $casesensitive = false;
+        if ((!empty($this->result->correctpattern)
+            && strpos($this->result->correctpattern, '{case_matters=false}') !== false)) {
+            $casesensitive = false;
         }
 
         $values = [];
@@ -101,7 +102,7 @@ class fillin extends result {
             } else {
                 $state = parent::INCORRECT;
             }
-            $option->useranswer = $this->get_answer($state, $gapresponse);
+            $option->useranswer = $this->get_answer($state, $this->response[$key]);
 
             $option->correctanswer = $this->get_answer(parent::TEXT, implode(' / ', $value));
 

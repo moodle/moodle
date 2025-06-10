@@ -42,27 +42,8 @@
     border-left-width: 0;
     padding: 4px 5px;
     vertical-align: middle;
-    text-align: center;
+    text-align: right;
     white-space: nowrap;
-}
-
-.path-grade-report-grader .action-menu {
-    display: inline-block;
-}
-
-.path-grade-report-grader .overriddengrade {
-    color: #495057;
-    border: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-}
-
-.path-grade-report-grader .gradepass {
-    color: #357a32;
-}
-
-.path-grade-report-grader .gradefail {
-    color: #ca3120;
 }
 
 /**
@@ -95,16 +76,6 @@
     width: 200px;
     white-space: normal;
     vertical-align: top;
-    height: 100px;
-}
-
-.path-grade-report-grader .gradeparent .gradecell {
-    vertical-align: top;
-    padding-top: 20px;
-}
-
-.path-grade-report-grader .gradeparent .locked {
-    padding-top: 27px;
 }
 
 .path-grade-report-grader .gradeparent .user.cell .userpicture {
@@ -169,6 +140,11 @@
     display: inline-block;
 }
 
+.path-grade-report-grader .gradeparent tr:nth-child(n) td.overridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
+    background-color: #efd9a4;
+}
+
 .path-grade-report-grader .gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
     /* Made very specific to override the default stripped style of the table. */
     background-color: #ffe3a0;
@@ -187,11 +163,11 @@
 
 /**
  * Editing fields.
- * MDL-74286 - width 100% pushes action menu out of cell.
  */
 .path-grade-report-grader .gradeparent select {
     text-overflow: ellipsis;
     min-width: 8rem;
+    width: 100%;
 }
 
 .path-grade-report-grader .gradeparent .text {
@@ -202,12 +178,12 @@
     text-align: center;
 }
 
-.path-grade-report-grader .action-menu {
-    padding-left: 10px;
-}
-
-.path-grade-report-grader .dropdown-menu {
-    width: max-content;
+.path-grade-report-grader .gradeparent .quickfeedback {
+    border: 1px dashed #000;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
 }
 
 .path-grade-report-grader .yui3-overlay {
@@ -226,11 +202,8 @@
     border-radius: 4px;
 }
 
-.path-grade-report-grader .initialsdropdown {
-    width: 460px;
+@media only screen and (min-width: 768px) {
+    .path-grade-report-grader .gradeparent table {
+        padding-right: 6em;
+    }
 }
-
-.path-grade-report-grader .initialsdropdown::after {
-    content: '';
-}
-

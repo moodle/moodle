@@ -20,10 +20,8 @@ namespace core_reportbuilder\local\aggregation;
 
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
-use core_reportbuilder\manager;
 use core_reportbuilder\local\report\column;
 use core_user\reportbuilder\datasource\users;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -144,24 +142,16 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
             'aggregation' => groupconcatdistinct::get_class_name(),
         ]);
 
-        // Add callback to format the column.
-        $instance = manager::get_report_from_persistent($report);
-        $instance->get_column('user:confirmed')
-            ->add_callback(static function(string $value, stdClass $row, $arguments, ?string $aggregation): string {
-                // Simple callback to return the given value, and append aggregation type.
-                return "{$value} ({$aggregation})";
-            });
-
         // Assert confirmed column was aggregated, and sorted predictably with callback applied.
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [
                 'c0_firstname' => 'Admin',
-                'c1_confirmed' => 'Yes (groupconcatdistinct)',
+                'c1_confirmed' => 'Yes',
             ],
             [
                 'c0_firstname' => 'Bob',
-                'c1_confirmed' => 'No (groupconcatdistinct), Yes (groupconcatdistinct)',
+                'c1_confirmed' => 'No, Yes',
             ],
         ], $content);
     }

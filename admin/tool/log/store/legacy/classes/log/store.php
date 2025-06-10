@@ -86,7 +86,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
         }
 
         // Replace crud fields.
-        $selectwhere = preg_replace_callback("/(crud).*?(<>|=|!=).*?'(.*?)'/s", self::class .'::replace_crud', $selectwhere);
+        $selectwhere = preg_replace_callback("/(crud).*?(<>|=|!=).*?'(.*?)'/s", 'self::replace_crud', $selectwhere);
 
         return array($selectwhere, $params, $sort);
     }

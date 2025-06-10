@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 22  -->
+  <question type="multianswerwiris">
+    <name>
+      <text>Cloze Wiris Test Question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Type -10: {#1}</p><p>Type 5: {#2}</p>
+<p>Choose 5/57: {#3}</p><p>Formula #b</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <wirissubquestions>
+        <wirissubquestion>
+            <![CDATA[{:SA:=\#a}]]>
+        </wirissubquestion>
+        <wirissubquestion>
+            <![CDATA[{:SA:=5}]]>
+        </wirissubquestion>
+        <wirissubquestion>
+            <![CDATA[{:MC:=\#b~1~2}]]>
+        </wirissubquestion>
+    </wirissubquestions>
+    <wirisquestion>
+&lt;question&gt;&lt;wirisCasSession&gt;&lt;![CDATA[&lt;wiriscalc version=&quot;3.2&quot;&gt;&lt;title&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mtext&gt;Untitled&amp;#xa0;calc&lt;/mtext&gt;&lt;/math&gt;&lt;/title&gt;&lt;properties&gt;&lt;property name=&quot;decimal_separator&quot;&gt;.&lt;/property&gt;&lt;property name=&quot;digit_group_separator&quot;&gt;&lt;/property&gt;&lt;property name=&quot;float_format&quot;&gt;mg&lt;/property&gt;&lt;property name=&quot;imaginary_unit&quot;&gt;i&lt;/property&gt;&lt;property name=&quot;implicit_times_operator&quot;&gt;false&lt;/property&gt;&lt;property name=&quot;item_separator&quot;&gt;,&lt;/property&gt;&lt;property name=&quot;lang&quot;&gt;en&lt;/property&gt;&lt;property name=&quot;precision&quot;&gt;4&lt;/property&gt;&lt;property name=&quot;quizzes_question_options&quot;&gt;true&lt;/property&gt;&lt;property name=&quot;save_settings_in_cookies&quot;&gt;false&lt;/property&gt;&lt;property name=&quot;times_operator&quot;&gt;·&lt;/property&gt;&lt;property name=&quot;use_degrees&quot;&gt;false&lt;/property&gt;&lt;/properties&gt;&lt;session version=&quot;3.0&quot; lang=&quot;en&quot;&gt;&lt;task&gt;&lt;title&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mtext&gt;Sheet 1&lt;/mtext&gt;&lt;/math&gt;&lt;/title&gt;&lt;group&gt;&lt;command&gt;&lt;input&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;a&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo&gt;-&lt;/mo&gt;&lt;mn&gt;10&lt;/mn&gt;&lt;/math&gt;&lt;/input&gt;&lt;output&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mo&gt;-&lt;/mo&gt;&lt;mn&gt;10&lt;/mn&gt;&lt;/math&gt;&lt;/output&gt;&lt;/command&gt;&lt;command&gt;&lt;input&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;b&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;5&lt;/mn&gt;&lt;mn&gt;57&lt;/mn&gt;&lt;/mfrac&gt;&lt;/math&gt;&lt;/input&gt;&lt;output&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mfrac&gt;&lt;mn&gt;5&lt;/mn&gt;&lt;mn&gt;57&lt;/mn&gt;&lt;/mfrac&gt;&lt;/math&gt;&lt;/output&gt;&lt;/command&gt;&lt;command&gt;&lt;input&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;/&gt;&lt;/input&gt;&lt;/command&gt;&lt;/group&gt;&lt;/task&gt;&lt;/session&gt;&lt;constructions&gt;&lt;construction group=&quot;1&quot;&gt;{&amp;quot;elements&amp;quot;:[],&amp;quot;constraints&amp;quot;:[],&amp;quot;displays&amp;quot;:[],&amp;quot;handwriting&amp;quot;:[]}&lt;/construction&gt;&lt;/constructions&gt;&lt;/wiriscalc&gt;]]&gt;&lt;/wirisCasSession&gt;&lt;correctAnswers&gt;&lt;correctAnswer&gt;&lt;/correctAnswer&gt;&lt;/correctAnswers&gt;&lt;assertions&gt;&lt;assertion name=&quot;syntax_math&quot;/&gt;&lt;assertion name=&quot;equivalent_symbolic&quot;&gt;&lt;param name=&quot;tolerance&quot;&gt;0.001&lt;/param&gt;&lt;param name=&quot;tolerance_digits&quot;&gt;false&lt;/param&gt;&lt;param name=&quot;relative_tolerance&quot;&gt;true&lt;/param&gt;&lt;/assertion&gt;&lt;/assertions&gt;&lt;slots&gt;&lt;slot&gt;&lt;initialContent&gt;&lt;/initialContent&gt;&lt;/slot&gt;&lt;/slots&gt;&lt;localData&gt;&lt;data name=&quot;inputField&quot;&gt;textField&lt;/data&gt;&lt;/localData&gt;&lt;/question&gt;    </wirisquestion>
+  </question>
+
+</quiz>

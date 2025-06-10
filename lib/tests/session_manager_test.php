@@ -846,81 +846,60 @@ class session_manager_test extends \advanced_testcase {
         $this->assertEquals('/good.php?id=4', $SESSION->recentsessionlocks[0]['url']);
     }
 
-    /**
-     * Data provider for the array_session_diff function.
-     *
-     * @return array
-     */
-    public function array_session_diff_provider() {
-        // Create an instance of this object so the comparison object's identities are the same.
-        // Used in one of the tests below.
-        $compareobjectb = (object) ['array' => 'b'];
+    public function test_array_session_diff_same_array() {
+        $a = [];
+        $a['c'] = new \stdClass();
+        $a['c']->o = new \stdClass();
+        $a['c']->o->o = new \stdClass();
+        $a['c']->o->o->l = 'cool';
 
-        return [
-            'both same objects' => [
-                'a' => ['example' => (object) ['array' => 'a']],
-                'b' => ['example' => (object) ['array' => 'a']],
-                'expected' => [],
-            ],
-            'both same arrays' => [
-                'a' => ['example' => ['array' => 'a']],
-                'b' => ['example' => ['array' => 'a']],
-                'expected' => [],
-            ],
-            'both the same with nested objects' => [
-                'a' => ['example' => (object) ['array' => 'a', 'deeper' => (object) []]],
-                'b' => ['example' => (object) ['array' => 'a', 'deeper' => (object) []]],
-                'expected' => [],
-            ],
-            'first array larger' => [
-                'a' => ['x' => 1, 'y' => 2],
-                'b' => ['x' => 1],
-                'expected' => ['y' => 2]
-            ],
-            'second array larger' => [
-                'a' => ['x' => 1],
-                'b' => ['x' => 1, 'y' => 2],
-                'expected' => ['y' => 2]
-            ],
-            'objects with different values but same keys' => [
-                'a' => ['example' => (object) ['array' => 'a']],
-                'b' => ['example' => $compareobjectb],
-                'expected' => ['example' => $compareobjectb]
-            ],
-            'different arrays with top level indexes' => [
-                'a' => ['x', 'y'],
-                'b' => ['x', 'y', 'z'],
-                'expected' => [2 => 'z']
-            ],
-            'different types but same values as first level' => [
-                'a' => ['example' => (object) ['array' => 'a']],
-                'b' => ['example' => ['array' => 'a']],
-                'expected' => ['example' => ['array' => 'a']]
-            ],
-            'different types but same values nested' => [
-                'a' => ['example' => (object) ['array' => ['a' => 'test']]],
-                'b' => ['example' => (object) ['array' => (object) ['a' => 'test']]],
-                // Type checking is not done further than the first level, so we expect no difference.
-                'expected' => []
-            ]
-        ];
+        $class = new \ReflectionClass('\core\session\manager');
+        $method = $class->getMethod('array_session_diff');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs(null, [$a, $a]);
+
+        $this->assertEmpty($result);
     }
 
-    /**
-     * Tests array diff method in various situations.
-     *
-     * @dataProvider array_session_diff_provider
-     * @covers \core\session\manager::array_session_diff
-     * @param array $a first value.
-     * @param array $b second value to compare to $a.
-     * @param array $expected the expected difference.
-     */
-    public function test_array_session_diff(array $a, array $b, array $expected) {
+    public function test_array_session_diff_first_array_larger() {
+        $a = [];
+        $a['stdClass'] = new \stdClass();
+        $a['stdClass']->attribute = 'This is an attribute';
+        $a['array'] = ['array', 'contents'];
+
+        $b = [];
+        $b['array'] = ['array', 'contents'];
+
         $class = new \ReflectionClass('\core\session\manager');
         $method = $class->getMethod('array_session_diff');
         $method->setAccessible(true);
 
         $result = $method->invokeArgs(null, [$a, $b]);
-        $this->assertSame($expected, $result);
+
+        $expected = [];
+        $expected['stdClass'] = new \stdClass();
+        $expected['stdClass']->attribute = 'This is an attribute';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_array_session_diff_second_array_larger() {
+        $a = [];
+        $a['array'] = ['array', 'contents'];
+
+        $b = [];
+        $b['stdClass'] = new \stdClass();
+        $b['stdClass']->attribute = 'This is an attribute';
+        $b['array'] = ['array', 'contents'];
+
+        $class = new \ReflectionClass('\core\session\manager');
+        $method = $class->getMethod('array_session_diff');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs(null, [$a, $b]);
+
+        // It's empty because the first array contains all the contents of the second.
+        $expected = [];
+        $this->assertEquals($expected, $result);
     }
 }

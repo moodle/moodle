@@ -113,6 +113,7 @@ class behat_user extends behat_base {
      * Recognised page names are:
      * | Page Type | Identifier meaning | Description                                |
      * | editing   | username or email  | User editing page (/user/editadvanced.php) |
+     * | profile   | username or email  | User profile page (/user/profile.php) |
      *
      * @param string $type identifies which type of page this is, e.g. 'Editing'.
      * @param string $identifier identifies the user, e.g. 'student1'.
@@ -129,6 +130,12 @@ class behat_user extends behat_base {
                         $identifier . '" does not exist');
                 }
                 return new moodle_url('/user/editadvanced.php', ['id' => $userid]);
+            case 'profile':
+                $userid = $this->get_user_id_by_identifier($identifier);
+                if (!$userid) {
+                    throw new Exception('The specified user with username or email "' . $identifier . '" does not exist');
+                }
+                return new moodle_url('/user/profile.php', ['id' => $userid]);
             default:
                 throw new Exception("Unrecognised page type '{$type}'.");
         }

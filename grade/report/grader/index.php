@@ -112,14 +112,13 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
 
+// Print header
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
+
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 $numusers = $report->get_numusers(true, true);
-
-$actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
-    null, null, null, $actionbar, false);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
@@ -131,13 +130,22 @@ if ($report->currentgroup == -2) {
 $warnings = [];
 $isediting = has_capability('moodle/grade:edit', $context) && isset($USER->editing) && $USER->editing;
 if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
-    // Processing posted grades here.
+    // Processing posted grades & feedback here.
     $warnings = $report->process_data($data);
 }
 
 // Final grades MUST be loaded after the processing.
 $report->load_users();
 $report->load_final_grades();
+echo $report->group_selector;
+
+// User search
+$url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
+$firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
+$lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
+$totalusers = $report->get_numusers(true, false);
+$renderer = $PAGE->get_renderer('core_user');
+echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach ($warnings as $warning) {
@@ -158,7 +166,7 @@ if ($numusers == 0) {
 $reporthtml = $report->get_grade_table($displayaverages);
 
 // print submit button
-if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
+if (!empty($USER->editing) && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
     echo '<form action="index.php" enctype="application/x-www-form-urlencoded" method="post" id="gradereport_grader">'; // Enforce compatibility with our max_input_vars hack.
     echo '<div>';
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';

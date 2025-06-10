@@ -16,8 +16,6 @@
 
 namespace mod_lesson\backup;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -77,7 +75,7 @@ class restore_date_test extends \restore_date_testcase {
             )
         );
         $result = \mod_lesson_external::process_page($lesson->id, $page->id, $data);
-        $result = external_api::clean_returnvalue(\mod_lesson_external::process_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(\mod_lesson_external::process_page_returns(), $result);
 
         // Create attempt.
         $newpageattempt = [
@@ -94,7 +92,7 @@ class restore_date_test extends \restore_date_testcase {
 
         if ($finished) {
             $result = \mod_lesson_external::finish_attempt($lesson->id);
-            $result = external_api::clean_returnvalue(\mod_lesson_external::finish_attempt_returns(), $result);
+            $result = \external_api::clean_returnvalue(\mod_lesson_external::finish_attempt_returns(), $result);
         }
         return $result;
     }

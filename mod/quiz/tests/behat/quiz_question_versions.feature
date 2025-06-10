@@ -111,3 +111,29 @@ Feature: Quiz question versioning
     And I press "Add selected questions to the quiz"
     Then I should see "Other question" on quiz page "1"
     And the field "version" in the "Other question" "list_item" matches value "Always latest"
+
+  @javascript
+  Scenario: Adding a question where all available versions are drafts should display a helpful message.
+    Given quiz "Quiz 1" contains the following questions:
+      | question       | page |
+      | First question | 1    |
+    And I am on the "Quiz 1" "mod_quiz > Question bank" page logged in as teacher
+    And I set the field "question_status_dropdown" in the "First question" "table_row" to "Draft"
+    When I am on the "Quiz 1" "mod_quiz > Edit" page
+    Then I should see "This question is in draft status. To use it in the quiz, go to the question bank and change the status to ready."
+
+  @javascript
+  Scenario: Previewing a question set to use always latest version will set the preview to always latest version
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher"
+    And the field "version" in the "First question" "list_item" matches value "Always latest"
+    When I follow "Preview question"
+    And I expand all fieldsets
+    Then the field "Question version" matches value "Always latest"
+
+  @javascript
+  Scenario: Previewing a question set to use a specific version will set the preview to that version
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher"
+    And I set the field "version" to "v1 (latest)"
+    When I follow "Preview question"
+    And I expand all fieldsets
+    Then the field "Question version" matches value "1"

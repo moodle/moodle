@@ -1,0 +1,103 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User plan information template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * plan
+        * id
+        * name
+        * user
+            * fullname
+            * profileimageurl
+    * hasnavigation if the block has navigation
+    * navprev
+        * fullname
+        * profileimagesmall
+        * planid
+        * tagid
+    * navnext
+        * fullname
+        * profileimagesmall
+        * planid
+        * tagid
+}}
+{{#plan}}
+<header class="widget_profile_box">
+    <div class="plan-name">
+        <h3 class="truncate">
+            {{#pix}}i/competencies, core, {{#str}}template, tool_lp{{/str}}{{/pix}}
+            <a href="{{{plan.url}}}" title="{{plan.name}}" target="_blank">
+                {{plan.name}}
+            </a>
+        </h3>
+    </div>
+    <div class="currentplan" id="plan-user-info">
+        <i id="spinerprofile" class="fa fa-refresh fa-spin fa-4x"></i>
+        <div class="img-wrapper">
+            <img alt="{{#str}}imagealt{{/str}}: {{plan.user.fullname}}" src="{{plan.user.profileimageurl}}" class="img-circle profile_img">
+        </div>
+        <div class="user-name">
+            <h3 class="truncate">
+                <a title="{{plan.user.fullname}}"
+                   href="{{plan.user.profileurl}}"
+                   target="_blank">{{plan.user.fullname}}</a>
+            </h3>
+        </div>
+    </div>
+    {{#hasnavigation}}
+    {{#navprev}}
+    <a  role="button"
+        title="{{#str}}previoususer, report_lpmonitoring{{/str}}: {{fullname}}-{{planid}}"
+        class="navigatetoplan prevplan"
+        data-planid="{{planid}}"
+        data-templateid="{{templateid}}"
+        data-tagid="{{tagid}}"
+        href="#">
+        <span class="user-profile-small">
+            <img alt="{{#str}}imagealt{{/str}}: {{fullname}}" src="{{profileimagesmall}}" >
+            <p>{{fullname}}</p>
+        </span>
+        <i class="fa fa-chevron-left fa-2x"></i>
+    </a>
+    {{/navprev}}
+    {{#navnext}}
+    <a role="button"
+       title="{{#str}}nextuser, report_lpmonitoring{{/str}}: {{fullname}}-{{planid}}"
+       class="navigatetoplan nexplan"
+       data-planid="{{planid}}"
+       data-templateid="{{templateid}}"
+       data-tagid="{{tagid}}"
+       href="#">
+        <span class="user-profile-small">
+            <img alt="{{#str}}imagealt{{/str}}: {{fullname}}" src="{{profileimagesmall}}">
+            <p>{{fullname}}</p>
+        </span>
+        <i class="fa fa-chevron-right fa-2x"></i>
+    </a>
+    {{/navnext}}
+    {{/hasnavigation}}
+</header>
+{{/plan}}
+{{#exception.message}}
+<p class="alert alert-info">
+    {{exception.message}}
+ </p>
+{{/exception.message}}

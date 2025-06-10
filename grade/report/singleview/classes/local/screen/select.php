@@ -97,7 +97,7 @@ class select extends screen {
         $types = gradereport_singleview\report\singleview::valid_screens();
 
         foreach ($types as $type) {
-            $classname = "gradereport_singleview\\local\\screen\\{$type}";
+            $classname = "gradereport_singleview\\local\\screen\\${type}";
 
             $screen = new $classname($this->courseid, null, $this->groupid);
 

@@ -12,7 +12,3 @@ See existing implementations for details. For instance the Drupal H5P module loc
 We will make available documentation and tutorials for creating platform integrations in the future.
 
 The H5P PHP library is GPL licensed due to GPL code being used for purifying HTML provided by authors.
-
-## License
-
-Open Sans font is licensed under Apache license, Version 2.0

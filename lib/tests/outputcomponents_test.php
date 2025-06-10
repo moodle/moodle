@@ -21,7 +21,6 @@ use custom_menu;
 use custom_menu_item;
 use paging_bar;
 use renderer_base;
-use single_button;
 use single_select;
 use theme_config;
 use url_select;
@@ -454,20 +453,20 @@ EOF;
 
     public function test_prepare() {
         $expecteda = array('<span class="current-page">1</span>',
-            '<a href="index.php?page=1">2</a>',
-            '<a href="index.php?page=2">3</a>',
-            '<a href="index.php?page=3">4</a>',
-            '<a href="index.php?page=4">5</a>',
-            '<a href="index.php?page=5">6</a>',
-            '<a href="index.php?page=6">7</a>',
-            '<a href="index.php?page=7">8</a>',
-        );
+                           '<a href="index.php?page=1">2</a>',
+                           '<a href="index.php?page=2">3</a>',
+                           '<a href="index.php?page=3">4</a>',
+                           '<a href="index.php?page=4">5</a>',
+                           '<a href="index.php?page=5">6</a>',
+                           '<a href="index.php?page=6">7</a>',
+                           '<a href="index.php?page=7">8</a>',
+                           );
         $expectedb = array('<a href="page?page=3">4</a>',
-            '<a href="page?page=4">5</a>',
-            '<span class="current-page">6</span>',
-            '<a href="page?page=6">7</a>',
-            '<a href="page?page=7">8</a>',
-        );
+                           '<a href="page?page=4">5</a>',
+                           '<span class="current-page">6</span>',
+                           '<a href="page?page=6">7</a>',
+                           '<a href="page?page=7">8</a>',
+                           );
 
         $mpage = new \moodle_page();
         $rbase = new renderer_base($mpage, "/");
@@ -588,85 +587,6 @@ EOF;
         // The rest should be fine.
         $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
         $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
-    }
-    /**
-     * Test for checking the template context data for the single_select element.
-     * @covers \single_button
-     */
-    public function test_single_button() {
-        global $PAGE;
-        $url = new \moodle_url('/');
-        $realname = 'realname';
-        $attributes = [
-            'data-dummy' => 'dummy',
-        ];
-        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_SECONDARY, $attributes);
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('secondary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-
-        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_PRIMARY, $attributes);
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('primary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-    }
-
-    /**
-     * Test for checking the template context data for the single_select element legacy API.
-     * @covers \single_button
-     */
-    public function test_single_button_deprecated() {
-        global $PAGE;
-        $url = new \moodle_url('/');
-        $realname = 'realname';
-        $attributes = [
-            'data-dummy' => 'dummy',
-        ];
-
-        // Test that when we use a true boolean value for the 4th parameter this is set as primary type.
-        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_PRIMARY, $attributes);
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('primary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-
-        // Test that when we use a false boolean value for the 4th parameter this is set as secondary type.
-        $singlebutton = new single_button($url, $realname, 'post', false, $attributes);
-        $this->assertDebuggingCalled();
-        $renderer = $PAGE->get_renderer('core');
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals($realname, $data->label);
-        $this->assertEquals('post', $data->method);
-        $this->assertEquals('singlebutton', $data->classes);
-        $this->assertEquals('secondary', $data->type);
-        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
-
-        // Test that when we set the primary value, then this is reflected in the type.
-        $singlebutton->primary = false;
-        $this->assertDebuggingCalled();
-        $this->assertEquals(single_button::BUTTON_SECONDARY, $singlebutton->type);
-        $singlebutton->primary = true;
-        $this->assertDebuggingCalled();
-        $this->assertEquals(single_button::BUTTON_PRIMARY, $singlebutton->type);
-        // Then set the type directly.
-
-        $singlebutton->type = single_button::BUTTON_DANGER;
-        $data = $singlebutton->export_for_template($renderer);
-        $this->assertEquals('danger', $data->type);
-
     }
 
     /**

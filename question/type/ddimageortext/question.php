@@ -119,9 +119,6 @@ class qtype_ddimageortext_drop_zone {
     /** @var array X and Y location of the drop zone */
     public $xy;
 
-    /** @var string field name to use */
-    public $fieldname;
-
     /**
      * Create a drop zone object.
      *

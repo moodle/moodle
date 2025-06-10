@@ -88,7 +88,6 @@ class section implements renderable {
             'indexcollapsed' => $indexcollapsed,
             'contentcollapsed' => $contentcollapsed,
             'hasrestrictions' => $this->get_has_restrictions(),
-            'bulkeditable' => $this->is_bulk_editable(),
         ];
 
         if (empty($modinfo->sections[$section->section])) {
@@ -103,15 +102,6 @@ class section implements renderable {
         }
 
         return $data;
-    }
-
-    /**
-     * Return if the section can be selected for bulk editing.
-     * @return bool if the section can be edited in bulk
-     */
-    protected function is_bulk_editable(): bool {
-        $section = $this->section;
-        return ($section->section != 0);
     }
 
     /**

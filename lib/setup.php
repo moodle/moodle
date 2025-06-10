@@ -154,16 +154,6 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
-// Set default warn runtime.
-if (!isset($CFG->taskruntimewarn)) {
-    $CFG->taskruntimewarn = 12 * 60 * 60;
-}
-
-// Set default error runtime.
-if (!isset($CFG->taskruntimeerror)) {
-    $CFG->taskruntimeerror = 24 * 60 * 60;
-}
-
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
@@ -391,7 +381,6 @@ $CFG->yui2version = '2.9.0';
 $CFG->yui3version = '3.17.2';
 
 // Patching the upstream YUI release.
-// For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
 // If we need to patch a YUI modules between official YUI releases, the yuipatchlevel will need to be manually
 // incremented here. The module will also need to be listed in the yuipatchedmodules.
 // When upgrading to a subsequent version of YUI, these should be reset back to 0 and an empty array.
@@ -850,6 +839,8 @@ foreach ($pluginswithfunction as $plugins) {
 }
 
 \core\session\manager::start();
+// Prevent ignoresesskey hack from getting carried over to a next page.
+unset($USER->ignoresesskey);
 
 if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {
     if (!empty($CFG->proxyfixunsafe)) {
@@ -947,6 +938,7 @@ if (!isset($CFG->theme)) {
 if (isset($_GET['lang']) and ($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
     if (get_string_manager()->translation_exists($lang, false)) {
         $SESSION->lang = $lang;
+        \core_courseformat\base::session_cache_reset_all();
     }
 }
 unset($lang);

@@ -1,15 +1,6 @@
 This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* The following analytics target classes, renamed since 3.7, have now been removed completed:
-  - `\core\analytics\target\course_dropout`
-  - `\core\analytics\target\course_competencies`
-  - `\core\analytics\target\course_completion`
-  - `\core\analytics\target\course_gradetopass`
-  - `\core\analytics\target\no_teaching`
-
 === 3.11 ===
 
 * Final deprecation get_enabled_time_splitting_methods. Method has been removed. Use

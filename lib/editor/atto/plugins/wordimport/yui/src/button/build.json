@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_wordimport-button",
+    "builds": {
+        "moodle-atto_wordimport-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

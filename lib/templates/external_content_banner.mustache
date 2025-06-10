@@ -34,10 +34,11 @@
     {
         "iframeid": "external-content",
         "url": "http://example.com/link",
+        "title": "External content"
     }
 }}
 <div class="alert alert-secondary alert-block fade in">
-    <iframe id="{{iframeid}}" class="w-100 border-0"></iframe>
+    <iframe id="{{iframeid}}" title="{{title}}" class="w-100 border-0"></iframe>
 </div>
 {{#js}}
 (function() {

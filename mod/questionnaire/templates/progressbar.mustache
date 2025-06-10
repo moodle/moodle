@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/completepage
+
+    Template which defines a questionnaire completion page.
+
+    Classes required for JS:
+    * /questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template: (Note sections have been used to allow non-inclusion)
+    * completepercent - string: progress through the questionnaire as a percentage
+    * targethelp: object - data for the help tooltip template
+
+    Example context (json):
+    {
+        "percent": "90",
+        "progresshelp": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon":{
+                "extraclasses": "iconhelp",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        }
+    }
+}}
+<div class="progressbar">
+    <div class="questionnaire-progressbar-wrapper">
+        <div class="questionnaire-progressbar-info-sr sr-only">{{#str}}
+            progressbar_info, mod_questionnaire, {{percent}}% {{/str}}</div>
+        <div class="questionnaire-progressbar-info" aria-hidden="true">
+            <span id="questionnaire-progressbar-percent">{{percent}}%</span>
+            {{#progresshelp}}
+                {{>core/help_icon}}
+            {{/progresshelp}}
+        </div>
+        <div class="questionnaire-progressbar">
+            <div class="questionnaire-progressbar-progress" style="width:{{percent}}%;">
+            </div>
+        </div>
+    </div>
+</div>

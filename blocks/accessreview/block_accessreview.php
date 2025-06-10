@@ -155,7 +155,7 @@ class block_accessreview extends block_base {
 
             $button = new single_button(
                 new moodle_url(accessibility::get_plugin_url(), ['action' => 'requestanalysis', 'courseid' => $COURSE->id]),
-                get_string('schedule:requestanalysis', manager::PLUGINNAME), 'post', single_button::BUTTON_PRIMARY,
+                get_string('schedule:requestanalysis', manager::PLUGINNAME), 'post', true,
                 ['class' => 'block_accessreview_analysisbutton']);
             $this->content->text .= html_writer::tag('div', $OUTPUT->render($button),
                 ['class' => 'block_accessreview_analysisbutton']);

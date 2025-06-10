@@ -1,22 +1,6 @@
 This files describes API changes for course formats
 
-Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
-
-=== 4.2 ===
-* New core_courseformat\base::get_context() to get the course context directly from the format instance.
-* New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
-  by overriding this method.
-* The reactive course editor now uses the standard fragment library to refresh an individual section or activity card
-  in the course content. Instead of using adhoc YUI methods and webservice, the new fragment methods are:
-    - core_courseformat_output_fragment_cmitem
-    - core_courseformat_output_fragment_section
-* New methods and outputs added for bulk editing (only available for formats compatible with reactive components):
-    - Mutations for editing the bulk data: bulkEnable, bulkReset, cmSelect, cmUnselect, sectionSelect and sectionUnselect.
-    - Output classes overridable by the plugins: content\bulkedittools, content\bulkedittoggler
-    - Renderer method: core_courseformat\output\section_renderer::bulk_editing_button
-    - New overridable checkboxes: content/cm/bulkselect.mustache and content/section/bulkselect.mustache
-* Plugins can use the CSS class "bulk-hidden" to hide elements when the bulk editing is enabled.
-* New core_courseformat\base::duplicate_section method to duplicate course sections and their modules within a course.
+Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace

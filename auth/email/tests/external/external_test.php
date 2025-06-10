@@ -70,7 +70,7 @@ class external_test extends externallib_advanced_testcase {
         $CFG->sitepolicy = 'https://moodle.org';
 
         $result = auth_email_external::get_signup_settings();
-        $result = \core_external\external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
+        $result = \external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
 
         // Check expected data.
         $this->assertEquals(array('firstname', 'lastname'), $result['namefields']);
@@ -101,6 +101,10 @@ class external_test extends externallib_advanced_testcase {
      * Test get_signup_settings with mathjax in a profile field.
      */
     public function test_get_signup_settings_with_mathjax_in_profile_fields() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/lib/externallib.php');
+
         // Enable MathJax filter in content and headings.
         $this->configure_filters([
             ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
@@ -115,12 +119,12 @@ class external_test extends externallib_advanced_testcase {
                 'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2));
 
         $result = auth_email_external::get_signup_settings();
-        $result = \core_external\external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
+        $result = \external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
 
         // Format the original data.
         $sitecontext = \context_system::instance();
-        $categoryname = \core_external\util::format_string($categoryname, $sitecontext->id);
-        $fieldname = \core_external\util::format_string($fieldname, $sitecontext->id);
+        $categoryname = external_format_string($categoryname, $sitecontext->id);
+        $fieldname = external_format_string($fieldname, $sitecontext->id);
 
         // Whip up a array with named entries to easily check against.
         $namedarray = array();
@@ -169,7 +173,7 @@ class external_test extends externallib_advanced_testcase {
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email, $city,  $country,
                                                     '', '', $customprofilefields);
-        $result = \core_external\external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
         $user = $DB->get_record('user', array('username' => $username));
@@ -190,7 +194,7 @@ class external_test extends externallib_advanced_testcase {
         $password = 'abc';
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email, $city,  $country,
                                                     '', '', $customprofilefields);
-        $result = \core_external\external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertFalse($result['success']);
         $this->assertCount(3, $result['warnings']);
         $expectederrors = array('username', 'email', 'password');

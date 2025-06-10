@@ -26,9 +26,7 @@ Feature: Add forum activities and discussions
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Forum post 1 |
       | Message | This is the body |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     When I add a new discussion to "Test forum name" forum with:
       | Subject | Post with attachment |
       | Message | This is the body |
@@ -57,5 +55,5 @@ Feature: Add forum activities and discussions
       | Forum type | single     |
       | Group mode | 1          |
     When I press "Save and display"
-    Then I should see "Separate groups cannot be used with single discussion topic"
-    And I should see "Single discussion topic cannot be used with separate groups"
+    Then I should see "Separate groups can't be used with a single simple discussion."
+    And I should see "A single simple discussion can't be used with separate groups."

@@ -1,0 +1,38 @@
+{
+  "description": "Grunt tasks for sass.",
+  "private": true,
+  "devDependencies": {
+    "acorn": ">=6.4.1",
+    "core-js": "^3.1.4",
+    "diff": ">=3.5.0",
+    "grunt": "^1.0.4",
+    "grunt-autoprefixer": "^3.0.4",
+    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^3.0.0",
+    "grunt-load-gruntfile": "0.0.2",
+    "grunt-sass": "^3.0.2",
+    "kind-of": ">=6.0.3",
+    "load-grunt-tasks": "^5.1.0",
+    "minimist": ">=1.2.3",
+    "serialize-javascript": ">=2.1.1",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "dependencies": {
+    "@vue/cli-service": "^4.5.15",
+    "acorn": ">=6.4.1",
+    "diff": ">=3.5.0",
+    "kind-of": ">=6.0.3",
+    "minimist": ">=1.2.3",
+    "node": "^12.6.0",
+    "node-sass": "^4.14.1",
+    "sass": "^1.26.7",
+    "serialize-javascript": ">=2.1.1",
+    "vue-contenteditable-directive": "^1.2.0",
+    "vue-wysiwyg": "^1.7.2"
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}

@@ -34,7 +34,7 @@ $context = context_system::instance();
 $PAGE->set_url(new \moodle_url('/admin/tool/filetypes/index.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title($SITE->fullname. ': ' . $title);
+$PAGE->set_title($title);
 
 $renderer = $PAGE->get_renderer('tool_filetypes');
 

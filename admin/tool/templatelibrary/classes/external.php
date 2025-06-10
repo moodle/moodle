@@ -14,12 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This is the external API for this tool.
+ *
+ * @package    tool_templatelibrary
+ * @copyright  2015 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace tool_templatelibrary;
+defined('MOODLE_INTERNAL') || die();
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
+require_once("$CFG->libdir/externallib.php");
+
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_format_value;
+use external_single_structure;
+use external_multiple_structure;
+use invalid_parameter_exception;
 
 /**
  * This is the external API for this tool.
@@ -78,7 +91,7 @@ class external extends external_api {
     /**
      * Returns description of list_templates() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function list_templates_returns() {
         return new external_multiple_structure(new external_value(PARAM_RAW, 'The template name (format is component/templatename)'));
@@ -119,7 +132,7 @@ class external extends external_api {
     /**
      * Returns description of load_canonical_template() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function load_canonical_template_returns() {
         return new external_value(PARAM_RAW, 'template');

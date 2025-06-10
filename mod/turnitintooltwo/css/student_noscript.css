@@ -1,0 +1,30 @@
+.mod_turnitintooltwo_submissions_data_table {
+	margin-top:16px;
+}
+
+.mod_turnitintooltwo_submissions_data_table th {
+    border:1px solid #999999;
+}
+
+.mod_turnitintooltwo_submissions_data_table td {
+    border:1px solid #999999;
+}
+
+.mod_turnitintooltwo #tabs ul#part_tabs_menu, .mod_turnitintooltwo a.toggle_summary, .mod_turnitintooltwo a.toggle_peermarks,
+.mod_turnitintooltwo a.toggle_peermark_instructions, .mod_turnitintooltwo .mod_turnitintooltwo_eula, .mod_turnitintooltwo_messages_inbox,
+.mod_turnitintooltwo .noscript_hide, .mod_turnitintooltwo .download_original_open, .mod_turnitintooltwo th.raw_data,
+.mod_turnitintooltwo td.raw_data, .mod_turnitintooltwo_submissions_data_table th.cpart,
+.mod_turnitintooltwo_submissions_data_table th.ccheckbox, .mod_turnitintooltwo_submissions_data_table td.c0,
+.mod_turnitintooltwo_submissions_data_table td.c1 {
+	display:none;
+}
+
+.mod_turnitintooltwo .peermark_instructions {
+	display: block;
+}
+
+.mod_turnitintooltwo .part_table {
+	background:#EFEFEF;
+	border:1px solid #DEDEDE;
+	padding:10px;
+}

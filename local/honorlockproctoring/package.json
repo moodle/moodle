@@ -1,0 +1,23 @@
+{
+  "name": "honorlockproctoring",
+  "version": "1.0.0",
+  "description": "Welcome to the Moodle plugin for integrating with the Honorlock Proctoring! This plugin provides seamless integration between Moodle and Honorlock Proctoring, enabling online assessments to be proctored and monitored in real-time. With this plugin, Moodle administrators can ensure the authenticity and validity of online exams, enhancing the reliability and trustworthiness of online education.",
+  "main": "amd/src/honorlockproctoring.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "grunt amd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HonorLock/moodle_honorlockproctoring.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HonorLock/moodle_honorlockproctoring/issues"
+  },
+  "homepage": "https://github.com/HonorLock/moodle_honorlockproctoring#readme",
+  "devDependencies": {
+    "grunt": "^1.6.1"
+  }
+}

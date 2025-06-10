@@ -1,0 +1,67 @@
+{{!
+    This file is part of the local_intellidata plugin for Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_intellidata/lti_launch
+    Template for launching the IntelliBoard LTI window.
+    Example context (json):
+    {
+        "debug": "false",
+        "endpoint": "https://intelliboard.net",
+        "inputs": [
+            {
+                "name": "resource_link_id",
+                "type": "text",
+                "value": "0"
+            }
+        ]
+    }
+}}
+<form action="{{endpoint}}" name="ltiLaunchForm" id="ltiLaunchForm" method="post" encType="application/x-www-form-urlencoded">
+    {{#inputs}}
+        <input {{#name}}name="{{name}}"{{/name}} type="{{type}}" value="{{value}}"/>
+    {{/inputs}}
+
+    {{#debug}}
+        <script>
+            //<![CDATA[
+            function basicltiDebugToggle() {
+                var ele = document.getElementById("basicltiDebug");
+                if (ele.style.display == "block") {
+                    ele.style.display = "none";
+                } else {
+                    ele.style.display = "block";
+                }
+            }
+            //]]>
+        </script>
+
+        <a id="displayText" href="javascript:basicltiDebugToggle();">{{#str}}lti_toggle_debug_data, local_intellidata{{/str}}</a>
+        <div id="basicltiDebug" style="display:none">
+        <b>{{#str}}lti_basiclti_endpoint, local_intellidata{{/str}}</b><br/>
+        {{endpoint}} <br/>&nbsp;<br/>
+        <b>{{#str}}lti_basiclti_parameters, local_intellidata{{/str}}</b><br/>
+            {{#inputs}}
+                {{#name}}name="{{name}}"{{/name}} --- type="{{type}}" --- value="{{value}}" <br/>
+            {{/inputs}}
+        &nbsp;<br/>
+        </div>
+    {{/debug}}
+    {{^debug}}
+        <script>
+            //<![CDATA[
+                document.ltiLaunchForm.submit();
+            //]]>
+        </script>
+    {{/debug}}
+</form>

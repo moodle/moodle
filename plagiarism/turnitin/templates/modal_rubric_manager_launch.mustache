@@ -1,0 +1,9 @@
+{{< core/modal }}
+    {{$title}}
+        {{#str}} launchrubricmanager, plagiarism_turnitin {{/str}}
+    {{/title}}
+    {{$body}}
+        <!-- Modal content -->
+        <iframe frameborder="0" src="{{wwwroot}}/plagiarism/turnitin/extras.php?cmd=rubricmanager&courseid={{courseid}}&view_context=box" id="rubric_manager_launch" class="rubric_manager iframe-ltilaunch-rubric"></iframe>
+    {{/body}}
+{{/ core/modal }}

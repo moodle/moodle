@@ -86,7 +86,7 @@ class api_test extends \externallib_advanced_testcase {
      */
     public function test_pre_processor_message_send_callback() {
         global $DB, $CFG;
-
+        require_once($CFG->libdir . '/externallib.php');
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
@@ -144,7 +144,7 @@ class api_test extends \externallib_advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
         $this->setUser($user3);
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = \core_external\util::generate_token_for_current_user($service);
+        $token = external_generate_token_for_current_user($service);
 
         $message->userto = $user3;
         $messageid = message_send($message);

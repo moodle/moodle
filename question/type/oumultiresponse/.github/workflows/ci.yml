@@ -1,0 +1,119 @@
+name: Moodle plugin CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '7.4'
+            moodle-branch: 'master'
+            database: 'pgsql'
+          - php: '7.4'
+            moodle-branch: 'MOODLE_311_STABLE'
+            database: 'mariadb'
+          - php: '7.3'
+            moodle-branch: 'MOODLE_310_STABLE'
+            database: 'pgsql'
+          - php: '7.2'
+            moodle-branch: 'MOODLE_39_STABLE'
+            database: 'mariadb'
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+      mariadb:
+        image: mariadb
+        env:
+          MYSQL_USER: 'root'
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: plugin
+
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.15.0'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pgsql, mysqli
+#          tools: phpunit
+#          coverage: none
+
+      - name: Deploy moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          # Add dirs to $PATH
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          # PHPUnit depends on en_AU.UTF-8 locale
+          sudo locale-gen en_AU.UTF-8
+
+      - name: Install Moodle
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+
+      - name: phplint
+        if: ${{ always() }}
+        run: moodle-plugin-ci phplint
+
+      - name: phpcpd
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpcpd || true
+
+      - name: phpmd
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpmd
+
+      - name: codechecker
+        if: ${{ always() }}
+        run: moodle-plugin-ci codechecker
+
+      - name: validate
+        if: ${{ always() }}
+        run: moodle-plugin-ci validate
+
+      - name: savepoints
+        if: ${{ always() }}
+        run: moodle-plugin-ci savepoints
+
+      - name: mustache
+        if: ${{ always() }}
+        run: moodle-plugin-ci mustache
+
+      - name: grunt
+        if: ${{ always() }}
+        run: moodle-plugin-ci grunt
+
+      - name: phpunit
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpunit
+
+      - name: behat
+        if: ${{ always() }}
+        run: moodle-plugin-ci behat --profile chrome

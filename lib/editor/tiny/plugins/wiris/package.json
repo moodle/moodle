@@ -1,0 +1,21 @@
+{
+  "name": "moodle-tiny_wiris",
+  "version": "8.2.2",
+  "description": "Type and handwrite mathematical notation in Moodle with MathType for TinyMCE Editor",
+  "homepage": "https://moodle.org/plugins/tinymce_tiny_mce_wiris",
+  "private": true,
+  "scripts": {
+    "preupdate-mathtype": "npx del js/plugin.min.js",
+    "update-mathtype": "npx cpy 'node_modules/@wiris/mathtype-tinymce6/plugin.min.js' 'js/'"
+  },
+  "devDependencies": {
+    "@wiris/mathtype-tinymce6": "^8.2.6",
+    "cpy-cli": "^3.1.1",
+    "del-cli": "^4.0.0"
+  },
+  "bugs": {
+    "email": "support@wiris.com"
+  },
+  "license": "GPL-3.0",
+  "author": "WIRIS Team (http://www.wiris.com/?utm_source=npmjs&utm_medium=referral)"
+}

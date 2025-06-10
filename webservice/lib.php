@@ -23,11 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_multiple_structure;
-use core_external\external_settings;
-use core_external\external_single_structure;
-use core_external\external_value;
+require_once($CFG->libdir.'/externallib.php');
 
 /**
  * WEBSERVICE_AUTHMETHOD_USERNAME - username/password authentication (also called simple authentication)
@@ -1825,7 +1821,7 @@ $castingcode
         $function->classname::$function->methodname($paramsstr);
         return null;
     }
-    return \\core_external\\external_api::clean_returnvalue($callforreturnvaluedesc, $function->classname::$function->methodname($paramsstr));
+    return external_api::clean_returnvalue($callforreturnvaluedesc, $function->classname::$function->methodname($paramsstr));
 EOD;
         return $methodbody;
     }

@@ -16,7 +16,7 @@
 
 namespace quizaccess_openclosedate;
 
-use mod_quiz\quiz_settings;
+use quiz;
 use quizaccess_openclosedate;
 
 defined('MOODLE_INTERNAL') || die();
@@ -41,7 +41,7 @@ class rule_test extends \basic_testcase {
         $quiz->overduehandling = 'autosubmit';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->preview = 0;
 
@@ -68,7 +68,7 @@ class rule_test extends \basic_testcase {
         $quiz->overduehandling = 'autosubmit';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->preview = 0;
 
@@ -95,7 +95,7 @@ class rule_test extends \basic_testcase {
         $quiz->overduehandling = 'autosubmit';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->preview = 0;
 
@@ -129,7 +129,7 @@ class rule_test extends \basic_testcase {
         $quiz->overduehandling = 'autosubmit';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->preview = 0;
 
@@ -170,7 +170,7 @@ class rule_test extends \basic_testcase {
         $quiz->graceperiod = 1000;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new \stdClass();
         $attempt->preview = 0;
 

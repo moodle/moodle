@@ -1,0 +1,137 @@
+{
+    "id": "graph",
+    "items": [
+      {
+        "id": "tools",
+        "items": [
+          {
+            "id": "pointers",
+            "items": [
+              {
+                "id": "cursorEditBarChart"
+              }
+            ]
+          },
+          {
+            "id": "visuals",
+            "items": [
+              {
+                "id": "fitPlotterToStats"
+              },
+              {
+                "id": "changeOrientationBars"
+              },
+              {
+                "id": "changeBarsPositioning"
+              }
+            ]
+          },
+          {
+            "id": "elements",
+            "items": [
+              {
+                "id": "newPackBars"
+              },
+              {
+                "id": "newSideBars"
+              },
+              {
+                "id": "newFreeLabel"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "menu",
+        "items": [
+          {
+            "id": "edition",
+            "items": [
+              {
+                "id": "undo"
+              },
+              {
+                "id": "redo"
+              }
+            ]
+          },
+          {
+            "id": "actions",
+            "items": [
+              {
+                "id": "download"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "view",
+        "items": [
+          {
+            "id": "viewTools",
+            "items": [
+              {
+                "id": "zoomIn"
+              },
+              {
+                "id": "zoomOut"
+              }
+            ]
+          },
+          {
+            "id": "viewActions",
+            "items": [
+              {
+                "id": "maximize"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contextualElement",
+        "items": [
+          {
+            "id": "elementStyles",
+            "items": [
+              {
+                "id": "lineColor"
+              }
+            ]
+          },
+          {
+            "id": "deleteSection",
+            "items": [
+              {
+                "id": "deletePackBars"
+              },
+              {
+                "id": "deleteSideBars"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contextualLabel",
+        "items": [
+          {
+            "id": "labelStyles",
+            "items": [
+              {
+                "id": "bold"
+              },
+              {
+                "id": "italic"
+              },
+              {
+                "id": "color"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+}

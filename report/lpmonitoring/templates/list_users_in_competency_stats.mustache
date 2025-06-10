@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Total list users in competency template
+
+    Context variables required for this template:
+    * competencyid
+    * totaluserlist
+        * fullname full name of user
+        * profileurl user profile url
+        * profileimagesmall  user small image url
+        * rated if the user is rated in this competency
+
+}}
+<div class="lpmonitoringdialogue">
+<table class="totallistusers" id="list-users-stats-{{competencyid}}">
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}fullname, core{{/str}}</th>
+            <th scope="col" class="stats-rated-column">{{#str}}rated, report_lpmonitoring{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#totaluserlist}}
+        <tr>
+            <td>
+                <img src="{{{profileimagesmall}}}" alt="{{profileimagesmall}}">
+                <a target="_blank" href="{{{profileurl}}}">
+                    {{fullname}}
+                </a>
+            </td>
+            <td>
+               {{#rated}}
+               <span class="badge badge-success">{{#str}}yes{{/str}}</span>
+               {{/rated}}
+               {{^rated}}
+               <span class="badge badge-danger">{{#str}}no{{/str}}</span>
+               {{/rated}}
+            </td>
+        </tr>
+        {{/totaluserlist}}
+    </tbody>
+</table>
+</div>

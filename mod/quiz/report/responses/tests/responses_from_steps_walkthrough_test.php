@@ -16,13 +16,14 @@
 
 namespace quiz_responses;
 
-use mod_quiz\quiz_attempt;
 use question_bank;
+use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.php');
+require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
@@ -41,10 +42,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
         return  __DIR__."/fixtures/{$setname}{$test}.csv";
     }
 
-    /**
-     * @var string[] names of the files which contain the test data.
-     */
-    protected $files = ['questions', 'steps', 'responses'];
+    protected $files = array('questions', 'steps', 'responses');
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
@@ -92,7 +90,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
                 throw new \coding_exception("There is no step no {$responses['submittedstepno']} ".
                                            "for slot $slot in quizattempt {$responses['quizattempt']}!");
             }
-            foreach (['responsesummary', 'fraction', 'state'] as $column) {
+            foreach (array('responsesummary', 'fraction', 'state') as $column) {
                 if (isset($tests[$column]) && $tests[$column] != '') {
                     switch($column) {
                         case 'responsesummary' :

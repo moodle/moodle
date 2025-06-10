@@ -17,13 +17,13 @@
 namespace mod_data\external;
 
 use core\notification;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
 use mod_data\local\importer\preset_importer;
 use mod_data\manager;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * This is the external method for deleting a saved preset.
@@ -33,16 +33,16 @@ use mod_data\manager;
  * @copyright  2022 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_mapping_information extends external_api {
+class get_mapping_information extends \external_api {
     /**
      * Parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([
-            'cmid' => new external_value(PARAM_INT, 'Id of the data activity', VALUE_REQUIRED),
-            'importedpreset' => new external_value(PARAM_TEXT, 'Preset to be imported'),
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters([
+            'cmid' => new \external_value(PARAM_INT, 'Id of the data activity', VALUE_REQUIRED),
+            'importedpreset' => new \external_value(PARAM_TEXT, 'Preset to be imported'),
         ]);
     }
 
@@ -81,17 +81,17 @@ class get_mapping_information extends external_api {
     /**
      * Return.
      *
-     * @return external_single_structure
+     * @return \external_single_structure
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure([
-            'data' => new external_single_structure([
-                'needsmapping' => new external_value(PARAM_BOOL, 'Whether the importing needs mapping or not'),
-                'presetname' => new external_value(PARAM_TEXT, 'Name of the applied preset'),
-                'fieldstocreate' => new external_value(PARAM_TEXT, 'List of field names to create'),
-                'fieldstoremove' => new external_value(PARAM_TEXT, 'List of field names to remove'),
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure([
+            'data' => new \external_single_structure([
+                'needsmapping' => new \external_value(PARAM_BOOL, 'Whether the importing needs mapping or not'),
+                'presetname' => new \external_value(PARAM_TEXT, 'Name of the applied preset'),
+                'fieldstocreate' => new \external_value(PARAM_TEXT, 'List of field names to create'),
+                'fieldstoremove' => new \external_value(PARAM_TEXT, 'List of field names to remove'),
             ], 'Information to import if everything went fine', VALUE_OPTIONAL),
-            'warnings' => new external_warnings(),
+            'warnings' => new \external_warnings(),
         ]);
     }
 }

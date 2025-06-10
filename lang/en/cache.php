@@ -65,7 +65,6 @@ $string['cachedef_file_imageinfo'] = 'File image info e.g. dimensions';
 $string['cachedef_suspended_userids'] = 'List of suspended users per course';
 $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_h5p_content_type_translations'] = 'H5P content-type libraries translations';
-$string['cachedef_h5p_libraries'] = 'H5P libraries';
 $string['cachedef_h5p_library_files'] = 'H5P library files';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_langmenu'] = 'List of available languages';

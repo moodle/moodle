@@ -18,8 +18,6 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
-use context_course;
-use core_customfield_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\boolean_select;
@@ -93,16 +91,6 @@ class courses_test extends core_reportbuilder_testcase {
             'tags' => ['Horses'],
         ]);
 
-        // Add a course image.
-        get_file_storage()->create_file_from_string([
-            'contextid' => context_course::instance($course->id)->id,
-            'component' => 'course',
-            'filearea' => 'overviewfiles',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'HelloWorld.jpg',
-        ], 'HelloWorld');
-
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
@@ -133,9 +121,6 @@ class courses_test extends core_reportbuilder_testcase {
         // Tags.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
-
-        // File entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:name']);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
@@ -168,9 +153,6 @@ class courses_test extends core_reportbuilder_testcase {
         // Tags.
         $this->assertEquals('Horses', $courserow[19]);
         $this->assertStringContainsString('Horses', $courserow[20]);
-
-        // File.
-        $this->assertEquals('HelloWorld.jpg', $courserow[21]);
     }
 
     /**
@@ -362,11 +344,6 @@ class courses_test extends core_reportbuilder_testcase {
             'Filter tag name not empty' => ['tag:name', [
                 'tag:name_operator' => tags::NOT_EMPTY,
             ], true],
-
-            // File.
-            'Filter file name empty' => ['file:name', [
-                'file:name_operator' => text::IS_EMPTY,
-            ], true],
         ];
     }
 
@@ -426,13 +403,8 @@ class courses_test extends core_reportbuilder_testcase {
 
         $this->resetAfterTest();
 
-        /** @var core_customfield_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
-        $customfieldcategory = $generator->create_category();
-        $generator->create_field(['categoryid' => $customfieldcategory->get('id'), 'shortname' => 'hi']);
-
         $category = $this->getDataGenerator()->create_category();
-        $course = $this->getDataGenerator()->create_course(['category' => $category->id, 'customfield_hi' => 'Hello']);
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
 
         $this->datasource_stress_test_columns(courses::class);
         $this->datasource_stress_test_columns_aggregation(courses::class);

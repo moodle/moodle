@@ -1,0 +1,59 @@
+{{!
+    This file is part of The Flashcard Module
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_flashcard/finished
+
+    Classes required for JS:
+    * no classes
+}}
+<!-- mod_flashcard/freebuttons -->
+    <tr>
+        <td width="200px">
+            <p>{{#str}}cardsremaining, mod_flashcard{{/str}}: <span id="remain">{{subquestionscpount}}</span></p>
+        </td>
+    </tr>
+
+    <tr>
+        <td width="200px">
+            <input id="next" type="button" value="{{#str}}next, mod_flashcard{{/str}}" onclick="javascript:next_card()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td width="200px">
+            <input id="previous" type="button" value="{{#str}}previous, mod_flashcard{{/str}}" onclick="javascript:previous_card()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td width="200px">
+            <input id="remove" type="button" value="{{#str}}removecard, mod_flashcard{{/str}}" onclick="javascript:remove_card()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td width="200px">
+            <input type="button" value="{{#str}}reset, mod_flashcard{{/str}}" onclick="javascript:location.reload()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td width="200px" align="center" colspan="2">
+            <br/><a href="{{{courseurl}}}">{{#str}}backtocourse, mod_flashcard{{/str}}</a>
+        </td>
+    </tr>
+<!-- /mod_flashcard/freebuttons -->

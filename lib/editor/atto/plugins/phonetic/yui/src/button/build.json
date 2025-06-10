@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_phonetic-button",
+  "builds": {
+    "moodle-atto_phonetic-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

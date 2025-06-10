@@ -221,29 +221,24 @@ class date_test extends advanced_testcase {
      */
     public function get_sql_filter_relative_provider(): array {
         return [
-            'Last hour' => [date::DATE_LAST, 1, date::DATE_UNIT_HOUR, '-30 minute'],
             'Last day' => [date::DATE_LAST, 1, date::DATE_UNIT_DAY, '-6 hour'],
             'Last week' => [date::DATE_LAST, 1, date::DATE_UNIT_WEEK, '-3 day'],
             'Last month' => [date::DATE_LAST, 1, date::DATE_UNIT_MONTH, '-3 week'],
             'Last year' => [date::DATE_LAST, 1, date::DATE_UNIT_YEAR, '-6 month'],
-            'Last two hours' => [date::DATE_LAST, 2, date::DATE_UNIT_HOUR, '-90 minute'],
             'Last two days' => [date::DATE_LAST, 2, date::DATE_UNIT_DAY, '-25 hour'],
             'Last two weeks' => [date::DATE_LAST, 2, date::DATE_UNIT_WEEK, '-10 day'],
             'Last two months' => [date::DATE_LAST, 2, date::DATE_UNIT_MONTH, '-7 week'],
             'Last two years' => [date::DATE_LAST, 2, date::DATE_UNIT_YEAR, '-15 month'],
 
             // Current week is tested separately.
-            'Current hour' => [date::DATE_CURRENT, null, date::DATE_UNIT_HOUR],
             'Current day' => [date::DATE_CURRENT, null, date::DATE_UNIT_DAY],
             'Current month' => [date::DATE_CURRENT, null, date::DATE_UNIT_MONTH],
             'Current year' => [date::DATE_CURRENT, null, date::DATE_UNIT_YEAR],
 
-            'Next hour' => [date::DATE_NEXT, 1, date::DATE_UNIT_HOUR, '+30 minute'],
             'Next day' => [date::DATE_NEXT, 1, date::DATE_UNIT_DAY, '+6 hour'],
             'Next week' => [date::DATE_NEXT, 1, date::DATE_UNIT_WEEK, '+3 day'],
             'Next month' => [date::DATE_NEXT, 1, date::DATE_UNIT_MONTH, '+3 week'],
             'Next year' => [date::DATE_NEXT, 1, date::DATE_UNIT_YEAR, '+6 month'],
-            'Next two hours' => [date::DATE_NEXT, 2, date::DATE_UNIT_HOUR, '+90 minute'],
             'Next two days' => [date::DATE_NEXT, 2, date::DATE_UNIT_DAY, '+25 hour'],
             'Next two weeks' => [date::DATE_NEXT, 2, date::DATE_UNIT_WEEK, '+10 day'],
             'Next two months' => [date::DATE_NEXT, 2, date::DATE_UNIT_MONTH, '+7 week'],

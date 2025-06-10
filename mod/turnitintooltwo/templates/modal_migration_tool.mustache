@@ -1,0 +1,25 @@
+{{< core/modal }}
+    {{$title}}
+        <div class="migrationheader">
+            {{# str }} migrationtooltitle, turnitintooltwo {{/ str }}
+        </div>
+    {{/title}}
+    {{$body}}
+        <div class="asktomigrate">
+            <p>{{# str }} migrationtoolinfo, turnitintooltwo {{/ str }}</p>
+        </div>
+        <div class="migrating hide">
+            <p>{{# str }} migrating, turnitintooltwo {{/ str }}</p>
+            <div class="migration-spinner">
+                <i class="fa fa-spinner fa-spin fa-3x"></i>
+            </div>
+            <p>{{# str }} migrationredirect, turnitintooltwo {{/ str }}</p>
+        </div>
+    {{/body}}
+    {{$footer}}
+        <div class="asktomigrate">
+            <button type="button" class="btn btn-primary" data-action="migrate-assignment">{{# str }} migrateassignment, turnitintooltwo {{/ str }}</button>
+            <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} dontmigrateassignment, turnitintooltwo {{/str}}</button>
+        </div>
+    {{/footer}}
+{{/ core/modal }}

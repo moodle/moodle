@@ -24,6 +24,7 @@
 namespace mod_feedback\external;
 defined('MOODLE_INTERNAL') || die();
 
+use mod_feedback\feedback;
 use core\external\exporter;
 use renderer_base;
 use core_files\external\stored_file_exporter;

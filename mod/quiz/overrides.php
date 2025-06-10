@@ -22,22 +22,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\quiz_settings;
-
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
+require_once($CFG->dirroot.'/mod/quiz/override_form.php');
+
 
 $cmid = required_param('cmid', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
 
-$quizobj = quiz_settings::create_for_cmid($cmid);
-$quiz = $quizobj->get_quiz();
-$cm = $quizobj->get_cm();
-$course = $quizobj->get_course();
-$context = $quizobj->get_context();
+list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'quiz');
+$quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
+
+$context = context_module::instance($cm->id);
 
 // Check the user has the required capabilities to list overrides.
 $canedit = has_capability('mod/quiz:manageoverrides', $context);

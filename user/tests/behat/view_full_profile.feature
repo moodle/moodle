@@ -9,17 +9,19 @@ Feature: Access to full profiles of users
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
-      | student3 | Student | 3 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
-      | Course 2 | C2 | topics |
+      | fullname | shortname | format | groupmode |
+      | Course 1 | C1        | topics | 0 |
+      | Course 2 | C2        | topics | 1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
       | student2 | C1 | student |
       | teacher1 | C1 | editingteacher |
+      | teacher1 | C2 | editingteacher |
+      | student1 | C2 | student |
       | student3 | C2 | student |
     And the following config values are set as admin:
       | messaging | 1 |
@@ -55,10 +57,9 @@ Feature: Access to full profiles of users
     Then I should see "First access to site"
 
   Scenario: Viewing full profiles with global permission
-    Given I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | moodle/user:viewdetails | Allow |
-    And I log out
+    Given the following "role capability" exists:
+      | role                    | user  |
+      | moodle/user:viewdetails | allow |
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
@@ -79,6 +80,42 @@ Feature: Access to full profiles of users
     When I follow "Profile" in the user menu
     Then I should see "First access to site"
 
+  Scenario: View only shared groups in a course with separate groups forced
+    Given the following "groups" exist:
+      | name       | course | idnumber |
+      | Group 1    | C2     | G1       |
+      | Group 2    | C2     | G2       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student3 | G2    |
+      | teacher1 | G1    |
+      | teacher1 | G2    |
+    When I log in as "student3"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I follow "Teacher 1"
+    Then I should see "Group 2"
+    And I should not see "Group 1"
+
+  Scenario: View all groups in a course with visible groups
+    Given the following "groups" exist:
+      | name       | course | idnumber |
+      | Group 1    | C1     | G1       |
+      | Group 2    | C1     | G2       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student2 | G2    |
+      | teacher1 | G1    |
+      | teacher1 | G2    |
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I follow "Teacher 1"
+    Then I should see "Group 1"
+    And I should see "Group 2"
+
   @javascript
   Scenario: Viewing full profiles of someone with the course contact role
     Given I log in as "admin"
@@ -94,6 +131,11 @@ Feature: Access to full profiles of users
     # Message search will not return a course contact unless the searcher shares a course with them,
     # or site-wide messaging is enabled ($CFG->messagingallusers).
     When I log in as "student1"
+    And I open messaging
+    And I search for "Student 3" in messaging
+    Then I should see "Student 3"
+    And I log out
+    When I log in as "student2"
     And I open messaging
     And I search for "Student 3" in messaging
     Then I should see "No results"

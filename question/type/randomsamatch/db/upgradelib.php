@@ -52,8 +52,6 @@ class qtype_randomsamatch_qe2_attempt_updater extends question_qtype_attempt_upd
     protected $choiceorder;
     /** @var array flipped version of the choiceorder array. */
     protected $flippedchoiceorder;
-    /** @var array of right answer for each stem. */
-    protected $rightanswer;
 
     public function question_summary() {
         return ''; // Done later, after we know which shortanswer questions are used.

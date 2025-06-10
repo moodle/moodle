@@ -84,6 +84,7 @@ function filter_tex_sanitize_formula(string $texexp): string {
         '\afterassignment', '\expandafter', '\noexpand', '\special',
         '\let', '\futurelet', '\else', '\fi', '\chardef', '\makeatletter', '\afterground',
         '\noexpand', '\line', '\mathcode', '\item', '\section', '\mbox', '\declarerobustcommand',
+        '\ExplSyntaxOn',
     ];
 
     $allowlist = ['inputenc'];

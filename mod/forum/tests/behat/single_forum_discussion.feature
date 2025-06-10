@@ -21,15 +21,12 @@ Feature: Single simple forum discussion type
       | forum      | Single discussion forum name | Single discussion forum description | single  | C1     | forum        |
 
   Scenario: Teacher can start the single simple discussion
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "Single discussion forum name"
+    When I am on the "Single discussion forum name" "forum activity" page logged in as teacher1
     Then I should see "Single discussion forum description" in the "div.firstpost.starter" "css_element"
     And I should not see "Add a new discussion topic"
 
   Scenario: Student can not add more discussions
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     When I reply "Single discussion forum name" post from "Single discussion forum name" forum with:
       | Subject | Reply to single discussion subject |
       | Message | Reply to single discussion message |

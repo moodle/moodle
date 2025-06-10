@@ -1,0 +1,62 @@
+{{!
+    This file is part of The Flashcard Module
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_flashcard/decks
+
+    Classes required for JS:
+    * no classes
+}}
+<!-- mod_flashcard/cardstatus -->
+<div class="card-status">
+    <table width="100%">
+        <tr valign="bottom">
+            {{#cardset}}
+            <td width="30%" align="center">
+            {{#notfirst}}
+            <td>{{#pix}}a/r_breadcrumb{{/pix}}</td>
+            {{/notfirst}}
+                {{#hascards}}
+                <table>
+                    <tr>
+                        <td>
+                            <div style="padding-bottom: {{height}}px" class="graphdeck" align="top">
+                                {{{icon}}}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{#clocks}}
+                            {{{latemark}}}
+                            {{/clocks}}
+                        </td>
+                    </tr>
+                </table>
+                {{/hascards}}
+                {{^hascards}}
+                <div height="12px" align="top">
+                    {{#pix}}topempty, mod_flashcard{{/pix}}
+                </div>
+                {{/hascards}}
+
+            </td>
+            {{/cardset}}
+        </tr>
+    </table>
+</div>
+
+{{{resetbutton}}}
+<!-- /mod_flashcard/cardstatus -->

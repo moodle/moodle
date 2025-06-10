@@ -37,15 +37,12 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string XHTML
      */
     protected function render_enrol_user_button(enrol_user_button $button) {
-        $buttoninfo = $button->export_for_template($this->output);
+        $attributes = array('type'     => 'submit',
+                            'value'    => $button->label,
+                            'disabled' => $button->disabled ? 'disabled' : null,
+                            'title'    => $button->tooltip,
+                            'class'    => 'btn ' . ($button->primary ? 'btn-primary' : 'btn-secondary'));
 
-        $attributes = [
-            'type' => 'submit',
-            'value' => $buttoninfo->label,
-            'disabled' => $buttoninfo->disabled ? 'disabled' : null,
-            'title' => $buttoninfo->tooltip,
-            'class' => 'btn ' . "btn-{$buttoninfo->type}",
-        ];
         if ($button->actions) {
             $id = html_writer::random_id('single_button');
             $attributes['id'] = $id;

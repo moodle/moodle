@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Persistent class tests.
+ *
+ * @package    core
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core;
 
 use advanced_testcase;
@@ -21,6 +29,8 @@ use coding_exception;
 use dml_missing_record_exception;
 use lang_string;
 use xmldb_table;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Persistent testcase.
@@ -161,23 +171,6 @@ class persistent_test extends advanced_testcase {
             ),
         );
         $this->assertEquals($expected, core_testable_persistent::properties_definition());
-    }
-
-    /**
-     * Test filtering record properties returns only those defined by the persistent
-     */
-    public function test_properties_filter(): void {
-        $result = core_testable_persistent::properties_filter((object) [
-            'idnumber' => '123',
-            'sortorder' => 1,
-            'invalidparam' => 'abc',
-        ]);
-
-        // We should get back all data except invalid param.
-        $this->assertEquals([
-            'idnumber' => '123',
-            'sortorder' => 1,
-        ], $result);
     }
 
     /**

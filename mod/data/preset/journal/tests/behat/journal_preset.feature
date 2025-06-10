@@ -76,27 +76,3 @@ Feature: Users can use the Journal preset
     And I press "Save"
     Then I should see "This is the title"
     And I should see "This is the content for the new entry."
-
-  @javascript
-  Scenario: Journal. Renaming a field should affect the template
-    Given I am on the "Student reflections" "data activity" page logged in as teacher1
-    And I navigate to "Fields" in current page administration
-    And I open the action menu in "Content" "table_row"
-    And I choose "Edit" in the open action menu
-    And I set the field "Field name" to "Edited field name"
-    And I press "Save"
-    And I should see "Field updated"
-    When I navigate to "Database" in current page administration
-    Then I click on "Advanced search" "checkbox"
-    And I should see "Edited field name"
-    And I click on "Add entry" "button"
-    And I should see "Edited field name"
-
-  @javascript
-  Scenario: Journal. Has otherfields tag
-    Given the following "mod_data > fields" exist:
-      | database | type | name        | description            |
-      | data1    | text | Extra field | Test field description |
-    And I am on the "Student reflections" "data activity" page logged in as teacher1
-    When I click on "Add entry" "button"
-    Then I should see "Extra field"

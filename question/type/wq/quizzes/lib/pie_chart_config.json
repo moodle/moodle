@@ -1,0 +1,128 @@
+{
+    "id": "graph",
+    "items": [
+      {
+        "id": "tools",
+        "items": [
+          {
+            "id": "pointers",
+            "items": [
+              {
+                "id": "cursorEditPieChart"
+              }
+            ]
+          },
+          {
+            "id": "visuals",
+            "items": [
+              {
+                "id": "fitPlotterToStats"
+              },
+              {
+                "id": "pie2D3D"
+              }
+            ]
+          },
+          {
+            "id": "elements",
+            "items": [
+              {
+                "id": "newPie"
+              },
+              {
+                "id": "newFreeLabel"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "menu",
+        "items": [
+          {
+            "id": "edition",
+            "items": [
+              {
+                "id": "undo"
+              },
+              {
+                "id": "redo"
+              }
+            ]
+          },
+          {
+            "id": "actions",
+            "items": [
+              {
+                "id": "download"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "view",
+        "items": [
+          {
+            "id": "viewTools",
+            "items": [
+              {
+                "id": "zoomIn"
+              },
+              {
+                "id": "zoomOut"
+              }
+            ]
+          },
+          {
+            "id": "viewActions",
+            "items": [
+              {
+                "id": "maximize"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contextualElement",
+        "items": [
+          {
+            "id": "elementStyles",
+            "items": [
+              {
+                "id": "lineColor"
+              }
+            ]
+          },
+          {
+            "id": "deleteSection",
+            "items": [
+              {
+                "id": "deletePie"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contextualLabel",
+        "items": [
+          {
+            "id": "labelStyles",
+            "items": [
+              {
+                "id": "bold"
+              },
+              {
+                "id": "italic"
+              },
+              {
+                "id": "color"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+}

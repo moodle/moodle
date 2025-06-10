@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/workdayhrm/db" VERSION="20230920" COMMENT="XMLDB file for Moodle enrol/workdayhrm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_workdayhrm" COMMENT="enrol_workdayhrm table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="employee_id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="universal_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="school_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="work_email" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="legal_first_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="legal_middle_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="legal_last_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preferred_first_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="preferred_middle_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="preferred_last_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="company_id" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_employee_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_universal_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_school_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="employee_userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iscurrent" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="lastupdated" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="work_email" TYPE="foreign" FIELDS="work_email" REFTABLE="user" REFFIELDS="email"/>
+        <KEY NAME="school_id" TYPE="foreign" FIELDS="school_id" REFTABLE="user" REFFIELDS="idnumber"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_wd_legal_first_name" UNIQUE="false" FIELDS="legal_first_name"/>
+        <INDEX NAME="idx_wd_legal_last_name" UNIQUE="false" FIELDS="legal_last_name"/>
+        <INDEX NAME="idx_wd_manager_school_id" UNIQUE="false" FIELDS="manager_school_id"/>
+        <INDEX NAME="idx_wd_employee_userid" UNIQUE="false" FIELDS="employee_userid"/>
+        <INDEX NAME="idx_wd_manager_userid" UNIQUE="false" FIELDS="manager_userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

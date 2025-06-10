@@ -74,7 +74,7 @@ class attempt_regraded extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/review.php', ['attempt' => $this->objectid]);
+        return new \moodle_url('/mod/quiz/review.php', array('attempt' => $this->objectid));
     }
 
     /**
@@ -105,7 +105,7 @@ class attempt_regraded extends \core\event\base {
      * @return array Array of mappings
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'quiz_attempts', 'restore' => 'quiz_attempt'];
+        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
     }
 
     /**
@@ -114,8 +114,8 @@ class attempt_regraded extends \core\event\base {
      * @return array Array of array mappings
      */
     public static function get_other_mapping() {
-        $othermapped = [];
-        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
 
         return $othermapped;
     }

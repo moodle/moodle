@@ -23,6 +23,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     $temp = new admin_settingpage('gradessettings', new lang_string('generalsettings', 'grades'), 'moodle/grade:manage');
     if ($ADMIN->fulltree) {
 
+        // BEGIN LSU Course Category Editable switch.
+        $temp->add(new admin_setting_configcheckbox('grade_coursecateditable', new lang_string('coursecateditable', 'grades'), new lang_string('coursecateditable_help', 'grades'), 1));
+        // END LSU Course Category Editable switch.
+
         // new CFG variable for gradebook (what roles to display)
         $temp->add(new admin_setting_special_gradebookroles());
 
@@ -47,6 +51,18 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
         $temp->add(new admin_setting_configselect('grade_export_displaytype', new lang_string('gradeexportdisplaytype', 'grades'),
                                                   new lang_string('gradeexportdisplaytype_desc', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
+        // BEGIN LSU Manual Grade Raw Grade support.
+        $temp->add(new admin_setting_configcheckbox('grade_item_manual_recompute',
+            new lang_string('gradeitemmanualrecompute', 'grades'),
+            new lang_string('gradeitemmanualrecompute_help', 'grades'), 0));
+
+        $manualraw = isset($CFG->grade_item_manual_recompute) ? $CFG->grade_item_manual_recompute : 0;
+        if ($manualraw) {
+            $temp->add(new admin_setting_configcheckbox('manipulate_categories',
+                new lang_string('manipulatecategories', 'grades'),
+                new lang_string('manipulatecategories_help', 'grades'), 0));
+        }
+        // END LSU Manual Grade Raw Grade support.
 
         $temp->add(new admin_setting_configselect('grade_export_decimalpoints', new lang_string('gradeexportdecimalpoints', 'grades'),
                                                   new lang_string('gradeexportdecimalpoints_desc', 'grades'), 2,
@@ -75,6 +91,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_special_gradeexport());
 
         $temp->add(new admin_setting_special_gradelimiting());
+
+        // BEGIN LSU Grade Privacy Aggreement.
+        $temp->add(new admin_setting_configcheckbox('privacy_ack', new lang_string('privacy_ack', 'grades'), new lang_string('privacy_ack_help', 'grades'), 0));
+        // END LSU Grade Privacy Aggreement.
 
         $temp->add(new admin_setting_configcheckbox('grade_report_showmin',
                                                     get_string('minimum_show', 'grades'),
@@ -119,6 +139,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_configmultiselect('grade_aggregations_visible', new lang_string('aggregationsvisible', 'grades'),
                                                        new lang_string('aggregationsvisiblehelp', 'grades'), $defaultvisible, $options));
 
+        // BEGIN LSU SWM unweighted extra credit option
+        $temp->add(new admin_setting_configcheckbox('grade_w_extra_credit', new lang_string('w_ec', 'grades'), new lang_string('w_ec_help', 'grades'), '1'));
+        // END LSU SWM unweighted extra credit option
+
         $options = array(0 => new lang_string('no'), 1 => new lang_string('yes'));
 
         $defaults = array('value'=>1, 'forced'=>false, 'adv'=>true);
@@ -140,6 +164,13 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $defaults['forced'] = false;
         $temp->add(new admin_setting_gradecat_combo('grade_droplow', new lang_string('droplow', 'grades'),
                     new lang_string('droplow_help', 'grades'), $defaults, $options));
+
+        // BEGIN LSU Drop Lowest Limiting.
+        $temp->add(new admin_setting_configcheckbox('grade_droplow_limit',
+            new lang_string('droplow_limit', 'grades'),
+            new lang_string('droplow_limit_help', 'grades'), 0)
+        );
+        // END LSU Drop Lowest Limiting.
 
         $temp->add(new admin_setting_configcheckbox('grade_overridecat', new lang_string('overridecat', 'grades'),
                    new lang_string('overridecat_help', 'grades'), 1));
@@ -194,7 +225,37 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $ADMIN->add('grades', $outcomes);
     }
     $letters = new admin_externalpage('letters', new lang_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/index.php', 'moodle/grade:manageletters');
+
+    // BEGIN LSU Better Letter Grades
+    $letters_str = new lang_string('letters', 'grades');
+    $letters_base = $CFG->wwwroot.'/grade/edit/letter';
+    $letters = new admin_externalpage('letters', $letters_str, $letters_base . '/index.php', 'moodle/grade:manageletters');
+    // END LSU Better Letter Grades
+
     $ADMIN->add('grades', $letters);
+
+    // BEGIN LSU Better Letter Grades
+    $letters_settings_str = new lang_string('letter', 'grades') . ' ' . new lang_string('edit') . ' ' . new lang_string('settings');
+    $temp = new admin_settingpage('letterssettings', $letters_settings_str, 'moodle/grade:manageletters');
+    if ($ADMIN->fulltree) {
+        $temp->add(new admin_setting_configcheckbox('grade_letters_strict',
+            new lang_string('lettersstrictletter', 'grades'), new lang_string('lettersstrictletter_help', 'grades'), 0));
+
+        $sql = 'SELECT id, name FROM {scale} WHERE courseid IN (0,1)';
+        $db_scales = $DB->get_records_sql_menu($sql);
+
+        // $params = array('courseid' => 1);
+        // $db_scales = $DB->get_records_menu('scale', $params, '', 'id, name');
+
+        $scales = array(0 => new lang_string('lettersdefaultletters', 'grades')) + $db_scales;
+
+        $temp->add(new admin_setting_configselect('grade_letters_names',
+            new lang_string('lettersnames', 'grades'),
+            new lang_string('lettersname_help', 'grades'), 0, $scales));
+    }
+
+    $ADMIN->add('grades', $temp);
+    // END LSU Better Letter Grades
 
     // The plugins must implement a settings.php file that adds their admin settings to the $settings object
 

@@ -35,7 +35,6 @@ use core_competency\template;
 use core_competency\template_competency;
 use core_competency\user_competency;
 use core_competency\user_competency_plan;
-use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -202,7 +201,7 @@ class external_test extends externallib_advanced_testcase {
             'contextid' => $system ? \context_system::instance()->id : \context_coursecat::instance($this->category->id)->id
         );
         $result = external::create_competency_framework($framework);
-        return (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        return (object) \external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
     }
 
     protected function create_plan($number, $userid, $templateid, $status, $duedate) {
@@ -216,7 +215,7 @@ class external_test extends externallib_advanced_testcase {
             'duedate' => $duedate
         );
         $result = external::create_plan($plan);
-        return (object) external_api::clean_returnvalue(external::create_plan_returns(), $result);
+        return (object) \external_api::clean_returnvalue(external::create_plan_returns(), $result);
     }
 
     protected function create_template($number, $system) {
@@ -229,7 +228,7 @@ class external_test extends externallib_advanced_testcase {
             'contextid' => $system ? \context_system::instance()->id : \context_coursecat::instance($this->category->id)->id
         );
         $result = external::create_template($template);
-        return (object) external_api::clean_returnvalue(external::create_template_returns(), $result);
+        return (object) \external_api::clean_returnvalue(external::create_template_returns(), $result);
     }
 
     protected function update_template($templateid, $number) {
@@ -241,7 +240,7 @@ class external_test extends externallib_advanced_testcase {
             'visible' => true
         );
         $result = external::update_template($template);
-        return external_api::clean_returnvalue(external::update_template_returns(), $result);
+        return \external_api::clean_returnvalue(external::update_template_returns(), $result);
     }
 
     protected function update_plan($planid, $number, $userid, $templateid, $status, $duedate) {
@@ -256,7 +255,7 @@ class external_test extends externallib_advanced_testcase {
             'duedate' => $duedate
         );
         $result = external::update_plan($plan);
-        return external_api::clean_returnvalue(external::update_plan_returns(), $result);
+        return \external_api::clean_returnvalue(external::update_plan_returns(), $result);
     }
 
     protected function update_competency_framework($id, $number = 1, $system = true) {
@@ -274,7 +273,7 @@ class external_test extends externallib_advanced_testcase {
             'contextid' => $system ? \context_system::instance()->id : \context_coursecat::instance($this->category->id)->id
         );
         $result = external::update_competency_framework($framework);
-        return external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+        return \external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
     }
 
     protected function create_competency($number, $frameworkid) {
@@ -286,7 +285,7 @@ class external_test extends externallib_advanced_testcase {
             'competencyframeworkid' => $frameworkid
         );
         $result = external::create_competency($competency);
-        return (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        return (object) \external_api::clean_returnvalue(external::create_competency_returns(), $result);
     }
 
     protected function update_competency($id, $number) {
@@ -298,7 +297,7 @@ class external_test extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_HTML
         );
         $result = external::update_competency($competency);
-        return external_api::clean_returnvalue(external::update_competency_returns(), $result);
+        return \external_api::clean_returnvalue(external::update_competency_returns(), $result);
     }
 
     /**
@@ -393,7 +392,7 @@ class external_test extends externallib_advanced_testcase {
 
         $id = $result->id;
         $result = external::read_competency_framework($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -419,7 +418,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catcreator);
         $id = $incat->id;
         $result = external::read_competency_framework($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -435,7 +434,7 @@ class external_test extends externallib_advanced_testcase {
         try {
             $id = $insystem->id;
             $result = external::read_competency_framework($id);
-            $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
+            $result = (object) \external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
             $this->fail('User cannot read a framework at system level.');
         } catch (\required_capability_exception $e) {
             // All good.
@@ -453,7 +452,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->user);
         $id = $result->id;
         $result = external::read_competency_framework($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -479,7 +478,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catuser);
         $id = $incat->id;
         $result = external::read_competency_framework($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -510,7 +509,7 @@ class external_test extends externallib_advanced_testcase {
 
         $id = $result->id;
         $result = external::delete_competency_framework($id);
-        $result = external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
 
         $this->assertTrue($result);
     }
@@ -527,14 +526,14 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catcreator);
         $id = $incat->id;
         $result = external::delete_competency_framework($id);
-        $result = external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
 
         $this->assertTrue($result);
 
         try {
             $id = $insystem->id;
             $result = external::delete_competency_framework($id);
-            $result = external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
+            $result = \external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
             $this->fail('Current user cannot should not be able to delete the framework.');
         } catch (\required_capability_exception $e) {
             // All good.
@@ -645,13 +644,13 @@ class external_test extends externallib_advanced_testcase {
         $result = $this->create_competency_framework(4, false);
 
         $result = external::count_competency_frameworks(array('contextid' => \context_system::instance()->id), 'self');
-        $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
 
         $this->assertEquals($result, 3);
 
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false);
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
         $result = (object) $result[0];
@@ -691,7 +690,7 @@ class external_test extends externallib_advanced_testcase {
         // Search on both ID number and shortname.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false, 'bee');
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(2, $result);
         $f = (object) array_shift($result);
         $this->assertEquals($framework1->get('id'), $f->id);
@@ -701,7 +700,7 @@ class external_test extends externallib_advanced_testcase {
         // Search on ID number.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false, 'beer');
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
         $this->assertEquals($framework2->get('id'), $f->id);
@@ -709,7 +708,7 @@ class external_test extends externallib_advanced_testcase {
         // Search on shortname.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false, 'cinnamon');
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
         $this->assertEquals($framework1->get('id'), $f->id);
@@ -717,7 +716,7 @@ class external_test extends externallib_advanced_testcase {
         // No match.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false, 'pwnd!');
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(0, $result);
     }
 
@@ -733,12 +732,12 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
         $result = external::count_competency_frameworks(array('contextid' => \context_system::instance()->id), 'self');
-        $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
         $this->assertEquals($result, 3);
 
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
             array('contextid' => \context_system::instance()->id), 'self', false);
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
         $result = (object) $result[0];
@@ -846,7 +845,7 @@ class external_test extends externallib_advanced_testcase {
 
         $id = $competency->id;
         $result = external::read_competency($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -874,7 +873,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catcreator);
         $id = $incat->id;
         $result = external::read_competency($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -906,7 +905,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->user);
         $id = $competency->id;
         $result = external::read_competency($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -933,7 +932,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catuser);
         $id = $incat->id;
         $result = external::read_competency($id);
-        $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
@@ -963,7 +962,7 @@ class external_test extends externallib_advanced_testcase {
 
         $id = $result->id;
         $result = external::delete_competency($id);
-        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $this->assertTrue($result);
     }
@@ -982,7 +981,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->catcreator);
         $id = $incat->id;
         $result = external::delete_competency($id);
-        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $this->assertTrue($result);
 
@@ -1076,15 +1075,15 @@ class external_test extends externallib_advanced_testcase {
         $c5 = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
 
         $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f2->get('id'))));
-        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competencies_returns(), $result);
         $this->assertEquals(2, $result);
 
         $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f1->get('id'))));
-        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competencies_returns(), $result);
         $this->assertEquals(3, $result);
 
         $result = external::count_competencies(array(array('column' => 'shortname', 'value' => 'A')));
-        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competencies_returns(), $result);
         $this->assertEquals(1, $result);
     }
 
@@ -1099,12 +1098,12 @@ class external_test extends externallib_advanced_testcase {
         $result = $this->create_competency(3, $framework->id);
 
         $result = external::count_competencies(array());
-        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competencies_returns(), $result);
 
         $this->assertEquals($result, 3);
 
         array('id' => $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10, \context_system::instance()->id));
-        $result = external_api::clean_returnvalue(external::list_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competencies_returns(), $result);
 
         $this->assertEquals(count($result), 3);
         $result = (object) $result[0];
@@ -1130,12 +1129,12 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->user);
 
         $result = external::count_competencies(array());
-        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_competencies_returns(), $result);
 
         $this->assertEquals($result, 3);
 
         array('id' => $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10, \context_system::instance()->id));
-        $result = external_api::clean_returnvalue(external::list_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competencies_returns(), $result);
 
         $this->assertEquals(count($result), 3);
         $result = (object) $result[0];
@@ -1161,7 +1160,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->user);
 
         $result = external::search_competencies('short', $framework->id);
-        $result = external_api::clean_returnvalue(external::search_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_competencies_returns(), $result);
 
         $this->assertEquals(count($result), 3);
         $result = (object) $result[0];
@@ -1700,7 +1699,7 @@ class external_test extends externallib_advanced_testcase {
         // This is a move up.
         external::reorder_template_competency($template->id, $competency4->id, $competency2->id);
         $result = external::list_competencies_in_template($template->id);
-        $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
 
         $r1 = (object) $result[0];
         $r2 = (object) $result[1];
@@ -1713,7 +1712,7 @@ class external_test extends externallib_advanced_testcase {
         // This is a move down.
         external::reorder_template_competency($template->id, $competency1->id, $competency4->id);
         $result = external::list_competencies_in_template($template->id);
-        $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
 
         $r1 = (object) $result[0];
         $r2 = (object) $result[1];
@@ -1908,7 +1907,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = external::read_template($cattemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('shortname2', $result['shortname']);
         $this->assertEquals('description2', $result['description']);
@@ -1922,7 +1921,7 @@ class external_test extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
         $this->assertTrue(has_capability('moodle/competency:templateview', \context_system::instance()));
         $result = external::read_template($systemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
         $this->assertEquals('shortname1', $result['shortname']);
         $this->assertEquals('description1', $result['description']);
@@ -1932,7 +1931,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         $result = external::read_template($cattemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('shortname2', $result['shortname']);
         $this->assertEquals('description2', $result['description']);
@@ -1987,7 +1986,7 @@ class external_test extends externallib_advanced_testcase {
         $result = $this->update_template($cattemplate->id, 3);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('shortname3', $result['shortname']);
         $this->assertEquals("description3", $result['description']);
@@ -2001,7 +2000,7 @@ class external_test extends externallib_advanced_testcase {
         $result = $this->update_template($systemplate->id, 4);
         $this->assertTrue($result);
         $result = external::read_template($systemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
         $this->assertEquals('shortname4', $result['shortname']);
         $this->assertEquals('description4', $result['description']);
@@ -2013,7 +2012,7 @@ class external_test extends externallib_advanced_testcase {
         $result = $this->update_template($cattemplate->id, 5);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
-        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('shortname5', $result['shortname']);
         $this->assertEquals('description5', $result['description']);
@@ -2065,17 +2064,17 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = external::delete_template($cat1->id);
-        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_template_returns(), $result);
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $cat1->id)));
 
         // User with system permissions.
         $this->setUser($this->creator);
         $result = external::delete_template($sys1->id);
-        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::delete_template($cat2->id);
-        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_template_returns(), $result);
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $sys1->id)));
         $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $cat2->id)));
@@ -2111,7 +2110,7 @@ class external_test extends externallib_advanced_testcase {
         assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
-        $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_templates_returns(), $result);
         $this->assertCount(2, $result);
         $this->assertEquals($cat1->id, $result[0]['id']);
         $this->assertEquals($cat2->id, $result[1]['id']);
@@ -2120,7 +2119,7 @@ class external_test extends externallib_advanced_testcase {
         assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents', false);
-        $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::list_templates_returns(), $result);
         $this->assertCount(3, $result);
         $this->assertEquals($cat2->id, $result[0]['id']);
         $this->assertEquals($cat1->id, $result[1]['id']);
@@ -2202,14 +2201,14 @@ class external_test extends externallib_advanced_testcase {
         assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $syscontextid), 'children');
-        $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_templates_returns(), $result);
         $this->assertEquals(3, $result);
 
         // User with system permissions.
         assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $catcontextid), 'parents');
-        $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::count_templates_returns(), $result);
         $this->assertEquals(5, $result);
     }
 
@@ -2232,7 +2231,7 @@ class external_test extends externallib_advanced_testcase {
 
         // The lower one always as competencyid.
         $result = external::add_related_competency($competency1->get('id'), $competency2->get('id'));
-        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
@@ -2250,7 +2249,7 @@ class external_test extends externallib_advanced_testcase {
         ));
 
         $result = external::add_related_competency($competency3->get('id'), $competency1->get('id'));
-        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
@@ -2275,7 +2274,7 @@ class external_test extends externallib_advanced_testcase {
             'competencyid = :cid AND relatedcompetencyid = :rid',
             array('rid' => $competency1->get('id'), 'cid' => $competency2->get('id'))));
         $result = external::add_related_competency($competency2->get('id'), $competency1->get('id'));
-        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(1, $DB->count_records_select(related_competency::TABLE,
             'competencyid = :cid AND relatedcompetencyid = :rid',
@@ -2325,18 +2324,18 @@ class external_test extends externallib_advanced_testcase {
 
         // Returns false when the relation does not exist.
         $result = external::remove_related_competency($c1->get('id'), $c3->get('id'));
-        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertFalse($result);
 
         // Returns true on success.
         $result = external::remove_related_competency($c2->get('id'), $c3->get('id'));
-        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(1, related_competency::count_records());
 
         // We don't need to specify competencyid and relatedcompetencyid in the right order.
         $result = external::remove_related_competency($c2->get('id'), $c1->get('id'));
-        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(0, related_competency::count_records());
     }
@@ -2363,7 +2362,7 @@ class external_test extends externallib_advanced_testcase {
         $rc24 = $lpg->create_related_competency(array('competencyid' => $c2->get('id'), 'relatedcompetencyid' => $c4->get('id')));
 
         $result = external::search_competencies('comp', $framework->get('id'), true);
-        $result = external_api::clean_returnvalue(external::search_competencies_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_competencies_returns(), $result);
 
         $this->assertCount(5, $result);
 
@@ -2585,7 +2584,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(3, $c2d->get('sortorder'));
 
         $result = external::delete_competency($c1->get('id'));
-        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $c2->read();
         $c2a->read();
@@ -2600,7 +2599,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(3, $c2d->get('sortorder'));
 
         $result = external::delete_competency($c2b->get('id'));
-        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $c2->read();
         $c2a->read();
@@ -2638,7 +2637,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $c2b->get('sortorder'));
 
         $result = external::set_parent_competency($c2a->get('id'), $c1->get('id'));
-        $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
 
         $c1->read();
         $c1a->read();
@@ -2656,7 +2655,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Move a root node.
         $result = external::set_parent_competency($c2->get('id'), $c1b->get('id'));
-        $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
 
         $c1->read();
         $c1a->read();

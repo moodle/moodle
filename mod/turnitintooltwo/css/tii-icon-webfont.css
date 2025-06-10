@@ -1,0 +1,370 @@
+/*!
+ *  Font Awesome 4.3.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */
+/* FONT PATH
+ * -------------------------- */
+@font-face {
+  font-family: 'TiiIconFont';
+  src: url('../fonts/tii-icon-webfont.eot');
+  src: url('../fonts/tii-icon-webfont.eot') format('embedded-opentype'), url('../fonts/tii-icon-webfont.woff') format('woff'), url('../fonts/tii-icon-webfont.ttf') format('truetype'), url('../fonts/tii-icon-webfont.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.tiiicon {
+  display: inline-block;
+  font: normal normal normal 14px/1 TiiIconFont;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0);
+}
+/* makes the font 33% larger relative to the icon container */
+.icon-lg {
+  font-size: 1.33333333em;
+  line-height: 0.75em;
+  vertical-align: -15%;
+}
+.icon-2x {
+  font-size: 2em;
+}
+.icon-3x {
+  font-size: 3em;
+}
+.icon-4x {
+  font-size: 4em;
+}
+.icon-5x {
+  font-size: 5em;
+}
+.icon-fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+.icon-ul {
+  padding-left: 0;
+  margin-left: 2.14285714em;
+  list-style-type: none;
+}
+.icon-ul > li {
+  position: relative;
+}
+.icon-li {
+  position: absolute;
+  left: -2.14285714em;
+  width: 2.14285714em;
+  top: 0.14285714em;
+  text-align: center;
+}
+.icon-li.icon-lg {
+  left: -1.85714286em;
+}
+.icon-border {
+  padding: .2em .25em .15em;
+  border: solid 0.08em #eeeeee;
+  border-radius: .1em;
+}
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+.icon.pull-left {
+  margin-right: .3em;
+}
+.icon.pull-right {
+  margin-left: .3em;
+}
+.icon-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+.icon-pulse {
+  -webkit-animation: fa-spin 1s infinite steps(8);
+  animation: fa-spin 1s infinite steps(8);
+}
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+.icon-rotate-90 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.icon-rotate-180 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.icon-rotate-270 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+.icon-flip-horizontal {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -webkit-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+.icon-flip-vertical {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -webkit-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  transform: scale(1, -1);
+}
+:root .icon-rotate-90,
+:root .icon-rotate-180,
+:root .icon-rotate-270,
+:root .icon-flip-horizontal,
+:root .icon-flip-vertical {
+  filter: none;
+}
+.icon-stack {
+  position: relative;
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  vertical-align: middle;
+}
+.icon-stack-1x,
+.icon-stack-2x {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+.icon-stack-1x {
+  line-height: inherit;
+}
+.icon-stack-2x {
+  font-size: 2em;
+}
+.icon-inverse {
+  color: #ffffff;
+}
+/*
+Extended font, we added the product designer tii fonts onto the end of font awesome using IcoMoon
+We also fixed a few sizing issues to make the sizes more consistent
+*/
+.icon-people-3:before {
+    content: "\e69c";
+}
+.icon-anonymous:before {
+    content: "\e651";
+}
+.icon-circle-cross:before {
+    content: "\e652";
+}
+.icon-circle-check:before {
+    content: "\e6a7";
+}
+.icon-class-copy:before {
+    content: "\e6a8";
+}
+.icon-resources:before {
+    content: "\e6ac";
+}
+.icon-dots:before {
+    content: "\e6ad";
+}
+.icon-down-arrow:before {
+    content: "\e6af";
+}
+.icon-right-arrow:before {
+    content: "\e605";
+}
+.icon-logout:before {
+    content: "\e629";
+}
+.icon-upload:before {
+    content: "\e6b2";
+}
+.icon-new-window:before {
+    content: "\e670";
+}
+.icon-download:before {
+    content: "\e689";
+}
+.icon-back:before {
+    content: "\e603";
+}
+.icon-forward:before {
+    content: "\e602";
+}
+.icon-plus:before {
+    content: "\e63c";
+}
+.icon-cross:before {
+    content: "\e6d2";
+}
+.icon-quickmarks:before {
+    content: "\e62f";
+}
+.icon-check:before {
+    content: "\e632";
+}
+.icon-gradebook:before {
+    content: "\e671";
+}
+.icon-graph:before {
+    content: "\e6b3";
+}
+.icon-messages:before {
+    content: "\e601";
+}
+.icon-messages-open:before {
+    content: "\e607";
+}
+.icon-search:before {
+    content: "\e69e";
+}
+.icon-zoom-out:before {
+    content: "\e6a5";
+}
+.icon-zoom-in:before {
+    content: "\e672";
+}
+.fa-hangul:before {
+    content: "\e677";
+}
+.icon-warn:before {
+    content: "\e67c";
+}
+.icon-timezone:before {
+    content: "\e68f";
+}
+.icon-rubric:before {
+    content: "\e691";
+}
+.icon-bubble-add-comment:before {
+    content: "\e6a4";
+}
+.icon-comment-below:before {
+    content: "\e67e";
+}
+.icon-rubric-assigned-comment:before {
+    content: "\e67f";
+}
+.icon-comment-question:before {
+    content: "\e680";
+}
+.icon-convert-to-qm:before {
+    content: "\e681";
+}
+.icon-audio-comment:before {
+    content: "\e6d0";
+}
+.icon-person:before {
+    content: "\e684";
+}
+.icon-people:before {
+    content: "\e685";
+}
+.icon-admin:before {
+    content: "\e686";
+}
+.icon-tutor:before {
+    content: "\e687";
+}
+.icon-student:before {
+    content: "\e688";
+}
+.icon-grademark:before {
+    content: "\e692";
+}
+.icon-peermark:before {
+    content: "\e693";
+}
+.icon-similarity-check:before {
+    content: "\e694";
+}
+.icon-matched:before {
+    content: "\e6a0";
+}
+.icon-side-by-side:before {
+    content: "\e6d1";
+}
+.icon-list:before {
+    content: "\e6ce";
+}
+.icon-layers:before {
+    content: "\e6cb";
+}
+.icon-layers-outline:before {
+    content: "\e6ca";
+}
+.icon-layers-outline-part:before {
+    content: "\e6c9";
+}
+.icon-layers-outline-dotted:before {
+    content: "\e6c8";
+}
+.icon-layers-dotted:before {
+    content: "\e6c7";
+}
+.icon-bars:before {
+    content: "\e6c5";
+}
+.icon-menu:before {
+    content: "\e6b8";
+}
+.icon-highlighter:before {
+    content: "\e6bb";
+}
+.icon-question-mark:before {
+    content: "\e6bd";
+}
+.icon-info-filled:before {
+    content: "\e6be";
+}
+.icon-info-outline:before {
+    content: "\e6bf";
+}
+.icon-settings:before {
+    content: "\e6c2";
+}
+.icon-contextual-menu:before {
+    content: "\e6b7";
+}
+.icon-ets-logo:before {
+    content: "\e600";
+}
+.icon-light-bulb:before {
+    content: "\e699";
+}
+.icon-left-arrow:before {
+    content: "\e604";
+}
+.icon-up-arrow:before {
+    content: "\e6b0";
+}
+.icon-library:before {
+    content: "\e69b";
+}
+.icon-login:before {
+    content: "\e606";
+}

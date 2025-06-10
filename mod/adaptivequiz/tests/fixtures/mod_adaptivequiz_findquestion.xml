@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <table name="context">
+        <column>id</column>
+        <column>contextlevel</column>
+        <column>instanceid</column>
+        <column>path</column>
+        <column>depth</column>
+        <row>
+            <value>16</value>
+            <value>50</value>
+            <value>2</value>
+            <value>/1/3/16</value>
+            <value>3</value>
+        </row>
+    </table>
+    <table name="course">
+        <column>id</column>
+        <column>category</column>
+        <column>fullname</column>
+        <column>shortname</column>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>101</value>
+            <value>101</value>
+        </row>
+    </table>
+    <table name="question_categories">
+        <column>id</column>
+        <column>name</column>
+        <column>contextid</column>
+        <column>info</column>
+        <column>stamp</column>
+        <row>
+            <value>1</value>
+            <value>Default for 101</value>
+            <value>16</value>
+            <value>default question category</value>
+            <value>example.loc+161208110835+ZNzubk</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Default for Miscellaneous</value>
+            <value>3</value>
+            <value>default question category</value>
+            <value>example.loc+161208112421+aQXIHP</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>Default for System</value>
+            <value>1</value>
+            <value>default question category</value>
+            <value>example.loc+161208112421+HX4iPR</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>Test reattempt</value>
+            <value>16</value>
+            <value>Data test for fetch_question</value>
+            <value>example.loc+161208112853+RAFrV1</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>retrieve_tags_with_question_count</value>
+            <value>16</value>
+            <value>test_retrieve_tags_with_question_count</value>
+            <value>example.loc+161208112930+1oAcF9</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category 1</value>
+            <value>16</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category</value>
+            <value>example.loc+161208120113+5PvXXH</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category 2</value>
+            <value>16</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category</value>
+            <value>example.loc+170110181010+Ig7DE6</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category 3</value>
+            <value>16</value>
+            <value>find_questions_with_tags_with_multiple_quest_in_quest_category</value>
+            <value>example.loc+170110181307+5LFZK2</value>
+        </row>
+    </table>
+    <table name="question">
+        <column>id</column>
+        <column>category</column>
+        <column>parent</column>
+        <column>name</column>
+        <column>questiontext</column>
+        <column>generalfeedback</column>
+        <column>defaultmark</column>
+        <column>qtype</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>true or false 1</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>4</value>
+            <value>0</value>
+            <value>true or false 2</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>4</value>
+            <value>0</value>
+            <value>true or false 3</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>4</value>
+            <value>0</value>
+            <value>true or false 4</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>4</value>
+            <value>0</value>
+            <value>true or false 5</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>4</value>
+            <value>0</value>
+            <value>true or false 6</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>5</value>
+            <value>0</value>
+            <value>TF test 1</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>5</value>
+            <value>0</value>
+            <value>TF test 2</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>9</value>
+            <value>5</value>
+            <value>0</value>
+            <value>TF test 3</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>10</value>
+            <value>5</value>
+            <value>0</value>
+            <value>TF test 4</value>
+            <value>question text</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>11</value>
+            <value>6</value>
+            <value>0</value>
+            <value>multiple_quest_in_quest_category 1</value>
+            <value>multiple_quest_in_quest_category 1</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>12</value>
+            <value>7</value>
+            <value>0</value>
+            <value>multiple_quest_in_quest_category 2</value>
+            <value>multiple_quest_in_quest_category 2</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+        <row>
+            <value>13</value>
+            <value>8</value>
+            <value>0</value>
+            <value>multiple_quest_in_quest_category 3</value>
+            <value>multiple_quest_in_quest_category 3</value>
+            <value>general feedback</value>
+            <value>1.0</value>
+            <value>truefalse</value>
+        </row>
+    </table>
+    <table name="question_answers">
+        <column>id</column>
+        <column>question</column>
+        <column>answer</column>
+        <column>fraction</column>
+        <column>feedback</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>true</value>
+            <value>1.0</value>
+            <value>feedback for true</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>false</value>
+            <value>0.0</value>
+            <value>feedback for false</value>
+        </row>
+    </table>
+    <table name="question_truefalse">
+        <column>id</column>
+        <column>question</column>
+        <column>trueanswer</column>
+        <column>falseanswer</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>2</value>
+        </row>
+    </table>
+    <table name="course_modules">
+        <column>id</column>
+        <column>course</column>
+        <column>module</column>
+        <column>falseanswer</column>
+
+    </table>
+    <table name="tag">
+        <column>id</column>
+        <column>userid</column>
+        <column>tagcollid</column>
+        <column>name</column>
+        <column>rawname</column>
+        <column>flag</column>
+        <row>
+            <value>1</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_5</value>
+            <value>adpq_5</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>1</value>
+            <value>phpunittag_5</value>
+            <value>phpunittag_5</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>2</value>
+            <value>1</value>
+            <value>phpunittag_888</value>
+            <value>phpunittag_888</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_6</value>
+            <value>adpq_6</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_7</value>
+            <value>adpq_7</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_8</value>
+            <value>adpq_8</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_9</value>
+            <value>adpq_9</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>2</value>
+            <value>1</value>
+            <value>adpq_10</value>
+            <value>adpq_10</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>22</value>
+            <value>2</value>
+            <value>1</value>
+            <value>test1_22</value>
+            <value>test1_22</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>23</value>
+            <value>2</value>
+            <value>1</value>
+            <value>test1_23</value>
+            <value>test1_23</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>24</value>
+            <value>2</value>
+            <value>1</value>
+            <value>test1_24</value>
+            <value>test1_24</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>25</value>
+            <value>2</value>
+            <value>2</value>
+            <value>adpq_5</value>
+            <value>adpq_5</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="tag_instance">
+        <column>id</column>
+        <column>tagid</column>
+        <column>component</column>
+        <column>itemtype</column>
+        <column>itemid</column>
+        <column>tiuserid</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>4</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>5</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>6</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>4</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>7</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>5</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>8</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>6</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>1</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>8</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>8</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>9</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>9</value>
+            <value>8</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>10</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>22</value>
+            <value>22</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>11</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>23</value>
+            <value>23</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>12</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>24</value>
+            <value>24</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>13</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>25</value>
+            <value>25</value>
+            <value>core</value>
+            <value>course</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>26</value>
+            <value>2</value>
+            <value>core_question</value>
+            <value>question</value>
+            <value>5</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="adaptivequiz_question">
+        <column>id</column>
+        <column>instance</column>
+        <column>questioncategory</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>11</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>22</value>
+        </row>
+    </table>
+</dataset>

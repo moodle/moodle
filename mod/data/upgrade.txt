@@ -1,15 +1,9 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
-== 4.2 ==
+== 4.1.2 ==
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
   parameters in the field add/modify form.
-* New tags are added to the current mod_data\templates class: ##otherfields##, [[FIELD#name]],
-  and [[FIELD#description]].
-* The mod_data\template class can provide preprocessor methods to optimize some tags. From now on,
-  when load_template_tags detects a tag, it will call a "preprocess_tag_TAGNAME" method if it exists.
-  This preprocessing can be used, for example, to precalculate some content. Currently, this preprocessor
-  is used to detect which fields needs to be renderer when a ##otherfields## is used.
 
 === 4.1 ===
 * The method data_view is now deprecated. Use $maganer->set_module_viewed instead.

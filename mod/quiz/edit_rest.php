@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\quiz_settings;
-
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
@@ -51,18 +49,17 @@ $shuffle    = optional_param('newshuffle', 0, PARAM_INT);
 $page       = optional_param('page', '', PARAM_INT);
 $ids        = optional_param('ids', '', PARAM_SEQUENCE);
 $PAGE->set_url('/mod/quiz/edit-rest.php',
-        ['quizid' => $quizid, 'class' => $class]);
+        array('quizid' => $quizid, 'class' => $class));
 
 require_sesskey();
-$quizobj = quiz_settings::create($quizid);
-$quiz = $quizobj->get_quiz();
-$cm = $quizobj->get_cm();
-$course = $quizobj->get_course();
+$quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
 require_login($course, false, $cm);
 
+$quizobj = new quiz($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
-$gradecalculator = $quizobj->get_grade_calculator();
-$modcontext = $quizobj->get_context();
+$modcontext = context_module::instance($cm->id);
 
 echo $OUTPUT->header(); // Send headers.
 
@@ -89,17 +86,17 @@ switch($requestmethod) {
                 switch ($field) {
                     case 'getsectiontitle':
                         require_capability('mod/quiz:manage', $modcontext);
-                        $result = ['instancesection' => $section->heading];
+                        $result = array('instancesection' => $section->heading);
                         break;
                     case 'updatesectiontitle':
                         require_capability('mod/quiz:manage', $modcontext);
                         $structure->set_section_heading($id, $newheading);
-                        $result = ['instancesection' => format_string($newheading)];
+                        $result = array('instancesection' => format_string($newheading));
                         break;
                     case 'updateshufflequestions':
                         require_capability('mod/quiz:manage', $modcontext);
                         $structure->set_section_shuffle($id, $shuffle);
-                        $result = ['instanceshuffle' => $section->shufflequestions];
+                        $result = array('instanceshuffle' => $section->shufflequestions);
                         break;
                 }
                 break;
@@ -117,13 +114,13 @@ switch($requestmethod) {
                         }
                         $structure->move_slot($id, $previousid, $page);
                         quiz_delete_previews($quiz);
-                        $result = ['visible' => true];
+                        $result = array('visible' => true);
                         break;
 
                     case 'getmaxmark':
                         require_capability('mod/quiz:manage', $modcontext);
-                        $slot = $DB->get_record('quiz_slots', ['id' => $id], '*', MUST_EXIST);
-                        $result = ['instancemaxmark' => quiz_format_question_grade($quiz, $slot->maxmark)];
+                        $slot = $DB->get_record('quiz_slots', array('id' => $id), '*', MUST_EXIST);
+                        $result = array('instancemaxmark' => quiz_format_question_grade($quiz, $slot->maxmark));
                         break;
 
                     case 'updatemaxmark':
@@ -132,24 +129,24 @@ switch($requestmethod) {
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
                             // Grade has really changed.
                             quiz_delete_previews($quiz);
-                            $gradecalculator->recompute_quiz_sumgrades();
-                            $gradecalculator->recompute_all_attempt_sumgrades();
-                            $gradecalculator->recompute_all_final_grades();
+                            quiz_update_sumgrades($quiz);
+                            quiz_update_all_attempt_sumgrades($quiz);
+                            quiz_update_all_final_grades($quiz);
                             quiz_update_grades($quiz, 0, true);
                         }
-                        $result = ['instancemaxmark' => quiz_format_question_grade($quiz, $maxmark),
-                                'newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades)];
+                        $result = array('instancemaxmark' => quiz_format_question_grade($quiz, $maxmark),
+                                'newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades));
                         break;
 
                     case 'updatepagebreak':
                         require_capability('mod/quiz:manage', $modcontext);
                         $slots = $structure->update_page_break($id, $value);
-                        $json = [];
+                        $json = array();
                         foreach ($slots as $slot) {
-                            $json[$slot->slot] = ['id' => $slot->id, 'slot' => $slot->slot,
-                                                            'page' => $slot->page];
+                            $json[$slot->slot] = array('id' => $slot->id, 'slot' => $slot->slot,
+                                                            'page' => $slot->page);
                         }
-                        $result = ['slots' => $json];
+                        $result = array('slots' => $json);
                         break;
 
                     case 'deletemultiple':
@@ -157,17 +154,17 @@ switch($requestmethod) {
 
                         $ids = explode(',', $ids);
                         foreach ($ids as $id) {
-                            $slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'id' => $id],
+                            $slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'id' => $id),
                                     '*', MUST_EXIST);
                             if ($structure->has_use_capability($slot->slot)) {
                                 $structure->remove_slot($slot->slot);
                             }
                         }
                         quiz_delete_previews($quiz);
-                        $gradecalculator->recompute_quiz_sumgrades();
+                        quiz_update_sumgrades($quiz);
 
-                        $result = ['newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
-                                'deleted' => true, 'newnumquestions' => $structure->get_question_count()];
+                        $result = array('newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
+                                'deleted' => true, 'newnumquestions' => $structure->get_question_count());
                         break;
 
                     case 'updatedependency':
@@ -175,7 +172,7 @@ switch($requestmethod) {
                         $slot = $structure->get_slot_by_id($id);
                         $value = (bool) $value;
                         $structure->update_question_dependency($slot->id, $value);
-                        $result = ['requireprevious' => $value];
+                        $result = array('requireprevious' => $value);
                         break;
                 }
                 break;
@@ -187,12 +184,12 @@ switch($requestmethod) {
             case 'section':
                 require_capability('mod/quiz:manage', $modcontext);
                 $structure->remove_section_heading($id);
-                $result = ['deleted' => true];
+                $result = array('deleted' => true);
                 break;
 
             case 'resource':
                 require_capability('mod/quiz:manage', $modcontext);
-                if (!$slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'id' => $id])) {
+                if (!$slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'id' => $id))) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
                 }
 
@@ -204,9 +201,9 @@ switch($requestmethod) {
                 }
                 $structure->remove_slot($slot->slot);
                 quiz_delete_previews($quiz);
-                $gradecalculator->recompute_quiz_sumgrades();
-                $result = ['newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
-                            'deleted' => true, 'newnumquestions' => $structure->get_question_count()];
+                quiz_update_sumgrades($quiz);
+                $result = array('newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
+                            'deleted' => true, 'newnumquestions' => $structure->get_question_count());
                 break;
         }
         break;

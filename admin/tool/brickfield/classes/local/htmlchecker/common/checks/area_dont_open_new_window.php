@@ -39,9 +39,26 @@ class area_dont_open_new_window extends brickfield_accessibility_test {
      *   The main check function. This is called by the parent class to actually check content
      */
     public function check(): void {
+        // Need to process all enabled lang versions of newwindowphrases.
+        $text = brickfield_accessibility_test::get_all_newwindowphrases();
+
         foreach ($this->get_all_elements('area') as $area) {
             if ($area->hasAttribute('target') && !in_array($area->getAttribute('target'), $this->allowedtargets)) {
-                $this->add_report($area);
+                $phrasefound = false;
+                foreach ($text as $phrase) {
+                    // Sanity check for readable text.
+                    if (!brickfield_accessibility_test::is_text_readable($phrase)) {
+                        break;
+                    }
+                    $pos = stripos($area->getAttribute('alt'), $phrase);
+                    if ($pos !== false) {
+                        $phrasefound = true;
+                        break;
+                    }
+                }
+                if (!$phrasefound) {
+                    $this->add_report($area);
+                }
             }
         }
     }

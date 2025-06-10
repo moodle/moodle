@@ -1,0 +1,56 @@
+{{!
+    User list navigation template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * hasnavigation
+    * fullnavigation
+        * fullname
+        * idnumber
+        * email
+        * nbrating
+        * nbcomments
+        * profileimage
+}}
+{{#hasnavigation}}
+<div data-region="blocks-lp-list-users" class="{{#navigationclosed}}lp-list-users-closed{{/navigationclosed}}">
+<table class="table table-list-users">
+    <tbody>
+        {{#fullnavigation}}
+        <tr class="{{#current}}selected{{/current}}"
+            data-planid="{{planid}}"
+            data-templateid="{{templateid}}"
+            data-tagid="{{tagid}}">
+            <td class="img-user"><img alt="{{#str}}imagealt{{/str}}: {{fullname}}" src="{{profileimage}}" /></td>
+            <td>
+                <span class="fullname-td">{{fullname}}</span>
+                <a href="#" class="nav-list-users-displayinfo">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                </a>
+                <span class="item-nav-list-users-info hidden">
+                    <span class="nav-small">{{email}}</span>
+                    <span class="nav-small">{{idnumber}}</span>
+                </span>
+                <span class="badge badge-info nav-small">{{planname}}</span>
+                {{#nbrating}}
+                <span class="badge badge-info nav-small">{{#str}}ratingnumber, report_lpmonitoring, {{{nbrating}}}{{/str}}</span>
+                {{/nbrating}}
+                {{#nbcomments}}
+                <span class="badge badge-info nav-small">{{#str}}commentsnumber, report_lpmonitoring, {{{nbcomments}}}{{/str}}</span>
+                {{/nbcomments}}
+                {{#nbplans}}
+                <span class="badge badge-info nav-small">{{#str}}plansnumber, report_lpmonitoring, {{{nbplans}}}{{/str}}</span>
+                {{/nbplans}}
+            </td>
+        </tr>
+        {{/fullnavigation}}
+    </tbody>
+</table>
+</div>
+<a class="btn btn-secondary toggle-lp-list-users hidden-lg-down">
+    <i class="fa fa-user-circle" aria-hidden="true"></i>
+    <i class="icon fa {{#navigationclosed}}fa-angle-double-right{{/navigationclosed}} {{^navigationclosed}}fa-angle-double-left{{/navigationclosed}} angle"></i>
+</a>
+{{/hasnavigation}}

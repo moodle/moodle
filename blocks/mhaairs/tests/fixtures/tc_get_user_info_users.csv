@@ -1,0 +1,9 @@
+username,course,editingteacher,teacher,student
+user2,tc2,1,1,1
+user2,tc3,,,
+user2,tc4,,,
+user2,tc5,,,1
+user3,tc2,1,1,1
+user3,tc3,1,,1
+user3,tc4,,,
+user3,tc5,,1,

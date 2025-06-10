@@ -1,0 +1,209 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Competency filter template.
+
+    Classes required for JS:
+    * learningplan
+
+    Context variables required for this template:
+    * templates
+      * shortname
+      * id
+    * tags
+      * id
+      * tag
+}}
+<form class="mform" id="reportFilter" accept-charset="utf-8" method="post" autocomplete="off">
+    <fieldset id="id_displayinfo" class="clearfix collapsible">
+        <legend class="ftoggler">
+            <a role="button" title="{{#str}}clicktohideshow{{/str}}" href="#" class="fheader" aria-controls="id_displayinfo" aria-expanded="true">{{#str}}filter, report_lpmonitoring{{/str}}</a>
+        </legend>
+        <div class="fcontainer clearfix">
+            <div class="fitem_fradio fitem fitem_fradiogroup form-group row">
+                <div class="fitemtitle col-md-3" id="optionfilter">
+                    <label class="col-form-label d-inline">{{#str}}filterby, report_lpmonitoring{{/str}}</label>
+                </div>
+                <div class="felement col-md-9 form-inline">
+
+                    <div class="radio radio-primary">
+                        <span>
+                            <input class="form-control" type="radio" name="optionfilter" id="template" value="template" checked disabled="disabled" aria-labelledby="optionfilter">
+                            <label for="template">{{#str}}template, tool_lp{{/str}}</label>
+                        </span>
+                    </div>
+                    <div class="radio radio-primary">
+                        <span>
+                            <input type="radio" name="optionfilter" id="student" value="student" disabled="disabled" aria-labelledby="optionfilter">
+                            <label for="student">{{#str}}user{{/str}}</label>
+                        </span>
+                    </div>
+                    <div class="radio radio-primary">
+                        <span>
+                            <input type="radio" name="optionfilter" id="tag" value="tag" disabled="disabled" aria-labelledby="optionfilter">
+                            <label for="tag">{{#str}}tag, report_lpmonitoring{{/str}}</label>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="templatefilter">
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label class="col-form-label d-inline" for="templateSelectorReport">{{#str}}template, tool_lp{{/str}}</label>
+                    </div>
+                    <div class="felement fautocomplete col-md-9 form-inline">
+                        <select id="templateSelectorReport" class="form-control custom-select">
+                            <option value="">{{#str}}selectlearningplantemplate, report_lpmonitoring{{/str}}</option>
+                            {{#templates}}
+                            <option value="{{id}}">{{shortname}}</option>
+                            {{/templates}}
+                        </select>
+                    </div>
+                </div>
+                <div class="fitem for-autocomplete form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label class="col-form-label d-inline" for="learningplanSelectorReport">{{#str}}usersfromtemplate, report_lpmonitoring{{/str}}</label>
+                    </div>
+                    <div class="felement fautocomplete col-md-9 form-inline  ">
+                        <select style="display: none" data-scalesortorder="" data-scalefilter="" id="learningplanSelectorReport" data-templateid="" data-scalefilterapply="" data-withcomments="" class="form-control">
+                        </select>
+                    </div>
+                </div>
+                <div class="advanced" style="display: none">
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3">
+                            <label>{{#str}}comments{{/str}}</label>
+                        </div>
+                        <div class="felement col-md-9 form-inline">
+                            <div class="checkbox checkbox-primary">
+                                <input id="filter-comment" type="checkbox" class="radio">
+                                <label for="filter-comment">{{#str}}atleastonecomment, report_lpmonitoring{{/str}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3">
+                            <label>{{#str}}learningplans, tool_lp{{/str}}</label>
+                        </div>
+                        <div class="felement col-md-9 form-inline">
+                            <div class="checkbox checkbox-primary">
+                                <input id="filter-plan" type="checkbox" class="radio">
+                                <label for="filter-plan">{{#str}}atleasttwoplans, report_lpmonitoring{{/str}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3">
+                            <label>{{#str}}scalesfortemplate, report_lpmonitoring{{/str}}</label>
+                        </div>
+                        <div class="felement col-md-9 form-inline">
+                            <div id="scale"></div>
+                        </div>
+                    </div>
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3" id="scalefilterapply">
+                            <label>{{#str}}scalefilterby, report_lpmonitoring{{/str}}</label>
+                        </div>
+                        <div class="felement fscalefilter col-md-9 form-inline">
+                            <div id="scalefilter"></div>
+                        </div>
+                    </div>
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3" id="scalesortorderlabel">
+                            <label >{{#str}}sort{{/str}}</label>
+                        </div>
+                        <div class="felement col-md-9 form-inline">
+                            <div id="scalesortorder"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="moreless-actions hidden">
+                    <div class="fitem form-group row">
+                        <div class="fitemtitle col-md-3"></div>
+                        <div class="felement col-md-9 form-inline">
+                            <a href="#" title="{{#str}}showmore, form{{/str}}" class="moreless-toggler show-toggler" role="button">{{#str}}showmore, form{{/str}}</a>
+                            <a href="#" title="{{#str}}showless, form{{/str}}" class="moreless-toggler less-toggler hidden" role="button">{{#str}}showless, form{{/str}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="studentfilter disabled-option">
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="studentSelectorReport">{{#str}}user{{/str}}</label>
+                    </div>
+                    <div class="felement fautocomplete col-md-9">
+                        <select data-capability="moodle/competency:planview" id="studentSelectorReport" class="form-control" disabled="disabled">
+                        </select>
+                    </div>
+                </div>
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="studentPlansSelectorReport">{{#str}}learningplans, tool_lp{{/str}}</label>
+                    </div>
+                    <div class="felement col-md-9 form-inline">
+                        <select id="studentPlansSelectorReport" class="form-control custom-select" disabled="disabled">
+                            <option>{{#str}}nolearningplanavailable, report_lpmonitoring{{/str}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="tagfilter disabled-option">
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label class="col-form-label d-inline" for="tagSelectorReport">{{#str}}tag, report_lpmonitoring{{/str}}</label>
+                    </div>
+                    <div class="felement fautocomplete col-md-9 form-inline">
+                        <select id="tagSelectorReport" class="form-control custom-select">
+                            <option value="">{{#str}}selecttag, report_lpmonitoring{{/str}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                            <label>{{#str}}comments{{/str}}</label>
+                    </div>
+                    <div class="felement col-md-9 form-inline">
+                        <div class="checkbox checkbox-primary">
+                                <input id="filter-comments" type="checkbox" class="radio">
+                                <label for="filter-comments">{{#str}}atleastonecomment, report_lpmonitoring{{/str}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="learningplanTagSelectorReport">{{#str}}learningplanswithtag, report_lpmonitoring{{/str}}</label>
+                    </div>
+                    <div class="felement col-md-9 form-inline">
+                        <select id="learningplanTagSelectorReport" class="form-control custom-select" disabled="disabled">
+                            <option>{{#str}}nolearningplanavailable, report_lpmonitoring{{/str}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3"></div>
+                    <div class="felement col-md-9">
+                        <button id="submitFilterReportButton" type="submit" class="btn btn-primary" disabled>
+                            {{#str}}apply, report_lpmonitoring{{/str}}
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </button>
+                    </div>
+            </div>
+        </div>
+    </fieldset>
+</form>

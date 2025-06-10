@@ -368,10 +368,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function add_first_page_links(lesson $lesson) {
-        global $CFG;
         $prevpageid = 0;
 
-        $output = $this->output->heading(get_string("whatdofirst", "lesson"), 3);
+        $headinglevel = $this->page->activityheader->get_heading_level(3);
+        $output = $this->output->heading(get_string("whatdofirst", "lesson"), $headinglevel);
         $links = array();
 
         $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
@@ -567,8 +567,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
         }
 
         if ($data->gradelesson) {
-            // We are using level 3 header because the page title is a sub-heading of lesson title (MDL-30911).
-            $output .= $this->heading(get_string("congratulations", "lesson"), 3);
+            $headinglevel = $this->page->activityheader->get_heading_level();
+            $output .= $this->heading(get_string("congratulations", "lesson"), $headinglevel);
             $output .= $this->box_start('generalbox boxaligncenter');
         }
 

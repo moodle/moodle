@@ -109,7 +109,7 @@ class singleview extends grade_report {
 
         $this->setup_item_selector($itemtype, $itemid);
 
-        $screenclass = "\\gradereport_singleview\\local\\screen\\{$itemtype}";
+        $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
 
         $this->screen = new $screenclass($courseid, $itemid, $this->currentgroup);
 

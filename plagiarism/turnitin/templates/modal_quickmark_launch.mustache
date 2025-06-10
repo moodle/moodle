@@ -1,0 +1,9 @@
+{{< core/modal }}
+    {{$title}}
+        {{#str}} launchquickmarkmanager, plagiarism_turnitin {{/str}}
+    {{/title}}
+    {{$body}}
+        <!-- Modal content -->
+        <iframe frameborder="0" src="{{wwwroot}}/plagiarism/turnitin/extras.php?cmd=quickmarkmanager&view_context=box" id="quickmark_manager_launch" class="quickmark_manager iframe-ltilaunch"></iframe>
+    {{/body}}
+{{/ core/modal }}

@@ -1,0 +1,34 @@
+Initial Setup
+=============
+
+You need one test course with a few activities (fewer than 20), and one test
+course with many activities (more than 20), including at least one of each type.
+
+Start with Activity completion and Conditional availability enabled in the admin menu.
+
+Test script
+===========
+
+1.  In the small course, go to Administration -> Reports -> Dates.
+2.  At the top will be an 'Activity type' selector. This should be set to 'All activities'.
+3.  Then there will be a form with a section at the top for the course start date,
+    and sections below for each course section that contains relevant activities.
+    In each section will be all the date settings for each activity.
+4.  Change some settings here, then go to the standard edit settings page for that
+    activity, and ensure that the changed settings have been saved.
+5.  Change some date settings in the standard activity settings from, go back to
+    the edit dates report, and ensure the updated dates are shown there.
+6.  Now go to the report for the large course. The report will automatically
+    swtich to only show one type of activity, to stop the form from being too big.
+7.  Switch through each activity type, and ensure that the date settings in the
+    report have exactly the same set of date settings as in the standard
+    activity settings form. Specific things to check are:
+    * whether you can set time as well as date for each setting.
+    * the precision, e.g. whether you can set any minutes, or just multiples of 5.
+    * for settings that depend on other settings on the from, e.g. forum rating
+      dates, the setting should only appear in the report if it is enabled in the
+      activity settings.
+    * that the disabled-if dependencies between the settings for each activity are
+      the same as on the editing form.
+8.  Turn off Activity completion and/or Conditional availability and ensure that
+    the corresponding settings disapper in the report.

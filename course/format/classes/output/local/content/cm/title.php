@@ -35,7 +35,7 @@ use lang_string;
 use renderable;
 use section_info;
 use stdClass;
-use core_external\external_api;
+use external_api;
 use context_module;
 
 /**

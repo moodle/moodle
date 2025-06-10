@@ -1,0 +1,161 @@
+language: php
+
+sudo: true
+
+dist: xenial
+
+services:
+  - mysql
+  
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.6"
+  apt:
+    packages:
+      - openjdk-8-jre-headless
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+matrix:
+  include:
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_34_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_34_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_36_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_36_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_37_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_37_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.2
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.2
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_36_STABLE
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_36_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_37_STABLE
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_37_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_39_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=MOODLE_310_STABLE
+    - php: 7.3
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=master
+    - php: 7.3
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=master
+    - php: 7.4
+      env:
+        DB=pgsql
+        MOODLE_BRANCH=master
+    - php: 7.4
+      env:
+        DB=mysqli
+        MOODLE_BRANCH=master
+
+before_install:
+  - which mysql && until mysql -u root -e "show status" &>/dev/null; do sleep 1; done
+  - phpenv config-rm xdebug.ini
+  - if [[ $MOODLE_BRANCH == MOODLE_34_STABLE || $MOODLE_BRANCH == MOODLE_36_STABLE ]];
+    then nvm install 8.9 && nvm use 8.9;
+    else nvm install 14.0 && nvm use 14.0;
+    fi
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2;
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints;
+  - moodle-plugin-ci mustache;
+  - moodle-plugin-ci grunt;
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat

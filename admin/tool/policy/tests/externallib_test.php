@@ -23,6 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/user/externallib.php');
 
@@ -86,21 +87,21 @@ class externallib_test extends externallib_advanced_testcase {
 
         // View current policy version.
         $result = external::get_policy_version($this->policy2->get('id'));
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(1, $result['result']);
         $this->assertEquals($this->policy1->get('name'), $result['result']['policy']['name']);
         $this->assertEquals($this->policy1->get('content'), $result['result']['policy']['content']);
 
         // View draft policy version.
         $result = external::get_policy_version($this->policy3->get('id'));
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(0, $result['result']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals(array_pop($result['warnings'])['warningcode'], 'errorusercantviewpolicyversion');
 
         // Add test for non existing versionid.
         $result = external::get_policy_version(999);
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(0, $result['result']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals(array_pop($result['warnings'])['warningcode'], 'errorpolicyversionnotfound');
@@ -108,7 +109,7 @@ class externallib_test extends externallib_advanced_testcase {
         // View previous non-accepted version in behalf of a child.
         $this->setUser($this->parent);
         $result = external::get_policy_version($this->policy1->get('id'), $this->child->id);
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(0, $result['result']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals(array_pop($result['warnings'])['warningcode'], 'errorusercantviewpolicyversion');
@@ -116,7 +117,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Let the parent accept the policy on behalf of her child and view it again.
         api::accept_policies($this->policy1->get('id'), $this->child->id);
         $result = external::get_policy_version($this->policy1->get('id'), $this->child->id);
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(1, $result['result']);
         $this->assertEquals($this->policy1->get('name'), $result['result']['policy']['name']);
         $this->assertEquals($this->policy1->get('content'), $result['result']['policy']['content']);
@@ -124,7 +125,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Only parent is able to view the child policy version accepted by her child.
         $this->setUser($this->adult);
         $result = external::get_policy_version($this->policy1->get('id'), $this->child->id);
-        $result = \core_external\external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::get_policy_version_returns(), $result);
         $this->assertCount(0, $result['result']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals(array_pop($result['warnings'])['warningcode'], 'errorusercantviewpolicyversion');
@@ -142,7 +143,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->sitepolicyhandler = 'tool_policy';
         $sitepolicymanager = new \core_privacy\local\sitepolicy\manager();
         $result = external_mobile::get_config();
-        $result = \core_external\external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
+        $result = \external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
         $toolsitepolicy = $sitepolicymanager->get_embed_url();
         foreach (array_values($result['settings']) as $r) {
             if ($r['name'] == 'sitepolicy') {
@@ -175,7 +176,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call WS to agree to the site policy. It will call tool_policy handler.
         $result = \core_user_external::agree_site_policy();
-        $result = \core_external\external_api::clean_returnvalue(\core_user_external::agree_site_policy_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_user_external::agree_site_policy_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $USER->policyagreed);
@@ -183,7 +184,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try again, we should get a warning.
         $result = \core_user_external::agree_site_policy();
-        $result = \core_external\external_api::clean_returnvalue(\core_user_external::agree_site_policy_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_user_external::agree_site_policy_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('alreadyagreed', $result['warnings'][0]['warningcode']);
@@ -210,14 +211,14 @@ class externallib_test extends externallib_advanced_testcase {
         // Default user can accept policies.
         $this->setUser($adult);
         $result = external_mobile::get_config();
-        $result = \core_external\external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
+        $result = \external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
         $toolsitepolicy = $sitepolicymanager->accept();
         $this->assertTrue($toolsitepolicy);
 
         // Child user can not accept policies.
         $this->setUser($child);
         $result = external_mobile::get_config();
-        $result = \core_external\external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
+        $result = \external_api::clean_returnvalue(external_mobile::get_config_returns(), $result);
         $this->expectException(\required_capability_exception::class);
         $sitepolicymanager->accept();
     }

@@ -1,0 +1,29 @@
+#split_error {
+    color: red;
+    text-align: center;
+}
+
+.split_available_sections select[multiple] {
+    min-height: 200px;
+}
+
+.split_available_sections {
+    float: left;
+    padding: 0 0 0 15px;
+    width: auto;
+}
+
+.split_movers {
+    float: left;
+    padding: 20px;
+    padding-top: 3em;
+}
+
+.split_movers input {
+    width: 3em;
+    height: 2.3em;
+}
+
+.split_bucket_sections {
+    float: left;
+}

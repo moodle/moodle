@@ -16,7 +16,6 @@
 
 namespace core_webservice;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -91,7 +90,7 @@ class externallib_test extends externallib_advanced_testcase {
         $siteinfo = \core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
 
         $this->assertEquals('johnd', $siteinfo['username']);
         $this->assertEquals('John', $siteinfo['firstname']);
@@ -163,7 +162,7 @@ class externallib_test extends externallib_advanced_testcase {
         $siteinfo = \core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
 
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
@@ -186,7 +185,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->insert_record('sessions', $record);
 
         $siteinfo = \core_webservice_external::get_site_info();
-        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
         $this->assertEquals($CFG->limitconcurrentlogins, $siteinfo['limitconcurrentlogins']);
         $this->assertEquals(1, $siteinfo['usersessionscount']);
     }
@@ -204,7 +203,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('userquota', $userquota);
 
         $result = \core_webservice_external::get_site_info();
-        $result = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
         $this->assertEquals(PHP_INT_MAX, $result['userquota']);
     }
 

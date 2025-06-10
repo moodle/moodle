@@ -1,0 +1,273 @@
+.path-mod-choicegroup .results {
+    border-collapse: separate;
+}
+
+.path-mod-choicegroup .results .data {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.path-mod-choicegroup .button {
+    text-align: center;
+}
+
+.path-mod-choicegroup .attemptcell {
+    width: 5px;
+    white-space: nowrap;
+}
+
+.path-mod-choicegroup .anonymous,
+.path-mod-choicegroup div.downloadreport ul {
+    list-style: none;
+    margin-left: 1em;
+}
+
+.path-mod-choicegroup .choicegroupresponse {
+    width: 100%;
+}
+
+.path-mod-choicegroup .choicegroupresponse .picture {
+    width: 10px;
+    white-space: nowrap;
+}
+
+.path-mod-choicegroup .choicegroupresponse .fullname {
+    width: 100%;
+    white-space: nowrap;
+}
+
+.path-mod-choicegroup .responseheader {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.path-mod-choicegroup .choicegroups .option label {
+    vertical-align: top;
+}
+
+.path-mod-choicegroup .choicegroups .option input {
+    vertical-align: middle;
+}
+
+.path-mod-choicegroup .horizontal,
+.path-mod-choicegroup .horizontal .choicegroups .option {
+    padding-right: 20px;
+    display: inline;
+    white-space: normal;
+}
+
+.path-mod-choicegroup .horizontal .choicegroups .button {
+    margin-top: 10px;
+}
+
+.path-mod-choicegroup ul.choicegroups li {
+    list-style: none;
+}
+
+.path-mod-choicegroup .results {
+    text-align: center;
+}
+
+.path-mod-choicegroup .results.anonymous .graph.horizontal {
+    vertical-align: middle;
+    text-align: left;
+    width: 70%;
+}
+
+.path-mod-choicegroup .results.anonymous .graph.vertical,
+.path-mod-choicegroup .cell {
+    vertical-align: bottom;
+    text-align: center;
+}
+
+.path-mod-choicegroup .results.names .header {
+    width: 10%;
+    white-space: normal;
+}
+
+.path-mod-choicegroup .results.names .cell {
+    vertical-align: top;
+    text-align: left;
+}
+
+.path-mod-choicegroup .results.names .user,
+.path-mod-choicegroup #yourselection {
+    padding: 5px;
+}
+
+.path-mod-choicegroup .results.names .user .attemptaction,
+.path-mod-choicegroup .results.names .user .image,
+.path-mod-choicegroup .results.names .user .fullname {
+    float: left;
+}
+
+.path-mod-choicegroup .results.names .user .fullname {
+    padding-left: 5px;
+}
+
+.path-mod-choicegroup .results .data.header {
+    width: 10%;
+}
+
+.path-mod-choicegroup .responseaction {
+    text-align: center;
+}
+
+.path-mod-choicegroup .results .option {
+    white-space: normal;
+}
+
+.path-mod-choicegroup .results .option,
+.path-mod-choicegroup .results .numberofuser,
+.path-mod-choicegroup .results .percentage {
+    font-weight: bold;
+    font-size: 108%;
+}
+
+#page-mod-choicegroup-report .downloadreport {
+    text-align: center;
+}
+
+#page-mod-choicegroup-report .downloadreport ul {
+    overflow: auto;
+    min-width: 80%;
+    max-width: 100%;
+    display: inline-block;
+    margin-left: 0;
+    margin-right: auto;
+    padding-left: 0;
+    text-align: left;
+}
+
+#page-mod-choicegroup-report .downloadreport ul li {
+    list-style: none;
+}
+
+.path-mod-choicegroup .clearfloat {
+    float: none;
+    clear: both;
+}
+
+/**
+ * Override for RTL layout
+ */
+.path-mod-choicegroup.dir-rtl .horizontal .choicegroups .option {
+    padding-right: 0;
+    padding-left: 20px;
+    float: right;
+}
+
+.path-mod-choicegroup.dir-rtl .results.anonymous .graph.horizontal {
+    text-align: right;
+}
+
+.path-mod-choicegroup.dir-rtl .results.anonymous {
+    text-align: center;
+}
+
+.path-mod-choicegroup.dir-rtl .results.names .cell {
+    text-align: right;
+}
+
+.path-mod-choicegroup.dir-rtl .results.names .user .attemptaction,
+.path-mod-choicegroup.dir-rtl .results.names .user .image,
+.path-mod-choicegroup.dir-rtl .results.names .user .fullname,
+.path-mod-choicegroup.dir-rtl .results.names .user .fullname {
+    padding-left: 0;
+    padding-right: 5px;
+}
+
+.path-mod-choicegroup.dir-rtl .downloadreport {
+    margin-left: 0;
+    text-align: center;
+}
+
+#page-mod-choicegroup-view.dir-rtl .reportlink {
+    text-align: left;
+}
+
+.path-mod-choicegroup div.tablecontainer {
+    min-width: 80%;
+    max-width: 100%;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.path-mod-choicegroup.dir-rtl div.tablecontainer {
+    text-align: right;
+}
+
+.path-mod-choicegroup div.border {
+    border: 1px #ccc solid;
+}
+
+.path-mod-choicegroup div.tablecontainer table {
+    width: 100%;
+}
+
+.path-mod-choicegroup td {
+    border-top: 1px #ccc solid;
+}
+
+.path-mod-choicegroup th,
+.path-mod-choicegroup td {
+    padding: 10px 15px;
+}
+
+.path-mod-choicegroup td.center {
+    text-align: center;
+}
+
+.path-mod-choicegroup div.choicegroup-memberdisplay {
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    border: 1px #999 solid;
+    margin: 0 auto;
+}
+
+.path-mod-choicegroup table.choicegroups {
+    margin: 20px 0;
+}
+
+.path-mod-choicegroup a.choicegroup-memberdisplay,
+.path-mod-choicegroup a.choicegroup-descriptiondisplay {
+    display: inline-block;
+}
+
+.path-mod-choicegroup div.choicegroups-membersnames.hidden,
+.path-mod-choicegroup div.choicegroups-descriptions.hidden,
+.path-mod-choicegroup a.choicegroup-memberdisplay.hidden,
+.path-mod-choicegroup a.choicegroup-descriptiondisplay.hidden {
+    display: none;
+}
+
+.path-mod-choicegroup .results td {
+    min-width: 120px;
+}
+
+.path-mod-choicegroup .choicegroups-descriptions {
+    border-top: 1px #ccc dotted;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+.path-mod-choicegroup .tableform {
+    text-align: center;
+}
+
+/* Styles to format the Choices table. */
+.path-mod-choicegroup .width10 {
+    width: 10%;
+}
+
+.path-mod-choicegroup .width40 {
+    width: 40%;
+}

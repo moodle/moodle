@@ -550,7 +550,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = writer::with_context($user1context);
 
         $contacts = (array) $writer->get_data([get_string('contacts', 'core_message')]);
-        usort($contacts, [static::class, 'sort_contacts']);
+        usort($contacts, ['static', 'sort_contacts']);
 
         $this->assertCount(3, $contacts);
 
@@ -706,7 +706,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $dbm2 = $DB->get_record('messages', ['id' => $m2]);
         $dbm3 = $DB->get_record('messages', ['id' => $m3]);
 
-        usort($messages, [static::class, 'sort_messages']);
+        usort($messages, ['static', 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -736,7 +736,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $dbm5 = $DB->get_record('messages', ['id' => $m5]);
         $dbm6 = $DB->get_record('messages', ['id' => $m6]);
 
-        usort($messages, [static::class, 'sort_messages']);
+        usort($messages, ['static', 'sort_messages']);
         $m4 = array_shift($messages);
         $m5 = array_shift($messages);
         $m6 = array_shift($messages);
@@ -1740,7 +1740,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         ]);
         $this->assertCount(3, $messages);
 
-        usort($messages, [static::class, 'sort_messages']);
+        usort($messages, ['static', 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -1810,7 +1810,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         ]);
         $this->assertCount(3, $messages);
 
-        usort($messages, [static::class, 'sort_messages']);
+        usort($messages, ['static', 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);

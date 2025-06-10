@@ -1,0 +1,7 @@
+{
+    "moodle-atto_kalturamedia-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

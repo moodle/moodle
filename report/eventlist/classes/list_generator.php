@@ -66,11 +66,11 @@ class report_eventlist_list_generator {
                 if ($detail) {
                     $reflectionclass = new ReflectionClass($event);
                     if (!$reflectionclass->isAbstract()) {
-                        $eventinformation = self::format_data($eventinformation, "\\{$event}");
+                        $eventinformation = self::format_data($eventinformation, "\\${event}");
                     }
                 } else {
                     $parts = explode('\\', $event);
-                    $eventinformation["\\{$event}"] = array_shift($parts);
+                    $eventinformation["\\${event}"] = array_shift($parts);
                 }
             }
         }

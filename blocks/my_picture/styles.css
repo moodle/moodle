@@ -1,0 +1,19 @@
+/**
+ * @author Adam Zapletal/Robert Russo
+ * @Louisana State University
+ */
+
+.blocks-my_picture {
+    text-align: center;
+}
+
+#blocks-my_picture-reprocess_all {
+    text-align: left;
+}
+
+#page-admin-setting-blocksettingmy_picture div.settingsform fieldset {
+   background-color: #fff;
+   box-shadow: 0 0 10px #bbb;
+   margin: 0 10px;
+   padding: 10px;
+}

@@ -44,14 +44,17 @@ if (!empty($CFG->gradepublishing)) {
 }
 
 $actionurl = new moodle_url('/grade/export/xml/export.php');
+
+// BEGIN LSU idnumber requirement stupidity.
 // The option 'idnumberrequired' excludes grade items that dont have an ID to use during import.
 $formoptions = array(
-    'idnumberrequired' => true,
+    'idnumberrequired' => false,
     'updategradesonly' => true,
     'publishing' => true,
     'simpleui' => true,
     'multipledisplaytypes' => false
 );
+// END LSU idnumber requirement stupidity.
 
 $mform = new grade_export_form($actionurl, $formoptions);
 

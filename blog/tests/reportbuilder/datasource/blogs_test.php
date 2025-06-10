@@ -19,10 +19,8 @@ declare(strict_types=1);
 namespace core_blog\reportbuilder\datasource;
 
 use context_system;
-use context_user;
 use core_blog_generator;
 use core_collator;
-use core_comment_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -92,7 +90,6 @@ class blogs_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
 
         /** @var core_blog_generator $blogsgenerator */
         $blogsgenerator = $this->getDataGenerator()->get_plugin_generator('core_blog');
@@ -109,16 +106,6 @@ class blogs_test extends core_reportbuilder_testcase {
             'filepath' => '/',
             'filename' => 'hello.txt',
         ], 'hello');
-
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
-            'context' => context_user::instance($user->id),
-            'component' => 'blog',
-            'area' => 'format_blog',
-            'itemid' => $blog->id,
-            'content' => 'Cool',
-        ]);
 
         // Manually update the created/modified date of the blog.
         $blog->created = 1654038000;
@@ -137,32 +124,15 @@ class blogs_test extends core_reportbuilder_testcase {
         // Tag entity (course/user presence already checked by default columns).
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
 
-        // File entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:size']);
-
-        // Comment entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:content']);
-
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
-        [
-            $body,
-            $attachment,
-            $publishstate,
-            $timemodified,
-            $tags,
-            $filesize,
-            $comment,
-        ] = array_values($content[0]);
-
+        [$body, $attachment, $publishstate, $timemodified, $tags] = array_values($content[0]);
         $this->assertStringContainsString('Horses', $body);
         $this->assertStringContainsString('hello.txt', $attachment);
         $this->assertEquals('Yourself (draft)', $publishstate);
         $this->assertEquals(userdate($blog->lastmodified), $timemodified);
         $this->assertEquals('horse', $tags);
-        $this->assertEquals("5\xc2\xa0bytes", $filesize);
-        $this->assertEquals(format_text('Cool'), $comment);
     }
 
     /**

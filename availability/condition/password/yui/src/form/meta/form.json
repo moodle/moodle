@@ -1,0 +1,11 @@
+{
+  "moodle-availability_password-form": {
+    "requires": [
+        "base",
+        "node",
+        "event",
+        "event-valuechange",
+        "moodle-core_availability-form"
+    ]
+  }
+}

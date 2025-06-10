@@ -1,0 +1,4023 @@
+/* * This is the main SASS file, the one that must be compiled.
+ * * 
+ * * It mixes the defined WIRIS colors with the features of the toolkit.
+ * */
+/* * This file is the entry point for defining the features of each element.
+ * *
+ * * All styles must be set to elements under .wrsUI_app, to avoid conflicts with the
+ * * platform where the final product is embeded.
+ * *
+ * * Animations must be defined to elements under .wrsUI_app.wrsUI_animated, to avoid
+ * * displaying animations at certain points, where the system removes the
+ * * wrsUI_animated class to not display an animation.
+ * *
+ * * Animations are usually defined in a separated SCSS file instead of the main
+ * * component SASS file, because they use a mixin called "transition", that takes
+ * * as a parameter a map of key-values. In SASS, you cannot write a map in different
+ * * lines, so using this mixin is a bit cumbersome for setting a large number of
+ * * properties. However, in SCSS it is possible, and the code looks nicer.
+ * * 
+ * * The SASS import tree must be exactly the same as the Component class tree. For example,
+ * * component.sass imports component_button.sass, that imports component_toggle_button.sass.
+ * *
+ * * When a component such as Button wants to import the SASS code of ToggleButton, it must do
+ * * it at the end of the file, so ToggleButton can override some parameters without using !important.
+ * *
+ * * Some components, such as ToolBar, will decide how its children must look, so they may apply
+ * * styles to Button. Those styles must live in component_tool_bar.sass, and not in component_button.sass.
+ * *
+ * * Constants must be defined in the first file of the tree that uses them. For example,
+ * * if Button uses $border-radius-button and ToggleButton also uses it, then it must
+ * * be defined only in component_button.sass. File component_toggle_button.sass will
+ * * inherit it.
+ * *
+ * * The name of the constants should follow this pattern:
+ * * $<CSS property, separated by hyphens>-<name of the component, in camelcase>[-<other properties, in camelcase>]*
+ * *
+ * * Examples:
+ * * - $border-radius-textComponent-label
+ * * - $margin-left-toolBar-toggledIcons-atRight-disabled
+ * */
+.wrsUI_app {
+  color: #000;
+  background: transparent;
+  line-height: normal;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wrsUI_app :focus {
+  outline: none;
+}
+
+.wrsUI_app button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+.wrsUI_app div, .wrsUI_app dl, .wrsUI_app dt, .wrsUI_app dd, .wrsUI_app ul, .wrsUI_app ol, .wrsUI_app li, .wrsUI_app h1, .wrsUI_app h2, .wrsUI_app h3, .wrsUI_app h4, .wrsUI_app h5, .wrsUI_app h6, .wrsUI_app pre, .wrsUI_app code, .wrsUI_app form, .wrsUI_app fieldset, .wrsUI_app legend, .wrsUI_app input, .wrsUI_app button, .wrsUI_app textarea, .wrsUI_app p, .wrsUI_app blockquote, .wrsUI_app th, .wrsUI_app td {
+  margin: 0;
+  padding: 0;
+}
+
+.wrsUI_app table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 0;
+}
+
+.wrsUI_app fieldset, .wrsUI_app img {
+  border: 0;
+  vertical-align: baseline;
+  max-width: none;
+}
+
+.wrsUI_app address, .wrsUI_app caption, .wrsUI_app cite, .wrsUI_app code, .wrsUI_app dfn, .wrsUI_app em, .wrsUI_app strong, .wrsUI_app th, .wrsUI_app var, .wrsUI_app optgroup {
+  font-style: inherit;
+  font-weight: inherit;
+}
+
+.wrsUI_app del, .wrsUI_app ins {
+  text-decoration: none;
+}
+
+.wrsUI_app li {
+  list-style: none;
+}
+
+.wrsUI_app caption, .wrsUI_app th {
+  text-align: left;
+}
+
+.wrsUI_app h1, .wrsUI_app h2, .wrsUI_app h3, .wrsUI_app h4, .wrsUI_app h5, .wrsUI_app h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+.wrsUI_app q:before, .wrsUI_app q:after {
+  content: "";
+}
+
+.wrsUI_app abbr, .wrsUI_app acronym {
+  border: 0;
+  font-variant: normal;
+}
+
+.wrsUI_app sup {
+  vertical-align: baseline;
+}
+
+.wrsUI_app sub {
+  vertical-align: baseline;
+}
+
+.wrsUI_app legend {
+  color: #000;
+}
+
+.wrsUI_app input, .wrsUI_app button, .wrsUI_app textarea, .wrsUI_app select, .wrsUI_app optgroup, .wrsUI_app option {
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+}
+
+.wrsUI_app input, .wrsUI_app button, .wrsUI_app textarea, .wrsUI_app select {
+  *font-size: 100%;
+}
+
+/**
+ * Shadow colors.
+ * http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * The hand-designed reference shadow sets.
+ * Source: http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * Animation durations.
+ */
+/**
+ * Material Design element elevations
+ * Source: https://material.google.com/material-design/elevation-shadows.html#elevation-shadows-elevation-android
+ */
+/**
+* Returns the two reference shadows whose elevations bound the specified
+* elevation. In the case where the supplied elevation exceeds the maximum
+* reference elevation, the last two reference shadows are returned.
+*/
+/**
+ * Performs linear interpolation between values a and b. Returns the value
+ * between a and b proportional to x (when x is between 0 and 1. When x is
+ * outside this range, the return value is a linear extrapolation).
+ */
+/**
+ * Performs linear interpolation between shadows by interpolating each property
+ * individually. Returns the value between shadow1 and shadow2 proportional to x
+ * (when x is between 0 and 1. When x is outside this range, the return value is
+ * a linear extrapolation).
+ */
+/**
+ * Calculates the set of shadows at a given elevation.
+ */
+/**
+ * Generates box-shadow and the transition for a given elevation
+ * A single elevation will generate a single box-shadow set
+ * Two elevations and a state will generate a default box-shadow set
+ * and another set that is activated by the state
+ * tested with :hover and :active
+ */
+/**
+ * Generates the transition for a change between 2 elevations
+ * The larger the elevation change the longer the animation takes
+ */
+/**
+* Returns box-shadow and transition properties for Material Design elements
+*/
+/**
+* CSS md-elevation-z# classes
+*/
+.md-elevation-z0 {
+  box-shadow: none;
+}
+
+.md-elevation-z1 {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z2 {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z3 {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z4 {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z5 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z6 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z7 {
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z8 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z9 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z10 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z11 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z12 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z13 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z14 {
+  box-shadow: 0px 7px 9px -5px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z15 {
+  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z16 {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z17 {
+  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z18 {
+  box-shadow: 0px 9px 11px -6px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z19 {
+  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z20 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z21 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z22 {
+  box-shadow: 0px 10px 14px -7px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z23 {
+  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z24 {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+/**
+* CSS transistion class
+*/
+md-elevation-transition {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+* CSS classes for Material Design elements
+*/
+.md-elevation-dialog {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-picker {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-nav-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-right-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-sheet {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-fab {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-fab:active {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-3 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-2 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-1 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-menu {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-nav-bar {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-card {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-card:hover {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-raised-button {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-raised-button:active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-snackbar {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-app-bar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-refresh-indicator {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-quick-entry {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-quick-entry:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-search-bar {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-search-bar:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-switch {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+
+.wrsUI_app .wrsUI_aux_materialIcon {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  opacity: 1;
+  color: black;
+}
+.wrsUI_app .wrsUI_aux_materialIcon:disabled {
+  opacity: 0.26;
+}
+
+.wrsUI_app .wrsUI_aux_SVGIcon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  stroke-width: 0;
+  opacity: 1;
+  box-sizing: content-box;
+}
+.wrsUI_app .wrsUI_aux_SVGIcon:disabled {
+  opacity: 0.26;
+}
+
+.wrsUI_app .wrsUI_aux_contextPanelWrapper {
+  z-index: 2000;
+  position: absolute !important;
+  display: flex !important;
+  max-height: 100vh;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_aux_contextPanelWrapper.wrsUI_hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.wrsUI_app .wrsUI_aux_contextPanelWrapper > .wrsUI_panel > .wrsUI_toolBar {
+  padding: 0;
+}
+.wrsUI_app .wrsUI_aux_contextPanelWrapper > .wrsUI_contextPanel {
+  overflow: auto;
+  max-height: 100vh;
+  align-self: flex-start;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_aux_contextPanelWrapper {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_aux_darkLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.24);
+}
+.wrsUI_app .wrsUI_window .wrsUI_aux_darkLayer {
+  background-color: rgba(0, 0, 0, 0.54);
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_aux_darkLayer {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-size: 14px;
+  border-radius: 4px;
+  font-family: "Roboto", "Segoe UI", Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  background: #fff;
+  -webkit-touch-callout: none;
+  -ms-touch-action: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.wrsUI_app * {
+  -ms-overflow-style: none;
+}
+.wrsUI_app:-webkit-full-screen {
+  position: fixed !important;
+  top: 1px !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  left: 1px !important;
+  width: auto !important;
+  height: auto !important;
+}
+.wrsUI_app:-moz-full-screen {
+  position: fixed !important;
+  top: 1px !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  left: 1px !important;
+  width: auto !important;
+  height: auto !important;
+}
+.wrsUI_app:-ms-fullscreen {
+  position: fixed !important;
+  top: 1px !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  left: 1px !important;
+  width: auto !important;
+  height: auto !important;
+}
+.wrsUI_app:fullscreen {
+  position: fixed !important;
+  top: 1px !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  left: 1px !important;
+  width: auto !important;
+  height: auto !important;
+}
+.wrsUI_app.wrsUI_fullscreen {
+  position: fixed !important;
+  top: 1px !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  left: 1px !important;
+  width: auto !important;
+  height: auto !important;
+  z-index: 2000 !important;
+  box-shadow: 0 0 10px 10px #000 !important;
+}
+.wrsUI_app .wrsUI_mainContent {
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.wrsUI_app .wrsUI_hidden {
+  display: none !important;
+}
+
+.wrsUI_app {
+  transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1), right 0.3s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app.wrsUI_animated * {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_button,
+.wrsUI_app .wrsUI_buttonCompactContainer {
+  border-radius: 4px;
+  overflow: hidden;
+}
+.wrsUI_app .wrsUI_button {
+  border: none;
+  display: inline-flex;
+  box-sizing: border-box;
+  background: transparent;
+  color: #6793a9;
+  text-transform: uppercase;
+  text-decoration: none;
+  vertical-align: middle;
+  position: relative;
+  font-weight: 500;
+  padding: 0 8px;
+  height: 36px;
+  min-width: 64px;
+  -webkit-appearance: none;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_button > .wrsUI_aux_ripple {
+  position: absolute;
+  background: rgba(103, 147, 169, 0.3);
+  width: 0;
+  padding-bottom: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 100%;
+  opacity: 0;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_button.wrsUI_aux_rippling > .wrsUI_aux_ripple {
+  opacity: 1;
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_button:not(:disabled) {
+  cursor: pointer;
+}
+.wrsUI_app .wrsUI_button:not(:disabled):hover:not(.wrsUI_focused) {
+  background: rgba(103, 147, 169, 0.1);
+}
+.wrsUI_app .wrsUI_button:not(:disabled):active {
+  background: rgba(103, 147, 169, 0.2);
+}
+.wrsUI_app .wrsUI_button.wrsUI_focused {
+  background: rgba(103, 147, 169, 0.2);
+}
+.wrsUI_app .wrsUI_button:active {
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonOutlined {
+  padding: 0 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonContained {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  background: #6793a9;
+  color: #fff;
+  padding: 0 16px;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonContained > .wrsUI_aux_ripple {
+  background: #a8c1ce;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonContained:not(:disabled):hover:not(.wrsUI_focused) {
+  background: #779fb2;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonContained:not(:disabled):active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  background: #88aabb;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonContained.wrsUI_focused {
+  background: #88aabb;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonIcon.wrsUI_buttonText {
+  padding: 0 16px 0 9px;
+}
+.wrsUI_app .wrsUI_button:not(.wrsUI_buttonIcon):not(.wrsUI_buttonText) {
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonCompact {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.wrsUI_app .wrsUI_button > * {
+  vertical-align: middle;
+  position: relative;
+}
+.wrsUI_app .wrsUI_button > .wrsUI_aux_icon + span {
+  margin-left: 5px;
+}
+.wrsUI_app .wrsUI_button:disabled {
+  color: #979797;
+}
+.wrsUI_app .wrsUI_button:disabled.wrsUI_buttonContained {
+  box-shadow: none;
+  color: #898989;
+  background: #ccc;
+}
+.wrsUI_app .wrsUI_button:disabled > .wrsUI_aux_ripple {
+  display: none;
+}
+.wrsUI_app .wrsUI_button:disabled .wrsUI_aux_icon {
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: gray;
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:not(:disabled).wrsUI_focused {
+  background: rgba(255, 255, 255, 0.2);
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:not(:disabled).wrsUI_focused .wrsUI_aux_icon {
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:not(:disabled):hover:not(.wrsUI_focused) {
+  background: rgba(255, 255, 255, 0.1);
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:not(:disabled):active {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:not(:disabled) .wrsUI_aux_icon {
+  opacity: 0.7;
+}
+.wrsUI_app .wrsUI_panelDarkBackground .wrsUI_button:disabled .wrsUI_aux_icon {
+  opacity: 0.5;
+}
+.wrsUI_app .wrsUI_panelLightBackground .wrsUI_button .wrsUI_aux_icon {
+  opacity: 0.54;
+}
+.wrsUI_app .wrsUI_panelLightBackground .wrsUI_button.wrsUI_focused .wrsUI_aux_icon, .wrsUI_app .wrsUI_panelLightBackground .wrsUI_button.wrsUI_focused .wrsUI_aux_icon {
+  opacity: 0.87;
+}
+.wrsUI_app .wrsUI_panelLightBackground .wrsUI_button:disabled .wrsUI_aux_icon {
+  opacity: 0.38;
+}
+.wrsUI_app .wrsUI_buttonCompactContainer .wrsUI_button.wrsUI_buttonCompact {
+  border-radius: 0;
+  height: auto;
+}
+.wrsUI_app .wrsUI_buttonCompactContainer .wrsUI_button.wrsUI_buttonCompact:not(:last-child) {
+  border-bottom: 1px solid #c1c7c9;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_button {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_button > .wrsUI_aux_ripple.wrsUI_aux_animated {
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_button.wrsUI_colorPicker {
+  margin: 0;
+  height: 20px;
+}
+.wrsUI_app .wrsUI_button.wrsUI_colorPicker::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.wrsUI_app .wrsUI_button.wrsUI_colorPicker.wrsUI_focused::after {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_button.wrsUI_colorPicker > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_button.wrsUI_colorPicker:disabled {
+  opacity: 0.5;
+}
+.wrsUI_app .wrsUI_colorPickerDialog .wrsUI_button {
+  vertical-align: top;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+.wrsUI_app .wrsUI_colorPickerDialog .wrsUI_button > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_colorDisplay {
+  border-radius: 50%;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_button.wrsUI_colorPicker::after,
+.wrsUI_app.wrsUI_animated .wrsUI_colorDisplay {
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_contextMenuButton {
+  box-shadow: none;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog {
+  background: #fff;
+  border-radius: 4px;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_button {
+  margin: 0;
+  width: 100% !important;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 0;
+  white-space: nowrap;
+  text-transform: none;
+  color: #000;
+  font-weight: 300;
+  padding: 0 12px;
+  line-height: 32px;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_button.wrsUI_buttonText {
+  justify-content: flex-start !important;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_button > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_divider {
+  position: relative;
+  margin: 8px 1px 8px 12px !important;
+  width: calc(100% - 13px) !important;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_panel {
+  padding: 0;
+  margin: 0;
+  background: #fff;
+}
+.wrsUI_app .wrsUI_contextMenuButtonDialog .wrsUI_button:hover {
+  background: #f2f2f2;
+}
+
+.wrsUI_app .wrsUI_aux_dropdown_container {
+  width: 100%;
+}
+.wrsUI_app .wrsUI_dropdown {
+  text-transform: none;
+  margin: 0;
+  font-weight: 300;
+  height: 49px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid darkgrey;
+  color: #000;
+  padding: 0 30px 0 12px;
+  display: block;
+  width: 100%;
+}
+.wrsUI_app .wrsUI_dropdown:not(:disabled):hover:not(.wrsUI_focused) {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_dropdown:not(:disabled):active, .wrsUI_app .wrsUI_dropdown:not(:disabled).wrsUI_contextMenuButtonPressed {
+  background: rgba(0, 0, 0, 0.15);
+}
+.wrsUI_app .wrsUI_dropdown.wrsUI_focused {
+  border-bottom: 1px solid #000;
+  background: rgba(0, 0, 0, 0.15);
+}
+.wrsUI_app .wrsUI_dropdown > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_dropdown span {
+  display: inline-block;
+}
+.wrsUI_app .wrsUI_dropdown .wrsUI_button:disabled {
+  color: #8A8A8A;
+}
+.wrsUI_app .wrsUI_dropdown > .wrsUI_aux_dropdown_title {
+  color: grey;
+}
+.wrsUI_app .wrsUI_dropdown > .wrsUI_aux_dropdown_value {
+  color: black;
+  font-size: 16px;
+}
+.wrsUI_app .wrsUI_dropdown:disabled > .wrsUI_aux_dropdown_value {
+  color: lightgrey;
+}
+.wrsUI_app .wrsUI_dropdown.wrsUI_dropdownOutlined {
+  border-radius: 4px;
+  border: none;
+  box-shadow: inset 0 0 0px 1px #778e9a;
+  background-color: transparent;
+  box-sizing: border-box !important;
+}
+.wrsUI_app .wrsUI_dropdown.wrsUI_dropdownOutlined:hover, .wrsUI_app .wrsUI_dropdown.wrsUI_dropdownOutlined.wrsUI_focused {
+  box-shadow: inset 0 0 0px 2px #6793a9;
+}
+.wrsUI_app .wrsUI_dropdownDialog {
+  padding: 8px 0;
+}
+.wrsUI_app .wrsUI_dropdownDialog .wrsUI_button {
+  font-size: 16px;
+}
+.wrsUI_app .wrsUI_dropdownDialog.wrsUI_dropdownTickable .wrsUI_button {
+  padding-right: 56px;
+}
+.wrsUI_app .wrsUI_dropdownDialog.wrsUI_dropdownTickable .wrsUI_button.wrsUI_dropdownTicked::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "check";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  position: absolute;
+  right: 16px;
+  color: #757575;
+  font-size: 21px;
+  height: auto;
+}
+.wrsUI_app .wrsUI_aux_dropdown_helperText {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 5px;
+  padding-left: 12px;
+  width: calc(100% - 12px);
+  text-align: left;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_dropdownDialog .wrsUI_button {
+  transition: perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+ * Shadow colors.
+ * http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * The hand-designed reference shadow sets.
+ * Source: http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * Animation durations.
+ */
+/**
+ * Material Design element elevations
+ * Source: https://material.google.com/material-design/elevation-shadows.html#elevation-shadows-elevation-android
+ */
+/**
+* Returns the two reference shadows whose elevations bound the specified
+* elevation. In the case where the supplied elevation exceeds the maximum
+* reference elevation, the last two reference shadows are returned.
+*/
+/**
+ * Performs linear interpolation between values a and b. Returns the value
+ * between a and b proportional to x (when x is between 0 and 1. When x is
+ * outside this range, the return value is a linear extrapolation).
+ */
+/**
+ * Performs linear interpolation between shadows by interpolating each property
+ * individually. Returns the value between shadow1 and shadow2 proportional to x
+ * (when x is between 0 and 1. When x is outside this range, the return value is
+ * a linear extrapolation).
+ */
+/**
+ * Calculates the set of shadows at a given elevation.
+ */
+/**
+ * Generates box-shadow and the transition for a given elevation
+ * A single elevation will generate a single box-shadow set
+ * Two elevations and a state will generate a default box-shadow set
+ * and another set that is activated by the state
+ * tested with :hover and :active
+ */
+/**
+ * Generates the transition for a change between 2 elevations
+ * The larger the elevation change the longer the animation takes
+ */
+/**
+* Returns box-shadow and transition properties for Material Design elements
+*/
+/**
+* CSS md-elevation-z# classes
+*/
+.md-elevation-z0 {
+  box-shadow: none;
+}
+
+.md-elevation-z1 {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z2 {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z3 {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z4 {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z5 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z6 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z7 {
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z8 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z9 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z10 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z11 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z12 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z13 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z14 {
+  box-shadow: 0px 7px 9px -5px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z15 {
+  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z16 {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z17 {
+  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z18 {
+  box-shadow: 0px 9px 11px -6px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z19 {
+  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z20 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z21 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z22 {
+  box-shadow: 0px 10px 14px -7px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z23 {
+  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z24 {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+/**
+* CSS transistion class
+*/
+md-elevation-transition {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+* CSS classes for Material Design elements
+*/
+.md-elevation-dialog {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-picker {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-nav-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-right-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-sheet {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-fab {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-fab:active {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-3 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-2 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-1 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-menu {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-nav-bar {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-card {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-card:hover {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-raised-button {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-raised-button:active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-snackbar {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-app-bar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-refresh-indicator {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-quick-entry {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-quick-entry:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-search-bar {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-search-bar:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-switch {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.dropdownArrow::after, .wrsUI_app .wrsUI_dropdown::after {
+  content: "";
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 14px !important;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_more";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: grey;
+  position: absolute;
+  top: 35%;
+  right: 5px;
+}
+
+.wrsUI_app .wrsUI_dropdown.wrsUI_toggleDropdown.wrsUI_buttonIcon {
+  padding-right: 10px;
+}
+.wrsUI_app .wrsUI_dropdownDialog.wrsUI_toggleDropdownDialog {
+  padding: 0;
+  background: #e6edf0;
+}
+.wrsUI_app .wrsUI_dropdownDialog.wrsUI_toggleDropdownDialog.wrsUI_dropdownTickable .wrsUI_button {
+  padding: 0;
+  min-width: 0;
+  width: 40px;
+  height: 40px;
+}
+.wrsUI_app .wrsUI_dropdownDialog.wrsUI_toggleDropdownDialog.wrsUI_dropdownTickable .wrsUI_button.wrsUI_dropdownTicked {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.wrsUI_app .wrsUI_button.wrsUI_selected {
+  background: rgba(103, 147, 169, 0.3);
+}
+.wrsUI_app .wrsUI_button.wrsUI_selected.wrsUI_buttonContained {
+  background: #a8c1ce;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.wrsUI_app .wrsUI_signInButton {
+  min-width: 36px;
+  width: 36px;
+  border-radius: 18px;
+}
+.wrsUI_app .wrsUI_signInButton .wrsUI_aux_imageIcon {
+  height: 28px;
+  border-radius: 14px;
+}
+
+.wrsUI_app.wrsUI_panel.wrsUI_panelCard {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.wrsUI_app .wrsUI_panel {
+  --indentation-level: 0;
+  position: relative;
+  padding-left: calc(24px * var(--indentation-level));
+}
+.wrsUI_app .wrsUI_panel.wrsUI_panelSolid {
+  background: #e6edf0;
+}
+.wrsUI_app .wrsUI_panel.wrsUI_panelCard {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.wrsUI_app .wrsUI_panel.wrsUI_panelCard:not(.wrsUI_app) {
+  padding: 16px;
+  margin: 0 16px;
+}
+.wrsUI_app .wrsUI_panel.wrsUI_panelCard:not(.wrsUI_app):last-child {
+  margin-bottom: 16px;
+}
+.wrsUI_app .wrsUI_panel.wrsUI_colorDisplay {
+  display: inline-block;
+}
+
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap {
+  position: relative;
+  overflow: hidden;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap > *,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap > * {
+  position: absolute;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorth,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorth {
+  top: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouth,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouth {
+  bottom: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtEast,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtEast {
+  right: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtWest,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtWest {
+  left: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorthEast,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorthEast {
+  top: 0;
+  right: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorthWest,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtNorthWest {
+  top: 0;
+  left: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouthEast,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouthEast {
+  bottom: 0;
+  right: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouthWest,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtSouthWest {
+  bottom: 0;
+  left: 0;
+}
+.wrsUI_app.wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtCenter,
+.wrsUI_app .wrsUI_borderPanel.wrsUI_borderPanelOverlap .wrsUI_borderPanelAtCenter {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap),
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: space-between !important;
+  align-content: space-between !important;
+  width: 100%;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorth,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorth {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: stretch;
+  align-self: start;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouth,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouth {
+  grid-row: 3;
+  grid-column: 2;
+  justify-self: stretch;
+  align-self: end;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtEast,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtEast {
+  grid-row: 2;
+  grid-column: 3;
+  justify-self: end;
+  align-self: center;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtEast.wrsUI_panel,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtEast.wrsUI_panel {
+  align-self: stretch;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtWest,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtWest {
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtWest.wrsUI_panel,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtWest.wrsUI_panel {
+  align-self: stretch;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorthEast,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorthEast {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: end;
+  align-self: start;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorthWest,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtNorthWest {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  align-self: start;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouthEast,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouthEast {
+  grid-row: 3;
+  grid-column: 3;
+  justify-self: end;
+  align-self: end;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouthWest,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtSouthWest {
+  grid-row: 3;
+  grid-column: 1;
+  justify-self: start;
+  align-self: end;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtCenter,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtCenter {
+  grid-row: 2;
+  grid-column: 2;
+  justify-self: stretch;
+  align-self: center;
+}
+.wrsUI_app.wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtCenter.wrsUI_panel,
+.wrsUI_app .wrsUI_borderPanel:not(.wrsUI_borderPanelOverlap) .wrsUI_borderPanelAtCenter.wrsUI_panel {
+  align-self: stretch;
+}
+
+.wrsUI_app .wrsUI_drawerPanel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_drawerPanelPersistentDrawerPanel {
+  pointer-events: none;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_drawerPanelPersistentDrawerPanel > * {
+  pointer-events: auto;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_drawerPanelPersistentDrawerPanel > .wrsUI_aux_darkLayer {
+  display: none;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_hidden {
+  pointer-events: none;
+}
+.wrsUI_app .wrsUI_drawerPanel:not(.wrsUI_drawerPanelRightDrawer):not(.wrsUI_drawerPanelBottomDrawer) > .wrsUI_aux_drawerContent {
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_drawerPanelRightDrawer > .wrsUI_aux_drawerContent {
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.wrsUI_app .wrsUI_drawerPanel.wrsUI_drawerPanelBottomDrawer > .wrsUI_aux_drawerContent {
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.wrsUI_app .wrsUI_drawerPanel > .wrsUI_aux_drawerContent {
+  background: #e6edf0;
+  position: absolute;
+  overflow: auto;
+  overflow-x: hidden;
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_drawerPanel.wrsUI_hidden > .wrsUI_aux_drawerContent {
+  transition: transform 0.195s cubic-bezier(0.4, 0, 0.6, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_drawerPanel > .wrsUI_aux_drawerContent {
+  transition: transform 0.225s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_drawingPanel.wrsUI_drawingPanelEmpty .wrsUI_aux_canvasContainer {
+  background: url("decoration/drawing_panel_empty.svg?v=4.12.0") center center no-repeat;
+}
+.wrsUI_app .wrsUI_drawingPanel.wrsUI_drawingPanelEmpty .wrsUI_aux_canvasContainer canvas {
+  background: url("decoration/drawing_panel_grid.png?v=4.12.0");
+}
+.wrsUI_app .wrsUI_drawingPanel .wrsUI_aux_canvasContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -ms-content-zooming: none;
+  -ms-touch-action: none;
+}
+.wrsUI_app .wrsUI_drawingPanel .wrsUI_aux_canvasContainer canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.wrsUI_app .wrsUI_plotterPanel .wrsUI_aux_canvasContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.wrsUI_app .wrsUI_plotterPanel .wrsUI_aux_canvasContainer canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.wrsUI_app.wrsUI_activityContainer,
+.wrsUI_app .wrsUI_activityContainer {
+  position: relative;
+  overflow-x: hidden;
+}
+.wrsUI_app.wrsUI_activityContainer > .wrsUI_activityPanel,
+.wrsUI_app .wrsUI_activityContainer > .wrsUI_activityPanel {
+  top: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  overflow-x: hidden;
+  overflow-y: overlay;
+}
+.wrsUI_app.wrsUI_activityContainer > .wrsUI_activityPanel.wrsUI_aux_activityPanelHiddenLeft,
+.wrsUI_app .wrsUI_activityContainer > .wrsUI_activityPanel.wrsUI_aux_activityPanelHiddenLeft {
+  left: -100%;
+}
+.wrsUI_app.wrsUI_activityContainer > .wrsUI_activityPanel.wrsUI_aux_activityPanelHiddenRight,
+.wrsUI_app .wrsUI_activityContainer > .wrsUI_activityPanel.wrsUI_aux_activityPanelHiddenRight {
+  left: 100%;
+}
+
+.wrsUI_app.wrsUI_animated.wrsUI_activityContainer,
+.wrsUI_app.wrsUI_animated .wrsUI_activityContainer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated.wrsUI_activityContainer .wrsUI_activityPanel.wrsUI_aux_activityPanelAnimated,
+.wrsUI_app.wrsUI_animated .wrsUI_activityContainer .wrsUI_activityPanel.wrsUI_aux_activityPanelAnimated {
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_aux_window {
+  position: fixed !important;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  display: flex;
+  pointer-events: none;
+  align-items: center;
+  justify-content: center;
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_windowBackgroundHidden > .wrsUI_aux_darkLayer {
+  opacity: 0;
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_windowModal {
+  z-index: 1999;
+}
+.wrsUI_app .wrsUI_aux_window:not(.wrsUI_windowModal) > .wrsUI_aux_darkLayer {
+  display: none;
+}
+.wrsUI_app .wrsUI_aux_window > * {
+  pointer-events: auto;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent {
+  max-width: 90%;
+  max-height: 80%;
+  position: absolute;
+  overflow: auto;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_titleBar:not(:empty) {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 20px;
+  font-weight: 500;
+  padding: 15px 24px;
+  text-align: left;
+  line-height: 36px;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_titleBar:not(:empty) > .wrsUI_aux_titleBar_buttons {
+  float: right;
+  vertical-align: middle;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_titleBar:not(:empty) > .wrsUI_aux_titleBar_buttons > .wrsUI_button {
+  min-width: inherit;
+  width: 36px;
+  border-radius: 50%;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_titleBar:not(:empty) > .wrsUI_aux_titleBar_buttons > .wrsUI_button > .wrsUI_aux_icon {
+  color: grey;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_movable {
+  max-width: 100%;
+  max-height: 100%;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_movable > .wrsUI_aux_titleBar {
+  padding: 8px 8px 8px 12px;
+  cursor: all-scroll !important;
+  background: rgba(0, 0, 0, 0.1);
+  color: black;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_movable > .wrsUI_aux_titleBar > .wrsUI_aux_titleBar_buttons > .wrsUI_button > .wrsUI_aux_icon {
+  color: black;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_resizable > .wrsUI_aux_windowBody {
+  height: calc(100% - 68px) !important;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_resizable > .wrsUI_aux_windowBody > .wrsUI_component.wrsUI_mathTypeComponent {
+  min-height: 200px;
+  min-width: 450px;
+  height: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_resizable > .wrsUI_button_resize_bar {
+  width: 100%;
+  height: 18px;
+  position: absolute;
+  bottom: 0px;
+  display: flex !important;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent.wrsUI_resizable > .wrsUI_button_resize_bar > .wrsUI_bottom_right_resizer {
+  width: 10px;
+  height: 10px;
+  color: black;
+  position: absolute !important;
+  align-content: bottom;
+  right: 4px;
+  bottom: 8px;
+  cursor: se-resize;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody {
+  display: flex;
+  flex-direction: column;
+}
+.wrsUI_app .wrsUI_aux_window > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody > .wrsUI_panel:first-child:last-child {
+  width: 100%;
+  flex-grow: 1;
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_hidden {
+  opacity: 0;
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_hidden > * {
+  pointer-events: none;
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_hidden > .wrsUI_aux_windowContent {
+  transform: scale(0.85);
+}
+.wrsUI_app .wrsUI_aux_window.wrsUI_windowRelative {
+  position: absolute !important;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_window > .wrsUI_aux_windowContent {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent {
+  position: relative;
+  overflow: hidden;
+}
+@media only screen and (max-height: 1300px) {
+  .wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent {
+    height: 80%;
+  }
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody {
+  overflow: auto;
+  position: relative;
+  height: calc(100% - 90px);
+  padding: 0px 28px 24px 28px;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody > .wrsUI_dialogForm_separator {
+  display: block;
+  margin-left: -24px;
+  margin-top: -10px;
+  width: 100%;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 18px 24px;
+  color: grey;
+  border-top: 1px solid #e1e1e1;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody > .wrsUI_dialogForm_separator.wrsUI_dialogForm_separator_withoutTitle {
+  padding-top: 0px;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_panel:not(.wrsUI_flowPanelTopToBottom) {
+  justify-content: space-between !important;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_panel:not(.wrsUI_flowPanelTopToBottom) > .wrsUI_dialogForm_titleSubtitlePanel {
+  margin-right: 48px !important;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_panel:not(.wrsUI_flowPanelTopToBottom):not(.wrsUI_dialogForm_panel_with_info) > * {
+  flex: 1;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_panel:not(.wrsUI_flowPanelTopToBottom) > *:not(:last-child) {
+  margin-right: 24px;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_dialogForm_titleLabel {
+  width: 100%;
+  font-size: 16px;
+  color: black;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody .wrsUI_dialogForm_subtitleLabel {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 5px;
+  width: 100%;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.54);
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody > *:not(:last-child):not(.wrsUI_dialogForm_separator) {
+  margin-bottom: 28px;
+}
+.wrsUI_app .wrsUI_window.wrsUI_dialogForm > .wrsUI_aux_windowContent > .wrsUI_aux_windowBody > .wrsUI_dialogForm_warning {
+  color: #f57f17;
+  font-size: 13px;
+  font-weight: bold;
+  width: 100%;
+  display: inline-block;
+}
+
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogPrimaryButtons {
+  padding: 8px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogPrimaryButtons button {
+  margin-left: 8px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogPrimaryButtons.wrsUI_flowPanelTopToBottom button + button {
+  margin-top: 12px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogSecondaryButtons {
+  padding: 8px 8px 8px 24px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogSecondaryButtons button {
+  margin-right: 8px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogMessage {
+  display: block;
+  padding: 0 24px 20px 24px;
+  color: rgba(0, 0, 0, 0.6);
+  max-width: 512px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogMessage:empty {
+  display: none;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_label,
+.wrsUI_app .wrsUI_dialog .wrsUI_checkBox .wrsUI_checkBoxText .wrsUI_label {
+  font-size: 16px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_dialogControl {
+  margin: 0 24px;
+}
+.wrsUI_app .wrsUI_dialog .wrsUI_progressBar {
+  bottom: 0;
+}
+
+.wrsUI_app .wrsUI_buttonPanel {
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  -webkit-appearance: none;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_buttonPanel > .wrsUI_label {
+  color: #000 !important;
+}
+.wrsUI_app .wrsUI_buttonPanel > .wrsUI_aux_ripple {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.16);
+  width: 0;
+  padding-bottom: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 100%;
+  opacity: 0;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_buttonPanel.wrsUI_aux_rippling > .wrsUI_aux_ripple {
+  opacity: 1;
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_buttonPanel:not(:disabled) {
+  cursor: pointer;
+}
+.wrsUI_app .wrsUI_buttonPanel:not(:disabled) > * {
+  cursor: pointer !important;
+}
+.wrsUI_app .wrsUI_buttonPanel:not(:disabled):hover:not(.wrsUI_focused) {
+  background: rgba(0, 0, 0, 0.04);
+}
+.wrsUI_app .wrsUI_buttonPanel:not(:disabled):active:hover {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_buttonPanel.wrsUI_focused {
+  background: rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_buttonPanel:active:hover {
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_buttonPanel:disabled {
+  color: #979797;
+}
+.wrsUI_app .wrsUI_buttonPanel:disabled > .wrsUI_aux_ripple {
+  display: none;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_buttonPanel {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_buttonPanel > .wrsUI_aux_ripple.wrsUI_aux_animated {
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_divider {
+  margin: 0;
+  position: absolute;
+  border-bottom: 1px solid #c1c7c9;
+}
+.wrsUI_app .wrsUI_divider.wrsUI_dividerVertical {
+  border-bottom: none;
+  border-right: 1px solid #c1c7c9;
+}
+
+.wrsUI_app.wrsUI_flowPanel,
+.wrsUI_app .wrsUI_flowPanel {
+  display: flex;
+  flex-shrink: 0;
+  flex-basis: auto;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+.wrsUI_app.wrsUI_flowPanelTopToBottom,
+.wrsUI_app .wrsUI_flowPanelTopToBottom {
+  flex-direction: column;
+}
+.wrsUI_app.wrsUI_flowPanelRightToLeft,
+.wrsUI_app .wrsUI_flowPanelRightToLeft, .wrsUI_app.wrsUI_flowPanelRightToLeftWithWrap,
+.wrsUI_app .wrsUI_flowPanelRightToLeftWithWrap {
+  flex-direction: row-reverse;
+}
+.wrsUI_app.wrsUI_flowPanelLeftToRightWithWrap,
+.wrsUI_app .wrsUI_flowPanelLeftToRightWithWrap, .wrsUI_app.wrsUI_flowPanelRightToLeftWithWrap,
+.wrsUI_app .wrsUI_flowPanelRightToLeftWithWrap {
+  flex-wrap: wrap;
+}
+
+.wrsUI_dataTable {
+  padding: 16px 0;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow {
+  border-width: 2px !important;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow .wrsUI_dataTableCell .wrsUI_label {
+  margin: 0 !important;
+  color: #000 !important;
+  font-size: 100% !important;
+  font-weight: normal !important;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow, .wrsUI_dataTable .wrsUI_dataTableBody .wrsUI_dataTableRow {
+  border-bottom: 1px solid lightgrey;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow .wrsUI_dataTableCell, .wrsUI_dataTable .wrsUI_dataTableBody .wrsUI_dataTableRow .wrsUI_dataTableCell {
+  display: inline-flex;
+  box-sizing: border-box;
+  min-width: 192px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow .wrsUI_dataTableCell:not(:first-child), .wrsUI_dataTable .wrsUI_dataTableBody .wrsUI_dataTableRow .wrsUI_dataTableCell:not(:first-child) {
+  margin-left: 28px;
+}
+.wrsUI_dataTable .wrsUI_dataTableHeader.wrsUI_dataTableRow .wrsUI_dataTableCell:not(:last-child), .wrsUI_dataTable .wrsUI_dataTableBody .wrsUI_dataTableRow .wrsUI_dataTableCell:not(:last-child) {
+  margin-right: 28px;
+}
+
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton {
+  margin-right: 0px !important;
+  min-width: 87px !important;
+  min-height: 40px;
+  color: #000;
+  border-width: 1px;
+  border-color: #c1c7c9;
+  border-radius: 0px;
+  border-style: solid;
+  border-right-width: 0px;
+  font-size: 15px !important;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton:disabled {
+  color: rgba(0, 0, 0, 0.38) !important;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton.wrsUI_selected {
+  border-width: 1px;
+  background-color: #c1c7c9;
+  border-color: #c1c7c9;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton.wrsUI_selected.wrsUI_focused {
+  background-color: rgba(103, 147, 169, 0.3);
+  border-color: #6793a9;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton.wrsUI_selected + .wrsUI_toggleButton {
+  border-left-width: 0px;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton:last-child {
+  border-right-width: 1px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.wrsUI_app .wrsUI_toggleButtonsPanel > .wrsUI_toggleButton > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.wrsUI_app .wrsUI_expansionPanel {
+  margin: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid #ededed;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_label {
+  cursor: inherit;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_aux_expansionPanelContent {
+  display: block;
+  overflow: hidden;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_aux_expansionPanelContent .wrsUI_expansionPanelContent {
+  box-sizing: border-box;
+  padding: 0px 24px;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded {
+  border: none;
+  border-radius: 2px;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded .wrsUI_expansionPanelSummary::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_less";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+  color: #9e9e9e;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded .wrsUI_expansionPanelSummary::after button {
+  display: initial !important;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded .wrsUI_aux_expansionPanelContent .wrsUI_expansionPanelContent {
+  padding: 0px 24px 24px 24px;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded:first-child {
+  border: none;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+.wrsUI_app .wrsUI_expansionPanel.wrsUI_expansionPanelExpanded:last-child {
+  border: none;
+  margin-bottom: 0;
+  margin-top: 16px;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary {
+  outline: none;
+  cursor: pointer;
+  padding: 16px 24px;
+  color: #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary .wrsUI_expansionPanelPrimaryLabel, .wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary .wrsUI_expansionPanelSecondaryLabel {
+  flex: 1 auto;
+  flex-flow: row wrap;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary .wrsUI_expansionPanelPrimaryLabel .wrsUI_expansionPanelAnnotation, .wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary .wrsUI_expansionPanelSecondaryLabel .wrsUI_expansionPanelAnnotation {
+  display: block;
+  font-size: 12px;
+  margin-top: 6px;
+  opacity: 0.75;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary::-webkit-details-marker {
+  display: none;
+}
+.wrsUI_app .wrsUI_expansionPanel .wrsUI_expansionPanelSummary::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_more";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: #9e9e9e;
+  padding: 0;
+  margin-top: 0;
+  position: absolute;
+  top: calc(50% - 12px);
+  bottom: 0;
+  right: 0;
+  width: 6%;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_expansionPanel {
+  transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_expansionPanel .wrsUI_aux_expansionPanelContent {
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_checkboxExpansionPanel {
+  width: 100%;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelContent .wrsUI_panel {
+  display: flex !important;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_aux_expansionPanelContent .wrsUI_expansionPanelContent {
+  padding: 0;
+  width: 100%;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel.wrsUI_expansionPanelExpanded .wrsUI_expansionPanelSummary::after {
+  display: none;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel.wrsUI_expansionPanelExpanded:first-child {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel.wrsUI_expansionPanelExpanded:last-child {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel.wrsUI_expansionPanelExpanded .wrsUI_aux_expansionPanelContent .wrsUI_expansionPanelContent {
+  padding: 0;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary {
+  width: 100%;
+  height: 60px;
+  padding: 0;
+  border-bottom: 1px solid #c1c7c9;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary::after {
+  display: none;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary .wrsUI_checkBox {
+  width: auto !important;
+  margin-top: 8px !important;
+  margin-left: 12px !important;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary .wrsUI_iconBox {
+  height: 22px;
+  margin-left: 12px;
+  margin-right: 8px;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary .wrsUI_dividerVertical {
+  position: relative;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_expansionPanelSummary .wrsUI_label {
+  height: 18px;
+}
+.wrsUI_app .wrsUI_checkboxExpansionPanel .wrsUI_checkboxExpansionPanelWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.wrsUI_app .wrsUI_treeSelector {
+  padding: 0;
+  background-color: #ffffff;
+}
+
+.wrsUI_app.wrsUI_floatingPanel,
+.wrsUI_app .wrsUI_floatingPanel {
+  position: absolute !important;
+  background: none !important;
+  border: none !important;
+  margin: none !important;
+  padding: none !important;
+}
+
+.wrsUI_app .wrsUI_responsiveToolbar {
+  height: 40px;
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarSection {
+  height: 40px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarSection .wrsUI_button {
+  width: 40px;
+  height: 40px;
+  margin: 0 2px;
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarBlock .wrsUI_responsiveToolbarSection {
+  padding: 0 6px;
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarBlock .wrsUI_responsiveToolbarSection:first-child {
+  border-left: none;
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarBlock .wrsUI_contextPanelButton {
+  height: 40px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarBlock .wrsUI_contextPanelButton:hover {
+  opacity: 0.7;
+}
+.wrsUI_app .wrsUI_responsiveToolbar .wrsUI_responsiveToolbarBlock .wrsUI_contextPanelButton .wrsUI_aux_icon {
+  color: black;
+  font-size: 22px;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel .wrsUI_responsiveToolbarSection {
+  padding: 0;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarHorizontalContextPanel {
+  height: 40px !important;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarHorizontalContextPanel .wrsUI_responsiveToolbarSection .wrsUI_button,
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarHorizontalContextPanel .wrsUI_responsiveToolbarSection .wrsUI_aux_dropdown_container {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border: none;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarHorizontalContextPanel .wrsUI_responsiveToolbarSection:not(:first-child) {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarVerticalContextPanel {
+  align-items: flex-start !important;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarVerticalContextPanel .wrsUI_responsiveToolbarSection {
+  align-items: flex-start !important;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarVerticalContextPanel .wrsUI_responsiveToolbarSection .wrsUI_button,
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarVerticalContextPanel .wrsUI_responsiveToolbarSection .wrsUI_aux_dropdown_container {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border: none;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel.wrsUI_responsiveToolbarVerticalContextPanel .wrsUI_responsiveToolbarSection:not(:first-child) {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel .wrsUI_responsiveToolbarContextPanelWide {
+  width: 100% !important;
+}
+.wrsUI_app .wrsUI_responsiveToolbarContextPanel .wrsUI_responsiveToolbarContextPanelWide .wrsUI_button {
+  width: 100% !important;
+  font-size: 16px !important;
+  justify-content: flex-start !important;
+}
+
+.wrsUI_app .wrsUI_interval {
+  display: inline-flex;
+  width: 190px;
+}
+
+.wrsUI_app .wrsUI_lockableInterval .wrsUI_button {
+  min-width: unset !important;
+  width: 50%;
+}
+
+.wrsUI_app .wrsUI_list {
+  margin: auto;
+  white-space: nowrap;
+  border-collapse: collapse;
+  margin: 4px 0;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_panel {
+  box-sizing: border-box;
+  padding: 8px;
+  justify-content: space-between !important;
+  width: calc(100% - 24px * var(--indentation-level));
+}
+.wrsUI_app .wrsUI_list > .wrsUI_panel > .wrsUI_label {
+  margin-right: 16px;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_panel > .wrsUI_textComponent,
+.wrsUI_app .wrsUI_list > .wrsUI_panel > .wrsUI_dropdown {
+  width: 100px;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_label {
+  font-size: 12px;
+  font-weight: 500;
+  display: block;
+  margin: 8px;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_divider {
+  position: static !important;
+  border: none;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_divider:before {
+  content: "";
+  border-top: 1px solid #c1c7c9;
+  position: absolute;
+  left: 8px;
+  right: 1px;
+  margin-top: 4px;
+}
+.wrsUI_app .wrsUI_list > .wrsUI_divider:after {
+  content: "";
+  padding: 5px;
+  display: block;
+}
+
+.wrsUI_app .wrsUI_toolBar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_toolBar.wrsUI_toolBarFlat {
+  box-shadow: none;
+}
+.wrsUI_app .wrsUI_toolBar.wrsUI_flowPanelTopToBottom > * > *:not(:first-child) {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_flowPanelTopToBottom) > * > *:not(:first-child) {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact) {
+  padding: 0 2px;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact).wrsUI_flowPanelTopToBottom {
+  padding: 2px 0;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact).wrsUI_flowPanelTopToBottom > *:last-child {
+  margin-top: auto;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact):not(.wrsUI_flowPanelTopToBottom) > *:last-child {
+  margin-left: auto;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact):not(.wrsUI_flowPanelTopToBottom) > * > *:not(:first-child)::before {
+  margin: 0 2px;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_button, .wrsUI_app .wrsUI_toolBar .wrsUI_button.wrsUI_buttonOutlined, .wrsUI_app .wrsUI_toolBar .wrsUI_button.wrsUI_buttonContained {
+  padding: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown {
+  border: none;
+  margin: 0;
+  padding: 0 24px 0 5px;
+  width: auto;
+  min-width: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown:not(:disabled):hover:not(.wrsUI_focused), .wrsUI_app .wrsUI_toolBar .wrsUI_dropdown.wrsUI_focused {
+  border-bottom: none;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown::after {
+  right: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown.wrsUI_buttonIcon {
+  padding: 0;
+  justify-content: center !important;
+}
+
+.toolbarButton, .wrsUI_app .wrsUI_toolBar .wrsUI_button {
+  background: transparent;
+  border-radius: 0;
+  width: 33px;
+  height: 33px;
+  min-width: 0;
+  margin: 0;
+  color: #2f4b59;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.toolbarButton:not(.wrsUI_switch):not(:disabled):hover, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled):hover, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_focused, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_focused {
+  background: rgba(0, 0, 0, 0.1);
+}
+.toolbarButton:not(.wrsUI_switch):not(:disabled):active, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled):active, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_selected, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_selected, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_contextPanelButtonPressed, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_contextPanelButtonPressed {
+  background: rgba(0, 0, 0, 0.15);
+}
+.toolbarButton:not(.wrsUI_switch).wrsUI_focused:not(.wrsUI_aux_rippling) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch).wrsUI_focused:not(.wrsUI_aux_rippling) > .wrsUI_aux_ripple {
+  opacity: 0.99;
+}
+.toolbarButton:not(.wrsUI_switch) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch) > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.toolbarButton:disabled, .wrsUI_app .wrsUI_toolBar .wrsUI_button:disabled {
+  opacity: 0.26;
+}
+.toolbarButton > .wrsUI_aux_icon, .wrsUI_app .wrsUI_toolBar .wrsUI_button > .wrsUI_aux_icon {
+  color: #2f4b59;
+}
+
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelAtRight):not(.wrsUI_tabbedPanelAtLeft) .wrsUI_aux_tabbedPanelTabContainer {
+  text-align: left;
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelAtRight):not(.wrsUI_tabbedPanelAtLeft) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab {
+  padding: 12px;
+  height: 24px;
+  line-height: 24px;
+  box-sizing: content-box;
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab > .wrsUI_label,
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab > .wrsUI_iconBox {
+  text-transform: uppercase;
+  color: #778e9a !important;
+  opacity: 0.7;
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab.wrsUI_aux_selected > .wrsUI_label,
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab.wrsUI_aux_selected > .wrsUI_iconBox {
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab:active {
+  background: #c1c7c9;
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelContainer > .wrsUI_panel.wrsUI_aux_tabbedPanelBeforeSelected {
+  transform: translateX(-100%);
+}
+.wrsUI_app .wrsUI_tabbedPanel:not(.wrsUI_tabbedPanelNavigation) .wrsUI_aux_tabbedPanelContainer > .wrsUI_panel.wrsUI_aux_tabbedPanelAfterSelected {
+  transform: translateX(100%);
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtRight .wrsUI_aux_tabbedPanelTabContainer, .wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtLeft .wrsUI_aux_tabbedPanelTabContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 70px;
+  overflow: hidden;
+  text-align: center;
+  z-index: 2;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtRight .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab, .wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtLeft .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab {
+  padding: 6px;
+  height: 44px;
+  width: 58px;
+  line-height: 44px;
+  vertical-align: middle;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtRight .wrsUI_aux_tabbedPanelTabContainer {
+  right: 0;
+  margin-right: 70px;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelAtLeft .wrsUI_aux_tabbedPanelTabContainer {
+  left: 0;
+  margin-left: 70px;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation {
+  /*> div:first-child > div:active
+  * background: $color-highlight*/
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation:not(.wrsUI_tabbedPanelAtRight):not(.wrsUI_tabbedPanelAtLeft) .wrsUI_aux_tabbedPanelTabContainer {
+  background: #fff;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation.wrsUI_tabbedPanelAtRight .wrsUI_aux_tabbedPanelTabContainer {
+  background: #fdfdfd;
+  border-left: 1px solid #ededed;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation.wrsUI_tabbedPanelAtLeft .wrsUI_aux_tabbedPanelTabContainer {
+  background: #fdfdfd;
+  border-right: 1px solid #ededed;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab {
+  font-size: 12px;
+  color: #6793a9;
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab:not(.wrsUI_aux_selected) > * {
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: gray;
+  filter: grayscale(100%);
+}
+.wrsUI_app .wrsUI_tabbedPanel.wrsUI_tabbedPanelNavigation .wrsUI_aux_indicator {
+  display: none;
+}
+.wrsUI_app .wrsUI_tabbedPanel .wrsUI_aux_tabbedPanelTabContainer .wrsUI_tabbedPanelTab {
+  overflow: hidden;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
+}
+.wrsUI_app .wrsUI_tabbedPanel .wrsUI_aux_tabbedPanelContainer {
+  position: relative;
+  overflow: hidden;
+  overflow-y: visible;
+}
+.wrsUI_app .wrsUI_tabbedPanel .wrsUI_aux_tabbedPanelContainer > .wrsUI_panel {
+  left: 0;
+  right: 0;
+  margin: 0;
+  position: absolute;
+}
+.wrsUI_app .wrsUI_tabbedPanel .wrsUI_aux_indicator {
+  position: absolute;
+  height: 2px;
+  background-color: #6793a9;
+  margin-top: -2px;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_tabbedPanel {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_tabbedPanel .wrsUI_aux_indicator {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_tabbedPanel .wrsUI_aux_tabbedPanelContainer {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_tabbedPanel .wrsUI_aux_tabbedPanelContainer > .wrsUI_panel.wrsUI_aux_tabbedPanelAnimated {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_signInPanel > div {
+  margin-bottom: 15px;
+}
+.wrsUI_app .wrsUI_signInPanel > div .wrsUI_aux_icon {
+  width: 215px;
+  height: 41px;
+}
+.wrsUI_app .wrsUI_signInPanel > div.wrsUI_aux_signin_google:focus > div {
+  box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+}
+.wrsUI_app .wrsUI_signInPanel > div.wrsUI_aux_signin_microsoft {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+}
+.wrsUI_app .wrsUI_signInPanel > div.wrsUI_aux_signin_microsoft:hover, .wrsUI_app .wrsUI_signInPanel > div.wrsUI_aux_signin_microsoft:focus {
+  cursor: pointer;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+@-webkit-keyframes radioButton-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-moz-keyframes radioButton-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-ms-keyframes radioButton-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes radioButton-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes radioButton-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-moz-keyframes radioButton-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-ms-keyframes radioButton-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@keyframes radioButton-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-webkit-keyframes radioButton-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@-moz-keyframes radioButton-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@-ms-keyframes radioButton-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@keyframes radioButton-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+.wrsUI_app .wrsUI_radioButton {
+  cursor: pointer;
+  margin: 8px 0;
+  width: 100%;
+}
+.wrsUI_app .wrsUI_radioButton:first-child {
+  margin-top: 0;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton {
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+  cursor: inherit;
+  border: inherit;
+  overflow: visible;
+  background: inherit;
+  box-sizing: content-box;
+  text-transform: inherit;
+  padding: 8px;
+  margin-right: 12px;
+  display: block;
+  position: relative;
+  vertical-align: middle;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  min-height: 20px;
+  line-height: 20px;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton:not(:disabled):hover, .wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton.wrsUI_focused, .wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton:not(:disabled):active {
+  background: inherit;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton::before, .wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton::before {
+  left: 8px;
+  top: 8px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  opacity: 0.54;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton::after {
+  top: 13px;
+  left: 13px;
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  background: #6793a9;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::before, .wrsUI_app .wrsUI_radioButton .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::after {
+  position: absolute;
+  content: "";
+  background: #6793a9;
+  border-radius: 50%;
+  box-sizing: border-box;
+  left: -2px;
+  top: -2px;
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  transform: scale(1);
+}
+.wrsUI_app .wrsUI_radioButton:hover .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::before {
+  opacity: 0.04;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_radioButtonText .wrsUI_label {
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  line-height: 20px;
+  font-weight: 400;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_radioButtonHelperText .wrsUI_label {
+  cursor: pointer;
+  margin-top: 0;
+  display: block;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 400;
+  font-size: 12px;
+}
+.wrsUI_app .wrsUI_radioButton .wrsUI_radioButtonHelperText .wrsUI_label:first-child {
+  margin-left: 48px;
+}
+.wrsUI_app .wrsUI_radioButton.wrsUI_selected .wrsUI_aux_radioButton:before {
+  border-color: #6793a9;
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_radioButton.wrsUI_selected .wrsUI_aux_radioButton:after {
+  transform: scale(1);
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_radioButton .wrsUI_aux_radioButton::before, .wrsUI_app.wrsUI_animated .wrsUI_radioButton .wrsUI_aux_radioButton::after {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_radioButton.wrsUI_focused .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::before {
+  animation: 225ms radioButton-ripple-radius forwards, 75ms radioButton-ripple-opacity-focus forwards;
+}
+.wrsUI_app.wrsUI_animated .wrsUI_radioButton:active .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::after, .wrsUI_app.wrsUI_animated .wrsUI_radioButton.wrsUI_aux_radioButton_active .wrsUI_aux_radioButton .wrsUI_aux_radioButton_ripple::after {
+  animation: 225ms radioButton-ripple-radius forwards, 75ms radioButton-ripple-opacity-active forwards;
+}
+
+@-webkit-keyframes checkBox-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-moz-keyframes checkBox-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-ms-keyframes checkBox-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes checkBox-ripple-radius {
+  from {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes checkBox-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-moz-keyframes checkBox-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-ms-keyframes checkBox-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@keyframes checkBox-ripple-opacity-focus {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+@-webkit-keyframes checkBox-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@-moz-keyframes checkBox-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@-ms-keyframes checkBox-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+@keyframes checkBox-ripple-opacity-active {
+  from {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+.wrsUI_app .wrsUI_checkBox {
+  cursor: pointer;
+  margin: 8px 0;
+  width: 100%;
+}
+.wrsUI_app .wrsUI_checkBox:first-child {
+  margin-top: 0;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox {
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+  cursor: inherit;
+  border: inherit;
+  overflow: visible;
+  background: inherit;
+  box-sizing: content-box;
+  text-transform: inherit;
+  padding: 8px;
+  margin-right: 12px;
+  display: block;
+  position: relative;
+  vertical-align: middle;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  min-height: 20px;
+  line-height: 20px;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox:not(:disabled):hover, .wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox.wrsUI_focused, .wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox:not(:disabled):active {
+  background: inherit;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox::before, .wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox::after {
+  left: 8px;
+  top: 8px;
+  height: 20px;
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  border-radius: 2px;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox::before {
+  width: 20px;
+  opacity: 0.54;
+  border: 2px solid #000;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px !important;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "check";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  width: 0px;
+  padding: 0 1px;
+  overflow: hidden;
+  text-align: center;
+  background: transparent;
+  line-height: 20px;
+  color: transparent;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::before, .wrsUI_app .wrsUI_checkBox .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::after {
+  position: absolute;
+  content: "";
+  background: #6793a9;
+  border-radius: 50%;
+  box-sizing: border-box;
+  left: -2px;
+  top: -2px;
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  transform: scale(1);
+}
+.wrsUI_app .wrsUI_checkBox:hover .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::before {
+  opacity: 0.04;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_checkBoxText .wrsUI_label {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgb(0, 0, 0);
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_checkBoxHelperText .wrsUI_label {
+  cursor: pointer;
+  margin-top: 0;
+  display: block;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 400;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.wrsUI_app .wrsUI_checkBox .wrsUI_checkBoxHelperText .wrsUI_label:first-child {
+  margin-left: 48px;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_selected .wrsUI_aux_checkBox::before {
+  opacity: 1;
+  border: none;
+  background: #6793a9;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_selected .wrsUI_aux_checkBox::after {
+  color: #fff;
+  width: 18px;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_undetermined .wrsUI_aux_checkBox::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px !important;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "remove";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  top: 9px;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_checkBoxDisabled {
+  cursor: not-allowed !important;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_checkBoxDisabled .wrsUI_checkBoxText .wrsUI_label {
+  cursor: not-allowed !important;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_checkBoxDisabled .wrsUI_checkBoxHelperText .wrsUI_label {
+  cursor: not-allowed !important;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_checkBoxDisabled.wrsUI_selected .wrsUI_aux_checkBox::before {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+.wrsUI_app .wrsUI_checkBox.wrsUI_checkBoxDisabled:hover .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::before {
+  opacity: 0 !important;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_checkBox:not(.wrsUI_checkBoxDisabled).wrsUI_selected .wrsUI_aux_checkBox::after {
+  transition: width 0.225s cubic-bezier(0, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_checkBox:not(.wrsUI_checkBoxDisabled).wrsUI_focused .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::before {
+  animation: 225ms checkBox-ripple-radius forwards, 75ms checkBox-ripple-opacity-focus forwards;
+}
+.wrsUI_app.wrsUI_animated .wrsUI_checkBox:not(.wrsUI_checkBoxDisabled):active .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::after, .wrsUI_app.wrsUI_animated .wrsUI_checkBox:not(.wrsUI_checkBoxDisabled).wrsUI_aux_checkBox_active .wrsUI_aux_checkBox .wrsUI_aux_checkBox_ripple::after {
+  animation: 225ms checkBox-ripple-radius forwards, 75ms checkBox-ripple-opacity-active forwards;
+}
+
+.wrsUI_app .wrsUI_switch {
+  box-shadow: none;
+  background: #c1c7c9;
+  width: 30px;
+  height: 13px;
+  border-radius: 13px;
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  margin: 2px;
+  display: inline-block;
+}
+.wrsUI_app .wrsUI_switch:hover.wrsUI_selected:before {
+  box-shadow: 0 0 0 12px rgba(47, 75, 89, 0.04);
+}
+.wrsUI_app .wrsUI_switch:hover:not(.wrsUI_selected):before {
+  box-shadow: 0 0 0 12px rgba(158, 158, 158, 0.04);
+}
+.wrsUI_app .wrsUI_switch.wrsUI_focused.wrsUI_selected:before {
+  box-shadow: 0 0 0 12px rgba(47, 75, 89, 0.12);
+}
+.wrsUI_app .wrsUI_switch.wrsUI_focused:not(.wrsUI_selected):before {
+  box-shadow: 0 0 0 12px rgba(158, 158, 158, 0.12);
+}
+.wrsUI_app .wrsUI_switch:not(:disabled) {
+  cursor: pointer;
+}
+.wrsUI_app .wrsUI_switch:not(:disabled):hover:not(.wrsUI_focused):not(.wrsUI_selected) {
+  background: #c1c7c9;
+}
+.wrsUI_app .wrsUI_switch:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background: #fff;
+  width: 17px;
+  height: 17px;
+  border-radius: 100%;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_switch.wrsUI_selected, .wrsUI_app .wrsUI_switch:not(:disabled):hover.wrsUI_selected {
+  background: #6793a9;
+}
+.wrsUI_app .wrsUI_switch.wrsUI_selected:before {
+  background: #2f4b59;
+  transform: translateX(17px);
+}
+.wrsUI_app .wrsUI_switch > .wrsUI_aux_ripple {
+  display: none;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_switch::before {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_chip {
+  box-shadow: none;
+  border: inherit;
+  font: inherit;
+  outline: inherit;
+  text-transform: inherit;
+  overflow: hidden;
+  display: inline-flex;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 4px;
+  min-width: 32px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 12px;
+  background: #e0e0e0;
+  border-radius: 16px;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_chip > .wrsUI_aux_ripple {
+  position: absolute;
+  background: rgba(103, 147, 169, 0.3);
+  width: 0;
+  padding-bottom: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 100%;
+  opacity: 0;
+  perspective: 1px;
+}
+.wrsUI_app .wrsUI_chip.wrsUI_aux_rippling > .wrsUI_aux_ripple {
+  opacity: 1;
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_chip:active {
+  perspective: 2px;
+}
+.wrsUI_app .wrsUI_chip::after {
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  background: #000;
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.wrsUI_app .wrsUI_chip:hover::after {
+  opacity: 0.04;
+}
+.wrsUI_app .wrsUI_chip.wrsUI_focused::after {
+  opacity: 0.12;
+}
+.wrsUI_app .wrsUI_chip:active {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_chip.wrsUI_chipOutlined {
+  background: #fff;
+  border: 1px solid #ededed;
+}
+.wrsUI_app .wrsUI_chip:disabled {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: rgba(0, 0, 0, 0.35) !important;
+  cursor: not-allowed;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_chip {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_chip::after {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_chip > .wrsUI_aux_ripple.wrsUI_aux_animated {
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1), perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_chip.wrsUI_choiceChip.wrsUI_selected {
+  color: #2f4b59;
+  background: #b8cfd9;
+}
+.wrsUI_app .wrsUI_chip.wrsUI_choiceChip.wrsUI_chipOutlined.wrsUI_selected {
+  background: #b8cfd9;
+  border: 1px solid #6793a9;
+}
+
+.wrsUI_app .wrsUI_chip.wrsUI_filterChip::before {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px !important;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "check";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  width: 0px;
+  height: 24px;
+  overflow: hidden;
+  font-weight: 100;
+  margin-left: -8px;
+  margin-right: 4px;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}
+.wrsUI_app .wrsUI_chip.wrsUI_filterChip.wrsUI_selected::before {
+  width: 24px;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_filterChip {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_filterChip::before {
+  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_label {
+  color: #778e9a;
+  cursor: default;
+}
+.wrsUI_app .wrsUI_label.wrsUI_labelImportant {
+  color: #000;
+  font-weight: 500;
+}
+.wrsUI_app .wrsUI_label.wrsUI_labelHeader {
+  color: #000;
+  font-weight: 500;
+  font-size: 20px;
+}
+.wrsUI_app .wrsUI_label.wrsUI_labelTiny {
+  font-size: 12px;
+}
+.wrsUI_app .wrsUI_label.wrsUI_compositeLabel .wrsUI_label, .wrsUI_app .wrsUI_label.wrsUI_compositeLabel .wrsUI_label * {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.wrsUI_app .wrsUI_label.wrsUI_hyperlinkLabel {
+  cursor: pointer;
+  padding-right: 10px;
+  border-bottom: 1px solid transparent;
+  text-decoration: underline;
+  color: #6793a9 !important;
+}
+.wrsUI_app .wrsUI_label.wrsUI_hyperlinkLabel.wrsUI_hyperlinkLabelExternal::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 10px !important;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "launch";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  position: absolute;
+}
+.wrsUI_app .wrsUI_label.wrsUI_hyperlinkLabel:hover {
+  background: rgba(191, 191, 191, 0.25);
+}
+.wrsUI_app .wrsUI_label.wrsUI_hyperlinkLabel.wrsUI_focused {
+  background: rgba(191, 191, 191, 0.25);
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
+.wrsUI_app .wrsUI_label.wrsUI_actionLabel {
+  cursor: pointer;
+  color: #6793a9;
+}
+.wrsUI_app .wrsUI_label.wrsUI_actionLabel:hover {
+  background: rgba(191, 191, 191, 0.25);
+}
+.wrsUI_app .wrsUI_label.wrsUI_actionLabel.wrsUI_focused {
+  background: rgba(191, 191, 191, 0.25);
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
+.wrsUI_app .wrsUI_iconBox {
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.wrsUI_app .wrsUI_slider {
+  display: flex;
+  flex-direction: row;
+}
+.wrsUI_app .wrsUI_slider > .wrsUI_label {
+  margin-right: 16px;
+  font-weight: 400;
+}
+.wrsUI_app .wrsUI_slider > .wrsUI_textField {
+  margin-left: 16px;
+}
+.wrsUI_app .wrsUI_slider .wrsUI_aux_sliderWrapper {
+  width: var(--slider-width);
+  height: 2px;
+  cursor: pointer;
+  position: relative;
+  padding: 4px 0;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: rgba(7, 118, 112, 0.5);
+}
+.wrsUI_app .wrsUI_slider .wrsUI_aux_sliderWrapper .wrsUI_aux_sliderRange {
+  background: #077670;
+  width: calc(var(--slider-width) / var(--slider-max) * (var(--slider-value) - var(--slider-min)));
+  height: 2px;
+  border-radius: 2px;
+}
+.wrsUI_app .wrsUI_slider .wrsUI_aux_sliderWrapper .wrsUI_aux_sliderHandle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #077680;
+  cursor: pointer;
+  position: absolute;
+  top: -1px;
+  left: calc(var(--slider-width) / var(--slider-max) * (var(--slider-value) - var(--slider-min)) - 5px);
+}
+.wrsUI_app .wrsUI_slider .wrsUI_aux_sliderWrapper .wrsUI_aux_sliderHandle:focus {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_slider .wrsUI_aux_sliderWrapper .wrsUI_aux_sliderHandle:active {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentCorrect {
+  border-bottom: 1px solid #318849 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentCorrect::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "check_circle";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: #318849;
+  position: absolute;
+  right: -28px;
+  top: calc(50% - 12px);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentCorrect > input {
+  color: #318849 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentCorrect > hr {
+  border-bottom: 2px solid #318849;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentWarning {
+  border-bottom: 1px solid #C99A08 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentWarning::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "error";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: #C99A08;
+  position: absolute;
+  right: -28px;
+  top: calc(50% - 12px);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentWarning > input {
+  color: #C99A08 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentWarning > hr {
+  border-bottom: 2px solid #C99A08;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentError {
+  border-bottom: 1px solid #FF0000 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentError::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "cancel";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: #FF0000;
+  position: absolute;
+  right: -28px;
+  top: calc(50% - 12px);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentError > input {
+  color: #FF0000 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_inputComponentError > hr {
+  border-bottom: 2px solid #FF0000;
+}
+
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent {
+  position: relative;
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid #778e9a;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent:not(.wrsUI_textComponentEmpty) > label {
+  transform: translateY(-5px) scale(0.75);
+  color: #778e9a;
+  width: max-content;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_focused > label {
+  color: #6793a9;
+  transform: translateY(-5px) scale(0.75);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentDisabled {
+  background: #979797 !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_focused > input::placeholder, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_focused > textarea::placeholder {
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_focused > label {
+  transform: translateY(-5px) scale(0.75);
+  color: #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_focused > hr {
+  display: block;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent > label {
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+  color: #000;
+  line-height: 49px;
+  transform-origin: left top;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentWithPrefix > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentWithPrefix > textarea {
+  border-left-width: 28px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentWithSuffix > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentWithSuffix > textarea {
+  text-align: right;
+  border-right-width: 28px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent:not(.wrsUI_textComponentWithLabel) input::placeholder {
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentSuffix {
+  position: absolute;
+  max-width: 20px;
+  line-height: 49px;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentPrefix.wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentSuffix.wrsUI_aux_textComponentPrefix {
+  left: 12px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentPrefix.wrsUI_aux_textComponentSuffix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent .wrsUI_aux_textComponentSuffix.wrsUI_aux_textComponentSuffix {
+  right: 12px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentCorrect > .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentCorrect > .wrsUI_aux_textComponentSuffix {
+  color: #318849;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentWarning > .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentWarning > .wrsUI_aux_textComponentSuffix {
+  color: #C99A08;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentError > .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_inputComponentError > .wrsUI_aux_textComponentSuffix {
+  color: #FF0000;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent > hr {
+  display: none;
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: -1px;
+  margin: 0;
+  border: none;
+  border-bottom: 2px solid #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent[disabled] {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent[disabled] > label, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent[disabled] > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent[disabled] > textarea {
+  color: #979797;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined {
+  border-radius: 4px;
+  border: none !important;
+  box-shadow: inset 0 0 0px 1px #778e9a;
+  background-color: transparent;
+  box-sizing: border-box !important;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined > hr {
+  visibility: none;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_focused {
+  box-shadow: inset 0 0 0px 2px #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_focused.wrsUI_inputComponentError {
+  box-shadow: inset 0 0 0px 2px #FF0000;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_focused.wrsUI_inputComponentWarning {
+  box-shadow: inset 0 0 0px 2px #C99A08;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_focused.wrsUI_inputComponentCorrect {
+  box-shadow: inset 0 0 0px 2px #318849;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_focused input {
+  caret-color: #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_inputComponentError {
+  box-shadow: inset 0 0 0px 1px #FF0000;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_inputComponentWarning {
+  box-shadow: inset 0 0 0px 1px #C99A08;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textComponent.wrsUI_textComponentOutlined.wrsUI_inputComponentCorrect {
+  box-shadow: inset 0 0 0px 1px #318849;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_textComponent label {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_textComponent hr {
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), right 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_textComponent textarea {
+  width: 100%;
+  height: calc(100% - 5px);
+  resize: none;
+  margin-bottom: 5px;
+  line-height: 49px;
+  color: #000;
+  background: transparent;
+  border: solid transparent;
+  border-width: 0 12px;
+  box-sizing: border-box;
+}
+.wrsUI_app .wrsUI_textComponent textarea::placeholder {
+  opacity: 0;
+  color: #9e9e9e;
+}
+.wrsUI_app .wrsUI_textComponent.wrsUI_textComponentWithLabel textarea {
+  height: calc(100% - 30px);
+  margin-top: 25px;
+  line-height: 24px;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_textComponent textarea::placeholder {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input {
+  width: 100%;
+  line-height: 49px;
+  color: #000;
+  background: transparent;
+  border: solid transparent;
+  border-width: 0 12px;
+  box-sizing: border-box;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input::placeholder {
+  opacity: 0;
+  color: #9e9e9e;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input[type=number] {
+  -moz-appearance: textfield;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input[type=number]::-webkit-inner-spin-button, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input[type=number]::-webkit-outer-spin-button, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input[type=number]:hover::-webkit-inner-spin-button, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField > input[type=number]:hover::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentCorrect::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentWarning::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentError::after {
+  right: 12px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentCorrect > .wrsUI_aux_textComponentHelperText, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentWarning > .wrsUI_aux_textComponentHelperText, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_inputComponentError > .wrsUI_aux_textComponentHelperText {
+  color: #FF0000;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField > .wrsUI_aux_textComponentHelperText {
+  position: absolute;
+  top: calc(100% + 4px);
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentCorrect > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentCorrect > textarea, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentWarning > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentWarning > textarea, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentError > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithPrefix.wrsUI_inputComponentError > textarea {
+  border-right-width: 44px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentCorrect > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentCorrect > textarea, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentWarning > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentWarning > textarea, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentError > input, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentError > textarea {
+  border-left-width: 44px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentCorrect::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentWarning::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithSuffix.wrsUI_inputComponentError::after {
+  right: unset;
+  left: 12px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithPrefix > label, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithSuffix > label {
+  transform: translateY(-5px) scale(0.75);
+  color: #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithPrefix .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithPrefix .wrsUI_aux_textComponentSuffix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithSuffix .wrsUI_aux_textComponentPrefix, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_textComponentWithSuffix .wrsUI_aux_textComponentSuffix {
+  padding-top: 14px;
+  line-height: 35px;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentCorrect > label, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentWarning > label, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentError > label {
+  transform: translateY(-5px) scale(0.75);
+  color: #6793a9;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentCorrect > input::placeholder, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentWarning > input::placeholder, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentError > input::placeholder {
+  opacity: 1;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentCorrect::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentWarning::after, .wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentError::after {
+  top: calc(50% - 4px);
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentCorrect > label {
+  color: #318849;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentWarning > label {
+  color: #C99A08;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel.wrsUI_inputComponentError > label {
+  color: #FF0000;
+}
+.wrsUI_app .wrsUI_inputComponent.wrsUI_textField.wrsUI_textComponentWithLabel > input {
+  padding-top: 14px;
+  line-height: 35px;
+}
+.wrsUI_app .wrsUI_dropdownTextFieldDialog {
+  background: #fff;
+  padding: 8px 0;
+}
+.wrsUI_app .wrsUI_dropdownTextFieldDialog .wrsUI_button {
+  border-radius: 0;
+  text-transform: none;
+  width: 100%;
+  padding: 0 16px;
+  line-height: 48px;
+  font-weight: 300;
+  margin: 0;
+  flex-shrink: 0;
+  height: auto;
+  white-space: nowrap;
+  color: #000;
+  justify-content: flex-start !important;
+}
+.wrsUI_app .wrsUI_dropdownTextFieldDialog .wrsUI_button:not(:disabled):hover, .wrsUI_app .wrsUI_dropdownTextFieldDialog .wrsUI_button.wrsUI_focused, .wrsUI_app .wrsUI_dropdownTextFieldDialog .wrsUI_button:not(:disabled):active {
+  background: #f2f2f2;
+}
+.wrsUI_app .wrsUI_dropdownTextFieldDialog .wrsUI_button > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_forceLTR {
+  direction: ltr;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_textComponent input::placeholder {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_autocompleteTextFieldDialog .wrsUI_button {
+  transition: perspective 0.00001s linear, opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@-webkit-keyframes progressBar-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+@-moz-keyframes progressBar-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+@-ms-keyframes progressBar-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+@keyframes progressBar-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+@-webkit-keyframes progressBar-indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%;
+  }
+  60% {
+    left: 107%;
+    right: -8%;
+  }
+  100% {
+    left: 107%;
+    right: -8%;
+  }
+}
+@-moz-keyframes progressBar-indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%;
+  }
+  60% {
+    left: 107%;
+    right: -8%;
+  }
+  100% {
+    left: 107%;
+    right: -8%;
+  }
+}
+@-ms-keyframes progressBar-indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%;
+  }
+  60% {
+    left: 107%;
+    right: -8%;
+  }
+  100% {
+    left: 107%;
+    right: -8%;
+  }
+}
+@keyframes progressBar-indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%;
+  }
+  60% {
+    left: 107%;
+    right: -8%;
+  }
+  100% {
+    left: 107%;
+    right: -8%;
+  }
+}
+.wrsUI_app .wrsUI_progressBar {
+  background: #b8cfd9;
+  height: 5px;
+  position: absolute;
+  overflow: hidden;
+}
+.wrsUI_app .wrsUI_progressBar:before, .wrsUI_app .wrsUI_progressBar:after {
+  content: "";
+  background: #6793a9;
+  height: 5px;
+  position: absolute;
+}
+.wrsUI_app .wrsUI_progressBar.wrsUI_hidden {
+  display: block !important;
+  height: 0;
+}
+
+.wrsUI_app.wrsUI_animated .wrsUI_progressBar {
+  transition: height 0.225s cubic-bezier(0, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wrsUI_app.wrsUI_animated .wrsUI_progressBar:not(.wrsUI_hidden):before {
+  animation: progressBar-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+.wrsUI_app.wrsUI_animated .wrsUI_progressBar:not(.wrsUI_hidden):after {
+  animation: progressBar-indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+  animation-delay: 1.15s;
+}
+
+@-webkit-keyframes progressCircle-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes progressCircle-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-ms-keyframes progressCircle-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes progressCircle-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes progressCircle-stroke-rotation {
+  0% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(0);
+  }
+  12.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(0);
+  }
+  12.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(270deg);
+  }
+  37.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(270deg);
+  }
+  37.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(180deg);
+  }
+  62.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(180deg);
+  }
+  62.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(90deg);
+  }
+  87.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(90deg);
+  }
+  87.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+  100% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+}
+@-moz-keyframes progressCircle-stroke-rotation {
+  0% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(0);
+  }
+  12.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(0);
+  }
+  12.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(270deg);
+  }
+  37.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(270deg);
+  }
+  37.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(180deg);
+  }
+  62.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(180deg);
+  }
+  62.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(90deg);
+  }
+  87.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(90deg);
+  }
+  87.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+  100% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+}
+@-ms-keyframes progressCircle-stroke-rotation {
+  0% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(0);
+  }
+  12.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(0);
+  }
+  12.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(270deg);
+  }
+  37.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(270deg);
+  }
+  37.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(180deg);
+  }
+  62.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(180deg);
+  }
+  62.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(90deg);
+  }
+  87.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(90deg);
+  }
+  87.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+  100% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+}
+@keyframes progressCircle-stroke-rotation {
+  0% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(0);
+  }
+  12.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(0);
+  }
+  12.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(72.5deg);
+  }
+  25.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(270deg);
+  }
+  37.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(270deg);
+  }
+  37.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(161.5deg);
+  }
+  50.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(180deg);
+  }
+  62.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(180deg);
+  }
+  62.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(251.5deg);
+  }
+  75.0001% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotate(90deg);
+  }
+  87.5% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotate(90deg);
+  }
+  87.5001% {
+    stroke-dashoffset: 56.54867px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+  100% {
+    stroke-dashoffset: 268.60617px;
+    transform: rotateX(180deg) rotate(341.5deg);
+  }
+}
+.wrsUI_progressCircle {
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: relative;
+}
+.wrsUI_progressCircle.wrsUI_progressCircleIndeterminate {
+  animation: progressCircle-rotate 2s linear infinite;
+}
+.wrsUI_progressCircle.wrsUI_progressCircleIndeterminate circle {
+  transition-property: stroke;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+}
+.wrsUI_progressCircle svg {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+  position: absolute;
+  transform-origin: center;
+  transform: rotate(-90deg);
+}
+.wrsUI_progressCircle circle {
+  fill: transparent;
+  stroke-width: 10%;
+  transform-origin: center;
+  stroke-dasharray: 282.743px;
+  stroke: #6793a9;
+  transition: stroke-dashoffset 225ms linear;
+  animation-name: progressCircle-stroke-rotation;
+}
+
+.wrsUI_app .wrsUI_formulaViewer {
+  pointer-events: none;
+}
+
+/*# sourceMappingURL=util_tmp.css.map */

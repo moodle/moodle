@@ -1,0 +1,169 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_customcert/mobile_view_activity_page
+
+    The main page to view the custom certificate activity
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * certificate
+    * cmid
+    * hasissues
+    * issues
+    * showgroups
+    * groups
+    * canmanage
+    * requiredtimemet
+    * hasrecipients
+    * recipients
+    * fileurl
+    * showreport
+    * currenttimestamp
+
+    Example context (json):
+    {
+        "certificate": {
+            "id": "1",
+            "course": "2",
+            "name": "A rad certificate name!",
+            "intro": "A certificate",
+            "requiredtime": "60"
+        },
+        "cmid": "25",
+        "issue": {
+            "timecreated": "1528370177"
+        },
+        "showgroups": "true",
+        "groups": [
+            {
+                "id": "2",
+                "selected": "false",
+                "name": "Group A"
+            }
+        ],
+        "canmanage": "true",
+        "requiredtimemet": "true",
+        "fileurl": "http://yoursite.com/mod/customcert/mobile/pluginfile.php?id=4",
+        "showreport": "true",
+        "hasrecipients": "true",
+        "recipients": [
+            {
+                "id": "2",
+                "issueid": "3",
+                "displayname": "Michaelangelo (Mickey)",
+                "fileurl": "http://yoursite.com/mod/customcert/mobile/pluginfile.php?id=4",
+                "timecreated": "1528370177"
+            }
+        ],
+        "currenttimestamp": "1528370177"
+    }
+}}
+{{=<% %>=}}
+<core-course-module-description description="<% certificate.intro %>" component="mod_customcert" componentId="<% cmid %>"></core-course-module-description>
+<ion-list>
+<%^canmanage%>
+    <%#requiredtimemet%>
+        <ion-item>
+            <ion-label>
+                {{ 'plugin.mod_customcert.receiveddate' | translate }}
+                <br />
+                <div class="timerewarded">
+                    <%#issue%>
+                        {{ <% timecreated %> * 1000 | coreFormatDate }}
+                    <%/issue%>
+                    <%^issue%>
+                        {{ 'plugin.mod_customcert.notissued' | translate }}
+                    <%/issue%>
+                </div>
+            </ion-label>
+            <div slot="end" class="flex-row">
+                <ion-button fill="clear" [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert" [attr.aria-label]="'core.download' | translate">
+                    <ion-icon name="cloud-download" slot="icon-only" aria-hidden="true"></ion-icon>
+                </ion-button>
+            </div>
+        </ion-item>
+    <%/requiredtimemet%>
+    <%^requiredtimemet%>
+        <ion-item>
+            <ion-label>
+                <p>{{ 'plugin.mod_customcert.requiredtimenotmet' | translate: {$a: { requiredtime: <% certificate.requiredtime %>} } }}</p>
+            </ion-label>
+        </ion-item>
+    <%/requiredtimemet%>
+<%/canmanage%>
+<%#canmanage%>
+    <ion-button expand="block" class="ion-margin" core-course-download-module-main-file moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert" [files]="[{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}]">
+        <ion-icon name="cloud-download" slot="start" aria-hidden="true"></ion-icon>
+        {{ 'plugin.mod_customcert.getcustomcert' | translate }}
+    </ion-button>
+<%/canmanage%>
+<%#showreport%>
+    <ion-item>
+        <ion-label>
+            {{ 'plugin.mod_customcert.listofissues' | translate: { $a: <% numrecipients %> } }}
+        </ion-label>
+    </ion-item>
+    <%#showgroups%>
+        <ion-item>
+            <ion-label>{{ 'plugin.mod_customcert.selectagroup' | translate }}</ion-label>
+            <ion-select [(ngModel)]="CONTENT_OTHERDATA.group" name="group" (ionChange)="updateContent({cmid: <% cmid %>, courseid: <% certificate.course %>, group: CONTENT_OTHERDATA.group})" interface="popover">
+                <%#groups%>
+                    <ion-select-option [value]="<% id %>"><% name %></ion-select-option>
+                <%/groups%>
+            </ion-select>
+        </ion-item>
+    <%/showgroups%>
+    <%#hasrecipients%>
+        <%#recipients%>
+            <ion-item>
+                <ion-label>
+                    <% displayname %>
+                    <br />
+                    <div class="timerewarded">{{ <% timecreated %> * 1000 | coreFormatDate }}</div>
+                </ion-label>
+                <div slot="end" class="flex-row">
+                    <ion-button fill="clear" [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert" [attr.aria-label]="'core.download' | translate">
+                        <ion-icon name="cloud-download" slot="icon-only" aria-hidden="true"></ion-icon>
+                    </ion-button>
+                    <%#canmanage%>
+                        <ion-button fill="clear" core-site-plugins-call-ws name="mod_customcert_delete_issue"
+                                [params]="{certificateid: <% certificate.id %>, issueid: <% issueid %>}"
+                                [preSets]="{getFromCache: 0, saveToCache: 0, typeExpected: 'boolean'}"
+                                confirmMessage="{{ 'plugin.mod_customcert.deleteissueconfirm' | translate }}"
+                                refreshOnSuccess="true" [attr.aria-label]="'core.delete' | translate">
+                            <ion-icon name="fas-trash" slot="icon-only" aria-hidden="true"></ion-icon>
+                        </ion-button>
+                    <%/canmanage%>
+                </div>
+            </ion-item>
+        <%/recipients%>
+    <%/hasrecipients%>
+    <%^hasrecipients%>
+        <ion-item>
+            <ion-label>
+                {{ 'plugin.mod_customcert.nothingtodisplay' | translate }}
+            </ion-label>
+        </ion-item>
+    <%/hasrecipients%>
+<%/showreport%>
+</ion-list>

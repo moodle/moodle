@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="grade/report/gradebook_builder/db" VERSION="20120326" COMMENT="XMLDB file for the Gradebook Builder report."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="gradereport_builder_template" COMMENT="Table storing Gradebook Builder templates.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextlevel"/>
+        <FIELD NAME="contextlevel" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context level at which this template should appear, ie: CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_USER, etc." PREVIOUS="id" NEXT="instanceid"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The instance id associated with the context level, ie: if contextlevel == CONTEXT_USER, then instanceid will be a userid." PREVIOUS="contextlevel" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Human readable name for the template" PREVIOUS="instanceid" NEXT="data"/>
+        <FIELD NAME="data" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The template data as JSON." PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="conins" UNIQUE="false" FIELDS="contextlevel, instanceid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

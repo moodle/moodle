@@ -68,10 +68,9 @@ Feature: Tagging courses
     And I log out
 
   Scenario: User can set course tags using separate form
-    Given I log in as "admin"
-    And I set the following system permissions of "Non-editing teacher" role:
-      | moodle/course:tag | Allow |
-    And I log out
+    Given the following "role capability" exists:
+      | role              | teacher |
+      | moodle/course:tag | allow   |
     When I log in as "teacher2"
     And I am on "Course 1" course homepage
     And I navigate to "Course tags" in current page administration

@@ -1,0 +1,194 @@
+.path-blocks-rollsheet.pagelayout-print div#page {
+  background-color: #fff !important;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.path-blocks-rollsheet .titles {
+  padding: 0 20px;
+}
+
+.path-blocks-rollsheet .borderless {
+ width: 100%;
+}
+.path-blocks-rollsheet .borderless td {
+  font-size: 9px;
+  text-align: left !important;
+  padding: 0 10px;
+}
+
+.path-blocks-rollsheet .borderless td:last-child {
+  width: 10%;
+}
+
+.path-blocks-rollsheet p {
+  margin: 0;
+  padding: 0;
+}
+
+.path-blocks-rollsheet .absences {
+  margin: 0 20px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.path-blocks-rollsheet .disclaimer {
+  font-size: 9px;
+}
+
+.path-blocks-rollsheet .center {
+  text-align: center;
+}
+
+.path-blocks-rollsheet .rolltitle {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 10px auto;
+}
+
+.path-blocks-rollsheet .rollcourse {
+  font-size: 25px;
+}
+
+.path-blocks-rollsheet .rollgroup {
+  font-size: 10px;
+}
+
+.path-blocks-rollsheet .printHeaderLogo {
+  height: 30px;
+}
+
+.path-blocks-rollsheet table.roll {
+  font-size: 10px;
+  width: 99%;
+  margin: 10px auto;;
+  background-color: #ffffff;
+}
+
+.path-blocks-rollsheet table.roll tr:nth-child(odd) td {
+  background-color: #dddddd;
+}
+
+.path-blocks-rollsheet table.roll th {
+  border: 1px solid #000000;
+  color: #333;
+  background-color: #fff;
+  font-weight: bold;
+  height: 40px;
+  vertical-align: bottom;
+}
+
+.path-blocks-rollsheet table.roll td {
+  border: 1px solid #000000;
+  vertical-align: middle;
+}
+
+.path-blocks-rollsheet p.center.disclaimer {
+  page-break-after: always;
+  margin-bottom: 30px;
+  margin-top: 10px;
+  font-size: 10px;
+}
+
+.path-blocks-rollsheet.pagelayout-print p.center.disclaimer {
+  margin-bottom: 0px;
+}
+
+.path-blocks-rollsheet div.floatright {
+  width: 95%;
+  margin: 0 10px 0 auto;
+  padding-top: 5px;
+  text-align: right;
+  clear: both;
+}
+
+.path-blocks-rollsheet div.floatleft {
+  transition: box-shadow 150ms, background-color 150ms, border-color 150ms;
+  display: inline-block;
+  padding: 0;
+  margin: 5px;
+  min-width: 140px;
+  height: 172px;
+  text-align: center;
+  background-color: #fff;
+  vertical-align: top;
+  border: 1px solid #ccc;
+    -webkit-print-color-adjust: exact;
+    -webkit-filter:opacity(1);
+  border-radius: 5px;
+}
+
+.path-blocks-rollsheet div.floatleft:hover {
+  transition: box-shadow 150ms, background-color 150ms, border-color 150ms;
+  box-shadow: 0 0 15px #ccc;
+  -webkit-box-shadow: 0 0 15px #ccc;
+  background-color: #f6f6f6;
+  border-color: #999;
+}
+
+.path-blocks-rollsheet div.floatleft:active {
+  box-shadow: 0 0 15px #666;
+  -webkit-box-shadow: 0 0 15px #666;
+  background-color: #f6f6f6;
+  border-color: #999;
+}
+
+.path-blocks-rollsheet.safari div.floatleft {
+  margin: 10px 15px;
+}
+
+.path-blocks-rollsheet div.floatleft img {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px 10px 7px 10px;
+}
+
+.path-blocks-rollsheet div.floatleft p {
+  height: 3em;
+  vertical-align: top;
+  white-space: nowrap;
+  padding: 0 5px;
+  margin: 0;
+}
+
+.path-blocks-rollsheet img.welcome_userpicture {
+  width: 120px;
+  height: 120px;
+}
+
+.path-blocks-rollsheet-print table.roll td {
+  text-align: left;
+}
+
+.path-blocks-rollsheet-print table.roll th {
+  vertical-align: top;
+  font-size: 10px;
+  font-weight: normal;
+  padding: 5px 0;
+  width: 8%;
+}
+
+.path-blocks-rollsheet-print table.roll th.c1, .path-blocks-rollsheet-print table.roll td.c1 {
+  width: auto;
+  white-space: nowrap;
+  padding-right: 10px;
+  font-size: 10px;
+  vertical-align: bottom;
+}
+
+.path-blocks-rollsheet-print table.roll th.c0, .path-blocks-rollsheet-print table.roll td.c0 {
+  border: none;
+  background-color: #ffffff !important;
+  text-align: right;
+  width: 20px;
+}
+
+.path-blocks-rollsheet-print .absences {
+  margin: 0 40px;
+  text-align: left;
+}
+
+.path-blocks-rollsheet-print .center.disclaimer {
+  margin: 0 40px;
+  text-align: left;
+}

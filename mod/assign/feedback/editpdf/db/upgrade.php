@@ -70,7 +70,9 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
                 ];
                 $task = new assignfeedback_editpdf\task\convert_submission;
                 $task->set_custom_data($data);
-                \core\task\manager::queue_adhoc_task($task, true);
+                // BEGIN LSU WE DO NOT USE editpdf.
+                // \core\task\manager::queue_adhoc_task($task, true);
+                // END LSU WE DO NOT USE editpdf.
             }
             $rs->close();
 

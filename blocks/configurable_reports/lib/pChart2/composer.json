@@ -1,0 +1,43 @@
+{
+  "name": "bozhinov/pchart2.0-for-php7",
+  "description": "pChart 2.3 compatible with PHP 7",
+  "keywords": [
+    "php",
+    "charts",
+    "php7",
+    "form",
+    "pie",
+    "bar",
+	"qrcode",
+	"barcode",
+    "server side charts"
+  ],
+  "homepage": "https://github.com/bozhinov/pChart2.0-for-PHP7",
+  "type": "project",
+  "license": "GPL-3.0",
+  "support": {
+    "issues": "https://github.com/bozhinov/pChart2.0-for-PHP7/issues",
+    "source": "https://github.com/bozhinov/pChart2.0-for-PHP7"
+  },
+  "authors": [
+    {
+      "name": "Momchil Bozhinov(bozhinov)",
+      "email": "momchil@bojinov.info"
+    }
+  ],
+
+  "autoload": {
+    "classmap": [
+      "pChart/"
+    ]
+  },
+
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+ 
+  "require": {
+    "php": ">=7.2",
+    "ext-gd": "*"
+  }
+
+}

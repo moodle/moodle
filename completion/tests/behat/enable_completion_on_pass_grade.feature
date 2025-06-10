@@ -27,26 +27,18 @@ Feature: Students will be marked as completed if they have achieved a passing gr
       | completionpassgrade                 | 1                       |
       | completionusegrade                  | 1                       |
       | gradepass                           | 50                      |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student First" user has not completed "Test assignment name" activity
-    And I log out
 
   Scenario: Passing grade completion
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Course 1" "grades > Grader report > View" page
     And I turn editing mode on
     And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"
     And I give the grade "50" to the user "Student Second" for the grade item "Test assignment name"
     And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
+    When I am on the "Course 1" course page logged in as student1
+    Then the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student2
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "done"

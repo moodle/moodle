@@ -39,6 +39,15 @@ use advanced_testcase;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_test extends advanced_testcase {
+
+    /**
+     * Setup before class.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->libdir}/externallib.php");
+    }
+
     /**
      * Test execute invalid component format.
      */

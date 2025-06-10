@@ -10,9 +10,9 @@
         "behat/mink": "^1.10.0",
         "friends-of-behat/mink-extension": "^2.7.2",
         "behat/mink-goutte-driver": "^2.0",
-        "symfony/process": "^4.4 || ^5.0",
-        "behat/behat": "3.12.*",
-        "oleg-andreyev/mink-phpwebdriver": "^1.2.1"
+        "symfony/process": "^4.4 || ^5.0 || ^6.0",
+        "behat/behat": "3.13.*",
+        "oleg-andreyev/mink-phpwebdriver": "1.2.*"
     },
     "autoload-dev": {
         "psr-0": {
@@ -22,7 +22,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0.0",
+        "php": ">=7.4.0",
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-curl": "*",
@@ -40,8 +40,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-hash": "*",
-        "ext-fileinfo": "*",
-        "ext-sodium": "*"
+        "ext-fileinfo": "*"
     },
     "suggest": {
         "ext-mysqli": "Needed when Moodle uses MySQL or MariaDB database.",
@@ -50,6 +49,7 @@
         "ext-oci8": "Needed when Moodle uses Oracle database.",
         "ext-tokenizer": "Enabling Tokenizer PHP extension is recommended, it improves Moodle Networking functionality.",
         "ext-soap": "Enabling SOAP PHP extension is useful for web services and some plugins.",
+        "ext-sodium": "Enabling Sodium PHP extension is recommended, it is used by Moodle encryption API.",
         "ext-exif": "Enabling Exif PHP extension is recommended, it is used by Moodle to parse image meta data."
     }
 }

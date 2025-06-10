@@ -77,8 +77,8 @@ class question_manually_graded extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/comment.php', ['attempt' => $this->other['attemptid'],
-            'slot' => $this->other['slot']]);
+        return new \moodle_url('/mod/quiz/comment.php', array('attempt' => $this->other['attemptid'],
+            'slot' => $this->other['slot']));
     }
 
     /**
@@ -87,8 +87,8 @@ class question_manually_graded extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'manualgrade', 'comment.php?attempt=' . $this->other['attemptid'] .
-            '&slot=' . $this->other['slot'], $this->other['quizid'], $this->contextinstanceid];
+        return array($this->courseid, 'quiz', 'manualgrade', 'comment.php?attempt=' . $this->other['attemptid'] .
+            '&slot=' . $this->other['slot'], $this->other['quizid'], $this->contextinstanceid);
     }
 
     /**
@@ -114,13 +114,13 @@ class question_manually_graded extends \core\event\base {
     }
 
     public static function get_objectid_mapping() {
-        return ['db' => 'question', 'restore' => 'question'];
+        return array('db' => 'question', 'restore' => 'question');
     }
 
     public static function get_other_mapping() {
-        $othermapped = [];
-        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
-        $othermapped['attemptid'] = ['db' => 'quiz_attempts', 'restore' => 'quiz_attempt'];
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+        $othermapped['attemptid'] = array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
 
         return $othermapped;
     }

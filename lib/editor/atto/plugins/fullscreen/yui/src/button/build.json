@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_fullscreen-button",
+  "builds": {
+    "moodle-atto_fullscreen-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

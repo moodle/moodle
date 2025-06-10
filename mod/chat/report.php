@@ -51,11 +51,10 @@ if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
     throw new \moodle_exception('coursemisconf');
 }
 
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 $PAGE->set_heading($course->fullname);
-
-require_login($course, false, $cm);
 
 if (empty($chat->studentlogs) && !has_capability('mod/chat:readlog', $context)) {
     notice(get_string('nopermissiontoseethechatlog', 'chat'));

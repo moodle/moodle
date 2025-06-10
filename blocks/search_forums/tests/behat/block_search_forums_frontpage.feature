@@ -8,11 +8,9 @@ Feature: The search forums block allows users to search for forum posts on front
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | student1 | Student | 1 | student1@example.com | S1 |
-    And I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    And I add the "Search forums" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | search_forums | System       | 1         | site-index      | side-pre      |
 
   Scenario: Use the search forum block on the frontpage and search for posts as a user
     Given I log in as "student1"

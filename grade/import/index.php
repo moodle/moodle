@@ -37,7 +37,14 @@ require_login($course);
 $context = context_course::instance($courseid);
 require_capability('moodle/grade:import', $context);
 
-$importplugins = core_component::get_plugin_list('gradeimport');
+// Retrieve all grade import plugins the current user can access.
+$importplugins = array_filter(core_component::get_plugin_list('gradeimport'),
+    static function(string $importplugin) use ($context): bool {
+        return has_capability("gradeimport/{$importplugin}:view", $context);
+    },
+    ARRAY_FILTER_USE_KEY
+);
+
 if (!empty($importplugins)) {
     $importplugin = array_key_first($importplugins);
     $url = new moodle_url("/grade/import/{$importplugin}/index.php", ['id' => $courseid]);

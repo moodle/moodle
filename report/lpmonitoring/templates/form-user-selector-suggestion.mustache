@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_lpmonitoring/form-user-selector-suggestion
+
+    Moodle template for the list of valid options in an autocomplate form element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * profileimageurlsmall Url to a small profile image.
+    * fullname Users full name
+    * userid user id field
+    * email user email field
+    * planid user plan id
+    * nbrating total number of rating
+    * hasidentity true if has identity to display
+    * identity extra user fields to display
+
+    Example context (json):
+    { "userid": "1",
+      "fullname": "Admin",
+      "email": "test",
+      "planid": "5",
+      "profileimageurl": "invalid url",
+      "profileimageurlsmall": "invalid url",
+      "nbrating": "6",
+      "nbcomments": "2",
+      "hasidentity": true,
+      "identity": "p001421, useremail@nomailtest.com"
+      
+    }
+}}
+<span class="userplan-fullname">
+    <img height="18" src="{{profileimagesmall}}" alt="" role="presentation">
+    <span>{{fullname}}</span>
+    {{#hasidentity}}
+    <span><small>{{identity}}</small></span>
+    {{/hasidentity}}
+</span>
+
+{{#nbrating}}
+<span class="nbratinguser">{{#str}}ratingnumber, report_lpmonitoring, {{{nbrating}}}{{/str}}</span>
+{{/nbrating}}
+
+{{#nbcomments}}
+<span class="nbratinguser">{{#str}}commentsnumber, report_lpmonitoring, {{{nbcomments}}}{{/str}}</span>
+{{/nbcomments}}
+
+{{#nbplans}}
+<span class="nbratinguser">{{#str}}plansnumber, report_lpmonitoring, {{{nbplans}}}{{/str}}</span>
+{{/nbplans}}

@@ -23,16 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 defined('MOODLE_INTERNAL') || die;
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/grade/grading/lib.php");
 
 /**
@@ -160,7 +153,7 @@ class core_grading_external extends external_api {
                 $definition['usermodified'] = $def->usermodified;
                 $definition['timecopied'] = $def->timecopied;
                 // Format the description text field.
-                $formattedtext = \core_external\util::format_text($definition['description'],
+                $formattedtext = external_format_text($definition['description'],
                     $definition['descriptionformat'],
                     $context->id,
                     $componentname,
@@ -187,14 +180,14 @@ class core_grading_external extends external_api {
     }
 
     /**
-     * Recursively processes all elements in an array and runs \core_external\util::format_text()on
+     * Recursively processes all elements in an array and runs external_format_text()on
      * all elements which have a text field and associated format field with a key name
      * that ends with the text 'format'. The modified array is returned.
      * @param array $items the array to be processed
      * @param int $contextid
      * @param string $componentname
      * @param int $itemid
-     * @see \core_external\util::format_text()
+     * @see external_format_text in lib/externallib.php
      * @return array the input array with all fields formatted
      */
     private static function format_text($items, $contextid, $componentname, $itemid) {
@@ -206,9 +199,9 @@ class core_grading_external extends external_api {
         }
         foreach ($formatkeys as $formatkey) {
             $descriptionkey = substr($formatkey, 0, -6);
-            $formattedtext = \core_external\util::format_text($items[$descriptionkey],
+            $formattedtext = external_format_text($items[$descriptionkey],
                 $items[$formatkey],
-                context::instance_by_id($contextid),
+                $contextid,
                 $componentname,
                 'description',
                 $itemid);
@@ -374,7 +367,7 @@ class core_grading_external extends external_api {
             $instance['feedback'] = $activeinstance->get_data('feedback');
             $instance['feedbackformat'] = $activeinstance->get_data('feedbackformat');
             // Format the feedback text field.
-            $formattedtext = \core_external\util::format_text($activeinstance->get_data('feedback'),
+            $formattedtext = external_format_text($activeinstance->get_data('feedback'),
                 $activeinstance->get_data('feedbackformat'),
                 $context->id,
                 $area->component,

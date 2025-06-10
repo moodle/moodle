@@ -18,14 +18,19 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\columns\sort;
 
-use core_external\external_api;
-use core_external\external_value;
-use core_external\external_single_structure;
-use core_external\external_function_parameters;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
 use core_reportbuilder\local\helpers\report;
 use core_reportbuilder\external\custom_report_columns_sorting_exporter;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * External method for toggling report column sorting

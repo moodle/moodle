@@ -1,0 +1,4 @@
+<?php
+
+interface com_wiris_quizzes_api_ui_AuxiliaryCasField extends com_wiris_quizzes_api_ui_QuizzesField{
+}

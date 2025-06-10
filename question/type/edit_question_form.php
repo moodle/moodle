@@ -52,8 +52,8 @@ abstract class question_wizard_form extends moodleform {
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
 
-        $mform->addElement('hidden', 'mdlscrollto');
-        $mform->setType('mdlscrollto', PARAM_INT);
+        $mform->addElement('hidden', 'scrollpos');
+        $mform->setType('scrollpos', PARAM_INT);
 
         $mform->addElement('hidden', 'appendqnumstring');
         $mform->setType('appendqnumstring', PARAM_ALPHA);

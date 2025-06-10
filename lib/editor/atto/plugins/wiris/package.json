@@ -1,0 +1,23 @@
+{
+  "name": "moodle-atto-mathtype",
+  "description": "Type and handwrite mathematical notation in Moodle with MathType for Atto Editor",
+  "homepage": "https://moodle.org/plugins/atto_wiris",
+  "private": true,
+  "scripts": {
+    "prebuild-mathtype": "shx rm -rf sandbox && shx mkdir sandbox && git clone https://github.com/wiris/html-integrations.git sandbox",
+    "build-mathtype": "cd sandbox && npm install && npm start",
+    "postbuild-mathtype": "cd sandbox/packages/mathtype-html-integration-devkit && npm run build",
+    "preupdate-mathtype": "shx mv core.js sandbox/core.js",
+    "update-mathtype": "npm run build-mathtype",
+    "postupdate-mathtype": "shx cp sandbox/packages/mathtype-html-integration-devkit/core.js ."
+  },
+  "devDependencies": {
+    "@wiris/mathtype-html-integration-devkit": "^1.0.0",
+    "shx": "^0.3.3"
+  },
+  "bugs": {
+    "email": "support@wiris.com"
+  },
+  "license": "GPL-3.0",
+  "author": "WIRIS Team (http://www.wiris.com/?utm_source=npmjs&utm_medium=referral)"
+}

@@ -23,6 +23,7 @@ use context;
 use context_system;
 use core_collator;
 use core_component;
+use core_plugin_manager;
 use core_reportbuilder\local\audiences\base;
 use core_reportbuilder\local\models\audience as audience_model;
 
@@ -241,7 +242,14 @@ class audience {
         foreach ($audiences as $class => $path) {
             $audienceclass = $class::instance();
             if (is_subclass_of($class, base::class) && $audienceclass->user_can_add()) {
-                $componentname = $audienceclass->get_component_displayname();
+                [$component] = explode('\\', $class);
+
+                if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
+                    $componentname = $plugininfo->displayname;
+                } else {
+                    $componentname = get_string('site');
+                }
+
                 $sources[$componentname][$class] = $audienceclass->get_name();
             }
         }

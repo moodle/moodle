@@ -18,7 +18,6 @@ namespace core_calendar;
 
 use core_calendar_external;
 use externallib_advanced_testcase;
-use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -360,14 +359,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         $options = array ('siteevents' => true, 'userevents' => true);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Check to see if we got all events.
         $this->assertEquals(5, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + 7*WEEKSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(5, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
 
@@ -393,71 +392,71 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events'])); // site, user.
         $this->assertEquals(2, count($events['warnings'])); // course, group.
 
         $role = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(4, count($events['events'])); // site, user, both course events.
         $this->assertEquals(1, count($events['warnings'])); // group.
 
         $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + HOURSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(3, count($events['events'])); // site, user, one course event.
         $this->assertEquals(1, count($events['warnings'])); // group.
 
         groups_add_member($group, $user);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(4, count($events['events'])); // site, user, group, one course event.
         $this->assertEquals(0, count($events['warnings']));
 
         $paramevents = array ('courseids' => array($course->id), 'groupids' => array($group->id));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(4, count($events['events'])); // site, user, group, one course event.
         $this->assertEquals(0, count($events['warnings']));
 
         $paramevents = array ('groupids' => array($group->id, 23));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(3, count($events['events'])); // site, user, group.
         $this->assertEquals(1, count($events['warnings']));
 
         $paramevents = array ('courseids' => array(23));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events'])); // site, user.
         $this->assertEquals(1, count($events['warnings']));
 
         $paramevents = array ();
         $options = array ('siteevents' => false, 'userevents' => false, 'timeend' => time() + 7*WEEKSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(0, count($events['events'])); // nothing returned.
         $this->assertEquals(0, count($events['warnings']));
 
         $paramevents = array ('eventids' => array($siteevent->id, $groupevent->id));
         $options = array ('siteevents' => false, 'userevents' => false, 'timeend' => time() + 7*WEEKSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events'])); // site, group.
         $this->assertEquals(0, count($events['warnings']));
 
         $paramevents = array ('eventids' => array($siteevent->id));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events'])); // site.
         $this->assertEquals(0, count($events['warnings']));
 
         // Try getting a course event by its id.
         $paramevents = array ('eventids' => array($courseevent->id));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
 
@@ -470,7 +469,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array ('courseids' => array($course->id));
         $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + WEEKSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         $this->assertCount(5, $events['events']);
 
@@ -481,7 +480,7 @@ class externallib_test extends externallib_advanced_testcase {
         \course_modinfo::clear_instance_cache();
 
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         // Expect one less.
         $this->assertCount(4, $events['events']);
 
@@ -504,7 +503,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array('categoryids' => array($category2b->id));
         $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Should be just one, since there's just one category event of the course I am enrolled (course3 - cat2b).
         $this->assertEquals(1, count($events['events']));
@@ -516,7 +515,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array('courseids' => array($course3->id));
         $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals($catevent2->id, $events['events'][0]['id']);
         $this->assertEquals(0, count($events['warnings']));
@@ -526,7 +525,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array('categoryids' => array($category2->id, $category->id));
         $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals($catevent2->id, $events['events'][0]['id']);
         $this->assertEquals(0, count($events['warnings']));
@@ -536,7 +535,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array('categoryids' => array($category->id, $category2->id, $category2b->id));
         $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals($catevent1->id, $events['events'][0]['id']);
@@ -566,7 +565,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now call the WebService.
         $events = core_calendar_external::get_calendar_events();
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Format the original data.
         $sitecontext = \context_system::instance();
@@ -607,7 +606,7 @@ class externallib_test extends externallib_advanced_testcase {
                 array('name' => 'user')
                 );
         $eventsret = core_calendar_external::create_calendar_events($events);
-        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $eventsret = \external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
 
         // Check to see if things were created properly.
         $aftercount = $DB->count_records('event');
@@ -631,7 +630,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/calendar:manageentries', $coursecontext->id, $role->id);
         $this->assignUserCapability('moodle/calendar:managegroupentries', $coursecontext->id, $role->id);
         $eventsret = core_calendar_external::create_calendar_events($events);
-        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $eventsret = \external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
         // Check to see if things were created properly.
         $aftercount = $DB->count_records('event');
         $this->assertEquals($prevcount + 4, $aftercount);
@@ -642,7 +641,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setGuestUser();
         $prevcount = $DB->count_records('event');
         $eventsret = core_calendar_external::create_calendar_events($events);
-        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $eventsret = \external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
         $aftercount = $DB->count_records('event');
         $this->assertEquals($prevcount, $aftercount);
         $this->assertEquals(0, count($eventsret['events']));
@@ -653,7 +652,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/calendar:managegroupentries', $coursecontext->id, $role->id);
         $prevcount = $DB->count_records('event');
         $eventsret = core_calendar_external::create_calendar_events($events);
-        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
+        $eventsret = \external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
         $aftercount = $DB->count_records('event');
         $this->assertEquals($prevcount + 1, $aftercount); // User event.
         $this->assertEquals(1, count($eventsret['events']));
@@ -695,7 +694,7 @@ class externallib_test extends externallib_advanced_testcase {
         $event8 = $this->create_calendar_event('Event 8', $user->id, 'user', 0, 1, array_merge($params, ['timesort' => 8]));
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(5);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -710,7 +709,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($event8->id, $result['lastid']);
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(9);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -722,7 +721,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Requesting action events on behalf of another user.
         $this->setAdminUser();
         $result = core_calendar_external::get_calendar_action_events_by_timesort(5, null, 0, 20, false, $user->id);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -772,7 +771,7 @@ class externallib_test extends externallib_advanced_testcase {
         $event8 = $this->create_calendar_event('Event 8', $user->id, 'user', 0, 1, array_merge($params, ['timesort' => 9]));
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(null, 5);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -787,7 +786,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($event4->id, $result['lastid']);
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(null, 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -800,7 +799,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(null, 5, 0, 20, false, $user->id);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -849,7 +848,7 @@ class externallib_test extends externallib_advanced_testcase {
         $paramevents = array('courseids' => array($course->id));
         $options = array ('siteevents' => true, 'userevents' => true);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals('Base event', $events['events'][0]['name']);
@@ -857,7 +856,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Retrieve events for the first student - both events are returned.
         $this->setUser($user);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals('Base event', $events['events'][0]['name']);
@@ -867,7 +866,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($teacher);
         $paramevents = ['eventids' => [$event2->id]];
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals('User event', $events['events'][0]['name']);
@@ -876,7 +875,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($anotheruser);
         $paramevents = ['eventids' => [$event2->id, $event1->id]];
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
-        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $events = \external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(0, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
     }
@@ -915,7 +914,7 @@ class externallib_test extends externallib_advanced_testcase {
         $event8 = $this->create_calendar_event('Event 8', $user->id, 'user', 0, 1, array_merge($params, ['timesort' => 8]));
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(3, 6);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -930,7 +929,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($event6->id, $result['lastid']);
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(10, 15);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -975,7 +974,7 @@ class externallib_test extends externallib_advanced_testcase {
         $event8 = $this->create_calendar_event('Event 8', $user->id, 'user', 0, 1, array_merge($params, ['timesort' => 8]));
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(2, 7, $event3->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -988,7 +987,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($event5->id, $result['lastid']);
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(2, 7, $event5->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -1001,7 +1000,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($event7->id, $result['lastid']);
 
         $result = core_calendar_external::get_calendar_action_events_by_timesort(2, 7, $event7->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_timesort_returns(),
             $result
         );
@@ -1129,7 +1128,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, 5);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1142,7 +1141,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('Event 8', $result[3]['name']);
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, 9);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1193,7 +1192,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, null, 5);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1206,7 +1205,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('Event 4', $result[3]['name']);
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, null, 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1257,7 +1256,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, 3, 6);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1270,7 +1269,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('Event 6', $result[3]['name']);
 
         $result = core_calendar_external::get_calendar_action_events_by_course($course1->id, 10, 15);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1323,7 +1322,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_course(
             $course1->id, 2, 7, $records[2]->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1335,7 +1334,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_course(
             $course1->id, 2, 7, $records[4]->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1347,7 +1346,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_course(
             $course1->id, 2, 7, $records[6]->id, 2);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1390,7 +1389,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // No result found for fake search.
         $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'Fake search');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1399,7 +1398,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Search for event name called 'Event 1'.
         $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'Event 1');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1409,7 +1408,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Search for activity type called 'assign'.
         $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'assign');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_course_returns(),
             $result
         );
@@ -1480,7 +1479,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = core_calendar_external::get_calendar_action_events_by_courses([], 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1489,7 +1488,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEmpty($result);
 
         $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id], 3);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1499,7 +1498,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEmpty($groupedbycourse[$course1->id]);
 
         $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id], 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1511,7 +1510,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_courses(
             [$course1->id, $course2->id], 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1527,7 +1526,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_courses(
             [$course1->id, $course2->id], 2, 4);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1542,7 +1541,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_calendar_external::get_calendar_action_events_by_courses(
             [$course1->id, $course2->id], 1, null, 1);
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1616,7 +1615,7 @@ class externallib_test extends externallib_advanced_testcase {
         // No result found for fake search.
         $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
             1, null, 20, 'Fake search');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1629,7 +1628,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Search for event name called 'Event 1'.
         $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
             1, null, 20, 'Event 1');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1644,7 +1643,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Search for activity type called 'assign'.
         $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
             1, null, 20, 'assign');
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_action_events_by_courses_returns(),
             $result
         );
@@ -1716,7 +1715,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result
         );
@@ -1758,7 +1757,7 @@ class externallib_test extends externallib_advanced_testcase {
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
         $this->expectException(\moodle_exception::class);
         $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result
         );
@@ -1802,7 +1801,7 @@ class externallib_test extends externallib_advanced_testcase {
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
         $this->expectException(\moodle_exception::class);
         $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result
         );
@@ -1855,7 +1854,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -1917,7 +1916,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -1983,7 +1982,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->expectException(\moodle_exception::class);
 
-        external_api::clean_returnvalue(
+        \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2044,7 +2043,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2109,7 +2108,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2175,7 +2174,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2244,7 +2243,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2310,7 +2309,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2379,7 +2378,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2453,7 +2452,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2526,7 +2525,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2599,7 +2598,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $result = external_api::clean_returnvalue(
+        $result = \external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
@@ -2627,7 +2626,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $timestart = new \DateTime();
         // Admin can load the course.
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false, true, $timestart->format('j'))
@@ -2635,7 +2634,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User enrolled in the course can load the course calendar.
         $this->setUser($user1);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false, true, $timestart->format('j'))
@@ -2644,7 +2643,7 @@ class externallib_test extends externallib_advanced_testcase {
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
         $this->expectException(\require_login_exception::class);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false, false, $timestart->format('j'))
@@ -2659,7 +2658,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $timestart = new \DateTime();
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               SITEID, null, false, true, $timestart->format('j'))
@@ -2687,7 +2686,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $timestart = new \DateTime();
         // Admin can load the course.
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
             core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
@@ -2695,7 +2694,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User enrolled in the course can load the course calendar.
         $this->setUser($user1);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
             core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
@@ -2704,7 +2703,7 @@ class externallib_test extends externallib_advanced_testcase {
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
         $this->expectException(\require_login_exception::class);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
             core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
@@ -2730,14 +2729,14 @@ class externallib_test extends externallib_advanced_testcase {
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
         // Admin can load the course.
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_upcoming_view_returns(),
             core_calendar_external::get_calendar_upcoming_view($course->id, null)
         );
         $this->assertEquals($data['courseid'], $course->id);
         // User enrolled in the course can load the course calendar.
         $this->setUser($user1);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_upcoming_view_returns(),
             core_calendar_external::get_calendar_upcoming_view($course->id, null)
         );
@@ -2745,7 +2744,7 @@ class externallib_test extends externallib_advanced_testcase {
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
         $this->expectException(\require_login_exception::class);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_upcoming_view_returns(),
             core_calendar_external::get_calendar_upcoming_view($course->id, null)
         );
@@ -2770,14 +2769,14 @@ class externallib_test extends externallib_advanced_testcase {
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
         // Admin can load the course event.
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
         );
         $this->assertEquals($data['event']['id'], $courseevent->id);
         // User enrolled in the course can load the course event.
         $this->setUser($user1);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
         );
@@ -2785,7 +2784,7 @@ class externallib_test extends externallib_advanced_testcase {
         // User not enrolled in the course cannot load the course event.
         $this->setUser($user2);
         $this->expectException(\moodle_exception::class);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
         );
@@ -2834,7 +2833,7 @@ class externallib_test extends externallib_advanced_testcase {
             $this->setUser($user);
         }
         $userevent = $this->create_calendar_event('user event', $USER->id, 'user', 0, time());
-        $results = external_api::clean_returnvalue(
+        $results = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($userevent->id)
         );
@@ -2856,7 +2855,7 @@ class externallib_test extends externallib_advanced_testcase {
             // Setup if exception is expected for the test.
             $this->expectException(\moodle_exception::class);
         }
-        external_api::clean_returnvalue(
+        \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($userevent->id)
         );
@@ -3016,14 +3015,14 @@ class externallib_test extends externallib_advanced_testcase {
         ];
         $options = [];
         // Admin can load the category event.
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_events_returns(),
             core_calendar_external::get_calendar_events($events, $options)
         );
         $this->assertEquals($data['events'][0]['id'], $categoryevent->id);
         // User with no special permission to see hidden categories will not see the event.
         $this->setUser($user1);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_events_returns(),
             core_calendar_external::get_calendar_events($events, $options)
         );
@@ -3041,7 +3040,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $CFG->calendar_adminseesall = 1;
 
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_access_information_returns(),
             core_calendar_external::get_calendar_access_information()
         );
@@ -3057,7 +3056,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
 
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_access_information_returns(),
             core_calendar_external::get_calendar_access_information()
         );
@@ -3080,7 +3079,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user);
 
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_access_information_returns(),
             core_calendar_external::get_calendar_access_information($course->id)
         );
@@ -3104,7 +3103,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($user);
 
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_calendar_access_information_returns(),
             core_calendar_external::get_calendar_access_information($course->id)
         );
@@ -3121,7 +3120,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $CFG->calendar_adminseesall = 1;
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_allowed_event_types_returns(),
             core_calendar_external::get_allowed_event_types()
         );
@@ -3133,7 +3132,7 @@ class externallib_test extends externallib_advanced_testcase {
     public function test_get_allowed_event_types_for_authenticated_users() {
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_allowed_event_types_returns(),
             core_calendar_external::get_allowed_event_types()
         );
@@ -3150,7 +3149,7 @@ class externallib_test extends externallib_advanced_testcase {
         $role = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
         $this->setUser($user);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_allowed_event_types_returns(),
             core_calendar_external::get_allowed_event_types($course->id)
         );
@@ -3168,7 +3167,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
         $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $this->setUser($user);
-        $data = external_api::clean_returnvalue(
+        $data = \external_api::clean_returnvalue(
             core_calendar_external::get_allowed_event_types_returns(),
             core_calendar_external::get_allowed_event_types($course->id)
         );

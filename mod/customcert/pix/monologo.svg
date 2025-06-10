@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24px" height="24px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 0.93758 0.93758"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str1 {stroke:black;stroke-width:0.0689082}
+    .str2 {stroke:black;stroke-width:0.0826907}
+    .str0 {stroke:black;stroke-width:8.20383e-005}
+    .fil0 {fill:none}
+    .fil1 {fill:url(#id1)}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M-0 0l0.93758 0 0 0.93758 -0.93758 0 0 -0.93758z"/>
+   </clipPath>
+  <linearGradient id="id1" gradientUnits="userSpaceOnUse" x1="0.633918" y1="0.599516" x2="0.633918" y2="0.744833">
+   <stop offset="0" style="stop-color:black"/>
+   <stop offset="1" style="stop-color:black"/>
+  </linearGradient>
+ </defs>
+<symbol id="Symbol1" viewBox="-12.6481 -0.123069 0.248068 7.81317e-005">
+ <line class="fil0 str0" x1="-12.6481" y1="-0.12303" x2="-12.4" y2= "-0.12303" />
+</symbol>
+<symbol id="Fm0-19459-0" viewBox="-12.6481 -0.123069 0.248068 7.81317e-005">
+ <line class="fil0 str0" x1="-12.6481" y1="-0.12303" x2="-12.4" y2= "-0.12303" />
+</symbol>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <g id="_176317040">
+     <rect id="_181006112" class="fil0 str1" x="0.0488332" y="0.122222" width="0.839915" height="0.693132"/>
+     <path id="_208446304" class="fil1" d="M0.542726 0.599516l-0.0481565 0.105939 0.0545359 -0.0090789 0.0272601 0.0484612 0.0547625 -0.118178c-0.0326044,-0.000535202 -0.0629234,-0.0104423 -0.0884021,-0.0271429zm0.0939807 0.0271429l0.0547625 0.118178 0.0272719 -0.0484612 0.0545203 0.0090789 -0.0481487 -0.105939c-0.0254787,0.0166967 -0.0558017,0.0266077 -0.088406,0.0271429z"/>
+     <circle id="_208445896" class="fil0 str2" cx="0.633917" cy="0.460092" r="0.126965"/>
+    </g>
+   </g>
+  </g>
+  <polygon class="fil0" points="-0,0 0.93758,0 0.93758,0.93758 -0,0.93758 "/>
+ </g>
+</svg>

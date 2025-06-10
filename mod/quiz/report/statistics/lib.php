@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options additional options affecting the file serving.
  */
 function quiz_statistics_question_preview_pluginfile($previewcontext, $questionid,
-        $filecontext, $filecomponent, $filearea, $args, $forcedownload, $options = []) {
+        $filecontext, $filecomponent, $filearea, $args, $forcedownload, $options = array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 

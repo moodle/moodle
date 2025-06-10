@@ -499,6 +499,9 @@ class manager {
 
             // Disable the preview plugin as it does not support Moodle filters.
             'preview',
+
+            // Use the Moodle link plugin instead.
+            'link',
         ];
     }
 

@@ -282,7 +282,10 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/* Audiences. */
+/**
+* Audiences.
+*/
+
 .reportbuilder-audiences-container {
     /* 'OR' separator. */
     .audience-separator {
@@ -375,17 +378,10 @@ $rb-right-sidebar-width: 350px;
         }
     }
 }
+
+/* Report table card view for small screens */
 .reportbuilder-report[data-report-type="0"]:not([data-editing]) {
-    // Report card view for small screens (if not forcing table).
     @include media-breakpoint-down(xs) {
-        &:not([data-force-table]) {
-            @include table-cards;
-        }
-    }
-    // Report card view for bigger screens (if forcing card).
-    @include media-breakpoint-up(sm) {
-        &[data-force-card] {
-            @include table-cards;
-        }
+        @include table-cards;
     }
 }

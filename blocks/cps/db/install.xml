@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/cps/db" VERSION="20120820" COMMENT="XMLDB file for the CPS setting block."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="enrol_cps_settings" COMMENT="Table storing general settings." NEXT="enrol_cps_creations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usenam" UNIQUE="true" FIELDS="userid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_creations" COMMENT="Table containing instructor settings for creation and enrollment" PREVIOUS="enrol_cps_settings" NEXT="enrol_cps_unwants">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="semesterid"/>
+        <FIELD NAME="semesterid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="create_days"/>
+        <FIELD NAME="create_days" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="semesterid" NEXT="enroll_days"/>
+        <FIELD NAME="enroll_days" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="create_days"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="courseidtocourse"/>
+        <KEY NAME="courseidtocourse" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="useridtomoodle" NEXT="semesteridtosemester"/>
+        <KEY NAME="semesteridtosemester" TYPE="foreign" FIELDS="semesterid" REFTABLE="enrol_ues_semesters" REFFIELDS="id" PREVIOUS="courseidtocourse"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usecousem" UNIQUE="true" FIELDS="userid, courseid, semesterid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_unwants" COMMENT="Table for storing Unwanted section in Moodle" PREVIOUS="enrol_cps_creations" NEXT="enrol_cps_materials">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="useridtomoodle"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="true" FIELDS="userid, sectionid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_materials" COMMENT="Table storing all the material courses." PREVIOUS="enrol_cps_unwants" NEXT="enrol_cps_splits">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="moodleid"/>
+        <FIELD NAME="moodleid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="courseid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="courseidtocourse"/>
+        <KEY NAME="courseidtocourse" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="useridtomoodle"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usecourse" UNIQUE="true" FIELDS="userid, courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_splits" COMMENT="Table storing section split information" PREVIOUS="enrol_cps_materials" NEXT="enrol_cps_crosslists">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="groupingid"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="sectionid" NEXT="shell_name"/>
+        <FIELD NAME="shell_name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="groupingid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="useridtomoodle"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="true" FIELDS="userid, sectionid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_crosslists" COMMENT="Table storing cross-list information" PREVIOUS="enrol_cps_splits" NEXT="enrol_cps_team_requests">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="groupingid"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="sectionid" NEXT="shell_name"/>
+        <FIELD NAME="shell_name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="groupingid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="useridtomoodle"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="true" FIELDS="userid, sectionid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_team_requests" COMMENT="Table stores team teach requests" PREVIOUS="enrol_cps_crosslists" NEXT="enrol_cps_team_sections">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="semesterid"/>
+        <FIELD NAME="semesterid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="requested"/>
+        <FIELD NAME="requested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="semesterid" NEXT="requested_course"/>
+        <FIELD NAME="requested_course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="requested" NEXT="approval_flag"/>
+        <FIELD NAME="approval_flag" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requested_course"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="requestedtomoodle"/>
+        <KEY NAME="requestedtomoodle" TYPE="foreign" FIELDS="requested" REFTABLE="user" REFFIELDS="id" PREVIOUS="useridtomoodle" NEXT="courseidtocourse"/>
+        <KEY NAME="courseidtocourse" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="requestedtomoodle" NEXT="reqcoursetocourse"/>
+        <KEY NAME="reqcoursetocourse" TYPE="foreign" FIELDS="requested_course" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="courseidtocourse" NEXT="semesteridtosemester"/>
+        <KEY NAME="semesteridtosemester" TYPE="foreign" FIELDS="semesterid" REFTABLE="enrol_ues_semesters" REFFIELDS="id" PREVIOUS="reqcoursetocourse"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesemrcoureq" UNIQUE="true" FIELDS="userid, semesterid, courseid, requested, requested_course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_cps_team_sections" COMMENT="Table storing the team teach mapping information" PREVIOUS="enrol_cps_team_requests">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="requesterid"/>
+        <FIELD NAME="requesterid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="requesterid" NEXT="requestid"/>
+        <FIELD NAME="requestid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="requestid" NEXT="groupingid"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="sectionid" NEXT="shell_name"/>
+        <FIELD NAME="shell_name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="groupingid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign-unique" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="primary" NEXT="requestidtorequest"/>
+        <KEY NAME="requestidtorequest" TYPE="foreign" FIELDS="requestid" REFTABLE="enrol_ues_team_requests" REFFIELDS="id" PREVIOUS="sectionidtosection" NEXT="coursetouescourse"/>
+        <KEY NAME="coursetouescourse" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="requestidtorequest"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="reqsecgro" UNIQUE="false" FIELDS="requestid, sectionid, groupingid" NEXT="courequ"/>
+        <INDEX NAME="courequ" UNIQUE="false" FIELDS="requesterid, courseid" PREVIOUS="reqsecgro"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

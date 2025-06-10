@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/rollsheet/db" VERSION="20130712" COMMENT="XMLDB file for Moodle blocks/rollsheet"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_rollsheet" COMMENT="Default comment for block_rollsheet, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fieldvarname"/>
+        <FIELD NAME="fieldvarname" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="field_value"/>
+        <FIELD NAME="field_value" TYPE="text" NOTNULL="false" PREVIOUS="fieldvarname"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -17,8 +17,8 @@ Feature: The logged in user block allows users to view their profile information
     And the following "activities" exist:
       | activity | course | idnumber | name           | intro                 |
       | page     | C1     | page1    | Test page name | Test page description |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test page name"
-    When I add the "Logged in user" block
+    And the following "blocks" exist:
+      | blockname | contextlevel    | reference | pagetypepattern | defaultregion |
+      | myprofile | Activity module | page1     | mod-page-*      | side-pre      |
+    When I am on the "Test page name" "page activity" page logged in as teacher1
     Then I should see "Teacher One" in the "Logged in user" "block"

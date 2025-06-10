@@ -14,15 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Resource external API
+ *
+ * @package    mod_resource
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
+ */
+
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_files;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * Resource external functions
@@ -88,7 +94,7 @@ class mod_resource_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function view_resource_returns() {
@@ -143,7 +149,7 @@ class mod_resource_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the resources in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -152,7 +158,7 @@ class mod_resource_external extends external_api {
                 $context = context_module::instance($resource->coursemodule);
 
                 helper_for_get_mods_by_courses::format_name_and_intro($resource, 'mod_resource');
-                $resource->contentfiles = util::get_area_files($context->id, 'mod_resource', 'content');
+                $resource->contentfiles = external_util::get_area_files($context->id, 'mod_resource', 'content');
 
                 $returnedresources[] = $resource;
             }

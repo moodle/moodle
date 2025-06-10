@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use core_external\external_files;
-use core_external\util as external_util;
+use external_files;
+use external_util;
 
 /**
  * Class for exporting content associated to a record.

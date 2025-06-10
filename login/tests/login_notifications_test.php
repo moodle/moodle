@@ -16,6 +16,11 @@
 
 namespace core;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/lib/externallib.php');
+
 /**
  * Contains tests for course related notifications.
  *
@@ -24,6 +29,15 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class login_notifications_test extends \advanced_testcase {
+
+    /**
+     * Load required classes
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once($CFG->libdir . '/externallib.php');
+    }
 
     /**
      * Test new login notification.
@@ -157,7 +171,7 @@ class login_notifications_test extends \advanced_testcase {
         $USER->lastip = '1.2.3.4.6'; // Different ip that current.
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = \core_external\util::generate_token_for_current_user($service);
+        $token = external_generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
@@ -175,7 +189,7 @@ class login_notifications_test extends \advanced_testcase {
         ];
         $DB->insert_record('user_devices', $fakedevice);
 
-        \core_external\util::log_token_request($token);
+        external_log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();
@@ -206,7 +220,7 @@ class login_notifications_test extends \advanced_testcase {
         // Mock data for test.
         $USER->lastip = '0.0.0.0';
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = \core_external\util::generate_token_for_current_user($service);
+        $token = external_generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
@@ -224,7 +238,7 @@ class login_notifications_test extends \advanced_testcase {
         ];
         $DB->insert_record('user_devices', $fakedevice);
 
-        \core_external\util::log_token_request($token);
+        external_log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();
@@ -253,10 +267,10 @@ class login_notifications_test extends \advanced_testcase {
         // Mock data for test.
         $USER->lastip = '1.2.3.4.6';    // New ip.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = \core_external\util::generate_token_for_current_user($service);
+        $token = external_generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
-        \core_external\util::log_token_request($token);
+        external_log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();

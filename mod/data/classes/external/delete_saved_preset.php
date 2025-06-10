@@ -17,14 +17,13 @@
 namespace mod_data\external;
 
 use core\notification;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
 use mod_data\manager;
 use mod_data\preset;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * This is the external method for deleting a saved preset.
@@ -34,17 +33,17 @@ use mod_data\preset;
  * @copyright  2022 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class delete_saved_preset extends external_api {
+class delete_saved_preset extends \external_api {
     /**
      * Parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([
-            'dataid' => new external_value(PARAM_INT, 'Id of the data activity', VALUE_REQUIRED),
-            'presetnames' => new external_multiple_structure(
-                new external_value(PARAM_TEXT, 'The preset name to delete', VALUE_REQUIRED)
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters([
+            'dataid' => new \external_value(PARAM_INT, 'Id of the data activity', VALUE_REQUIRED),
+            'presetnames' => new \external_multiple_structure(
+                new \external_value(PARAM_TEXT, 'The preset name to delete', VALUE_REQUIRED)
             )
         ]);
     }
@@ -112,12 +111,12 @@ class delete_saved_preset extends external_api {
     /**
      * Return.
      *
-     * @return external_single_structure
+     * @return \external_single_structure
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure([
-            'result' => new external_value(PARAM_BOOL, 'The processing result'),
-            'warnings' => new external_warnings()
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure([
+            'result' => new \external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new \external_warnings()
         ]);
     }
 }

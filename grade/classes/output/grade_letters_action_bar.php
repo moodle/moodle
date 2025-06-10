@@ -53,7 +53,7 @@ class grade_letters_action_bar extends action_bar {
         }
         // Add a button to the action bar with a link to the 'edit grade letters' page.
         $editbuttonlink = new moodle_url('/grade/edit/letter/index.php', ['id' => $this->context->id, 'edit' => 1]);
-        $editbutton = new \single_button($editbuttonlink, get_string('edit'), 'get', \single_button::BUTTON_PRIMARY);
+        $editbutton = new \single_button($editbuttonlink, get_string('edit'), 'get', true);
         $data['editbutton'] = $editbutton->export_for_template($output);
 
         return $data;

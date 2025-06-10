@@ -57,8 +57,6 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
     const FILETYPE_QTI = 1;
     /** @var int Blackboard question pool files were previously handled by the blackboard plugin. */
     const FILETYPE_POOL = 2;
-    /** @var string temporary directory/folder.  */
-    public $temp_dir;
 
     /**
      * Return the content of a file given by its path in the tempdir directory.

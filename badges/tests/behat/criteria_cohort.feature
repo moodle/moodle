@@ -1,4 +1,4 @@
-@core @core_badges @_file_upload
+@core @core_badges
 Feature: Award badges based on cohort
   In order to award badges to users based on their cohort membership
   As an admin
@@ -18,13 +18,15 @@ Feature: Award badges based on cohort
       | user  | cohort |
       | user1 | CH1   |
       | user2 | CH2   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
@@ -53,13 +55,15 @@ Feature: Award badges based on cohort
       | user1 | CH2   |
       | user2 | CH1   |
       | user2 | CH3   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
     And I set the field "id_cohort_cohorts" to "One Cohort,Two Cohort"
@@ -93,13 +97,15 @@ Feature: Award badges based on cohort
       | user2 | CH3   |
       | user3 | CH2   |
       | user3 | CH3   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
@@ -129,13 +135,15 @@ Feature: Award badges based on cohort
       | user  | cohort |
       | user1 | CH1   |
       | user2 | CH2   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
@@ -180,13 +188,15 @@ Feature: Award badges based on cohort
       | user1 | CH1   |
       | user2 | CH2   |
       | user3 | CH2   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
@@ -237,13 +247,15 @@ Feature: Award badges based on cohort
       | user1 | CH2   |
       | user2 | CH2   |
       | user2 | CH2   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
@@ -294,13 +306,15 @@ Feature: Award badges based on cohort
       | user1 | CH2   |
       | user2 | CH1   |
       | user3 | CH2   |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
     And I set the field "id_cohort_cohorts" to "One Cohort,Two Cohort"
@@ -352,25 +366,23 @@ Feature: Award badges based on cohort
       | user1 | CH1   |
       | user1 | CH2   |
       | user2 | CH2   |
+    And the following "core_badges > Badges" exist:
+      | name         | status | description            | image                        |
+      | Site Badge 1 | 0      | Site badge description | badges/tests/behat/badge.png |
+      | Site Badge 2 | 0      | Site badge description | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge 1 |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge 1" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
     And I press "Save"
     And I press "Enable access"
     When I press "Continue"
     And I should see "Recipients (1)"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge 2 |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge 2" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "Two Cohort"
     And I press "Save"
@@ -411,13 +423,14 @@ Feature: Award badges based on cohort
       | user1 | CH2    |
       | user2 | CH2    |
       | user2 | CH3    |
+    And the following "core_badges > Badges" exist:
+      | name         | status | description            | image                        |
+      | Site Badge 1 | 0      | Site badge description | badges/tests/behat/badge.png |
+      | Site Badge 2 | 0      | Site badge description | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge 1 |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge 1" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
     And I set the field "id_cohort_cohorts" to "One Cohort,Two Cohort"
@@ -426,12 +439,9 @@ Feature: Award badges based on cohort
     And I press "Enable access"
     When I press "Continue"
     And I should see "Recipients (1)"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge 2 |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge 2" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
     And I set the field "id_cohort_cohorts" to "Three Cohort,Two Cohort"

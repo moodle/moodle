@@ -31,7 +31,7 @@ import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
-import {getList, getFirst} from 'core/normalise';
+import {getList} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
@@ -74,12 +74,11 @@ export default class extends BaseComponent {
             CONTENTTREE: `#destination-selector`,
             ACTIONMENU: `.action-menu`,
             ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
-            // Availability modal selectors.
-            OPTIONSRADIO: `[type='radio']`,
         };
         // Component css classes.
         this.classes = {
-            DISABLED: `disabled`,
+            DISABLED: `text-body`,
+            ITALIC: `font-italic`,
         };
     }
 
@@ -179,31 +178,6 @@ export default class extends BaseComponent {
     }
 
     /**
-     * Return the ids represented by this element.
-     *
-     * Depending on the dataset attributes the action could represent a single id
-     * or a bulk actions with all the current selected ids.
-     *
-     * @param {HTMLElement} target
-     * @returns {Number[]} array of Ids
-     */
-    _getTargetIds(target) {
-        let ids = [];
-        if (target?.dataset?.id) {
-            ids.push(target.dataset.id);
-        }
-        const bulkType = target?.dataset?.bulk;
-        if (!bulkType) {
-            return ids;
-        }
-        const bulk = this.reactive.get('bulk');
-        if (bulk.enabled && bulk.selectedType === bulkType) {
-            ids = [...ids, ...bulk.selection];
-        }
-        return ids;
-    }
-
-    /**
      * Handle a move section request.
      *
      * @param {Element} target the dispatch action element
@@ -218,6 +192,8 @@ export default class extends BaseComponent {
         const sectionInfo = this.reactive.get('section', sectionId);
 
         event.preventDefault();
+
+        const pendingModalReady = new Pending(`courseformat/actions:prepareMoveSectionModal`);
 
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
@@ -271,6 +247,8 @@ export default class extends BaseComponent {
             this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
             this._destroyModal(modal, editTools);
         });
+
+        pendingModalReady.resolve();
     }
 
     /**
@@ -288,6 +266,8 @@ export default class extends BaseComponent {
         const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
+
+        const pendingModalReady = new Pending(`courseformat/actions:prepareMoveCmModal`);
 
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
@@ -364,6 +344,8 @@ export default class extends BaseComponent {
             this.reactive.dispatch('cmMove', [cmId], targetSectionId, targetCmId);
             this._destroyModal(modal, editTools);
         });
+
+        pendingModalReady.resolve();
     }
 
     /**
@@ -423,36 +405,6 @@ export default class extends BaseComponent {
     }
 
     /**
-     * Handle a toggle cm selection.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestToggleSelectionCm(target) {
-        const cmId = target.dataset.id;
-        if (!cmId) {
-            return;
-        }
-        const value = target.checked ?? false;
-        const mutation = (value) ? 'cmSelect' : 'cmUnselect';
-        this.reactive.dispatch(mutation, [cmId]);
-    }
-
-    /**
-     * Handle a toggle section selection.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestToggleSelectionSection(target) {
-        const sectionId = target.dataset.id;
-        if (!sectionId) {
-            return;
-        }
-        const value = target.checked ?? false;
-        const mutation = (value) ? 'sectionSelect' : 'sectionUnselect';
-        this.reactive.dispatch(mutation, [sectionId]);
-    }
-
-    /**
      * Basic mutation action helper.
      *
      * @param {Element} target the dispatch action element
@@ -468,159 +420,6 @@ export default class extends BaseComponent {
     }
 
     /**
-     * Handle a course module duplicate request.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestCmDuplicate(target, event) {
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
-            return;
-        }
-        const sectionId = target.dataset.sectionid ?? null;
-        event.preventDefault();
-        this.reactive.dispatch('cmDuplicate', cmIds, sectionId);
-    }
-
-    /**
-     * Handle a delete cm request.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestCmDelete(target, event) {
-        // Check we have an id.
-        const cmId = target.dataset.id;
-
-        if (!cmId) {
-            return;
-        }
-        const cmInfo = this.reactive.get('cm', cmId);
-
-        event.preventDefault();
-
-        const modalParams = {
-            title: getString('confirm', 'core'),
-            body: getString(
-                'deletechecktypename',
-                'moodle',
-                {
-                    type: cmInfo.modname,
-                    name: cmInfo.name,
-                }
-            ),
-            saveButtonText: getString('delete', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
-        };
-
-        const modal = await this._modalBodyRenderedPromise(modalParams);
-
-        modal.getRoot().on(
-            ModalEvents.save,
-            e => {
-                // Stop the default save button behaviour which is to close the modal.
-                e.preventDefault();
-                modal.destroy();
-                this.reactive.dispatch('cmDelete', [cmId]);
-            }
-        );
-    }
-
-    /**
-     * Handle a cm availability change request.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestCmAvailability(target) {
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
-            return;
-        }
-        // Show the availability modal to decide which action to trigger.
-        const exporter = this.reactive.getExporter();
-        const data = {
-            allowstealth: exporter.canUseStealth(this.reactive.state, cmIds),
-        };
-        const modalParams = {
-            title: getString('availability', 'core'),
-            body: Templates.render('core_courseformat/local/content/cm/availabilitymodal', data),
-            saveButtonText: getString('apply', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
-        };
-        const modal = await this._modalBodyRenderedPromise(modalParams);
-
-        this._setupMutationRadioButtonModal(modal, cmIds);
-    }
-
-    /**
-     * Handle a section availability change request.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestSectionAvailability(target) {
-        const sectionIds = this._getTargetIds(target);
-        if (sectionIds.length == 0) {
-            return;
-        }
-        // Show the availability modal to decide which action to trigger.
-        const modalParams = {
-            title: getString('availability', 'core'),
-            body: Templates.render('core_courseformat/local/content/section/availabilitymodal', []),
-            saveButtonText: getString('apply', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
-        };
-        const modal = await this._modalBodyRenderedPromise(modalParams);
-
-        this._setupMutationRadioButtonModal(modal, sectionIds);
-    }
-
-    /**
-     * Add events to a mutation selector radio buttons modal.
-     * @param {Modal} modal
-     * @param {Number[]} ids the section or cm ids to apply the mutation
-     */
-    _setupMutationRadioButtonModal(modal, ids) {
-        // The save button is not enabled until the user selects an option.
-        modal.setButtonDisabled('save', true);
-
-        const submitFunction = (radio) => {
-            const mutation = radio?.value;
-            if (!mutation) {
-                return false;
-            }
-            this.reactive.dispatch(mutation, ids);
-            return true;
-        };
-
-        const modalBody = getFirst(modal.getBody());
-        const radioOptions = modalBody.querySelectorAll(this.selectors.OPTIONSRADIO);
-        radioOptions.forEach(radio => {
-            radio.addEventListener('change', () => {
-                modal.setButtonDisabled('save', false);
-            });
-            radio.parentNode.addEventListener('click', () => {
-                radio.checked = true;
-                modal.setButtonDisabled('save', false);
-            });
-            radio.parentNode.addEventListener('dblclick', dbClickEvent => {
-                if (submitFunction(radio)) {
-                    dbClickEvent.preventDefault();
-                    modal.destroy();
-                }
-            });
-        });
-
-        modal.getRoot().on(
-            ModalEvents.save,
-            () => {
-                const radio = modalBody.querySelector(`${this.selectors.OPTIONSRADIO}:checked`);
-                submitFunction(radio);
-            }
-        );
-    }
-
-    /**
      * Disable all add sections actions.
      *
      * @param {boolean} locked the new locked value.
@@ -629,6 +428,7 @@ export default class extends BaseComponent {
         const targets = this.getElements(this.selectors.ADDSECTION);
         targets.forEach(element => {
             element.classList.toggle(this.classes.DISABLED, locked);
+            element.classList.toggle(this.classes.ITALIC, locked);
             this.setElementLocked(element, locked);
         });
     }
@@ -643,6 +443,7 @@ export default class extends BaseComponent {
             element.style.pointerEvents = 'none';
             element.style.userSelect = 'none';
             element.classList.add(this.classes.DISABLED);
+            element.classList.add(this.classes.ITALIC);
             element.setAttribute('aria-disabled', true);
             element.addEventListener('click', event => event.preventDefault());
         }

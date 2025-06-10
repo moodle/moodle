@@ -14,23 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report_competency;
-
-use context_course;
-use core_competency\external\user_competency_course_exporter;
-use core_course\external\course_summary_exporter;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_user\external\user_summary_exporter;
-use tool_lp\external\competency_summary_exporter;
-
 /**
  * This is the external API for this report.
  *
  * @package    report_competency
+ * @copyright  2015 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace report_competency;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/externallib.php");
+
+use context_course;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use core_competency\external\user_competency_course_exporter;
+use core_user\external\user_summary_exporter;
+use tool_lp\external\competency_summary_exporter;
+use core_course\external\course_summary_exporter;
+
+/**
+ * This is the external API for this report.
+ *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +49,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competency_frameworks_manage_page() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function data_for_report_parameters() {
         $courseid = new external_value(
@@ -101,7 +111,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_report() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function data_for_report_returns() {
         return new external_single_structure(array (

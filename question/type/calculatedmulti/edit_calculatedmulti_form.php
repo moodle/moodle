@@ -131,11 +131,12 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $addfieldsname = 'updatecategory';
         $addstring = get_string('updatecategory', 'qtype_calculated');
         $mform->registerNoSubmitButton($addfieldsname);
+        $this->editasmultichoice = 1;
 
         $mform->insertElementBefore(
                 $mform->createElement('submit', $addfieldsname, $addstring), 'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
-        $mform->addElement('hidden', 'multichoice', 1);
+        $mform->addElement('hidden', 'multichoice', $this->editasmultichoice);
         $mform->setType('multichoice', PARAM_INT);
 
         $menu = array(get_string('answersingleno', 'qtype_multichoice'),

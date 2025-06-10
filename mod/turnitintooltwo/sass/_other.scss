@@ -1,0 +1,269 @@
+/*
+ * No other place to go.
+ */
+.student_read,
+.centered_cell,
+.centered_div {
+    text-align:center !important;
+}
+
+.centered_cb_cell {
+    padding-right:8px;
+    padding-left:8px;
+}
+
+body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
+    position: relative;
+    left: -1px;
+}
+
+.mod_turnitintooltwo .hidden_class, .mod_turnitintooltwo #user_role, .mod_turnitintooltwo .launch_form,
+.mod_turnitintooltwo #useragreement_form form, .mod_turnitintooltwo #assignment_id, .mod_turnitintooltwo #course_id,
+.mod_turnitintooltwo #submission_id, .mod_turnitintooltwo #tii_course_id, .mod_turnitintooltwo #tii_course_name,
+.mod_turnitintooltwo .enrolling_container, .mod_turnitintooltwo #view_context,
+.mod_turnitintooltwo #inbox_form, .mod_turnitintooltwo_unanonymise_form, .mod_turnitintooltwo_edit_course_end_date_form,
+.mod_turnitintooltwo #course_category, .mod_turnitintooltwo #class_ids, .mod_turnitintooltwo #create_assignments,
+.mod_turnitintooltwo .row_peermark_reviews, .mod_turnitintooltwo .peermark_instructions,
+.mod_turnitintooltwo .toggle_peermark_instructions .hide_peermark_instructions,
+.mod_turnitintooltwo_course_browser_table_filter, .mod_turnitintooltwo .js_required,
+.mod_turnitintooltwo #course_category, .mod_turnitintooltwo #create_assignments,
+#page-admin-setting-modsettingturnitintooltwo .tii_upgrading_check, #page-admin-setting-modsettingturnitintooltwo #test_link,
+#page-admin-setting-modsettingturnitintooltwo #test_result, #page-admin-setting-modsettingturnitintooltwo .test_connection,
+#page-admin-setting-modsettingturnitintooltwo #testing_container, .mod_turnitintooltwo .peermark_loading,
+.mod_turnitintooltwo_messages_loading, .mod_turnitintooltwo .tii_table_functions, .mod_turnitintooltwo .refresh_row .fa-spinner,
+.mod_turnitintooltwo #enrolling_error, .mod_turnitintooltwo .dv_url {
+    display:none;
+}
+
+
+.mod_turnitintooltwo .submission_form_container, .mod_turnitintooltwo .class_recreation,
+div#mod_turnitintooltwo_digital_receipt {
+    padding: 0 24px;
+}
+
+div#mod_turnitintooltwo_digital_receipt {
+    margin: 0;
+}
+
+.mod_turnitintooltwo .row_score, .mod_turnitintooltwo .row_peermark_manager, .mod_turnitintooltwo .row_peermark_reviews {
+    float:right;
+}
+
+.mod_turnitintooltwo .grademark_open, .mod_turnitintooltwo .origreport_open, .mod_turnitintooltwo .download_original_open,
+.mod_turnitintooltwo_zip_open, .mod_turnitintooltwo .enrol_link, .mod_turnitintooltwo_refresh_link,
+.mod_turnitintooltwo .refresh_row, .mod_turnitintooltwo_messages_inbox, .mod_turnitintooltwo span.link,
+.mod_turnitintooltwo_rubric_manager_launch, .mod_turnitintooltwo_rubric_view_launch,
+.mod_turnitintooltwo_quickmark_manager_launch, .mod_turnitintooltwo .tii_peermark_manager_launch,
+.mod_turnitintooltwo .tii_peermark_reviews_launch, #page-admin-setting-modsettingturnitintooltwo #test_link {
+    cursor:pointer;
+}
+
+.mod_turnitintooltwo #submitting_loader, .mod_turnitintooltwo #refresh_loading {
+    display:none;
+    padding: 16px 0 8px;
+    text-align: center;
+}
+
+.grey {
+    color: $dark-grey !important;
+}
+
+.light-blue {
+    color: $light-blue !important;
+}
+
+.gm-blue {
+    color: $gm-blue !important;
+}
+
+.green {
+    color: $green !important;
+}
+
+.red {
+    color: $red !important;
+}
+
+.tii_checkagainstnote, .tii_genspeednote {
+    border: 1px solid $light-blue2;
+    background: $light-blue;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+.mod_turnitintooltwo_submissions_data_table .fa,
+.mod_turnitintooltwo_part_details .fa {
+    color: darken($dark-grey, 10%);
+}
+
+.middle-padding {
+    padding: 0 5px;
+}
+
+.mod_turnitintooltwo #course_search_options, .mod_turnitintooltwo .create_checkboxes {
+    border: 1px solid $border-color;
+    padding: 6px 10px;
+}
+
+.mod_turnitintooltwo .create_checkboxes {
+    display: none;
+    margin-top: 12px;
+}
+
+.icon_margin {
+    margin-right: 20px;
+}
+.icon_smallmargin {
+    margin-right: 10px;
+}
+
+.mod_turnitintooltwo iframe {
+    border: 1px solid $light-grey;
+}
+
+#migration-progress-bar {
+    background-color: #FFFFFF;
+    height: 30px;
+    line-height: 28px;
+    border: 1px solid;
+    border-radius: 3px;
+    margin: 15px 0px 30px 0px;
+}
+#migration-progress, #migration-progress-todo {
+    width: 0%;
+    height: 100%;
+    text-align: center;
+    float: left;
+    font-size: 14px;
+}
+#migration-progress {
+    background-color: #0073D2;
+    color: #fff;
+}
+.migration-spinner {
+    text-align: center;
+    padding: 30px;
+}
+
+.enablemigrationtool {
+    text-align: center;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background-color: #0e90d2;
+    background-image: -moz-linear-gradient(top,#149bdf,#0480be);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#149bdf),to(#0480be));
+    background-image: -webkit-linear-gradient(top,#149bdf,#0480be);
+    background-image: -o-linear-gradient(top,#149bdf,#0480be);
+    background-image: linear-gradient(to bottom,#149bdf,#0480be);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf',endColorstr='#ff0480be',GradientType=0);
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -moz-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: width 0.6s ease;
+    -moz-transition: width 0.6s ease;
+    -o-transition: width 0.6s ease;
+    transition: width 0.6s ease;
+}
+
+#migration-progress-bar {
+    background-color: #FFFFFF;
+    height: 30px;
+    line-height: 28px;
+    border: 1px solid;
+    border-radius: 3px;
+    margin: 15px 0px 30px 0px;
+}
+#migration-progress, #migration-progress-todo {
+    width: 0%;
+    height: 100%;
+    text-align: center;
+    float: left;
+    font-size: 14px;
+}
+#migration-progress {
+    background-color: #0073D2;
+    color: #fff;
+}
+.migration-spinner {
+    text-align: center;
+}
+
+.enablemigrationtool {
+    text-align: center;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background-color: #0e90d2;
+    background-image: -moz-linear-gradient(top,#149bdf,#0480be);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#149bdf),to(#0480be));
+    background-image: -webkit-linear-gradient(top,#149bdf,#0480be);
+    background-image: -o-linear-gradient(top,#149bdf,#0480be);
+    background-image: linear-gradient(to bottom,#149bdf,#0480be);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf',endColorstr='#ff0480be',GradientType=0);
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -moz-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: width 0.6s ease;
+    -moz-transition: width 0.6s ease;
+    -o-transition: width 0.6s ease;
+    transition: width 0.6s ease;
+}
+
+.data-table-splitter {
+    float: left;
+    padding-right: 20px;
+}
+
+#migrationform #fitem_id_submitbutton,
+#migration-delete-selected #fitem_id_submitbutton,
+#fitem_id_enablemigrationtool {
+    width: 75%;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+}
+#fitem_id_enablemigrationtool .fitemtitle {
+    width: 300px;
+}
+#migrationform {
+    margin: 30px 0px;
+}
+
+.migrationheader {
+    color: #003A69;
+    font-size: 18px;
+    font-weight: normal;
+    margin: 10px 0 10px 0;
+}
+.mod_turnitintooltwo .btn-primary {
+    background: #0073D2;
+}
+.mod_turnitintooltwo .btn-primary:hover {
+    background: #00569E;
+}
+.mod_turnitintooltwo .btn-primary:active {
+    background: #003A69;
+}
+.mod_turnitintooltwo .btn-primary {
+    box-shadow: none;
+    border: none;
+    height: 35px;
+    margin-right: 11px;
+    border-radius: 3px;
+}
+
+.migrationTable_length {
+    margin-top: 20px;
+}
+
+#migrationTable .fa-times {
+    color: #FF0000;
+}
+
+#migrationTable .fa-check {
+    color: #008000;
+}

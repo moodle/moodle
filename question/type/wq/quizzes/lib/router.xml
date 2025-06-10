@@ -1,0 +1,12 @@
+<router>
+  <service>
+    <name>quizzes</name>
+    <url>http://www.wiris.net/demo/quizzes/rest</url>
+    <!--url>http://localhost:8080/quizzes/rest</url-->
+  </service>
+  <service>
+    <name>render</name>
+    <url>http://www.wiris.net/demo/editor/render</url>
+    <!--url>http://localhost:8080/formula-swf/render.png</url-->
+  </service>
+</router>

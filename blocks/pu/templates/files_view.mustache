@@ -1,0 +1,81 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Proctor U
+ *
+ * @package   block_pu
+ * @copyright 2021 onwards LSU Online & Continuing Education
+ * @copyright 2021 onwards Tim Hunt, Robert Russo, David Lowe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_pu_container">
+    <table class="table table-hover table-striped pu_files_table">
+        <caption>Files in Moodle</caption>
+        <thead>
+            <tr>
+                {{! -------------------- }}
+                <th>{{# str }} pu_filename, block_pu {{/ str }}</th>
+                {{! -------------------- }}
+                <th>{{# str }} pu_filecreated, block_pu {{/ str }}</th>
+                {{! -------------------- }}
+                <th>{{# str }} pu_filemodified, block_pu {{/ str }}</th>
+                {{! -------------------- }}
+                <th>{{# str }} pu_copy, block_pu {{/ str }}</th>
+                {{! -------------------- }}
+                <th>{{# str }} pu_delete, block_pu {{/ str }}</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{#pu_data}}
+            <form method="POST" id="pu_file_form_{{puid}}">
+                <tr data-rowid='{{puid}}'>
+                    <input type="hidden" value="{{puid}}" name="pu_file_id"/>
+                    <input type="hidden" value="{{fileid}}" name="mdl_file_id"/>
+                    <input type="hidden" value="pu" name="pu_or_nonmood"/>
+
+                    <td>{{pu_filename}}</td>
+                    <td>{{pu_filecreated}}</td>
+                    <td>{{pu_filemodified}}</td>
+                    <td><button class="btn btn-primary pu_file_copy"><i class="fa fa-copy"></i></button></td>
+                    <td><button type="submit" class="btn btn-danger pu_file_delete"><i class="fa fa-trash"></i></button></td>
+                </tr>
+            </form>
+            {{/pu_data}}
+            {{^pu_data}}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} pu_nofiles, block_pu {{/ str }}</td>
+                </tr>
+            {{/pu_data}}
+        </tbody>
+    </table>
+    <span class="pull-right">
+        <a href="{{pu_url}}/blocks/pu/uploader.php" class="btn btn-info">Add New File</a>
+    </span>
+    <span class="non_mood_files_refresher">
+        {{> block_pu/non_mood_files}}
+    </span>
+</div>
+
+{{#js}}
+require(['jquery', 'block_pu/events'], function($, EV) {
+    EV.registerMooFileEvents();
+});
+{{/js}}
+

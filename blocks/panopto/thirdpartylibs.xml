@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>lib/AuthManagement/</location>
+        <name>PanoptoAuthManagement</name>
+        <version>1.0.0</version>
+        <license>GPL</license>
+        <licenseversion>3.0</licenseversion>
+    </library>
+    <library>
+        <location>lib/UserManagement/</location>
+        <name>PanoptoUserManagement</name>
+        <version>1.0.0</version>
+        <license>GPL</license>
+        <licenseversion>3.0</licenseversion>
+    </library>
+    <library>
+        <location>lib/SessionManagement/</location>
+        <name>PanoptoSessionManagement</name>
+        <version>1.0.0</version>
+        <license>GPL</license>
+        <licenseversion>3.0</licenseversion>
+    </library>
+</libraries>

@@ -1,6 +1,0 @@
-This files describes API changes in core_form libraries and APIs,
-information provided here is intended especially for developers.
-
-=== 4.2 ===
-
-* The moodle-form-passwordunmask module has been removed. It was deprecated in Moodle 3.2.

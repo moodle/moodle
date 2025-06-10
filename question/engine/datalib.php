@@ -560,7 +560,9 @@ ORDER BY
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots = null, $fields = null) {
-        if ($slots !== null) {
+        if ($slots === []) {
+            return [];
+        } else if ($slots !== null) {
             [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
             $slotwhere = " AND qa.slot {$slottest}";
         } else {
@@ -1173,11 +1175,11 @@ ORDER BY
     }
 
     /**
-     * Return a sub-query that computes the sum of the marks for all the questions
-     * in a usage. Which usage to compute the sum for is controlled by the $qubaid
+     * Return a subquery that computes the sum of the marks for all the questions
+     * in a usage. Which useage to compute the sum for is controlled bu the $qubaid
      * parameter.
      *
-     * See {@see \mod_quiz\grade_calculator::recompute_all_attempt_sumgrades()} for an example of the usage of
+     * See {@link quiz_update_all_attempt_sumgrades()} for an example of the usage of
      * this method.
      *
      * This method may be called publicly.
@@ -1210,7 +1212,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@see \mod_quiz\local\reports\attempts_report_table::add_latest_state_join()}.
+     * {@link quiz_attempts_report_table::add_latest_state_join()}.
      *
      * This method may be called publicly.
      *
@@ -1674,13 +1676,13 @@ class question_file_saver implements question_response_files {
      *
      * @param int $draftitemid the draft area to save the files from.
      * @param string $component the component for the file area to save into.
-     * @param string $uncleanedfilearea the name of the file area to save into - but before it has been cleaned up.
+     * @param string $filearea the name of the file area to save into.
      * @param string $text optional content containing file links.
      */
-    public function __construct($draftitemid, $component, $uncleanedfilearea, $text = null) {
+    public function __construct($draftitemid, $component, $filearea, $text = null) {
         $this->draftitemid = $draftitemid;
         $this->component = $component;
-        $this->filearea = self::clean_file_area_name($uncleanedfilearea);
+        $this->filearea = $filearea;
         $this->value = $this->compute_value($draftitemid, $text);
     }
 
@@ -1742,29 +1744,6 @@ class question_file_saver implements question_response_files {
     public function save_files($itemid, $context) {
         file_save_draft_area_files($this->draftitemid, $context->id,
                 $this->component, $this->filearea, $itemid);
-    }
-
-    /**
-     * Clean up a possible file area name to ensure that it matches the required rules.
-     *
-     * @param string $uncleanedfilearea the proposed file area name (e.g. 'response_-attachments').
-     * @return string a similar valid file area name. E.g: response_attachments.
-     */
-    public static function clean_file_area_name(string $uncleanedfilearea): string {
-        $filearea = $uncleanedfilearea;
-        if ($filearea !== clean_param($filearea, PARAM_AREA)) {
-            // Only lowercase ascii letters, numbers and underscores are allowed.
-            // Remove the invalid character in the filearea string.
-            $filearea = preg_replace('~[^a-z0-9_]~', '', core_text::strtolower($filearea));
-            // Replace multiple underscore to a single underscore.
-            $filearea = preg_replace('~_+~', '_', $filearea);
-            // If, after attempted cleaning, the filearea is not valid, throw a clear error to avoid subtle bugs.
-            if ($filearea !== clean_param($filearea, PARAM_AREA)) {
-                throw new coding_exception('Name ' . $filearea .
-                    ' cannot be used with question_file_saver because it does not match the rules for file area names');
-            }
-        }
-        return $filearea;
     }
 
     /**

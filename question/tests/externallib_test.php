@@ -38,15 +38,6 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class externallib_test extends externallib_advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \stdClass user record. */
-    protected $student;
-
-    /** @var \stdClass user role record. */
-    protected $studentrole;
-
     /**
      * Set up for every test
      */

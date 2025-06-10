@@ -29,8 +29,6 @@ namespace mod_lesson\external;
 use externallib_advanced_testcase;
 use mod_lesson_external;
 use lesson;
-use core_external\external_api;
-use core_external\external_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -107,7 +105,8 @@ class external_test extends externallib_advanced_testcase {
      * Test test_mod_lesson_get_lessons_by_courses
      */
     public function test_mod_lesson_get_lessons_by_courses() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -136,7 +135,7 @@ class external_test extends externallib_advanced_testcase {
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
         // Set WS filtering.
-        $wssettings = external_settings::get_instance();
+        $wssettings = \external_settings::get_instance();
         $wssettings->set_filter(true);
 
         $returndescription = mod_lesson_external::get_lessons_by_courses_returns();
@@ -181,14 +180,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_lesson_external::get_lessons_by_courses(array($course2->id, $this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedlessons, $result['lessons']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_lesson_external::get_lessons_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedlessons, $result['lessons']);
         $this->assertCount(0, $result['warnings']);
 
@@ -198,7 +197,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_lesson_external::get_lessons_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedlessons, $result['lessons']);
 
         // Call for the second course we unenrolled the user from, expected warning.
@@ -218,14 +217,14 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = mod_lesson_external::get_lessons_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedlessons, $result['lessons']);
 
         // Admin also should get all the information.
         self::setAdminUser();
 
         $result = mod_lesson_external::get_lessons_by_courses(array($this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedlessons, $result['lessons']);
 
         // Now, add a restriction.
@@ -234,7 +233,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->set_field('lesson', 'password', 'abc', array('id' => $lesson1->id));
 
         $lessons = mod_lesson_external::get_lessons_by_courses(array($this->course->id));
-        $lessons = external_api::clean_returnvalue(mod_lesson_external::get_lessons_by_courses_returns(), $lessons);
+        $lessons = \external_api::clean_returnvalue(mod_lesson_external::get_lessons_by_courses_returns(), $lessons);
         $this->assertFalse(isset($lessons['lessons'][0]['intro']));
     }
 
@@ -352,7 +351,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->insert_record('lesson_grades', (object) $record);
 
         $result = mod_lesson_external::get_lesson_access_information($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
         $this->assertFalse($result['canmanage']);
         $this->assertFalse($result['cangrade']);
         $this->assertFalse($result['canviewreports']);
@@ -370,7 +369,7 @@ class external_test extends externallib_advanced_testcase {
         // Now check permissions as admin.
         $this->setAdminUser();
         $result = mod_lesson_external::get_lesson_access_information($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
         $this->assertTrue($result['canmanage']);
         $this->assertTrue($result['cangrade']);
         $this->assertTrue($result['canviewreports']);
@@ -406,7 +405,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_lesson_external::view_lesson($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::view_lesson_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::view_lesson_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -449,7 +448,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test lesson without page attempts.
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['attempts']);
 
@@ -470,7 +469,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->insert_record('lesson_attempts', (object) $newpageattempt);
 
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['attempts']);
 
@@ -479,20 +478,20 @@ class external_test extends externallib_advanced_testcase {
 
         // Test filtering. Only correct.
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['attempts']);
 
         // Test filtering. Only correct only for page 2.
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, true, $this->page2->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['attempts']);
 
         // Teacher retrieve student page attempts.
         $this->setUser($this->teacher);
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, false, null, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['attempts']);
 
@@ -531,7 +530,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test lesson without multiple attemps. The first result must be returned.
         $result = mod_lesson_external::get_user_grade($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(50, $result['grade']);
         $this->assertEquals('50.00', $result['formattedgrade']);
@@ -539,7 +538,7 @@ class external_test extends externallib_advanced_testcase {
         // With retakes. By default average.
         $DB->set_field('lesson', 'retake', 1, array('id' => $this->lesson->id));
         $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(75, $result['grade']);
         $this->assertEquals('75.00', $result['formattedgrade']);
@@ -547,7 +546,7 @@ class external_test extends externallib_advanced_testcase {
         // With retakes. With max grade setting.
         $DB->set_field('lesson', 'usemaxgrade', 1, array('id' => $this->lesson->id));
         $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(100, $result['grade']);
         $this->assertEquals('100.00', $result['formattedgrade']);
@@ -555,7 +554,7 @@ class external_test extends externallib_advanced_testcase {
         // Test as teacher we get the same result.
         $this->setUser($this->teacher);
         $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(100, $result['grade']);
         $this->assertEquals('100.00', $result['formattedgrade']);
@@ -593,7 +592,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
         $this->setUser($this->student);
         $result = mod_lesson_external::get_user_attempt_grade($this->lesson->id, $attemptnumber, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['grade']['nquestions']);
         $this->assertEquals(1, $result['grade']['attempts']);
@@ -606,7 +605,7 @@ class external_test extends externallib_advanced_testcase {
         // With custom scoring, in this case, we don't retrieve any values since we are using questions without particular score.
         $DB->set_field('lesson', 'custom', 1, array('id' => $this->lesson->id));
         $result = mod_lesson_external::get_user_attempt_grade($this->lesson->id, $attemptnumber, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['grade']['nquestions']);
         $this->assertEquals(1, $result['grade']['attempts']);
@@ -649,7 +648,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test first attempt.
         $result = mod_lesson_external::get_content_pages_viewed($this->lesson->id, 1, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['pages']);
         foreach ($result['pages'] as $page) {
@@ -662,7 +661,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Attempt without pages viewed.
         $result = mod_lesson_external::get_content_pages_viewed($this->lesson->id, 3, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['pages']);
     }
@@ -694,7 +693,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test retrieve timers.
         $result = mod_lesson_external::get_user_timers($this->lesson->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_timers_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_timers_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['timers']);
         foreach ($result['timers'] as $timer) {
@@ -746,7 +745,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = mod_lesson_external::get_pages($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(3, $result['pages']);
 
@@ -766,7 +765,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
         $DB->set_field('lesson', 'displayleft', 0, array('id' => $this->lesson->id));
         $result = mod_lesson_external::get_pages($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(3, $result['pages']);
 
@@ -796,7 +795,7 @@ class external_test extends externallib_advanced_testcase {
 
         unset($SESSION->lesson_messages);
         $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1);
-        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['messages']);
@@ -827,7 +826,7 @@ class external_test extends externallib_advanced_testcase {
         unset($SESSION->lesson_messages);
         $this->setUser($this->teacher);
         $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
         // Everything ok as teacher.
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['messages']);
@@ -880,7 +879,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_lesson_external::launch_attempt($this->lesson->id, '', $this->page2->id, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
         // Everything ok as student.
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['messages']);
@@ -907,7 +906,7 @@ class external_test extends externallib_advanced_testcase {
         // Everything ok as teacher.
         $this->setUser($this->teacher);
         $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['messages']);
 
@@ -925,7 +924,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test a content page first (page1).
         $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page1->id, '', false, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['answers']);  // No answers, auto-generated content page.
@@ -945,7 +944,7 @@ class external_test extends externallib_advanced_testcase {
         // Check now a page with answers (true / false) and with menu available.
         $DB->set_field('lesson', 'displayleft', 1, array('id' => $this->lesson->id));
         $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['answers']);  // One for true, one for false.
         // Check menu availability.
@@ -967,7 +966,7 @@ class external_test extends externallib_advanced_testcase {
         // First we need to launch the lesson so the timer is on.
         mod_lesson_external::launch_attempt($this->lesson->id);
         $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['answers']);  // One for true, one for false.
         // Check contents.
@@ -1033,11 +1032,11 @@ class external_test extends externallib_advanced_testcase {
             )
         );
         $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
-        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
 
         if ($finished) {
             $result = mod_lesson_external::finish_attempt($this->lesson->id);
-            $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+            $result = \external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
         }
         return $result;
     }
@@ -1074,7 +1073,7 @@ class external_test extends externallib_advanced_testcase {
         mod_lesson_external::launch_attempt($this->lesson->id);
 
         $result = mod_lesson_external::finish_attempt($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $returneddata = [];
@@ -1134,7 +1133,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
 
         // One attempt, 0 for grade (incorrect response) in overal statistics.
         $this->assertEquals(1, $result['data']['numofattempts']);
@@ -1161,7 +1160,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
 
         // Two attempts with maximum grade.
         $this->assertEquals(2, $result['data']['numofattempts']);
@@ -1190,7 +1189,7 @@ class external_test extends externallib_advanced_testcase {
         // Now check we have two students and the statistics changed.
         $this->setAdminUser();
         $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
 
         // Total of 3 attempts with maximum grade.
         $this->assertEquals(3, $result['data']['numofattempts']);
@@ -1207,7 +1206,7 @@ class external_test extends externallib_advanced_testcase {
     public function test_get_attempts_overview_no_attempts() {
         $this->setAdminUser();
         $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertArrayNotHasKey('data', $result);
     }
@@ -1229,7 +1228,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         // Test first attempt finished.
         $result = mod_lesson_external::get_user_attempt($this->lesson->id, $this->student->id, 0);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
 
         $this->assertCount(2, $result['answerpages']);  // 2 pages in the lesson.
         $this->assertCount(2, $result['answerpages'][0]['answerdata']['answers']);  // 2 possible answers in true/false.
@@ -1247,7 +1246,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test second attempt unfinished.
         $result = mod_lesson_external::get_user_attempt($this->lesson->id, $this->student->id, 1);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
 
         $this->assertCount(2, $result['answerpages']);  // 2 pages in the lesson.
         $this->assertCount(2, $result['answerpages'][0]['answerdata']['answers']);  // 2 possible answers in true/false.
@@ -1257,7 +1256,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
         // Test first attempt finished.
         $result = mod_lesson_external::get_user_attempt($this->lesson->id, $this->student->id, 0);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_returns(), $result);
 
         $this->assertCount(2, $result['answerpages']);  // 2 pages in the lesson.
         $this->assertCount(2, $result['answerpages'][0]['answerdata']['answers']);  // 2 possible answers in true/false.
@@ -1275,7 +1274,7 @@ class external_test extends externallib_advanced_testcase {
     public function test_get_pages_possible_jumps() {
         $this->setAdminUser();
         $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(3, $result['jumps']);    // 3 jumps, 2 from the question page and 1 from the content.
@@ -1298,7 +1297,7 @@ class external_test extends externallib_advanced_testcase {
     public function test_get_pages_possible_jumps_with_offlineattemps_disabled() {
         $this->setUser($this->student->id);
         $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
         $this->assertCount(0, $result['jumps']);
     }
 
@@ -1311,7 +1310,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->set_field('lesson', 'allowofflineattempts', 1, array('id' => $this->lesson->id));
         $this->setUser($this->student->id);
         $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
         $this->assertCount(3, $result['jumps']);
     }
 
@@ -1324,7 +1323,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
         $this->assertCount(37, $result['lesson']);  // Expect most of the fields.
         $this->assertFalse(isset($result['password']));
     }
@@ -1342,7 +1341,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
         $this->assertCount(7, $result['lesson']);   // Expect just this few fields.
         $this->assertFalse(isset($result['intro']));
     }
@@ -1360,7 +1359,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id, $password);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
         $this->assertCount(37 , $result['lesson']);
         $this->assertFalse(isset($result['intro']));
     }
@@ -1378,7 +1377,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Lesson not passing a valid password (but we are teachers, we should see all the info).
         $result = mod_lesson_external::get_lesson($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
         $this->assertCount(46, $result['lesson']);  // Expect all the fields.
         $this->assertEquals($result['lesson']['password'], $password);
     }

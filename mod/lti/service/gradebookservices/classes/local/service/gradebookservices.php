@@ -529,6 +529,7 @@ class gradebookservices extends service_base {
         }
 
         if ($gradeitem->is_manual_item()) {
+            // TODO: LSU Deal with this as well.
             $result = $gradeitem->update_final_grade($userid, $finalgrade, null, $feedback, FORMAT_PLAIN, null, $timemodified);
         } else {
             if (!$grade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $userid))) {
@@ -541,6 +542,11 @@ class gradebookservices extends service_base {
             $grade->feedbackformat = $feedbackformat;
             $grade->feedback = $feedback;
             $grade->rawgrade = $finalgrade;
+
+            // BEGIN LSU #1286 LTI grade dates.
+            $grade->dategraded = $timemodified;
+            // END LSU #1286 LTI grade dates.
+
             $status = grade_update($source, $gradeitem->courseid,
                 $gradeitem->itemtype, $gradeitem->itemmodule,
                 $gradeitem->iteminstance, $gradeitem->itemnumber, $grade);
@@ -634,6 +640,7 @@ class gradebookservices extends service_base {
             } else {
                 $result->scoreOf = "{$endpoint}?type_id={$typeid}";
             }
+            // TODO: LSU CHECK THIS LINE.
             $result->timestamp = date('c', $grade->timemodified);
         }
         return $result;

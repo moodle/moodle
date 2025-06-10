@@ -1,0 +1,85 @@
+.block_panopto .panoptoProcessInformation {
+    border: solid 1px #c0c0c0;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.block_panopto .panoptoProcessInformation .attribute {
+    font-weight: bold;
+}
+
+.block_panopto .panoptoProcessInformation .value {
+    margin-left: 15px;
+    margin-bottom: 5px;
+}
+
+.block_panopto .panoptoProcessInformation .successMessage {
+    color: green;
+}
+
+.block_panopto .panoptoProcessInformation .errorMessage {
+    color: red;
+}
+
+
+/* Block sidebar */
+
+.block_panopto .sectionHeader {
+    margin-top: 10px;
+}
+
+.block_panopto #hiddenLecturesDiv {
+    display: none;
+}
+
+.block_panopto #showAllDiv {
+    margin-top: 5px;
+}
+
+.block_panopto #showAllToggle {
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.block_panopto .listItem {
+    margin-top: 3px;
+    font-size: 0.8em;
+}
+
+.block_panopto .listItemAlt {
+    background: #f0f0f0;
+}
+
+.block_panopto .rssLink {
+    font-size: 0.8em;
+}
+
+.block_panopto .rssParen {
+    font-size: 0.7em;
+}
+
+.block_panopto .nowrap {
+    white-space: nowrap;
+}
+
+.block_panopto .error {
+    color: red;
+}
+
+/* Block progress bar */
+.block_panopto .panopto-progress-bar-container {
+    position: relative;
+    margin: 20px auto;
+    width: 420px;
+    height: 60px;
+}
+
+.block_panopto .panopto-progress-bar-container .panopto-progress-bar {
+    position: relative;
+    border: 1px solid #ccc;
+    left: 0;
+    margin-bottom: 5px;
+    width: 100%;
+    height: 25px;
+    text-align: center;
+}

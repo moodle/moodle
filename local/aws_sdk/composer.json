@@ -1,0 +1,9 @@
+{
+    "name": "blackboard-open-source/aws_sdk",
+    "description": "AWS SDK",
+    "type": "project",
+    "require": {
+        "aws/aws-sdk-php": "3.235.7"
+    },
+    "license": "GPL"
+}

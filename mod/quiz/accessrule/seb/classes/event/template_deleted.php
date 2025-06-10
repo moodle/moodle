@@ -100,7 +100,7 @@ class template_deleted extends base {
      * @return array Mapping of object id.
      */
     public static function get_objectid_mapping() : array {
-        return ['db' => 'quizaccess_seb_template', 'restore' => 'quizaccess_seb_template'];
+        return array('db' => 'quizaccess_seb_template', 'restore' => 'quizaccess_seb_template');
     }
 
     /**

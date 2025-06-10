@@ -68,7 +68,6 @@ require_once($CFG->libdir . '/portfolio/caller.php');
  * $button = new portfolio_add_button(array('callbackclass' => 'name_of_caller_class', 'callbackargs' => array('id' => 6), 'callbackcomponent' => 'yourcomponent')); eg. mod_forum
  * $somehtml .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
  * </code>
- *{@link http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page} for more information
  *
  * @package core_portfolio
  * @category portfolio
@@ -1371,4 +1370,3 @@ function portfolio_rewrite_pluginfile_urls($text, $contextid, $component, $filea
     return preg_replace_callback($pattern, $callback, $text);
 }
 // this function has to go last, because the regexp screws up syntax highlighting in some editors
-

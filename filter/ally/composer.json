@@ -1,0 +1,5 @@
+{
+    "require-dev": {
+        "firebase/php-jwt":"3.0.0"
+    }
+}

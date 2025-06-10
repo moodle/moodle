@@ -1,0 +1,9 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/group-310-plus-ci.yml@main
+    with:
+      disable_behat: true

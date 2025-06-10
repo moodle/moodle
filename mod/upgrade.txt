@@ -66,7 +66,7 @@ information provided here is intended especially for developers.
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
   compliant. Activity modules use this API to report what information they store or process regarding users, and provide
-  ability to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to
+  ability to export and delete personal data. See hhttps://moodledev.io/docs/apis/subsystems/privacy/ for guidelines on how to
   implement the privacy API in your activity module.
 * Backup directory now can be outside of temp directory. Use make_backup_temp_directory($name) instead of
   make_temp_directory('/backup/'.$name)
@@ -97,7 +97,7 @@ information provided here is intended especially for developers.
 *_print_overview functions have been deprecated.
 * The block_myoverview has replaced block_course_overview to provide better information to students. To support this,
   actions can now be attached to calendar events. Documentation for the following new API callbacks introduced in
-  MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
+  MDL-55611 can be found at https://moodledev.io/docs/apis/core/calendar. The 3 new callbacks are:
   - mod_<modname>_core_calendar_is_event_visible
   - mod_<modname>_core_calendar_provide_event_action
   - mod_<modname>_core_calendar_event_action_shows_item_count
@@ -130,7 +130,7 @@ information provided here is intended especially for developers.
 
 * Dropped support for the $module in mod/xxx/version.php files (deprecated
   since 2.7). All activity modules must use the $plugin syntax now. See
-  https://docs.moodle.org/dev/version.php for details (MDL-43896).
+  https://moodledev.io/docs/apis/commonfiles/version.php for details (MDL-43896).
 * Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
   to mod_forum_rating_can_see_item_ratings() for example.
 
@@ -226,9 +226,9 @@ required changes in code:
 
 required changes in code:
 * use new DML syntax everywhere
-  (http://docs.moodle.org/dev/DML_functions)
+  (https://moodledev.io/docs/apis/core/dml/ddl)
 * use new DDL syntax in db/upgrade.php
-  (http://docs.moodle.org/dev/DDL_functions)
+  (https://moodledev.io/docs/apis/core/dml/ddl)
 * replace defaults.php by settings.php and db/install.php
 * replace STATEMENTS section in db/install.xml with PHP code db/install.php or db/log.php
 * move post installation code from lib.php into db/install.php
@@ -236,7 +236,7 @@ required changes in code:
 * new mandatory naming of intro and introformat table fields in module tables,
   the presence of these fields is indicated in xxx_plugin_supports()
 * completely rewrite file handling
-  (http://docs.moodle.org/dev/File_API)
+  (https://moodledev.io/docs/apis/subsystems/files)
 * rewrite backup/restore
   (not finished yet)
 * rewrite trusttext support - new db table columns needed
@@ -250,9 +250,8 @@ required changes in code:
                  move module icon to mod/xxx/pix/icon.gif
                  old global $THEME is fully replaced by $OUTPUT
                  create plugin renderers
-  (http://docs.moodle.org/dev/Theme_changes_in_2.0)
 * migrate all javascript new coding style using YUI3+YUI2
-  (http://docs.moodle.org/dev/JavaScript_usage_guide)
+  (https://moodledev.io/docs/guides/javascript/modules)
 * remove '_utf8' from lang pack names, use new {a} syntax
 * replace helps with new 'xxx_hlp' strings
 * please note the $plugin->requires in version.php has to be bigger than 2010000000,
@@ -267,7 +266,6 @@ optional - no changes needed in older code:
 * course completion tracking support
 * new navigation features
 * new comments API
-  (http://docs.moodle.org/dev/Comments_2.0)
+  (https://docs.moodle.org/dev/Comment_API)
 * new ratings API
-  (http://docs.moodle.org/dev/Ratings_2.0)
-
+  (https://docs.moodle.org/dev/Rating_API)

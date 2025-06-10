@@ -60,12 +60,7 @@ class user_created extends base {
      * @return string
      */
     public function get_description() {
-        $description = "The user with id '$this->userid' created the user with id '$this->objectid'";
-        if (!empty($this->other['restoreid'])) {
-            $courseid = $this->other['courseid'] ?? 0;
-            return "{$description} during restore of the course with id '$courseid'.";
-        }
-        return "{$description}.";
+        return "The user with id '$this->userid' created the user with id '$this->objectid'.";
     }
 
     /**
@@ -137,27 +132,6 @@ class user_created extends base {
         // Create user_created event.
         $event = self::create($data);
         return $event;
-    }
-
-    /**
-     * Create instance of event when user is created during the course restore process.
-     *
-     * @param int $userid id of user
-     * @param string $restoreid
-     * @param int $courseid
-     * @return user_created
-     */
-    public static function create_from_user_id_on_restore(int $userid, string $restoreid,
-            int $courseid): user_created {
-        $data = [
-            'objectid' => $userid,
-            'relateduserid' => $userid,
-            'context' => \context_user::instance($userid),
-            'other' => ['restoreid' => $restoreid, 'courseid' => $courseid],
-        ];
-
-        // Create user_created event.
-        return self::create($data);
     }
 
     public static function get_objectid_mapping() {

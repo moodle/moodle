@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_table extends flexible_table {
-    /** @var stdClass full question object for this question. */
+    /** @var object full question object for this question. */
     protected $questiondata;
 
     /** @var  int no of attempts. */
@@ -60,7 +60,7 @@ class quiz_statistics_question_table extends flexible_table {
      * Set up columns and column names and other table settings.
      *
      * @param moodle_url $reporturl
-     * @param stdClass     $questiondata
+     * @param object     $questiondata
      * @param integer    $s             number of attempts on this question.
      * @param \core_question\statistics\responses\analysis_for_question $responseanalysis
      */
@@ -73,8 +73,8 @@ class quiz_statistics_question_table extends flexible_table {
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter quizresponseanalysis');
 
         // Define the table columns.
-        $columns = [];
-        $headers = [];
+        $columns = array();
+        $headers = array();
 
         if ($responseanalysis->has_subparts()) {
             $columns[] = 'part';
@@ -138,7 +138,7 @@ class quiz_statistics_question_table extends flexible_table {
 
     /**
      * The mark fraction that this response earns.
-     * @param stdClass $response containst the data to display.
+     * @param object $response containst the data to display.
      * @return string contents of this table cell.
      */
     protected function col_fraction($response) {
@@ -151,7 +151,7 @@ class quiz_statistics_question_table extends flexible_table {
 
     /**
      * The frequency with which this response was given.
-     * @param stdClass $response contains the data to display.
+     * @param object $response contains the data to display.
      * @return string contents of this table cell.
      */
     protected function col_frequency($response) {
@@ -167,7 +167,7 @@ class quiz_statistics_question_table extends flexible_table {
      * then this is the output for this cell of the table.
      *
      * @param string $colname  The name of this column.
-     * @param stdClass $response The raw data for this row.
+     * @param object $response The raw data for this row.
      * @return string|null The value for this cell of the table or null means use raw data.
      */
     public function other_cols($colname, $response) {

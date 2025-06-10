@@ -250,31 +250,4 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         // Delete it.
         question_engine::delete_questions_usage_by_activity($quba->get_id());
     }
-
-    /**
-     * Test cases for {@see test_get_file_area_name()}.
-     *
-     * @return array test cases
-     */
-    public function get_file_area_name_cases(): array {
-        return [
-            'simple variable' => ['response_attachments', 'response_attachments'],
-            'behaviour variable' => ['response_5:answer', 'response_5answer'],
-            'variable with special character' => ['response_5:answer', 'response_5answer'],
-            'multiple underscores in different places' => ['response_weird____variable__name', 'response_weird_variable_name'],
-        ];
-    }
-
-    /**
-     * Test get_file_area_name.
-     *
-     * @covers \question_file_saver::clean_file_area_name
-     * @dataProvider get_file_area_name_cases
-     *
-     * @param string $uncleanedfilearea
-     * @param string $expectedfilearea
-     */
-    public function test_clean_file_area_name(string $uncleanedfilearea, string $expectedfilearea): void {
-        $this->assertEquals($expectedfilearea, \question_file_saver::clean_file_area_name($uncleanedfilearea));
-    }
 }

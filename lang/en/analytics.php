@@ -163,3 +163,6 @@ $string['viewinsight'] = 'View insight';
 $string['viewinsightdetails'] = 'View insight details';
 $string['viewprediction'] = 'View prediction details';
 $string['washelpful'] = 'Was this helpful?';
+
+// Deprecated since Moodle 3.10.
+$string['modeloutputdirinfo'] = 'Directory where prediction processors store all evaluation info. Useful for debugging and research.';

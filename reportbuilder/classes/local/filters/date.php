@@ -64,9 +64,6 @@ class date extends base {
     /** @var int Date in the future */
     public const DATE_FUTURE = 8;
 
-    /** @var int Relative date unit for an hour */
-    public const DATE_UNIT_HOUR = 0;
-
     /** @var int Relative date unit for a day */
     public const DATE_UNIT_DAY = 1;
 
@@ -126,7 +123,6 @@ class date extends base {
         // Unit selector for last and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
         $units = [
-            self::DATE_UNIT_HOUR => get_string('filterdatehours', 'core_reportbuilder'),
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),
             self::DATE_UNIT_WEEK => get_string('filterdateweeks', 'core_reportbuilder'),
             self::DATE_UNIT_MONTH => get_string('filterdatemonths', 'core_reportbuilder'),
@@ -171,29 +167,30 @@ class date extends base {
 
         switch ($operator) {
             case self::DATE_NOT_EMPTY:
-                $sql = "{$fieldsql} IS NOT NULL AND {$fieldsql} <> 0";
+                $sql = "COALESCE({$fieldsql}, 0) <> 0";
                 break;
             case self::DATE_EMPTY:
-                $sql = "{$fieldsql} IS NULL OR {$fieldsql} = 0";
+                $sql = "COALESCE({$fieldsql}, 0) = 0";
                 break;
             case self::DATE_RANGE:
-                $clauses = [];
+                $sql = '';
 
                 $datefrom = (int)($values["{$this->name}_from"] ?? 0);
-                if ($datefrom > 0) {
-                    $paramdatefrom = database::generate_param_name();
-                    $clauses[] = "{$fieldsql} >= :{$paramdatefrom}";
-                    $params[$paramdatefrom] = $datefrom;
-                }
-
                 $dateto = (int)($values["{$this->name}_to"] ?? 0);
-                if ($dateto > 0) {
-                    $paramdateto = database::generate_param_name();
-                    $clauses[] = "{$fieldsql} < :{$paramdateto}";
+
+                [$paramdatefrom, $paramdateto] = database::generate_param_names(2);
+
+                if ($datefrom > 0 && $dateto > 0) {
+                    $sql = "{$fieldsql} BETWEEN :{$paramdatefrom} AND :{$paramdateto}";
+                    $params[$paramdatefrom] = $datefrom;
+                    $params[$paramdateto] = $dateto;
+                } else if ($datefrom > 0) {
+                    $sql = "{$fieldsql} >= :{$paramdatefrom}";
+                    $params[$paramdatefrom] = $datefrom;
+                } else if ($dateto > 0) {
+                    $sql = "{$fieldsql} < :{$paramdateto}";
                     $params[$paramdateto] = $dateto;
                 }
-
-                $sql = implode(' AND ', $clauses);
 
                 break;
             // Relative helper method can handle these three cases.
@@ -208,7 +205,7 @@ class date extends base {
 
                 // Generate parameters and SQL clause for the relative date comparison.
                 [$paramdatefrom, $paramdateto] = database::generate_param_names(2);
-                $sql = "{$fieldsql} >= :{$paramdatefrom} AND {$fieldsql} <= :{$paramdateto}";
+                $sql = "{$fieldsql} BETWEEN :{$paramdatefrom} AND :{$paramdateto}";
 
                 [
                     $params[$paramdatefrom],
@@ -239,7 +236,7 @@ class date extends base {
      *
      * @param int $operator One of the ::DATE_LAST/CURRENT/NEXT constants
      * @param int $dateunitvalue Unit multiplier of the date unit
-     * @param int $dateunit One of the ::DATE_UNIT_* constants
+     * @param int $dateunit One of the ::DATE_UNIT_DAY/WEEK/MONTH/YEAR constants
      * @return int[] Timestamps representing the start/end of timeframe
      */
     private static function get_relative_timeframe(int $operator, int $dateunitvalue, int $dateunit): array {
@@ -247,17 +244,6 @@ class date extends base {
         $datestart = $dateend = new DateTimeImmutable();
 
         switch ($dateunit) {
-            case self::DATE_UNIT_HOUR:
-                if ($operator === self::DATE_CURRENT) {
-                    $hour = (int) $datestart->format('G');
-                    $datestart = $datestart->setTime($hour, 0);
-                    $dateend = $dateend->setTime($hour, 59, 59);
-                } else if ($operator === self::DATE_LAST) {
-                    $datestart = $datestart->modify("-{$dateunitvalue} hour");
-                } else if ($operator === self::DATE_NEXT) {
-                    $dateend = $dateend->modify("+{$dateunitvalue} hour");
-                }
-                break;
             case self::DATE_UNIT_DAY:
                 if ($operator === self::DATE_CURRENT) {
                     $datestart = $datestart->setTime(0, 0);

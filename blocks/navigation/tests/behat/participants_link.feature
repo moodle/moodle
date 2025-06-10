@@ -39,29 +39,23 @@ Feature: Displaying the link to the Participants page
 
   @javascript
   Scenario: Course participants link is displayed to users depending on role permissions settings
-    And I log in as "admin"
-    And I am on "Course1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-    And I am on the "Course1" "enrolment methods" page
+    Given the following "activities" exist:
+      | activity | course | name            |
+      | forum    | C1     | Test forum name |
+    And I am on the "Course1" "enrolment methods" page logged in as admin
     And I click on "Edit" "link" in the "Guest access" "table_row"
     And I set the following fields to these values:
       | Allow guest access | Yes |
     And I press "Save changes"
-    And I log out
-    When I log in as "guest"
-    And I am on "Course1" course homepage
+    When I am on the "Course1" course page logged in as guest
     Then I should not see "Participants" in the "Navigation" "block"
     And I am on the "Test forum name" "forum activity" page
     And I should not see "Participants" in the "Navigation" "block"
     And I log out
-    And I log in as "admin"
-    And I set the following system permissions of "Guest" role:
-      | capability                     | permission |
-      | moodle/course:viewparticipants | Allow      |
-    And I log in as "guest"
-    And I am on "Course1" course homepage
+    And the following "role capability" exists:
+      | role                           | guest |
+      | moodle/course:viewparticipants | allow |
+    And I am on the "Course1" course page logged in as guest
     And I should see "Participants" in the "Navigation" "block"
     And I am on the "Test forum name" "forum activity" page
     And I should see "Participants" in the "Navigation" "block"

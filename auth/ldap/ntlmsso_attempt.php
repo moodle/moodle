@@ -26,7 +26,7 @@ $sesskey = sesskey();
 // when we've already left the page that set the timer.
 $loginsite = get_string("loginsite");
 $PAGE->navbar->add($loginsite);
-$PAGE->set_title("$site->fullname: $loginsite");
+$PAGE->set_title($loginsite);
 $PAGE->set_heading($site->fullname);
 echo $OUTPUT->header();
 

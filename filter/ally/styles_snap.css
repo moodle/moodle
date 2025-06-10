@@ -1,0 +1,43 @@
+/*
+* Ally styles for Snap theme.
+*/
+
+/* Hide Ally when moving things in Snap. */
+.snap-move-inprogress .ally-actions{
+    display: none !important;
+}
+
+/* Increase the size of download icon on resource cards. */
+.snap-resource-card .snap-resource .snap-asset-link .ally-download img {
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+/* Snap resources when displayed as cards on large screen devices. */
+@media screen and (min-width: 767px) {
+    .snap-resource-card .snap-resource .snap-asset-link .filter-ally-wrapper > a {
+        display: block;
+        float: left;
+        width: 85%;
+    }
+
+    .snap-resource-card .snap-resource .snap-asset-link .filter-ally-wrapper .ally-actions {
+        display: block;
+        float: right;
+        text-align: right;
+        width: 15%;
+    }
+
+    .snap-resource-card .snap-resource .snap-asset-link a[data-ally-file-id] {
+        display: block;
+        text-align: center;
+        margin: 0.3em 0;
+    }
+}
+
+.filter-ally-wrapper .ally-actions.ally-actions-tile .ally-feedback {
+    margin-bottom: 0!important;
+}

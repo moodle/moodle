@@ -1,0 +1,55 @@
+notifications:
+  email: false
+
+language: php
+
+os: linux
+
+dist: xenial
+
+sudo: false
+
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.6"
+
+services:
+  - mysql
+  - redis-server
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+php:
+ - 7.2
+
+env:
+ global:
+  - MOODLE_BRANCH=MOODLE_38_STABLE
+ matrix:
+  - DB=pgsql
+  - DB=mysqli
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 8.9
+  - nvm use 8.9
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+  - moodle-plugin-ci add-config '$CFG->local_redislock_redis_server = "127.0.0.1";'
+  - moodle-plugin-ci add-config 'define("LOCAL_REDISLOCK_REDIS_LOCK_TEST", "true");'
+  - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci phpunit

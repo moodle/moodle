@@ -208,7 +208,7 @@ Feature: Assign user override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Availability" to "Hide from students"
+    And I set the field "Availability" to "Hide on course page"
     And I click on "Save and display" "button"
     When I navigate to "Overrides" in current page administration
     And I press "Add user override"

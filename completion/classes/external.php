@@ -24,15 +24,9 @@
  * @since      Moodle 2.9
  */
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-
 defined('MOODLE_INTERNAL') || die;
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/completionlib.php");
 
 /**
@@ -289,7 +283,7 @@ class core_completion_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.9
      */
     public static function get_activities_completion_status_returns() {
@@ -467,7 +461,7 @@ class core_completion_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 2.9
      */
     public static function get_course_completion_status_returns() {

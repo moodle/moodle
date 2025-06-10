@@ -32,8 +32,9 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
+use stdClass;
 use context_module;
 
 /**
@@ -71,12 +72,12 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
 
         $params = [
             'course' => $course1->id,
-            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card-887.h5p',
+            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card.h5p',
             'introformat' => 1
         ];
         $activities[] = $this->getDataGenerator()->create_module('h5pactivity', $params);
         // Add filename and contextid to make easier the asserts.
-        $activities[1]->filename = 'greeting-card-887.h5p';
+        $activities[1]->filename = 'greeting-card.h5p';
         $context = context_module::instance($activities[1]->cmid);
         $activities[1]->contextid = $context->id;
 

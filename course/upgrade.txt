@@ -1,12 +1,10 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-* course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
-  of an existing course module. The new module is inserted before this module.
-* The function duplicate_module() now has two new optional parameters:
-  - $sectionid to specify section the duplicated course module is placed in
-  - $changename to disable changing the name of the course module using the 'duplicatedmodule' lang string
+=== 4.1.7 ===
+* set_coursemodule_visible() has a new $rebuildcache parameter. If this is being called multiple times in the same request,
+  consider passing `false` for this parameter and rebuilding the cache once after all the course modules have been updated.
+  See course_update_section() for an example.
 
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use

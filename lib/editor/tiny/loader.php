@@ -49,6 +49,12 @@ class loader {
     /** @var string The mimetype to send */
     protected $mimetype = null;
 
+    /** @var string The component to use */
+    protected $component;
+
+    /** @var string The complete path to the candidate file */
+    protected $candidatefile;
+
     /**
      * Initialise the class, parse the request and serve the content.
      */
@@ -74,10 +80,10 @@ class loader {
             }
 
             [$rev, $filepath] = explode('/', $slashargument, 2);
-            $this->rev  = min_clean_param($rev, 'RAW');
+            $this->rev  = min_clean_param($rev, 'INT');
             $this->filepath = min_clean_param($filepath, 'SAFEPATH');
         } else {
-            $this->rev  = min_optional_param('rev', 0, 'RAW');
+            $this->rev  = min_optional_param('rev', 0, 'INT');
             $this->filepath = min_optional_param('filepath', 'standard', 'SAFEPATH');
         }
 

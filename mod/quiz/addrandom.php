@@ -26,10 +26,9 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-use mod_quiz\form\add_random_form;
-use mod_quiz\quiz_settings;
 use qbank_managecategories\question_category_object;
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
@@ -40,11 +39,12 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
-$mdlscrollto = optional_param('mdlscrollto', 0, PARAM_INT);
+$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
-$quizobj = quiz_settings::create($quiz->id);
-$course = $quizobj->get_course();
-
+// Get the course object and related bits.
+if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
+    throw new \moodle_exception('invalidcourseid');
+}
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/quiz:manage', $contexts->lowest());
@@ -57,10 +57,10 @@ $PAGE->set_url($thispageurl);
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
-    $returnurl = new moodle_url('/mod/quiz/edit.php', ['cmid' => $cmid]);
+    $returnurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
 }
-if ($mdlscrollto) {
-    $returnurl->param('mdlscrollto', $mdlscrollto);
+if ($scrollpos) {
+    $returnurl->param('scrollpos', $scrollpos);
 }
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
@@ -75,8 +75,8 @@ $qcobject = new question_category_object(
     null,
     $contexts->having_cap('moodle/question:add'));
 
-$mform = new add_random_form(new moodle_url('/mod/quiz/addrandom.php'),
-                ['contexts' => $contexts, 'cat' => $pagevars['cat']]);
+$mform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'),
+                array('contexts' => $contexts, 'cat' => $pagevars['cat']));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
@@ -113,16 +113,16 @@ if ($data = $mform->get_data()) {
 
     quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories, $tagids);
     quiz_delete_previews($quiz);
-    $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
+    quiz_update_sumgrades($quiz);
     redirect($returnurl);
 }
 
-$mform->set_data([
+$mform->set_data(array(
     'addonpage' => $addonpage,
     'returnurl' => $returnurl,
     'cmid' => $cm->id,
     'category' => $category,
-]);
+));
 
 // Setup $PAGE.
 $streditingquiz = get_string('editinga', 'moodle', get_string('modulename', 'quiz'));
@@ -131,7 +131,7 @@ $PAGE->set_title($streditingquiz);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-if (!$quizname = $DB->get_field($cm->modname, 'name', ['id' => $cm->instance])) {
+if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {
             throw new \moodle_exception('invalidcoursemodule');
 }
 

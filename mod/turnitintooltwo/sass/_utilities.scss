@@ -1,0 +1,64 @@
+/*
+ * Helpers and general styles
+ */
+
+/*
+ * Lets us clear floats for older moodles
+ */
+.clearfix:after {
+   content: ".";
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+h3.main {
+    line-height: 40px;
+}
+
+.mod_turnitintooltwo {
+    .fitem_fbutton {
+        padding-top:12px;
+    }
+
+    span.dimmed {
+        color:#999999;
+    }
+
+    #assignmentBrowserTable_wrapper {
+        padding: 10px;
+    }
+
+    .nowrap {
+        white-space:nowrap;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+
+    .underline {
+        text-decoration: underline;
+    }
+
+    .bold,
+    #or_container {
+        font-weight:bold;
+    }
+
+    span.link {
+        color: #0000FF;
+    }
+}

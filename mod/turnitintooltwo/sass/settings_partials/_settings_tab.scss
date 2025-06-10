@@ -1,0 +1,61 @@
+#page-admin-setting-modsettingturnitintooltwo {
+
+    #test_link,
+    #testing_container {
+        margin-bottom:8px;
+    }
+
+    #test_link img {
+        position: relative;
+        top:4px;
+    }
+
+    #test_result {
+        margin: 4px 0 0;
+        padding: 5px 10px;
+        width: 500px;
+        text-align: center;
+    }
+
+    .test_link_success {
+        border: 1px solid #00CC00;
+        background: #C3FDB8;
+    }
+
+    .test_link_fail {
+        border:1px solid #CC0000;
+        background: #E77471;
+    }
+
+    .smallicon {
+        vertical-align: middle;
+    }
+
+    // Upgrade
+    .tii_upgrade_check,
+    .tii_upgrading_check {
+        font-size: 12px;
+    }
+
+    .tii_upgrade_check {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .tii_upgrade_check,
+    .tii_upgrading_check {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+    }
+    .tii_upgrade_check img,
+    .tii_upgrading_check img {
+        padding: 0 0 5px 5px;
+        vertical-align: middle;
+    }
+
+    .tii_upgrading_check img {
+        position: relative;
+        top: 3px;
+    }
+}

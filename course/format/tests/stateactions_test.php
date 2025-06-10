@@ -16,7 +16,6 @@
 
 namespace core_courseformat;
 
-use course_modinfo;
 use moodle_exception;
 use stdClass;
 
@@ -30,6 +29,15 @@ use stdClass;
  * @coversDefaultClass \core_courseformat\stateactions
  */
 class stateactions_test extends \advanced_testcase {
+
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/externallib.php');
+    }
+
     /**
      * Helper method to create an activity into a section and add it to the $sections and $activities arrays.
      *
@@ -167,24 +175,6 @@ class stateactions_test extends \advanced_testcase {
     }
 
     /**
-     * Enrol, set and create the test user depending on the role name.
-     *
-     * @param stdClass $course the course data
-     * @param string $rolename the testing role name
-     */
-    private function set_test_user_by_role(stdClass $course, string $rolename) {
-        if ($rolename == 'admin') {
-            $this->setAdminUser();
-        } else {
-            $user = $this->getDataGenerator()->create_user();
-            if ($rolename != 'unenroled') {
-                $this->getDataGenerator()->enrol_user($user->id, $course->id, $rolename);
-            }
-            $this->setUser($user);
-        }
-    }
-
-    /**
      * Test the behaviour course_state.
      *
      * @dataProvider get_state_provider
@@ -217,7 +207,15 @@ class stateactions_test extends \advanced_testcase {
         $references = $this->course_references($course);
 
         // Create and enrol user using given role.
-        $this->set_test_user_by_role($course, $role);
+        if ($role == 'admin') {
+            $this->setAdminUser();
+        } else {
+            $user = $this->getDataGenerator()->create_user();
+            if ($role != 'unenroled') {
+                $this->getDataGenerator()->enrol_user($user->id, $course->id, $role);
+            }
+            $this->setUser($user);
+        }
 
         // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
         $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
@@ -596,21 +594,21 @@ class stateactions_test extends \advanced_testcase {
      * @param string $role the user role
      * @param string[] $idrefs the sections or cms id references to be used as method params
      * @param bool $expectedexception whether the call should throw an exception
-     * @param int[] $expectedtotal the expected total number of state indexed by put, remove and create
+     * @param int $expectedtotal the expected total number of state puts
      * @param string|null $coursefield the course field to check
      * @param int|string|null $coursevalue the section field value
      * @param string|null $sectionfield the section field to check
      * @param int|string|null $sectionvalue the section field value
      * @param string|null $cmfield the cm field to check
      * @param int|string|null $cmvalue the cm field value
-     * @return array an array of elements to do extra validations (course, references, results)
+     * @return array the state update summary
      */
     protected function basic_state_text(
         string $method = 'section_hide',
         string $role = 'editingteacher',
         array $idrefs = [],
         bool $expectedexception = false,
-        array $expectedtotals = [],
+        int $expectedtotal = 0,
         ?string $coursefield = null,
         $coursevalue = 0,
         ?string $sectionfield = null,
@@ -634,8 +632,6 @@ class stateactions_test extends \advanced_testcase {
         $references["cm1"] = $this->create_activity($course->id, 'book', 1, false);
         $references["cm2"] = $this->create_activity($course->id, 'glossary', 2, true);
         $references["cm3"] = $this->create_activity($course->id, 'page', 2, false);
-        $references["cm4"] = $this->create_activity($course->id, 'forum', 2, false);
-        $references["cm5"] = $this->create_activity($course->id, 'wiki', 2, false);
 
         if ($expectedexception) {
             $this->expectException(moodle_exception::class);
@@ -656,10 +652,13 @@ class stateactions_test extends \advanced_testcase {
         // Format results in a way we can compare easily.
         $results = $this->summarize_updates($updates);
 
+        // Most state actions does not use create or remove actions because they are designed
+        // to refresh parts of the state.
+        $this->assertEquals(0, $results['create']['count']);
+        $this->assertEquals(0, $results['remove']['count']);
+
         // Validate we have all the expected entries.
-        $this->assertEquals($expectedtotals['create'] ?? 0, $results['create']['count']);
-        $this->assertEquals($expectedtotals['remove'] ?? 0, $results['remove']['count']);
-        $this->assertEquals($expectedtotals['put'] ?? 0, $results['put']['count']);
+        $this->assertEquals($expectedtotal, $results['put']['count']);
 
         // Validate course, section and cm.
         if (!empty($coursefield)) {
@@ -677,11 +676,7 @@ class stateactions_test extends \advanced_testcase {
                 $this->assertEquals($cmvalue, $cm->$cmfield);
             }
         }
-        return [
-            'course' => $course,
-            'references' => $references,
-            'results' => $results,
-        ];
+        return $results;
     }
 
     /**
@@ -701,7 +696,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['section1', 'section2', 'section3'],
             $expectedexception,
-            ['put' => 9],
+            7,
             null,
             null,
             'visible',
@@ -728,7 +723,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['section1', 'section2', 'section3'],
             $expectedexception,
-            ['put' => 9],
+            7,
             null,
             null,
             'visible',
@@ -755,7 +750,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1', 'cm2', 'cm3'],
             $expectedexception,
-            ['put' => 4],
+            4,
             null,
             null,
             null,
@@ -782,7 +777,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1', 'cm2', 'cm3'],
             $expectedexception,
-            ['put' => 4],
+            4,
             null,
             null,
             null,
@@ -810,7 +805,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1', 'cm2', 'cm3'],
             $expectedexception,
-            ['put' => 4],
+            4,
             null,
             null,
             null,
@@ -827,7 +822,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1'],
             $expectedexception,
-            ['put' => 2],
+            2,
             null,
             null,
             null,
@@ -840,7 +835,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm2', 'cm3'],
             $expectedexception,
-            ['put' => 2],
+            2,
             null,
             null,
             null,
@@ -877,207 +872,6 @@ class stateactions_test extends \advanced_testcase {
     }
 
     /**
-     * Duplicate course module method.
-     *
-     * @covers ::cm_duplicate
-     * @dataProvider cm_duplicate_provider
-     * @param string $targetsection the target section (empty for none)
-     * @param bool $validcms if uses valid cms
-     * @param string $role the current user role name
-     * @param bool $expectedexception if the test will raise an exception
-     */
-    public function test_cm_duplicate(
-        string $targetsection = '',
-        bool $validcms = true,
-        string $role = 'admin',
-        bool $expectedexception = false
-    ) {
-        $this->resetAfterTest();
-
-        // Create a course with 3 sections.
-        $course = $this->create_course('topics', 3, []);
-
-        $references = $this->course_references($course);
-
-        // Create and enrol user using given role.
-        $this->set_test_user_by_role($course, $role);
-
-        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
-        $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
-        $references["cm1"] = $this->create_activity($course->id, 'page', 2, false);
-
-        if ($expectedexception) {
-            $this->expectException(moodle_exception::class);
-        }
-
-        // Initialise stateupdates.
-        $courseformat = course_get_format($course->id);
-        $updates = new stateupdates($courseformat);
-
-        // Execute method.
-        $targetsectionid = (!empty($targetsection)) ? $references[$targetsection] : null;
-        $cmrefs = ($validcms) ? ['cm0', 'cm1'] : ['invalidcm'];
-        $actions = new stateactions();
-        $actions->cm_duplicate(
-            $updates,
-            $course,
-            $this->translate_references($references, $cmrefs),
-            $targetsectionid,
-        );
-
-        // Check the new elements in the course structure.
-        $originalsections = [
-            'assign' => $references['section1'],
-            'page' => $references['section2'],
-        ];
-        $modinfo = course_modinfo::instance($course);
-        $cms = $modinfo->get_cms();
-        $i = 0;
-        foreach ($cms as $cmid => $cminfo) {
-            if ($cmid == $references['cm0'] || $cmid == $references['cm1']) {
-                continue;
-            }
-            $references["newcm$i"] = $cmid;
-            if ($targetsectionid) {
-                $this->assertEquals($targetsectionid, $cminfo->section);
-            } else {
-                $this->assertEquals($originalsections[$cminfo->modname], $cminfo->section);
-            }
-            $i++;
-        }
-
-        // Check the resulting updates.
-        $results = $this->summarize_updates($updates);
-
-        if ($targetsectionid) {
-            $this->assertArrayHasKey($references[$targetsection], $results['put']['section']);
-        } else {
-            $this->assertArrayHasKey($references['section1'], $results['put']['section']);
-            $this->assertArrayHasKey($references['section2'], $results['put']['section']);
-        }
-        $countcms = ($targetsection == 'section3' || $targetsection === '') ? 2 : 3;
-        $this->assertCount($countcms, $results['put']['cm']);
-        $this->assertArrayHasKey($references['newcm0'], $results['put']['cm']);
-        $this->assertArrayHasKey($references['newcm1'], $results['put']['cm']);
-    }
-
-    /**
-     * Duplicate course module data provider.
-     *
-     * @return array the testing scenarios
-     */
-    public function cm_duplicate_provider(): array {
-        return [
-            'valid cms without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'valid cms targeting an empty section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'valid cms targeting a section with activities' => [
-                'targetsection' => 'section2',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'invalid cms without target section' => [
-                'targetsection' => '',
-                'validcms' => false,
-                'role' => 'admin',
-                'expectedexception' => true,
-            ],
-            'invalid cms with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => false,
-                'role' => 'admin',
-                'expectedexception' => true,
-            ],
-            'student role with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'student',
-                'expectedexception' => true,
-            ],
-            'student role without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'student',
-                'expectedexception' => true,
-            ],
-            'unrenolled user with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'unenroled',
-                'expectedexception' => true,
-            ],
-            'unrenolled user without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'unenroled',
-                'expectedexception' => true,
-            ],
-        ];
-    }
-
-    /**
-     * Test for cm_delete
-     *
-     * @covers ::cm_delete
-     * @dataProvider basic_role_provider
-     * @param string $role the user role
-     * @param bool $expectedexception if it will expect an exception.
-     */
-    public function test_cm_delete(
-        string $role = 'editingteacher',
-        bool $expectedexception = false
-    ): void {
-        $this->resetAfterTest();
-        // We want modules to be deleted for good.
-        set_config('coursebinenable', 0, 'tool_recyclebin');
-
-        $info = $this->basic_state_text(
-            'cm_delete',
-            $role,
-            ['cm2', 'cm3'],
-            $expectedexception,
-            ['remove' => 2, 'put' => 1],
-        );
-
-        $course = $info['course'];
-        $references = $info['references'];
-        $results = $info['results'];
-        $courseformat = course_get_format($course->id);
-
-        $this->assertArrayNotHasKey($references['cm0'], $results['remove']['cm']);
-        $this->assertArrayNotHasKey($references['cm1'], $results['remove']['cm']);
-        $this->assertArrayHasKey($references['cm2'], $results['remove']['cm']);
-        $this->assertArrayHasKey($references['cm3'], $results['remove']['cm']);
-        $this->assertArrayNotHasKey($references['cm4'], $results['remove']['cm']);
-        $this->assertArrayNotHasKey($references['cm5'], $results['remove']['cm']);
-
-        // Check the new section cm list.
-        $newcmlist = $this->translate_references($references, ['cm4', 'cm5']);
-        $section = $results['put']['section'][$references['section2']];
-        $this->assertEquals($newcmlist, $section->cmlist);
-
-        // Check activities are deleted.
-        $modinfo = $courseformat->get_modinfo();
-        $cms = $modinfo->get_cms();
-        $this->assertArrayHasKey($references['cm0'], $cms);
-        $this->assertArrayHasKey($references['cm1'], $cms);
-        $this->assertArrayNotHasKey($references['cm2'], $cms);
-        $this->assertArrayNotHasKey($references['cm3'], $cms);
-        $this->assertArrayHasKey($references['cm4'], $cms);
-        $this->assertArrayHasKey($references['cm5'], $cms);
-    }
-
-    /**
      * Test for cm_moveright
      *
      * @covers ::cm_moveright
@@ -1094,7 +888,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1', 'cm2', 'cm3'],
             $expectedexception,
-            ['put' => 4],
+            4,
             null,
             null,
             null,
@@ -1121,7 +915,7 @@ class stateactions_test extends \advanced_testcase {
             $role,
             ['cm0', 'cm1', 'cm2', 'cm3'],
             $expectedexception,
-            ['put' => 4],
+            4,
             null,
             null,
             null,

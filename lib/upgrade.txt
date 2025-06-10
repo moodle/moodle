@@ -1,85 +1,66 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
+=== 4.1.7 ===
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
 
+=== 4.1.6 ===
+* \moodle_page::set_title() has been updated to append the site name depending on the value of $CFG->sitenameintitle and whether
+  the site's fullname/shortname has been set. So there's no need to manually add the site name whenever calling $PAGE->set_title().
+  If it's necessary to override this, pass `false` to its new optional parameter `$appendsitename`.
+* New page title separator constant `moodle_page:TITLE_SEPARATOR` has been created to help standardise the separators used in page
+  titles.
+* New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
+  when writing feature files to check that the page title contains the expected string.
+  e.g. `And the page title should contain "Some title"`
+
+=== 4.1.5 ===
+* Added a new render of caption for the table in render_caption. It can be used by
+  set_caption($caption, $captionattributes).
+    e.g. $caption = 'Caption for table'
+    e.g. $captionattributes = ['class' => 'inline'];
+* Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
+  whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
+  even if we define the settings in config.php.
+* New \core\output\activity_header::get_heading_level() method to get the heading level for a given heading level depending whether
+  the page displays a heading for the activity (usually a h2 heading containing the activity name).
+* count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
+
+=== 4.1.4 ===
+* Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
+
+=== 4.1.3 ===
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
+  has additional configuration according to its environment, which the administrator can specify to alter and
+  override any connection options.
+* New \core_component::has_monologo_icon() that determines whether a plugin has monologo icons. This can be used to
+  determine whether to apply CSS filtering to the plugin's icon when rendering it.
+* \cm_info::get_icon_url() resolves the icon's file type and adds a `filtericon` parameter in the URL when rendering the monologo
+  version of the course module icon or when the plugin declares, via its `filtericon` custom data, that the icon needs to be
+  filtered. This additional information can be used by plugins when rendering the module icon to determine whether to apply
+  CSS filtering to the icon.
+* Activity plugins displaying activity module icons using \cm_info::get_icon_url() can declare the `filtericon` custom data in their
+  `get_coursemodule_info()` callback. If set, this will be used by \cm_info::get_icon_url() to set the icon URL's `filtericon`
+  parameter. This information can be used by the plugins when enclosing the icons in `.activityiconcontainer .icon` or
+  `.activityiconcontainer .activityicon` containers to determine whether CSS filtering should be applied to the icon. If the icon
+  needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
+* New moodle_url::export_params_for_template() returns the params as an array of key => value pairs. You should use this when
+  you want to pass URL params to a template. An example can be found in single button.
+* Course module indentation has been recovered for course format using components via Move right/left feature.
+  Course formats using components will be allowed to use one level indentation only.
+
+=== 4.1.2 ===
+
+* The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
 * A new constant COMPLETION_COMPLETE_FAIL_HIDDEN is introduced to mark that user has received a failing grade
   for a hidden grade item. This state returned by internal_get_grade_state() and is only used by get_core_completion_state()
   for processing the passgrade completion data.
-* \single_button constructor signature has been changed to manage more types than just primary buttons.
-  The boolean "primary" parameter has been deprecated and replaced by a more generic type allowing to use
-  Bootstrap styles of buttons (danger, warning...). The constructor will still manage the boolean primary
-  parameter but will display a debugging message.
-* In enrollib.php, the methods get_enrolled_with_capabilities_join, get_enrolled_sql, get_enrolled_users and
-  count_enrolled_users used to only be able to accept a single group id, even though internally, they used
-  groups_get_members_join which could also accept an array of groups, or the constant USERSWITHOUTGROUP.
-  This has now been made consistent. These enrol methods now accept all the group-related options that
-  groups_get_members_join can handle.
-* assign_capability() now has an optional $performancehints parameter which can be used in
-  situations where it is being called in a loop in response to a database query, to reduce the
-  amount of checks it has to do.
-* New DB parameter 'versionfromdb', only available for MySQL and MariaDB drivers. It allows to force the DB version to be
-  evaluated through an explicit call to VERSION() to skip the PHP client version which appears to be sometimes fooled by the
-  underlying infrastructure, e.g. PaaS on Azure.
-* The actionmenu component has now a set_kebab_trigger that will setup the action menu for use in kebab menus.
-* The useexternalyui configuration setting has been removed as a part of the migration away from YUI.
-  It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
-  to remove it.
-* New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
-* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server
-  has additional configuration according to its environment, which the administrator can specify to alter and
-  override any connection options.
-* In outputcomponents.php, initials_bar() can now be rendered in a smaller (mini) way. This provides purely the
-  initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
-  you'll need to implement your own form handling. Example usage can be found within the grader report.
-* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
-* Box/Spout has been archived and is no longer maintained, so it has now been removed and replaced by OpenSpout.
-* The following parts of the external API have been moved to the core_external subsystem:
-  Classes:
-    - external_api                      => core_external\external_api
-    - external_description              => core_external\external_description
-    - external_files                    => core_external\files
-    - external_format_value             => core_external\external_format_value
-    - external_function_parameters      => core_external\external_function_parameters
-    - external_multiple_structure       => core_external\external_multiple_structure
-    - external_settings                 => core_external\external_settings
-    - external_single_structure         => core_external\external_single_structure
-    - external_util                     => core_external\util
-    - external_value                    => core_external\external_value
-    - external_warnings                 => core_external\external_warnings
-    - restricted_context_exception      => core_external\restricted_context_exception
-  Functions:
-    - external_format_string()          => core_external\util::format_string()
-    - external_format_text()            => core_external\util::format_text()
-    - external_create_service_token()   => core_external\util::generate_token()
-    - external_generate_token()         => core_external\util::generate_token()
-    - external_generate_token_for_current_user()
-                                        => core_external\util::generate_token_for_current_user()
-    - external_log_token_request        => core_external\util::log_token_request()
 
-  The old class locations have been aliased for backwards compatibility and will emit a deprecation notice in a future
-  release.
-* The following methods, deprecated since 3.10, have been removed and can no longer be used:
-  - `\core\output\mustache_helper_collection::strip_blacklisted_helpers`
-  - `\core_form\filetypes_util::is_whitelisted`
-  - `\core_form\filetypes_util::get_not_whitelisted`
+=== 4.1.1 ===
+
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
 * Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
-* The $required parameter for \core_external\external_description is now being validated in order to prevent
-  unintentionally passing incorrect parameters to the external_description's (and its subclasses') constructors (e.g. the parameter
-  description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
-* The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
-* The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
-* A `\core\event\role_created` event is now triggered when roles are created via the `create_role` API.
-* Event \core\event\user_created is now triggered if the user is created during course restore. In this case
-  $event->other has properties 'restoreid' and 'courseid'.
-* The core/modal module and all their versions (SAVE_CANCEL, DELETE_CANCEL...) now has a setButtonDisable to disable or enable
-  specific modal action buttons. This function allows developers to have modals that could only be submited if the user do some
-  action in the modal body like ticking a checkbox or selecting an element.
-* Course module indentation has been recovered for course format using components via Move right/left feature.
-  Course formats using components will be allowed to use one level indentation only.
-* The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
-* Support for serving of AMD modules built in really old versions of Moodle (<= 3.8) has been removed.
-  Please ensure that your AMD modules have been rebuilt with a supported Moodle version.
 
 === 4.1 ===
 
@@ -144,9 +125,6 @@ information provided here is intended especially for developers.
   setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
 * New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
   for managing word boundary markers in a database driver supporting regex syntax when searching.
-* The plugin_functions cache in core has been made localisable by prefixing the
-  key it uses with the all versions hash, which only changes when there are code
-  changes.
 
 === 4.0 ===
 
@@ -681,7 +659,7 @@ defined or can't be applied.
 * Legacy cron has been deprecated and will be removed in Moodle 4.1. This includes the functions:
   - cron_execute_plugin_type()
   - cron_bc_hack_plugin_functions()
-  Please, use the Task API instead: https://docs.moodle.org/dev/Task_API
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
 * Introduce new hooks for plugin developers:
     - <component>_can_course_category_delete($category)
     - <component>_can_course_category_delete_move($category, $newcategory)
@@ -1002,7 +980,7 @@ the groupid field.
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
   compliant. Plugins use this API to report what information they store or process regarding users, and provide ability
-  to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to implement the
+  to export and delete personal data. See https://moodledev.io/docs/apis/subsystems/privacy for guidelines on how to implement the
   privacy API in your plugin.
 * The cron runner now sets up a fresh PAGE and OUTPUT between each task.
 * The core_renderer methods notify_problem(), notify_success(), notify_message() and notify_redirect() that were
@@ -1020,7 +998,7 @@ the groupid field.
 * Add recaptchalib_v2.php for support of reCAPTCHA v2.
 * Plugins can define class 'PLUGINNAME\privacy\local\sitepolicy\handler' if they implement an alternative mechanisms for
   site policies managements and agreements. Administrators can define which component is to be used for handling site
-  policies and agreements. See https://docs.moodle.org/dev/Site_policy_handler
+  policies and agreements.
 * Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
   will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
   act as a site policy handler.
@@ -1102,8 +1080,7 @@ the groupid field.
 
 === 3.3 ===
 
-* Behat compatibility changes are now being documented at
-  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+* Behat compatibility changes are now being documented at https://moodledev.io
 * PHPUnit's bootstrap has been changed to use HTTPS wwwroot (https://www.example.com/moodle) from previous HTTP version. Any
   existing test expecting the old HTTP URLs will need to be switched to the new HTTPS value (reference: MDL-54901).
 * The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
@@ -1331,7 +1308,7 @@ the groupid field.
   only to courses the user is enrolled in, and are visible to them.
 * External functions that are not calling external_api::validate_context are buggy and will now generate
   exceptions. Previously they were only generating warnings in the webserver error log.
-  See https://docs.moodle.org/dev/External_functions_API#Security
+  See https://moodledev.io/docs/apis/subsystems/external/security
 * The moodle/blog:associatecourse and moodle/blog:associatemodule capabilities has been removed.
 * The following functions has been finally deprecated and can not be used any more:
     - profile_display_badges()
@@ -1399,7 +1376,7 @@ the groupid field.
   is consistent with web services.
 * Several changes in Moodle core, standard plugins and third party libraries to
   ensure compatibility with PHP7. All plugins are recommended to perform testing
-  against PHP7 as well. Refer to https://docs.moodle.org/dev/Moodle_and_PHP7 for more
+  against PHP7 as well. Refer to https://moodledev.io/general/development/policies/php for more
   information. The following changes may affect you:
   * Class moodleform, moodleform_mod and some module classes have been changed to use
     __construct() for the constructor. Calling parent constructors by the class
@@ -1421,7 +1398,7 @@ the groupid field.
   respected. Users of this function should output their own feedback if required.
 * Number of changes to Tags API, see tag/upgrade.txt for more details
 * The previous events API handlers are being deprecated in favour of events 2 API, debugging messages are being displayed if
-  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers
+  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Events_API#Event_dispatching_and_observers
   Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
 * mforms validation functions are not available in the global JS namespace anymore, event listeners
   are assigned to fields and buttons through a self-contained JS function.
@@ -1468,7 +1445,7 @@ the groupid field.
 * External functions can be called without a session if they define 'loginrequired' => true in db/services.php.
 * All plugins are required to declare their frankenstyle component name via
   the $plugin->component property in their version.php file. See
-  https://docs.moodle.org/dev/version.php for details (MDL-48494).
+  https://moodledev.io/docs/apis/commonfiles/version.php for details (MDL-48494).
 * PHPUnit is upgraded to 4.7. Some tests using deprecated assertions etc may need changes to work correctly.
 * Users of the text editor API to manually create a text editor should call set_text before calling use_editor.
 * Javascript - SimpleYUI and the Y instance used for modules have been merged. Y is now always the same instance of Y.
@@ -2000,7 +1977,7 @@ YUI:
 Event triggering and event handlers:
     * All existing events and event handlers should be replaced by new
       event classes and matching new event observers.
-    * See http://docs.moodle.org/dev/Event_2 for more information.
+    * See https://docs.moodle.org/dev/Events_API for more information.
     * The following events will be entirely removed, though they can still
       be captured using handlers, but they should not be used any more.
       * groups_members_removed          -> \core\event\group_member_removed
@@ -2063,7 +2040,6 @@ Event triggering and event handlers:
   print_remote_host(), print_whole_category_list(), print_category_info(), get_course_category_tree(),
   print_courses(), print_course(), get_category_courses_array(), get_category_courses_array_recursively(),
   get_courses_wmanagers()
-  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 * Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
   functions to get information for only active (excluding suspended enrolments) users. Included two
@@ -2154,13 +2130,13 @@ API changes:
 === 2.0 ===
 
 API changes:
-* new DML API - http://docs.moodle.org/dev/DML_functions
-* new DDL API - http://docs.moodle.org/dev/DDL_functions
-* new file API - http://docs.moodle.org/dev/File_API
+* new DML API - https://moodledev.io/docs/apis/core/dml
+* new DDL API - https://moodledev.io/docs/apis/core/dml/ddl
+* new file API - https://moodledev.io/docs/apis/subsystems/files
 * new $PAGE and $OUTPUT API
 * new navigation API
-* new theme API - http://docs.moodle.org/dev/Theme_changes_in_2.0
-* new javascript API - http://docs.moodle.org/dev/JavaScript_usage_guide
+* new theme API
+* new javascript API - https://moodledev.io/docs/guides/javascript
 * new portfolio API
 * new local plugin type
 * new translation support - http://lang.moodle.org

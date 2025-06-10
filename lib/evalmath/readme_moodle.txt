@@ -29,7 +29,3 @@ Changes by Stefan Erlachner, Thomas Niedermaier (MDL-64414):
 e.g. if (or(condition_1, condition_2, ... condition_n))
 * add function and:
 e.g. if (and(condition_1, condition_2, ... condition_n))
-
-Changes by Raquel Ortega (MDL-76413)
-* Avoid PHP 8.2: Partially-supported callable deprecations
-* eg: call_user_func_array(array('self', 'sum'), $args to call_user_func_array(array(self::class, 'sum'), $args)

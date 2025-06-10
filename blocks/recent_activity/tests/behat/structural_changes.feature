@@ -47,38 +47,33 @@ Feature: View structural changes in recent activity block
 
   Scenario: Check that Added module information is displayed respecting view capability
     Given the following "activities" exist:
-      | activity | course | section | name                  | idnumber | description    | groupmode | grouping | visible |
-      | forum    | C1     | 1       | ForumVisibleGroups    | forum1   | No description | 2         |          | 1       |
-      | forum    | C1     | 1       | ForumSeparateGroups   | forum2   | No description | 1         |          | 1       |
-      | forum    | C1     | 1       | ForumHidden           | forum3   | No description | 1         |          | 0       |
-      | forum    | C1     | 1       | ForumNoGroups         | forum4   | No description | 0         |          | 1       |
-      | forum    | C1     | 2       | ForumVisibleGroupsG1  | forum5   | No description | 2         | GG1      | 1       |
-      | forum    | C1     | 2       | ForumSeparateGroupsG1 | forum6   | No description | 1         | GG1      | 1       |
-      | forum    | C1     | 3       | ForumVisibleGroupsG2  | forum7   | No description | 2         | GG2      | 1       |
-      | forum    | C1     | 3       | ForumSeparateGroupsG2 | forum8   | No description | 1         | GG2      | 1       |
-    And I log in as "teacher1"
+      | activity | course | name                  | idnumber | groupmode | grouping | visible |
+      | forum    | C1     | ForumVisibleGroups    | forum1   | 2         |          | 1       |
+      | forum    | C1     | ForumSeparateGroups   | forum2   | 1         |          | 1       |
+      | forum    | C1     | ForumHidden           | forum3   | 1         |          | 0       |
+      | forum    | C1     | ForumNoGroups         | forum4   | 0         |          | 1       |
+      | forum    | C1     | ForumVisibleGroupsG1  | forum5   | 2         | GG1      | 1       |
+      | forum    | C1     | ForumSeparateGroupsG1 | forum6   | 1         | GG1      | 1       |
+      | forum    | C1     | ForumVisibleGroupsG2  | forum7   | 2         | GG2      | 1       |
+      | forum    | C1     | ForumSeparateGroupsG2 | forum8   | 1         | GG2      | 1       |
 
-    And I am on "Course 1" course homepage
-    And I click on "ForumVisibleGroupsG1" "link"
-    And I click on "Settings" "link"
+    And I am on the "ForumVisibleGroupsG1" "forum activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 1 |
     And I press "Save and return to course"
 
-    And I click on "ForumSeparateGroupsG1" "link"
-    And I click on "Settings" "link"
+    And I am on the "ForumSeparateGroupsG1" "forum activity editing" page
     And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 1 |
     And I press "Save and return to course"
 
-    And I click on "ForumVisibleGroupsG2" "link"
-    And I click on "Settings" "link"
+    And I am on the "ForumVisibleGroupsG2" "forum activity editing" page
     And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 2 |
     And I press "Save and return to course"
 
-    And I click on "ForumSeparateGroupsG2" "link"
-    And I click on "Settings" "link"
+    And I am on the "ForumSeparateGroupsG2" "forum activity editing" page
+
     And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 2 |
     And I press "Save and return to course"
@@ -94,10 +89,8 @@ Feature: View structural changes in recent activity block
     And I should see "ForumSeparateGroupsG1" in the "Recent activity" "block"
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
-    And I log out
 
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
     And I should see "ForumSeparateGroups" in the "Recent activity" "block"
     And I should see "ForumNoGroups" in the "Recent activity" "block"
@@ -106,10 +99,8 @@ Feature: View structural changes in recent activity block
     And I should see "ForumSeparateGroupsG1" in the "Recent activity" "block"
     And I should not see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should not see "ForumSeparateGroupsG2" in the "Recent activity" "block"
-    And I log out
 
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student2
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
     And I should see "ForumSeparateGroups" in the "Recent activity" "block"
     And I should see "ForumNoGroups" in the "Recent activity" "block"
@@ -118,10 +109,8 @@ Feature: View structural changes in recent activity block
     And I should not see "ForumSeparateGroupsG1" in the "Recent activity" "block"
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
-    And I log out
 
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student3
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
     And I should see "ForumSeparateGroups" in the "Recent activity" "block"
     And I should see "ForumNoGroups" in the "Recent activity" "block"
@@ -130,17 +119,14 @@ Feature: View structural changes in recent activity block
     And I should see "ForumSeparateGroupsG1" in the "Recent activity" "block"
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
-    And I log out
 
     # Teachers have capability to see all groups and hidden activities
-    And I log in as "assistant1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as assistant1
     And I should see "ForumHidden" in the "Recent activity" "block"
     And I should see "ForumVisibleGroupsG1" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG1" in the "Recent activity" "block"
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
-    And I log out
 
   Scenario: Updates and deletes in recent activity block
     Given the following "activity" exists:
@@ -148,7 +134,6 @@ Feature: View structural changes in recent activity block
       | course      | C1             |
       | idnumber    | forum1         |
       | name        | ForumNew       |
-      | description | No description |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
@@ -158,8 +143,7 @@ Feature: View structural changes in recent activity block
 
     # Update forum as a teacher after a second to ensure we have a new timestamp for recent activity.
     And I wait "1" seconds
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "Added Forum" in the "Recent activity" "block"
     And I should see "ForumNew" in the "Recent activity" "block"
     And I log out
@@ -167,10 +151,7 @@ Feature: View structural changes in recent activity block
     And I wait "1" seconds
 
     # Update forum as a teacher
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "ForumNew"
-    And I navigate to "Settings" in current page administration
+    And I am on the "ForumNew" "forum activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | name | ForumUpdated |
     And I press "Save and return to course"
@@ -178,8 +159,7 @@ Feature: View structural changes in recent activity block
     And I wait "1" seconds
     # Student 1 already saw that forum was created, now he can see that forum was updated
 
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should not see "Added Forum" in the "Recent activity" "block"
     And I should not see "ForumNew" in the "Recent activity" "block"
     And I should see "Updated Forum" in the "Recent activity" "block"
@@ -188,8 +168,7 @@ Feature: View structural changes in recent activity block
     And I wait "1" seconds
     # Student 2 has bigger interval and he can see one entry that forum was created but with the new name
 
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student2
     And I should see "Added Forum" in the "Recent activity" "block"
     And I should not see "ForumNew" in the "Recent activity" "block"
     And I should not see "Updated Forum" in the "Recent activity" "block"
@@ -206,8 +185,7 @@ Feature: View structural changes in recent activity block
     And I wait "1" seconds
     # Students 1 and 2 see that forum was deleted
 
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should not see "Added Forum" in the "Recent activity" "block"
     And I should not see "ForumNew" in the "Recent activity" "block"
     And I should not see "Updated Forum" in the "Recent activity" "block"
@@ -217,8 +195,7 @@ Feature: View structural changes in recent activity block
     And I wait "1" seconds
     # Student 3 never knew that forum was created, so he does not see anything
 
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student3
     And I should not see "Added Forum" in the "Recent activity" "block"
     And I should not see "ForumNew" in the "Recent activity" "block"
     And I should not see "Updated Forum" in the "Recent activity" "block"

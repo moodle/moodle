@@ -402,6 +402,32 @@ class auth extends \auth_plugin_base {
         notice($message, "$CFG->wwwroot/index.php");
     }
 
+    // BEGIN LSU External Domains Fixes.
+    public function normalize_external_oauth_email(string $email, string $domain = 'lsu.edu'): string {
+        // If the email already ends with the specified domain, do nothing
+        if (str_ends_with($email, '@' . $domain)) {
+            return $email;
+        }
+
+        // Handle case-insensitive #EXT# using regex
+        $local = preg_replace('/#ext#/i', '', $email);
+
+        // Extract local part before the @
+        $local = explode('@', $local)[0];
+
+        // Find the last underscore (to separate username from domain)
+        $lastunderscore = strrpos($local, '_');
+        if ($lastunderscore !== false) {
+            $username = substr($local, 0, $lastunderscore);
+            $domainpart = substr($local, $lastunderscore + 1);
+            return $username . '@' . $domainpart;
+        }
+
+        // Otherwise return the original email unmodified
+        return $email;
+    }
+    // END LSU External Domains Fixes.
+
     /**
      * Complete the login process after oauth handshake is complete.
      * @param \core\oauth2\client $client
@@ -413,6 +439,83 @@ class auth extends \auth_plugin_base {
 
         $rawuserinfo = $client->get_raw_userinfo();
         $userinfo = $client->get_userinfo();
+
+        // BEGIN LSU External Domains fixes.
+        if (str_contains($CFG->allowedemaildomains, ',')) {
+
+            // It's a list of domains.
+            $alloweddomains = array_map('trim', explode(',', $CFG->allowedemaildomains));
+
+        // Make sure it's not empty.
+        } else if (trim($CFG->allowedemaildomains) != '') {
+
+            // It's a single domain.
+            $alloweddomains = [trim($CFG->allowedemaildomains)];
+
+        // It's empty.
+        } else {
+
+            // Get the domain from the noreply.
+            preg_match('/(?<=@)([a-zA-Z0-9.-]+)/', $CFG->noreplyaddress, $matches);
+
+            // We found a domain.
+            if (isset($matches[1])) {
+
+                // Set it.
+                $alloweddomains = [$matches[1]];
+
+            // There's no domain present.
+            } else {
+
+                // Final fallback is hardcoded.
+                $alloweddomains = ['lsu.edu'];
+            }
+        }
+
+        // We've built ourselves an array where the 1st element is the one we want. Get it.
+        $defaultdomain = reset($alloweddomains);
+
+        // Normalize usernames. All the defaultdomain stuff is probably never used.
+        $fixedusername = self::normalize_external_oauth_email($userinfo['username'], $defaultdomain);
+
+        // Set the userinfo username appropriately.
+        $userinfo['username'] = $fixedusername;
+        $rawuserinfo->userPrincipalName = $fixedusername;
+
+        // IDK if this is real phenomenon, but it happens to me.
+        if (is_null($rawuserinfo->givenName) ||
+            is_null($rawuserinfo->surname) ||
+            !isset($userinfo['firstname']) ||
+            !isset($userinfo['lastname'])
+        ) {
+            // If we have a displayName in the sso $rawuserinfo.
+            if (!empty($rawuserinfo->displayName)) {
+
+                // Split this into full words and make sure they're trimmed.
+                $parts = preg_split('/\s+/', trim($rawuserinfo->displayName));
+
+                // If we do not have a firstname in the userinfo array.
+                if (!isset($userinfo['firstname'])) {
+                    $userinfo['firstname'] = $parts[0] ?? null;
+                }
+
+                // If we do not have a lasttname in the userinfo array.
+                if (!isset($userinfo['lastname'])) {
+                    $userinfo['lastname'] = $parts[count($parts) - 1] ?? null;
+                }
+
+                // If the givenName is null.
+                if (is_null($rawuserinfo->givenName)) {
+                    $rawuserinfo->givenName = $parts[0] ?? null;
+                }
+
+                // If the surname is null.
+                if (is_null($rawuserinfo->surname)) {
+                    $rawuserinfo->surname = $parts[count($parts) - 1] ?? null;
+                }
+            }
+        }
+        // END LSU External Domains fixes.
 
         if (!$userinfo) {
             // Trigger login failed event.
@@ -426,6 +529,17 @@ class auth extends \auth_plugin_base {
             $client->log_out();
             redirect(new moodle_url('/login/index.php'));
         }
+
+        // BEGIN LSU userPrincipalName to email mapping.
+        if (empty($userinfo['username'])) {
+            $userinfo['username'] = $rawuserinfo->userPrincipalName;
+        }
+        if (empty($userinfo['email']) || $userinfo['email'] != $rawuserinfo->userPrincipalName) {
+            $rawuserinfo->mail = $rawuserinfo->userPrincipalName;
+            $userinfo['email'] = $rawuserinfo->userPrincipalName;
+        }
+        // END LSU userPrincipalName to email mapping.
+
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
             // Trigger login failed event.
             $failurereason = AUTH_LOGIN_NOUSER;
@@ -480,7 +594,9 @@ class auth extends \auth_plugin_base {
                 redirect(new moodle_url('/login/index.php'));
             } else if ($mappeduser && ($mappeduser->confirmed || !$issuer->get('requireconfirmation'))) {
                 // Update user fields.
-                $userinfo = $this->update_user($userinfo, $mappeduser);
+                // BEGIN LSU oauth Fixes.
+                $userinfo = self::update_userinfo($userinfo, $mappeduser);
+                // END LSU oauth Fixes.
                 $userwasmapped = true;
             } else {
                 // Trigger login failed event.
@@ -523,8 +639,13 @@ class auth extends \auth_plugin_base {
 
         if (!$userwasmapped) {
             // No defined mapping - we need to see if there is an existing account with the same email.
+            // BEGIN LSU oauth fixes.
+            $moodleuser = \core_user::get_user_by_username($userinfo['username']);
+            if (empty($moodleuser)) {
+                $moodleuser = \core_user::get_user_by_email($userinfo['email']);
+            }
+            // END LSU oauth fixes.
 
-            $moodleuser = \core_user::get_user_by_email($userinfo['email']);
             if (!empty($moodleuser)) {
                 if ($issuer->get('requireconfirmation')) {
                     $PAGE->set_url('/auth/oauth2/confirm-link-login.php');
@@ -541,7 +662,9 @@ class auth extends \auth_plugin_base {
                     // We dont have profile loaded on $moodleuser, so load it.
                     require_once($CFG->dirroot.'/user/profile/lib.php');
                     profile_load_custom_fields($moodleuser);
-                    $userinfo = $this->update_user($userinfo, $moodleuser);
+                    // BEGIN LSU oauth fixes.
+                    $userinfo = self::update_userinfo($userinfo, $moodleuser);
+                    // END LSU oauth fixes.
                     // No redirect, we will complete this login.
                 }
 
@@ -623,6 +746,38 @@ class auth extends \auth_plugin_base {
         $this->update_picture($user);
         redirect($redirecturl);
     }
+
+    // BEGIN LSU oauth fixes.
+    /**
+     * Update user data according to data sent by authorization server.
+     *
+     * @param array $userinfo data from authorization server
+     * @param stdClass $moodleuser Current data of the user to be updated
+     * @return stdClass The updated user record, or the existing one if there's nothing to be updated.
+     */
+    public static function update_userinfo($userinfo, $moodleuser) {
+        global $DB;
+        $table = 'user';
+        $userinfo["id"] = $moodleuser->id;
+        // Unset the user's first name to keep whatever first name they have in Moodle.
+        unset($userinfo['firstname']);
+
+        // Make sure username and email are lowercase.
+        if (isset($userinfo->username)) {
+            $userinfo->username = trim(core_text::strtolower($userinfo->username));
+        }
+        if (isset($userinfo->email)) {
+            $userinfo->email = trim(core_text::strtolower($userinfo->email));
+        }
+
+        // Update the record.
+        $update = $DB->update_record($table, $userinfo, $bulk=null);
+
+        // Get the complete record.
+        $user = $DB->get_record($table, array("id" => $moodleuser->id));
+        return $user;
+    }
+    // END LSU oauth fixes.
 
     /**
      * Returns information on how the specified user can change their password.

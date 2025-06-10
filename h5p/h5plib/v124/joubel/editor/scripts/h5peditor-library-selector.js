@@ -146,7 +146,7 @@ ns.LibrarySelector.prototype.appendTo = function ($element) {
     This line is commented out to prevent display of the hub selector in Moodle.
     For more information see MDL-67814.
   */
-  // this.$selector.appendTo($element);
+  //this.$selector.appendTo($element);
   /* End Moodle change */
   this.$tutorialUrl.appendTo($element);
   this.$exampleUrl.appendTo($element);

@@ -16,13 +16,6 @@
 
 namespace core_user\external;
 
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 /**
  * Provides the core_user_search_identity external function.
  *
@@ -31,16 +24,16 @@ use core_external\external_value;
  * @copyright   2021 David Mudrák <david@moodle.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_identity extends external_api {
+class search_identity extends \external_api {
 
     /**
      * Describes the external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([
-            'query' => new external_value(PARAM_RAW, 'The search query', VALUE_REQUIRED),
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters([
+            'query' => new \external_value(PARAM_RAW, 'The search query', VALUE_REQUIRED),
         ]);
     }
 
@@ -53,7 +46,7 @@ class search_identity extends external_api {
     public static function execute(string $query): array {
         global $DB, $CFG;
 
-        $params = external_api::validate_parameters(self::execute_parameters(), [
+        $params = \external_api::validate_parameters(self::execute_parameters(), [
             'query' => $query,
         ]);
         $query = clean_param($params['query'], PARAM_TEXT);
@@ -112,26 +105,26 @@ class search_identity extends external_api {
     /**
      * Describes the external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
-    public static function execute_returns(): external_description {
+    public static function execute_returns(): \external_description {
 
-        return new external_single_structure([
-            'list' => new external_multiple_structure(
-                new external_single_structure([
-                    'id' => new external_value(\core_user::get_property_type('id'), 'ID of the user'),
+        return new \external_single_structure([
+            'list' => new \external_multiple_structure(
+                new \external_single_structure([
+                    'id' => new \external_value(\core_user::get_property_type('id'), 'ID of the user'),
                     // The output of the {@see fullname()} can contain formatting HTML such as <ruby> tags.
                     // So we need PARAM_RAW here and the caller is supposed to render it appropriately.
-                    'fullname' => new external_value(PARAM_RAW, 'The fullname of the user'),
-                    'extrafields' => new external_multiple_structure(
-                        new external_single_structure([
-                            'name' => new external_value(PARAM_TEXT, 'Name of the extrafield.'),
-                            'value' => new external_value(PARAM_TEXT, 'Value of the extrafield.'),
+                    'fullname' => new \external_value(PARAM_RAW, 'The fullname of the user'),
+                    'extrafields' => new \external_multiple_structure(
+                        new \external_single_structure([
+                            'name' => new \external_value(PARAM_TEXT, 'Name of the extrafield.'),
+                            'value' => new \external_value(PARAM_TEXT, 'Value of the extrafield.'),
                         ]), 'List of extra fields', VALUE_OPTIONAL)
                 ])
             ),
-            'maxusersperpage' => new external_value(PARAM_INT, 'Configured maximum users per page.'),
-            'overflow' => new external_value(PARAM_BOOL, 'Were there more records than maxusersperpage found?'),
+            'maxusersperpage' => new \external_value(PARAM_INT, 'Configured maximum users per page.'),
+            'overflow' => new \external_value(PARAM_BOOL, 'Were there more records than maxusersperpage found?'),
         ]);
     }
 }

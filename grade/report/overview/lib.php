@@ -132,25 +132,6 @@ class grade_report_overview extends grade_report {
     }
 
     /**
-     * Regrades all courses if needed.
-     *
-     * If $frontend is true, this may show a progress bar and redirect back to the page (possibly
-     * several times if multiple courses need it). Otherwise, it will not return until all the
-     * courses have been updated.
-     *
-     * @param bool $frontend True if we are running front-end code and can safely redirect back
-     */
-    public function regrade_all_courses_if_needed(bool $frontend = false): void {
-        foreach ($this->courses as $course) {
-            if ($frontend) {
-                grade_regrade_final_grades_if_required($course);
-            } else {
-                grade_regrade_final_grades($course->id);
-            }
-        }
-    }
-
-    /**
      * Prepares the headers and attributes of the flexitable.
      */
     public function setup_table() {

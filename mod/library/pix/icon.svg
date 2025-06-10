@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+     id="svg1256" sodipodi:version="0.32" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" sodipodi:docname="Office-book.svg" inkscape:version="0.48.3.1 r9886" inkscape:output_extension="org.inkscape.output.svg.inkscape"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="48px"
+     viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+<sodipodi:namedview  fill="#ef2929" stroke="#cc0000" id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="0.27843137" showgrid="false" inkscape:cx="20.75205" inkscape:zoom="5.6568542" inkscape:cy="24.468855" inkscape:grid-bbox="true" inkscape:window-width="765" inkscape:document-units="px" inkscape:pageopacity="0.0" inkscape:window-y="28" inkscape:showpageshadow="false" inkscape:window-maximized="0" inkscape:window-height="582" inkscape:pageshadow="2" inkscape:window-x="80" inkscape:current-layer="layer1">
+    </sodipodi:namedview>
+<radialGradient id="path21642_1_" cx="166.2383" cy="-508.3701" r="15.75" gradientTransform="matrix(1.1508 0 0 -0.5952 -167.3059 -265.2262)" gradientUnits="userSpaceOnUse">
+    <stop  offset="0" style="stop-color:#000000"/>
+    <stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
+</radialGradient>
+<path id="path21642" sodipodi:cy="36.75" sodipodi:ry="9.375" sodipodi:type="arc" sodipodi:rx="15.75" sodipodi:cx="25.125" fill="url(#path21642_1_)" d="
+    M42.125,37.375c0,5.178-8.115,9.375-18.125,9.375c-10.01,0-18.125-4.197-18.125-9.375S13.99,28,24,28
+    C34.01,28,42.125,32.197,42.125,37.375z"/>
+<path id="rect1408" sodipodi:nodetypes="csssccsssss" fill="#461D7C" stroke="#28005A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" d="
+    M6.364,5.519c0.091-1.915,1.008-2.964,2.715-2.97l29.327-0.09c0.246,0,0.568,0.2,0.593,0.45l3.259,32.958l-1.315,0.057l0.629,6.445
+    c0.062,0.625-0.181,1.16-1.071,1.164L9.789,43.679C7.257,43.69,4.654,41.6,4.776,39.024L6.364,5.519z"/>
+<linearGradient id="path2489_1_" gradientUnits="userSpaceOnUse" x1="31.3906" y1="-781.4463" x2="31.1144" y2="-772.3953" gradientTransform="matrix(2.2627 0 0 -0.4419 -46.3062 -304.9793)">
+    <stop  offset="0" style="stop-color:#FFFFFF"/>
+    <stop  offset="1" style="stop-color:#CBCBCB"/>
+</linearGradient>
+<path id="path2489" fill="url(#path2489_1_)" d="M40.125,34.875L10.938,35c-1.557,0.178-2.812,1.396-2.812,3s1.256,2.822,2.812,3
+    l29.188,0.125v-0.062c-1.656-0.078-3-1.388-3-3.062s1.344-2.984,3-3.062V34.875z"/>
+<path id="path2784" sodipodi:nodetypes="ccccccssc" fill="#7859AE" d="M9.688,2.812c-1.707,0-2.637,1.009-2.719,2.861L5.312,37.826
+    c-0.092,3.078,1.827,4.828,3.812,5.33c-4.25-1.631-3.688-8.992,1.625-8.961h30.898L38.336,3.243
+    c-0.025-0.241-0.348-0.431-0.594-0.431H9.688z"/>
+<polygon id="rect2793" opacity="0.4804" fill="#FFFFFF" enable-background="new    " points="9.646,3.841 11.646,3.841 
+    10.586,33.302 8.586,33.302 "/>
+<linearGradient id="path2104_1_" gradientUnits="userSpaceOnUse" x1="244.4414" y1="-261.3608" x2="168.3211" y2="-255.979" gradientTransform="matrix(1.0254 0 0 -0.9573 -175.3682 -226.3179)">
+    <stop  offset="0" style="stop-color:#FFFFFF"/>
+    <stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+</linearGradient>
+<path id="path2104" sodipodi:nodetypes="cccscssc" fill="none" stroke="url(#path2104_1_)" stroke-width="1" stroke-linecap="round" stroke-miterlimit="20" d="
+    M9.875,3.333c-1.684,0-2.336,0.732-2.417,2.554l-1.299,29.89c0.934-1.607,2.439-2.184,4.853-2.184h29.951L38.137,3.757
+    c-0.021-0.237-0.343-0.424-0.586-0.424H9.875z"/>
+</svg>

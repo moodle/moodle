@@ -54,6 +54,7 @@ $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
 $string['enrolenddateerror'] = 'Enrolment end date cannot be earlier than start date';
 $string['enrolisdisabled'] = 'The \'Publish as LTI tool\' plugin is disabled.';
+$string['enrolltiversionincorrect'] = 'The resource is not set up for use over legacy LTI (versions 1.1/2.0). Please contact the administrator of this tool.';
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolperiod_help'] = 'Length of time that the enrolment is valid, starting with the moment the user enrols themselves from the remote system. If disabled, the enrolment duration will be unlimited.';
 $string['enrolmentfinished'] = 'Enrolment finished.';

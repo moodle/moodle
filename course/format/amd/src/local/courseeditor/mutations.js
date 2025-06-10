@@ -74,7 +74,6 @@ export default class {
             targetSectionId,
             targetCmId
         );
-        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }
@@ -97,7 +96,6 @@ export default class {
             targetSectionId,
             targetCmId
         );
-        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmIds, false);
     }
@@ -178,34 +176,6 @@ export default class {
     }
 
     /**
-     * Duplicate course modules
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} cmIds the list of course modules ids
-     * @param {number|undefined} targetSectionId the optional target sectionId
-     * @param {number|undefined} targetCmId the target course module id
-     */
-    async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
-        const course = stateManager.get('course');
-        // Lock all target sections.
-        const sectionIds = new Set();
-        if (targetSectionId) {
-            sectionIds.add(targetSectionId);
-        } else {
-            cmIds.forEach((cmId) => {
-                const cm = stateManager.get('cm', cmId);
-                sectionIds.add(cm.sectionid);
-            });
-        }
-        this.sectionLock(stateManager, Array.from(sectionIds), true);
-
-        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
-        this.bulkReset(stateManager);
-        stateManager.processUpdates(updates);
-
-        this.sectionLock(stateManager, Array.from(sectionIds), false);
-    }
-
-    /**
      * Move course modules to specific course location.
      *
      * Note that one of targetSectionId or targetCmId should be provided in order to identify the
@@ -273,19 +243,6 @@ export default class {
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
-        stateManager.processUpdates(updates);
-    }
-
-    /**
-     * Delete cms.
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} cmIds the list of section ids
-     */
-    async cmDelete(stateManager, cmIds) {
-        const course = stateManager.get('course');
-        this.cmLock(stateManager, cmIds, true);
-        const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
-        this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
     }
 
@@ -444,6 +401,9 @@ export default class {
      */
     async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
     }
@@ -457,6 +417,9 @@ export default class {
      */
     async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
     }
@@ -468,7 +431,7 @@ export default class {
      * @param {string} preferenceName the preference name
      * @param {array} sectionIds the affected section ids
      * @param {boolean} preferenceValue the new preferenceValue value
-     * @return {array} the list of all sections with that preference set to true
+     * @return {Number[]|null} sections ids with the preference value true or null if no update is required
      */
     _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
@@ -477,7 +440,7 @@ export default class {
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
-                return;
+                return null;
             }
             const newValue = preferenceValue ?? section[preferenceName];
             if (section[preferenceName] != newValue) {
@@ -487,7 +450,7 @@ export default class {
         });
         stateManager.setReadOnly(true);
         if (affectedSections.size == 0) {
-            return [];
+            return null;
         }
         // Get all collapsed section ids.
         const collapsedSectionIds = [];
@@ -498,126 +461,6 @@ export default class {
             }
         });
         return collapsedSectionIds;
-    }
-
-    /**
-     * Enable/disable bulk editing.
-     *
-     * Note: reenabling the bulk will clean the current selection.
-     *
-     * @param {StateManager} stateManager the current state manager
-     * @param {Boolean} enabled the new bulk state.
-     */
-    bulkEnable(stateManager, enabled) {
-        const state = stateManager.state;
-        stateManager.setReadOnly(false);
-        state.bulk.enabled = enabled;
-        state.bulk.selectedType = '';
-        state.bulk.selection = [];
-        stateManager.setReadOnly(true);
-    }
-
-    /**
-     * Reset the current selection.
-     * @param {StateManager} stateManager the current state manager
-     */
-    bulkReset(stateManager) {
-        const state = stateManager.state;
-        stateManager.setReadOnly(false);
-        state.bulk.selectedType = '';
-        state.bulk.selection = [];
-        stateManager.setReadOnly(true);
-    }
-
-    /**
-     * Select a list of cms.
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} cmIds the list of cm ids
-     */
-    cmSelect(stateManager, cmIds) {
-        this._addIdsToSelection(stateManager, 'cm', cmIds);
-    }
-
-    /**
-     * Unselect a list of cms.
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} cmIds the list of cm ids
-     */
-    cmUnselect(stateManager, cmIds) {
-        this._removeIdsFromSelection(stateManager, 'cm', cmIds);
-    }
-
-    /**
-     * Select a list of sections.
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} sectionIds the list of cm ids
-     */
-    sectionSelect(stateManager, sectionIds) {
-        this._addIdsToSelection(stateManager, 'section', sectionIds);
-    }
-
-    /**
-     * Unselect a list of sections.
-     * @param {StateManager} stateManager the current state manager
-     * @param {array} sectionIds the list of cm ids
-     */
-    sectionUnselect(stateManager, sectionIds) {
-        this._removeIdsFromSelection(stateManager, 'section', sectionIds);
-    }
-
-    /**
-     * Add some ids to the current bulk selection.
-     * @param {StateManager} stateManager the current state manager
-     * @param {String} typeName the type name (section/cm)
-     * @param {array} ids the list of ids
-     */
-    _addIdsToSelection(stateManager, typeName, ids) {
-        const bulk = stateManager.state.bulk;
-        if (!bulk?.enabled) {
-            throw new Error(`Bulk is not enabled`);
-        }
-        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
-            throw new Error(`Cannot add ${typeName} to the current selection`);
-        }
-
-        // Stored ids are strings for compatability with HTML data attributes.
-        ids = ids.map(value => value.toString());
-
-        stateManager.setReadOnly(false);
-        bulk.selectedType = typeName;
-        const newSelection = new Set([...bulk.selection, ...ids]);
-        bulk.selection = [...newSelection];
-        stateManager.setReadOnly(true);
-    }
-
-    /**
-     * Remove some ids to the current bulk selection.
-     *
-     * The method resets the selection type if the current selection is empty.
-     *
-     * @param {StateManager} stateManager the current state manager
-     * @param {String} typeName the type name (section/cm)
-     * @param {array} ids the list of ids
-     */
-    _removeIdsFromSelection(stateManager, typeName, ids) {
-        const bulk = stateManager.state.bulk;
-        if (!bulk?.enabled) {
-            throw new Error(`Bulk is not enabled`);
-        }
-        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
-            throw new Error(`Cannot remove ${typeName} from the current selection`);
-        }
-
-        // Stored ids are strings for compatability with HTML data attributes.
-        ids = ids.map(value => value.toString());
-
-        stateManager.setReadOnly(false);
-        const IdsToFilter = new Set(ids);
-        bulk.selection = bulk.selection.filter(current => !IdsToFilter.has(current));
-        if (bulk.selection.length === 0) {
-            bulk.selectedType = '';
-        }
-        stateManager.setReadOnly(true);
     }
 
     /**

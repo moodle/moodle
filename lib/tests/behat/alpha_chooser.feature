@@ -119,7 +119,6 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should see "Cstudent Cstudent"
 
-  @javascript
   Scenario: Filter users on view gradebook page
     Given the following "activities" exist:
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
@@ -127,7 +126,6 @@ Feature: Initials bar
     And I am on the "assign1" "Activity" page logged in as "teacher"
     When I follow "View all submissions"
     And I select "View gradebook" from the "jump" singleselect
-    And I press "Filter by name"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -135,19 +133,15 @@ Feature: Initials bar
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should see "Cstudent Cstudent"
-    And I select "A" in the "Last name" "core_grades > initials bar"
+    And I click on "A" "link" in the ".initialbar.lastinitial .page-item.A" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".page-item.active.A" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
-    And I press "Apply"
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "Last (A)"
-    And I select "B" in the "First name" "core_grades > initials bar"
-    And I press "Apply"
-    And I wait until the page is ready
+    And I click on "B" "link" in the ".initialbar.firstinitial .page-item.B" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -165,25 +159,19 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "First (B) Last (A)"
-    And I select "All" in the "First name" "core_grades > initials bar"
+    And I click on "All" "link" in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".page-item.active.A" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
-    And I press "Apply"
-    And I wait until the page is ready
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "Last (A)"
-    And I select "All" in the "Last name" "core_grades > initials bar"
+    And I click on "All" "link" in the ".initialbar.lastinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".page-item.active.A" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
-    And I press "Apply"
-    And I wait until the page is ready
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should see "Cstudent Cstudent"

@@ -59,9 +59,6 @@ class category_condition extends condition {
     /** @var int The maximum displayed length of the category info. */
     protected $maxinfolength;
 
-    /** @var \moodle_url The URL the form is submitted to. */
-    protected $baseurl;
-
     /**
      * Constructor
      * @param string     $cat           categoryID,contextID as used with question_bank_view->display()

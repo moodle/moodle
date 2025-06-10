@@ -1,0 +1,8 @@
+Thumbs.db
+.buildpath
+.project
+.settings
+nbproject/project.xml
+nbproject/private/private.xml
+nbproject/private/private.properties
+nbproject/project.properties

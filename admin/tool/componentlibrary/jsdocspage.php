@@ -33,7 +33,7 @@ require_capability('moodle/site:configview', context_system::instance());
 $jsdocdir = "{$CFG->dirroot}/jsdoc";
 if (file_exists($jsdocdir) && is_dir($jsdocdir)) {
     $relativepath = get_file_argument();
-    redirect(new moodle_url("/jsdoc/{$relativepath}"));
+    redirect(new moodle_url("/jsdoc/${relativepath}"));
 }
 
 $PAGE->set_pagelayout('base');

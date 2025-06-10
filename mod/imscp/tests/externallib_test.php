@@ -16,7 +16,6 @@
 
 namespace mod_imscp;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_imscp_external;
 
@@ -78,7 +77,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_imscp_external::view_imscp($imscp->id);
-        $result = external_api::clean_returnvalue(mod_imscp_external::view_imscp_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_imscp_external::view_imscp_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -138,7 +137,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($student1);
         $imscps = mod_imscp_external::get_imscps_by_courses(array());
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(1, $imscps['imscps']);
         $this->assertEquals('First IMSCP', $imscps['imscps'][0]['name']);
         // As Student you cannot see some IMSCP properties like 'section'.
@@ -147,7 +146,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Student1 is not enrolled in this Course.
         // The webservice will give a warning!
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(0, $imscps['imscps']);
         $this->assertEquals(1, $imscps['warnings'][0]['warningcode']);
 
@@ -155,7 +154,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         // As Admin we can see this IMSCP.
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(1, $imscps['imscps']);
         $this->assertEquals('Second IMSCP', $imscps['imscps'][0]['name']);
         // As an Admin you can see some IMSCP properties like 'section'.
@@ -171,7 +170,7 @@ class externallib_test extends externallib_advanced_testcase {
         \course_modinfo::clear_instance_cache();
 
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course1->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(0, $imscps['imscps']);
     }
 }

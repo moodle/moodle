@@ -117,6 +117,10 @@ class auth extends base {
             $settings = new admin_settingpage($section, $this->displayname,
                 'moodle/site:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // This may also set $settings to null.
+        } else if (file_exists($this->full_path('config.html'))) {
+            $settingsurl = new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
+            $settings = new admin_externalpage($section, $this->displayname,
+                $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
         }
 
         if ($settings) {

@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Scale color configuration template.
+
+    Classes required for JS:
+    * scalecolorconfiguration
+
+    Context variables required for this template:
+    * competencyframeworks - array of objects containing id, shortname, idnumber, visible
+}}
+<div class="container-fluid competencyreport {{config.theme}}">
+    <form class="mform" id="savecolor" accept-charset="utf-8" method="post" autocomplete="off">
+        <fieldset id="id_settings" class="clearfix collapsible">
+            <legend class="ftoggler">
+                <a href="#" class="fheader" role="button" aria-controls="id_settings" aria-expanded="true">{{#str}}settings{{/str}}</a>
+            </legend>
+            <div class="fcontainer clearfix">
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="templateselector">{{#str}}competencyframeworks, tool_lp{{/str}}</label>
+                    </div>
+                    <div class="felement col-md-9 form-inline">
+                        <select  id="templateselector" class="form-control custom-select">
+                            <option value="">{{#str}}selectframework, report_lpmonitoring{{/str}}</option>
+                            {{#competencyframeworks}}
+                            <option value="{{{id}}}">{{{shortname}}} ({{contextnamenoprefix}})</option>
+                            {{/competencyframeworks}}
+                        </select>
+                    </div>
+                </div>
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3">
+                        <label for="scaleselector">
+                            <i id="loaderscale" class="fa fa-refresh fa-spin" style="display:none"></i>
+                            {{#str}}scales{{/str}}
+                        </label>
+                    </div>
+                    <div class="felement col-md-9 form-inline">
+                        <select  id="scaleselector" class="form-control custom-select" disabled>
+                            <option value="">{{#str}}noscaleavailable, report_lpmonitoring{{/str}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset id="id_scale" class="clearfix collapsible" style="display: none">
+            <legend class="ftoggler">
+                <a href="#" id="scaleheader" class="fheader" role="button" aria-controls="id_scale" aria-expanded="true">
+                    {{#str}}colorsforscale, report_lpmonitoring{{/str}}
+                </a>
+            </legend>
+            <div class="fcontainer clearfix">
+                <div id="loaderscalevalues" style="display:none">
+                    <i class="fa fa-refresh fa-spin fa-4x"></i>
+                </div>
+                <div id="scalevalues">
+                </div>
+                <div class="fitem form-group row">
+                    <div class="fitemtitle col-md-3"></div>
+                    <div class="felement col-md-9 form-inline">
+                        <button id="submitScaleColorButton" data-action="save" type="submit" class="btn btn-primary">
+                            {{#str}}save, admin{{/str}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{{#js}}
+require(['jquery', 'report_lpmonitoring/scalecolorconfiguration'], function($, Scalecolorconfig) {
+Scalecolorconfig.init('#templateselector', '#scaleselector', '#scalevalues');
+});
+{{/js}}

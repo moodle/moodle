@@ -1,0 +1,281 @@
+{
+    "id": "graph",
+    "items": [
+        {
+            "id": "tools",
+            "items": [
+                {
+                    "id": "pointers",
+                    "items": [
+                        {
+                            "id": "cursorActive"
+                        },
+                        {
+                            "id": "drawStrokes"
+                        }
+                    ]
+                },
+                {
+                    "id": "elements",
+                    "items": [
+                        {
+                            "id": "newPoint"
+                        },
+                        {
+                            "id": "lines",
+                            "items": [
+                                {
+                                    "id": "newLineThroughTwoPoints"
+                                },
+                                {
+                                    "id": "newLineSegmentByPoints"
+                                },
+                                {
+                                    "id": "newRayFromPointThroughPoint"
+                                },
+                                {
+                                    "id": "newVectorByPoints"
+                                },
+                                {
+                                    "id": "newParallelogram"
+                                },
+                                {
+                                    "id": "newPolyline"
+                                },
+                                {
+                                    "id": "newPolygon"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "curves",
+                            "items": [
+                                {
+                                    "id": "newCircleByCenterAndPoint"
+                                },
+                                {
+                                    "id": "newCircleByThreePoints"
+                                },
+                                {
+                                    "id": "newArcByThreePoints"
+                                },
+                                {
+                                    "id": "newParabolaByFocusAndDirectrix"
+                                },
+                                {
+                                    "id": "newEllipseByFociAndPoint"
+                                },
+                                {
+                                    "id": "newHyperbolaByFociAndPoint"
+                                },
+                                {
+                                    "id": "newConicByFivePoints"
+                                },
+                                {
+                                    "id": "newInterpolatingPolynomialByPoints"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "labels",
+                    "items": [
+                        {
+                            "id": "newElementByLabel"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "menu",
+            "items": [
+                {
+                    "id": "edition",
+                    "items": [
+                        {
+                            "id": "undo"
+                        },
+                        {
+                            "id": "redo"
+                        },
+                        {
+                            "id": "deleteAll"
+                        }
+                    ]
+                },
+                {
+                    "id": "actions",
+                    "items": [
+                        {
+                            "id": "download"
+                        }
+                    ]
+                },
+                {
+                    "id": "settingsSection",
+                    "items": [
+                        {
+                            "id": "settings"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "view",
+            "items": [
+                {
+                    "id": "viewTools",
+                    "items": [
+                        {
+                            "id": "zoomIn"
+                        },
+                        {
+                            "id": "zoomOut"
+                        }
+                    ]
+                },
+                {
+                    "id": "animationTools",
+                    "items": [
+                        {
+                            "id": "animateConstruction"
+                        }
+                    ]
+                },
+                {
+                    "id": "viewActions",
+                    "items": [
+                        {
+                            "id": "maximize"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "contextualElement",
+            "items": [
+                {
+                    "id": "elementLabel",
+                    "items": [
+                        {
+                            "id": "fixLabel"
+                        }
+                    ]
+                },
+                {
+                    "id": "elementStyles",
+                    "items": [
+                        {
+                            "id": "lineWidth"
+                        },
+                        {
+                            "id": "lineStyle"
+                        },
+                        {
+                            "id": "lineColor"
+                        }
+                    ]
+                },
+                {
+                    "id": "deleteSection",
+                    "items": [
+                        {
+                            "id": "deleteElement"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "contextualLabel",
+            "items": [
+                {
+                    "id": "labelStyles",
+                    "items": [
+                        {
+                            "id": "bold"
+                        },
+                        {
+                            "id": "italic"
+                        },
+                        {
+                            "id": "color"
+                        }
+                    ]
+                },
+                {
+                    "id": "labelContent",
+                    "items": [
+                        {
+                            "id": "fraction"
+                        },
+                        {
+                            "id": "superscript"
+                        },
+                        {
+                            "id": "squareRoot"
+                        },
+                        {
+                            "id": "nRoot"
+                        },
+                        {
+                            "id": "constants",
+                            "items": [
+                                {
+                                    "id": "numberE"
+                                },
+                                {
+                                    "id": "numberPi"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "functions",
+                            "items": [
+                                {
+                                    "id": "tangent"
+                                },
+                                {
+                                    "id": "arctangent"
+                                },
+                                {
+                                    "id": "logBase"
+                                },
+                                {
+                                    "id": "cosinus"
+                                },
+                                {
+                                    "id": "arccosinus"
+                                },
+                                {
+                                    "id": "ln"
+                                },
+                                {
+                                    "id": "sinus"
+                                },
+                                {
+                                    "id": "arcsinus"
+                                },
+                                {
+                                    "id": "exp"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "deleteSection",
+                    "items": [
+                        {
+                            "id": "deleteLabel"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

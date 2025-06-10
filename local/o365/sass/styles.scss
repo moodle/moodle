@@ -1,0 +1,129 @@
+.local_o365_statusmessage {
+    &.alert {
+        margin-bottom: 0.25rem;
+    }
+    img {
+        margin-right: 0.25rem;
+    }
+    span, a {
+        vertical-align: middle;
+    }
+}
+
+#local_o365_admin-azuresetup {
+    button.refreshperms {
+        margin: 0 0 0.75rem;
+    }
+}
+
+.local_o365_adminsetting_azuresetup_results {
+    section {
+        margin-bottom: 1rem;
+        h5 {
+            margin: 0 0 0.25rem;
+        }
+    }
+}
+
+.local_o365_ucp_index {
+    .connectionstatus {
+        float: right;
+        width: 14rem;
+        padding: 0.5rem;
+        img {
+            float: left;
+            padding: 0.25rem;
+        }
+        small {
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        img.smallicon {
+            width: 12px;
+            height: 12px;
+        }
+    }
+    .local_o365_features {
+        margin-right: 16rem;
+        > div {
+            margin-bottom: 1rem;
+            a, b {
+                background-position: 2px 0px;
+                background-size: 28px;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                display: inline-block;
+                padding: 4px 4px 4px 40px;
+            }
+        }
+        .local_o365_feature_connection {
+            a, b {
+                background-image: url([[pix:local_o365|o365color]]);
+            }
+        }
+        .local_o365_feature_calendar a, .local_o365_feature_calendar b {
+            background-image: url([[pix:local_o365|outlookcolor]]);
+        }
+        .local_o365_feature_onenote a, .local_o365_feature_onenote b {
+            background-image: url([[pix:local_o365|onenotecolor]]);
+        }
+    }
+}
+
+.local_o365_ucp_featurepage {
+    h3.local_o365_featureheader {
+        background-position: center left;
+        background-size: 28px;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        padding: 4px 4px 4px 35px;
+        &.local_o365_feature_calendar {
+            background-image: url([[pix:local_o365|outlookcolor]]);
+        }
+        &.local_o365_feature_onenote {
+            background-image: url([[pix:local_o365|onenotecolor]]);
+        }
+    }
+    &.local_o365_feature_connection {
+        h3.local_o365_featureheader {
+            background-image: url([[pix:local_o365|o365color]]);
+        }
+        div.connectionstatus {
+            margin: 2rem 0;
+        }
+        div.local_o365_connectionoption {
+            margin: 0 0 1rem;
+            padding: 1rem;
+            h4 {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
+.local_o365_o365toollink {
+    margin-bottom: 1rem;
+}
+
+.local_o365_matchqueuetoolbar {
+    margin: 0.75rem 0 0.5rem 0;
+}
+
+table.local_o365_matchqueue {
+    width: 100%;
+    td, th {
+        padding: 0.25rem 0.5rem;
+        vertical-align: top;
+        &:first-child {
+            width: 1.5rem;
+            text-align: center;
+        }
+    }
+
+}
+
+/* Display spinner while course data is syncing. */
+.local_o365_spinner {
+    margin: 0 0 1em 1em;
+    display: none;
+}

@@ -367,12 +367,12 @@ final class column {
         $fields = [];
 
         foreach ($this->fields as $alias => $sql) {
-            // Ensure params within SQL are prefixed with column index.
-            foreach ($this->params as $name => $value) {
-                $sql = preg_replace_callback('/:(?<param>' . preg_quote($name, '\b/') . ')/', function(array $matches): string {
-                    return ':' . $this->unique_param_name($matches['param']);
-                }, $sql);
-            }
+
+            // Ensure parameter names within SQL are prefixed with column index.
+            $params = array_keys($this->params);
+            $sql = database::sql_replace_parameter_names($sql, $params, function(string $param): string {
+                return $this->unique_param_name($param);
+            });
 
             $fields[$alias] = [
                 'sql' => $sql,
@@ -473,20 +473,18 @@ final class column {
     }
 
     /**
-     * Adds column callback (in the case there are multiple, they will be called iteratively - the result of each passed
-     * along to the next in the chain)
+     * Adds column callback (in the case there are multiple, they will be applied one after another)
      *
      * The callback should implement the following signature (where $value is the first column field, $row is all column
-     * fields, $additionalarguments are those passed to this method, and $aggregation indicates the current aggregation type
-     * being applied to the column):
-     *
-     * function($value, stdClass $row, $additionalarguments, ?string $aggregation): string
+     * fields, and $additionalarguments are those passed on from this method):
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is being aggregated. For entities that can be left joined to a report, the
-     * first argument of the callback must be nullable (as it should also be if the first column field is itself nullable).
+     * if the column is part of a report source and is being aggregated.
+     * For entities that can to be left joined to a report, the first argument to their column callbacks must be nullable.
      *
-     * @param callable $callable
+     * function($value, stdClass $row[, $additionalarguments]): string
+     *
+     * @param callable $callable function that takes arguments ($value, \stdClass $row, $additionalarguments)
      * @param mixed $additionalarguments
      * @return self
      */
@@ -689,7 +687,7 @@ final class column {
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
-                $value = ($callable)($value, (object) $values, $arguments, null);
+                $value = ($callable)($value, (object) $values, $arguments);
             }
         }
 

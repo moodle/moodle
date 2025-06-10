@@ -15,11 +15,58 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File only retained to prevent fatal errors in code that tries to require/include this.
+ * Defines the form that limits student's access to attempt a quiz.
  *
- * @todo MDL-76612 delete this file as part of Moodle 4.6 development.
- * @deprecated This file is no longer required in Moodle 4.2+.
+ * @package   mod_quiz
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
 
-debugging('This file is no longer required in Moodle 4.2+. Please do not include/require it.', DEBUG_DEVELOPER);
+require_once($CFG->libdir.'/formslib.php');
+
+
+/**
+ * A form that limits student's access to attempt a quiz.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_quiz_preflight_check_form extends moodleform {
+
+    protected function definition() {
+        $mform = $this->_form;
+        $this->_form->updateAttributes(array('id' => 'mod_quiz_preflight_form'));
+
+        foreach ($this->_customdata['hidden'] as $name => $value) {
+            if ($name === 'sesskey') {
+                continue;
+            }
+            $mform->addElement('hidden', $name, $value);
+            $mform->setType($name, PARAM_INT);
+        }
+
+        foreach ($this->_customdata['rules'] as $rule) {
+            if ($rule->is_preflight_check_required($this->_customdata['attemptid'])) {
+                $rule->add_preflight_check_form_fields($this, $mform,
+                        $this->_customdata['attemptid']);
+            }
+        }
+
+        $this->add_action_buttons(true, get_string('startattempt', 'quiz'));
+        $this->set_display_vertical();
+        $mform->setDisableShortforms();
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        $timenow = time();
+        $accessmanager = $this->_customdata['quizobj']->get_access_manager($timenow);
+        $errors = array_merge($errors, $accessmanager->validate_preflight_check($data, $files, $this->_customdata['attemptid']));
+
+        return $errors;
+    }
+}

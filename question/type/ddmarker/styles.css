@@ -227,7 +227,3 @@ body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
 body#page-question-type-ddmarker #fitem_id_penalty {
     margin-bottom: 2em;
 }
-
-body#page-question-type-ddmarker .ddarea.que.ddmarker {
-    overflow-y: scroll;
-}

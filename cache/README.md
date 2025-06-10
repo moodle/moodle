@@ -242,14 +242,16 @@ Both the cache API and the cache stores have tests.
 Please be aware that several of the cache stores require configuration in order to be able operate in the tests.
 Tests for stores requiring configuration that haven't been configured will be skipped.
 All configuration is done in your sites config.php through definitions.
-The following snippet illustrates how to configure core cache stores that require configuration.
+The following snippet illustrates how to configure the three core cache stores that require configuration.
 
+    define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');
+    define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');
     define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
 
 As of Moodle 2.8 it is also possible to set the default cache stores used when running tests.
 You can do this by adding the following define to your config.php file:
 
-    // xxx is one of the installed stored (for example redis) or other cachestore with a test define.
+    // xxx is one of Memcache, Memcached, mongodb or other cachestore with a test define.
     define('TEST_CACHE_USING_APPLICATION_STORE', 'xxx');
 
 This allows you to run tests against a defined test store. It uses the defined value to identify a store to test against with a matching TEST_CACHESTORE define.

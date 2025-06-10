@@ -27,7 +27,7 @@ This directory is the recommended place for local customisations.
 Wherever possible, customisations should be written using one
 of the standard plug-in points like modules, blocks, auth plugins, themes, etc.
 
-See also http://docs.moodle.org/dev/Local_customisation for more
+See also https://moodledev.io/docs/apis/plugintypes/local for more
 information.
 
 

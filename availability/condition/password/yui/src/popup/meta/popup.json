@@ -1,0 +1,11 @@
+{
+  "moodle-availability_password-popup": {
+    "requires": [
+        "base",
+        "node",
+        "event",
+        "moodle-core-notification-dialogue",
+        "io-base"
+    ]
+  }
+}

@@ -226,11 +226,11 @@ class completion extends base {
                 LEFT JOIN {grade_grades} {$grade}
                        ON ({$user}.id = {$grade}.userid AND {$gradeitem}.id = {$grade}.itemid)
             ")
-            ->set_type(column::TYPE_INTEGER)
+            ->set_type(column::TYPE_FLOAT)
             ->add_fields("{$grade}.finalgrade")
             ->set_is_sortable(true)
-            ->add_callback(function ($value) {
-                if (!$value) {
+            ->add_callback(function(?float $value): string {
+                if ($value === null) {
                     return '';
                 }
                 return format_float($value, 2);
@@ -264,45 +264,6 @@ class completion extends base {
             new lang_string('timecompleted', 'completion'),
             $this->get_entity_name(),
             "{$coursecompletion}.timecompleted"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                date::DATE_ANY,
-                date::DATE_NOT_EMPTY,
-                date::DATE_EMPTY,
-                date::DATE_RANGE,
-                date::DATE_LAST,
-                date::DATE_CURRENT,
-            ]);
-
-        // Time enrolled/started filter and condition.
-        $fields = ['timeenrolled', 'timestarted'];
-        foreach ($fields as $field) {
-            $filters[] = (new filter(
-                date::class,
-                $field,
-                new lang_string($field, 'enrol'),
-                $this->get_entity_name(),
-                "{$coursecompletion}.{$field}"
-            ))
-                ->add_joins($this->get_joins())
-                ->set_limited_operators([
-                    date::DATE_ANY,
-                    date::DATE_NOT_EMPTY,
-                    date::DATE_EMPTY,
-                    date::DATE_RANGE,
-                    date::DATE_LAST,
-                    date::DATE_CURRENT,
-                ]);
-        }
-
-        // Time reaggregated filter and condition.
-        $filters[] = (new filter(
-            date::class,
-            'reaggregate',
-            new lang_string('timereaggregated', 'enrol'),
-            $this->get_entity_name(),
-            "{$coursecompletion}.reaggregate"
         ))
             ->add_joins($this->get_joins())
             ->set_limited_operators([

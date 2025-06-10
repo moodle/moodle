@@ -1,0 +1,140 @@
+{
+  "id": "graph",
+  "items": [
+    {
+      "id": "tools",
+      "items": [
+        {
+          "id": "pointers",
+          "items": [
+            {
+              "id": "cursorEditLineChart"
+            }
+          ]
+        },
+        {
+          "id": "visuals",
+          "items": [
+            {
+              "id": "fitPlotterToStats"
+            },
+            {
+              "id": "changeOrientationLines"
+            }
+          ]
+        },
+        {
+          "id": "elements",
+          "items": [
+            {
+              "id": "newPointsLineChart"
+            },
+            {
+              "id": "newLineLineChart"
+            },
+            {
+              "id": "newFreeLabel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "items": [
+        {
+          "id": "edition",
+          "items": [
+            {
+              "id": "undo"
+            },
+            {
+              "id": "redo"
+            }
+          ]
+        },
+        {
+          "id": "actions",
+          "items": [
+            {
+              "id": "download"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "items": [
+        {
+          "id": "viewTools",
+          "items": [
+            {
+              "id": "zoomIn"
+            },
+            {
+              "id": "zoomOut"
+            }
+          ]
+        },
+        {
+          "id": "viewActions",
+          "items": [
+            {
+              "id": "maximize"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contextualElement",
+      "items": [
+        {
+          "id": "elementStyles",
+          "items": [
+            {
+              "id": "lineWidth"
+            },
+            {
+              "id": "pointDiameter"
+            },
+            {
+              "id": "lineColor"
+            }
+          ]
+        },
+        {
+          "id": "deleteSection",
+          "items": [
+            {
+              "id": "deletePointsLineChart"
+            },
+            {
+              "id": "deleteLineLineChart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contextualLabel",
+      "items": [
+        {
+          "id": "labelStyles",
+          "items": [
+            {
+              "id": "bold"
+            },
+            {
+              "id": "italic"
+            },
+            {
+              "id": "color"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

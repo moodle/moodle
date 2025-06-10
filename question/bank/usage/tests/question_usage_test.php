@@ -16,8 +16,6 @@
 
 namespace qbank_usage;
 
-use mod_quiz\quiz_attempt;
-
 /**
  * Tests for the data of question usage from differnet areas like helper or usage table.
  *
@@ -45,7 +43,7 @@ class question_usage_test extends \advanced_testcase {
         $quiz = $quizgenerator->create_instance(['course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
 
-        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -70,7 +68,7 @@ class question_usage_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptdata = quiz_attempt::create($attempt->id);
+        $attemptdata = \quiz_attempt::create($attempt->id);
 
         $this->setAdminUser();
         $PAGE->set_url(new \moodle_url('/'));

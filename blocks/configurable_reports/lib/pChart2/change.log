@@ -1,0 +1,178 @@
+
+ +--------------------------------------------+
+ ¦                                            ¦
+ ¦   pChart - a PHP Charting library          ¦
+ ¦                                            ¦
+ ¦   Version     : 2.4.0-dev                  ¦
+ ¦   Based on code by: Jean-Damien POGOLOTTI  ¦
+ ¦   Maintained by   : Momchil Bozhinov       ¦
+ ¦   Last Update : 27/07/21                   ¦
+ ¦                                            ¦
+ +--------------------------------------------+
+
+ 2.4.0 -----------------------------------------------------------------------
+  o Removed pSQLite
+  o Removed ImageMapper
+  o Removed pCache
+  o Added Aztec lib
+  o Added Barcodes lib
+  o Added PDF417 lib
+  o Added QRCode lib
+  o Added linear barcodes from all over
+  o Moved fonts out of the pChart folder
+  o Explicitly declare the visibility for methods
+  o BC: pScatter->drawScatterScale params DrawXLines & DrawYLines accept array
+  o BC: pDraw->drawScale param DrawYLines accepts array
+  o BC: pData->setAxisDisplay with AXIS_FORMAT_CUSTOM uses anonymous func as a param
+  o BC: Removed pData methods
+	importFromCSV
+	setScatterSerieShape
+	setScatterSerieDescription
+	setScatterSeriePicture
+	setScatterSerieDrawable
+	setScatterSerieTicks
+	setScatterSerieWeight
+	setScatterSerieColor
+	setXAxisName
+	setXAxisDisplay
+	setXAxisUnit
+	setAxisPosition
+	setAxisColor
+	setAxisUnit
+	setAxisDisplay
+	setAxisXY
+	setAbsicssaPosition
+	setSerieShape
+	setSerieWeight
+	setSeriePicture
+	setSerieDrawable
+	setSerieTicks
+	getSeriePercentile
+	getSerieCount
+	getSerieAverage
+	getSeriePalette
+	getMin
+	getMax
+	getAxisData
+	getGeometricMean
+	getHarmonicMean
+	getStandardDeviation
+	getCoefficientOfVariation
+	getSerieMedian
+	containsData
+	reverseSerie
+	addRandomValues
+	negateValues
+	saveAxisConfig
+	saveYMargin
+	saveOrientation
+
+  o Added pData methods
+	setAxisProperties
+	setScatterSerieProperties
+	setSerieProperties
+	saveData
+
+  o Added pDraw methods
+	gettheImage
+  	getShadow
+  	restoreShadow
+	setAntialias
+	getFont
+	getGraphAreaDiffs
+	getGraphAreaCoordinates
+
+  o Added benchmark script
+  o FIXED: pDraw->setFilter
+  o pData->XAxis data structure to match Axis[0]
+  o pData->setAbsicssa accepts an array of params along with the id
+  o pColor and pColorGradient classes cleaned up
+  o pColor converted to array in pDraw private methods. 13% speed improvement
+
+ 2.3.0 -----------------------------------------------------------------------
+  o Introduced pQRCode
+  o Introduced pSQLite
+  o Replaced all fonts (OFL license)
+  o pDraw->toBase64() added
+  o pBarcode moved to its own folder
+  o pBarcode no longer uses text file for codes Db
+  o pData->loadPalette no longer uses text file for palette
+  o pData->getRandomColor replaced by calling pColor() with no params
+  o pColor(0) equals pColor(0,0,0,100)
+  o pColor->toHTMLColor was renamed to pColor->toHex
+  o Sandbox: code improvements
+  o Sandbox: replaced JSColor with drawrPalette (MIT license)
+  o pDraw->isChartLayoutStacked flag is now passed to writeLabel (example.drawLabel.stacked)
+  o FIXED: ImageMapper: map failed to load on first attempt
+  o FIXED: Issue #29 - draw3DPie reverse order of color
+  
+ 2.2.3 -----------------------------------------------------------------------
+  o Cleaned up code
+  o Introduced pColor & pColorGradient
+  o pDraw.Debug only contains the code diff from pDraw
+  o pDraw->drawBestFit moved to pCharts
+  o Removed useless indexing into non-associative arrays
+  o Avoid eval() in createFunctionSerie
+  o Optimized pCache->isInCache()
+  o Cache for pData->loadPalette(). Opcode cache is faster.
+  o Cache for barcode Db (pBarcode39.php & pBarcode128.php)
+  o Added RemoveYAxis parameter to pDraw->drawScale (example.drawBarChart.span)
+  o Removed delayed loader
+  o Removed Microsoft fonts
+  o ImageMapper: Re-write JS using jQuery
+  o ImageMapper: Split into Session and File storage
+  o ImageMapper: PDO SQLite storage
+  o ImageMapper: uses JSON format
+  o ImageMapper: custom styling for the tooltip
+
+ 2.2.2 -----------------------------------------------------------------------
+  o Cleaned up code
+  o Added Debug version of pDraw
+  o Moved pDraw->getAbscissaMargin() to pData
+  o Moved pDraw->scaleGetXSettings() to pData
+  o Moved pDraw->countDrawableSeries() to pData
+  o Moved pDraw->drawDerivative() to pCharts
+  o Re-Saved examples\resources\*.png to avoid issue #9
+  o Output compression set to 6 (imagepng default)
+  o Added pDraw->resize()
+  o Barcode->getSize() renamed to getProjection()
+  o Barcode examples improved
+  o Removed CHART_LAST_LAYOUT_REGULAR & CHART_LAST_LAYOUT_STACKED globals
+  o Renamed pDraw->LastChartLayout to isChartLayoutStacked
+  o Removed the need for convertToArray()
+  o Type hinting for all functions in pData
+  o pSpring->getDistance() & pSpring->getAgnle() are no more
+  o pData->stripVOID() is no more
+  o pData->Data["GraphArea"] is no more
+  o pBubble->resetSeriesColors() moved to pData
+  o Bugfix: StackedAreaChart starts at 1 and not 0
+
+ 2.2.1 -----------------------------------------------------------------------
+
+  o Reduced file usage in pCache
+  o Added changeID function to pCache
+  o Optimized pData->importFromCSV
+  o Added class for caching to a PDO SQLite database
+  o Added workaround for bug #75656 (font file not found on Windows)
+  o Added pDraw->setFilter - very basic wrapper around imagefilter
+  o Modified examples to show how to output and compress black & white images
+  o Moved drawSplitPath to pCharts
+  o Added pData->clearPoints
+
+ 2.2.0 -----------------------------------------------------------------------
+
+  o New way of loading the lib
+  o Merged pImage with pDraw
+  o Moved pData under pDraw - $pDraw->myData
+  o Separated pImageMap from pDraw
+  o Moved charting functions out of pDraw into a new class - pCharts
+  o Added extra checks for dimensions and available memory to pDraw
+  o Renamed pData->drawAll() to pData->setAllDrawable()
+  o Added support for compression and filters in PNG output
+  o ImageMap was improved to save on file writes
+  o temp and cache directories are now separate so proper permissions can be set
+	temp and cache must be writable and the rest of the code must be read-only
+
+ 2.1.4 ------------------------------------------------------------------------
+
+  o Initial version from the pChart main website

@@ -39,7 +39,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -94,7 +94,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -131,7 +131,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -172,7 +172,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -191,16 +191,16 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create tags.
         foreach ($tagnames as $tagname) {
-            $tagrecord = [
+            $tagrecord = array(
                 'isstandard' => 1,
                 'flag' => 0,
                 'rawname' => $tagname,
                 'description' => $tagname . ' desc'
-            ];
+            );
             $tags[$tagname] = $this->getDataGenerator()->create_tag($tagrecord);
         }
 
-        return [$randomslot, $tags];
+        return array($randomslot, $tags);
     }
 
     public function test_set_tags() {
@@ -354,7 +354,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
         $quizcontext = \context_module::instance($quiz->cmid);
 
         // Create a question category in the system context.
@@ -371,19 +371,19 @@ class local_structure_slot_random_test extends \advanced_testcase {
         $form->stamp = make_unique_id_code();
 
         // Prepare 2 tags.
-        $tagrecord = [
+        $tagrecord = array(
             'isstandard' => 1,
             'flag' => 0,
             'rawname' => 'foo',
             'description' => 'foo desc'
-        ];
+        );
         $footag = $this->getDataGenerator()->create_tag($tagrecord);
-        $tagrecord = [
+        $tagrecord = array(
             'isstandard' => 1,
             'flag' => 0,
             'rawname' => 'bar',
             'description' => 'bar desc'
-        ];
+        );
         $bartag = $this->getDataGenerator()->create_tag($tagrecord);
 
 

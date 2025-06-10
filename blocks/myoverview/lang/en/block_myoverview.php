@@ -50,7 +50,6 @@ $string['card'] = 'Card';
 $string['cards'] = 'Cards';
 $string['courseprogress'] = 'Course progress:';
 $string['completepercent'] = '{$a}% complete';
-$string['createcourse'] = 'Create course';
 $string['customfield'] = 'Custom field';
 $string['customfiltergrouping'] = 'Field to use';
 $string['customfiltergrouping_nofields'] = 'This option requires a course custom field to be set up and visible to everyone.';
@@ -87,15 +86,6 @@ $string['sortbytitle'] = 'Sort by course name';
 $string['sortbylastaccessed'] = 'Sort by last accessed';
 $string['sortbyshortname'] = 'Sort by short name';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
-$string['viewquickstart'] = 'View Quickstart guide';
-$string['zero_default_title'] = 'You\'re not enrolled in any course';
-$string['zero_nopermission_intro'] = 'Once you enrol in a course, it will appear here.';
-$string['zero_request_title'] = 'Request your first course';
-$string['zero_request_intro'] = 'Need help getting started? Check out the <a href="{$a->dochref}" title="{$a->doctitle}" target="{$a->doctarget}">Moodle documentation</a> or take your first steps with our <a href="{$a->quickhref}" title="{$a->quicktitle}" target="{$a->quicktarget}">Quickstart guide</a>.';
-$string['zero_nocourses_title'] = 'Create your first course';
-$string['zero_nocourses_intro'] = 'Need help getting started? Check out the <a href="{$a->dochref}" title="{$a->doctitle}" target="{$a->doctarget}">Moodle documentation</a> or take your first steps with our Quickstart guide.';
-$string['zero_createcourses_intro'] = 'Once you enrol in a course, it will appear here. To view all courses on this site, go to Manage courses.';
-$string['zero_nomanagecourses_intro'] = 'Once you enrol in a course, it will appear here.';
 
 // Deprecated since Moodle 4.0.
 $string['clearsearch'] = "Clear search";

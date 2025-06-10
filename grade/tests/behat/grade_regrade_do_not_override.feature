@@ -30,8 +30,7 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I press "Save and show next"
     And I set the field "Grade out of 100" to "60"
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "gradereport-grader-table" table:
       |                      |              |              |
       | First name / Last name | Assignment 1 | Course total |
@@ -40,7 +39,6 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 2" for the grade item "Course total"
     And I press "Save changes"
-    And I navigate to "View > Grader report" in the course gradebook
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on "Edit" "link" in the ".coursecategory" "css_element"
     And I click on "Edit settings" "link" in the ".coursecategory" "css_element"
@@ -64,8 +62,7 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I press "Save and show next"
     And I set the field "Grade out of 100" to "70"
     And I press "Save changes"
-    When I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page
     Then the following should exist in the "gradereport-grader-table" table:
       |                      |              |              |
       | First name / Last name | Assignment 1 | Course total |

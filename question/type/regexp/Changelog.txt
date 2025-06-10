@@ -1,0 +1,65 @@
+04/06/2019
+version 2019052100 for moodle 3.7
+version 2019052101
+added the inline input feature for the mobile version (based on same feature for short answer question for mobile)
+--------------------------------------------------------------------------------
+12/01/2019
+version  = 2019011301
+- Version Halloween 2018 has many changes
+- Switching maintainance from Nicolas Dunand back to Joseph Rézeau
+- With many thanks to Nicolas for his maintainance work in the past 4 years!
+- changed CSS rules of misplaced words and wrong words for a better display
+- added a 3rd Help option: Get or buy one word OR one punctuation mark
+- added compliance with the Moodle Mobile App
+- made code totally compliant with Moodle codechecker and Moodle PHPdoc
+- plus a number of minor bug fixes and small improvements to the response analysis
+--------------------------------------------------------------------------------
+08/01/2014
+version  = 2013111801
+Fixed incorrect processing of utf8 characters between []
+See this discussion: https://moodle.org/mod/forum/discuss.php?d=251510 (FR)
+
+29/10/2012
+version 2012102900
+- removed French fr from lang folder (moved to AMOS)
+- added permutation feature: up to 2 sets of "permuted" words or phrases can be used in regular expression
+- use the print_collapsible_region feature to display/hide alternate answers on Preview and Quiz review pages
+- fixed fix potential html format tags inside correct answers
+- fixed correctanswersare if no alternate answers
+- fixed ignorecase bugs
+- added a require to locallib (needed for multianswer integration of remove_blanks)
+- fixed escaped question mark bug
+- fixed extra blanks problem
+- compliance with Strict Standards
+- restored General Feedback field to avoid "missing GF" error in 2.3
+- fixed summarise_response_withhelp
+- made compliant with new optional_param_array method in moodle 2.3 / not retro-compatible
+
+---------------------------------------------
+26/02/2012
+version 2012022600
+- accept to give letter or word hint even with empty student answer
+- display misplaced words in student answer even if nothing matches at beginning of answer
+- removed obsolete showhint and addnextletter functions from module.js
+---------------------------------------------
+19/01/2012
+version  = 2012011000 (no version number change)
+added studentshowalternate option and updated XML table to add studentshowalternate field in qtype_regexp table (options) 
+added display alternative correct answers feature in question edit form
+----------------------------------------------
+10/01/2012
+version  = 2012011000
+- added backup/moodle1/lib.php to restore regexp questions from 1.9 backups
+- reverted table qtype_regexp_options to previous name qtype_regexp
+(pending decision by Tim Hunt to standardize question options table names)
+- updated  backup/moodle1/backup and restore files to follow current naming conventions
+- ditto for questiontype.php file and db/upgrade.php
+----------------------------------------------
+21/12/2011
+version 2011122101
+- added words hint feature (needs 2011122101 versions of regexpadaptivewithhelp and regexpadaptivewithhelpnopenalty to work)
+----------------------------------------------
+17/12/2011
+version 2011121701
+- moved calculation of alternateanswers to locallib function get_alternateanswers($question)
+- stored/cached alternateanswers array in $SESSION for better performance

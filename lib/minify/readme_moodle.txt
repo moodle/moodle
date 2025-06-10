@@ -20,9 +20,3 @@ MDL-68191: https://github.com/matthiasmullie/minify/issues/317 is a bug that sto
   a few seconds. This is one of the reasons Behat runs in the browser are so slow.)
   Whenever this library is updated check if the fix is included and remove this note.
   NOTE: As of 2020/12/08, only the first commit was brought into Moodle
-
-Note:
- * 2023-02-10 Apply commit https://github.com/matthiasmullie/minify/commit/aa8010c2fa3c26f018874141d36025085754abff
-   to avoid PHP 8.2 deprecations. See MDL-76413 for more details.
-   Since new version already have this fix if someone executing the upgrading version and
-   it has already the patch please ignore this note.

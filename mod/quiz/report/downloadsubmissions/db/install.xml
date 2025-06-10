@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+  <XMLDB PATH="mod/quiz/report/downloadsubmissions/db" VERSION="20170615" COMMENT="XMLDB file for Moodle mod/quiz/report/downloadsubmissions">
+    <TABLES>
+      <TABLE NAME="quiz_downloadsubmissions" COMMENT="Default comment for quiz_downloadsubmissions, please edit me">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        </KEYS>
+      </TABLE>
+    </TABLES>
+  </XMLDB>

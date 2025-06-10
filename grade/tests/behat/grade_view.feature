@@ -18,31 +18,13 @@ Feature: We can enter in grades and view reports from the gradebook
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity   | name                   | intro                   | course | section | idnumber |
-      | assign     | Test assignment name 1 | Submit your online text | C1     | 1       | assign1  |
-      | assign     | Test assignment name 2 | Submit your online text | C1     | 1       | assign2  |
+      | activity   | name                   | course | idnumber | assignsubmission_onlinetext_enabled |
+      | assign     | Test assignment name 1 | C1     | assign1  | 1                                   |
+      | assign     | Test assignment name 2 | C1     | assign2  | 1                                   |
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name 1"
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-    And I press "Save and return to course"
-    And I follow "Test assignment name 2"
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-    And I press "Save and return to course"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name 1"
+    And I am on the "Test assignment name 1" "assign activity" page logged in as student1
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 1 |
@@ -50,8 +32,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I press "Submit assignment"
     And I press "Continue"
     Then I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name 2"
+    And I am on the "Test assignment name 2" "assign activity" page
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 2 |
@@ -59,10 +40,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I press "Submit assignment"
     And I press "Continue"
     Then I should see "Submitted for grading"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"

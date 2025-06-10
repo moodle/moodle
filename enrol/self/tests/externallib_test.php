@@ -16,7 +16,6 @@
 
 namespace enrol_self;
 
-use core_external\external_api;
 use enrol_self_external;
 use externallib_advanced_testcase;
 
@@ -77,7 +76,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $instanceinfo1 = enrol_self_external::get_instance_info($instanceid1);
-        $instanceinfo1 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo1);
+        $instanceinfo1 = \external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo1);
 
         $this->assertEquals($instanceid1, $instanceinfo1['id']);
         $this->assertEquals($course->id, $instanceinfo1['courseid']);
@@ -87,7 +86,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse(isset($instanceinfo1['enrolpassword']));
 
         $instanceinfo2 = enrol_self_external::get_instance_info($instanceid2);
-        $instanceinfo2 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo2);
+        $instanceinfo2 = \external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo2);
         $this->assertEquals($instanceid2, $instanceinfo2['id']);
         $this->assertEquals($course->id, $instanceinfo2['courseid']);
         $this->assertEquals('self', $instanceinfo2['type']);
@@ -96,7 +95,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse(isset($instanceinfo2['enrolpassword']));
 
         $instanceinfo3 = enrol_self_external::get_instance_info($instanceid3);
-        $instanceinfo3 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo3);
+        $instanceinfo3 = \external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo3);
         $this->assertEquals($instanceid3, $instanceinfo3['id']);
         $this->assertEquals($course->id, $instanceinfo3['courseid']);
         $this->assertEquals('self', $instanceinfo3['type']);
@@ -152,7 +151,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Self enrol me.
         $result = enrol_self_external::enrol_user($course1->id);
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
 
         self::assertTrue($result['status']);
         self::assertEquals(1, $DB->count_records('user_enrolments', array('enrolid' => $instance1->id)));
@@ -174,14 +173,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try not passing a key.
         $result = enrol_self_external::enrol_user($course2->id);
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertFalse($result['status']);
         self::assertCount(1, $result['warnings']);
         self::assertEquals('4', $result['warnings'][0]['warningcode']);
 
         // Try passing an invalid key.
         $result = enrol_self_external::enrol_user($course2->id, 'invalidkey');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertFalse($result['status']);
         self::assertCount(1, $result['warnings']);
         self::assertEquals('4', $result['warnings'][0]['warningcode']);
@@ -189,14 +188,14 @@ class externallib_test extends externallib_advanced_testcase {
         // Try passing an invalid key with hint.
         $selfplugin->set_config('showhint', true);
         $result = enrol_self_external::enrol_user($course2->id, 'invalidkey');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertFalse($result['status']);
         self::assertCount(1, $result['warnings']);
         self::assertEquals('3', $result['warnings'][0]['warningcode']);
 
         // Everything correct, now.
         $result = enrol_self_external::enrol_user($course2->id, 'abcdef');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
 
         self::assertTrue($result['status']);
         self::assertEquals(1, $DB->count_records('user_enrolments', array('enrolid' => $instance2->id)));
@@ -213,14 +212,14 @@ class externallib_test extends externallib_advanced_testcase {
         self::setUser($user2);
         // Try passing and invalid key for group.
         $result = enrol_self_external::enrol_user($course2->id, 'invalidkey');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertFalse($result['status']);
         self::assertCount(1, $result['warnings']);
         self::assertEquals('2', $result['warnings'][0]['warningcode']);
 
         // Now, everything ok.
         $result = enrol_self_external::enrol_user($course2->id, 'zyx');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
 
         self::assertTrue($result['status']);
         self::assertEquals(2, $DB->count_records('user_enrolments', array('enrolid' => $instance2->id)));
@@ -237,20 +236,20 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setUser($user3);
         $result = enrol_self_external::enrol_user($course2->id, 'invalidkey');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertFalse($result['status']);
         self::assertCount(2, $result['warnings']);
 
         // Now, everything ok.
         $result = enrol_self_external::enrol_user($course2->id, 'zyx');
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertTrue($result['status']);
         self::assertTrue(is_enrolled($context2, $user3));
 
         // Now test passing an instance id.
         self::setUser($user4);
         $result = enrol_self_external::enrol_user($course2->id, 'abcdef', $instance3id);
-        $result = external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
+        $result = \external_api::clean_returnvalue(enrol_self_external::enrol_user_returns(), $result);
         self::assertTrue($result['status']);
         self::assertTrue(is_enrolled($context2, $user3));
         self::assertCount(0, $result['warnings']);

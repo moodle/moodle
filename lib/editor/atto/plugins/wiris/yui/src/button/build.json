@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_wiris-button",
+  "builds": {
+    "moodle-atto_wiris-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

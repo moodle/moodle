@@ -14,19 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
+/**
+ * Implementaton of the quizaccess_delaybetweenattempts plugin.
+ *
+ * @package    quizaccess
+ * @subpackage delaybetweenattempts
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
 
 /**
  * A rule imposing the delay between attempts settings.
  *
- * @package   quizaccess_delaybetweenattempts
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_delaybetweenattempts extends access_rule_base {
+class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         if (empty($quizobj->get_quiz()->delay1) && empty($quizobj->get_quiz()->delay2)) {
             return null;
         }
@@ -59,7 +70,7 @@ class quizaccess_delaybetweenattempts extends access_rule_base {
      * Compute the next time a student would be allowed to start an attempt,
      * according to this rule.
      * @param int $numprevattempts number of previous attempts.
-     * @param stdClass $lastattempt information about the previous attempt.
+     * @param object $lastattempt information about the previous attempt.
      * @return number the time.
      */
     protected function compute_next_start_time($numprevattempts, $lastattempt) {

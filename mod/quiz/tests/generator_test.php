@@ -38,10 +38,10 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('mod_quiz_generator', $generator);
         $this->assertEquals('quiz', $generator->get_modulename());
 
-        $generator->create_instance(['course' => $SITE->id]);
-        $generator->create_instance(['course' => $SITE->id]);
+        $generator->create_instance(array('course'=>$SITE->id));
+        $generator->create_instance(array('course'=>$SITE->id));
         $createtime = time();
-        $quiz = $generator->create_instance(['course' => $SITE->id, 'timecreated' => 0]);
+        $quiz = $generator->create_instance(array('course' => $SITE->id, 'timecreated' => 0));
         $this->assertEquals(3, $DB->count_records('quiz'));
 
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);

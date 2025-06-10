@@ -14,8 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\reports\attempts_report_table;
-use mod_quiz\quiz_attempt;
+/**
+ * This file defines the quiz responses table for showing last try at question.
+ *
+ * @package   quiz_responses
+ * @copyright 2008 Jean-Michel Vedrine
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
+
 
 /**
  * This is a table subclass for displaying the quiz responses report.
@@ -23,11 +34,11 @@ use mod_quiz\quiz_attempt;
  * @copyright 2008 Jean-Michel Vedrine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_last_responses_table extends attempts_report_table {
+class quiz_last_responses_table extends quiz_attempts_report_table {
 
     /**
      * Constructor
-     * @param stdClass $quiz
+     * @param object $quiz
      * @param context $context
      * @param string $qmsubselect
      * @param quiz_responses_options $options
@@ -94,7 +105,7 @@ class quiz_last_responses_table extends attempts_report_table {
     /**
      * Column text from the extra data loaded in load_extra_data(), before html formatting etc.
      *
-     * @param stdClass $attempt
+     * @param object $attempt
      * @param int $slot
      * @param string $field
      * @return string

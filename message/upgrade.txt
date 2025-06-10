@@ -1,13 +1,6 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* The following methods, deprecated since 3.10, have been removed and can no longer be used:
-  - `message_count_unread_messages`
-  - `\core_message\api::get_non_contacts_with_unread_message_count`
-  - `\core_message\api::get_contacts_with_unread_message_count`
-
 === 4.0 ===
 
 The following functions have been finally deprecated and can not be used anymore:

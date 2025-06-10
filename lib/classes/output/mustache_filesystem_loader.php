@@ -65,19 +65,4 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
     protected function shouldCheckPath() {
         return true;
     }
-
-    /**
-     * Load a Template by name.
-     *
-     * @param string $name the template name
-     * @return string Mustache Template source
-     */
-    public function load($name): string {
-        global $CFG;
-        if (!empty($CFG->debugtemplateinfo)) {
-            // We use many templates per page. We don't want to allocate more memory than necessary.
-            return "<!-- template(PHP): $name -->" . parent::load($name) . "<!-- /template(PHP): $name -->";
-        }
-        return parent::load($name);
-    }
 }

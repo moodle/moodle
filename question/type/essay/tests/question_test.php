@@ -280,9 +280,9 @@ class question_test extends \advanced_testcase {
 
         // Test the case in which we're in "no inline response" mode,
         // in which the response is not required (as it's not provided).
-        $essay->responserequired = 0;
+        $essay->reponserequired = 0;
         $essay->responseformat = 'noinline';
-        $essay->attachmentsrequired = 1;
+        $essay->attachmensrequired = 1;
 
         $this->assertFalse($essay->is_complete_response(
                 array()));
@@ -294,7 +294,7 @@ class question_test extends \advanced_testcase {
                 array('attachments' => $attachments[1])));
 
         // Ensure that responserequired is ignored when we're in inline response mode.
-        $essay->responserequired = 1;
+        $essay->reponserequired = 1;
         $this->assertTrue($essay->is_complete_response(
                 array('attachments' => $attachments[1])));
     }

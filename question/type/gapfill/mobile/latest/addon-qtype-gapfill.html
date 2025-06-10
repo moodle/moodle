@@ -1,0 +1,21 @@
+<section class="list qtype-gapfill-container qtype-gapfill" ion-list *ngIf="question.text || question.text === ''">
+    <ion-item class="addon-qtype-gapfill-container qtext ion-text-wrap " >
+        <ion-label>
+            <ion-card class="core-info-card" *ngIf="question.isdragdrop && !question.readOnly">
+                <ion-item>
+                    <ion-icon name="fas-info-circle" slot="start" aria-hidden="true"></ion-icon>
+                    <ion-label>
+                         {{ 'core.question.howtodraganddrop' | translate }}
+                    </ion-label>
+                </ion-item>
+            </ion-card>
+        <p>
+        <core-format-text *ngIf="question.optionsaftertext" [component]="component" [componentId]="componentId"
+            [text]="question.text" (afterRender)="questionRendered()"></core-format-text></p>
+    <p><core-format-text *ngIf="!question.optionsaftertext"  [component]="component"
+            [componentId]="componentId" [text]="question.text" (afterRender)="questionRendered()"></core-format-text></p>
+        <core-format-text *ngIf="question.answers" [component]="component" [componentId]="componentId"
+         [text]="question.answers" (afterRender)="questionRendered()"></core-format-text>
+    </ion-label>
+    </ion-item>
+</section>

@@ -1,0 +1,43 @@
+#page-blocks-ues_meta_viewer-viewer .search-table, #page-blocks-ues_meta_viewer-viewer .results-table {
+    font-size: 80%;
+    text-align: center;
+    margin: auto 10px;
+    padding: 0;
+    overflow-x: auto;
+}
+
+#page-blocks-ues_meta_viewer-viewer .search-table table.generaltable {
+    margin: 0 auto;
+    width: 100%;
+    overflow-x: auto;
+}
+
+#page-blocks-ues_meta_viewer-viewer .search-table table.generaltable input {
+    width: 7.5em;
+}
+
+#page-blocks-ues_meta_viewer-viewer .search-table table.generaltable td {
+    padding: auto 10px;
+}
+
+#page-blocks-ues_meta_viewer-viewer .center {
+    text-align: center;
+}
+
+#page-blocks-ues_meta_viewer-viewer .padded {
+    padding: 10px 0px;
+}
+
+#page-blocks-ues_meta_viewer-viewer .results-table table.generaltable {
+    font-size: 120%;
+    margin: 0 auto;
+    width: 100%;
+}
+
+#page-blocks-ues_meta_viewer-viewer .margin-center {
+    margin: auto 10px;
+}
+
+#page-blocks-ues_meta_viewer-viewer .no-results {
+    color: red;
+}

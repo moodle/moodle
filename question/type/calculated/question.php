@@ -311,6 +311,7 @@ class qtype_calculated_variable_substituter {
 
         // Prepare an array for {@link substitute_values()}.
         $this->search = array();
+        $this->replace = array();
         foreach ($values as $name => $value) {
             if (!is_numeric($value)) {
                 $a = new stdClass();

@@ -84,7 +84,7 @@ if ($form->is_cancelled()) {
     $id = lti_add_tool_proxy($data);
     redirect($redirect);
 } else {
-    $PAGE->set_title("{$SITE->shortname}: " . get_string('toolregistration', 'lti'));
+    $PAGE->set_title(get_string('toolregistration', 'lti'));
     $PAGE->navbar->add(get_string('lti_administration', 'lti'), $redirect);
 
     echo $OUTPUT->header();

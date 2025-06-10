@@ -1,0 +1,130 @@
+/*
+* Ally css.
+*/
+
+/* Initially, all ally elements are all hidden until Ally flips them on with an "ally-active" CSS class. */
+.filter-ally-wrapper .ally-feedback,
+.filter-ally-wrapper .ally-download,
+.filter-ally-wrapper .ally-image-cover {
+    display: none;
+}
+
+.filter-ally-wrapper .ally-download.ally-active,
+.filter-ally-wrapper .ally-feedback.ally-active,
+.filter-ally-wrapper .ally-image-cover.ally-active {
+    display: inline-block;
+}
+
+/* Links to ally feedback and download menu. */
+.filter-ally-wrapper .ally-actions a[data-ally-file-id] {
+    display: block;
+    margin: 0 2.5px;
+}
+
+.filter-ally-wrapper .ally-actions a[data-ally-file-id]:hover {
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+/* Ally icons - 20x20. */
+.filter-ally-wrapper .ally-actions img {
+    width: 20px;
+    height: 20px;
+}
+
+.filter-ally-wrapper .ally-feedback {
+    vertical-align: text-bottom; /* Fix aspect ratio issue with icon. */
+}
+
+/*
+* Ally for images.
+*/
+
+/* Ally image cover. */
+.filter-ally-wrapper .ally-image-cover {
+    position: absolute;
+    z-index: 1;
+}
+
+.filter-ally-wrapper .ally-image-cover .ally-image-seizure-guard {
+    width: 100%;
+    height: 100%;
+}
+
+/* "ally-feedback" items for embedded image overlays cannot be display: none because they need to retain their
+   dimensions for placement. Instead, we make them invisible and place them behind the image so they don't obstruct
+   anything until they are "active". */
+.filter-ally-wrapper.ally-image-wrapper .ally-actions .ally-feedback {
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-color: #FFF;
+    visibility: hidden;
+    z-index: -1;
+}
+
+.filter-ally-wrapper.ally-image-wrapper .ally-actions .ally-feedback.ally-active {
+    visibility: visible;
+    z-index: 2;
+}
+
+.filter-ally-wrapper.ally-image-wrapper .ally-actions .ally-feedback a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+}
+
+.filter-ally-wrapper.ally-image-wrapper .ally-actions .ally-feedback img {
+    vertical-align: baseline;
+}
+
+.filter-ally-wrapper.ally-image-wrapper .ally-accessibility-score-indicator {
+    box-sizing: border-box;
+}
+
+/*
+* CSS for behat tests.
+*/
+
+/* CSS required for testing purposes only */
+body.behat-site .filter-ally-wrapper .ally-image-cover,
+body.behat-site .filter-ally-wrapper .ally-actions .ally-feedback,
+body.behat-site .filter-ally-wrapper .ally-actions .ally-download {
+    border: 4px solid red;
+    display: inline-block;
+}
+
+body.behat-site .filter-ally-wrapper.ally-image-wrapper .ally-actions .ally-feedback {
+    visibility: visible;
+    z-index: 2;
+}
+
+@media (min-width: 767px) {
+    body:not(.snap-resource-card) .mform .form-group:has(.ally-score-meter-container.ally-add-tooltip) {
+        padding-top: 3rem!important; /* Avoid overlap with ally score indicator */
+    }
+}
+
+/* Allow the clickable Ally icons to be clicked, on the activities of a Course section. */
+body.path-course li.activity.modtype_resource span.ally-actions {
+    position: relative;
+    z-index: 1;
+}
+
+.ally-wysiwyg-feedback-tinymce .ally-score-meter-container-toolbar {
+    /* Place ally toolbar (feedback indicator) outside and above the tiny mce editor */
+    margin-top: -36px;
+}
+
+.filter-ally-wrapper.ally-anchor-wrapper {
+    display: inline-block;
+}
+
+.filter-ally-wrapper.ally-anchor-wrapper .ally-actions {
+    display: inline-flex;
+}

@@ -85,6 +85,7 @@ abstract class restore_search_base implements renderable {
     public function __construct(array $config = array()) {
 
         $this->search = optional_param($this->get_varsearch(), self::DEFAULT_SEARCH, PARAM_NOTAGS);
+        $this->search = trim($this->search);
         $this->maxresults = get_config('backup', 'import_general_maxresults');
 
         foreach ($config as $name => $value) {

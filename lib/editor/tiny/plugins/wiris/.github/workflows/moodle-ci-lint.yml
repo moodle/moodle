@@ -1,0 +1,86 @@
+name: Moodle Plugin CI Code Lint
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.3"]
+    steps:
+      # 0. Initial step.
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      # 0.1 Log
+      - name: Log info
+        run: |
+          curl ifconfig.me
+          echo "PHP: ${{ matrix.php }}"
+          echo "Moodle: ${{ matrix.moodle-branch }}"
+          echo "Database: ${{ matrix.database }}"
+
+      # 0.2. install a specific version of Node using
+      # https://github.com/actions/setup-node
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 1. Setup PHP using the matrix described on the strategy section.
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=10000
+          coverage: none
+
+      # 2. Setup Moodle-plugin-ci version 4. This is the latest version. Keep it updated.
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+        env:
+          IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          COVERAGE: false
+          CODECHECKER_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          PHPUNIT_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+
+      # 3. Run all tests.
+      # 3.1. Lint
+      - name: PHP Lint
+        if: ${{ always() }}
+        run: moodle-plugin-ci phplint ./plugin
+
+      # 3.2. PHP Detectors
+      - name: PHP Copy/Paste Detector (DEPRECATED)
+        continue-on-error: true
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpcpd ./plugin
+
+      - name: PHP Mess Detector
+        continue-on-error: true
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpmd ./plugin
+
+      # 3.3. Code validations
+      - name: Moodle Code Checker
+        if: ${{ always() }}
+        run: moodle-plugin-ci codechecker --max-warnings 50 ./plugin
+
+      - name: Check upgrade savepoints
+        if: ${{ always() }}
+        run: moodle-plugin-ci savepoints ./plugin
+
+      - name: Mustache Lint
+        if: ${{ always() }}
+        run: moodle-plugin-ci mustache ./plugin

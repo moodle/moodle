@@ -180,12 +180,23 @@ class page_requirements_manager {
         $this->yui3loader = new stdClass();
         $this->YUI_config = new YUI_config();
 
+        if (is_https() && !empty($CFG->useexternalyui)) {
+            // On HTTPS sites all JS must be loaded from https sites,
+            // YUI CDN does not support https yet, sorry.
+            $CFG->useexternalyui = 0;
+        }
+
         // Set up some loader options.
         $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/'. $CFG->yui3version . '/';
         $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php'.$sep;
 
-        $this->yui3loader->base = $this->yui3loader->local_base;
-        $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
+        if (!empty($CFG->useexternalyui)) {
+            $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/';
+            $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
+        } else {
+            $this->yui3loader->base = $this->yui3loader->local_base;
+            $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
+        }
 
         // Enable combo loader? This significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
@@ -198,7 +209,6 @@ class page_requirements_manager {
         $this->YUI_config->combine      = $this->yui3loader->combine;
 
         // If we've had to patch any YUI modules between releases, we must override the YUI configuration to include them.
-        // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
         if (!empty($CFG->yuipatchedmodules) && !empty($CFG->yuipatchlevel)) {
             $this->YUI_config->define_patched_core_modules($this->yui3loader->local_comboBase,
                     $CFG->yui3version,
@@ -208,7 +218,7 @@ class page_requirements_manager {
 
         $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
         $this->YUI_config->add_group('yui2', array(
-            // Loader configuration for our 2in3.
+            // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
             'base' => $CFG->wwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
             'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php'.$sep,
             'combine' => $this->yui3loader->combine,
@@ -457,7 +467,7 @@ class page_requirements_manager {
      *
      * NOTE: this should not be used in official Moodle distribution!
      *
-     * {@see http://docs.moodle.org/dev/jQuery}
+     * {@link https://moodledev.io/docs/guides/javascript/jquery}
      */
     public function jquery() {
         $this->jquery_plugin('jquery');
@@ -505,7 +515,7 @@ class page_requirements_manager {
      *   }
      * </code>
      *
-     * {@see http://docs.moodle.org/dev/jQuery}
+     * {@link https://moodledev.io/docs/guides/javascript/jquery}
      *
      * @param string $plugin name of the jQuery plugin as defined in jquery/plugins.php
      * @param string $component name of the component
@@ -616,7 +626,7 @@ class page_requirements_manager {
      * This code prevents loading of standard 'ui-css' which my be requested by other plugins,
      * the 'yourtheme-ui-css' gets loaded only if some other code requires jquery.
      *
-     * {@see http://docs.moodle.org/dev/jQuery}
+     * {@link https://moodledev.io/docs/guides/javascript/jquery}
      *
      * @param string $oldplugin original plugin
      * @param string $newplugin the replacement
@@ -699,28 +709,15 @@ class page_requirements_manager {
     }
 
     /**
-     * Returns the actual url through which a JavaScript file is served.
+     * Returns the actual url through which a script is served.
      *
-     * @param moodle_url|string $url full moodle url, or shortened path to script.
-     * @throws coding_exception if the given $url isn't a shortened url starting with / or a moodle_url instance.
+     * @param moodle_url|string $url full moodle url, or shortened path to script
      * @return moodle_url
      */
     protected function js_fix_url($url) {
         global $CFG;
 
         if ($url instanceof moodle_url) {
-            // If the URL is external to Moodle, it won't be handled by Moodle (!).
-            if ($url->is_local_url()) {
-                $localurl = $url->out_as_local_url();
-                // Check if the URL points to a Moodle PHP resource.
-                if (strpos($localurl, '.php') !== false) {
-                    // It's a Moodle PHP resource e.g. a resource already served by the proper Moodle Handler.
-                    return $url;
-                }
-                // It's a local resource: we need to further examine it.
-                return $this->js_fix_url($url->out_as_local_url(false));
-            }
-            // The URL is not a Moodle resource.
             return $url;
         } else if (null !== $url && strpos($url, '/') === 0) {
             // Fix the admin links if needed.
@@ -738,7 +735,7 @@ class page_requirements_manager {
             if (substr($url, -3) === '.js') {
                 $jsrev = $this->get_jsrev();
                 if (empty($CFG->slasharguments)) {
-                    return new moodle_url('/lib/javascript.php', ['rev' => $jsrev, 'jsfile' => $url]);
+                    return new moodle_url('/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
                 } else {
                     $returnurl = new moodle_url('/lib/javascript.php');
                     $returnurl->set_slashargument('/'.$jsrev.$url);

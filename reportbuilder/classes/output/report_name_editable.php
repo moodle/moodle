@@ -18,11 +18,17 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\output;
 
+use core_external;
 use html_writer;
 use moodle_url;
 use core\output\inplace_editable;
 use core_reportbuilder\permission;
 use core_reportbuilder\local\models\report;
+
+defined('MOODLE_INTERNAL') || die;
+
+global $CFG;
+require_once("{$CFG->libdir}/external/externallib.php");
 
 /**
  * Report name editable component
@@ -67,7 +73,7 @@ class report_name_editable extends inplace_editable {
     public static function update(int $reportid, string $value): self {
         $report = new report($reportid);
 
-        \core_external\external_api::validate_context($report->get_context());
+        core_external::validate_context($report->get_context());
         permission::require_can_edit_report($report);
 
         $value = trim(clean_param($value, PARAM_TEXT));

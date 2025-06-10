@@ -388,42 +388,6 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($startdate, $c2->startdate);
     }
 
-    public function test_restore_course_with_users() {
-        global $DB;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-
-        // Create a user and a course, enrol user in the course. Backup this course.
-        $startdate = mktime(12, 0, 0, 7, 1, 2016); // 01-Jul-2016.
-        $u1 = $dg->create_user(['firstname' => 'Olivia']);
-        $c1 = $dg->create_course(['shortname' => 'SN', 'fullname' => 'FN', 'startdate' => $startdate,
-            'summary' => 'DESC', 'summaryformat' => FORMAT_MOODLE]);
-        $dg->enrol_user($u1->id, $c1->id, 'student');
-        $backupid = $this->backup_course($c1->id);
-
-        // Delete the course and the user completely.
-        delete_course($c1, false);
-        delete_user($u1);
-        $DB->delete_records('user', ['id' => $u1->id]);
-
-        // Now restore this course, the user will be created and event user_created event will be triggered.
-        $sink = $this->redirectEvents();
-        $c2 = $this->restore_to_new_course($backupid);
-        $events = $sink->get_events();
-        $sink->close();
-
-        $user = $DB->get_record('user', ['firstname' => 'Olivia'], '*', MUST_EXIST);
-        $events = array_values(array_filter($events, function(\core\event\base $event) {
-            return is_a($event, \core\event\user_created::class);
-        }));
-        $this->assertEquals(1, count($events));
-        $this->assertEquals($user->id, $events[0]->relateduserid);
-        $this->assertEquals($c2->id, $events[0]->other['courseid']);
-        $this->assertStringContainsString("during restore of the course with id '{$c2->id}'",
-            $events[0]->get_description());
-    }
-
     public function test_restore_course_info_in_existing_course() {
         global $DB;
         $this->resetAfterTest();

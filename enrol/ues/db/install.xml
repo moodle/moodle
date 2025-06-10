@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/ues/db" VERSION="20111111" COMMENT="XMLDB file for the UES enrollment module"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_ues_semesters" COMMENT="Table containing the semester information for a campus" NEXT="enrol_ues_courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="year"/>
+        <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="year" NEXT="campus"/>
+        <FIELD NAME="campus" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="session_key"/>
+        <FIELD NAME="session_key" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="campus" NEXT="classes_start"/>
+        <FIELD NAME="classes_start" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="session_key" NEXT="grades_due"/>
+        <FIELD NAME="grades_due" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="classes_start"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="yeanamcamses" UNIQUE="true" FIELDS="year, name, campus, session_key"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_courses" COMMENT="ues course information (like Moodle course categories)" PREVIOUS="enrol_ues_semesters" NEXT="enrol_ues_sections">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="department"/>
+        <FIELD NAME="department" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="cou_number"/>
+        <FIELD NAME="cou_number" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" PREVIOUS="department" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="cou_number"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="depcou" UNIQUE="true" FIELDS="department, cou_number"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_sections" COMMENT="Section information tied to courses (a Moodle course or groups within a course)" PREVIOUS="enrol_ues_courses" NEXT="enrol_ues_teachers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="semesterid"/>
+        <FIELD NAME="semesterid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="idnumber"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="semesterid" NEXT="sec_number"/>
+        <FIELD NAME="sec_number" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="idnumber" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="pending" SEQUENCE="false" PREVIOUS="sec_number"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseidtocourses"/>
+        <KEY NAME="courseidtocourses" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="primary" NEXT="semestersidtosemester"/>
+        <KEY NAME="semestersidtosemester" TYPE="foreign" FIELDS="semesterid" REFTABLE="enrol_ues_semesters" REFFIELDS="id" PREVIOUS="courseidtocourses" NEXT="idnumbertoidnumber"/>
+        <KEY NAME="idnumbertoidnumber" TYPE="foreign" FIELDS="idnumber" REFTABLE="course" REFFIELDS="idnumber" PREVIOUS="semestersidtosemester"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="semcousec" UNIQUE="true" FIELDS="semesterid, courseid, sec_number"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_teachers" COMMENT="ues Instructor enrollments" PREVIOUS="enrol_ues_sections" NEXT="enrol_ues_students">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sectionid" NEXT="primary_flag"/>
+        <FIELD NAME="primary_flag" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="enrolled" SEQUENCE="false" PREVIOUS="primary_flag"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="primary" NEXT="useridtomoodle"/>
+        <KEY NAME="useridtomoodle" TYPE="foreign" FIELDS="userid" REFTABLE="users" REFFIELDS="id" PREVIOUS="sectionidtosection"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="false" FIELDS="userid, sectionid" NEXT="usesecsta"/>
+        <INDEX NAME="usesecsta" UNIQUE="false" FIELDS="userid, sectionid, status" PREVIOUS="usesec" NEXT="usesecpri"/>
+        <INDEX NAME="usesecpri" UNIQUE="false" FIELDS="userid, sectionid, primary_flag" PREVIOUS="usesecsta" NEXT="usesecprista"/>
+        <INDEX NAME="usesecprista" UNIQUE="true" FIELDS="userid, sectionid, primary_flag, status" PREVIOUS="usesecpri"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_students" COMMENT="ues Students enrollments for sections" PREVIOUS="enrol_ues_teachers" NEXT="enrol_ues_usermeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="credit_hours"/>
+        <FIELD NAME="credit_hours" TYPE="number" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="03.00" SEQUENCE="false" DECIMALS="2" PREVIOUS="sectionid" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="enrolled" SEQUENCE="false" PREVIOUS="credit_hours"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="useridmoodleid"/>
+        <KEY NAME="useridmoodleid" TYPE="foreign" FIELDS="userid" REFTABLE="users" REFFIELDS="id" PREVIOUS="primary" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="useridmoodleid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usesec" UNIQUE="false" FIELDS="userid, sectionid" NEXT="usesecsta"/>
+        <INDEX NAME="usesecsta" UNIQUE="true" FIELDS="userid, sectionid, status" PREVIOUS="usesec"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_usermeta" COMMENT="Sub system meta information for Moodle users." PREVIOUS="enrol_ues_students" NEXT="enrol_ues_semestermeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="username"/>
+        <KEY NAME="username" TYPE="unique" FIELDS="userid, name" PREVIOUS="primary" NEXT="useridmoodleid"/>
+        <KEY NAME="useridmoodleid" TYPE="foreign" FIELDS="userid" REFTABLE="users" REFFIELDS="id" PREVIOUS="username"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_ues_semestermeta" COMMENT="Meta information for semesters" PREVIOUS="enrol_ues_usermeta" NEXT="enrol_ues_coursemeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="semesterid"/>
+        <FIELD NAME="semesterid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="semesterid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="semestersidtosemester"/>
+        <KEY NAME="semestersidtosemester" TYPE="foreign" FIELDS="semesterid" REFTABLE="enrol_ues_semesters" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="semnam" UNIQUE="true" FIELDS="semesterid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_coursemeta" COMMENT="Meta information for Courses" PREVIOUS="enrol_ues_semestermeta" NEXT="enrol_ues_sectionmeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseidtocourses"/>
+        <KEY NAME="courseidtocourses" TYPE="foreign" FIELDS="courseid" REFTABLE="enrol_ues_courses" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="counam" UNIQUE="true" FIELDS="courseid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_sectionmeta" COMMENT="Meta information for Sections" PREVIOUS="enrol_ues_coursemeta" NEXT="enrol_ues_teachermeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="sectionid"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="sectionid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="sectionidtosection"/>
+        <KEY NAME="sectionidtosection" TYPE="foreign" FIELDS="sectionid" REFTABLE="enrol_ues_sections" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="secnam" UNIQUE="true" FIELDS="sectionid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_teachermeta" COMMENT="Meta Information for teachers" PREVIOUS="enrol_ues_sectionmeta" NEXT="enrol_ues_studentmeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="teacherid"/>
+        <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="teacherid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="teacheridtoteachers"/>
+        <KEY NAME="teacheridtoteachers" TYPE="foreign" FIELDS="teacherid" REFTABLE="enrol_ues_teachers" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="teanam" UNIQUE="true" FIELDS="teacherid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_studentmeta" COMMENT="Meta Information for students" PREVIOUS="enrol_ues_teachermeta" NEXT="enrol_ues_errors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="studentid"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="studentid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="studentidtostudent"/>
+        <KEY NAME="studentidtostudent" TYPE="foreign" FIELDS="studentid" REFTABLE="enrol_ues_students" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="stunam" UNIQUE="true" FIELDS="studentid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_ues_errors" COMMENT="Table used to store error information when processing enrollment." PREVIOUS="enrol_ues_studentmeta">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="params"/>
+        <FIELD NAME="params" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="timestamp"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="params"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="namtim" UNIQUE="false" FIELDS="name, timestamp"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_migratehvp2h5p/listnotmigrated
+
+    Displays a list of activities to be migrated.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * hvpactivities string The HTML of the HVP activities to migrate table.
+
+    Example context (json):
+    {
+        "hvpactivities": "<table><tr><td>This is the table where the list of HVP activities will be rendered</td></tr></table>",
+        "formaction": "#",
+        "settings": [
+            {
+                "name": "examplefield",
+                "label": "What do you want to do?",
+                "options": [
+                    {
+                        "value": 0,
+                        "text": "Nothing"
+                    },
+                    {
+                        "value": 1,
+                        "text": "Something"
+                    }
+                ]
+            }
+        ]
+    }
+
+}}
+<form action="{{formaction}}" method="post" id="migratehvp2h5pform">
+    <div data-region="hvpactivities">
+        <div class="mt-1 mb-1" data-region="hvp-activities-table">
+            {{{hvpactivities}}}
+        </div>
+    </div>
+    <div class="mt-1">
+        <h3>{{#str}} settings, tool_migratehvp2h5p {{/str}}</h3>
+        {{#settings}}
+            <div class="form-group">
+                <label class="form-label" for="{{name}}">{{label}}</label>
+                {{#options.0}}
+                    <select class="form-control" id="{{name}}" name="{{name}}">
+                          {{#options}}<option value="{{value}}">{{text}}</option>{{/options}}
+                    </select>
+                {{/options.0}}
+            </div>
+        {{/settings}}
+    </div>
+    <div class="mt-1 d-inline-block w-100">
+        <button class="btn btn-primary" id="confirm-bulk-action">{{# str}} migrate, tool_migratehvp2h5p {{/ str}}</button>
+    </div>
+</form>

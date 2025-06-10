@@ -89,7 +89,7 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertEquals('Course page', get_string('coursepage', 'core_admin'));
         $this->assertDebuggingCalled('String [coursepage,core_admin] is deprecated. '.
             'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
-            'Please refer to https://docs.moodle.org/dev/String_deprecation');
+            'Please refer to https://moodledev.io/general/projects/api/string-deprecation');
     }
 
     /**

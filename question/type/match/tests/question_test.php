@@ -191,7 +191,7 @@ class question_test extends \advanced_testcase {
 
         $match = \test_question_maker::make_question('match');
         unset($match->stems[4]);
-        unset($match->stemformat[4]);
+        unset($match->stemsformat[4]);
         unset($match->right[4]);
         $match->apply_attempt_state($firststep);
 
@@ -212,7 +212,7 @@ class question_test extends \advanced_testcase {
 
         $match = \test_question_maker::make_question('match');
         $match->stems[5] = "Snake";
-        $match->stemformat[5] = FORMAT_HTML;
+        $match->stemsformat[5] = FORMAT_HTML;
         $match->choices[5] = "Reptile";
         $match->right[5] = 5;
         $match->apply_attempt_state($firststep);

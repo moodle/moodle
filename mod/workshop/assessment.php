@@ -153,6 +153,7 @@ if ($canoverridegrades or $cansetassessmentweight) {
     $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $options);
     if ($data = $feedbackform->get_data()) {
         $workshop->evaluate_assessment($assessment, $data, $cansetassessmentweight, $canoverridegrades);
+        $workshop->aggregate_grading_grades();
         redirect($workshop->view_url());
     }
 }

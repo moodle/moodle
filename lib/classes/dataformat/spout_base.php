@@ -51,7 +51,7 @@ abstract class spout_base extends \core\dataformat\base {
      * Output file headers to initialise the download of the file.
      */
     public function send_http_headers() {
-        $this->writer = \OpenSpout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
+        $this->writer = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
         if (method_exists($this->writer, 'setTempFolder')) {
             $this->writer->setTempFolder(make_request_directory());
         }
@@ -70,7 +70,7 @@ abstract class spout_base extends \core\dataformat\base {
      * Set the dataformat to be output to current file
      */
     public function start_output_to_file(): void {
-        $this->writer = \OpenSpout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
+        $this->writer = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
         if (method_exists($this->writer, 'setTempFolder')) {
             $this->writer->setTempFolder(make_request_directory());
         }
@@ -100,7 +100,7 @@ abstract class spout_base extends \core\dataformat\base {
      * @param array $columns
      */
     public function start_sheet($columns) {
-        if ($this->sheettitle && $this->writer instanceof \OpenSpout\Writer\WriterMultiSheetsAbstract) {
+        if ($this->sheettitle && $this->writer instanceof \Box\Spout\Writer\WriterMultiSheetsAbstract) {
             if ($this->renamecurrentsheet) {
                 $sheet = $this->writer->getCurrentSheet();
                 $this->renamecurrentsheet = false;
@@ -109,7 +109,7 @@ abstract class spout_base extends \core\dataformat\base {
             }
             $sheet->setName($this->sheettitle);
         }
-        $row = \OpenSpout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray((array)$columns);
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray((array)$columns);
         $this->writer->addRow($row);
     }
 
@@ -120,7 +120,7 @@ abstract class spout_base extends \core\dataformat\base {
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
-        $row = \OpenSpout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray($this->format_record($record));
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray($this->format_record($record));
         $this->writer->addRow($row);
     }
 

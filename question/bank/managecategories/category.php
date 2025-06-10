@@ -112,11 +112,11 @@ if ($param->delete) {
     // Second pass, if we still have questions to move, setup the form.
     if ($questionstomove) {
         $categorycontext = context::instance_by_id($category->contextid);
-        $moveform = new question_move_form($thispageurl,
+        $qcobject->moveform = new question_move_form($thispageurl,
             ['contexts' => [$categorycontext], 'currentcat' => $param->delete]);
-        if ($moveform->is_cancelled()) {
+        if ($qcobject->moveform->is_cancelled()) {
             redirect($thispageurl);
-        } else if ($formdata = $moveform->get_data()) {
+        } else if ($formdata = $qcobject->moveform->get_data()) {
             list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
             $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
             $thispageurl->remove_params('cat', 'category');
@@ -171,11 +171,7 @@ if ($param->edit !== null || $qcobject->catform->is_submitted()) {
     // In this case, category id is in the 'id' hidden filed.
     $qcobject->edit_single_category($param->edit ?? required_param('id', PARAM_INT));
 } else if ($questionstomove) {
-    $vars = new stdClass();
-    $vars->name = $category->name;
-    $vars->count = $questionstomove;
-    echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
-    $moveform->display();
+    $qcobject->display_move_form($questionstomove, $category);
 } else {
     // Display the user interface.
     $qcobject->display_user_interface();

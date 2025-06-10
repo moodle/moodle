@@ -1,0 +1,90 @@
+/* the gap where answers are dropped/keyed in */
+.qtype-gapfill input[type=text] {
+    border: solid black thin;
+    border-radius: 4px;
+    color: inherit;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    padding: 1px;
+}
+/* dropped text is centred, keyed in text is not */
+.qtype-gapfill .droptarget {
+    text-align: center;
+    background: inherit;
+    cursor: pointer;
+}
+
+.qtype-gapfill div.answeroptions {
+    margin-bottom: 6px;
+}
+
+.qtype-gapfill span.draggable.answers {
+    background: inherit;
+    border: solid 1px;
+    box-shadow: 3px 3px 4px #000;
+    cursor: pointer;
+    display: inline-block;
+    margin: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: middle;
+    z-index: 3;
+    -moz-box-shadow: 3px 3px 4px #000;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 3px 3px 4px #000;
+}
+/**
+When an answer is picked the shadows
+should make it look a bit like it has been
+pressed in */
+.qtype-gapfill span.draggable.answers.picked {
+    /*a very light grey */
+    background: #f8f8f8;
+    -moz-box-shadow: -1px -1px 1px rgba(119, 119, 119, 0.75);
+    -webkit-box-shadow: -1px -1px 1px rgba(119, 119, 119, 0.75);
+    box-shadow: -1px -1px 1px rgba(119, 119, 119, 0.75);
+}
+.qtype-gapfill span.aftergapfeedback {
+    font-style: italic;
+    font-weight: bold;
+    color: green;
+}
+.gapfilltable td {
+    border: solid;
+    border-width: thin;
+    padding: 4px;
+}
+.gapfilltable th {
+    border: solid;
+    border-width: thin;
+    background-color: lightgray;
+}
+.gapfilltable caption {
+    border-bottom: solid;
+    border-width: thin;
+}
+.gapfilltable-col {
+    background-color: lightgray;
+}
+.gapfilltable-row {
+    background-color: lightgray;
+}
+
+.gapfilltable caption {
+    border-bottom: solid;
+    border-width: thin;
+}
+
+.qtype-gapfill .droptarget.correctduplicate {
+    background-color: #ff0;
+}
+
+.qtype-gapfill .core-question-answer-correct {
+    background-color: #afa;
+}
+
+.qtype-gapfill .core-question-answer-incorrect {
+    background-color: #faa;
+}

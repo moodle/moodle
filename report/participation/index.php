@@ -86,6 +86,8 @@ echo $OUTPUT->header();
 // Print the selector dropdown.
 $pluginname = get_string('pluginname', 'report_participation');
 report_helper::print_report_selector($pluginname);
+// Release session lock.
+\core\session\manager::write_close();
 
 // Logs will not have been recorded before the course timecreated time.
 $minlog = $course->timecreated;
@@ -182,9 +184,6 @@ if (!empty($instanceid) && !empty($roleid)) {
                                         TABLE_VAR_PAGE    => 'spage'
                                         ));
     $table->setup();
-
-    // Unlock the session only after outputting the table, since the table writes to the session.
-    \core\session\manager::write_close();
 
     // We want to query both the current context and parent contexts.
     list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');

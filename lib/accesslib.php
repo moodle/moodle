@@ -135,17 +135,17 @@ define('CONTEXT_MODULE', 70);
  */
 define('CONTEXT_BLOCK', 80);
 
-/** Capability allow management of trusts - NOT IMPLEMENTED YET - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allow management of trusts - NOT IMPLEMENTED YET - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_MANAGETRUST', 0x0001);
-/** Capability allows changes in system configuration - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows changes in system configuration - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_CONFIG',      0x0002);
-/** Capability allows user to add scripted content - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows user to add scripted content - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_XSS',         0x0004);
-/** Capability allows access to personal user information - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows access to personal user information - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_PERSONAL',    0x0008);
-/** Capability allows users to add content others may see - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows users to add content others may see - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_SPAM',        0x0010);
-/** capability allows mass delete of data belonging to other users - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** capability allows mass delete of data belonging to other users - see {@link https://moodledev.io/docs/apis/subsystems/roles} */
 define('RISK_DATALOSS',    0x0020);
 
 /** rolename displays - the name as defined in the role definition, localised if name empty */
@@ -165,11 +165,6 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
     /** maximum size of context cache - it is possible to tweak this config.php or in any script before inclusion of context.php */
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
-
-/** Performance hint for assign_capability: the contextid is known to exist */
-define('ACCESSLIB_HINT_CONTEXT_EXISTS', 'contextexists');
-/** Performance hint for assign_capability: there is no existing entry in role_capabilities */
-define('ACCESSLIB_HINT_NO_EXISTING', 'notexists');
 
 /**
  * Although this looks like a global variable, it isn't really.
@@ -1316,21 +1311,9 @@ function create_role($name, $shortname, $description, $archetype = '') {
     if (empty($role->sortorder)) {
         $role->sortorder = 1;
     }
-    $role->id = $DB->insert_record('role', $role);
-    $event = \core\event\role_created::create([
-        'objectid' => $role->id,
-        'context' => context_system::instance(),
-        'other' => [
-            'name' => $role->name,
-            'shortname' => $role->shortname,
-            'archetype' => $role->archetype,
-        ]
-    ]);
+    $id = $DB->insert_record('role', $role);
 
-    $event->add_record_snapshot('role', $role);
-    $event->trigger();
-
-    return $role->id;
+    return $id;
 }
 
 /**
@@ -1385,21 +1368,14 @@ function delete_role($roleid) {
 /**
  * Function to write context specific overrides, or default capabilities.
  *
- * The $performancehints array can currently contain two values intended to make this faster when
- * this function is being called in a loop, if you have already checked certain details:
- * 'contextexists' - if we already know the contextid exists in context table
- * ASSIGN_HINT_NO_EXISTING - if we already know there is no entry in role_capabilities matching
- *   contextid, roleid, and capability
- *
  * @param string $capability string name
  * @param int $permission CAP_ constants
  * @param int $roleid role id
  * @param int|context $contextid context id
  * @param bool $overwrite
- * @param string[] $performancehints Performance hints - leave blank unless needed
  * @return bool always true or exception
  */
-function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false, array $performancehints = []) {
+function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false) {
     global $USER, $DB;
 
     if ($contextid instanceof context) {
@@ -1418,12 +1394,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         return true;
     }
 
-    if (in_array(ACCESSLIB_HINT_NO_EXISTING, $performancehints)) {
-        $existing = false;
-    } else {
-        $existing = $DB->get_record('role_capabilities',
-                ['contextid' => $context->id, 'roleid' => $roleid, 'capability' => $capability]);
-    }
+    $existing = $DB->get_record('role_capabilities', array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability));
 
     if ($existing and !$overwrite) {   // We want to keep whatever is there already
         return true;
@@ -1441,8 +1412,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         $cap->id = $existing->id;
         $DB->update_record('role_capabilities', $cap);
     } else {
-        if (in_array(ACCESSLIB_HINT_CONTEXT_EXISTS, $performancehints) ||
-                $DB->record_exists('context', ['id' => $context->id])) {
+        if ($DB->record_exists('context', array('id'=>$context->id))) {
             $DB->insert_record('role_capabilities', $cap);
         }
     }
@@ -2280,9 +2250,6 @@ function reset_role_capabilities($roleid) {
 function update_capabilities($component = 'moodle') {
     global $DB, $OUTPUT;
 
-    // Allow temporary caches to be used during install, dramatically boosting performance.
-    $token = new \core_cache\allow_temporary_caches();
-
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
@@ -2348,7 +2315,6 @@ function update_capabilities($component = 'moodle') {
     }
     // Add new capabilities to the stored definition.
     $existingcaps = $DB->get_records_menu('capabilities', array(), 'id', 'id, name');
-    $capabilityobjects = [];
     foreach ($newcaps as $capname => $capdef) {
         $capability = new stdClass();
         $capability->name         = $capname;
@@ -2356,37 +2322,18 @@ function update_capabilities($component = 'moodle') {
         $capability->contextlevel = $capdef['contextlevel'];
         $capability->component    = $component;
         $capability->riskbitmask  = $capdef['riskbitmask'];
-        $capabilityobjects[] = $capability;
-    }
-    $DB->insert_records('capabilities', $capabilityobjects);
 
-    // Flush the cache, as we have changed DB.
-    cache::make('core', 'capabilities')->delete('core_capabilities');
+        $DB->insert_record('capabilities', $capability, false);
 
-    foreach ($newcaps as $capname => $capdef) {
+        // Flush the cached, as we have changed DB.
+        cache::make('core', 'capabilities')->delete('core_capabilities');
+
         if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
-            if ($rolecapabilities = $DB->get_records_sql('
-                    SELECT rc.*,
-                           CASE WHEN EXISTS(SELECT 1
-                                    FROM {role_capabilities} rc2
-                                   WHERE rc2.capability = ?
-                                         AND rc2.contextid = rc.contextid
-                                         AND rc2.roleid = rc.roleid) THEN 1 ELSE 0 END AS entryexists,
-                            ' . context_helper::get_preload_record_columns_sql('x') .'
-                      FROM {role_capabilities} rc
-                      JOIN {context} x ON x.id = rc.contextid
-                     WHERE rc.capability = ?',
-                    [$capname, $capdef['clonepermissionsfrom']])) {
-                foreach ($rolecapabilities as $rolecapability) {
-                    // Preload the context and add performance hints based on the SQL query above.
-                    context_helper::preload_from_record($rolecapability);
-                    $performancehints = [ACCESSLIB_HINT_CONTEXT_EXISTS];
-                    if (!$rolecapability->entryexists) {
-                        $performancehints[] = ACCESSLIB_HINT_NO_EXISTING;
-                    }
+            if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
+                foreach ($rolecapabilities as $rolecapability){
                     //assign_capability will update rather than insert if capability exists
                     if (!assign_capability($capname, $rolecapability->permission,
-                            $rolecapability->roleid, $rolecapability->contextid, true, $performancehints)) {
+                                            $rolecapability->roleid, $rolecapability->contextid, true)){
                          echo $OUTPUT->notification('Could not clone capabilities for '.$capname);
                     }
                 }
@@ -2608,13 +2555,10 @@ function get_capability_info($capabilityname) {
  * @return stdClass|null with deprecation message and potential replacement if not null
  */
 function get_deprecated_capability_info($capabilityname) {
-    // Here if we do like get_all_capabilities, we run into performance issues as the full array is unserialised each time.
-    // We could have used an adhoc task but this also had performance issue. Last solution was to create a cache using
-    // the official caches.php file. The performance issue shows in test_permission_evaluation.
-    $cache = cache::make('core', 'deprecatedcapabilities');
-    // Cache has not be initialised.
-    if (!$cache->get('deprecated_capabilities_initialised')) {
-        // Look for deprecated capabilities in each components.
+    $cache = cache::make('core', 'capabilities');
+    $alldeprecatedcaps = $cache->get('deprecated_capabilities');
+    if ($alldeprecatedcaps === false) {
+        // Look for deprecated capabilities in each component.
         $allcaps = get_all_capabilities();
         $components = [];
         $alldeprecatedcaps = [];
@@ -2627,18 +2571,19 @@ function get_deprecated_capability_info($capabilityname) {
                     require($defpath);
                     if (!empty($deprecatedcapabilities)) {
                         foreach ($deprecatedcapabilities as $cname => $cdef) {
-                            $cache->set($cname, $cdef);
+                            $alldeprecatedcaps[$cname] = $cdef;
                         }
                     }
                 }
             }
         }
-        $cache->set('deprecated_capabilities_initialised', true);
+        $cache->set('deprecated_capabilities', $alldeprecatedcaps);
     }
-    if (!$cache->has($capabilityname)) {
+
+    if (!isset($alldeprecatedcaps[$capabilityname])) {
         return null;
     }
-    $deprecatedinfo = $cache->get($capabilityname);
+    $deprecatedinfo = $alldeprecatedcaps[$capabilityname];
     $deprecatedinfo['fullmessage'] = "The capability '{$capabilityname}' is deprecated.";
     if (!empty($deprecatedinfo['message'])) {
         $deprecatedinfo['fullmessage'] .= $deprecatedinfo['message'];
@@ -2699,7 +2644,7 @@ function get_capability_string($capabilityname) {
     }
 
     $dir = core_component::get_component_directory($component);
-    if (!file_exists($dir)) {
+    if (!isset($dir) || !file_exists($dir)) {
         // plugin broken or does not exist, do not bother with printing of debug message
         return $capabilityname.' ???';
     }
@@ -2723,7 +2668,7 @@ function get_component_string($component, $contextlevel) {
 
     list($type, $name) = core_component::normalize_component($component);
     $dir = core_component::get_plugin_directory($type, $name);
-    if (!file_exists($dir)) {
+    if (!isset($dir) || !file_exists($dir)) {
         // plugin not installed, bad luck, there is no way to find the name
         return $component . ' ???';
     }
@@ -4280,21 +4225,21 @@ function get_user_capability_contexts(string $capability, bool $getcategories, $
         $fieldlist = \core\access\get_user_capability_course_helper::map_fieldnames($categoryfieldsexceptid);
         if ($categoryorderby) {
             $fields = explode(',', $categoryorderby);
-            $orderby = '';
+            $categoryorderby = '';
             foreach ($fields as $field) {
-                if ($orderby) {
-                    $orderby .= ',';
+                if ($categoryorderby) {
+                    $categoryorderby .= ',';
                 }
-                $orderby .= 'c.'.$field;
+                $categoryorderby .= 'c.'.$field;
             }
-            $orderby = 'ORDER BY '.$orderby;
+            $categoryorderby = 'ORDER BY '.$categoryorderby;
         }
         $rs = $DB->get_recordset_sql("
             SELECT c.id $fieldlist
               FROM {course_categories} c
                JOIN {context} x ON c.id = x.instanceid AND x.contextlevel = ?
             $contextlimitsql
-            $orderby", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
+            $categoryorderby", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
         $basedlimit = $limit;
         foreach ($rs as $category) {
             $categories[] = $category;
@@ -4303,6 +4248,7 @@ function get_user_capability_contexts(string $capability, bool $getcategories, $
                 break;
             }
         }
+        $rs->close();
     }
 
     $courses = [];
@@ -4395,6 +4341,11 @@ function role_switch($roleid, context $context) {
 
     if (!isset($USER->access)) {
         load_all_capabilities();
+    }
+
+    // Make sure that course index is refreshed.
+    if ($coursecontext = $context->get_course_context()) {
+        core_courseformat\base::session_cache_reset(get_course($coursecontext->instanceid));
     }
 
     // Add the switch RA

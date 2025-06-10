@@ -1,0 +1,811 @@
+.wrsUI_app.wrsUI_graph {
+  position: relative;
+  min-height: 200px;
+  min-width: 200px;
+}
+.wrsUI_app.wrsUI_graph svg {
+  width: 29px;
+  height: 29px;
+}
+.wrsUI_app.wrsUI_graph.wrsUI_graph_awake > * {
+  opacity: 0.95;
+}
+.wrsUI_app.wrsUI_graph:focus {
+  outline: none;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_drawingPanel.wrsUI_drawingPanelEmpty .wrsUI_aux_canvasContainer canvas {
+  background: none;
+}
+
+.wrsUI_app.wrsUI_graph .wrsUI_drawerPanelRightDrawer .wrsUI_aux_drawerContent {
+  background: #fafafa;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_drawerPanelRightDrawer .wrsUI_aux_drawerContent .wrsUI_panel:not(.wrsUI_interval) > .wrsUI_textComponent,
+.wrsUI_app.wrsUI_graph .wrsUI_drawerPanelRightDrawer .wrsUI_aux_drawerContent .wrsUI_aux_dropdown_container {
+  width: 112px !important;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_drawerPanelRightDrawer .wrsUI_aux_drawerContent .wrsUI_dropdown.wrsUI_button {
+  text-align: left !important;
+}
+
+.wrsUI_app.wrsUI_graph .wrs_editor .wrs_formulaDisplay {
+  height: auto !important;
+}
+.wrsUI_app.wrsUI_graph .wrs_editor .wrs_formulaDisplay,
+.wrsUI_app.wrsUI_graph .wrs_editor .wrs_container {
+  border: 0;
+  margin: 0px 3px 0px 3px;
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+.wrsUI_app.wrsUI_graph .wrs_editor .wrs_hidden {
+  margin: 0px;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_floatingPanel {
+  opacity: 1;
+}
+
+/**
+ * Shadow colors.
+ * http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * The hand-designed reference shadow sets.
+ * Source: http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * Animation durations.
+ */
+/**
+ * Material Design element elevations
+ * Source: https://material.google.com/material-design/elevation-shadows.html#elevation-shadows-elevation-android
+ */
+/**
+* Returns the two reference shadows whose elevations bound the specified
+* elevation. In the case where the supplied elevation exceeds the maximum
+* reference elevation, the last two reference shadows are returned.
+*/
+/**
+ * Performs linear interpolation between values a and b. Returns the value
+ * between a and b proportional to x (when x is between 0 and 1. When x is
+ * outside this range, the return value is a linear extrapolation).
+ */
+/**
+ * Performs linear interpolation between shadows by interpolating each property
+ * individually. Returns the value between shadow1 and shadow2 proportional to x
+ * (when x is between 0 and 1. When x is outside this range, the return value is
+ * a linear extrapolation).
+ */
+/**
+ * Calculates the set of shadows at a given elevation.
+ */
+/**
+ * Generates box-shadow and the transition for a given elevation
+ * A single elevation will generate a single box-shadow set
+ * Two elevations and a state will generate a default box-shadow set
+ * and another set that is activated by the state
+ * tested with :hover and :active
+ */
+/**
+ * Generates the transition for a change between 2 elevations
+ * The larger the elevation change the longer the animation takes
+ */
+/**
+* Returns box-shadow and transition properties for Material Design elements
+*/
+/**
+* CSS md-elevation-z# classes
+*/
+.md-elevation-z0 {
+  box-shadow: none;
+}
+
+.md-elevation-z1 {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z2 {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z3 {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z4 {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z5 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z6 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z7 {
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z8 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z9 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z10 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z11 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z12 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z13 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z14 {
+  box-shadow: 0px 7px 9px -5px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z15 {
+  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z16 {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z17 {
+  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z18 {
+  box-shadow: 0px 9px 11px -6px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z19 {
+  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z20 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z21 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z22 {
+  box-shadow: 0px 10px 14px -7px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z23 {
+  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z24 {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+/**
+* CSS transistion class
+*/
+md-elevation-transition {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+* CSS classes for Material Design elements
+*/
+.md-elevation-dialog {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-picker {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-nav-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-right-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-sheet {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-fab {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-fab:active {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-3 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-2 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-1 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-menu {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-nav-bar {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-card {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-card:hover {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-raised-button {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-raised-button:active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-snackbar {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-app-bar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-refresh-indicator {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-quick-entry {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-quick-entry:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-search-bar {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-search-bar:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-switch {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.dropdownArrow::after, .graphDropdownButtonTextToolbar::after, .wrsUI_app .wrsUI_constantsButton::after, .wrsUI_app .wrsUI_functionsButton::after {
+  content: "";
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 14px !important;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_more";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: grey;
+  position: absolute;
+  top: 35%;
+  right: 5px;
+}
+
+.wrsUI_app .wrsUI_toolBar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+.wrsUI_app .wrsUI_toolBar.wrsUI_toolBarFlat {
+  box-shadow: none;
+}
+.wrsUI_app .wrsUI_toolBar.wrsUI_flowPanelTopToBottom > * > *:not(:first-child) {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_flowPanelTopToBottom) > * > *:not(:first-child) {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact) {
+  padding: 0 2px;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact).wrsUI_flowPanelTopToBottom {
+  padding: 2px 0;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact).wrsUI_flowPanelTopToBottom > *:last-child {
+  margin-top: auto;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact):not(.wrsUI_flowPanelTopToBottom) > *:last-child {
+  margin-left: auto;
+}
+.wrsUI_app .wrsUI_toolBar:not(.wrsUI_toolBarCompact):not(.wrsUI_flowPanelTopToBottom) > * > *:not(:first-child)::before {
+  margin: 0 2px;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_button, .wrsUI_app .wrsUI_toolBar .wrsUI_button.wrsUI_buttonOutlined, .wrsUI_app .wrsUI_toolBar .wrsUI_button.wrsUI_buttonContained {
+  padding: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown {
+  border: none;
+  margin: 0;
+  padding: 0 24px 0 5px;
+  width: auto;
+  min-width: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown:not(:disabled):hover:not(.wrsUI_focused), .wrsUI_app .wrsUI_toolBar .wrsUI_dropdown.wrsUI_focused {
+  border-bottom: none;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown::after {
+  right: 0;
+}
+.wrsUI_app .wrsUI_toolBar .wrsUI_dropdown.wrsUI_buttonIcon {
+  padding: 0;
+  justify-content: center !important;
+}
+
+.toolbarButton, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button, .wrsUI_app .wrsUI_toolBar .wrsUI_button {
+  background: transparent;
+  border-radius: 0;
+  width: 33px;
+  height: 33px;
+  min-width: 0;
+  margin: 0;
+  color: #2f4b59;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.toolbarButton:not(.wrsUI_switch):not(:disabled):hover, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch):not(:disabled):hover, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled):hover, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_focused, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_focused, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_focused {
+  background: rgba(0, 0, 0, 0.1);
+}
+.toolbarButton:not(.wrsUI_switch):not(:disabled):active, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch):not(:disabled):active, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled):active, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_selected, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_selected, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_selected, .toolbarButton:not(.wrsUI_switch):not(:disabled).wrsUI_contextPanelButtonPressed, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_contextPanelButtonPressed, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch):not(:disabled).wrsUI_contextPanelButtonPressed {
+  background: rgba(0, 0, 0, 0.15);
+}
+.toolbarButton:not(.wrsUI_switch).wrsUI_focused:not(.wrsUI_aux_rippling) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch).wrsUI_focused:not(.wrsUI_aux_rippling) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch).wrsUI_focused:not(.wrsUI_aux_rippling) > .wrsUI_aux_ripple {
+  opacity: 0.99;
+}
+.toolbarButton:not(.wrsUI_switch) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:not(.wrsUI_switch) > .wrsUI_aux_ripple, .wrsUI_app .wrsUI_toolBar .wrsUI_button:not(.wrsUI_switch) > .wrsUI_aux_ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+.toolbarButton:disabled, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button:disabled, .wrsUI_app .wrsUI_toolBar .wrsUI_button:disabled {
+  opacity: 0.26;
+}
+.toolbarButton > .wrsUI_aux_icon, .wrsUI_app .wrsUI_dropdownDialog .wrsUI_button > .wrsUI_aux_icon, .wrsUI_app .wrsUI_toolBar .wrsUI_button > .wrsUI_aux_icon {
+  color: #2f4b59;
+}
+
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_responsiveToolbarBlock .wrsUI_responsiveToolbarSection {
+  padding: 0;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_responsiveToolbarSection .wrsUI_button {
+  margin: 0;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_button {
+  padding: 0;
+  height: 40px;
+  width: 40px;
+  border: 0 !important;
+  text-align: center !important;
+  min-width: 40px;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_button.wrsUI_dropdown {
+  min-width: 50px !important;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_button.wrsUI_dropdown .wrsUI_aux_icon {
+  padding-right: 10px;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_toolBar .wrsUI_button.wrsUI_dropdown::after {
+  color: #2f4b59 !important;
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px !important;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_more";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+}
+.wrsUI_app.wrsUI_graph .wrsUI_responsiveToolbarContextPanel .wrsUI_responsiveToolbarSection {
+  margin: 0;
+}
+.wrsUI_app.wrsUI_graph .wrsUI_responsiveToolbarContextPanel .wrsUI_responsiveToolbarSection .wrsUI_aux_dropdown_container {
+  width: auto !important;
+}
+.wrsUI_app .wrsUI_dropdown.wrsUI_button {
+  text-align: center;
+}
+.wrsUI_app .wrsUI_dropdownDialog .wrsUI_button {
+  font-size: 16px !important;
+  height: 40px;
+}
+
+/**
+ * Shadow colors.
+ * http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * The hand-designed reference shadow sets.
+ * Source: http://codepen.io/shyndman/pen/ojxmdY
+ */
+/**
+ * Animation durations.
+ */
+/**
+ * Material Design element elevations
+ * Source: https://material.google.com/material-design/elevation-shadows.html#elevation-shadows-elevation-android
+ */
+/**
+* Returns the two reference shadows whose elevations bound the specified
+* elevation. In the case where the supplied elevation exceeds the maximum
+* reference elevation, the last two reference shadows are returned.
+*/
+/**
+ * Performs linear interpolation between values a and b. Returns the value
+ * between a and b proportional to x (when x is between 0 and 1. When x is
+ * outside this range, the return value is a linear extrapolation).
+ */
+/**
+ * Performs linear interpolation between shadows by interpolating each property
+ * individually. Returns the value between shadow1 and shadow2 proportional to x
+ * (when x is between 0 and 1. When x is outside this range, the return value is
+ * a linear extrapolation).
+ */
+/**
+ * Calculates the set of shadows at a given elevation.
+ */
+/**
+ * Generates box-shadow and the transition for a given elevation
+ * A single elevation will generate a single box-shadow set
+ * Two elevations and a state will generate a default box-shadow set
+ * and another set that is activated by the state
+ * tested with :hover and :active
+ */
+/**
+ * Generates the transition for a change between 2 elevations
+ * The larger the elevation change the longer the animation takes
+ */
+/**
+* Returns box-shadow and transition properties for Material Design elements
+*/
+/**
+* CSS md-elevation-z# classes
+*/
+.md-elevation-z0 {
+  box-shadow: none;
+}
+
+.md-elevation-z1 {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z2 {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z3 {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z4 {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z5 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z6 {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z7 {
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z8 {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z9 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z10 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z11 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z12 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z13 {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z14 {
+  box-shadow: 0px 7px 9px -5px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z15 {
+  box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z16 {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z17 {
+  box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z18 {
+  box-shadow: 0px 9px 11px -6px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z19 {
+  box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z20 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z21 {
+  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z22 {
+  box-shadow: 0px 10px 14px -7px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z23 {
+  box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-z24 {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+/**
+* CSS transistion class
+*/
+md-elevation-transition {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+* CSS classes for Material Design elements
+*/
+.md-elevation-dialog {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-picker {
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-nav-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-right-drawer {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-sheet {
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-fab {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-fab:active {
+  box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-3 {
+  box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-2 {
+  box-shadow: 0px 6px 6px -4px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-sub-menu-1 {
+  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-menu {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-bottom-nav-bar {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-card {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-card:hover {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-raised-button {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 287.5ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-raised-button:active {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-snackbar {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-app-bar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-refresh-indicator {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-quick-entry {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-quick-entry:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-search-bar {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 256.25ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.md-elevation-search-bar:active {
+  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.md-elevation-switch {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.dropdownArrow::after, .graphDropdownButtonTextToolbar::after, .wrsUI_app .wrsUI_constantsButton::after, .wrsUI_app .wrsUI_functionsButton::after {
+  content: "";
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 14px !important;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  content: "expand_more";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+  color: grey;
+  position: absolute;
+  top: 35%;
+  right: 5px;
+}
+
+.wrsUI_app .wrsUI_constantsContextPanel,
+.wrsUI_app .wrsUI_functionsContextPanel {
+  padding: 0 !important;
+}
+.wrsUI_app .wrsUI_constantsContextPanel .wrsUI_button.wrsUI_buttonText {
+  width: 40px !important;
+}
+.wrsUI_app .wrsUI_functionsContextPanel .wrsUI_button.wrsUI_buttonText {
+  width: 52px !important;
+}
+.wrsUI_app .wrsUI_constantsButton {
+  width: 50px !important;
+}
+.wrsUI_app .wrsUI_functionsButton {
+  width: 62px !important;
+}
+
+.graphButtonText, .graphDropdownButtonTextToolbar, .wrsUI_app .wrsUI_constantsButton, .wrsUI_app .wrsUI_functionsButton, .wrsUI_app .wrsUI_constantsContextPanel .wrsUI_button.wrsUI_buttonText, .wrsUI_app .wrsUI_functionsContextPanel .wrsUI_button.wrsUI_buttonText {
+  padding-bottom: 2px !important;
+  height: 40px;
+  min-width: 40px !important;
+  justify-content: center !important;
+  font-weight: 500;
+  font-size: 12pt;
+  color: #2f4b59;
+  text-transform: none;
+}
+
+.graphDropdownButtonTextToolbar, .wrsUI_app .wrsUI_constantsButton, .wrsUI_app .wrsUI_functionsButton {
+  padding-right: 10px !important;
+}
+
+.wrsUI_app .wrsUI_label.wrsUI_labelHelperTextAction {
+  color: #2f4b59 !important;
+}
+.wrsUI_app .wrsUI_label.wrsUI_labelHelperText {
+  opacity: 0.8;
+  color: #2f4b59 !important;
+}
+.wrsUI_app .wrsUI_label.wrsUI_hyperlinkLabel.wrsUI_hyperlinkLabelHelperText {
+  color: #2f4b59 !important;
+}
+.wrsUI_app .wrsUI_iconBox.wrsUI_iconBoxHelperText {
+  box-shadow: none;
+  pointer-events: none;
+}
+.wrsUI_app .wrsUI_iconBox.wrsUI_iconBoxHelperText .wrsUI_aux_icon {
+  color: #2f4b59 !important;
+  height: 20px;
+  width: 20px;
+  font-size: 20px !important;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonHelperText {
+  padding: 0;
+  height: 16px;
+  width: 16px;
+  border: 0 !important;
+  text-align: center !important;
+  min-width: 16px;
+}
+.wrsUI_app .wrsUI_button.wrsUI_buttonHelperText .wrsUI_aux_icon {
+  color: #2f4b59 !important;
+  height: 16px;
+  width: 16px;
+  font-size: 16px !important;
+}
+
+/*# sourceMappingURL=graph.css.map */

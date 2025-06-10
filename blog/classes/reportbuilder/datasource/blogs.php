@@ -22,8 +22,6 @@ use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\{course, user};
 use core_blog\reportbuilder\local\entities\blog;
-use core_files\reportbuilder\local\entities\file;
-use core_comment\reportbuilder\local\entities\comment;
 use core_tag\reportbuilder\local\entities\tag;
 
 /**
@@ -56,18 +54,6 @@ class blogs extends datasource {
 
         $this->add_entity($blogentity);
 
-        // Join the files entity.
-        $fileentity = (new file())
-            ->set_entity_title(new lang_string('blogattachment', 'core_blog'));
-        $filesalias = $fileentity->get_table_alias('files');
-        $this->add_entity($fileentity
-            ->add_join("LEFT JOIN {files} {$filesalias}
-                ON {$filesalias}.contextid = " . SYSCONTEXTID . "
-               AND {$filesalias}.component = 'blog'
-               AND {$filesalias}.filearea = 'attachment'
-               AND {$filesalias}.itemid = {$postalias}.id
-               AND {$filesalias}.filename != '.'"));
-
         // Join the tag entity.
         $tagentity = (new tag())
             ->set_entity_title(new lang_string('blogtags', 'core_blog'))
@@ -87,31 +73,16 @@ class blogs extends datasource {
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.id = {$postalias}.courseid"));
 
-        // Join the comment entity (ensure differing alias from that used by course entity).
-        $commententity = (new comment())
-            ->set_table_alias('comments', 'bcmt');
-        $this->add_entity($commententity
-            ->add_join("LEFT JOIN {comments} bcmt ON bcmt.component = 'blog' AND bcmt.itemid = {$postalias}.id"));
-
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entity($blogentity->get_entity_name());
 
-        // Add specific file/tag entity elements.
-        $this->add_columns_from_entity($fileentity->get_entity_name(), ['name', 'size', 'type', 'timecreated']);
-        $this->add_filters_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-        $this->add_conditions_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-
+        // Add specific tag entity elements.
         $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
         $this->add_filter($tagentity->get_filter('name'));
         $this->add_condition($tagentity->get_condition('name'));
 
         $this->add_all_from_entity($userentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
-
-        // Add specific comment entity elements.
-        $this->add_columns_from_entity($commententity->get_entity_name(), ['content', 'timecreated']);
-        $this->add_filter($commententity->get_filter('timecreated'));
-        $this->add_condition($commententity->get_filter('timecreated'));
     }
 
     /**

@@ -1,0 +1,36 @@
+#iseek {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#iseek_brand {
+	height: 30px;
+	width: 120px;
+	margin-bottom: 5px;
+}
+
+#iseek_form {
+	display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 24px;
+}
+
+#iseek_text {
+	border: 1px solid black !important;
+	border-right: none !important;
+	padding-left: 5px !important;
+}
+
+#iseek_button {
+	height: 100%;
+	width: 30px;
+	border: 1px solid black !important;
+	background-color: #7DA840;
+}
+
+#iseek_button:hover {
+	background-color: #D1EDA8;
+}

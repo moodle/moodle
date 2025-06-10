@@ -87,6 +87,9 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
+// First make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
+
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
 
@@ -110,8 +113,11 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     }
 
     if (empty($userid)) {
-        print_grade_page_head($courseid, 'report', 'overview', false, false, false,
-            true, null, null, null, $actionbar);
+        // BEGIN LSU last report selected.
+        print_grade_page_head($COURSE->id, 'report', 'overview',
+            get_string('pluginname', 'gradereport_overview') . ' - ' . fullname($user),
+            false, false, true, null, null, $user);
+        // END LSU last report selected.
 
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
@@ -123,12 +129,22 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
     } else { // Only show one user's report
         $report = new grade_report_overview($userid, $gpr, $context);
-        // Make sure we have proper final grades - this report shows grades from other courses, not just the
-        // selected one, so we need to check and regrade all courses the user is enrolled in.
-        $report->regrade_all_courses_if_needed(true);
-        print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview') .
-            ' - ' . fullname($report->user), false, false, true, null, null,
-            $report->user, $actionbar);
+
+        // BEGIN LSU Alternate Names support.
+        $user = $report->user;
+        $alternateused = isset($user->alternatename) && $user->alternatename <> '' ? $user->alternatename : 0;
+
+        if ($alternateused) {
+            $user->firstname = $report->user->alternatename . ' (' . $report->user->firstname . ') ';
+        }
+        // END LSU Alternate Names support.
+
+        // BEGIN LSU last report selected.
+        print_grade_page_head($COURSE->id, 'report', 'overview',
+            get_string('pluginname', 'gradereport_overview') . ' - ' . fullname($report->user),
+            false, false, true, null, null, $report->user, $actionbar);
+        // END LSU last report selected.
+
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {
@@ -173,9 +189,10 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
                 echo '<br />' . $report->print_table(true);
             }
         } else { // We have a course context. We must be navigating from the gradebook.
-            print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
-                . ' - ' . fullname($report->user), false, false, true, null, null,
-                $report->user, $actionbar);
+            // BEGIN LSU last report selected.
+            print_grade_page_head($COURSE->id, 'report', 'overview',
+                get_string('pluginname', 'gradereport_overview'));
+            // END LSU last report selected.
             if ($report->fill_table()) {
                 echo '<br />' . $report->print_table(true);
             }

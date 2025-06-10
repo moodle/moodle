@@ -25,15 +25,16 @@
 namespace core_blog;
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir .'/externallib.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_multiple_structure;
+use external_warnings;
 use context_system;
 use context_course;
 use moodle_exception;
@@ -194,7 +195,7 @@ class external extends external_api {
     /**
      * Returns description of get_entries() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since  Moodle 3.6
      */
     public static function get_entries_returns() {
@@ -276,7 +277,7 @@ class external extends external_api {
     /**
      * Returns description of view_entries() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since  Moodle 3.6
      */
     public static function view_entries_returns() {

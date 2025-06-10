@@ -36,16 +36,8 @@ export default class extends DndSectionItem {
     create(descriptor) {
         // Optional component name for debugging.
         this.name = 'content_section_header';
-        // Default query selectors.
-        this.selectors = {
-            ACTIONSMENU: `.section_action_menu`,
-            BULKSELECT: `[data-for='sectionBulkSelect']`,
-            BULKCHECKBOX: `[data-bulkcheckbox]`,
-        };
-        this.classes = {
-            HIDE: 'd-none',
-            SELECTED: 'selected',
-        };
+        // We need our id to watch specific events.
+
         // Get main info from the descriptor.
         this.id = descriptor.id;
         this.section = descriptor.section;
@@ -60,91 +52,5 @@ export default class extends DndSectionItem {
      */
     stateReady(state) {
         this.configDragDrop(this.id, state, this.fullregion);
-        this._refreshBulk({state});
-    }
-
-    /**
-     * Component watchers.
-     *
-     * @returns {Array} of watchers
-     */
-    getWatchers() {
-        return [
-            {watch: `bulk:updated`, handler: this._refreshBulk},
-        ];
-    }
-
-    /**
-     * Update a bulk options.
-     *
-     * @param {object} param
-     * @param {Object} param.state the state data
-     */
-    _refreshBulk({state}) {
-        const bulk = state.bulk;
-        if (!this._isSectionBulkEditable()) {
-            return;
-        }
-        // For now, dragging elements in bulk is not possible.
-        this.setDraggable(!bulk.enabled);
-        this.getElement(this.selectors.BULKSELECT)?.classList.toggle(this.classes.HIDE, !bulk.enabled);
-
-        const disabled = !this._isSectionBulkEnabled(bulk);
-        const selected = this._isSelected(bulk);
-        this.element.classList.toggle(this.classes.SELECTED, selected);
-        this._setCheckboxValue(selected, disabled);
-    }
-
-    /**
-     * Modify the checkbox element.
-     * @param {Boolean} checked the new checked value
-     * @param {Boolean} disabled the new disabled value
-     */
-    _setCheckboxValue(checked, disabled) {
-        const checkbox = this.getElement(this.selectors.BULKCHECKBOX);
-        if (!checkbox) {
-            return;
-        }
-        checkbox.checked = checked;
-        checkbox.disabled = disabled;
-        // Is selectable is used to easily scan the page for bulk checkboxes.
-        if (disabled) {
-            checkbox.removeAttribute('data-is-selectable');
-        } else {
-            checkbox.dataset.isSelectable = 1;
-        }
-    }
-
-    /**
-     * Check if cm bulk selection is available.
-     * @param {Object} bulk the current state bulk attribute
-     * @returns {Boolean}
-     */
-    _isSectionBulkEnabled(bulk) {
-        if (!bulk.enabled) {
-            return false;
-        }
-        return (bulk.selectedType === '' || bulk.selectedType === 'section');
-    }
-
-    /**
-     * Check if the section is bulk editable.
-     * @return {Boolean}
-     */
-    _isSectionBulkEditable() {
-        const section = this.reactive.get('section', this.id);
-        return section?.bulkeditable ?? false;
-    }
-
-    /**
-     * Check if the cm id is part of the current bulk selection.
-     * @param {Object} bulk the current state bulk attribute
-     * @returns {Boolean}
-     */
-    _isSelected(bulk) {
-        if (bulk.selectedType !== 'section') {
-            return false;
-        }
-        return bulk.selection.includes(this.id);
     }
 }

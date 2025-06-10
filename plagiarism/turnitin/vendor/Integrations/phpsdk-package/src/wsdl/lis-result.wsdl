@@ -1,0 +1,2933 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl11:definitions xmlns:tns="http://www.imsglobal.org/services/lis/oms1p0/wsdl11/sync/imsoms_v1p0" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="OutcomesManagementServiceSyncServices" targetNamespace="http://www.imsglobal.org/services/lis/oms1p0/wsdl11/sync/imsoms_v1p0">
+    <wsdl11:documentation>
+        WSDLv1.1 File Information
+        -------------------------
+        Services:       OutcomesManagementService (Synchronous Communications)
+        Author:         Colin Smythe
+        Date:           31st January, 2010
+        Version:        Final 1.0
+        Status:         Public Draft
+        Description:    The Outcomes Management Service.
+
+        History:        Version 1.0: This is the first formal release of this service.
+
+        WSDL Binding:   WSDL Binding is based upon the IMS GLC General Web Services Base Profile v1.0
+                        The IMS GLC GWS Basic Profile is derived from the WS-I Basic Profile v1.1.  This
+                        profile uses: WSDL 1.1, SOAP 1.1, HTTP 1.1 and XML 1.0.  Extension profiles to
+                        the IMS GLC GWS Base Profile are available but are not supported using this tool version.
+
+        License:        IPR, License and Distribution Notices
+
+                        This machine readable file is derived from IMS Global Learning Consortium (GLC) specification 
+                        IMS Outcomes Management Service Version 1.0 found at http://www.imsglobal.org/lis and the 
+                        original IMS GLC schema binding or code base http://www.imsglobal.org/lis.
+
+                        Recipients of this document are requested to submit, with their comments, notification of any
+                        relevant patent claims or other intellectual property rights of which they may be aware that might be
+                        infringed by the schema binding contained in this document.
+
+                        IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                        rights that might be claimed to pertain to the implementation or use of the technology described in this
+                        document or the extent to which any license under such rights might or might not be available; neither
+                        does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                        procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                        Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                        Copyright (c) IMS Global Learning Consortium 1999-2010. All Rights Reserved.
+
+                        License Notice for Users
+
+                        Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                        non-exclusive license to use this document. 
+
+                        Distribution Notice for Developers
+
+                        Developers of products or services that are not original incorporators of this document and 
+                        have not changed this document, that is, are distributing a software product that incorporates this 
+                        document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                        display and distribute the contents of this document in any medium for any purpose without fee or 
+                        royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                        copies, or portions thereof.
+
+                        Developers of products or services that are original incorporators of this document and wish 
+                        to provide distribution of this document as is or with modifications and developers of products and 
+                        services that are not original incorporators of this document and have changed this document, are
+                        required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                        paragraphs:-
+
+                        *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                           permission to copy, display and distribute the contents of this document in any medium for any 
+                           purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                           its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                           registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                           instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                           registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                           purposes of third-party or other distribution of your product or service that incorporates this 
+                           document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                        *  If you wish to create and distribute a derived work from this document, you are hereby 
+                           granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                           any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                           notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                           profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                           the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                           granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                           third-party or other distribution of your product or service that incorporates the derived work as long 
+                           as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                        The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                        successors or assigns.
+
+                        THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                        EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                        NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                        ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+        UML Source File Information
+        ---------------------------
+        Choreography:     Sync
+        Transport:        SOAPv1.1
+
+        Source UML File Information
+        ---------------------------
+        The source file information must be supplied as an XMI file (without diagram layout information).
+        The supported UML authoring tools are:
+        (a) Poseidon – v6 (and later)
+
+        Source XSLT File Information
+        ----------------------------
+        XSL Generator:    UMLtoWSDLv1.1Transformv0p9.xsl
+        XSLT Processor:   Xalan
+        Release:          1.0 Beta 3
+        Date:             31st May, 2009
+
+        IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+        ------------------------------------------------
+        This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+        attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+        that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+        claim on the materials created by third party users of this tool.  Details on how to use this tool
+        are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+        Tool Copyright:  2005-2010 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+    </wsdl11:documentation>
+
+    <!-- Declaration of the WSDL type elements ************************************************************ -->
+
+    <wsdl11:types>
+        <xs:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.imsglobal.org/services/lis/oms1p0/wsdl11/sync/imsoms_v1p0" version="IMS OMS 1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+        <!-- Generate Global Attributes *********************************************************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+        <xs:simpleType name="imsx_CodeMajor.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="success"/>
+                <xs:enumeration value="processing"/>
+                <xs:enumeration value="failure"/>
+                <xs:enumeration value="unsupported"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_Severity.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="status"/>
+                <xs:enumeration value="warning"/>
+                <xs:enumeration value="error"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:simpleType name="imsx_CodeMinorValue.Type">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="fullsuccess"/>
+                <xs:enumeration value="nosourcedids"/>
+                <xs:enumeration value="idallocfail"/>
+                <xs:enumeration value="overflowfail"/>
+                <xs:enumeration value="idallocinusefail"/>
+                <xs:enumeration value="invaliddata"/>
+                <xs:enumeration value="incompletedata"/>
+                <xs:enumeration value="partialdatastorage"/>
+                <xs:enumeration value="unknownobject"/>
+                <xs:enumeration value="unknownquery"/>
+                <xs:enumeration value="deletefailure"/>
+                <xs:enumeration value="targetreadfailure"/>
+                <xs:enumeration value="savepointerror"/>
+                <xs:enumeration value="savepointsyncerror"/>
+                <xs:enumeration value="unknownextension"/>
+                <xs:enumeration value="targetisbusy"/>
+                <xs:enumeration value="linkfailure"/>
+                <xs:enumeration value="unauthorizedrequest"/>
+                <xs:enumeration value="unsupportedLIS"/>
+                <xs:enumeration value="unsupportedLISoperation"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:element name="imsx_codeMajor" type="tns:imsx_CodeMajor.Type"/>
+
+        <xs:element name="imsx_severity" type="tns:imsx_Severity.Type"/>
+
+        <xs:element name="imsx_codeMinorFieldValue" type="tns:imsx_CodeMinorValue.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+        <xs:element name="label" type="xs:normalizedString"/>
+
+        <xs:element name="outcomesHandlerSourcedId" type="xs:anyURI"/>
+
+        <xs:element name="contextType" type="xs:anyURI"/>
+
+        <xs:element name="lineItemTypeVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="resourceHandlerId" type="xs:anyURI"/>
+
+        <xs:element name="localeKey" type="xs:normalizedString"/>
+
+        <xs:element name="defaultDisplayName" type="xs:normalizedString"/>
+
+        <xs:element name="imsx_messageRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_operationRefIdentifier" type="xs:string"/>
+
+        <xs:element name="imsx_description" type="xs:string"/>
+
+        <xs:element name="imsx_codeMinorFieldName" type="xs:string" default="TargetEndSystem"/>
+
+        <xs:element name="imsx_version" type="xs:string" default="V1.0"/>
+
+        <xs:element name="imsx_messageIdentifier" type="xs:string"/>
+
+        <xs:element name="min" type="xs:decimal"/>
+
+        <xs:element name="max" type="xs:decimal"/>
+
+        <xs:element name="ordinal" type="xs:integer"/>
+
+        <xs:element name="date" type="xs:dateTime"/>
+
+        <xs:element name="resultStatusVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="language" type="xs:normalizedString"/>
+
+        <xs:element name="textString" type="xs:string"/>
+
+        <xs:element name="metadataNameVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="metadataValueVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="extensionNameVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="extensionValueVocabulary" type="xs:anyURI"/>
+
+        <xs:element name="fieldName" type="xs:normalizedString"/>
+
+        <xs:element name="fieldType" type="xs:normalizedString"/>
+
+        <xs:element name="fieldValue" type="xs:normalizedString"/>
+
+        <xs:element name="refAgentInstanceID" type="xs:normalizedString"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+        <xs:complexType name="LineItem.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The LineItem complexType is the container for the LineItem data model.  A LineItem 
+consists of a column of results that are assigned to a Course component e.g. CourseTemplate, etc.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:context" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:lineItemType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:choice minOccurs="0" maxOccurs="1">
+                    <xs:element ref="tns:resultValueSourcedId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element ref="tns:resultValue" minOccurs="1" maxOccurs="1"/>
+                </xs:choice>
+                <xs:element ref="tns:lineItemSettings" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:outcomesHandlerSourcedId" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="LineItemRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The LineItemRecord complexType defines the association between the globally 
+unique identifier of a LineItem object and the LineItem object iself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:lineItem" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="LineItemRecordSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The LineItemRecordSet complexType is the container for the collection of LineItemRecords.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:lineItemRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Context.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The Context complexType is the container for all of the information that establishes the context for a lineItem.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:contextIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:contextType" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="LineItemType.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The LineItemType complexType is the container for the definition of the type of lineItem.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:lineItemTypeVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:lineItemTypeValue" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:resourceHandlerId" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:localeKey" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:defaultDisplayName" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_StatusInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMajor" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_severity" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageRefIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_operationRefIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="tns:imsx_description" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinor" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinor.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_CodeMinorField.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_codeMinorFieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_codeMinorFieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_RequestHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="imsx_ResponseHeaderInfo.Type">
+            <xs:sequence>
+                <xs:element ref="tns:imsx_version" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_messageIdentifier" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:imsx_statusInfo" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ValueRange.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ValueRange complexType is the container for the minimum and 
+maximum numeric value that a Result can have.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:min" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:max" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ValueList.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ValueList complexType is the container for the set of values 
+that can be allocated to a Result.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:orderValue" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultValue.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ResultValue complexType is the container for the 
+                    information about the set of values that are permitted 
+                    for a Result.  This is either a set of values or a 
+                    numeric range.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:choice>
+                <xs:element ref="tns:label" minOccurs="0" maxOccurs="1"/>
+                <xs:choice minOccurs="1" maxOccurs="1">
+                    <xs:element ref="tns:valueList" minOccurs="1" maxOccurs="1"/>
+                    <xs:element ref="tns:valueRange" minOccurs="1" maxOccurs="1"/>
+                </xs:choice>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:choice>
+        </xs:complexType>
+
+        <xs:complexType name="OrderedValue.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The OrderedValue complexType is the container for each of the 
+values in the set of permitted values.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:ordinal" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:grade" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:valueRange" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultValueRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ResultValueRecord complexType is the container 
+                    for the association of a ResultValues object with its globally 
+                    unique identifier i.e. its sourcedId.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:resultValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultValueRecordSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ResultValueRecordSet complexType is the container for the collection of ResultValueRecords.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:resultValueRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Result.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Result complexType is the container for a Result.  
+                    Each Result identifies the Person to whom the result 
+                    is assigned and the set of attributes for the result value.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:statusofResult" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:lineItemSourcedId" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:personSourcedId" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:date" minOccurs="0" maxOccurs="1"/>
+                <xs:choice minOccurs="0" maxOccurs="1">
+                    <xs:element ref="tns:resultValueSourcedId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element ref="tns:resultValue" minOccurs="1" maxOccurs="1"/>
+                </xs:choice>
+                <xs:element ref="tns:resultScore" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:resultMessageSettings" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:dataSource" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:recordInfo" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:extension" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultRecord.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    ResultRecord is the complexType for the association 
+                    of the globally unique identifier for a Result and the 
+                    Result object itself.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedGUID" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:result" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultRecordSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The ResultRecordSet complexType is the container for the collection of ResultRecords.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:resultRecord" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ResultStatus.Type">
+            <xs:sequence>
+                <xs:element ref="tns:resultStatusVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:resultStatusValue" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:localeKey" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:defaultDisplayName" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="GUIDSet.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The GUIDSet data-type is the container for a set 
+                    of SourcedIds.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Text.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The text complexType is the container for a language specific string.  
+The language is denoted using the ISO 639 code set.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:language" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:textString" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="Metadata.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The Metadata complexType is the container for meta-data 
+                    that is used to describe an object.  At the current time 
+                    this is just a set of name/type/value triples.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:metadataNameVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:metadataValueVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:metadataField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="IMSExtension.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The IMSExtension complexType is the container for the set 
+                    of extension information.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:extensionNameVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionValueVocabulary" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:extensionField" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ExtensionField.Type">
+            <xs:annotation>
+                <xs:documentation source="umlcommentbox">
+                    The ExtensionField complexType is the container for each 
+                    of the extension entries.  This is a name/type/value 
+                    triple.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:fieldName" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldType" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="tns:fieldValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="SourcedGUID.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    The SourcedGUID complexType is the container for the extended sourcedId. 
+The refAgentInstamceID permits multiple endpoint differentiation.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="tns:refAgentInstanceID" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="tns:sourcedId" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="PropertySet.Type">
+            <xs:annotation>
+                <xs:documentation source="umldocumentation">
+                    To be defined with respect to the LTI Specification.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+        <xs:simpleType name="GUID.Type">
+            <xs:restriction base="xs:normalizedString"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="SequenceIdentifier.Type">
+            <xs:restriction base="xs:dateTime"/>
+        </xs:simpleType>
+
+        <xs:simpleType name="QueryObject.Type">
+            <xs:restriction base="xs:normalizedString"/>
+        </xs:simpleType>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the elements ********************************************************************** -->
+
+        <xs:element name="context" type="tns:Context.Type"/>
+
+        <xs:element name="lineItemSettings" type="tns:PropertySet.Type"/>
+
+        <xs:element name="recordInfo" type="tns:Metadata.Type"/>
+
+        <xs:element name="extension" type="tns:IMSExtension.Type"/>
+
+        <xs:element name="sourcedGUID" type="tns:SourcedGUID.Type"/>
+
+        <xs:element name="lineItem" type="tns:LineItem.Type"/>
+
+        <xs:element name="lineItemTypeValue" type="tns:Text.Type"/>
+
+        <xs:element name="imsx_codeMinor" type="tns:imsx_CodeMinor.Type"/>
+
+        <xs:element name="imsx_codeMinorField" type="tns:imsx_CodeMinorField.Type"/>
+
+        <xs:element name="imsx_statusInfo" type="tns:imsx_StatusInfo.Type"/>
+
+        <xs:element name="orderValue" type="tns:OrderedValue.Type"/>
+
+        <xs:element name="grade" type="tns:Text.Type"/>
+
+        <xs:element name="valueRange" type="tns:ValueRange.Type"/>
+
+        <xs:element name="resultValue" type="tns:ResultValue.Type"/>
+
+        <xs:element name="valueList" type="tns:ValueList.Type"/>        
+
+        <xs:element name="statusofResult" type="tns:ResultStatus.Type"/>
+
+        <xs:element name="resultScore" type="tns:Text.Type"/>
+
+        <xs:element name="resultMessageSettings" type="tns:PropertySet.Type"/>
+
+        <xs:element name="result" type="tns:Result.Type"/>
+
+        <xs:element name="resultStatusValue" type="tns:Text.Type"/>
+
+        <xs:element name="metadataField" type="tns:ExtensionField.Type"/>
+
+        <xs:element name="extensionField" type="tns:ExtensionField.Type"/>
+
+        <xs:element name="dataSource" type="tns:GUID.Type"/>
+
+        <xs:element name="contextIdentifier" type="tns:GUID.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message parameter elements **************************************************** -->
+
+        <xs:element name="sourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="lineItemRecord" type="tns:LineItemRecord.Type"/>
+
+        <xs:element name="resultIdSet" type="tns:GUIDSet.Type"/>
+
+        <xs:element name="sourcedIdSet" type="tns:GUIDSet.Type"/>
+
+        <xs:element name="personSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="offeringSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="sectionSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="lineItemType" type="tns:LineItemType.Type"/>
+
+        <xs:element name="fromSavePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="savePoint" type="tns:SequenceIdentifier.Type"/>
+
+        <xs:element name="lineItemRecordSet" type="tns:LineItemRecordSet.Type"/>
+
+        <xs:element name="queryObject" type="tns:QueryObject.Type"/>
+
+        <xs:element name="newSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultRecord" type="tns:ResultRecord.Type"/>
+
+        <xs:element name="sourceId" type="tns:GUID.Type"/>
+
+        <xs:element name="lineItemSourcedid" type="tns:GUID.Type"/>
+
+        <xs:element name="courseOfferingSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="courseSectionSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultStatus" type="tns:ResultStatus.Type"/>
+
+        <xs:element name="contextSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultRecordSet" type="tns:ResultRecordSet.Type"/>
+
+        <xs:element name="resultValuesRecord" type="tns:ResultValueRecord.Type"/>
+
+        <xs:element name="resultValueRecord" type="tns:ResultValueRecord.Type"/>
+
+        <xs:element name="lineItemSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultValueSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultSourcedId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultValueSourceId" type="tns:GUID.Type"/>
+
+        <xs:element name="resultValueRecordSet" type="tns:ResultValueRecordSet.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the message body elements ********************************************************* -->
+
+        <xs:element name="createLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:lineItemRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createLineItemResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyLineItemResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteLineItemResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllLineItemIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllLineItemIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForPersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForPersonResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:offeringSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForCourseOfferingResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sectionSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsForCourseSectionResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsWithLineItemTypeRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemType"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsWithLineItemTypeResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readLineItemsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:lineItemRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateLineItemResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:lineItemRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceLineItemResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverLineItemIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverLineItemIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeLineItemIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeLineItemIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createResultResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyResultResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteResultResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllResultIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllResultIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForPersonRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:personSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForPersonResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemSourcedid"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForLineItemResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseOfferingRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseOfferingSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseOfferingResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseSectionRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseSectionResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseSectionWithStatusRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:courseSectionSourcedId"/>
+                    <xs:element ref="tns:resultStatus"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForCourseSectionWithStatusResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForLineItemsWithLineItemTypeRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:contextSourcedId"/>
+                    <xs:element ref="tns:lineItemType"/>
+                    <xs:element ref="tns:resultStatus"/>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsForLineItemsWithLineItemTypeResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readResultIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateResultResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceResultResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverResultIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverResultIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeResultIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeResultIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultValuesRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createResultValueResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="createByProxyResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValuesRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="createByProxyResultValueResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deleteResultValueResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValueRecord" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readAllResultValueIdsRequest">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="readAllResultValueIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdForLineItemRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:lineItemSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdForLineItemResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValueSourcedId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdForResultRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdForResultResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValueSourceId" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdsFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValueIdsFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValuesRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValuesResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValueRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValuesFromSavePointRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:fromSavePoint"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="readResultValuesFromSavePointResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:resultValueRecordSet" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tns:savePoint" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultValuesRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="updateResultValueResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="replaceResultValueRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:resultValuesRecord"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replaceResultValueResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <xs:element name="discoverResultValueIdsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:queryObject"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="discoverResultValueIdsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedIdSet" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeResultValueIdentifierRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element ref="tns:sourcedId"/>
+                    <xs:element ref="tns:newSourcedId"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="changeResultValueIdentifierResponse">
+            <xs:complexType/>
+        </xs:element>
+
+        <!-- ================================================================================================== -->
+
+        <!-- Declaration of the root element(s) *************************************************************** -->
+
+        <xs:element name="imsx_syncRequestHeaderInfo" type="tns:imsx_RequestHeaderInfo.Type"/>
+        <xs:element name="imsx_syncResponseHeaderInfo" type="tns:imsx_ResponseHeaderInfo.Type"/>
+
+        <!-- ================================================================================================== -->
+
+        </xs:schema>
+    </wsdl11:types>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL message elements ********************************************************* -->
+
+    <wsdl11:message name="createLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:createLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createLineItemResponse">
+        <wsdl11:part name="Response" element="tns:createLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyLineItemResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteLineItemResponse">
+        <wsdl11:part name="Response" element="tns:deleteLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllLineItemIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllLineItemIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllLineItemIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllLineItemIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForPersonRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemIdsForPersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForPersonResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemIdsForPersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemIdsForCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemIdsForCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemIdsForCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsForCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemIdsForCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsWithLineItemTypeRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemIdsWithLineItemTypeRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsWithLineItemTypeResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemIdsWithLineItemTypeResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemsRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemsResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readLineItemsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readLineItemsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readLineItemsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:updateLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateLineItemResponse">
+        <wsdl11:part name="Response" element="tns:updateLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceLineItemResponse">
+        <wsdl11:part name="Response" element="tns:replaceLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverLineItemIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverLineItemIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverLineItemIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverLineItemIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeLineItemIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeLineItemIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeLineItemIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeLineItemIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createResultRequest">
+        <wsdl11:part name="Parameters" element="tns:createResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createResultResponse">
+        <wsdl11:part name="Response" element="tns:createResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyResultRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyResultResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteResultRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteResultResponse">
+        <wsdl11:part name="Response" element="tns:deleteResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultResponse">
+        <wsdl11:part name="Response" element="tns:readResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllResultIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllResultIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllResultIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllResultIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForPersonRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForPersonRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForPersonResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForPersonResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForLineItemResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseOfferingRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForCourseOfferingRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseOfferingResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForCourseOfferingResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseSectionRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForCourseSectionRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseSectionResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForCourseSectionResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseSectionWithStatusRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForCourseSectionWithStatusRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForCourseSectionWithStatusResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForCourseSectionWithStatusResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForLineItemsWithLineItemTypeRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsForLineItemsWithLineItemTypeRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsForLineItemsWithLineItemTypeResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsForLineItemsWithLineItemTypeResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readResultIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultsRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultsResponse">
+        <wsdl11:part name="Response" element="tns:readResultsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readResultsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateResultRequest">
+        <wsdl11:part name="Parameters" element="tns:updateResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateResultResponse">
+        <wsdl11:part name="Response" element="tns:updateResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceResultRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceResultResponse">
+        <wsdl11:part name="Response" element="tns:replaceResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverResultIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverResultIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverResultIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverResultIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeResultIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeResultIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeResultIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeResultIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:createResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createResultValueResponse">
+        <wsdl11:part name="Response" element="tns:createResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:createByProxyResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="createByProxyResultValueResponse">
+        <wsdl11:part name="Response" element="tns:createByProxyResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:deleteResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="deleteResultValueResponse">
+        <wsdl11:part name="Response" element="tns:deleteResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueResponse">
+        <wsdl11:part name="Response" element="tns:readResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllResultValueIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:readAllResultValueIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readAllResultValueIdsResponse">
+        <wsdl11:part name="Response" element="tns:readAllResultValueIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdForLineItemRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValueIdForLineItemRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdForLineItemResponse">
+        <wsdl11:part name="Response" element="tns:readResultValueIdForLineItemResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdForResultRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValueIdForResultRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdForResultResponse">
+        <wsdl11:part name="Response" element="tns:readResultValueIdForResultResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdsFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValueIdsFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValueIdsFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readResultValueIdsFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValuesRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValuesRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValuesResponse">
+        <wsdl11:part name="Response" element="tns:readResultValuesResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValuesFromSavePointRequest">
+        <wsdl11:part name="Parameters" element="tns:readResultValuesFromSavePointRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="readResultValuesFromSavePointResponse">
+        <wsdl11:part name="Response" element="tns:readResultValuesFromSavePointResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:updateResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="updateResultValueResponse">
+        <wsdl11:part name="Response" element="tns:updateResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceResultValueRequest">
+        <wsdl11:part name="Parameters" element="tns:replaceResultValueRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="replaceResultValueResponse">
+        <wsdl11:part name="Response" element="tns:replaceResultValueResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverResultValueIdsRequest">
+        <wsdl11:part name="Parameters" element="tns:discoverResultValueIdsRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="discoverResultValueIdsResponse">
+        <wsdl11:part name="Response" element="tns:discoverResultValueIdsResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeResultValueIdentifierRequest">
+        <wsdl11:part name="Parameters" element="tns:changeResultValueIdentifierRequest"/>
+        <wsdl11:part name="HeaderInfoParameters" element="tns:imsx_syncRequestHeaderInfo"/>
+    </wsdl11:message>
+    <wsdl11:message name="changeResultValueIdentifierResponse">
+        <wsdl11:part name="Response" element="tns:changeResultValueIdentifierResponse"/>
+        <wsdl11:part name="HeaderInfoResponse" element="tns:imsx_syncResponseHeaderInfo"/>
+    </wsdl11:message>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL portType elements ******************************************************** -->
+
+    <wsdl11:portType name="LineItemManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the LineItemManager interface.  
+            The operations are:
+            
+            1) CreateLineItem
+            2) CreateByProxyLineItem
+            3) DeleteLineItem
+            4) ReadLineItem
+            5) ReadAllLineItemIds
+            6) ReadLineItemIdsForPerson
+            7) ReadLineItemIdsForCourseOffering
+            8) ReadLineItemIdsForCourseSection
+            9) ReadLineItemIdsWithLineItemType
+            10) ReadLineItemIdsFromSavePoint
+            11) ReadLineItems
+            12) ReadLineItemIdsrmSavePoint
+            13) UpdateLineItem
+            14) ReplaceLineItem
+            15) DiscoverLineItemIds
+            16) ChangeLineItemIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createLineItemRequest"/>
+            <wsdl11:output message="tns:createLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyLineItemRequest"/>
+            <wsdl11:output message="tns:createByProxyLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteLineItemRequest"/>
+            <wsdl11:output message="tns:deleteLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemRequest"/>
+            <wsdl11:output message="tns:readLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllLineItemIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllLineItemIdsRequest"/>
+            <wsdl11:output message="tns:readAllLineItemIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForPerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemIdsForPersonRequest"/>
+            <wsdl11:output message="tns:readLineItemIdsForPersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemIdsForCourseOfferingRequest"/>
+            <wsdl11:output message="tns:readLineItemIdsForCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemIdsForCourseSectionRequest"/>
+            <wsdl11:output message="tns:readLineItemIdsForCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsWithLineItemType">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemIdsWithLineItemTypeRequest"/>
+            <wsdl11:output message="tns:readLineItemIdsWithLineItemTypeResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readLineItemIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItems">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemsRequest"/>
+            <wsdl11:output message="tns:readLineItemsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readLineItemsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readLineItemsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateLineItemRequest"/>
+            <wsdl11:output message="tns:updateLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceLineItemRequest"/>
+            <wsdl11:output message="tns:replaceLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverLineItemIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverLineItemIdsRequest"/>
+            <wsdl11:output message="tns:discoverLineItemIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeLineItemIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeLineItemIdentifierRequest"/>
+            <wsdl11:output message="tns:changeLineItemIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+    <wsdl11:portType name="ResultManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the ResultManager interface.  
+            The operations are:
+            
+            1) CreateResult
+            2) CreateByProxyResult
+            3) DeleteResult
+            4) ReadResult
+            5) ReadAllResultIds
+            6) ReadResultIdsForPerson
+            7) ReadResultIdsForLineItem
+            8) ReadResultIdsForCourseOffering
+            9) ReadResultIdsForCourseSection
+            10) ReadResultIdsForCourseSectionWithStatus
+            11) ReadResultIdsForLineItemsWithLineItemType
+            12) ReadResultIdsFromSavePoint
+            13) ReadResults
+            14) ReadResultsFromSavePoint
+            15) UpdateResult
+            16) ReplaceResult
+            17) DiscoverResultIds
+            18) ChangeResultIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createResultRequest"/>
+            <wsdl11:output message="tns:createResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyResultRequest"/>
+            <wsdl11:output message="tns:createByProxyResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteResultRequest"/>
+            <wsdl11:output message="tns:deleteResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultRequest"/>
+            <wsdl11:output message="tns:readResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllResultIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllResultIdsRequest"/>
+            <wsdl11:output message="tns:readAllResultIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForPerson">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForPersonRequest"/>
+            <wsdl11:output message="tns:readResultIdsForPersonResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForLineItemRequest"/>
+            <wsdl11:output message="tns:readResultIdsForLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseOffering">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForCourseOfferingRequest"/>
+            <wsdl11:output message="tns:readResultIdsForCourseOfferingResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseSection">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForCourseSectionRequest"/>
+            <wsdl11:output message="tns:readResultIdsForCourseSectionResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseSectionWithStatus">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForCourseSectionWithStatusRequest"/>
+            <wsdl11:output message="tns:readResultIdsForCourseSectionWithStatusResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForLineItemsWithLineItemType">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsForLineItemsWithLineItemTypeRequest"/>
+            <wsdl11:output message="tns:readResultIdsForLineItemsWithLineItemTypeResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readResultIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResults">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultsRequest"/>
+            <wsdl11:output message="tns:readResultsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readResultsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateResultRequest"/>
+            <wsdl11:output message="tns:updateResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceResultRequest"/>
+            <wsdl11:output message="tns:replaceResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverResultIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverResultIdsRequest"/>
+            <wsdl11:output message="tns:discoverResultIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeResultIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeResultIdentifierRequest"/>
+            <wsdl11:output message="tns:changeResultIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+    <wsdl11:portType name="ResultValueManagerSyncPortType">
+        <wsdl11:documentation>
+            PortType Description
+            --------------------
+            This is the ResultValueManager interface.  
+            The operations are:
+            
+            1) CreateResultValue
+            2) CreateByProxyResultValue
+            3) DeleteResultValue
+            4) ReadResultValue
+            5) ReadAllResultValueIds
+            6) ReadResultValueIdForLineItem
+            7) ReadResultValueIdForResult
+            8) ReadResultValueIdsFromSavePoint
+            9) ReadResultValues
+            10) ReadResultValuesFromSavePoint
+            11) UpdateResultValue
+            12) ReplaceResultValue
+            13) DiscoverResultValue
+            14) ChangeResultValuesIdentifier
+        </wsdl11:documentation>
+        <wsdl11:operation name="createResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createResultValueRequest"/>
+            <wsdl11:output message="tns:createResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:createByProxyResultValueRequest"/>
+            <wsdl11:output message="tns:createByProxyResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:deleteResultValueRequest"/>
+            <wsdl11:output message="tns:deleteResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValueRequest"/>
+            <wsdl11:output message="tns:readResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllResultValueIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readAllResultValueIdsRequest"/>
+            <wsdl11:output message="tns:readAllResultValueIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdForLineItem">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValueIdForLineItemRequest"/>
+            <wsdl11:output message="tns:readResultValueIdForLineItemResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdForResult">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValueIdForResultRequest"/>
+            <wsdl11:output message="tns:readResultValueIdForResultResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdsFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValueIdsFromSavePointRequest"/>
+            <wsdl11:output message="tns:readResultValueIdsFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValues">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValuesRequest"/>
+            <wsdl11:output message="tns:readResultValuesResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValuesFromSavePoint">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:readResultValuesFromSavePointRequest"/>
+            <wsdl11:output message="tns:readResultValuesFromSavePointResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:updateResultValueRequest"/>
+            <wsdl11:output message="tns:updateResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceResultValue">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:replaceResultValueRequest"/>
+            <wsdl11:output message="tns:replaceResultValueResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverResultValueIds">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:discoverResultValueIdsRequest"/>
+            <wsdl11:output message="tns:discoverResultValueIdsResponse"/>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeResultValueIdentifier">
+            <wsdl11:documentation>
+                Operation Description
+                ---------------------
+                
+            </wsdl11:documentation>
+            <wsdl11:input message="tns:changeResultValueIdentifierRequest"/>
+            <wsdl11:output message="tns:changeResultValueIdentifierResponse"/>
+        </wsdl11:operation>
+    </wsdl11:portType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL binding elements ********************************************************* -->
+
+    <wsdl11:binding name="LineItemManagerSyncSoapBinding" type="tns:LineItemManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createByProxyLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/deleteLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllLineItemIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readAllLineItemIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllLineItemIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllLineItemIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForPerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemIdsForPerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemIdsForPersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemIdsForPersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemIdsForCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemIdsForCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemIdsForCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsForCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemIdsForCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemIdsForCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemIdsForCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsWithLineItemType">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemIdsWithLineItemType" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemIdsWithLineItemTypeRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemIdsWithLineItemTypeResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItems">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItems" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readLineItemsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readLineItemsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readLineItemsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readLineItemsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/updateLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/replaceLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverLineItemIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/discoverLineItemIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverLineItemIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverLineItemIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeLineItemIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/changeLineItemIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeLineItemIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeLineItemIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+    <wsdl11:binding name="ResultManagerSyncSoapBinding" type="tns:ResultManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createByProxyResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/deleteResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllResultIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readAllResultIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllResultIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllResultIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForPerson">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForPerson" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForPersonRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForPersonResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseOffering">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForCourseOffering" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForCourseOfferingRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForCourseOfferingResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseSection">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForCourseSection" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForCourseSectionRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForCourseSectionResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForCourseSectionWithStatus">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForCourseSectionWithStatus" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForCourseSectionWithStatusRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForCourseSectionWithStatusResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsForLineItemsWithLineItemType">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsForLineItemsWithLineItemType" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsForLineItemsWithLineItemTypeRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsForLineItemsWithLineItemTypeResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResults">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResults" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/updateResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/replaceResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverResultIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/discoverResultIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverResultIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverResultIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeResultIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/changeResultIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeResultIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeResultIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+    <wsdl11:binding name="ResultValueManagerSyncSoapBinding" type="tns:ResultValueManagerSyncPortType">
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl11:operation name="createResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="createByProxyResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/createByProxyResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:createByProxyResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:createByProxyResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="deleteResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/deleteResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:deleteResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:deleteResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readAllResultValueIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readAllResultValueIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readAllResultValueIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readAllResultValueIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdForLineItem">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValueIdForLineItem" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValueIdForLineItemRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValueIdForLineItemResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdForResult">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValueIdForResult" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValueIdForResultRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValueIdForResultResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValueIdsFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValueIdsFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValueIdsFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValueIdsFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValues">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValues" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValuesRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValuesResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="readResultValuesFromSavePoint">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/readResultValuesFromSavePoint" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:readResultValuesFromSavePointRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:readResultValuesFromSavePointResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="updateResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/updateResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:updateResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:updateResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="replaceResultValue">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/replaceResultValue" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:replaceResultValueRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:replaceResultValueResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="discoverResultValueIds">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/discoverResultValueIds" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:discoverResultValueIdsRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:discoverResultValueIdsResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+        <wsdl11:operation name="changeResultValueIdentifier">
+            <soap11:operation soapAction="http://www.imsglobal.org/soap/lis/oms1p0/changeResultValueIdentifier" style="document"/>
+            <wsdl11:input>
+                <soap11:body use="literal" parts="Parameters"/>
+                <soap11:header message="tns:changeResultValueIdentifierRequest" part="HeaderInfoParameters" use="literal" wsdl11:required="true"/>
+            </wsdl11:input>
+            <wsdl11:output>
+                <soap11:body use="literal" parts="Response"/>
+                <soap11:header message="tns:changeResultValueIdentifierResponse" part="HeaderInfoResponse" use="literal" wsdl11:required="true"/>
+            </wsdl11:output>
+        </wsdl11:operation>
+    </wsdl11:binding>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the WSDL service elements ********************************************************* -->
+
+    <wsdl11:service name="OutcomesManagementServiceSyncService">
+        <wsdl11:documentation>
+            Service Information
+            -------------------
+            Author:         Colin Smythe
+            Date:           31st January, 2010
+            Version:        Final 1.0
+            Status:         Public Draft
+            Description:    The Outcomes Management Service is composed of three interfaces 
+                            each of which has several operations.
+            History:        Version 1.0: This is the first formal release of this service.
+        </wsdl11:documentation>
+        <wsdl11:port name="LineItemManagerSyncSoapPort" binding="tns:LineItemManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-lineitem"/>
+        </wsdl11:port>
+        <wsdl11:port name="ResultManagerSyncSoapPort" binding="tns:ResultManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-result"/>
+        </wsdl11:port>
+        <wsdl11:port name="ResultValueManagerSyncSoapPort" binding="tns:ResultValueManagerSyncSoapBinding">
+            <soap11:address location="https://www.turnitin.com/api/soap/1p0/lis-resultvalue"/>
+        </wsdl11:port>
+    </wsdl11:service>
+
+    <!-- ================================================================================================== -->
+
+</wsdl11:definitions>

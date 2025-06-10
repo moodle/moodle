@@ -1,0 +1,56 @@
+#page-grade-report-grade_breakdown-index table.generaltable a:link, #page-grade-report-grade_breakdown-index table.generaltable a:visited {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: #44287c;
+    padding-top: .7em;
+}
+
+#page-grade-report-grade_breakdown-index table.generaltable td {
+    padding: .1em;
+    height: 3em;
+    text-align: center !important;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#page-grade-report-grade_breakdown-index table.generaltable th {
+    text-align: center !important;
+}
+
+#page-grade-report-grade_breakdown-index table.generaltable a:hover {
+    text-decoration: none;
+    color: #cccccc;
+    background-color: #000000;
+}
+
+#page-grade-report-grade_breakdown-index table.generaltable {
+    text-align: center !important;
+}
+
+#page-grade-report-grade_breakdown-index .lastrow {
+    background-color: #F3EAD8;
+}
+
+#page-grade-report-grade_breakdown-index .lastrow td {
+    border: none;
+}
+
+.path-grade-report-grade_breakdown .selectors {
+    margin: 10px 10px 0px 10px;
+    overflow: hidden;
+}
+
+.path-grade-report-grade_breakdown #selectgrade{
+    float: right;
+}
+
+.path-grade-report-grade_breakdown #selectgroup {
+    float: left;
+}
+
+#page-grade-report-grade_breakdown-letter_report table.generaltable {
+    margin: auto auto;
+    text-align: center;
+    width: 60%;
+}

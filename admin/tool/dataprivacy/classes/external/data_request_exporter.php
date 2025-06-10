@@ -24,9 +24,12 @@
 namespace tool_dataprivacy\external;
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 use core\external\persistent_exporter;
 use core_user;
 use core_user\external\user_summary_exporter;
+use dml_exception;
+use moodle_exception;
 use renderer_base;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_request;

@@ -82,6 +82,16 @@ class imsbadgeconnect extends base_definition {
                     $issuer->set('image', $url);
                     $issuer->update();
                 }
+            } else if ($key == 'apiBase') {
+                (new endpoint(0, (object) [
+                    'issuerid' => $issuer->get('id'),
+                    'name' => $key,
+                    'url' => $value,
+                ]))->create();
+            } else if ($key == 'name') {
+                // Get and update issuer name.
+                $issuer->set('name', $value);
+                $issuer->update();
             }
         }
     }

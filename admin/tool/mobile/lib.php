@@ -222,7 +222,7 @@ function tool_mobile_standard_footer_html() {
     global $CFG;
     $output = '';
     if (!empty($CFG->enablemobilewebservice) && $url = tool_mobile_create_app_download_url()) {
-        $output .= html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'));
+        $output .= html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'), ['class' => 'mobilelink']);
     }
     return $output;
 }

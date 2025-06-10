@@ -35,7 +35,7 @@ $PAGE->set_url($pageurl);
 
 admin_externalpage_setup('ltitoolproxies');
 
-$PAGE->set_title("{$SITE->shortname}: " . get_string('toolregistration', 'lti'));
+$PAGE->set_title(get_string('toolregistration', 'lti'));
 
 $configuredtoolproxieshtml = '';
 $pendingtoolproxieshtml = '';

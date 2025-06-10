@@ -71,7 +71,7 @@ class system_report_exporter_test extends advanced_testcase {
         $PAGE->set_url(new moodle_url('/'));
 
         $systemreport = system_report_factory::create(system_report_available::class, context_system::instance(), '', '', 0,
-            ['withfilters' => $withfilters])->add_attributes(['data-foo' => 'bar', 'data-another' => '1']);
+            ['withfilters' => $withfilters]);
 
         $exporter = new system_report_exporter($systemreport->get_report_persistent(), [
             'source' => $systemreport,
@@ -90,10 +90,5 @@ class system_report_exporter_test extends advanced_testcase {
             $this->assertFalse($data->filterspresent);
             $this->assertEmpty($data->filtersform);
         }
-
-        $this->assertEquals([
-            ['name' => 'data-foo', 'value' => 'bar'],
-            ['name' => 'data-another', 'value' => '1']
-        ], $data->attributes);
     }
 }

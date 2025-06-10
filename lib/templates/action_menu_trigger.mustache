@@ -21,8 +21,12 @@
 
     Example context (json):
     {
-        "text": "Example link text",
+        "actiontext": "Example link text",
         "title": "Example link title",
+        "triggerrole": "button",
+        "triggerattributes": [
+            {"name": "data-boundary", "value": "window" }
+        ],
         "url": "http://example.com/link",
         "classes": "icon menu-action",
         "instance": "1",
@@ -52,7 +56,7 @@
                         "component": null,
                         "title": "Dashboard"
                         },
-                    "classes": "icon menu-action",
+                    "classes": "menu-action",
                     "attributes": [
                         {"name": "role", "value": "menuitem"},
                         {"name": "data-title", "value": "mymoodle,admin"}
@@ -79,7 +83,21 @@
     }
 }}
 <div class="dropdown{{^secondary.items}} hidden{{/secondary.items}}">
-    <a href="#" tabindex="0" class="{{triggerextraclasses}} dropdown-toggle icon-no-margin" id="action-menu-toggle-{{instance}}" aria-label="{{title}}" data-toggle="dropdown" role="{{triggerrole}}" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">
+    <a
+        href="#"
+        tabindex="0"
+        class="{{triggerextraclasses}} dropdown-toggle icon-no-margin"
+        id="action-menu-toggle-{{instance}}"
+        aria-label="{{title}}"
+        data-toggle="dropdown"
+        role="{{triggerrole}}"
+        aria-haspopup="true"
+        aria-expanded="false"
+        aria-controls="action-menu-{{instance}}-menu"
+    {{#triggerattributes}}
+        {{name}}="{{value}}"
+    {{/triggerattributes}}
+    >
         {{{actiontext}}}
         {{{menutrigger}}}
             {{#icon}}

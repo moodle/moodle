@@ -21,16 +21,14 @@
  * @copyright  2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir . '/externallib.php');
 
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/externallib.php');
 
-use core_course\external\course_summary_exporter;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
+use \core_course\external\course_summary_exporter;
 
 /**
  * Starred courses block external functions.
@@ -84,14 +82,41 @@ class block_starredcourses_external extends core_course_external {
         // Get the favourites, by type, for the user.
         $favourites = $userservice->find_favourites_by_type('core_course', 'courses', $offset, $limit);
 
+        $favouritecourseids = [];
+        if ($favourites) {
+            $favouritecourseids = array_map(
+                function($favourite) {
+                    return $favourite->itemid;
+                }, $favourites);
+        }
+
+        // Get all courses that the current user is enroled in, restricted down to favourites.
+        $filteredcourses = [];
+        if ($favouritecourseids) {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, 0, null, null,
+                COURSE_DB_QUERY_LIMIT, $favouritecourseids);
+            list($filteredcourses, $processedcount) = course_filter_courses_by_favourites(
+                $courses,
+                $favouritecourseids,
+                0
+            );
+        }
+        // Grab the course ids.
+        $filteredcourseids = array_column($filteredcourses, 'id');
+
+        // Filter out any favourites that are not in the list of enroled courses.
+        $filteredfavourites = array_filter($favourites, function($favourite) use ($filteredcourseids) {
+            return in_array($favourite->itemid, $filteredcourseids);
+        });
+
         // Sort the favourites getting last added first.
-        usort($favourites, function($a, $b) {
+        usort($filteredfavourites, function($a, $b) {
             if ($a->timemodified == $b->timemodified) return 0;
             return ($a->timemodified > $b->timemodified) ? -1 : 1;
         });
 
         $formattedcourses = array();
-        foreach ($favourites as $favourite) {
+        foreach ($filteredfavourites as $favourite) {
             $course = get_course($favourite->itemid);
             $context = \context_course::instance($favourite->itemid);
             $canviewhiddencourses = has_capability('moodle/course:viewhiddencourses', $context);
@@ -109,7 +134,7 @@ class block_starredcourses_external extends core_course_external {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.6
      */
     public static function get_starred_courses_returns() {

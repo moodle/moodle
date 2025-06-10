@@ -1,0 +1,89 @@
+<editor>
+	<actions>
+		<action id="fraction">
+			<content>
+				<mfrac><mrow/><mrow/></mfrac>
+			</content>
+		</action>
+
+		<action id="squareRoot">
+			<content>
+				<msqrt><mrow/></msqrt>
+			</content>
+		</action>
+		
+		<action id="nRoot">
+			<content>
+				<mroot><mrow/><mrow/></mroot>
+			</content>
+		</action>
+
+		<action id="superscript">
+			<content>
+				<msup><maction actiontype="argument"><mrow/></maction><mrow/></msup>
+			</content>
+		</action>
+
+		<action id="numberPi">
+			<content>
+				<mi mathvariant="normal">&#960;</mi>
+			</content>
+		</action>
+
+		<action id="numberE">
+			<content>
+				<mi mathvariant="normal">e</mi>
+			</content>
+		</action>
+
+		<action id="sinus" offset="4" offsetRTL="3">
+			<content>
+				<math><mi>sin</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="cosinus" offset="4">
+			<content>
+				<math><mi>cos</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="tangent" offset="4">
+			<content>
+				<math><mi>tan</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="arcsinus" offset="7">
+			<content>
+				<math><mi>arcsin</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="arccosinus" offset="7">
+			<content>
+				<math><mi>arccos</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="arctangent" offset="7">
+			<content>
+				<math><mi>arctan</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+
+		<action id="logBase" offset="4">
+			<content>
+				<math><msub><mi>log</mi><mrow/></msub><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="ln" offset="3">
+			<content>
+				<math><mi>ln</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+		<action id="exp" offset="4">
+			<content>
+				<math><mi>exp</mi><mfenced><mrow/></mfenced></math>
+			</content>
+		</action>
+	</actions>
+	
+	<toolbar>
+	</toolbar>
+</editor>

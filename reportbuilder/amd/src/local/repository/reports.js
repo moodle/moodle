@@ -43,13 +43,12 @@ export const deleteReport = reportId => {
  *
  * @param {Number} reportId
  * @param {Boolean} editMode
- * @param {Number} [pageSize=0]
  * @return {Promise}
  */
-export const getReport = (reportId, editMode, pageSize = 0) => {
+export const getReport = (reportId, editMode) => {
     const request = {
         methodname: 'core_reportbuilder_reports_get',
-        args: {reportid: reportId, editmode: editMode, pagesize: pageSize}
+        args: {reportid: reportId, editmode: editMode}
     };
 
     return Ajax.call([request])[0];

@@ -14,7 +14,6 @@ Feature: A teacher or admin can view subscriptions tab
     And the following "activity" exists:
       | course   | C1                             |
       | activity | forum                          |
-      | intro    | Test forum description         |
       | name     | Test forum name                |
 
   Scenario: A teacher views view subscribers by default and views the Subscribers heading

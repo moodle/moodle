@@ -125,7 +125,7 @@ class template extends persistent {
         $result = true;
 
         if ($this->get('id')) {
-            $settings = seb_quiz_settings::get_records(['templateid' => $this->get('id')]);
+            $settings = quiz_settings::get_records(['templateid' => $this->get('id')]);
             $result = empty($settings);
         }
 

@@ -53,7 +53,6 @@ $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 $groupid = optional_param('group', 0, PARAM_INT);
 $activityinclude = optional_param('activityinclude', 'all', PARAM_TEXT);
 $activityorder = optional_param('activityorder', 'orderincourse', PARAM_TEXT);
-$activitysection = optional_param('activitysection', -1, PARAM_INT);
 
 // Whether to show extra user identity information
 $userfields = \core_user\fields::for_identity($context);
@@ -94,9 +93,6 @@ if ($activityinclude !== '') {
 if ($activityorder !== '') {
     $url->param('activityorder', $activityorder);
 }
-if ($activitysection !== '') {
-    $url->param('activitysection', $activitysection);
-}
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
@@ -115,7 +111,7 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 // Get data on activities and progress of all users, and give error if we've
 // nothing to display (no users or no activities).
 $completion = new completion_info($course);
-list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder, $activitysection);
+list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder);
 $output = $PAGE->get_renderer('report_progress');
 
 if ($sifirst !== 'all') {
@@ -212,21 +208,6 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     // Display activity order options.
     echo $output->render_activity_order_select($url, $activityorder);
 
-    // Display section selector.
-    $modinfo = get_fast_modinfo($course);
-    $sections = [];
-    $cmids = array_keys($completion->get_activities());
-    foreach ($modinfo->get_sections() as $sectionnum => $section) {
-        if (empty(array_intersect($section, $cmids))) {
-            continue;
-        }
-        $sectionname = get_section_name($course, $sectionnum);
-        if (empty($sectionname)) {
-            $sectionname = get_string('section') . ' ' . $sectionnum;
-        }
-        $sections[$sectionnum] = $sectionname;
-    }
-    echo $output->render_activity_section_select($url, $activitysection, $sections);
 }
 
 if (count($activities)==0) {

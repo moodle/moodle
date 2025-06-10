@@ -25,15 +25,30 @@
 namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/grade/grade_scale.php");
 
+use context;
+use context_system;
 use context_course;
 use context_module;
-use context_system;
+use context_helper;
 use context_user;
+use coding_exception;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_format_value;
+use external_single_structure;
+use external_multiple_structure;
+use invalid_parameter_exception;
+use required_capability_exception;
+use grade_scale;
+
 use core_competency\external\competency_exporter;
 use core_competency\external\competency_framework_exporter;
 use core_competency\external\course_competency_exporter;
+use core_competency\external\course_competency_settings_exporter;
 use core_competency\external\course_module_competency_exporter;
 use core_competency\external\evidence_exporter;
 use core_competency\external\performance_helper;
@@ -43,13 +58,6 @@ use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
 use core_competency\external\user_evidence_competency_exporter;
 use core_competency\external\user_evidence_exporter;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use grade_scale;
-use invalid_parameter_exception;
 
 /**
  * External API class.
@@ -93,7 +101,7 @@ class external extends external_api {
     /**
      * Returns description of create_competency_framework() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function create_competency_framework_parameters() {
         $structure = competency_framework_exporter::get_create_structure();
@@ -133,7 +141,7 @@ class external extends external_api {
     /**
      * Returns description of create_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function create_competency_framework_returns() {
         return competency_framework_exporter::get_read_structure();
@@ -142,7 +150,7 @@ class external extends external_api {
     /**
      * Returns description of read_competency_framework() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function read_competency_framework_parameters() {
         $id = new external_value(
@@ -181,7 +189,7 @@ class external extends external_api {
     /**
      * Returns description of read_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_competency_framework_returns() {
         return competency_framework_exporter::get_read_structure();
@@ -190,7 +198,7 @@ class external extends external_api {
     /**
      * Returns description of competency_viewed() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function competency_viewed_parameters() {
         $id = new external_value(
@@ -220,7 +228,7 @@ class external extends external_api {
     /**
      * Returns description of competency_viewed() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function competency_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the event competency viewed was logged');
@@ -229,7 +237,7 @@ class external extends external_api {
     /**
      * Returns description of duplicate_competency_framework() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function duplicate_competency_framework_parameters() {
         $id = new external_value(
@@ -269,7 +277,7 @@ class external extends external_api {
     /**
      * Returns description of duplicate_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function duplicate_competency_framework_returns() {
         return competency_framework_exporter::get_read_structure();
@@ -278,7 +286,7 @@ class external extends external_api {
     /**
      * Returns description of delete_competency_framework() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_competency_framework_parameters() {
         $id = new external_value(
@@ -313,7 +321,7 @@ class external extends external_api {
     /**
      * Returns description of delete_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_competency_framework_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -322,7 +330,7 @@ class external extends external_api {
     /**
      * Returns description of update_competency_framework() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function update_competency_framework_parameters() {
         $structure = competency_framework_exporter::get_update_structure();
@@ -354,7 +362,7 @@ class external extends external_api {
     /**
      * Returns description of update_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function update_competency_framework_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -363,7 +371,7 @@ class external extends external_api {
     /**
      * Returns description of list_competency_frameworks() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_competency_frameworks_parameters() {
         $sort = new external_value(
@@ -481,7 +489,7 @@ class external extends external_api {
     /**
      * Returns description of list_competency_frameworks() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_competency_frameworks_returns() {
         return new external_multiple_structure(competency_framework_exporter::get_read_structure());
@@ -490,7 +498,7 @@ class external extends external_api {
     /**
      * Returns description of count_competency_frameworks() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_competency_frameworks_parameters() {
         $includes = new external_value(
@@ -529,7 +537,7 @@ class external extends external_api {
     /**
      * Returns description of count_competency_frameworks() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_competency_frameworks_returns() {
         return new external_value(PARAM_INT, 'The number of competency frameworks found.');
@@ -538,7 +546,7 @@ class external extends external_api {
     /**
      * Returns description of competency_framework_viewed() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function competency_framework_viewed_parameters() {
         $id = new external_value(
@@ -570,7 +578,7 @@ class external extends external_api {
     /**
      * Returns description of competency_framework_viewed() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function competency_framework_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the event competency framework was logged');
@@ -579,7 +587,7 @@ class external extends external_api {
     /**
      * Returns description of create_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function create_competency_parameters() {
         $structure = competency_exporter::get_create_structure();
@@ -616,7 +624,7 @@ class external extends external_api {
     /**
      * Returns description of create_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function create_competency_returns() {
         return competency_exporter::get_read_structure();
@@ -625,7 +633,7 @@ class external extends external_api {
     /**
      * Returns description of read_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function read_competency_parameters() {
         $id = new external_value(
@@ -665,7 +673,7 @@ class external extends external_api {
     /**
      * Returns description of read_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_competency_returns() {
         return competency_exporter::get_read_structure();
@@ -674,7 +682,7 @@ class external extends external_api {
     /**
      * Returns description of delete_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_competency_parameters() {
         $id = new external_value(
@@ -710,7 +718,7 @@ class external extends external_api {
     /**
      * Returns description of delete_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -719,7 +727,7 @@ class external extends external_api {
     /**
      * Returns description of update_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function update_competency_parameters() {
         $structure = competency_exporter::get_update_structure();
@@ -750,7 +758,7 @@ class external extends external_api {
     /**
      * Returns description of update_competency_framework() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function update_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -759,7 +767,7 @@ class external extends external_api {
     /**
      * Returns description of list_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_competencies_parameters() {
         $filters = new external_multiple_structure(new external_single_structure(
@@ -872,7 +880,7 @@ class external extends external_api {
     /**
      * Returns description of list_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_competencies_returns() {
         return new external_multiple_structure(competency_exporter::get_read_structure());
@@ -881,7 +889,7 @@ class external extends external_api {
     /**
      * Returns description of search_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function search_competencies_parameters() {
         $searchtext = new external_value(
@@ -938,7 +946,7 @@ class external extends external_api {
     /**
      * Returns description of search_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function search_competencies_returns() {
         return new external_multiple_structure(competency_exporter::get_read_structure());
@@ -947,7 +955,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_competencies_parameters() {
         $filters = new external_multiple_structure(new external_single_structure(
@@ -999,7 +1007,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_competencies_returns() {
         return new external_value(PARAM_INT, 'The number of competencies found.');
@@ -1008,7 +1016,7 @@ class external extends external_api {
     /**
      * Returns description of set_parent_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function set_parent_competency_parameters() {
         $competencyid = new external_value(
@@ -1051,7 +1059,7 @@ class external extends external_api {
     /**
      * Returns description of set_parent_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function set_parent_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -1060,7 +1068,7 @@ class external extends external_api {
     /**
      * Returns description of move_up_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function move_up_competency_parameters() {
         $competencyid = new external_value(
@@ -1094,7 +1102,7 @@ class external extends external_api {
     /**
      * Returns description of move_up_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function move_up_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -1103,7 +1111,7 @@ class external extends external_api {
     /**
      * Returns description of move_down_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function move_down_competency_parameters() {
         $competencyid = new external_value(
@@ -1137,7 +1145,7 @@ class external extends external_api {
     /**
      * Returns description of move_down_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function move_down_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -1146,7 +1154,7 @@ class external extends external_api {
     /**
      * Returns description of count_courses_using_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_courses_using_competency_parameters() {
         $competencyid = new external_value(
@@ -1180,7 +1188,7 @@ class external extends external_api {
     /**
      * Returns description of count_courses_using_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_courses_using_competency_returns() {
         return new external_value(PARAM_INT, 'The number of courses using this competency');
@@ -1189,7 +1197,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies_in_course() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_competencies_in_course_parameters() {
         $courseid = new external_value(
@@ -1222,7 +1230,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies_in_course() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_competencies_in_course_returns() {
         return new external_value(PARAM_INT, 'The number of competencies in this course.');
@@ -1231,7 +1239,7 @@ class external extends external_api {
     /**
      * Returns description of list_course_module_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_course_module_competencies_parameters() {
         $cmid = new external_value(
@@ -1282,7 +1290,7 @@ class external extends external_api {
     /**
      * Returns description of list_course_module_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_course_module_competencies_returns() {
         return new external_multiple_structure(
@@ -1296,7 +1304,7 @@ class external extends external_api {
     /**
      * Returns description of list_course_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_course_competencies_parameters() {
         $courseid = new external_value(
@@ -1313,7 +1321,7 @@ class external extends external_api {
     /**
      * Returns description of count_course_module_competencies() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_course_module_competencies_parameters() {
         $cmid = new external_value(
@@ -1347,7 +1355,7 @@ class external extends external_api {
     /**
      * Returns description of count_course_module_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_course_module_competencies_returns() {
         return new external_value(PARAM_INT, 'The number of competencies found.');
@@ -1395,7 +1403,7 @@ class external extends external_api {
     /**
      * Returns description of list_course_competencies() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_course_competencies_returns() {
         return new external_multiple_structure(
@@ -1409,7 +1417,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_course() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function add_competency_to_course_parameters() {
         $courseid = new external_value(
@@ -1448,7 +1456,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_course() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function add_competency_to_course_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -1457,7 +1465,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_course() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function remove_competency_from_course_parameters() {
         $courseid = new external_value(
@@ -1496,7 +1504,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_course() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function remove_competency_from_course_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -1505,7 +1513,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_course_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function reorder_course_competency_parameters() {
         $courseid = new external_value(
@@ -1552,7 +1560,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_course_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function reorder_course_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -1561,7 +1569,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_template_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function reorder_template_competency_parameters() {
         $templateid = new external_value(
@@ -1611,7 +1619,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_template_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function reorder_template_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -1620,7 +1628,7 @@ class external extends external_api {
     /**
      * Returns description of create_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function create_template_parameters() {
         $structure = template_exporter::get_create_structure();
@@ -1657,7 +1665,7 @@ class external extends external_api {
     /**
      * Returns description of create_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function create_template_returns() {
         return template_exporter::get_read_structure();
@@ -1666,7 +1674,7 @@ class external extends external_api {
     /**
      * Returns description of read_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function read_template_parameters() {
         $id = new external_value(
@@ -1703,7 +1711,7 @@ class external extends external_api {
     /**
      * Returns description of read_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_template_returns() {
         return template_exporter::get_read_structure();
@@ -1712,7 +1720,7 @@ class external extends external_api {
     /**
      * Returns description of delete_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_template_parameters() {
         $id = new external_value(
@@ -1756,7 +1764,7 @@ class external extends external_api {
     /**
      * Returns description of delete_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_template_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -1765,7 +1773,7 @@ class external extends external_api {
     /**
      * Returns description of update_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function update_template_parameters() {
         $structure = template_exporter::get_update_structure();
@@ -1794,7 +1802,7 @@ class external extends external_api {
     /**
      * Returns description of update_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function update_template_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -1803,7 +1811,7 @@ class external extends external_api {
     /**
      * Returns description of duplicate_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function duplicate_template_parameters() {
         $templateid = new external_value(
@@ -1841,7 +1849,7 @@ class external extends external_api {
     /**
      * Returns description of duplicate_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function duplicate_template_returns() {
         return template_exporter::get_read_structure();
@@ -1850,7 +1858,7 @@ class external extends external_api {
     /**
      * Returns description of list_templates() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_templates_parameters() {
         $sort = new external_value(
@@ -1955,7 +1963,7 @@ class external extends external_api {
     /**
      * Returns description of list_templates() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_templates_returns() {
         return new external_multiple_structure(template_exporter::get_read_structure());
@@ -1964,7 +1972,7 @@ class external extends external_api {
     /**
      * Returns description of count_templates() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_templates_parameters() {
         $includes = new external_value(
@@ -2002,7 +2010,7 @@ class external extends external_api {
     /**
      * Returns description of count_templates() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_templates_returns() {
         return new external_value(PARAM_INT, 'The number of learning plan templates found.');
@@ -2011,7 +2019,7 @@ class external extends external_api {
     /**
      * Returns description of count_templates_using_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_templates_using_competency_parameters() {
         $competencyid = new external_value(
@@ -2045,7 +2053,7 @@ class external extends external_api {
     /**
      * Returns description of count_templates_using_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_templates_using_competency_returns() {
         return new external_value(PARAM_INT, 'The number of learning plan templates using this competency');
@@ -2054,7 +2062,7 @@ class external extends external_api {
     /**
      * Returns description of list_templates_using_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_templates_using_competency_parameters() {
         $competencyid = new external_value(
@@ -2100,7 +2108,7 @@ class external extends external_api {
     /**
      * Returns description of list_templates_using_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_templates_using_competency_returns() {
         return new external_multiple_structure(template_exporter::get_read_structure());
@@ -2109,7 +2117,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies_in_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function count_competencies_in_template_parameters() {
         $templateid = new external_value(
@@ -2142,7 +2150,7 @@ class external extends external_api {
     /**
      * Returns description of count_competencies_in_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function count_competencies_in_template_returns() {
         return new external_value(PARAM_INT, 'The number of competencies in this learning plan template.');
@@ -2151,7 +2159,7 @@ class external extends external_api {
     /**
      * Returns description of list_competencies_in_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_competencies_in_template_parameters() {
         $templateid = new external_value(
@@ -2198,7 +2206,7 @@ class external extends external_api {
     /**
      * Returns description of list_competencies_in_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_competencies_in_template_returns() {
         return new external_multiple_structure(competency_exporter::get_read_structure());
@@ -2207,7 +2215,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function add_competency_to_template_parameters() {
         $templateid = new external_value(
@@ -2250,7 +2258,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function add_competency_to_template_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -2259,7 +2267,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function add_competency_to_plan_parameters() {
         $planid = new external_value(
@@ -2301,7 +2309,7 @@ class external extends external_api {
     /**
      * Returns description of add_competency_to_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function add_competency_to_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -2310,7 +2318,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function remove_competency_from_plan_parameters() {
         $planid = new external_value(
@@ -2351,7 +2359,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function remove_competency_from_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -2360,7 +2368,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_template() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function remove_competency_from_template_parameters() {
         $templateid = new external_value(
@@ -2383,7 +2391,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_plan_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function reorder_plan_competency_parameters() {
         $planid = new external_value(
@@ -2433,7 +2441,7 @@ class external extends external_api {
     /**
      * Returns description of reorder_plan_competency() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function reorder_plan_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -2442,7 +2450,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_cancel_review_request_parameters() {
         return new external_function_parameters(array(
@@ -2473,7 +2481,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_cancel_review_request_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2482,7 +2490,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_request_review_parameters() {
         return new external_function_parameters(array(
@@ -2513,7 +2521,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_request_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2522,7 +2530,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_start_review_parameters() {
         return new external_function_parameters(array(
@@ -2553,7 +2561,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_start_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2562,7 +2570,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_stop_review_parameters() {
         return new external_function_parameters(array(
@@ -2593,7 +2601,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_stop_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2602,7 +2610,7 @@ class external extends external_api {
     /**
      * Returns description of template_has_related_data() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function template_has_related_data_parameters() {
         $templateid = new external_value(
@@ -2636,7 +2644,7 @@ class external extends external_api {
     /**
      * Returns description of template_has_related_data() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function template_has_related_data_returns() {
         return new external_value(PARAM_BOOL, 'True if the template has related data');
@@ -2663,7 +2671,7 @@ class external extends external_api {
     /**
      * Returns description of remove_competency_from_template() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function remove_competency_from_template_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -2672,7 +2680,7 @@ class external extends external_api {
     /**
      * Returns description of create_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function create_plan_parameters() {
         $structure = plan_exporter::get_create_structure();
@@ -2706,7 +2714,7 @@ class external extends external_api {
     /**
      * Returns description of create_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function create_plan_returns() {
         return plan_exporter::get_read_structure();
@@ -2715,7 +2723,7 @@ class external extends external_api {
     /**
      * Returns description of update_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function update_plan_parameters() {
         $structure = plan_exporter::get_update_structure();
@@ -2749,7 +2757,7 @@ class external extends external_api {
     /**
      * Returns description of update_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function update_plan_returns() {
         return plan_exporter::get_read_structure();
@@ -2758,7 +2766,7 @@ class external extends external_api {
     /**
      * Returns description of complete_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function complete_plan_parameters() {
         $planid = new external_value(
@@ -2787,7 +2795,7 @@ class external extends external_api {
     /**
      * Returns description of complete_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function complete_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if completing learning plan was successful');
@@ -2796,7 +2804,7 @@ class external extends external_api {
     /**
      * Returns description of reopen_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function reopen_plan_parameters() {
         $planid = new external_value(
@@ -2825,7 +2833,7 @@ class external extends external_api {
     /**
      * Returns description of reopen_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function reopen_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if reopening learning plan was successful');
@@ -2834,7 +2842,7 @@ class external extends external_api {
     /**
      * Returns description of read_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function read_plan_parameters() {
         $id = new external_value(
@@ -2870,7 +2878,7 @@ class external extends external_api {
     /**
      * Returns description of read_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_plan_returns() {
         return plan_exporter::get_read_structure();
@@ -2879,7 +2887,7 @@ class external extends external_api {
     /**
      * Returns description of delete_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_plan_parameters() {
         $id = new external_value(
@@ -2914,7 +2922,7 @@ class external extends external_api {
     /**
      * Returns description of delete_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -2923,7 +2931,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_cancel_review_request_parameters() {
         return new external_function_parameters(array(
@@ -2951,7 +2959,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_cancel_review_request_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2960,7 +2968,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_request_review_parameters() {
         return new external_function_parameters(array(
@@ -2988,7 +2996,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_request_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -2997,7 +3005,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_start_review_parameters() {
         return new external_function_parameters(array(
@@ -3025,7 +3033,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_start_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -3034,7 +3042,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_stop_review_parameters() {
         return new external_function_parameters(array(
@@ -3062,7 +3070,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function plan_stop_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -3071,7 +3079,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function approve_plan_parameters() {
         return new external_function_parameters(array(
@@ -3099,7 +3107,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function approve_plan_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -3108,7 +3116,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function unapprove_plan_parameters() {
         return new external_function_parameters(array(
@@ -3136,7 +3144,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function unapprove_plan_returns() {
         return new external_value(PARAM_BOOL, 'The success');
@@ -3145,7 +3153,7 @@ class external extends external_api {
     /**
      * External function parameters structure.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_plan_competencies_parameters() {
         return new external_function_parameters(array(
@@ -3200,7 +3208,7 @@ class external extends external_api {
     /**
      * External function return structure.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function list_plan_competencies_returns() {
         $uc = user_competency_exporter::get_read_structure();
@@ -3221,7 +3229,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_user_plans_parameters() {
         return new external_function_parameters(array(
@@ -3258,7 +3266,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function list_user_plans_returns() {
         return new external_multiple_structure(
@@ -3269,7 +3277,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_user_evidence_parameters() {
         return new external_function_parameters(array(
@@ -3300,7 +3308,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function read_user_evidence_returns() {
         return user_evidence_exporter::get_read_structure();
@@ -3309,7 +3317,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_user_evidence_parameters() {
         return new external_function_parameters(array(
@@ -3335,7 +3343,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_user_evidence_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -3344,7 +3352,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function create_user_evidence_competency_parameters() {
         return new external_function_parameters(array(
@@ -3378,7 +3386,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function create_user_evidence_competency_returns() {
         return user_evidence_competency_exporter::get_read_structure();
@@ -3387,7 +3395,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_user_evidence_competency_parameters() {
         return new external_function_parameters(array(
@@ -3418,7 +3426,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_user_evidence_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
@@ -3427,7 +3435,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function request_review_of_user_evidence_linked_competencies_parameters() {
         return new external_function_parameters(array(
@@ -3455,7 +3463,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function request_review_of_user_evidence_linked_competencies_returns() {
         return new external_value(PARAM_BOOL, 'True if all competencies were send to review');
@@ -3500,7 +3508,7 @@ class external extends external_api {
             // Add a key (make the first value 1).
             $scalevalues[$key] = array(
                     'id' => $key + 1,
-                    'name' => \core_external\util::format_string($value, $context->id)
+                    'name' => external_format_string($value, $context->id)
                 );
         }
         return $scalevalues;
@@ -3565,7 +3573,7 @@ class external extends external_api {
     /**
      * Returns description of add_related_competency_returns() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function add_related_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -3615,7 +3623,7 @@ class external extends external_api {
     /**
      * Returns description of remove_related_competency_returns() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function remove_related_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if successful.');
@@ -3624,7 +3632,7 @@ class external extends external_api {
     /**
      * Returns description of update_ruleoutcome_course_competency() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function set_course_competency_ruleoutcome_parameters() {
         $coursecompetencyid = new external_value(
@@ -3668,7 +3676,7 @@ class external extends external_api {
     /**
      * Returns description of update_ruleoutcome_course_competency() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function set_course_competency_ruleoutcome_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
@@ -3678,7 +3686,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function grade_competency_parameters() {
         $userid = new external_value(
@@ -3754,7 +3762,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function grade_competency_returns() {
         return evidence_exporter::get_read_structure();
@@ -3763,7 +3771,7 @@ class external extends external_api {
     /**
      * Returns description of grade_competency_in_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function grade_competency_in_plan_parameters() {
         $planid = new external_value(
@@ -3841,7 +3849,7 @@ class external extends external_api {
     /**
      * Returns description of grade_competency_in_plan() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function grade_competency_in_plan_returns() {
         return evidence_exporter::get_read_structure();
@@ -3850,7 +3858,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_viewed_parameters() {
         $usercompetencyid = new external_value(
@@ -3884,7 +3892,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function user_competency_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the event user competency viewed was logged');
@@ -3893,7 +3901,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed_in_plan() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_viewed_in_plan_parameters() {
         $competencyid = new external_value(
@@ -3942,7 +3950,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed_in_plan() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function user_competency_viewed_in_plan_returns() {
         return new external_value(PARAM_BOOL, 'True if the event user competency viewed in plan was logged');
@@ -3951,7 +3959,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed_in_course() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_viewed_in_course_parameters() {
         $competencyid = new external_value(
@@ -4000,7 +4008,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_viewed_in_course() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function user_competency_viewed_in_course_returns() {
         return new external_value(PARAM_BOOL, 'True if the event user competency viewed in course was logged');
@@ -4009,7 +4017,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_plan_viewed() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function user_competency_plan_viewed_parameters() {
         $competencyid = new external_value(
@@ -4058,7 +4066,7 @@ class external extends external_api {
     /**
      * Returns description of user_competency_plan_viewed() result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function user_competency_plan_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the event user competency plan viewed was logged');
@@ -4067,7 +4075,7 @@ class external extends external_api {
     /**
      * Returns description of grade_competency_in_course() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function grade_competency_in_course_parameters() {
         $courseid = new external_value(
@@ -4154,7 +4162,7 @@ class external extends external_api {
     /**
      * Returns description of grade_competency_in_course() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function grade_competency_in_course_returns() {
         return evidence_exporter::get_read_structure();
@@ -4163,7 +4171,7 @@ class external extends external_api {
     /**
      * Returns description of unlink_plan_from_template_() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function unlink_plan_from_template_parameters() {
         $planid = new external_value(
@@ -4198,7 +4206,7 @@ class external extends external_api {
     /**
      * Returns description of unlink_plan_from_template_() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function unlink_plan_from_template_returns() {
         return new external_value(PARAM_BOOL, 'True if the unlink was successful');
@@ -4207,7 +4215,7 @@ class external extends external_api {
     /**
      * Returns description of template_viewed() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function template_viewed_parameters() {
         $id = new external_value(
@@ -4243,7 +4251,7 @@ class external extends external_api {
     /**
      * Returns description of template_viewed() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function template_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the log of the view was successful');
@@ -4252,7 +4260,7 @@ class external extends external_api {
     /**
      * Returns description of update_course_competency_settings() parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function update_course_competency_settings_parameters() {
         $courseid = new external_value(
@@ -4298,7 +4306,7 @@ class external extends external_api {
     /**
      * Returns description of update_course_competency_settings() result value.
      *
-     * @return external_value
+     * @return \external_value
      */
     public static function update_course_competency_settings_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful.');
@@ -4307,7 +4315,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_evidence_parameters() {
         return new external_function_parameters(array(
@@ -4336,7 +4344,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_evidence_returns() {
         return new external_value(PARAM_BOOL, 'The success');

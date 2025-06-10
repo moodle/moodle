@@ -326,13 +326,27 @@ abstract class column_base {
     }
 
     /**
+     * If this column requires any aggregated statistics, it should declare that here.
+     *
+     * This is those statistics can be efficiently loaded in bulk.
+     *
+     * The statistics are all loaded just before load_additional_data is called on each column.
+     * The values are then available from $this->qbank->get_aggregate_statistic(...);
+     *
+     * @return string[] the names of the required statistics fields. E.g. ['facility'].
+     */
+    public function get_required_statistics_fields(): array {
+        return [];
+    }
+
+    /**
      * If this column needs extra data (e.g. tags) then load that here.
      *
      * The extra data should be added to the question object in the array.
      * Probably a good idea to check that another column has not already
      * loaded the data you want.
      *
-     * @param \stdClass[] $questions the questions that will be displayed.
+     * @param \stdClass[] $questions the questions that will be displayed, indexed by question id.
      */
     public function load_additional_data(array $questions) {
     }

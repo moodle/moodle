@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/adminlib.php');
 admin_externalpage_setup('searchareas', '', null, (new moodle_url('/admin/searchreindex.php'))->out(false));
 
 // Get area parameter and check it exists.
-$areaid = required_param('areaid', PARAM_ALPHAEXT);
+$areaid = required_param('areaid', PARAM_ALPHANUMEXT);
 $area = \core_search\manager::get_search_area($areaid);
 if ($area === false) {
     throw new moodle_exception('invalidrequest');
@@ -44,7 +44,7 @@ $PAGE->set_secondary_active_tab('modules');
 
 // Start page output.
 $heading = get_string('gradualreindex', 'search', '');
-$PAGE->set_title($PAGE->title . ': ' . $heading);
+$PAGE->set_title($areaname . ' - ' . get_string('gradualreindex', 'search', ''));
 $PAGE->navbar->add($heading);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
@@ -83,7 +83,7 @@ if (optional_param('sesskey', '', PARAM_ALPHANUM)) {
     // Display confirmation prompt.
     echo $OUTPUT->confirm(get_string('gradualreindex_confirm', 'search', html_writer::tag('strong', $areaname)),
             new single_button(new moodle_url('/admin/searchreindex.php', ['areaid' => $areaid,
-                'sesskey' => sesskey()]), get_string('continue'), 'post', single_button::BUTTON_PRIMARY),
+                'sesskey' => sesskey()]), get_string('continue'), 'post', true),
             new single_button(new moodle_url('/admin/searchareas.php'), get_string('cancel'), 'get'));
 }
 

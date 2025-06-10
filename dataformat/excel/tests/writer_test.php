@@ -57,15 +57,15 @@ class writer_test extends \advanced_testcase {
         $file = tempnam(sys_get_temp_dir(), 'excel_');
         $handle = fopen($file, "w");
         fwrite($handle, $content);
-        /** @var \OpenSpout\Reader\XLSX\Reader $reader */
-        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromType(\OpenSpout\Common\Type::XLSX);
+        /** @var \Box\Spout\Reader\XLSX\Reader $reader */
+        $reader = \Box\Spout\Reader\Common\Creator\ReaderFactory::createFromType(\Box\Spout\Common\Type::XLSX);
         $reader->open($file);
 
-        /** @var \OpenSpout\Reader\XLSX\Sheet[] $sheets */
+        /** @var \Box\Spout\Reader\XLSX\Sheet[] $sheets */
         $sheets = $reader->getSheetIterator();
         $rowscellsvalues = [];
         foreach ($sheets as $sheet) {
-            /** @var \OpenSpout\Common\Entity\Row[] $rows */
+            /** @var \Box\Spout\Common\Entity\Row[] $rows */
             $rows = $sheet->getRowIterator();
             foreach ($rows as $row) {
                 $thisvalues = [];

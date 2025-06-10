@@ -98,7 +98,15 @@ class remote_resource_test extends \advanced_testcase {
             ]
         );
 
-        $this->assertGreaterThan(0, $remoteres->get_download_size());
+        // We need to handle size of -1 (missing "Content-Length" header), or where it is set and greater than zero.
+        $this->assertThat(
+            $remoteres->get_download_size(),
+            $this->logicalOr(
+                $this->equalTo(-1),
+                $this->greaterThan(0),
+            ),
+        );
+
         [$path, $name] = $remoteres->download_to_requestdir();
         $this->assertIsString($path);
         $this->assertEquals('test.html', $name);

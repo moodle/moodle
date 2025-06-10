@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\columns\sort;
 
 use core_reportbuilder_generator;
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\report_access_exception;
 use core_reportbuilder\local\models\column;

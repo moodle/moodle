@@ -22,10 +22,10 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | course                              | CC1                         |
       | name                                | Test assignment name        |
       | idnumber                            | assign1                     |
-      | description                         | Test assignment description |
-    And I log in as "admin"
-    And I am on "Completion course" course homepage
-    And I navigate to "Settings" in current page administration
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | CC1       | course-view-*   | side-pre      |
+    And I am on the "Completion course" "course editing" page logged in as admin
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
@@ -38,9 +38,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I expand all fieldsets
     And I set the field "Assignment - Test assignment name" to "1"
     And I press "Save changes"
-    And I turn editing mode on
-    And I add the "Course completion status" block
-    And I log out
 
   @javascript
   Scenario: Update course completion when student marks activity as complete
@@ -48,9 +45,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and return to course"
-    And I log out
-    When I log in as "student1"
-    And I am on "Completion course" course homepage
+    When I am on the "Completion course" course page logged in as student1
     And I should see "Status: Not yet started"
     And I press "Mark as done"
     And I wait until "Done" "button" exists
@@ -66,9 +61,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
     And I am on "Completion course" course homepage
-    And I log out
-    And I log in as "student1"
-    When I am on "Completion course" course homepage
+    When I am on the "Completion course" course page logged in as student1
     Then I should see "Status: Complete"
 
   @javascript
@@ -78,7 +71,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | course                              | CC1                         |
       | name                                | Test assignment name2       |
       | idnumber                            | assign2                     |
-      | description                         | Test assignment description |
     And I am on the "Test assignment name2" "assign activity editing" page logged in as admin
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
@@ -94,34 +86,23 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
-    And I am on "Completion course" course homepage
-    And I log out
-    And I log in as "student1"
-    And I am on "Completion course" course homepage
+    And I am on the "Completion course" course page logged in as student1
     And I should see "Status: In progress"
-    And I log out
     And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
-    And I am on "Completion course" course homepage
-    And I log out
-    And I log in as "student1"
-    And I am on "Completion course" course homepage
+    When I am on the "Completion course" course page logged in as student1
     Then I should see "Status: Complete"
 
   @javascript
   Scenario: Course completion should not be updated when teacher grades assignment on course grader report page
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Completion course" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "57" to the user "Student First" for the grade item "Test assignment name"
     And I press "Save changes"
-    And I log out
-    And I log in as "student1"
-    When I am on "Completion course" course homepage
+    When I am on the "Completion course" course page logged in as student1
     Then I should see "Status: Pending"
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds
@@ -131,9 +112,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Course completion should not be updated when teacher grades assignment on activity grader report page
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I navigate to "View > Single view" in the course gradebook
+    Given I am on the "Completion course" "grades > Single View > View" page logged in as "teacher1"
     And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I turn editing mode on
     And I click on "Student First" in the "user" search widget
@@ -142,9 +121,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | Grade for Test assignment name | 10.00 |
       | Feedback for Test assignment name | test data |
     And I press "Save"
-    And I log out
-    And I log in as "student1"
-    And I am on "Completion course" course homepage
+    When I am on the "Completion course" course page logged in as student1
     And I should see "Status: Pending"
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds
@@ -154,8 +131,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript @_file_upload
   Scenario: Course completion should not be updated when teacher imports grades with csv file
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
+    Given I am on the "Completion course" course page logged in as teacher1
     And I navigate to "CSV file" import page in the course gradebook
     And I upload "lib/tests/fixtures/upload_grades.csv" file to "File" filemanager
     And I press "Upload grades"
@@ -164,9 +140,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I press "Upload grades"
     And I press "Continue"
     And I should see "10.00" in the "Student First" "table_row"
-    And I log out
-    And I log in as "student1"
-    And I am on "Completion course" course homepage
+    And I am on the "Completion course" course page logged in as student1
     And I should see "Status: Pending"
     When I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds

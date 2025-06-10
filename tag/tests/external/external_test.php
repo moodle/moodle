@@ -26,12 +26,12 @@
 namespace core_tag\external;
 
 use externallib_advanced_testcase;
-use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 class external_test extends externallib_advanced_testcase {
@@ -65,7 +65,7 @@ class external_test extends externallib_advanced_testcase {
         // User without any caps can not change anything about a tag but can request [partial] tag data.
         $this->setUser($this->getDataGenerator()->create_user());
         $result = \core_tag_external::update_tags(array($updatetag));
-        $result = external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
         $this->assertEquals($tag->id, $result['warnings'][0]['item']);
         $this->assertEquals('nothingtoupdate', $result['warnings'][0]['warningcode']);
         $this->assertEquals($originaltag['rawname'], $DB->get_field('tag', 'rawname',
@@ -74,7 +74,7 @@ class external_test extends externallib_advanced_testcase {
             array('id' => $tag->id)));
 
         $result = \core_tag_external::get_tags(array($gettag));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
         $this->assertEquals($originaltag['rawname'], $result['tags'][0]['rawname']);
         $this->assertEquals($originaltag['description'], $result['tags'][0]['description']);
         $this->assertNotEmpty($result['tags'][0]['viewurl']);
@@ -87,11 +87,11 @@ class external_test extends externallib_advanced_testcase {
         // User with editing only capability can change description but not the tag name.
         $roleid = $this->assignUserCapability('moodle/tag:edit', $context->id);
         $result = \core_tag_external::update_tags(array($updatetag));
-        $result = external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
         $this->assertEmpty($result['warnings']);
 
         $result = \core_tag_external::get_tags(array($gettag));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
         $this->assertEquals($updatetag['id'], $result['tags'][0]['id']);
         $this->assertEquals($updatetag['description'], $result['tags'][0]['description']);
         $this->assertEquals($originaltag['rawname'], $result['tags'][0]['rawname']);
@@ -108,11 +108,11 @@ class external_test extends externallib_advanced_testcase {
         assign_capability('moodle/tag:manage', CAP_ALLOW, $roleid, $context->id);
         $this->assertTrue(has_capability('moodle/tag:manage', $context));
         $result = \core_tag_external::update_tags(array($updatetag));
-        $result = external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
         $this->assertEmpty($result['warnings']);
 
         $result = \core_tag_external::get_tags(array($gettag));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
         $this->assertEquals($updatetag['id'], $result['tags'][0]['id']);
         $this->assertEquals($updatetag['rawname'], $result['tags'][0]['rawname']);
         $this->assertEquals(\core_text::strtolower($updatetag['rawname']), $result['tags'][0]['name']);
@@ -132,12 +132,12 @@ class external_test extends externallib_advanced_testcase {
             'id' => 123,
         );
         $result = \core_tag_external::update_tags(array($nonexistingtag));
-        $result = external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
         $this->assertEquals(123, $result['warnings'][0]['item']);
         $this->assertEquals('tagnotfound', $result['warnings'][0]['warningcode']);
 
         $result = \core_tag_external::get_tags(array($getnonexistingtag));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tags_returns(), $result);
         $this->assertEmpty($result['tags']);
         $this->assertEquals(123, $result['warnings'][0]['item']);
         $this->assertEquals('tagnotfound', $result['warnings'][0]['warningcode']);
@@ -146,7 +146,7 @@ class external_test extends externallib_advanced_testcase {
         $anothertag = $this->getDataGenerator()->create_tag(array('rawname' => 'Mytag'));
         $updatetag2 = array('id' => $tag->id, 'rawname' => 'MYTAG');
         $result = \core_tag_external::update_tags(array($updatetag2));
-        $result = external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::update_tags_returns(), $result);
         $this->assertEquals($tag->id, $result['warnings'][0]['item']);
         $this->assertEquals('namesalreadybeeingused', $result['warnings'][0]['warningcode']);
     }
@@ -174,7 +174,7 @@ class external_test extends externallib_advanced_testcase {
         // Change to admin user and make sure that tag name can be updated using web service update_inplace_editable().
         $this->setAdminUser();
         $res = \core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'New tag name');
-        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('New tag name', $res['value']);
         $this->assertEquals('New tag name', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
 
@@ -210,7 +210,7 @@ class external_test extends externallib_advanced_testcase {
 
         // First, search by id.
         $result = \core_tag_external::get_tagindex_per_area(array('id' => $tag->id));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
         $this->assertCount(2, $result); // Two different areas: course and user.
         $this->assertEquals($tag->id, $result[0]['tagid']);
         $this->assertEquals('course', $result[0]['itemtype']);
@@ -219,7 +219,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, search by name.
         $result = \core_tag_external::get_tagindex_per_area(array('tag' => 'test'));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
         $this->assertCount(2, $result); // Two different areas: course and user.
         $this->assertEquals($tag->id, $result[0]['tagid']);
         $this->assertEquals('course', $result[0]['itemtype']);
@@ -228,14 +228,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Filter by tag area.
         $result = \core_tag_external::get_tagindex_per_area(array('tag' => 'test', 'ta' => $result[0]['ta']));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
         $this->assertCount(1, $result); // Just the given area.
         $this->assertEquals($tag->id, $result[0]['tagid']);
         $this->assertEquals('course', $result[0]['itemtype']);
 
         // Now, search by tag collection (use default).
         $result = \core_tag_external::get_tagindex_per_area(array('id' => $tag->id, 'tc' => 1));
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tagindex_per_area_returns(), $result);
         $this->assertCount(2, $result); // Two different areas: course and user.
     }
 
@@ -248,7 +248,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = \core_tag_external::get_tag_areas();
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_areas_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_areas_returns(), $result);
         $areas = $DB->get_records('tag_area');
         $this->assertCount(count($areas), $result['areas']);
         foreach ($result['areas'] as $area) {
@@ -270,7 +270,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = \core_tag_external::get_tag_collections();
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_collections_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_collections_returns(), $result);
 
         $collections = $DB->get_records('tag_coll');
         $this->assertCount(count($collections), $result['collections']);
@@ -309,7 +309,7 @@ class external_test extends externallib_advanced_testcase {
 
         // First, retrieve complete cloud.
         $result = \core_tag_external::get_tag_cloud();
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(4, $result['tags']); // Four different tags: Cats, Dogs, Mice, Horses.
         $this->assertEquals(4, $result['tagscount']);
         $this->assertEquals(4, $result['totalcount']);
@@ -325,7 +325,7 @@ class external_test extends externallib_advanced_testcase {
         // Test filter by collection, pagination and sorting.
         $defaultcoll = \core_tag_collection::get_default();
         $result = \core_tag_external::get_tag_cloud($defaultcoll, false, 2, 'count');
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(2, $result['tags']); // Only two tags.
         $this->assertEquals(2, $result['tagscount']);
         $this->assertEquals(4, $result['totalcount']);
@@ -333,14 +333,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Test search.
         $result = \core_tag_external::get_tag_cloud(0, false, 150, 'name', 'Mice');
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(1, $result['tags']); // Only the searched tags.
         $this->assertEquals(1, $result['tagscount']);
         $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
         $this->assertEquals('Mice', $result['tags'][0]['name']);
 
         $result = \core_tag_external::get_tag_cloud(0, false, 150, 'name', 'Conejo');
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(0, $result['tags']); // Nothing found.
         $this->assertEquals(0, $result['tagscount']);
         $this->assertEquals(0, $result['totalcount']); // When searching, the total is always for the search.
@@ -350,7 +350,7 @@ class external_test extends externallib_advanced_testcase {
         $micetag->update(array('isstandard' => 1));
 
         $result = \core_tag_external::get_tag_cloud(0, true);
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(1, $result['tags']);
         $this->assertEquals(1, $result['tagscount']);
         $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
@@ -358,7 +358,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Test course context filtering.
         $result = \core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, $coursecontext->id);
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(1, $result['tags']);
         $this->assertEquals(1, $result['tagscount']);
         $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
@@ -366,13 +366,13 @@ class external_test extends externallib_advanced_testcase {
 
         // Complete system context.
         $result = \core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, \context_system::instance()->id);
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(4, $result['tags']);
         $this->assertEquals(4, $result['tagscount']);
 
         // Just system context - avoid children.
         $result = \core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, \context_system::instance()->id, 0);
-        $result = external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_tag_external::get_tag_cloud_returns(), $result);
         $this->assertCount(2, $result['tags']);
         $this->assertEquals(2, $result['tagscount']); // Horses and Cats.
         $this->assertEquals('Cats', $result['tags'][0]['name']);

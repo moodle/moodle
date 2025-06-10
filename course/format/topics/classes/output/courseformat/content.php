@@ -25,7 +25,6 @@
 namespace format_topics\output\courseformat;
 
 use core_courseformat\output\local\content as content_base;
-use renderer_base;
 
 /**
  * Base class to render a course content.
@@ -42,18 +41,5 @@ class content extends content_base {
      * The responsible for the buttons is core_courseformat\output\local\content\section.
      */
     protected $hasaddsection = false;
-
-    /**
-     * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
-     *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
-     */
-    public function export_for_template(renderer_base $output) {
-        global $PAGE;
-        $PAGE->requires->js_call_amd('format_topics/mutations', 'init');
-        $PAGE->requires->js_call_amd('format_topics/section', 'init');
-        return parent::export_for_template($output);
-    }
 
 }

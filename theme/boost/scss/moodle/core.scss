@@ -414,9 +414,20 @@ form.popupform div {
 
 // Position required for table sizing inside a flex container.
 .no-overflow > .generaltable {
-    position: relative;
     margin-bottom: 0;
 }
+
+.no-overflow,
+.table-responsive {
+    .generaltable {
+        .sr-only,
+        .accesshide {
+            position: relative;
+            display: block;
+        }
+    }
+}
+
 // Accessibility features
 
 // Accessibility: text 'seen' by screen readers but not visual users.
@@ -1520,7 +1531,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .option label {
     display: block;
     margin: 0;
-    padding: ($spacer / 2) 0;
+    padding: ($spacer * 0.5) 0;
     border-bottom: 1px solid #fff;
 }
 
@@ -2076,7 +2087,7 @@ a.disabled {
     text-decoration: none;
     cursor: default;
     font-style: italic;
-    color: #808080;
+    color: $text-muted;
 }
 
 body.lockscroll {
@@ -2199,12 +2210,6 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
     }
 }
 
-// Reset for ul.
-ul {
-    padding-left: 1rem;
-    -webkit-margin-start: 0.2rem;  /* stylelint-disable-line */
-}
-
 /* YUI 2 Tree View */
 /*rtl:raw:
 .ygtvtn,
@@ -2287,7 +2292,7 @@ ul {
     padding-right: 0;
     padding-left: 0;
     .nav {
-        margin-right: $grid-gutter-width / 2;
+        margin-right: $grid-gutter-width * 0.5;
         background-color: $card-bg;
     }
     @include media-breakpoint-down(sm) {
@@ -2327,7 +2332,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 }
 
 .hasstickyfooter .btn-footer-popover {
-    bottom: calc(1rem + #{$stickyfooter-height});
+    bottom: calc(2rem + #{$navbar-height});
 }
 
 .popover.footer {
@@ -2607,10 +2612,6 @@ input[disabled] {
     }
 }
 
-.v-hidden {
-    visibility: hidden;
-}
-
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;
@@ -2628,7 +2629,7 @@ $picker-emojis-per-row: 7 !default;
     .category-button {
         padding: .375rem 0;
         height: 100%;
-        width: $picker-width / $picker-emoji-category-count;
+        width: divide($picker-width, $picker-emoji-category-count);
         border-top: none;
         border-left: none;
         border-right: none;
@@ -2672,7 +2673,7 @@ $picker-emojis-per-row: 7 !default;
     }
 
     .emoji-short-name {
-        line-height: $picker-row-height / 2;
+        line-height: $picker-row-height * 0.5;
     }
 
     @include media-breakpoint-down(xs) {
@@ -2734,10 +2735,10 @@ $picker-emojis-per-row: 7 !default;
     .breadcrumb:not(:empty) {
         width: 100%;
         flex-wrap: nowrap;
-        margin-bottom: $spacer / 2;
+        margin-bottom: $spacer * 0.5;
         .breadcrumb-item {
-            padding-top: $spacer / 3;
-            padding-bottom: $spacer / 3;
+            padding-top: $spacer * 0.33333;
+            padding-bottom: $spacer * 0.33333;
             display: inline-flex;
             overflow: hidden;
         }
@@ -2762,7 +2763,7 @@ $picker-emojis-per-row: 7 !default;
         max-width: 100%;
     }
     .card .card-body {
-        padding: $card-spacer-x / 2;
+        padding: $card-spacer-x * 0.5;
     }
     #page-header {
         .card {
@@ -2776,7 +2777,7 @@ $picker-emojis-per-row: 7 !default;
     .nav-pills {
         margin: 0;
         border: 0;
-        padding: $spacer / 8;
+        padding: $spacer * 0.125;
         background-color: $gray-200;
         .nav-item {
             flex: 1 1 auto;
@@ -2785,7 +2786,7 @@ $picker-emojis-per-row: 7 !default;
         .nav-link {
             background: $white;
             border: 0;
-            margin: $spacer / 8;
+            margin: $spacer * 0.125;
             &.active {
                 @include button-outline-variant($gray-600);
                 border-color: $gray-600;
@@ -2913,41 +2914,6 @@ body.dragging {
 
 // Generic classes reactive components can use.
 
-.overlay-preview {
-    background-color: rgba($white, .8);
-    border: 2px dashed $primary;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    .overlay-preview-wrapper {
-        position: absolute;
-        top: 0;
-        padding: 2rem;
-        width: 100%;
-    }
-
-    .overlay-preview-content {
-        position: relative;
-        top: 0;
-        padding: $modal-inner-padding;
-        margin: 0 auto;
-        width: 100%;
-        max-width: 600px;
-        background-color: $primary;
-        color: $white;
-        text-align: center;
-        font-size: $font-size-lg;
-        @include border-radius();
-    }
-}
-
-.overlay-preview-borders {
-    outline: 2px dashed $primary;
-}
-
 .waitstate {
     display: none;
 }
@@ -2997,6 +2963,27 @@ body.dragging {
     font-size: 9px;
     width: 9px;
     border: 0;
+
+}
+
+.dropleft .dropdown-toggle::before {
+    border: 0;
+    content: $fa-var-chevron-left;
+    @include fa-icon();
+    font-size: 9px;
+    margin-left: 0;
+    margin-right: 4px;
+    width: 9px;
+}
+
+.dropright .dropdown-toggle::after {
+    border: 0;
+    content: $fa-var-chevron-right;
+}
+
+.dropup .dropdown-toggle::after {
+    border: 0;
+    content: $fa-var-chevron-up;
 }
 
 .select-menu {
@@ -3082,4 +3069,5 @@ blockquote {
         overflow-wrap: anywhere;
         white-space: normal;
     }
+
 }

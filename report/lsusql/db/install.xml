@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="report/lsusql/db" VERSION="20220630" COMMENT="XMLDB file for Moodle report/lsusql"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="report_lsusql_queries" COMMENT="Custom SQL queries that can be run as LSU API Reports.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="displayname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the report as displayed in the UI"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A human-readable description of the query."/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Query description text format"/>
+        <FIELD NAME="querysql" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The SQL to run to generate this report."/>
+        <FIELD NAME="queryparams" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The SQL parameters to generate this report."/>
+        <FIELD NAME="querylimit" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="5000" SEQUENCE="false" COMMENT="Limit the number of results returned."/>
+        <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The capability that a user needs to have to run this report."/>
+        <FIELD NAME="userlimit" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A comma seperated list of users further limiting who can access the report."/>
+        <FIELD NAME="lastrun" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of when this report was last run."/>
+        <FIELD NAME="lastexecutiontime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time this report took to run last time it was executed, in milliseconds."/>
+        <FIELD NAME="runable" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="manual" SEQUENCE="false" COMMENT="'manual', 'weekly' or 'monthly'"/>
+        <FIELD NAME="donotescape" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do not escape saved CLI based queries."/>
+        <FIELD NAME="singlerow" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Only meaningful to set this scheduled reports. Means the report can only return one row of data, and the report builds up a row at a time."/>
+        <FIELD NAME="at" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="The time for the daily report"/>
+        <FIELD NAME="emailto" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A comma-separated list of user ids"/>
+        <FIELD NAME="emailwhat" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="A list of email options in a select menu"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The category ID from report_lsusql_categories table."/>
+        <FIELD NAME="customdir" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="categoryidkey" TYPE="foreign" FIELDS="categoryid" REFTABLE="report_lsusql_categories" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="report_lsusql_categories" COMMENT="A list of available categories">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A list of category names"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

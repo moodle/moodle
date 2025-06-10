@@ -1,0 +1,14 @@
+# .github/workflows/ci.yml
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/ci.yml@main
+    # Required if you plan to publish (uncomment the below)
+    secrets:
+      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
+    with:
+      disable_mustache: true
+      disable_phpcpd: true

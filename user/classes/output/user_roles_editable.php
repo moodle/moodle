@@ -14,12 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Contains class core_user\output\user_roles_editable
+ *
+ * @package   core_user
+ * @copyright 2017 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core_user\output;
 
 use context_course;
 use core_user;
 use core_external;
 use coding_exception;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class to display list of user roles.
@@ -135,8 +145,9 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @return \self
      */
     public static function update($itemid, $newvalue) {
-        global $DB;
+        global $DB, $CFG;
 
+        require_once($CFG->libdir . '/external/externallib.php');
         // Check caps.
         // Do the thing.
         // Return one of me.

@@ -1,0 +1,163 @@
+/*
+    1. DataTable Table
+    2. DataTable Pagination
+    3. Score colour
+*/
+
+
+/*
+ * 1. Table styles and related
+ */
+.mod_turnitintooltwo_submissions_data_table,
+#mod_turnitintooltwo_course_browser_table {
+    width:100%;
+    font-size: 13px;
+    border:1px solid $border-color;
+    width:100% !important;
+    margin-top: 6px !important;
+
+    .ccheckbox {
+        text-align: center;
+        padding: 8px 10px 2px !important;
+    }
+
+    .odd {
+        background: $odd-color !important;
+
+        .sorting_1 {
+            background: darken($odd-color, 3%) !important;
+        }
+    }
+
+    .even {
+        background: $even-color !important;
+
+        .sorting_1 {
+            background: darken($even-color, 2%) !important;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    thead th {
+        border-bottom: 0 !important;
+    }
+
+    th {
+        padding: $table-head-padding 20px !important;
+    }
+
+    td {
+        padding: $table-padding 10px !important;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    .sorting_disabled {
+        cursor: default;
+    }
+
+    .left {
+        text-align: left;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .grademark_open,
+    .grademark_grade,
+    .origreport_score {
+        float:right;
+    }
+
+    .grademark_grade,
+    .origreport_score {
+        padding-right:8px;
+    }
+
+    th.narrow,
+    td.narrow {
+        width: 60px;
+    }
+
+    .submit_nothing, .submission_title, .delete_paper {
+        cursor: pointer;
+    }
+
+    .score_colour {
+        width:36px;
+        display:inline-block;
+        float:right;
+    }
+
+    .late_submission {
+        color: #d31900;
+    }
+
+    #tii_digital_receipt_icon {
+        margin-top: -3px;
+        margin-right: 5px;
+    }
+}
+
+/*
+ * 2. DataTables pagination
+ */
+.dataTables_paginate {
+    margin-top: 6px;
+    font-size:12px;
+    float: right;
+
+    a {
+        display: inline-block;
+        border: 1px solid $border-color;
+        padding: 2px 5px;
+        background-position: left -2px;
+    }
+
+    .current {
+        background: #EFEFEF;
+    }
+
+    span a {
+        border-right: 0;
+    }
+
+    .previous {
+        border-right: 0;
+    }
+
+}
+
+.dataTables_info {
+    float:left;
+    clear:none;
+    margin-top: 8px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+
+/*
+ * 3. Score colour for originality report.
+ */
+.mod_turnitintooltwo .score_colour_ { background: #999999; }
+.mod_turnitintooltwo .score_colour_0 { background: #3552B7; }
+.mod_turnitintooltwo .score_colour_10 { background: #617B8D; }
+.mod_turnitintooltwo .score_colour_20 { background: #A1B556; }
+.mod_turnitintooltwo .score_colour_30 { background: #DAE235; }
+.mod_turnitintooltwo .score_colour_40 { background: #EDAC28; }
+.mod_turnitintooltwo .score_colour_50 { background: #EDD42F; }
+.mod_turnitintooltwo .score_colour_60 { background: #ECAD28; }
+.mod_turnitintooltwo .score_colour_70 { background: #E15A21; }
+.mod_turnitintooltwo .score_colour_80 { background: #E05A21; }
+.mod_turnitintooltwo .score_colour_90 { background: #DC4321; }
+.mod_turnitintooltwo .score_colour_100 { background: #DB4221; }
+
+
+.mod_turnitintooltwo .enrol_link {
+    padding: 6px 18px 0 0;
+}

@@ -57,17 +57,9 @@
         "indent": 1
     }
 }}
-{{#editing}}
-    <div class="divider divider-plus bulk-hidden" data-action="insert-before-{{activityname}}">
-        {{> core_course/activitychooserbuttonactivity}}
-    </div>
-{{/editing}}
 <div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
         }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
-    {{$ core_courseformat/local/content/cm/bulkselect }}
-        {{> core_courseformat/local/content/cm/bulkselect }}
-    {{/ core_courseformat/local/content/cm/bulkselect }}
     {{!
       Place the actual content of the activity-item in a separate template to make it easier for other formats to add
       additional content to the activity wrapper.

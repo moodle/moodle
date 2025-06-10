@@ -1,0 +1,77 @@
+#page-report-editdates-index #activitytypeform {
+    margin-bottom: 1em;
+}
+
+#page-report-editdates-index div[id^="fitem_id_moddivider"] {
+    margin-bottom: 30px;
+}
+
+#page-report-editdates-index .editdates_highlight {
+    background: #d9edf7;
+    border-radius: 5px;
+    color: black;
+    padding: 10px;
+    position: relative;
+    top: 10px;
+}
+
+.path-report-editdates .vertical-text-container {
+    overflow-x: scroll;
+    position: static;
+    width: 60vw;
+}
+
+@media screen and (max-width: 1750px) {
+    .path-report-editdates .vertical-text-container {
+        width: 70vw;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .path-report-editdates .vertical-text-container {
+        width: 90vw;
+    }
+}
+
+.path-report-editdates th.vertical-text {
+    font-size: .8em;
+}
+
+.path-report-editdates th.vertical-text {
+    /* Something you can count on */
+    white-space: nowrap;
+}
+
+.path-report-editdates th.vertical-text > div {
+    display: block;
+    transform:
+        /* Magic Numbers */
+        translate(18px, 40px)
+        /* 45 is really 360 - 45 */
+        rotate(315deg);
+    width: 30px;
+    position: relative;
+    top: -25px;
+}
+
+.path-report-editdates th.vertical-text > div > span {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 10px;
+}
+
+.path-report-editdates .vertical-text-container td {
+    border-right: 1px solid #ccc;
+    text-align: center;
+    vertical-align: top;
+}
+
+.path-report-editdates a.timelineitem img {
+    width: 20px;
+}
+
+.path-report-editdates a.timelineitem {
+    display: inline-block;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    padding: 2px;
+}

@@ -1,0 +1,21 @@
+div.block_mhaairs_warning {
+    color: red;
+}
+
+div.block_mhaairs div.footer {
+    margin-top: 20px;
+}
+
+div.block_mhaairs div.servicelink {
+    margin-top: 3px;
+}
+
+div.block_mhaairs img.serviceicon {
+    height: 16px;
+    width: 16px;
+    margin: 0 4px;
+}
+
+div.block_mhaairs div.helplink {
+    margin-top: 3px;
+}

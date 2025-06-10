@@ -764,9 +764,10 @@ abstract class base implements \IteratorAggregate {
                 debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);
             }
             $encoded = json_encode($this->data['other']);
-            // The comparison here is not set to strict as whole float numbers will be converted to integers through JSON encoding /
-            // decoding and send an unwanted debugging message.
-            if ($encoded === false or $this->data['other'] != json_decode($encoded, true)) {
+            // The comparison here is not set to strict. We just need to check if the data is compatible with the JSON encoding
+            // or not and we don't need to worry about how the data is encoded. Because in some cases, the data can contain
+            // objects, and objects can be converted to a different format during encoding and decoding.
+            if ($encoded === false) {
                 debugging('other event data must be compatible with json encoding', DEBUG_DEVELOPER);
             }
             if ($this->data['userid'] and !is_number($this->data['userid'])) {

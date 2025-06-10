@@ -17,7 +17,6 @@
 namespace core;
 
 use core_grades_external;
-use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -159,7 +158,7 @@ class grades_external_test extends \externallib_advanced_testcase {
             array(),
             array('grademax' => $changedmax)
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id);
         $this->assertTrue($grades->items[0]->grademax == $changedmax);
@@ -174,7 +173,7 @@ class grades_external_test extends \externallib_advanced_testcase {
             0,
             array(array('studentid' => $student1->id, 'grade' => $student1grade))
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id, array($student1->id));
         $this->assertTrue($grades->items[0]->grades[$student1->id]->grade == $student1grade);
@@ -193,7 +192,7 @@ class grades_external_test extends \externallib_advanced_testcase {
                 array('studentid' => $student2->id, 'grade' => $student2grade)
             )
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id, array($student1->id, $student2->id));
         $this->assertTrue($grades->items[0]->grades[$student1->id]->grade == $student1grade);
@@ -269,7 +268,7 @@ class grades_external_test extends \externallib_advanced_testcase {
             array(),
             array('hidden' => 1)
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id);
         $this->assertTrue($grades->items[0]->hidden == 1);

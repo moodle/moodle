@@ -111,15 +111,13 @@ $string['groupmembers'] = 'Group members';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
-$string['groupmode_help'] = 'This setting has 3 options:
+$string['groupmode_help'] = '* No groups
+* Separate groups: Students are divided into groups and can only see their group\'s work.
+* Visible groups: Students are divided into groups, but can see the work of other groups.
 
-* No groups
-* Separate groups - Each group member can only see their own group, others are invisible
-* Visible groups - Each group member works in their own group, but can also see other groups
-
-The group mode defined at course level is the default mode for all activities within the course. Each activity that supports groups can also define its own group mode, though if the group mode is forced at course level, the group mode setting for each activity is ignored.';
+The group mode set at course level is the default mode for all activities. If the group mode is forced at course level, it can\'t be changed in an activity.';
 $string['groupmodeforce'] = 'Force group mode';
-$string['groupmodeforce_help'] = 'If group mode is forced, then the course group mode is applied to every activity in the course. Group mode settings in each activity are then ignored.';
+$string['groupmodeforce_help'] = 'The group mode is enforced for all activities and can\'t be changed in an activity.';
 $string['groupmy'] = 'My group';
 $string['groupname'] = 'Group name';
 $string['groupnameexists'] = 'The group name \'{$a}\' already exists in this course, please choose another one.';

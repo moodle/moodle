@@ -18,6 +18,7 @@ namespace qbank_previewquestion\output;
 
 use context;
 use qbank_previewquestion\helper;
+use qbank_previewquestion\question_preview_options;
 
 /**
  * Class renderer for rendering preview url
@@ -50,7 +51,8 @@ class renderer extends \plugin_renderer_base {
         }
 
         $image = $this->pix_icon('t/preview', $alt, '', ['class' => 'iconsmall']);
-        $link = helper::question_preview_url($questionid, null, null, null, null, $context);
+        $link = helper::question_preview_url($questionid, null, null, null, null, $context, null,
+                question_preview_options::ALWAYS_LATEST);
         $action = new \popup_action('click', $link, 'questionpreview', helper::question_preview_popup_params());
 
         return $this->action_link($link, $image . $label, $action, $attributes);

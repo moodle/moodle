@@ -31,12 +31,12 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 use mod_glossary_external;
 use context_module;
 use context_user;
-use core_external\util as external_util;
+use external_util;
 
 /**
  * External function test for update_entry.

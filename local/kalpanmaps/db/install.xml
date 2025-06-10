@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/kalpanmaps/db" VERSION="20210616" COMMENT="XMLDB file for Moodle local/kalpanmaps"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_kalpanmaps" COMMENT="local_kalpanmaps table.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="kaltura_id" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="panopto_id" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="kalid_ix" UNIQUE="false" FIELDS="kaltura_id"/>
+        <INDEX NAME="panid_ix" UNIQUE="false" FIELDS="panopto_id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

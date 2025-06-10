@@ -1,0 +1,68 @@
+Ad-hoc database queries
+
+This report plugin allows Administrators to set up arbitrary database queries
+to act as ad-hoc reports. Reports can run as follows:
+
+Manual: Run a query on demand,
+Scheduled: queries that are scheduled to run automatically (monthly, weekly, daily).
+
+Other users with the right capability can go in and see a list of queries that
+they have access to. Results can be viewed on-screen or downloaded as CSV.
+
+User interface contains the following form elements
+----------------------------------------------------
+
+01) 'Query name' (text): The name of the query.
+
+02) 'Description' (HTML editor): The description of the query.
+
+03) 'Query SQL' (text): The sql query text (with or without parameter.
+
+04) 'Verify the Query SQL text and update the form' (button): refresh button for
+submitting the form and displaying the parameter names which are labelled with
+parameter-names (text),
+
+05) 'Notes': some text about place holders (Reports can contain placeholders,
+in which case, the user running the report is presented a form where they
+can enter the values to substitute for the placeholders when the report is run).
+If a placeholder_name starts or ends with the four characters 'date' then a
+date-time selector will be used to input that placeholder value, otherwise a
+plain text input box will be used.
+
+06) 'Who can access this query' (select menu): access level options
+
+07) 'Limit rows returned' set the maximum number of rows this query may return.
+Useful if you want a query to return the top 10 somethings. Note that you cannot
+increase this beyond the hard limit of 5000 for any query, which is the default.
+
+08) 'Run' (select menu): whether run the query on-demand or scheduled (Daily, weekly, Monthly)
+
+09 'at' (select menu): full hour on the day
+
+10) 'Type of result' (checkbox): 'The query returns one row, accumulate the results one row at a time'
+checked/unchecked.
+
+11) 'Automatically email to' (text): a comma separated list of user names. When enabled,
+and email system is setup, sends email to the each user in the list.
+
+12) 'What to email' (select menu): options that are pout into the email body.
+
+13) 'Category' (select menu): Each query is assigned to a category, which is used
+to group the display of the query list.
+
+
+Conditions
+----------
+When Query SQL text {03) contains parameters, the query runs only on demond and
+08, 09, 10 and 11 are disabled.
+
+'at' (08) is enabled only when , Run (07) is set to 'Daily'.
+
+
+Output
+------
+
+When the table is displayed, any value that looks like a URL is displayed as a link.
+
+If a column has a name ending with the four characters 'date', and contains an
+integer value, then that is assumed to be a unix time-stamp, and formatted nicely.

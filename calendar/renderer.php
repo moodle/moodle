@@ -325,10 +325,10 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     public function render_subscriptions_header(): string {
         $importcalendarbutton = new single_button(new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()),
-                get_string('importcalendar', 'calendar'), 'get', single_button::BUTTON_PRIMARY);
+                get_string('importcalendar', 'calendar'), 'get', true);
         $importcalendarbutton->class .= ' float-sm-right float-right';
         $exportcalendarbutton = new single_button(new moodle_url('/calendar/export.php', calendar_get_export_import_link_params()),
-                get_string('exportcalendar', 'calendar'), 'get', single_button::BUTTON_PRIMARY);
+                get_string('exportcalendar', 'calendar'), 'get', true);
         $exportcalendarbutton->class .= ' float-sm-right float-right';
         $output = $this->output->heading(get_string('managesubscriptions', 'calendar'));
         $output .= html_writer::start_div('header d-flex flex-wrap mt-5');

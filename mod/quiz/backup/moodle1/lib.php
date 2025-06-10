@@ -50,40 +50,40 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
      * @return array of {@link convert_path} instances
      */
     public function get_paths() {
-        return [
+        return array(
             new convert_path(
                 'quiz', '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ',
-                [
-                    'newfields' => [
+                array(
+                    'newfields' => array(
                         'showuserpicture'       => 0,
                         'questiondecimalpoints' => -1,
                         'introformat'           => 0,
                         'showblocks'            => 0,
-                    ],
-                ]
+                    ),
+                )
             ),
             new convert_path('quiz_question_instances',
                     '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES'),
             new convert_path('quiz_question_instance',
                     '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES/QUESTION_INSTANCE',
-                [
-                    'renamefields' => [
+                array(
+                    'renamefields' => array(
                         'question' => 'questionid',
                         'grade'    => 'maxmark',
-                    ],
-                ]
+                    ),
+                )
             ),
             new convert_path('quiz_feedbacks',
                     '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS'),
             new convert_path('quiz_feedback',
                     '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS/FEEDBACK',
-                [
-                    'newfields' => [
+                array(
+                    'newfields' => array(
                         'feedbacktextformat' => FORMAT_HTML,
-                    ]
-                ]
+                    )
+                )
             )
-        ];
+        );
     }
 
     /**
@@ -126,10 +126,10 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
 
         // Start writing quiz.xml.
         $this->open_xml_writer("activities/quiz_{$this->moduleid}/quiz.xml");
-        $this->xmlwriter->begin_tag('activity', ['id' => $instanceid,
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid,
                 'moduleid' => $this->moduleid, 'modulename' => 'quiz',
-                'contextid' => $contextid]);
-        $this->xmlwriter->begin_tag('quiz', ['id' => $instanceid]);
+                'contextid' => $contextid));
+        $this->xmlwriter->begin_tag('quiz', array('id' => $instanceid));
 
         foreach ($data as $field => $value) {
             if ($field <> 'id') {
@@ -149,7 +149,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     }
 
     public function process_quiz_question_instance($data) {
-        $this->write_xml('question_instance', $data, ['/question_instance/id']);
+        $this->write_xml('question_instance', $data, array('/question_instance/id'));
     }
 
     public function on_quiz_feedbacks_start() {
@@ -169,7 +169,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
             $data['maxgrade'] = 0;
         }
 
-        $this->write_xml('feedback', $data, ['/feedback/id']);
+        $this->write_xml('feedback', $data, array('/feedback/id'));
     }
 
     /**
@@ -178,7 +178,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     public function on_quiz_end() {
 
         // Append empty <overrides> subpath element.
-        $this->write_xml('overrides', []);
+        $this->write_xml('overrides', array());
 
         // Finish writing quiz.xml.
         $this->xmlwriter->end_tag('quiz');
@@ -190,7 +190,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
         foreach ($this->fileman->get_fileids() as $fileid) {
-            $this->write_xml('file', ['id' => $fileid]);
+            $this->write_xml('file', array('id' => $fileid));
         }
         $this->xmlwriter->end_tag('fileref');
         $this->xmlwriter->end_tag('inforef');

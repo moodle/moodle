@@ -102,6 +102,29 @@ class database {
     }
 
     /**
+     * Replace parameter names within given SQL expression, allowing caller to specify callback to handle their replacement
+     * primarily to ensure uniqueness when the expression is to be used as part of a larger query
+     *
+     * @param string $sql
+     * @param array $params
+     * @param callable $callback Method that takes a single string parameter, and returns another string
+     * @return string
+     */
+    public static function sql_replace_parameter_names(string $sql, array $params, callable $callback): string {
+        foreach ($params as $param) {
+
+            // Pattern to look for param within the SQL.
+            $pattern = '/:(?<param>' . preg_quote($param) . ')\b/';
+
+            $sql = preg_replace_callback($pattern, function(array $matches) use ($callback): string {
+                return ':' . $callback($matches['param']);
+            }, $sql);
+        }
+
+        return $sql;
+    }
+
+    /**
      * Generate SQL expression for sorting group concatenated fields
      *
      * @param string $field The original field or SQL expression

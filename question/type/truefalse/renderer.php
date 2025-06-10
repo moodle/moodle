@@ -99,11 +99,16 @@ class qtype_truefalse_renderer extends qtype_renderer {
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
                 array('class' => 'qtext'));
 
-        $result .= html_writer::start_tag('div', array('class' => 'ablock'));
+        $result .= html_writer::start_tag('fieldset', array('class' => 'ablock'));
         if (!empty($question->showstandardinstruction)) {
-            $result .= html_writer::tag('div', get_string('selectone', 'qtype_truefalse'),
-                array('class' => 'prompt'));
+            $legendclass = '';
+            $questionnumber = $options->add_question_identifier_to_label(get_string('selectone', 'qtype_truefalse'), true, true);
+        } else {
+            $legendclass = 'sr-only';
+            $questionnumber = $options->add_question_identifier_to_label(get_string('answer'), true, true);
         }
+        $result .= html_writer::tag('legend', $questionnumber,
+            array('class' => 'prompt h6 font-weight-normal ' . $legendclass));
 
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         $result .= html_writer::tag('div', $radiotrue . ' ' . $truefeedbackimg,
@@ -112,7 +117,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
                 array('class' => 'r1' . $falseclass));
         $result .= html_writer::end_tag('div'); // Answer.
 
-        $result .= html_writer::end_tag('div'); // Ablock.
+        $result .= html_writer::end_tag('fieldset'); // Ablock.
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
