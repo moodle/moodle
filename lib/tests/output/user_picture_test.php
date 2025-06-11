@@ -25,6 +25,20 @@ namespace core\output;
  * @covers \core\output\user_picture
  */
 final class user_picture_test extends \advanced_testcase {
+
+    /**
+     * Assert appropriate debugging is emitted if required user fields are absent
+     */
+    public function test_constructor_missing_fields(): void {
+        $user = get_admin();
+        unset($user->picture);
+
+        // Assert debugging notice when required field isn't present.
+        $userpicture = new user_picture($user);
+        $this->assertDebuggingCalled('Missing \'picture\' property in $user object, this is a performance problem that needs ' .
+            'to be fixed by a developer. Please use the \core_user\fields API to get the full list of required fields.');
+    }
+
     /**
      * Tests {@see user_picture::allow_view()} for a not-logged-in request.
      */

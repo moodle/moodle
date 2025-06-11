@@ -106,7 +106,7 @@ class user_picture implements renderable {
             if (!property_exists($user, $field)) {
                 $needrec = true;
                 debugging(
-                    "Missing {$field} property in {$user} object, "
+                    "Missing '{$field}' property in \$user object, "
                         . "this is a performance problem that needs to be fixed by a developer. "
                         . 'Please use the \core_user\fields API to get the full list of required fields.',
                     DEBUG_DEVELOPER,
