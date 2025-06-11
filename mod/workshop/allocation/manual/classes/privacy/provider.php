@@ -44,7 +44,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param collection $collection Collection of items to add metadata to.
      * @return collection Collection with our added items.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_user_preference('workshopallocation_manual_perpage', 'privacy:metadata:preference:perpage');
 

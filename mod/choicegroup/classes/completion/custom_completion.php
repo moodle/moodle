@@ -43,11 +43,9 @@ class custom_completion extends activity_custom_completion {
 
         $this->validate_rule($rule);
         // Choice only supports completionsubmit as a custom rule.
-        $choicegroup = $DB->get_record('choicegroup', ['id'=>$this->cm->instance], '*', MUST_EXIST);
+        $choicegroup = $DB->get_record('choicegroup', ['id' => $this->cm->instance], '*', MUST_EXIST);
 
-        return (choicegroup_get_user_answer($choicegroup, $this->userid) !== false)
-            ? COMPLETION_COMPLETE
-            : COMPLETION_INCOMPLETE;
+        return (choicegroup_get_user_answer($choicegroup, $this->userid) !== false) ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }
 
     /**
@@ -57,7 +55,7 @@ class custom_completion extends activity_custom_completion {
      */
     public static function get_defined_custom_rules(): array {
         return [
-            'completionsubmit'
+            'completionsubmit',
         ];
     }
 
@@ -68,7 +66,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_custom_rule_descriptions(): array {
         return [
-            'completionsubmit' => get_string('completiondetail:submit', 'choicegroup')
+            'completionsubmit' => get_string('completiondetail:submit', 'choicegroup'),
         ];
     }
 

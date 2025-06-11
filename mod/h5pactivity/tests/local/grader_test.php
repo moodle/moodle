@@ -36,7 +36,7 @@ use stdClass;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grader_test extends \advanced_testcase {
+final class grader_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -49,7 +49,7 @@ class grader_test extends \advanced_testcase {
     /**
      * Test for grade item delete.
      */
-    public function test_grade_item_delete() {
+    public function test_grade_item_delete(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -82,7 +82,7 @@ class grader_test extends \advanced_testcase {
      * @param bool $reset if has to reset grades
      * @param string $idnumber the new idnumber
      */
-    public function test_grade_item_update(int $newgrade, bool $reset, string $idnumber) {
+    public function test_grade_item_update(int $newgrade, bool $reset, string $idnumber): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -160,7 +160,7 @@ class grader_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function grade_item_update_data(): array {
+    public static function grade_item_update_data(): array {
         return [
             'Change idnumber' => [
                 100, false, 'newidnumber'
@@ -198,7 +198,7 @@ class grader_test extends \advanced_testcase {
      * @param int $completion 1 all student have the activity completed, 0 one have incompleted
      * @param array $results expected results (user1 grade, user2 grade)
      */
-    public function test_update_grades(int $newgrade, bool $all, int $completion, array $results) {
+    public function test_update_grades(int $newgrade, bool $all, int $completion, array $results): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -258,7 +258,7 @@ class grader_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function update_grades_data(): array {
+    public static function update_grades_data(): array {
         return [
             // Quantitative grade, all attempts completed.
             'Same grademax, all users, all completed' => [

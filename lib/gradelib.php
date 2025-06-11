@@ -354,6 +354,10 @@ function grade_needs_regrade_final_grades($courseid) {
 function grade_needs_regrade_progress_bar($courseid) {
     global $DB;
     $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
+    if (!$grade_items) {
+        // If there are no grade items then we definitely don't need a progress bar!
+        return false;
+    }
 
     list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
     $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
@@ -376,9 +380,9 @@ function grade_needs_regrade_progress_bar($courseid) {
  *
  * @param stdClass $course The course to regrade
  * @param callable $callback A function to call if regrading took place
- * @return moodle_url The URL to redirect to if redirecting
+ * @return moodle_url|false The URL to redirect to if redirecting
  */
-function grade_regrade_final_grades_if_required($course, callable $callback = null) {
+function grade_regrade_final_grades_if_required($course, ?callable $callback = null) {
     global $PAGE, $OUTPUT;
 
     if (!grade_needs_regrade_final_grades($course->id)) {
@@ -426,16 +430,22 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
 }
 
 /**
- * Returns grading information for given activity, optionally with user grades
+ * Returns grading information for given activity, optionally with user grades.
  * Manual, course or category items can not be queried.
  *
- * @category grade
+ * This function can be VERY costly - it is doing full course grades recalculation if needsupdate = 1
+ * for course grade item. So be sure you really need it.
+ * If you need just certain grades consider using grade_item::refresh_grades()
+ * together with grade_item::get_grade() instead.
+ *
  * @param int    $courseid ID of course
  * @param string $itemtype Type of grade item. For example, 'mod' or 'block'
  * @param string $itemmodule More specific then $itemtype. For example, 'forum' or 'quiz'. May be NULL for some item types
  * @param int    $iteminstance ID of the item module
  * @param mixed  $userid_or_ids Either a single user ID, an array of user IDs or null. If user ID or IDs are not supplied returns information about grade_item
- * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
+ * @return stdClass Object with keys {items, outcomes, errors}, where 'items' is an array of grade
+ *               information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
+ * @category grade
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
@@ -443,13 +453,20 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
     $return = new stdClass();
     $return->items    = array();
     $return->outcomes = array();
+    $return->errors = [];
 
-    $course_item = grade_item::fetch_course_item($courseid);
+    $courseitem = grade_item::fetch_course_item($courseid);
     $needsupdate = array();
-    if ($course_item->needsupdate) {
+    if ($courseitem->needsupdate) {
         $result = grade_regrade_final_grades($courseid);
         if ($result !== true) {
             $needsupdate = array_keys($result);
+            // Return regrade errors if the user has capability.
+            $context = context_course::instance($courseid);
+            if (has_capability('moodle/grade:edit', $context)) {
+                $return->errors = $result;
+            }
+            $courseitem->regrading_finished();
         }
     }
 
@@ -1101,7 +1118,9 @@ function grade_recover_history_grades($userid, $courseid) {
              WHERE gi.courseid = :courseid AND gg.userid = :userid";
     $params = array('userid' => $userid, 'courseid' => $courseid);
     if ($DB->record_exists_sql($sql, $params)) {
-        debugging('Attempting to recover the grades of a user who already has grades. Skipping recover.');
+        // BEGIN LSU Remove annoying debug notices on blind enrollments of existing students.
+        mtrace('Attempting to recover the grades of a user who already has grades. Skipping recover.');
+        // END LSU Remove annoying debug notices on blind enrollments of existing students.
         return false;
     } else {
         //Retrieve the user's old grades
@@ -1151,7 +1170,7 @@ function grade_recover_history_grades($userid, $courseid) {
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
  * @param object $updated_item Optional grade item to be marked for regrading. It is required if $userid is set.
  * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
- * @return bool true if ok, array of errors if problems found. Grade item id => error message
+ * @return array|true true if ok, array of errors if problems found. Grade item id => error message
  */
 function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null, $progress=null) {
     // This may take a very long time and extra memory.
@@ -1324,7 +1343,10 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                     continue; // this one is ok
                 }
                 $grade_items[$gid]->force_regrading();
-                $errors[$grade_items[$gid]->id] = get_string('errorcalculationbroken', 'grades');
+                if (!empty($grade_items[$gid]->calculation) && empty($errors[$gid])) {
+                    $itemname = $grade_items[$gid]->get_name();
+                    $errors[$gid] = get_string('errorcalculationbroken', 'grades', $itemname);
+                }
             }
             break; // Found error.
         }

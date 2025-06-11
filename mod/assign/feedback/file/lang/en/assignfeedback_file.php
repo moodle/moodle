@@ -23,6 +23,7 @@
  */
 
 $string['batchoperationconfirmuploadfiles'] = 'Upload one or more feedback files for all selected users?';
+$string['batchoperationuploadfiles'] = 'Upload feedback';
 $string['batchuploadfiles'] = 'Upload feedback files for multiple users';
 $string['batchuploadfilesforusers'] = 'Send feedback files to {$a} selected user(s).';
 $string['configmaxbytes'] = 'Maximum file size';
@@ -49,7 +50,7 @@ $string['moreusers'] = '{$a} more...';
 $string['nochanges'] = 'No changes';
 $string['pluginname'] = 'File feedback';
 $string['uploadfiles'] = 'Send feedback files';
-$string['uploadzip'] = 'Upload multiple feedback files in a zip';
+$string['uploadzip'] = 'Upload feedback files in a zip';
 $string['uploadzipsummary'] = 'Feedback files imported from a zip';
 $string['userswithnewfeedback'] = 'Users with updated feedback: {$a}';
 $string['selectedusers'] = 'Selected users';

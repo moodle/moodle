@@ -1,8 +1,89 @@
+## v4.4.2 (2024-10-07)
+
+* version update
+* MOODLE_405_STABLE
+
+## v4.4.2 (2024-05-20)
+
+* infection 94%
+
+## v4.4.1 (2024-04-20)
+
+* version update
+* code review
+* MOODLE_404_STABLE
+
+## v4.2.4 (2024-04-05)
+
+* version update
+* Update README.md
+* code review
+
+## v4.2.3 (2024-03-13)
+
+* version update
+* php 8.3
+* issue #29
+* issue #30
+* code review
+
+## v4.2.2 (2024-02-26)
+
+* version update
+* issue #26
+
+## v4.2.1 (2024-01-05)
+
+* version update
+* code review
+
+## v4.1.1 (2023-12-08)
+
+* version update
+
+## v4.1.0 (2023-12-06)
+
+* version update
+* issue #23
+* logo
+
+## v4.0.9 (2023-10-15)
+
+* version update
+* MOODLE_403_STABLE
+* issue #22
+
+## v4.0.8 (2023-10-14)
+
+* version update
+* Fixed error where course module would not be set and would try to get id
+* php 8.2
+
+## v4.0.7 (2023-06-03)
+
+* version update
+* issue #19
+* process-isolation
+* php 8.1
+
+## v4.0.6 (2023-04-23)
+
+* version update
+* MOODLE_402_STABLE
+* update main.yml
+* grunt fix
+* cron fix
+* licence - changes.md
+* merge pull request #3
+* fixed error where course module would not be set and would try to get id
+* php 8.2
+* MOODLE_401_STABLE
+
 ## v4.0.5 (2022-11-11)
 
 * fix phpunit Moodle 311 
 * better theme support 
-* checkout@v3 
+* checkout@v4 
 * section test added 
 * get_section_info_all availability is always null 
 * version update 

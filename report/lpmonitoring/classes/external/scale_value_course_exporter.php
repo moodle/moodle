@@ -48,7 +48,7 @@ class scale_value_course_exporter extends \core\external\exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('relatedinfo' => '\\stdClass');
+        return ['relatedinfo' => '\\stdClass'];
     }
 
     /**
@@ -57,24 +57,24 @@ class scale_value_course_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'url' => array(
-                'type' => PARAM_RAW
-            ),
-            'shortname' => array(
-                'type' => PARAM_RAW
-            ),
-            'grade' => array(
-                'type' => PARAM_RAW
-            ),
-            'nbnotes' => array(
-                'type' => PARAM_INT
-            ),
-            'lastcomment' => array(
+        return [
+            'url' => [
                 'type' => PARAM_RAW,
-                'null' => NULL_ALLOWED
-            )
-        );
+            ],
+            'shortname' => [
+                'type' => PARAM_RAW,
+            ],
+            'grade' => [
+                'type' => PARAM_RAW,
+            ],
+            'nbnotes' => [
+                'type' => PARAM_INT,
+            ],
+            'lastcomment' => [
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED,
+            ],
+        ];
     }
 
     /**
@@ -89,8 +89,11 @@ class scale_value_course_exporter extends \core\external\exporter {
 
         $result = new stdClass();
 
-        $urlparams = array('userid' => $this->related['relatedinfo']->userid,
-                'competencyid' => $this->related['relatedinfo']->competencyid, 'courseid' => $coursedata->course->id);
+        $urlparams = [
+            'userid' => $this->related['relatedinfo']->userid,
+            'competencyid' => $this->related['relatedinfo']->competencyid,
+            'courseid' => $coursedata->course->id,
+        ];
         $url = (new \moodle_url('/admin/tool/lp/user_competency_in_course.php', $urlparams))->out();
 
         $nbnotes = 0;

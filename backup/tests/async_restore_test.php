@@ -35,12 +35,12 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class async_restore_test extends \advanced_testcase {
+final class async_restore_test extends \advanced_testcase {
 
     /**
      * Tests the asynchronous backup.
      */
-    public function test_async_restore() {
+    public function test_async_restore(): void {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest(true);
@@ -116,7 +116,6 @@ class async_restore_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_restore_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array('backupid' => $restoreid));
         $asynctask->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($asynctask);
@@ -142,7 +141,7 @@ class async_restore_test extends \advanced_testcase {
     /**
      * Tests the asynchronous restore will resolve in duplicate cases where the controller is already removed.
      */
-    public function test_async_restore_missing_controller() {
+    public function test_async_restore_missing_controller(): void {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest(true);
@@ -223,7 +222,6 @@ class async_restore_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_restore_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['backupid' => $restoreid]);
         \core\task\manager::queue_adhoc_task($asynctask);
 
@@ -245,7 +243,6 @@ class async_restore_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_restore_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['backupid' => $restoreid]);
         \core\task\manager::queue_adhoc_task($asynctask);
 

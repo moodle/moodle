@@ -1,6 +1,6 @@
-# moodle-tool_crawler
+[![ci](https://github.com/catalyst/moodle-tool_crawler/actions/workflows/ci.yml/badge.svg?branch=MOODLE_310_STABLE)](https://github.com/catalyst/moodle-tool_crawler/actions/workflows/ci.yml?branch=MOODLE_310_STABLE)
 
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/catalyst/moodle-tool_crawler/ci.yml?branch=MOODLE_310_STABLE&label=ci)
+# moodle-tool_crawler
 
 * [What is this?](#what-is-this)
 * [How does it work?](#how-does-it-work)

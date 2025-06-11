@@ -18,18 +18,16 @@
  * Privacy Subsystem implementation for local_redislock.
  *
  * @package local_redislock
- * @copyright Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_redislock\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for local_redislock implementing null_provider.
  *
- * @copyright Copyright (c) 2018 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {

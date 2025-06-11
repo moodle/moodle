@@ -26,15 +26,15 @@ Feature: In an assignment, teachers can provide feedback comments on student sub
       | assign                | user      | onlinetext                   |
       | Test assignment name  | student1  | I'm the student1 submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I click on "Quick grading" "checkbox"
     And I set the field "Feedback comments" to "Feedback from teacher."
-    And I press "Save all quick grading changes"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I should see "Feedback from teacher."
     And I set the field "Feedback comments" to ""
-    And I press "Save all quick grading changes"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I should not see "Feedback from teacher."

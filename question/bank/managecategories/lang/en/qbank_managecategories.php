@@ -23,5 +23,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['after'] = 'After {$a}';
+$string['before'] = 'Before {$a}';
+$string['categoryincategory'] = 'Cannot move category in same category.';
+$string['categorymoved'] = 'The category has been moved successfully.';
+$string['confirmdelete'] = 'Delete category "{$a}"?. Any child categories will be moved to this category\'s parent.';
+$string['descriptionnotdisplayed'] = 'Categories description not displayed';
+$string['displaydescription'] = 'Categories description displayed';
+$string['error:category'] = 'You must select a valid category';
+$string['idnumberexists'] = 'ID number already in use. Change it to move or update category.';
+$string['lastcategoryinthiscontext'] = 'This category is the only one in this context. You need to add another category if this category is to be moved.';
+$string['movecategory'] = 'Move {$a}';
+$string['newchild'] = 'As new child of {$a}';
 $string['pluginname'] = 'Manage categories';
-$string['privacy:metadata'] = 'The Manage categories question bank plugin does not store any personal data.';
+$string['privacy:preference:includesubcategories_filter_default'] = 'Indicates whether or not the "Also show questions from subcategories" filter option is enabled by default when the user views the question bank.';
+$string['privacy:preference:showdescriptions'] = 'A flag to indicate whether or not category descriptions are shown.';
+$string['questionsubcategoriesdisplayed'] = 'When selecting categories in the question bank, the "Also show questions from subcategories" option is used and are automatically included in the filter results.';
+$string['questionsubcategoriesnotdisplayed'] = 'When selecting categories in the question bank, the "Also show questions from subcategories" option is not used, so questions from subcategories are not included in the filter results.';
+$string['showcategorydescription'] = 'Show descriptions';

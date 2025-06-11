@@ -45,7 +45,7 @@ class provider implements
      * @param   collection     $collection The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // There is a one user preference.
         $collection->add_user_preference('auth_manual_passwordupdatetime',
             'privacy:metadata:preference:passwordupdatetime');

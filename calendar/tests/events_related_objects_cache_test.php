@@ -30,12 +30,13 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_related_objects_cache_test extends \advanced_testcase {
+final class events_related_objects_cache_test extends \advanced_testcase {
 
     /**
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -43,7 +44,7 @@ class events_related_objects_cache_test extends \advanced_testcase {
      * An event with no module should return null when trying to retrieve
      * the module instance.
      */
-    public function test_get_module_instance_no_module() {
+    public function test_get_module_instance_no_module(): void {
         $this->setAdminUser();
         $mapper = container::get_event_mapper();
         $legacyevent = create_event([
@@ -60,7 +61,7 @@ class events_related_objects_cache_test extends \advanced_testcase {
      * The get_module_instance should return the correct module instances
      * for the given set of events in the cache.
      */
-    public function test_get_module_instance_with_modules() {
+    public function test_get_module_instance_with_modules(): void {
         $this->setAdminUser();
         $mapper = container::get_event_mapper();
         $generator = $this->getDataGenerator();
@@ -102,7 +103,7 @@ class events_related_objects_cache_test extends \advanced_testcase {
      * Trying to load the course module of an event that isn't in
      * the cache should return null.
      */
-    public function test_module_instance_unknown_event() {
+    public function test_module_instance_unknown_event(): void {
         $this->setAdminUser();
         $mapper = container::get_event_mapper();
         $generator = $this->getDataGenerator();

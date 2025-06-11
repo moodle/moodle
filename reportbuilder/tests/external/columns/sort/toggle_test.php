@@ -19,9 +19,9 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\columns\sort;
 
 use core_reportbuilder_generator;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
-use core_reportbuilder\report_access_exception;
+use core_reportbuilder\exception\report_access_exception;
 use core_reportbuilder\local\models\column;
 use core_user\reportbuilder\datasource\users;
 
@@ -38,7 +38,7 @@ require_once("{$CFG->dirroot}/webservice/tests/helpers.php");
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class toggle_test extends externallib_advanced_testcase {
+final class toggle_test extends externallib_advanced_testcase {
 
     /**
      * Text execute method
@@ -49,7 +49,7 @@ class toggle_test extends externallib_advanced_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
         $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
 
         // Toggle sort descending.
@@ -57,21 +57,14 @@ class toggle_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(toggle::execute_returns(), $result);
 
         $this->assertTrue($result['hassortablecolumns']);
-        $this->assertCount(4, $result['sortablecolumns']);
-        $columnid = $column->get('id');
-        $sortablecolumn = array_filter($result['sortablecolumns'], function(array $column) use($columnid) {
-            return $column['id'] == $columnid;
-        });
-        $sortablecolumn = reset($sortablecolumn);
-        $this->assertEquals($columnid, $sortablecolumn['id']);
+        $this->assertCount(1, $result['sortablecolumns']);
+
+        $sortablecolumn = reset($result['sortablecolumns']);
         $this->assertEquals('Email address', $sortablecolumn['title']);
         $this->assertEquals(SORT_DESC, $sortablecolumn['sortdirection']);
         $this->assertEquals(1, $sortablecolumn['sortenabled']);
-        $this->assertEquals(4, $sortablecolumn['sortorder']);
-        $this->assertEquals('t/downlong', $sortablecolumn['sorticon']['key']);
-        $this->assertEquals('moodle', $sortablecolumn['sorticon']['component']);
-        $str = get_string('columnsortdirectionasc', 'core_reportbuilder', 'Email address');
-        $this->assertEquals($str, $sortablecolumn['sorticon']['title']);
+        $this->assertEquals(1, $sortablecolumn['sortorder']);
+        $this->assertArrayHasKey('sorticon', $sortablecolumn);
 
         // Confirm column was updated.
         $columnupdated = new column($column->get('id'));

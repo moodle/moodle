@@ -45,7 +45,7 @@ M.core_role.init_cap_table_filter = function(Y, tableid, contextid) {
             this.table = Y.one('#'+this.tableid);
 
             // Create a div to hold the search UI.
-            this.div = Y.Node.create('<div class="capabilitysearchui form-inline"></div>').setStyles({
+            this.div = Y.Node.create('<div class="capabilitysearchui d-flex flex-wrap align-items-center"></div>').setStyles({
                 width : this.table.get('offsetWidth'),
                 marginLeft : 'auto',
                 marginRight : 'auto'

@@ -14,34 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use context_course;
+use stdClass;
+
 /**
- * Report plugins helper class
+ * A helper class with static methods to help report plugins
  *
  * @package core
  * @subpackage report
  * @copyright 2021 Sujith Haridasan
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core;
-use moodle_url;
-use url_select;
-
-/**
- * A helper class with static methods to help report plugins
- *
- * @package core
- * @copyright 2021 Sujith Haridasan
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class report_helper {
+
     /**
      * Print the selector dropdown
      *
      * @param string $pluginname The report plugin where the header is modified
-     * @return void
+     * @param string $additional Additional content to display aligned with the selector
      */
-    public static function print_report_selector(string $pluginname):void {
+    public static function print_report_selector(string $pluginname, string $additional = ''): void {
         global $OUTPUT, $PAGE;
 
         if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
@@ -75,32 +69,100 @@ class report_helper {
                 }
 
             }
+            $selectmenu = new \core\output\select_menu('reporttype', $menuarray, $activeurl);
+            $selectmenu->set_label(get_string('reporttype'), ['class' => 'sr-only']);
+            $options = \html_writer::tag(
+                'div',
+                $OUTPUT->render_from_template('core/tertiary_navigation_selector', $selectmenu->export_for_template($OUTPUT)),
+                ['class' => 'navitem']
+            );
 
-            $select = new url_select($menuarray, $activeurl, null, 'choosecoursereport');
-            $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
-            echo \html_writer::tag('div', $OUTPUT->render($select), ['class' => 'tertiary-navigation']);
+            if ($additional) {
+                $options .= \html_writer::div('', 'navitem-divider') .
+                    \html_writer::div($additional, 'navitem');
+            }
+
+            echo \html_writer::tag(
+                'div',
+                $options,
+                ['class' => 'tertiary-navigation full-width-bottom-border ms-0 d-flex', 'id' => 'tertiary-navigation']);
+        } else {
+            echo $OUTPUT->heading($pluginname, 2, 'mb-3');
         }
-        echo $OUTPUT->heading($pluginname, 2, 'mb-3');
     }
 
     /**
-     * Save the last selected report in the session
-     *
      * @deprecated since Moodle 4.0
-     * @param int $id The course id
-     * @param moodle_url $url The moodle url
-     * @return void
      */
-    public static function save_selected_report(int $id, moodle_url $url):void {
-        global $USER;
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
+    public static function save_selected_report() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+    }
 
-        debugging('save_selected_report() has been deprecated because it is no longer used and will be '.
-            'removed in future versions of Moodle', DEBUG_DEVELOPER);
-
-        // Last selected report.
-        if (!isset($USER->course_last_report)) {
-            $USER->course_last_report = [];
+    /**
+     * Retrieve the right SQL / params for the group filter depending on the filterparams, course and group settings.
+     *
+     * Addionnaly, it will return the list of users visible by the current user so
+     * it can be used to filter out records that are not visible. This is mainly
+     * because we cannot use joins as the log tables can be in two different databases.
+     *
+     * @param stdClass $filterparams
+     * @return array
+     */
+    public static function get_group_filter(stdClass $filterparams): array {
+        global $DB, $USER;
+        $useridfilter = null;
+        // First and just in case we are in separate group, just set the $useridfilter to the list
+        // of users visible by this user.
+        $courseid = $filterparams->courseid ?? SITEID;
+        $courseid = $courseid ?: SITEID; // Make sure that if courseid is set to 0 we use SITEID.
+        $course = get_course($courseid);
+        $groupmode = groups_get_course_groupmode($course);
+        $groupid = $filterparams->groupid ?? 0;
+        $context = context_course::instance($courseid);
+        if ($groupid || ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context))) {
+            if ($groupid) {
+                $cgroups = [(int) $groupid];
+            } else {
+                $cgroups = groups_get_all_groups($courseid, $USER->id);
+                $cgroups = array_keys($cgroups);
+                // If you are not in any groups you can still view users without group. This may
+                // perform poorly because it will list all users in the entire system who do not
+                // belong to a group on this course.
+                if (empty($cgroups)) {
+                    $cgroups[] = USERSWITHOUTGROUP;
+                }
+            }
+            // If that's the case, limit the users to be in the groups only, defined by the filter.
+            [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($cgroups, $context);
+            $groupusers = $DB->get_fieldset_sql($groupmembersql, $groupmemberparams);
+            $useridfilter = array_fill_keys($groupusers, true);
         }
-        $USER->course_last_report[$id] = $url;
+        $joins = [];
+        $params = [];
+        if (empty($filterparams->userid)) {
+            if ($groupid) {
+                if ($thisgroupusers = groups_get_members($groupid)) {
+                    [$sql, $sqlfilterparams] = $DB->get_in_or_equal(
+                        array_keys($thisgroupusers),
+                        SQL_PARAMS_NAMED,
+                    );
+                    $joins[] = "userid {$sql}";
+                    $params = $sqlfilterparams;
+                } else {
+                    $joins[] = 'userid = 0'; // No users in groups, so we want something that will always be false.
+                }
+            }
+        } else {
+            $joins[] = "userid = :userid";
+            $params['userid'] = $filterparams->userid;
+            $useridfilter[$filterparams->userid] = true;
+        }
+
+        return [
+            'joins' => $joins,
+            'params' => $params,
+            'useridfilter' => $useridfilter,
+        ];
     }
 }

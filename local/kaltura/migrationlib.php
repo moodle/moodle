@@ -824,7 +824,7 @@ function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist
 }
 
 /**
- * This function updates records for Kaltura video resrouce, presentation and media assignments; by adding a source URL and padding the width and height.
+ * This function updates records for Kaltura video resrouce and media assignments; by adding a source URL and padding the width and height.
  */
 function local_kaltura_update_activities() {
     global $CFG, $DB;
@@ -871,43 +871,6 @@ function local_kaltura_update_activities() {
                 $record->metadata = $metadata;
 
                 $DB->update_record('kalvidres', $record, true);
-            }
-        }
-    }
-
-    $table = new xmldb_table('kalvidpres');
-
-    if ($DB->get_manager()->table_exists($table)) {
-        // Migrate Kaltura video resrouce entries.
-        $sql = 'SELECT *
-                  FROM {kalvidpres}
-                 WHERE source IS NULL';
-        $records = $DB->get_records_sql($sql);
-
-        foreach ($records as $id => $record) {
-            if (!is_null($record->entry_id) && !empty($record->entry_id)) {
-                $player = empty($configsettings->presentation) ? $configsettings->presentation_custom : $configsettings->presentation;
-                $source = local_kaltura_build_source_url($record->entry_id, $record->height, $record->width, $player);
-                $record->source = $source;
-                $record->width = $record->width + KALTURA_MIGRATION_WIDTH_PADDING;
-                $record->height = $record->height + KALTURA_MIGRATION_HEIGHT_PADDING;
-
-                try {
-                    // Retrieve the Kaltura base entry object.
-                    $kalentry = $client->baseEntry->get($record->entry_id);
-                }
-                catch(Exception $ex) {
-                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
-                    // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
-                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration
-                    $kalentry = new stdClass();
-                }
-                $newobject = local_kaltura_convert_kaltura_base_entry_object($kalentry);
-                // Searlize and base 64 encode the metadata.
-                $metadata = local_kaltura_encode_object_for_storage($newobject);
-                $record->metadata = $metadata;
-
-                $DB->update_record('kalvidpres', $record, true);
             }
         }
     }
@@ -984,21 +947,6 @@ function local_kaltura_set_activities_entries_to_categories() {
         }
     }
 
-    $table = new xmldb_table('kalvidpres');
-
-    if ($DB->get_manager()->table_exists($table)) {
-        // Migrate Kaltura video resrouce entries.
-        $sql = 'SELECT *
-                  FROM {kalvidpres}';
-        $records = $DB->get_records_sql($sql);
-
-        foreach ($records as $id => $record) {
-            if (!is_null($record->entry_id) && !empty($record->entry_id)) {
-                local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
-            }
-        }
-    }
-
     $table = new xmldb_table('kalvidassign_submission');
 
     if ($DB->get_manager()->table_exists($table)) {
@@ -1022,7 +970,7 @@ function local_kaltura_set_activities_entries_to_categories() {
 }
 
 /**
- * This function makes sure that the entry of activity (assignment submission, resource, video-presentation resource) is assigned to the InContext category or the respective course.
+ * This function makes sure that the entry of activity (assignment submission, resource) is assigned to the InContext category or the respective course.
  * This function is used in order to bridge the gap in cases where the moodle kaltura repository 
  * was disabled in V3, or was enabled after resources have already been created which would make those resources to not be in the old category tree.
  * 
@@ -1143,88 +1091,6 @@ function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
             ));
         }
     }
-}
-
-/**
- * This function updates the name and adminTags property of a KalturaDataEntry (Video presentation).
- * @param KalturaConfiguration $client A Kaltura client object.
- * @param Array $entrylist A list of Kaltura entries, where the key is the entry id and the value is the video presentation activity name.
- */
-function local_kaltura_update_video_presentation_entry($client, $entrylist) {
-    foreach ($entrylist as $entryid => $activityname) {
-        $vidpres = new KalturaBaseEntry();
-        $vidpres->name = $activityname;
-        $vidpres->adminTags = 'presentation';
-        try
-        {
-            $client->baseEntry->update($entryid, $vidpres);
-        }
-        catch(Exception $ex){
-            local_kaltura_migration_log_data(__FUNCTION__, array(
-                            "failed updating data with tag",
-                            $entryid,
-                            $ex->getCode(),
-                            $ex->getMessage(),
-                            base64_encode($ex->getTraceAsString()),
-            ));
-        }
-    }
-}
-
-/**
- * This function migrates video presentation entries to the new KAF standard by setting additional properties.
- * @param int $kafcategory The KAF root category.
- * @param array $cachedcategories An array of cateogires that have been created under the KAF root category.
- * @return void.
- */
-function local_kaltura_migrate_video_presentation_entries($kafcategory, $cachedcategories) {
-    global $DB;
-
-    $table = new xmldb_table('kalvidpres');
-
-    // Check if the video presentation table exists.
-    if ($DB->get_manager()->table_exists($table)) {
-        // Retrieve all video presentation records that have not yet been migrated.
-        $sql = 'SELECT id,name,course,entry_id
-                  FROM {kalvidpres}
-                 WHERE source IS NULL';
-        $vidpresrecs = $DB->get_records_sql($sql);
-
-        if (empty($vidpresrecs)) {
-            return;
-        }
-
-        // Get a Kaltura session.
-        $client = local_kaltura_get_kaltura_client();
-
-        // Get the KAF channels category object.
-        $channelscategory = local_kaltura_get_channels_id($client, $kafcategory);
-
-        // Initialize arrays used to map video presentation entries to Kaltura categories.
-        $entrycategories = array();
-        $entry = array();
-
-        // Populate arrays with the mapping data.
-        foreach ($vidpresrecs as $rec) {
-            $entrycategories[$rec->entry_id] = array($rec->course);
-            $entry[$rec->entry_id] = $rec->name;
-
-            // Check if the mapping of a course category to a new category already exists then skip the rest of the loop.
-            if (isset($cachedcategories[$rec->course])) {
-                continue;
-            }
-
-            $cachedcategories[$rec->course] = $rec->course;
-        }
-
-        // Create KAF categories and add the entries to the categories.
-        local_kaltura_assign_entries_to_new_categories($client, $entrycategories, $channelscategory, array(), $cachedcategories);
-
-        // Update the entry name and adminTag property for the video presentation object.
-        local_kaltura_update_video_presentation_entry($client, $entry);
-    }
-
-    return;
 }
 
 /**

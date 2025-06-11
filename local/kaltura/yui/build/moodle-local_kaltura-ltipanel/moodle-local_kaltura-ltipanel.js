@@ -125,10 +125,10 @@ Y.extend(LTIPANEL, Y.Base, {
         iframenode.setAttribute('height', Y.one('input[id=height]').getAttribute('value'));
         iframenode.setStyle('display', 'inline');
 
-        // If the page is a Video presentation or resource execute a function to change the button caption KALDEV-579
+        // If the page is a Video resource execute a function to change the button caption KALDEV-579
         var element = Y.one('input[name=modulename]');
 
-        if (undefined !== element && ('kalvidres' === this.modulename || 'kalvidpres' === this.modulename)) {
+        if (undefined !== element && 'kalvidres' === this.modulename) {
             this.lti_panel_change_add_media_button_caption();
         }
 

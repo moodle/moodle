@@ -42,7 +42,7 @@ class filtered_userlist extends \core_privacy\local\request\approved_userlist {
      * @param   int[]   $unexpireduserids The list of userids for those users who should not be expired.
      * @return  $this
      */
-    public function apply_expired_context_filters(array $expireduserids, array $unexpireduserids) : filtered_userlist {
+    public function apply_expired_context_filters(array $expireduserids, array $unexpireduserids): filtered_userlist {
         // The current userlist content.
         $userids = $this->get_userids();
 

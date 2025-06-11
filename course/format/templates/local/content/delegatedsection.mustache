@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/delegatedsection
+
+    Displays a course section.
+
+    Note: This template is a wrapper around the section/content template to allow course formats and theme designers to
+    modify parts of the wrapper without having to copy/paste the entire template.
+
+    Example context (json):
+    {
+        "num": 3,
+        "id": 35,
+        "sectionname": "Section title",
+        "controlmenu": "[tools menu]",
+        "header": {
+            "name": "Section title",
+            "title": "<a href=\"http://moodle/course/view.php?id=5#section-0\">Section title</a>",
+            "url": "#",
+            "ishidden": true,
+            "headinglevel": 3
+        },
+        "cmlist": {
+            "cms": [
+                {
+                    "cmitem": {
+                        "cmformat": {
+                            "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Assign example</span></a>",
+                            "hasname": "true"
+                        },
+                        "id": 4,
+                        "anchor": "activity-4",
+                        "module": "assign",
+                        "extraclasses": ""
+                    }
+                }
+            ],
+            "hascms": true
+        },
+        "ishidden": false,
+        "iscurrent": true,
+        "currentlink": "<span class=\"accesshide\">This topic</span>",
+        "availability": {
+            "info": "<span class=\"badge bg-info\">Hidden from students</span>",
+            "hasavailability": true
+        },
+        "summary": {
+            "summarytext": "Summary text!"
+        },
+        "controlmenu": {
+            "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
+            "hasmenu": true
+        },
+        "cmcontrols": "[Add an activity or resource]",
+        "iscoursedisplaymultipage": true,
+        "sectionreturnnum": 0,
+        "contentcollapsed": false,
+        "sitehome": false,
+        "highlightedlabel" : "Highlighted"
+    }
+}}
+<ul class="p-0">
+    <li id="section-{{num}}"
+        class="section course-section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
+                {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}}{{^displayonesection}} current {{/displayonesection}}{{/iscurrent}}
+                {{#isstealth}} orphaned {{/isstealth}} delegated-section"
+        data-sectionid="{{num}}"
+        data-sectionreturnnum="{{sectionreturnnum}}"
+        data-for="section"
+        data-id="{{id}}"
+        data-number="{{num}}"
+        data-sectionname="{{sectionname}}"
+    >
+        <div class="section-item">
+            {{$ core_courseformat/local/content/section/content }}
+                {{> core_courseformat/local/content/section/content }}
+            {{/ core_courseformat/local/content/section/content }}
+        </div>
+    </li>
+</ul>

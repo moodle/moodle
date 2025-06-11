@@ -40,7 +40,7 @@ class one_week_after_start extends \core_analytics\local\time_splitting\after_st
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('timesplitting:oneweekafterstart');
     }
 

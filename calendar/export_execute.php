@@ -39,12 +39,9 @@ if (empty($CFG->enablecalendarexport)) {
     die('no export');
 }
 
-// Fetch basic user information to correctly log the user.
-$fields = 'id,username,password,firstname,lastname';
-
-$checkuserid = !empty($userid) && $user = $DB->get_record('user', array('id' => $userid), $fields);
+$checkuserid = !empty($userid) && $user = \core_user::get_user($userid);
 // Allowing for fallback check of old url - MDL-27542.
-$checkusername = !empty($username) && $user = $DB->get_record('user', array('username' => $username), $fields);
+$checkusername = !empty($username) && $user = \core_user::get_user_by_username($username);
 if ((!$checkuserid && !$checkusername) || !$user) {
     //No such user
     die('Invalid authentication');

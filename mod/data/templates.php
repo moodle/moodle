@@ -71,7 +71,39 @@ if ($useeditor !== null) {
 }
 
 $PAGE->requires->js('/mod/data/data.js');
-$PAGE->set_title($instance->name);
+switch ($mode) {
+    case 'asearchtemplate':
+        $title = get_string('asearchtemplate', 'data');
+        break;
+    case 'csstemplate':
+        $title = get_string('csstemplate', 'data');
+        break;
+    case 'jstemplate':
+        $title = get_string('jstemplate', 'data');
+        break;
+    case 'listtemplate':
+        $title = get_string('listtemplate', 'data');
+        break;
+    case 'rsstemplate':
+        $title = get_string('rsstemplate', 'data');
+        break;
+    case 'singletemplate':
+        $title = get_string('singletemplate', 'data');
+        break;
+    default:
+        if ($manager->has_fields()) {
+            $title = get_string('addtemplate', 'data');
+        } else {
+            $title = get_string('data:managetemplates', 'data');
+        }
+        break;
+}
+$titleparts = [
+    $title,
+    format_string($instance->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->force_settings_menu(true);

@@ -32,7 +32,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use mod_h5pactivity\local\manager;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 /**
@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_user_attempts_test extends externallib_advanced_testcase {
+final class get_user_attempts_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_user_attempts getting more than one user at once.
@@ -145,7 +145,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_multipleusers_data(): array {
+    public static function execute_multipleusers_data(): array {
         return [
             // Teacher checks.
             'Teacher checking students with attempts' => [
@@ -188,7 +188,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
      *
      * @return array[]
      */
-    public function execute_with_sortorder(): array {
+    public static function execute_with_sortorder(): array {
         return [
             'Sort by id' => ['id', ['user01', 'user02']],
             'Sort by id desc' => ['id desc', ['user02', 'user01']],

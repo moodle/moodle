@@ -14,103 +14,150 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for report_helper.
- *
- * @package    core
- * @category   test
- * @copyright  2021 Sujith Haridasan
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core;
 
-use moodle_url;
-use core\report_helper;
-
 /**
- * Tests the functions for report_helper class.
+ * Tests the report_helper class.
+ *
+ * @covers \core\report_helper
+ * @package core
+ * @category test
+ * @copyright 2024 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_helper_test extends \advanced_testcase {
-    /**
-     * Data provider for testing selected report for same and different courses
-     *
-     * @return array
-     */
-    public function data_selected_report():array {
-        return [
-            ['course_url_id' => [
-                ['url' => '/test', 'id' => 1],
-                ['url' => '/foo', 'id' => 1]]
-            ],
-            ['course_url_id' => [
-                ['url' => '/test', 'id' => 1],
-                ['url' => '/foo/bar', 'id' => 2]]
-            ]
-        ];
-    }
+final class report_helper_test extends \advanced_testcase {
+    /** @var int[] Array of created user ids */
+    protected array $userids;
 
     /**
-     * Testing selected report saved in $USER session.
-     *
-     * @dataProvider data_selected_report
-     * @param array $courseurlid The array has both course url and course id
+     * Tests {@see report_helper::get_group_filter()}.
      */
-    public function test_save_selected_report(array $courseurlid):void {
-        global $USER;
-
-        $url1 = new moodle_url($courseurlid[0]['url']);
-        $courseid1 = $courseurlid[0]['id'];
-        report_helper::save_selected_report($courseid1, $url1);
-        $this->assertDebuggingCalled('save_selected_report() has been deprecated because it is no ' .
-            'longer used and will be removed in future versions of Moodle');
-
-        $this->assertEquals($USER->course_last_report[$courseid1], $url1);
-
-        $url2 = new moodle_url($courseurlid[1]['url']);
-        $courseid2 = $courseurlid[1]['id'];
-        report_helper::save_selected_report($courseid2, $url2);
-        $this->assertDebuggingCalled('save_selected_report() has been deprecated because it is no ' .
-            'longer used and will be removed in future versions of Moodle');
-
-        $this->assertEquals($USER->course_last_report[$courseid2], $url2);
-    }
-
-    /**
-     * Testing the report selector dropdown shown.
-     *
-     * Verify that the dropdowns have the pages to be displayed.
-     *
-     * @return void
-     */
-    public function test_print_report_selector():void {
-        global $PAGE;
-
+    public function test_get_group_filter(): void {
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user();
+        // Create some test course, groups, and users.
+        $generator = self::getDataGenerator();
 
-        $PAGE->set_url('/');
+        $vgcourse = $generator->create_course(['groupmode' => VISIBLEGROUPS]);
+        $sgcourse = $generator->create_course(['groupmode' => SEPARATEGROUPS]);
 
-        $course = $this->getDataGenerator()->create_course();
-        $PAGE->set_course($course);
+        $vg1 = $generator->create_group(['courseid' => $vgcourse->id]);
+        $vg2 = $generator->create_group(['courseid' => $vgcourse->id]);
+        $sg1 = $generator->create_group(['courseid' => $sgcourse->id]);
+        $sg2 = $generator->create_group(['courseid' => $sgcourse->id]);
 
-        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'teacher');
+        $this->userids = [];
+        for ($i = 0; $i < 10; $i++) {
+            $this->userids[$i] = $generator->create_user()->id;
+            $generator->enrol_user($this->userids[$i], ($i < 5) ? $vgcourse->id : $sgcourse->id, 'student');
+        }
 
-        $this->setUser($user);
+        groups_add_member($vg1, $this->userids[0]);
+        groups_add_member($vg1, $this->userids[1]);
+        groups_add_member($vg2, $this->userids[0]);
+        groups_add_member($vg2, $this->userids[2]);
+        groups_add_member($vg2, $this->userids[3]);
 
-        ob_start();
-        report_helper::print_report_selector('Logs');
-        $output = $this->getActualOutput();
-        ob_end_clean();
+        groups_add_member($sg1, $this->userids[5]);
+        groups_add_member($sg1, $this->userids[6]);
+        groups_add_member($sg2, $this->userids[5]);
+        groups_add_member($sg2, $this->userids[7]);
+        groups_add_member($sg2, $this->userids[8]);
 
-        $log = '<option value="/report/log/index.php?id=' . $course->id .'" selected>Logs</option>';
-        $competency = '<option value="/report/competency/index.php?id=' . $course->id . '" >Competency breakdown</option>';
-        $loglive = '<option value="/report/loglive/index.php?id=' . $course->id . '" >Live logs</option>';
-        $participation = '<option value="/report/participation/index.php?id=' . $course->id . '" >Course participation</option>';
-        $this->assertStringContainsString($log, $output);
-        $this->assertStringContainsString($competency, $output);
-        $this->assertStringContainsString($loglive, $output);
-        $this->assertStringContainsString($participation, $output);
+        // Teacher user has access all groups.
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $vgcourse->id, 'editingteacher');
+        $generator->enrol_user($teacher->id, $sgcourse->id, 'editingteacher');
+
+        // With specified groups on either course (does not matter who user is).
+        $this->assert_group_filter([0, 1], ['courseid' => $vgcourse->id, 'groupid' => $vg1->id]);
+        $this->assert_group_filter([0, 2, 3], ['courseid' => $vgcourse->id, 'groupid' => $vg2->id]);
+        $this->assert_group_filter([5, 6], ['courseid' => $sgcourse->id, 'groupid' => $sg1->id]);
+        $this->assert_group_filter([5, 7, 8], ['courseid' => $sgcourse->id, 'groupid' => $sg2->id]);
+
+        // With specified group and user.
+        $this->assert_group_filter([2], [
+            'courseid' => $vgcourse->id,
+            'groupid' => $vg2->id,
+            'userid' => $this->userids[2],
+        ]);
+        $this->assert_group_filter([6], [
+            'courseid' => $sgcourse->id,
+            'groupid' => $sg2->id,
+            'userid' => $this->userids[6],
+        ]);
+
+        // No restrictions, user belongs to a group or to both groups on VG course.
+        $this->setUser($this->userids[1]);
+        $all = array_keys($this->userids);
+        $this->assert_group_filter($all, ['courseid' => $vgcourse->id]);
+        $this->setUser($this->userids[0]);
+        $this->assert_group_filter($all, ['courseid' => $vgcourse->id]);
+
+        // No restrictions, user belongs to a group or to both groups on SG course.
+        $this->setUser($this->userids[6]);
+        $this->assert_group_filter([5, 6], ['courseid' => $sgcourse->id]);
+        $this->setUser($this->userids[5]);
+        $this->assert_group_filter([5, 6, 7, 8], ['courseid' => $sgcourse->id]);
+
+        // No restrictions, user has access all groups on either course.
+        $this->setUser($teacher);
+        $this->assert_group_filter($all, ['courseid' => $vgcourse->id]);
+        $this->assert_group_filter($all, ['courseid' => $sgcourse->id]);
+
+        // There was a performance issue for users with access all groups where it listed all users
+        // in the system in the 'filter' list, now it doesn't.
+        $this->assertNull(report_helper::get_group_filter(
+            (object)['courseid' => $sgcourse->id],
+        )['useridfilter']);
+
+        // Specified group even if you have AAG.
+        $this->assert_group_filter([0, 1], ['courseid' => $vgcourse->id, 'groupid' => $vg1->id]);
+        $this->assert_group_filter([5, 6], ['courseid' => $sgcourse->id, 'groupid' => $sg1->id]);
+
+        // No restrictions, user does not belong to a group on course. Makes no difference in VG.
+        $this->setUser($this->userids[5]);
+        $this->assert_group_filter($all, ['courseid' => $vgcourse->id]);
+
+        // In SG user can now view all users across system who are not in a group on course.
+        // Strange but true.
+        $this->setUser($this->userids[0]);
+        $this->assert_group_filter([0, 1, 2, 3, 4, 9], ['courseid' => $sgcourse->id]);
     }
+
+    /**
+     * Calls {@see report_helper::get_group_filter()} and checks which of the users created by this
+     * unit test are returned.
+     *
+     * @param int[] $expecteduserindexes Expected user indexes
+     * @param array $filterparams Array of filter parameters to pass to get_group_filter
+     */
+    protected function assert_group_filter(array $expecteduserindexes, array $filterparams): void {
+        global $DB;
+
+        $result = report_helper::get_group_filter((object)$filterparams);
+
+        // Combine the joins (if any). 'TRUE' is not allowed in SQL Server, you must use '1 = 1'.
+        $where = '1 = 1';
+        foreach ($result['joins'] as $join) {
+            $where .= ' AND ' . $join;
+        }
+
+        // The joins use field 'userid' so we make a subselect table with that field name.
+        $userids = $DB->get_fieldset_sql("
+            SELECT userid
+              FROM (SELECT id AS userid FROM {user}) userdata
+             WHERE $where", $result['params']);
+
+        if ($result['useridfilter'] !== null) {
+            $userids = array_filter($userids, fn($userid) => array_key_exists($userid, $result['useridfilter']));
+        }
+
+        // Convert user ids to expected indexes, exclude any results not in our test user list, and sort.
+        $indexes = array_map(fn($userid) => array_search($userid, $this->userids), $userids);
+        $indexes = array_filter($indexes, fn($index) => $index !== false);
+        sort($indexes);
+        $this->assertEquals($expecteduserindexes, $indexes);
+    }
+
 }

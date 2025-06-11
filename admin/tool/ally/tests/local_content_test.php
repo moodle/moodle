@@ -39,6 +39,8 @@ require_once(__DIR__.'/abstract_testcase.php');
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_content_test extends abstract_testcase {
@@ -110,7 +112,7 @@ class local_content_test extends abstract_testcase {
             $course->id,
             $section->timemodified,
             $section->summaryformat,
-            'Topic 0' // Default section name for section 0 where no section name set.
+            'Section 0' // Default section name for section 0 where no section name set.
         );
 
         $labelintro = '<p>My original intro content</p>';
@@ -152,7 +154,7 @@ class local_content_test extends abstract_testcase {
         $contents = local_content::get_course_html_content_items('course', $course->id);
         // Default title.
         $expectedtitle = $contents[2]->title;
-        $this->assertEquals('Topic 1', $expectedtitle);
+        $this->assertEquals('Section 1', $expectedtitle);
 
         $expectedtimemodified = $course->timecreated;
         $contents = local_content::get_html_content($section2->id, 'course', 'course_sections', 'summary', $course->id, true);

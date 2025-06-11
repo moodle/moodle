@@ -30,12 +30,12 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-class api_test extends \externallib_advanced_testcase {
+final class api_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_autologin_key.
      */
-    public function test_get_autologin_key() {
+    public function test_get_autologin_key(): void {
         global $USER, $DB;
 
         $this->resetAfterTest(true);
@@ -57,7 +57,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test get_potential_config_issues.
      */
-    public function test_get_potential_config_issues() {
+    public function test_get_potential_config_issues(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -84,9 +84,9 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test pre_processor_message_send callback.
      */
-    public function test_pre_processor_message_send_callback() {
+    public function test_pre_processor_message_send_callback(): void {
         global $DB, $CFG;
-        require_once($CFG->libdir . '/externallib.php');
+
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
@@ -144,7 +144,7 @@ class api_test extends \externallib_advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
         $this->setUser($user3);
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         $message->userto = $user3;
         $messageid = message_send($message);

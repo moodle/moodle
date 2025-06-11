@@ -52,7 +52,15 @@ function ADODB_Error_PEAR($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 {
 global $ADODB_Last_PEAR_Error;
 
-	if (error_reporting() == 0) return; // obey @ protocol
+	// Do not throw if errors are suppressed by @ operator
+	// error_reporting() value for suppressed errors changed in PHP 8.0.0
+	$suppressed = version_compare(PHP_VERSION, '8.0.0', '<')
+		? 0
+		: E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR | E_PARSE;
+	if (error_reporting() == $suppressed) {
+		return;
+	}
+
 	switch($fn) {
 	case 'EXECUTE':
 		$sql = $p1;

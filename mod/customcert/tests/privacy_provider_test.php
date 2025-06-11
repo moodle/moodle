@@ -36,14 +36,14 @@ use mod_customcert\privacy\provider;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_provider_test extends \core_privacy\tests\provider_testcase {
+final class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::get_contexts_for_userid().
      *
      * @covers \provider::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -74,7 +74,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::get_users_in_context()
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -115,7 +115,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::get_users_in_context()
      */
-    public function test_get_users_in_context_invalid_context_type() {
+    public function test_get_users_in_context_invalid_context_type(): void {
         $systemcontext = context_system::instance();
 
         $userlist = new \core_privacy\local\request\userlist($systemcontext, 'mod_customcert');
@@ -129,7 +129,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::export_user_data()
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -166,7 +166,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::delete_data_for_all_users_in_context()
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -208,7 +208,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::delete_data_for_user()
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -249,7 +249,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @covers \provider::delete_data_for_users()
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -301,7 +301,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
      * @param int $customcertid
      * @param int $userid
      */
-    protected function create_certificate_issue(int $customcertid, int $userid) {
+    protected function create_certificate_issue(int $customcertid, int $userid): void {
         global $DB;
 
         static $i = 1;

@@ -402,6 +402,8 @@ class manager {
             }
         }
 
+        $rs->close();
+
         if (count($batchinserts) > 0) {
             $DB->insert_records(self::DB_PROCESS, $batchinserts);
         }
@@ -598,7 +600,7 @@ class manager {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function store_result_summary(int $courseid = null) {
+    public static function store_result_summary(?int $courseid = null) {
         global $DB;
 
         if (static::is_okay_to_cache() && ($courseid == null)) {
@@ -788,7 +790,7 @@ class manager {
      * Get course module summary information for a course.
      *
      * @param   int $courseid
-     * @return  stdClass[]
+     * @return  \stdClass[]
      */
     public static function get_cm_summary_for_course(int $courseid): array {
         global $DB;

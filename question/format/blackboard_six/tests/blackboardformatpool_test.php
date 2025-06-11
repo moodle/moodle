@@ -36,16 +36,16 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2012 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blackboardformatpool_test extends \question_testcase {
+final class blackboardformatpool_test extends \question_testcase {
 
     public function make_test_xml() {
         $xmlfile = new qformat_blackboard_six_file();
         $xmlfile->filetype = 2;
-        $xmlfile->text = file_get_contents(__DIR__ . '/fixtures/sample_blackboard_pool.dat');
+        $xmlfile->text = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'sample_blackboard_pool.dat'));
         return array(0 => $xmlfile);
     }
 
-    public function test_import_match() {
+    public function test_import_match(): void {
 
         $xml = $this->make_test_xml();
 
@@ -94,7 +94,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_multichoice_single() {
+    public function test_import_multichoice_single(): void {
 
         $xml = $this->make_test_xml();
 
@@ -153,7 +153,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_multichoice_multi() {
+    public function test_import_multichoice_multi(): void {
 
         $xml = $this->make_test_xml();
 
@@ -226,7 +226,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_truefalse() {
+    public function test_import_truefalse(): void {
 
         $xml = $this->make_test_xml();
 
@@ -255,7 +255,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_fill_in_the_blank() {
+    public function test_import_fill_in_the_blank(): void {
 
         $xml = $this->make_test_xml();
 
@@ -289,7 +289,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_essay() {
+    public function test_import_essay(): void {
 
         $xml = $this->make_test_xml();
 
@@ -317,7 +317,7 @@ class blackboardformatpool_test extends \question_testcase {
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_import_category() {
+    public function test_import_category(): void {
 
         $xml = $this->make_test_xml();
 

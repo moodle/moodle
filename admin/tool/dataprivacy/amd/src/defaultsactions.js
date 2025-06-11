@@ -25,10 +25,10 @@ define([
     'core/ajax',
     'core/notification',
     'core/str',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events',
     'core/templates'],
-function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates) {
+function($, Ajax, Notification, Str, ModalSaveCancel, ModalEvents, Templates) {
 
     /**
      * List of action selectors.
@@ -158,11 +158,12 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates) {
             var category = INHERIT;
             var purpose = INHERIT;
 
-            ModalFactory.create({
+            ModalSaveCancel.create({
                 title: Str.get_string('deletedefaults', 'tool_dataprivacy', activityDisplayName),
                 body: Templates.render('tool_dataprivacy/delete_activity_defaults', {"activityname": activityDisplayName}),
-                type: ModalFactory.types.SAVE_CANCEL,
-                large: true
+                large: true,
+                show: true,
+                removeOnClose: true,
             }).then(function(modal) {
                 modal.setSaveButtonText(Str.get_string('delete'));
 
@@ -170,14 +171,6 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates) {
                 modal.getRoot().on(ModalEvents.save, function() {
                     setContextDefaults(contextLevel, category, purpose, activity, false);
                 });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                modal.show();
 
                 return true;
             }).catch(Notification.exception);
@@ -241,11 +234,12 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates) {
             templateContext.activityoptions = activityOptions;
         }
 
-        ModalFactory.create({
+        ModalSaveCancel.create({
             title: title,
             body: Templates.render('tool_dataprivacy/category_purpose_form', templateContext),
-            type: ModalFactory.types.SAVE_CANCEL,
-            large: true
+            large: true,
+            show: true,
+            removeOnClose: true,
         }).then(function(modal) {
 
             // Handle save event.
@@ -257,14 +251,6 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates) {
 
                 setContextDefaults($('#contextlevel').val(), $('#category').val(), $('#purpose').val(), activityVal, overrideVal);
             });
-
-            // Handle hidden event.
-            modal.getRoot().on(ModalEvents.hidden, function() {
-                // Destroy when hidden.
-                modal.destroy();
-            });
-
-            modal.show();
 
             return modal;
         }).catch(Notification.exception);

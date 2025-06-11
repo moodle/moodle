@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables extends Google_Service
 {
   /** Manage your Fusion Tables. */
@@ -639,6 +640,7 @@ class Google_Service_Fusiontables extends Google_Service
  *   $column = $fusiontablesService->column;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Column_Resource extends Google_Service_Resource
 {
 
@@ -750,6 +752,7 @@ class Google_Service_Fusiontables_Column_Resource extends Google_Service_Resourc
  *   $query = $fusiontablesService->query;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Query_Resource extends Google_Service_Resource
 {
 
@@ -806,6 +809,7 @@ class Google_Service_Fusiontables_Query_Resource extends Google_Service_Resource
  *   $style = $fusiontablesService->style;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Style_Resource extends Google_Service_Resource
 {
 
@@ -914,6 +918,7 @@ class Google_Service_Fusiontables_Style_Resource extends Google_Service_Resource
  *   $table = $fusiontablesService->table;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Table_Resource extends Google_Service_Resource
 {
 
@@ -1120,6 +1125,7 @@ class Google_Service_Fusiontables_Table_Resource extends Google_Service_Resource
  *   $task = $fusiontablesService->task;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Task_Resource extends Google_Service_Resource
 {
 
@@ -1182,6 +1188,7 @@ class Google_Service_Fusiontables_Task_Resource extends Google_Service_Resource
  *   $template = $fusiontablesService->template;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Template_Resource extends Google_Service_Resource
 {
 
@@ -1286,6 +1293,7 @@ class Google_Service_Fusiontables_Template_Resource extends Google_Service_Resou
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Bucket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1348,6 +1356,7 @@ class Google_Service_Fusiontables_Bucket extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Column extends Google_Collection
 {
   protected $collection_key = 'validValues';
@@ -1466,6 +1475,7 @@ class Google_Service_Fusiontables_Column extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_ColumnBaseColumn extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1492,6 +1502,7 @@ class Google_Service_Fusiontables_ColumnBaseColumn extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_ColumnList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1538,6 +1549,7 @@ class Google_Service_Fusiontables_ColumnList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Geometry extends Google_Collection
 {
   protected $collection_key = 'geometries';
@@ -1574,6 +1586,7 @@ class Google_Service_Fusiontables_Geometry extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Import extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1600,6 +1613,7 @@ class Google_Service_Fusiontables_Import extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Line extends Google_Collection
 {
   protected $collection_key = 'coordinates';
@@ -1627,6 +1641,7 @@ class Google_Service_Fusiontables_Line extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_LineStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1682,6 +1697,7 @@ class Google_Service_Fusiontables_LineStyle extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Point extends Google_Collection
 {
   protected $collection_key = 'coordinates';
@@ -1709,6 +1725,7 @@ class Google_Service_Fusiontables_Point extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_PointStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1736,6 +1753,7 @@ class Google_Service_Fusiontables_PointStyle extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Polygon extends Google_Collection
 {
   protected $collection_key = 'coordinates';
@@ -1763,6 +1781,7 @@ class Google_Service_Fusiontables_Polygon extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_PolygonStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1846,6 +1865,7 @@ class Google_Service_Fusiontables_PolygonStyle extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Sqlresponse extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -1882,6 +1902,7 @@ class Google_Service_Fusiontables_Sqlresponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_StyleFunction extends Google_Collection
 {
   protected $collection_key = 'buckets';
@@ -1929,6 +1950,7 @@ class Google_Service_Fusiontables_StyleFunction extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_StyleFunctionGradient extends Google_Collection
 {
   protected $collection_key = 'colors';
@@ -1966,6 +1988,7 @@ class Google_Service_Fusiontables_StyleFunctionGradient extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_StyleFunctionGradientColors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1992,6 +2015,7 @@ class Google_Service_Fusiontables_StyleFunctionGradientColors extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_StyleSetting extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2066,6 +2090,7 @@ class Google_Service_Fusiontables_StyleSetting extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_StyleSettingList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2112,6 +2137,7 @@ class Google_Service_Fusiontables_StyleSettingList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Table extends Google_Collection
 {
   protected $collection_key = 'columns';
@@ -2239,6 +2265,7 @@ class Google_Service_Fusiontables_Table extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_TableList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2276,6 +2303,7 @@ class Google_Service_Fusiontables_TableList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Task extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2329,6 +2357,7 @@ class Google_Service_Fusiontables_Task extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_TaskList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2375,6 +2404,7 @@ class Google_Service_Fusiontables_TaskList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_Template extends Google_Collection
 {
   protected $collection_key = 'automaticColumnNames';
@@ -2438,6 +2468,7 @@ class Google_Service_Fusiontables_Template extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fusiontables_TemplateList extends Google_Collection
 {
   protected $collection_key = 'items';

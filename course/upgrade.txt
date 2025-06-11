@@ -1,10 +1,78 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
-=== 4.1.7 ===
+=== 4.4 ===
+* The following behat steps are now deprecated and replaced by new ones with no Javascript dependencies:
+  - I add a ":activityname" to section ":sectionnum"
+  - I add a ":activityname" to section ":sectionnum and I fill the form with:"
+  The new steps are:
+  - I add a :activityname to section :sectionnum using the activity chooser
+  - I add a :activitypluginname activity to course :coursefullname section :sectionnum
+  - I add a :activitypluginname activity to course :coursefullname section :sectionnum and I fill the form with:
 * set_coursemodule_visible() has a new $rebuildcache parameter. If this is being called multiple times in the same request,
   consider passing `false` for this parameter and rebuilding the cache once after all the course modules have been updated.
   See course_update_section() for an example.
+* The external function core_course::get_courses_by_field now returns the communication tool configuration for the course.
+  - communicationroomname: the room name
+  - communicationroomurl: the tool url
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `course_purge_section_cache`
+  - `course_purge_module_cache`
+  - `get_array_of_activities`
+  - `core_course_management_renderer::management_heading`
+  - `core_course_management_renderer::course_search_form`
+* New format actions classes. Those classes will eventually replace all course/lib.php content editing functions.
+  All new methods are distributed in three classes formats can extend. Method can be accessed using static
+  methods (see doc block of core_courseformat\formatactions for more information).
+* The monologo activity icons have been improved and .png files have been removed (although the API still supports them).
+The background for these icons has been removed and the color is used now for outlining their shapes.
+About the categories supported by the FEATURE_MOD_PURPOSE:
+  * A new category has been added: MOD_PURPOSE_INTERACTIVECONTENT.
+  * The MOD_PURPOSE_INTERFACE category has been deprecated. The styles associated with this category have been removed.
+The colors for all these purposes and the filters applied to outline them are defined in theme/boost/scss/moodle/variables.scss
+* New hooks for extending course form:
+ - core_course\hook\after_form_definition
+ - core_course\hook\after_form_definition_after_data
+ - core_course\hook\after_form_validation
+ - core_course\hook\after_form_submission
+* New behat step using the URL resolvers:
+ - When I am on the "Course > <section> "course > section" page logged in as "<username>". When utilizing 'Section x'
+ it first searches by section name (Section x). If it's not found, then it searches by the section number (x).
+* The template core_course/course_search_form has been removed following its cessation of use upon MDL-69454 in version 3.11.
+* New parameter 'requiredfields' added to \core_course_external::get_enrolled_courses_by_timeline_classification() to allow
+  callers of this function to specify only the required course fields.
+* Set default values for the following course_summary_exporter properties:
+  - summary (null)
+  - summaryformat (FORMAT_MOODLE)
+  - pdfexportfont (null)
+
+=== 4.3 ===
+* The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
+* External function core_course_external::get_course_contents() now returns a new field activitybadge with the data to display
+  the activity badge when the module implements it.
+* prepare_new_moduleinfo_data() now accepts a parameter "suffix" that will be added to the name of the completion rules.
+* The method core_course_bulk_activity_completion_renderer:: edit_default_completion() has been deprecated and will be removed.
+* The `core_course\output\activity_information` output class has been deprecated. Use `core_course\output\activity_completion`
+  and `core_course\output\activity_dates` instead.
+  Alongside with that, the following methods have been deprecated too:
+  - `core_course_renderer::render_activity_information()`
+  - `renderer_base::activity_information()`
+
+=== 4.2 ===
+* course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
+  of an existing course module. The new module is inserted before this module.
+* The function duplicate_module() now has two new optional parameters:
+  - $sectionid to specify section the duplicated course module is placed in
+  - $changename to disable changing the name of the course module using the 'duplicatedmodule' lang string
+* The method `make_categories_options`, deprecated since 3.10, has been removed
+* External function core_course_external::get_courses_by_field and core_course_external::search_courses now return a field
+called "courseimage" containing a URL pointing to the course image.
+* External function core_course_external::get_course_contents() does not throw exceptions for invalid course formats anymore.
 
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use

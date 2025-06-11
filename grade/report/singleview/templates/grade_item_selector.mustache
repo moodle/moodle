@@ -17,38 +17,39 @@
     The grade item selector trigger element.
 
     Context variables required for this template:
+    * itemid - The value of the grade item selector element (id of the preselected grade item)
+    * instance - The instance ID of the combo box.
     * courseid - The course ID.
     * selectedoption - (optional) Object containing information about the selected option.
         * text - The text of the selected option.
 
     Example context (json):
     {
+        "itemid": "21",
+        "instance": "25",
         "courseid": "2",
         "selectedoption": {
             "text": "Grade item 1"
         }
     }
 }}
-<div class="search-widget dropdown d-flex" data-searchtype="grade">
-    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" aria-label="{{#str}} selectagrade, gradereport_singleview {{/str}}">
-        <span class="align-items-center d-flex">
-            {{#selectedoption}}
-                <span class="d-block pr-3 text-truncate">
-                    <span class="d-block small">
+<div class="align-items-center d-flex">
+    {{#selectedoption}}
+        <div class="d-block pe-3 text-truncate">
+                    <span class="d-block small" aria-hidden="true">
                         {{#str}} selectagrade, gradereport_singleview {{/str}}
                     </span>
-                    <span class="p-0 font-weight-bold">
-                        {{text}}
-                    </span>
-                </span>
-            {{/selectedoption}}
-            {{^selectedoption}}
-                <span class="user-info d-block pr-3">
-                    {{#str}} selectagrade, gradereport_singleview {{/str}}
-                </span>
-            {{/selectedoption}}
-        </span>
-    </button>
-    <div class="dropdown-menu wide">
-    </div>
+            <span class="p-0 font-weight-bold">
+                {{text}}
+            </span>
+        </div>
+    {{/selectedoption}}
+    {{^selectedoption}}
+        <div class="user-info d-block pe-3">
+            {{#str}} selectagrade, gradereport_singleview {{/str}}
+        </div>
+    {{/selectedoption}}
 </div>
+<span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
+<span class="d-none" data-region="itemid" data-itemid="{{itemid}}"></span>
+<span class="d-none" data-region="instance" data-instance="{{instance}}"></span>

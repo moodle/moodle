@@ -29,9 +29,9 @@ Feature: Use core page resolvers for the I am on the page steps
       | Course Short name        | ECON101                     | COURSE                       | Fundamentals of Economics   |
       | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics   |
       | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add discussion topic        |
-      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum             |
+      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Edit settings             |
       | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add discussion topic        |
-      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum             |
+      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Edit settings             |
       | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun   |
       | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun  |
 
@@ -59,9 +59,9 @@ Feature: Use core page resolvers for the I am on the page steps
       | Course Short name        | ECON101                     | COURSE                       | Fundamentals of Economics  |
       | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics  |
       | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add discussion topic       |
-      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
+      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Edit settings            |
       | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add discussion topic       |
-      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
+      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Edit settings            |
       | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun  |
       | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun |
 

@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    ::current_language
  */
-class moodlelib_current_language_test extends \advanced_testcase {
+final class moodlelib_current_language_test extends \advanced_testcase {
 
     public function test_current_language_site_default(): void {
         $this->resetAfterTest();

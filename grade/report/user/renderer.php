@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\comboboxsearch;
+
 /**
  * Custom renderer for the user grade report
  *
@@ -86,48 +88,28 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param object $course The course object.
      * @param int|null $userid The user ID.
      * @param int|null $groupid The group ID.
+     * @param string $usersearch Search string.
      * @return string The raw HTML to render.
      * @throws coding_exception
+     * @deprecated since Moodle 4.5. See user_selector use in \gradereport_user\output\action_bar::export_for_template.
      */
-    public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
+    public function users_selector(object $course, ?int $userid = null, ?int $groupid = null, string $usersearch = ''): string {
 
-        $data = [
-            'courseid' => $course->id,
-            'groupid' => $groupid ?? 0,
-        ];
+        debugging('users_selector is deprecated.', DEBUG_DEVELOPER);
 
-        // If a particular option is selected (not in zero state).
-        if (!is_null($userid)) {
-            if ($userid) { // A single user selected.
-                $user = core_user::get_user($userid);
-                $data['selectedoption'] = [
-                    'image' => $this->user_picture($user, ['size' => 40, 'link' => false]),
-                    'text' => fullname($user),
-                    'additionaltext' => $user->email,
-                ];
-            } else { // All users selected.
-                // Get the total number of users.
-                $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-                $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-                $showonlyactiveenrol = $showonlyactiveenrol ||
-                    !has_capability('moodle/course:viewsuspendedusers', context_course::instance($course->id));
-                $gui = new graded_users_iterator($course, null, $groupid);
-                $gui->require_active_enrolment($showonlyactiveenrol);
-                $gui->init();
-                $totalusersnum = 0;
-                while ($userdata = $gui->next_user()) {
-                    $totalusersnum++;
-                }
-                $gui->close();
-
-                $data['selectedoption'] = [
-                    'text' => get_string('allusersnum', 'gradereport_user', $totalusersnum),
-                ];
-            }
-        }
-
-        $this->page->requires->js_call_amd('gradereport_user/user', 'init');
-        return $this->render_from_template('core_grades/user_selector', $data);
+        $courserenderer = $this->page->get_renderer('core', 'course');
+        $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $course->id, 'group' => 0]);
+        $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $course->id]);
+        $this->page->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
+        return $courserenderer->render(
+            new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $userid,
+                groupid: $groupid,
+                usersearch: $usersearch
+            )
+        );
     }
 
     /**
@@ -146,7 +128,6 @@ class gradereport_user_renderer extends plugin_renderer_base {
         while ($userdata = $gui->next_user()) {
             $users[$userdata->user->id] = $userdata->user;
         }
-        $gui->close();
 
         $arraykeys = array_keys($users);
         $keynumber = array_search($userid, $arraykeys);
@@ -191,8 +172,11 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param int $userview The current view user setting constant
      * @param int $courseid The course ID.
      * @return string The raw HTML to render.
+     * @deprecated since Moodle 4.5 See select_menu use in \gradereport_user\output\action_bar::export_for_template.
      */
     public function view_mode_selector(int $userid, int $userview, int $courseid): string {
+
+        debugging('view_mode_selector is deprecated.', DEBUG_DEVELOPER);
 
         $viewasotheruser = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $userid,
             'userview' => GRADE_REPORT_USER_VIEW_USER]);

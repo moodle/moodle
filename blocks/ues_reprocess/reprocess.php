@@ -35,7 +35,7 @@ $type = required_param('type', PARAM_TEXT);
 $validtypes = array('user', 'course');
 
 if (!in_array($type, $validtypes)) {
-    print_error('not_supported', 'block_ues_reprocess', '', $type);
+    moodle_exception('not_supported', 'block_ues_reprocess', '', $type);
 }
 
 $id = required_param('id', PARAM_INT);

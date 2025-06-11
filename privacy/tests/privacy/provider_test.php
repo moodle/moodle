@@ -40,13 +40,13 @@ use core_privacy\local\metadata\types\user_preference;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \advanced_testcase {
+final class provider_test extends \advanced_testcase {
     /**
      * Returns a list of frankenstyle names of core components (plugins and subsystems).
      *
      * @return array the array of frankenstyle component names with the relevant class name.
      */
-    public function get_component_list() {
+    public static function get_component_list(): array {
         $components = ['core' => [
             'component' => 'core',
             'classname' => manager::get_provider_classname_for_component('core')
@@ -84,7 +84,7 @@ class provider_test extends \advanced_testcase {
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_null_provider($component, $classname) {
+    public function test_null_provider($component, $classname): void {
         $reason = $classname::get_reason();
         $this->assertIsString($reason);
 
@@ -97,12 +97,12 @@ class provider_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function null_provider_provider() {
-        return array_filter($this->get_component_list(), function($component) {
-                return static::component_implements(
-                    $component['classname'],
-                    \core_privacy\local\metadata\null_provider::class
-                );
+    public static function null_provider_provider(): array {
+        return array_filter(self::get_component_list(), function($component): bool {
+            return static::component_implements(
+                $component['classname'],
+                \core_privacy\local\metadata\null_provider::class
+            );
         });
     }
 
@@ -113,7 +113,7 @@ class provider_test extends \advanced_testcase {
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_metadata_provider($component, $classname) {
+    public function test_metadata_provider($component, $classname): void {
         global $DB;
 
         $collection = new collection($component);
@@ -174,7 +174,7 @@ class provider_test extends \advanced_testcase {
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @param string $classname the fully qualified provider classname
      */
-    public function test_all_providers_compliant($component, $classname) {
+    public function test_all_providers_compliant($component, $classname): void {
         $manager = new manager();
         $this->assertTrue($manager->component_is_compliant($component));
     }
@@ -185,7 +185,7 @@ class provider_test extends \advanced_testcase {
      * @dataProvider    is_user_data_provider
      * @param   string  $component
      */
-    public function test_component_understands_deleted_users($component) {
+    public function test_component_understands_deleted_users($component): void {
         $this->resetAfterTest();
 
         // Create a user.
@@ -208,7 +208,7 @@ class provider_test extends \advanced_testcase {
      * @dataProvider    is_user_data_provider
      * @param   string  $component
      */
-    public function test_userdata_provider_implements_userlist($component) {
+    public function test_userdata_provider_implements_userlist($component): void {
         $classname = manager::get_provider_classname_for_component($component);
         $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
     }
@@ -218,12 +218,12 @@ class provider_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function metadata_provider_provider() {
-        return array_filter($this->get_component_list(), function($component) {
-                return static::component_implements(
-                    $component['classname'],
-                    \core_privacy\local\metadata\provider::class
-                );
+    public static function metadata_provider_provider(): array {
+        return array_filter(self::get_component_list(), function($component): bool {
+            return static::component_implements(
+                $component['classname'],
+                \core_privacy\local\metadata\provider::class
+            );
         });
     }
 
@@ -232,12 +232,12 @@ class provider_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_user_data_provider() {
-        return array_filter($this->get_component_list(), function($component) {
-                return static::component_implements(
-                    $component['classname'],
-                    \core_privacy\local\request\core_user_data_provider::class
-                );
+    public static function is_user_data_provider(): array {
+        return array_filter(self::get_component_list(), function($component): bool {
+            return static::component_implements(
+                $component['classname'],
+                \core_privacy\local\request\core_user_data_provider::class
+            );
         });
     }
 
@@ -290,7 +290,7 @@ class provider_test extends \advanced_testcase {
     /**
      * Test that all tables with user fields are covered by metadata providers
      */
-    public function test_table_coverage() {
+    public function test_table_coverage(): void {
         global $DB;
         $dbman = $DB->get_manager();
         $tables = [];
@@ -310,7 +310,7 @@ class provider_test extends \advanced_testcase {
             }
         }
 
-        $componentlist = $this->metadata_provider_provider();
+        $componentlist = self::metadata_provider_provider();
         foreach ($componentlist as $componentarray) {
             $component = $componentarray['component'];
             $classname = $componentarray['classname'];

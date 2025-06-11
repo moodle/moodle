@@ -1,3 +1,1 @@
-info,mod_scorm
-displayactivityname,mod_scorm
-displayactivityname_help,mod_scorm
+completionscorerequired_help,mod_scorm

@@ -1045,7 +1045,7 @@ function portfolio_expected_time_db($recordcount) {
  * Function to send portfolio report to admins
  *
  * @param array $insane array of insane plugins
- * @param array $instances (optional) if reporting instances rather than whole plugins
+ * @param bool $instances (optional) if reporting instances rather than whole plugins
  */
 function portfolio_insane_notify_admins($insane, $instances=false) {
 
@@ -1199,7 +1199,7 @@ function portfolio_format_text_options() {
  * looks through preg_replace matches and replaces content with whatever the active portfolio export format says
  *
  * @param int $contextid module context id
- * @param string $component module name (eg:mod_assignment)
+ * @param string $component module name (eg:mod_assign)
  * @param string $filearea normal file_area arguments
  * @param int $itemid component item id
  * @param portfolio_format $format exporter format type

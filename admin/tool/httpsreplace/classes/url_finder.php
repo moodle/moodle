@@ -148,9 +148,10 @@ class url_finder {
         }
 
         $urls = array();
-
+        sort($tables); // Make it easier to see progress because they are ordered.
         $numberoftables = count($tables);
         $tablenumber = 0;
+        sort($tables);
         foreach ($tables as $table) {
             if ($progress) {
                 $progress->update($tablenumber, $numberoftables, get_string('searching', 'tool_httpsreplace', $table));

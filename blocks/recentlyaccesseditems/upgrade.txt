@@ -1,4 +1,13 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in the recentlyaccesseditems block code.
+
+=== 4.4 ===
+* The external function \block_recentlyaccesseditems\external\get_recent_items() now returns
+  a field called "branded" indicating whether the module is branded or not.
 
 === 3.7 ===
 

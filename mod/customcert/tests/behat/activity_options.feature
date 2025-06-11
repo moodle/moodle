@@ -41,7 +41,7 @@ Feature: Being able to correctly display options on the certificate activity edi
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Custom certificate" to section "1"
+    And I add a customcert activity to course "Course 1" section "1"
     And I should not see "Email students"
     And I should not see "Email teachers"
     And I should not see "Email others"
@@ -75,7 +75,7 @@ Feature: Being able to correctly display options on the certificate activity edi
   Scenario: Add an activity using default custom certificate options
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Custom certificate" to section "0"
+    And I add a customcert activity to course "Course 1" section "1"
     And the field "emailstudents" matches value "0"
     And the field "emailteachers" matches value "0"
     And the field "emailothers" matches value ""
@@ -98,7 +98,7 @@ Feature: Being able to correctly display options on the certificate activity edi
       | protection_copy   | 1               | customcert |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Custom certificate" to section "1"
+    And I add a customcert activity to course "Course 1" section "1"
     And the field "emailstudents" matches value "1"
     And the field "emailteachers" matches value "1"
     And the field "emailothers" matches value "test@moodle.com"

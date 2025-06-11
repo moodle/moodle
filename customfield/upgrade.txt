@@ -1,12 +1,28 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
-=== 4.1.5 ===
+=== 4.4 ===
+* Enhance the handling of files embedded within textarea custom fields in the course backup and restore functionalities.
+  These files are now properly backed up when a course is backed up, and restored when the course is restored.
+  Other types of custom fields can also benefit from this new API. See MDL-79151 for more information.
+  `\core_customfield\handler::restore_instance_data_from_backup()` now conditionally returns a data_controller id and
+  there are two new methods, `\core_customfield\data_controller::backup_define_structure()` and
+  `\core_customfield\data_controller::restore_define_structure()`.
+
+=== 4.3 ===
 * Field categories are now consistently of type `PARAM_TEXT`, ensure instance `get_formatted_name()` helper is used
   during output
+
+=== 4.2 ===
+* The `\customfield_select\field_controller::get_options_array` method, deprecated since 3.10, has been removed, use
+  the field instance `get_options` method instead
 
 === 3.11 ===
 * Methods \core_customfield\handler::get_field_config_form() and \core_customfield\handler::setup_edit_page() are no
   longer used. Components that define custom fields areas do not need to implement them. Field edit form opens in
   the modal now.
-

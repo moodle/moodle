@@ -45,11 +45,23 @@ class ADODB_postgres8 extends ADODB_postgres7
 	 * @return int last inserted ID for given table/column, or the most recently
 	 *             returned one if $table or $column are empty
 	 */
-	protected function _insertID($table = '', $column = '')
+	protected function _insertID( $table = '', $column = '' )
 	{
-		return empty($table) || empty($column)
-			? $this->GetOne("SELECT lastval()")
-			: $this->GetOne("SELECT currval(pg_get_serial_sequence('$table', '$column'))");
+		global $ADODB_GETONE_EOF;
+
+		$sql = empty($table) || empty($column)
+			? 'SELECT lastval()'
+			: "SELECT currval(pg_get_serial_sequence('$table', '$column'))";
+
+		// Squelch "ERROR:  lastval is not yet defined in this session" (see #978)
+		$result = @$this->GetOne($sql);
+		if ($result === false || $result == $ADODB_GETONE_EOF) {
+			if ($this->debug) {
+				ADOConnection::outp(__FUNCTION__ . "() failed : " . $this->errorMsg());
+			}
+			return false;
+		}
+		return $result;
 	}
 }
 

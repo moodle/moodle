@@ -26,6 +26,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_cache\definition;
+use core_cache\store;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,8 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class static_data_store extends cache_store {
-
+abstract class static_data_store extends store {
     /**
      * An array for storage.
      * @var array
@@ -134,7 +136,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
-     * The store will be initialised when required and will be provided with a cache_definition at that time.
+     * The store will be initialised when required and will be provided with a definition at that time.
      *
      * @param string $name
      * @param array $configuration
@@ -190,11 +192,11 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     /**
      * Returns true if the given mode is supported by this store.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @return bool
      */
     public static function is_supported_mode($mode) {
-        return ($mode === self::MODE_REQUEST);
+        return ($mode === store::MODE_REQUEST);
     }
 
     /**
@@ -202,9 +204,9 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      *
      * Once this has been done the cache is all set to be used.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      */
-    public function initialise(cache_definition $definition) {
+    public function initialise(definition $definition) {
         $keyarray = $definition->generate_multi_key_parts();
         $this->storeid = $keyarray['mode'].'/'.$keyarray['component'].'/'.$keyarray['area'].'/'.$keyarray['siteidentifier'];
         $this->store = &self::register_store_id($this->storeid);
@@ -525,10 +527,10 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     /**
      * Generates an instance of the cache store that can be used for testing.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return cachestore_static
      */
-    public static function initialise_test_instance(cache_definition $definition) {
+    public static function initialise_test_instance(definition $definition) {
         // Do something here perhaps.
         $cache = new cachestore_static('Static store');
         $cache->initialise($definition);

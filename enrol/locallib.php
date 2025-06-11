@@ -274,7 +274,7 @@ class course_enrolment_manager {
         // Search condition.
         // TODO Does not support custom user profile fields (MDL-70456).
         $extrafields = fields::get_identity_fields($this->get_context(), false);
-        list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
+        list($sql, $params) = users_search_sql($this->searchfilter, 'u', USER_SEARCH_CONTAINS, $extrafields);
 
         // Role condition.
         if ($this->rolefilter) {
@@ -563,24 +563,49 @@ class course_enrolment_manager {
      * @param int $page Starting at 0.
      * @param int $perpage Number of users returned per page.
      * @param bool $returnexactcount Return the exact total users using count_record or not.
+     * @param ?int $contextid Context ID we are in - we might use search on activity level and its group mode can be different from course group mode.
      * @return array with two or three elements:
      *      int totalusers Number users matching the search. (This element only exist if $returnexactcount was set to true)
      *      array users List of user objects returned by the query.
      *      boolean moreusers True if there are still more users, otherwise is False.
      */
     public function search_users(string $search = '', bool $searchanywhere = false, int $page = 0, int $perpage = 25,
-            bool $returnexactcount = false) {
+            bool $returnexactcount = false, ?int $contextid = null) {
+        global $USER;
+
         [$ufields, $joins, $params, $wherecondition] = $this->get_basic_search_conditions($search, $searchanywhere);
+
+        if (isset($contextid)) {
+            // If contextid is set, we need to determine the group mode that should be used (module or course).
+            [$context, $course, $cm] = get_context_info_array($contextid);
+            // If cm instance is returned, then use the group mode from the module, otherwise get the course group mode.
+            $groupmode = $cm ? groups_get_activity_groupmode($cm, $course) : groups_get_course_groupmode($this->course);
+        } else {
+            // Otherwise, default to the group mode of the course.
+            $context = $this->context;
+            $groupmode = groups_get_course_groupmode($this->course);
+        }
+
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+            $groups = groups_get_all_groups($this->course->id, $USER->id, 0, 'g.id');
+            $groupids = array_column($groups, 'id');
+            if (!$groupids) {
+                return ['totalusers' => 0, 'users' => [], 'moreusers' => false];
+            }
+        } else {
+            $groupids = [];
+        }
+
+        [$enrolledsql, $enrolledparams] = get_enrolled_sql($context, '', $groupids);
 
         $fields      = 'SELECT ' . $ufields;
         $countfields = 'SELECT COUNT(u.id)';
         $sql = " FROM {user} u
                       $joins
-                 JOIN {user_enrolments} ue ON ue.userid = u.id
-                 JOIN {enrol} e ON ue.enrolid = e.id
-                WHERE $wherecondition
-                  AND e.courseid = :courseid";
-        $params['courseid'] = $this->course->id;
+                 JOIN ($enrolledsql) je ON je.id = u.id
+                WHERE $wherecondition";
+
+        $params = array_merge($params, $enrolledparams);
 
         return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, 0, $returnexactcount);
     }
@@ -590,7 +615,7 @@ class course_enrolment_manager {
      * that SQL, and the filter that was used in constructing the sql.
      *
      * @global moodle_database $DB
-     * @return string
+     * @return array
      */
     protected function get_instance_sql() {
         global $DB;
@@ -1411,7 +1436,7 @@ class enrol_user_button extends single_button {
      * @param string $galleryversion Deprecated: The gallery version to use
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      */
-    public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
+    public function require_yui_module($modules, $function, ?array $arguments = null, $galleryversion = null, $ondomready = false) {
         if ($galleryversion != null) {
             debugging('The galleryversion parameter to yui_module has been deprecated since Moodle 2.3.', DEBUG_DEVELOPER);
         }
@@ -1432,7 +1457,7 @@ class enrol_user_button extends single_button {
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      * @param array $module A module definition
      */
-    public function require_js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
+    public function require_js_init_call($function, ?array $extraarguments = null, $ondomready = false, ?array $module = null) {
         $js = new stdClass;
         $js->function = $function;
         $js->extraarguments = $extraarguments;
@@ -1516,7 +1541,7 @@ class user_enrolment_action implements renderable {
      * @param moodle_url $url
      * @param array $attributes
      */
-    public function __construct(pix_icon $icon, $title, $url, array $attributes = null) {
+    public function __construct(pix_icon $icon, $title, $url, ?array $attributes = null) {
         $this->icon = $icon;
         $this->title = $title;
         $this->url = new moodle_url($url);
@@ -1598,7 +1623,7 @@ abstract class enrol_bulk_enrolment_operation {
      * @param course_enrolment_manager $manager
      * @param stdClass $plugin
      */
-    public function __construct(course_enrolment_manager $manager, enrol_plugin $plugin = null) {
+    public function __construct(course_enrolment_manager $manager, ?enrol_plugin $plugin = null) {
         $this->manager = $manager;
         $this->plugin = $plugin;
     }

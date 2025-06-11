@@ -40,7 +40,7 @@ use core_grading\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass User without data. */
     protected $user0;
@@ -63,7 +63,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -90,7 +90,7 @@ class provider_test extends provider_testcase {
     /**
      * Test retrieval of user ids in a given context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
         $this->grading_setup_test_scenario_data();
         // Instance two has one user who created the definitions and another who modified it.
@@ -103,13 +103,14 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with no grading definitions created or modified will not have any data exported.
      */
-    public function test_export_user_data_no_content() {
+    public function test_export_user_data_no_content(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $context = \context_system::instance();
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'core_grading');
@@ -119,7 +120,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -198,7 +199,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -219,7 +220,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -262,7 +263,7 @@ class provider_test extends provider_testcase {
     /**
      * Test exporting user data relating to an item ID.
      */
-    public function test_export_item_data() {
+    public function test_export_item_data(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -300,7 +301,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting user data related to a context and item ID.
      */
-    public function test_delete_instance_data() {
+    public function test_delete_instance_data(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -353,7 +354,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the deletion of multiple instances at once.
      */
-    public function test_delete_data_for_instances() {
+    public function test_delete_data_for_instances(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

@@ -35,12 +35,12 @@ use core_my\privacy\provider;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::test_export_user_preferences().
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         global $DB;
 
         // Test setup.

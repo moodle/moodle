@@ -14,22 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains event class for displaying the day view.
- *
- * @package   core_calendar
- * @copyright 2017 Simey Lameze <simey@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_calendar\external;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core\external\exporter;
+use core_date;
+use DateTimeImmutable;
 use renderer_base;
 use moodle_url;
-use \core_calendar\local\event\container;
+use core_calendar\local\event\container;
 
 /**
  * Class for displaying the day view.
@@ -209,7 +201,12 @@ class calendar_day_exporter extends exporter {
 
         // Need to account for user's timezone.
         $usernow = usergetdate(time());
-        $today = new \DateTimeImmutable();
+        $today = new DateTimeImmutable(
+            timezone: core_date::get_user_timezone_object(),
+        );
+
+        // The start time should use the day's date but the current
+        // time of the day (adjusted for user's timezone).
         $neweventtimestamp = $today->setTimestamp($date[0])->setTime(
             $usernow['hours'],
             $usernow['minutes'],

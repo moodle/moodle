@@ -25,12 +25,12 @@
 
 namespace local_o365\webservices\exception;
 
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * Exception thrown when a module that does not exist is called.
  */
-class modulenotfound extends \moodle_exception {
+class modulenotfound extends moodle_exception {
     /**
      * Constructor.
      *

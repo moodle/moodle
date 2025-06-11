@@ -52,7 +52,7 @@ class cronrunning extends check {
      * Return result
      * @return result
      */
-    public function get_result() : result {
+    public function get_result(): result {
         global $CFG;
 
         // Eventually this should replace cron_overdue_warning and

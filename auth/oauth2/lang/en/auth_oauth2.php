@@ -25,7 +25,7 @@
 $string['accountexists'] = 'A user already exists on this site with this username. If this is your account, log in by entering your username and password and add it as a linked login via your preferences page.';
 $string['auth_oauth2description'] = 'OAuth 2 standards based authentication';
 $string['auth_oauth2settings'] = 'OAuth 2 authentication settings.';
-$string['confirmaccountemail'] = 'Hi {$a->fullname},
+$string['confirmaccountemail'] = 'Hi {$a->firstname},
 
 A new account has been requested at \'{$a->sitename}\'
 using your email address.
@@ -47,7 +47,7 @@ Please contact the site administrator immediately.';
 $string['confirmaccountemailsubject'] = '{$a}: account confirmation';
 $string['confirmationinvalid'] = 'The confirmation link is either invalid, or has expired. Please start the login process again to generate a new confirmation email.';
 $string['confirmationpending'] = 'This account is pending email confirmation.';
-$string['confirmlinkedloginemail'] = 'Hi {$a->fullname},
+$string['confirmlinkedloginemail'] = 'Hi {$a->firstname},
 
 A request has been made to link the {$a->issuername} login
 {$a->linkedemail} to your account at \'{$a->sitename}\'

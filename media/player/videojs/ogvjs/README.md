@@ -7,6 +7,33 @@ Based around libogg, libvorbis, libtheora, libopus, libvpx, libnestegg and dav1d
 
 ## Updates
 
+1.9.0 - 2024-04-23
+* update repo URL
+* update build to emscripten 3.1.57
+* remove execute bits from wasm
+
+1.8.9 - 2022-04-06
+* Bump yuv-canvas to 1.2.11, further perf improvments for frame drawing
+* Workaround gets audio working when ringer is disabled by iOS hardware switch
+
+1.8.8 - 2022-04-04
+* Bump yuv-canvas to 1.2.10, fixes WebGL scaling bug in Netscape/macOS; adjustment to prior performance tweaks.
+
+1.8.7 - 2022-03-29
+* Bump emscripten compatibility to 3.1.8
+* Bump Opus to 1.3.1
+* Bump yuv-canvas to 1.2.9, fixes WebGL performance regressions on some browsers
+* experimental demo/threaded.php provides a COOP-COEP-CORP environment for testing threaded decoders (top-level frame and all worker JS must opt in to COOP-COEP; CORP or CORS required for most loaded resources)
+
+1.8.6 - 2022-01-12
+* Bump to yuv-canvas
+* Fix demo for removal of video-canvas mode
+
+1.8.5 - 2022-01-11
+* Remove unnecessary user-agent checks
+* Remove flaky, obsolete support for faking CSS `object-fit`
+* Remove experimental support for streaming `<canvas>` into `<video>`
+
 1.8.4 - 2021-07-02
 * Fix for fix for OGVLoader.base fix
 
@@ -80,7 +107,7 @@ Based around libogg, libvorbis, libtheora, libopus, libvpx, libnestegg and dav1d
 * fix for seek on very short WebM files
 * fix for replay-after-end-of-playback in WebM
 
-See more details and history in [CHANGES.md](https://github.com/brion/ogv.js/blob/master/CHANGES.md)
+See more details and history in [CHANGES.md](https://github.com/bvibber/ogv.js/blob/master/CHANGES.md)
 
 ## Current status
 
@@ -95,7 +122,7 @@ See also a standalone demo with performance metrics at https://brionv.com/misc/o
 * color: yes
 * audio: yes, with a/v sync (requires Web Audio or Flash)
 * background threading: yes (video, audio decoders in Workers)
-* [GPU accelerated drawing: yes (WebGL)](https://github.com/brion/ogv.js/wiki/GPU-acceleration)
+* [GPU accelerated drawing: yes (WebGL)](https://github.com/bvibber/ogv.js/wiki/GPU-acceleration)
 * GPU accelerated decoding: no
 * SIMD acceleration: no
 * Web Assembly: yes (with asm.js fallback)
@@ -131,7 +158,7 @@ Testing browsers (these support .ogv and .webm natively):
 
 ## Package installation
 
-Pre-built releases of ogv.js are available as [.zip downloads from the GitHub releases page](https://github.com/brion/ogv.js/releases) and through the npm package manager.
+Pre-built releases of ogv.js are available as [.zip downloads from the GitHub releases page](https://github.com/bvibber/ogv.js/releases) and through the npm package manager.
 
 You can load the `ogv.js` main entry point directly in a script tag, or bundle it through whatever build process you like. The other .js files must be made available for runtime loading, together in the same directory.
 
@@ -247,7 +274,7 @@ Meanwhile, newer 64-bit iPhones and iPads are comparable to low-end laptops, and
 Windows on 32-bit ARM platforms is similar... IE 11 on Windows RT 8.1 on a Surface tablet (NVidia Tegra 3) does not work (crashes IE), while Edge on Windows 10 Mobile works ok at low resolutions, having trouble starting around 240p.
 
 
-In both cases, a native application looms as a possibly better alternative. See [OGVKit](https://github.com/brion/OGVKit) and [OgvRt](https://github.com/brion/OgvRT) projects for experiments in those directions.
+In both cases, a native application looms as a possibly better alternative. See [OGVKit](https://github.com/bvibber/OGVKit) and [OgvRt](https://github.com/bvibber/OgvRT) projects for experiments in those directions.
 
 
 Note that at these lower resolutions, Vorbis audio and Theora video decoding are about equally expensive operations -- dual-core phones and tablets should be able to eke out a little parallelism here thanks to audio and video being in separate Worker threads.
@@ -255,7 +282,7 @@ Note that at these lower resolutions, Vorbis audio and Theora video decoding are
 
 *WebGL drawing acceleration*
 
-Accelerated YCbCr->RGB conversion and drawing is done using WebGL on supporting browsers, or through software CPU conversion if not. This is abstracted in the [yuv-canvas](https://github.com/brion/yuv-canvas) package, now separately installable.
+Accelerated YCbCr->RGB conversion and drawing is done using WebGL on supporting browsers, or through software CPU conversion if not. This is abstracted in the [yuv-canvas](https://github.com/bvibber/yuv-canvas) package, now separately installable.
 
 It may be possible to do further acceleration of actual decoding operations using WebGL shaders, but this could be ... tricky. WebGL is also only available on the main thread, and there are no compute shaders yet so would have to use fragment shaders.
 
@@ -288,7 +315,7 @@ As with chunked streaming, cross-site playback requires CORS support for the Ran
 
 *Audio output*
 
-Audio output is handled through the [AudioFeeder](https://github.com/brion/audio-feeder) library, which encapsulates use of Web Audio API:
+Audio output is handled through the [AudioFeeder](https://github.com/bvibber/audio-feeder) library, which encapsulates use of Web Audio API:
 
 Firefox, Safari, Chrome, and Edge support the W3C Web Audio API.
 
@@ -379,4 +406,4 @@ libogg, libvorbis, libtheora, libopus, nestegg, libvpx, and dav1d are available 
 
 Based on build scripts from https://github.com/devongovett/ogg.js
 
-See [AUTHORS.md](https://github.com/brion/ogv.js/blob/master/AUTHORS.md) and/or the git history for a list of contributors.
+See [AUTHORS.md](https://github.com/bvibber/ogv.js/blob/master/AUTHORS.md) and/or the git history for a list of contributors.

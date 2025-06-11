@@ -27,43 +27,19 @@
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_search_simpledb_upgrade($oldversion = 0) {
-    global $DB;
-
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2022050400) {
-
-        $table = new xmldb_table('search_simpledb_index');
-
-        // Define index areaid (not unique) to be added to search_simpledb_index.
-        $index = new xmldb_index('contextid', XMLDB_INDEX_NOTUNIQUE, ['contextid']);
-
-        // Conditionally launch add index contextid.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Define index courseid (not unique) to be added to search_simpledb_index.
-        $index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
-
-        // Conditionally launch add index courseid.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Define index areaid (not unique) to be added to search_simpledb_index.
-        $index = new xmldb_index('areaid', XMLDB_INDEX_NOTUNIQUE, ['areaid']);
-
-        // Conditionally launch add index areaid.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Simpledb savepoint reached.
-        upgrade_plugin_savepoint(true, 2022050400, 'search', 'simpledb');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

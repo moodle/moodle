@@ -144,7 +144,7 @@ if ($mform->is_cancelled()) {
 
     // Replace unchanged values with null.
     foreach ($keys as $key) {
-        if (($fromform->{$key} == $assigninstance->{$key})) {
+        if (!isset($fromform->{$key}) || $fromform->{$key} == $assigninstance->{$key}) {
             $fromform->{$key} = null;
         }
     }

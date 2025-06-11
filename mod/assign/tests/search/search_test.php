@@ -39,14 +39,14 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @copyright   2016 Eric Merrill {@link http://www.merrilldigital.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * Test for assign file attachments.
      *
      * @return void
      */
-    public function test_attach_files() {
+    public function test_attach_files(): void {
         global $USER;
 
         $this->resetAfterTest(true);

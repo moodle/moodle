@@ -37,7 +37,7 @@
 }}
 <form id="addtagcoll_form" method="post" action="{{actionurl}}" class="needs-validation">
     <input type="hidden" name="sesskey" value="{{sesskey}}"/>
-    <div class="form-group control-group" data-region="addtagcoll_nameinput">
+    <div class="mb-3 control-group" data-region="addtagcoll_nameinput">
         <label for="addtagcoll_name">
             {{#str}}name{{/str}}
             <span>
@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group form-check">
+    <div class="mb-3 form-check">
         <input id="addtagcoll_searchable" name="searchable" type="checkbox" value="1" checked class="form-check-input"/>
         <label for="addtagcoll_searchable" class="form-check-label">{{#str}}searchable, tag{{/str}}</label>
     </div>

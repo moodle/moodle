@@ -36,7 +36,7 @@ class calculator {
      */
     protected $progress;
 
-    public function __construct(\core\progress\base $progress = null) {
+    public function __construct(?\core\progress\base $progress = null) {
         if ($progress === null) {
             $progress = new \core\progress\none();
         }
@@ -121,7 +121,11 @@ class calculator {
         return $quizstats;
     }
 
-    /** @var int No longer used. Previously the time after which statistics are automatically recomputed. */
+    /**
+     * @var int previously, the time after which statistics are automatically recomputed.
+     * @deprecated since Moodle 4.3. Use of pre-computed stats is no longer time-limited.
+     * @todo MDL-78091 Final deprecation in Moodle 4.7
+     */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
@@ -271,7 +275,7 @@ class calculator {
      * @param $fromqa
      * @param $whereqa
      * @param $qaparams
-     * @return object with properties power2, power3, power4
+     * @return stdClass with properties power2, power3, power4
      */
     protected function sum_of_powers_of_difference_to_mean($mean, $fromqa, $whereqa, $qaparams) {
         global $DB;
@@ -282,7 +286,7 @@ class calculator {
                     SUM(POWER((quiza.sumgrades - $mean), 4)) AS power4
                   FROM $fromqa
                  WHERE $whereqa";
-        $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
+        $params = ['mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean] + $qaparams;
 
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
     }

@@ -100,6 +100,7 @@ class com_wiris_plugin_impl_TestImpl implements com_wiris_plugin_api_Test{
 		$condition = true;
 		try {
 			$h = new com_wiris_plugin_impl_HttpImpl("http://www.wiris.net", null);
+			com_wiris_plugin_impl_RequestHeadersStoreImpl::dumpInto($h);
 			$h->request(true);
 		}catch(Exception $»e) {
 			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;

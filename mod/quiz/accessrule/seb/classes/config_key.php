@@ -55,7 +55,7 @@ class config_key {
      * @param string $xml A PList XML string, representing SEB config.
      * @return config_key This config key instance.
      */
-    public static function generate(string $xml) : config_key {
+    public static function generate(string $xml): config_key {
         if (!empty($xml) && !helper::is_valid_seb_config($xml)) {
             throw new \invalid_parameter_exception('Invalid a PList XML string, representing SEB config');
         }
@@ -77,7 +77,7 @@ class config_key {
      *
      * @return string The Config Key hash
      */
-    public function get_hash() : string {
+    public function get_hash(): string {
         return $this->hash;
     }
 }

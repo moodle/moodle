@@ -44,11 +44,6 @@ if ($mode) {
     $params += ['mode' => $mode];
 }
 $url = new moodle_url('/mod/feedback/manage_templates.php', $params);
-if ($mode == 'manage') {
-    navigation_node::override_active_url($url);
-} else {
-    navigation_node::override_active_url(new moodle_url('/mod/feedback/view.php', $params));
-}
 
 $PAGE->set_url($url);
 $actionbar = new \mod_feedback\output\edit_action_bar($cm->id, $url);

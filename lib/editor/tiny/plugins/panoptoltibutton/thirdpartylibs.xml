@@ -1,0 +1,25 @@
+<thirdpartylibs>
+    <!-- Handlebars -->
+    <library>
+        <name>Handlebars</name>
+        <version>4.7.7</version>
+        <location>js/handlebars.min-v4.7.7.js</location>
+        <license>MIT</license>
+        <licenseurl>https://opensource.org/licenses/MIT</licenseurl>
+        <notes>
+            Handlebars provides the power necessary to let you build semantic templates effectively with no frustration.
+        </notes>
+    </library>
+
+    <!-- jQuery -->
+    <library>
+        <name>jQuery</name>
+        <version>3.7.0</version>
+        <location>js/jquery-3.7.0.min.js</location>
+        <license>MIT</license>
+        <licenseurl>https://jquery.org/license/</licenseurl>
+        <notes>
+            jQuery is a fast, small, and feature-rich JavaScript library.
+        </notes>
+    </library>
+</thirdpartylibs>

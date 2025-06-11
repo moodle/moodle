@@ -1,19 +1,19 @@
 .local_onenote_linkbutton {
-	background-image: url([[pix:local_onenote|onenote]]);
-	background-position: 2px 0px;
-	background-size: 32px 32px;
+    background-image: url([[pix:local_onenote|onenote]]);
+    background-position: 2px 0;
+    background-size: 32px 32px;
     background-repeat: no-repeat;
     background-color: #80397b;
     color: #fff;
     display: inline-block;
     padding: 6px 6px 6px 40px;
-    margin: 5px 0px;
+    margin: 5px 0;
     font-size: 14px;
 }
 
 .local_onenote_linkbutton:active,
 .local_onenote_linkbutton:hover,
 .local_onenote_linkbutton:visited {
-    text-decoration: none !important;
+    text-decoration: none;
     color: #fff;
 }

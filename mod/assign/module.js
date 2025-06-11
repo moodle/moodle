@@ -27,7 +27,8 @@ M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
 
 M.mod_assign.init_grading_table = function(Y) {
     Y.use('node', function(Y) {
-        checkboxes = Y.all('td.c0 input');
+        const checkboxes = Y.all('td.c0 input');
+        let rowelement;
         checkboxes.each(function(node) {
             node.on('change', function(e) {
                 rowelement = e.currentTarget.get('parentNode').get('parentNode');
@@ -50,64 +51,21 @@ M.mod_assign.init_grading_table = function(Y) {
             }
         });
 
-        var selectall = Y.one('th.c0 input');
+        const selectall = Y.one('th.c0 input');
         if (selectall) {
             selectall.on('change', function(e) {
-                if (e.currentTarget.get('checked')) {
-                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
-                    checkboxes.each(function(node) {
-                        rowelement = node.get('parentNode').get('parentNode');
+                Y.all('td.c0 input[type="checkbox"]').each(function(node) {
+                    rowelement = node.get('parentNode').get('parentNode');
+                    if (e.currentTarget.get('checked')) {
                         node.set('checked', true);
                         rowelement.removeClass('unselectedrow');
                         rowelement.addClass('selectedrow');
-                    });
-                } else {
-                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
-                    checkboxes.each(function(node) {
-                        rowelement = node.get('parentNode').get('parentNode');
+                    } else {
                         node.set('checked', false);
                         rowelement.removeClass('selectedrow');
                         rowelement.addClass('unselectedrow');
-                    });
-                }
-            });
-        }
-
-        var batchform = Y.one('form.gradingbatchoperationsform');
-        if (batchform) {
-            batchform.on('submit', function(e) {
-                M.util.js_pending('mod_assign/module.js:batch:submit');
-                checkboxes = Y.all('td.c0 input');
-                var selectedusers = [];
-                checkboxes.each(function(node) {
-                    if (node.get('checked')) {
-                        selectedusers[selectedusers.length] = node.get('value');
                     }
                 });
-
-                operation = Y.one('#id_operation');
-                usersinput = Y.one('input.selectedusers');
-                usersinput.set('value', selectedusers.join(','));
-                if (selectedusers.length == 0) {
-                    alert(M.util.get_string('nousersselected', 'assign'));
-                    e.preventDefault();
-                } else {
-                    action = operation.get('value');
-                    prefix = 'plugingradingbatchoperation_';
-                    if (action.indexOf(prefix) == 0) {
-                        pluginaction = action.substr(prefix.length);
-                        plugin = pluginaction.split('_')[0];
-                        action = pluginaction.substr(plugin.length + 1);
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
-                    } else {
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
-                    }
-                    if (!confirm(confirmmessage)) {
-                        M.util.js_complete('mod_assign/module.js:batch:submit');
-                        e.preventDefault();
-                    }
-                    // Note: Do not js_complete. The page being reloaded will empty it.
-                }
             });
         }
 
@@ -117,51 +75,6 @@ M.mod_assign.init_grading_table = function(Y) {
                 this.get('parentNode').addClass('quickgrademodified');
             });
         });
-    });
-};
-
-M.mod_assign.init_grading_options = function(Y) {
-    Y.use('node', function(Y) {
-        var paginationelement = Y.one('#id_perpage');
-        paginationelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-        });
-        var filterelement = Y.one('#id_filter');
-        if (filterelement) {
-            filterelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var markerfilterelement = Y.one('#id_markerfilter');
-        if (markerfilterelement) {
-            markerfilterelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var workflowfilterelement = Y.one('#id_workflowfilter');
-        if (workflowfilterelement) {
-            workflowfilterelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var quickgradingelement = Y.one('#id_quickgrading');
-        if (quickgradingelement) {
-            quickgradingelement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var showonlyactiveenrolelement = Y.one('#id_showonlyactiveenrol');
-        if (showonlyactiveenrolelement) {
-            showonlyactiveenrolelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-            });
-        }
-        var downloadasfolderselement = Y.one('#id_downloadasfolders');
-        if (downloadasfolderselement) {
-            downloadasfolderselement.on('change', function(e) {
-                Y.one('form.gradingoptionsform').submit();
-            });
-        }
     });
 };
 

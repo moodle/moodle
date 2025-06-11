@@ -28,11 +28,11 @@ require_once('data_privacy_testcase.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_observer_test extends data_privacy_testcase {
+final class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when users are configured as DPO, they are sent an message upon failure.
      */
-    public function test_handle_component_failure() {
+    public function test_handle_component_failure(): void {
         $this->resetAfterTest();
 
         // Create another user who is not a DPO.
@@ -65,7 +65,7 @@ class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when no user is configured as DPO, the message is sent to admin instead.
      */
-    public function test_handle_component_failure_no_dpo() {
+    public function test_handle_component_failure_no_dpo(): void {
         $this->resetAfterTest();
 
         // Create another user who is not a DPO or admin.

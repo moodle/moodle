@@ -363,7 +363,7 @@ class sync_members extends scheduled_task {
      * @param string $membershipsurltemplate The memberships endpoint URL template.
      * @return bool|User[] Array of User objects upon successful membership service request. False, otherwise.
      */
-    protected function do_context_membership_request(Context $context, ResourceLink $resourcelink = null,
+    protected function do_context_membership_request(Context $context, ?ResourceLink $resourcelink = null,
                                                      $membershipsurltemplate = '') {
         $dataconnector = $this->dataconnector;
 

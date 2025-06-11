@@ -1571,6 +1571,7 @@ class com_wiris_quizzes_impl_QuestionImpl extends com_wiris_quizzes_impl_Questio
 		$dopt->set(com_wiris_quizzes_api_QuizzesConstants::$OPTION_DIGIT_GROUP_SEPARATOR, "");
 		$dopt->set(com_wiris_quizzes_api_QuizzesConstants::$OPTION_STUDENT_ANSWER_PARAMETER, "false");
 		$dopt->set(com_wiris_quizzes_api_QuizzesConstants::$OPTION_STUDENT_ANSWER_PARAMETER_NAME, "answer");
+		$dopt->set(com_wiris_quizzes_api_QuizzesConstants::$OPTION_ITEM_SEPARATOR, ",");
 		return $dopt;
 	}
 	static function setLocalDataToArray($name, $value, $ld) {

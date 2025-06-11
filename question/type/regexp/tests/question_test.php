@@ -43,12 +43,12 @@ require_once($CFG->dirroot . '/question/type/regexp/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \question\type\regexp\question
  */
-class question_test extends \advanced_testcase {
+final class question_test extends \advanced_testcase {
     /**
      * Test compare_string_with_wildcard() method.
      * @covers ::compare_string_with_wildcard method
      */
-    public function test_compare_string_with_wildcard() {
+    public function test_compare_string_with_wildcard(): void {
         // Test case.
         $ignorecase = true;
         $this->assertTrue((bool)qtype_regexp_question::compare_string_with_wildcard(
@@ -83,8 +83,8 @@ class question_test extends \advanced_testcase {
      * Test is_complete_response() method.
      * @covers ::is_complete_response
      */
-    public function test_is_complete_response() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_is_complete_response(): void {
+        $question = \test_question_maker::make_question('regexp');
 
         $this->assertFalse($question->is_complete_response([]));
         $this->assertFalse($question->is_complete_response(['answer' => '']));
@@ -97,8 +97,8 @@ class question_test extends \advanced_testcase {
      * Test is_gradable_response method.
      * @covers ::is_gradable_response
      */
-    public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_is_gradable_response(): void {
+        $question = \test_question_maker::make_question('regexp');
 
         $this->assertFalse($question->is_gradable_response([]));
         $this->assertFalse($question->is_gradable_response(['answer' => '']));
@@ -111,8 +111,8 @@ class question_test extends \advanced_testcase {
      * Test test_grading method.
      * @covers ::grade_response
      */
-    public function test_grading() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_grading(): void {
+        $question = \test_question_maker::make_question('regexp');
 
         $this->assertEquals([0, question_state::$gradedwrong], $question->grade_response(['answer' => 'x']));
         $this->assertEquals([1, question_state::$gradedright], $question->grade_response(['answer' => "it's blue, white and red"]));
@@ -123,8 +123,8 @@ class question_test extends \advanced_testcase {
      * Test get_correct_response method.
      * @covers ::get_correct_response
      */
-    public function test_get_correct_response() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_get_correct_response(): void {
+        $question = \test_question_maker::make_question('regexp');
 
         $this->assertEquals(['answer' => "it's blue, white and red"],
                 $question->get_correct_response());
@@ -134,8 +134,8 @@ class question_test extends \advanced_testcase {
      * Test get_question_summary method.
      * @covers ::get_question_summary
      */
-    public function test_get_question_summary() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_get_question_summary(): void {
+        $question = \test_question_maker::make_question('regexp');
         $qsummary = $question->get_question_summary();
         $this->assertEquals('What are the colours of the French flag?', $qsummary);
     }
@@ -144,8 +144,8 @@ class question_test extends \advanced_testcase {
      * Test summarise_response method.
      * @covers ::summarise_response
      */
-    public function test_summarise_response() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_summarise_response(): void {
+        $question = \test_question_maker::make_question('regexp');
         $summary = $question->summarise_response(['answer' => "it's blue, white and red"]);
         $this->assertEquals("it's blue, white and red", $summary);
     }
@@ -154,8 +154,8 @@ class question_test extends \advanced_testcase {
      * Test classify_response method.
      * @covers ::classify_response
      */
-    public function test_classify_response() {
-        $question = test_question_maker::make_question('regexp');
+    public function test_classify_response(): void {
+        $question = \test_question_maker::make_question('regexp');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(
@@ -179,7 +179,7 @@ class question_test extends \advanced_testcase {
         );
 
         $this->assertEquals(
-            [new question_classified_response(15, 'red and white', 0.0)],
+            [new question_classified_response(16, 'red and white', 0.0)],
             $question->classify_response(['answer' => 'red and white'])
         );
 

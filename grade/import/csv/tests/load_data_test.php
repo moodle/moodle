@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
  * @copyright  2014 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class load_data_test extends \grade_base_testcase {
+final class load_data_test extends \grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
     protected $oktext = '"First name","Last name","ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
@@ -59,6 +59,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
 
     public function tearDown(): void {
         $this->csvimport = null;
+        parent::tearDown();
     }
 
     /**
@@ -86,7 +87,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test loading data and returning preview content.
      */
-    public function test_load_csv_content() {
+    public function test_load_csv_content(): void {
         $encoding = 'utf8';
         $separator = 'comma';
         $previewrows = 5;
@@ -146,7 +147,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test fetching grade items for the course.
      */
-    public function test_fetch_grade_items() {
+    public function test_fetch_grade_items(): void {
 
         $gradeitemsarray = \grade_item::fetch_all(array('courseid' => $this->courseid));
         $gradeitems = \phpunit_gradeimport_csv_load_data::fetch_grade_items($this->courseid);
@@ -174,7 +175,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test the inserting of grade record data.
      */
-    public function test_insert_grade_record() {
+    public function test_insert_grade_record(): void {
         global $DB, $USER;
 
         $user = $this->getDataGenerator()->create_user();
@@ -187,7 +188,8 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $record->feedback = 'Some test feedback';
 
         $testobject = new \phpunit_gradeimport_csv_load_data();
-        $testobject->test_insert_grade_record($record, $user->id);
+
+        $testobject->test_insert_grade_record($record, $user->id, new \grade_item());
 
         $gradeimportvalues = $DB->get_records('grade_import_values');
         // Get the insert id.
@@ -212,7 +214,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test preparing a new grade item for import into the gradebook.
      */
-    public function test_import_new_grade_item() {
+    public function test_import_new_grade_item(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -240,7 +242,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      *
      * @return array
      */
-    public function check_user_exists_provider() {
+    public static function check_user_exists_provider(): array {
         return [
             'Fetch by email' => [
                 'email', 's1@example.com', true
@@ -287,7 +289,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      * @param boolean $successexpected Whether we expect for a user to be found or not.
      * @param int $allowaccountssameemail Value for $CFG->allowaccountssameemail
      */
-    public function test_check_user_exists($field, $value, $successexpected, $allowaccountssameemail = 0) {
+    public function test_check_user_exists($field, $value, $successexpected, $allowaccountssameemail = 0): void {
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();
@@ -357,7 +359,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test preparing feedback for inserting / updating into the gradebook.
      */
-    public function test_create_feedback() {
+    public function test_create_feedback(): void {
 
         $testarray = $this->csv_load($this->oktext);
         $testobject = new \phpunit_gradeimport_csv_load_data();
@@ -373,7 +375,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test preparing grade_items for upgrading into the gradebook.
      */
-    public function test_update_grade_item() {
+    public function test_update_grade_item(): void {
 
         $testarray = $this->csv_load($this->oktext);
         $testobject = new \phpunit_gradeimport_csv_load_data();
@@ -406,7 +408,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test importing data and mapping it with items in the course.
      */
-    public function test_map_user_data_with_value() {
+    public function test_map_user_data_with_value(): void {
         // Need to add one of the users into the system.
         $user = new \stdClass();
         $user->firstname = 'Anne';
@@ -459,7 +461,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Test importing data into the gradebook.
      */
-    public function test_prepare_import_grade_data() {
+    public function test_prepare_import_grade_data(): void {
         global $DB;
 
         // Need to add one of the users into the system.
@@ -512,7 +514,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /*
      * Test importing csv data into the gradebook using "Last downloaded from this course" column and force import option.
      */
-    public function test_force_import_option () {
+    public function test_force_import_option(): void {
 
         // Need to add users into the system.
         $user = new \stdClass();

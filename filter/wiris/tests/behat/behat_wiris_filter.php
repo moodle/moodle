@@ -38,8 +38,6 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_wiris_filter extends behat_wiris_base {
-
-
     /**
      * Turns MathType filter off in Filter settings
      *

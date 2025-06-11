@@ -26,11 +26,11 @@ use mod_forum\local\exporters\author as author_exporter;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_author_test extends \advanced_testcase {
+final class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */
-    public function test_export_author() {
+    public function test_export_author(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -70,7 +70,7 @@ class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function with groups.
      */
-    public function test_export_author_with_groups() {
+    public function test_export_author_with_groups(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -109,7 +109,7 @@ class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function with no view capability.
      */
-    public function test_export_author_no_view_capability() {
+    public function test_export_author_no_view_capability(): void {
         global $PAGE;
         $this->resetAfterTest();
 

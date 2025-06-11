@@ -25,8 +25,6 @@
 
 namespace local_o365\page;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Basic page-style class handling page setup and page modes.
  */

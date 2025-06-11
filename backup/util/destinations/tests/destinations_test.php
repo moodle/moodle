@@ -22,18 +22,18 @@ namespace core_backup;
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class destinations_test extends \basic_testcase {
+final class destinations_test extends \basic_testcase {
 
     /**
      * test backup_destination class
      */
-    function test_backup_destination() {
+    function test_backup_destination(): void {
     }
 
     /**
      * test backup_destination_osfs class
      */
-    function test_backup_destination_osfs() {
+    function test_backup_destination_osfs(): void {
     }
 }
 

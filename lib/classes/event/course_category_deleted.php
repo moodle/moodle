@@ -80,24 +80,6 @@ class course_category_deleted extends base {
     }
 
     /**
-     * Returns the name of the legacy event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'course_category_deleted';
-    }
-
-    /**
-     * Returns the legacy event data.
-     *
-     * @return \core_course_category the category that was deleted
-     */
-    protected function get_legacy_eventdata() {
-        return $this->coursecat;
-    }
-
-    /**
      * Set custom data of the event - deleted coursecat.
      *
      * @param \core_course_category $coursecat
@@ -117,15 +99,6 @@ class course_category_deleted extends base {
             throw new \coding_exception('Function get_coursecat() can not be used on restored events.');
         }
         return $this->coursecat;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'category', 'delete', 'index.php', $this->other['name'] . '(ID ' . $this->objectid . ')');
     }
 
     /**

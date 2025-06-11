@@ -28,14 +28,14 @@ require_once($CFG->libdir.'/adminlib.php');
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adminlib_test extends \advanced_testcase {
+final class adminlib_test extends \advanced_testcase {
 
     /**
      * Data provider of serialized string.
      *
      * @return array
      */
-    public function db_should_replace_dataprovider() {
+    public static function db_should_replace_dataprovider(): array {
         return [
             // Skipped tables.
             ['block_instances', '', false],
@@ -75,7 +75,7 @@ class adminlib_test extends \advanced_testcase {
      * @param string $column name
      * @param bool $expected whether it should be replaced
      */
-    public function test_db_should_replace(string $table, string $column, bool $expected) {
+    public function test_db_should_replace(string $table, string $column, bool $expected): void {
         $actual = db_should_replace($table, $column);
         $this->assertSame($actual, $expected);
     }
@@ -86,7 +86,7 @@ class adminlib_test extends \advanced_testcase {
      * @covers ::db_should_replace
      * @return array
      */
-    public function db_should_replace_additional_skip_tables_dataprovider() {
+    public static function db_should_replace_additional_skip_tables_dataprovider(): array {
         return [
             // Skipped tables.
             ['block_instances', '', false],
@@ -120,10 +120,90 @@ class adminlib_test extends \advanced_testcase {
      * @param string $column name
      * @param bool $expected whether it should be replaced
      */
-    public function test_db_should_replace_additional_skip_tables(string $table, string $column, bool $expected) {
+    public function test_db_should_replace_additional_skip_tables(string $table, string $column, bool $expected): void {
         $this->resetAfterTest();
         $additionalskiptables = 'context, quiz_attempts, role_assignments ';
         $actual = db_should_replace($table, $column, $additionalskiptables);
         $this->assertSame($actual, $expected);
+    }
+
+    /**
+     * Test admin_output_new_settings_by_page method.
+     *
+     * @covers ::admin_output_new_settings_by_page
+     */
+    public function test_admin_output_new_settings_by_page(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $root = admin_get_root(true, true);
+        // The initial list of html pages with no default settings.
+        $initialsettings = admin_output_new_settings_by_page($root);
+        $this->assertArrayHasKey('supportcontact', $initialsettings);
+        $this->assertArrayHasKey('frontpagesettings', $initialsettings);
+        // Existing default setting.
+        $this->assertArrayNotHasKey('modsettingbook', $initialsettings);
+
+        // Add settings not set during PHPUnit init.
+        set_config('supportemail', 'support@example.com');
+        $frontpage = new \admin_setting_special_frontpagedesc();
+        $frontpage->write_setting('test test');
+        // Remove a default setting.
+        unset_config('numbering', 'book');
+
+        $root = admin_get_root(true, true);
+        $new = admin_output_new_settings_by_page($root);
+        $this->assertArrayNotHasKey('supportcontact', $new);
+        $this->assertArrayNotHasKey('frontpagesettings', $new);
+        $this->assertArrayHasKey('modsettingbook', $new);
+    }
+
+    /**
+     * Test repeated recursive application of default settings.
+     *
+     * @covers ::admin_apply_default_settings
+     */
+    public function test_admin_apply_default_settings(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // There should not be any pending new defaults.
+        $saved = admin_apply_default_settings(null, false);
+        $this->assertSame([], $saved);
+
+        // Emulation of upgrades from CLI.
+        unset_config('logocompact', 'core_admin');
+        unset_config('grade_aggregationposition');
+        unset_config('numbering', 'book');
+        unset_config('enabled', 'core_competency');
+        unset_config('pushcourseratingstouserplans', 'core_competency');
+        $saved = admin_apply_default_settings(null, false);
+        $expected = [
+            'core_competency/enabled' => '1',
+            'grade_aggregationposition' => '1',
+            'book/numbering' => '1',
+            'core_admin/logocompact' => '',
+            'core_competency/pushcourseratingstouserplans' => '1',
+        ];
+        $this->assertEquals($expected, $saved);
+
+        // Repeated application of defaults - not done usually.
+        $saved = admin_apply_default_settings(null, true);
+        $this->assertGreaterThan(500, count($saved));
+        $saved = admin_apply_default_settings();
+        $this->assertGreaterThan(500, count($saved));
+
+        // Emulate initial application of defaults.
+        $DB->delete_records('config', []);
+        $DB->delete_records('config_plugins', []);
+        purge_all_caches();
+        $saved = admin_apply_default_settings(null, true);
+        $this->assertGreaterThan(500, count($saved));
+
+        // Make sure there were enough repetitions.
+        $saved = admin_apply_default_settings(null, false);
+        $this->assertSame([], $saved);
     }
 }

@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/edit_nav_actions
+
+    Actions bar at the top of the various quiz edit pages.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * overridesnav - must alwasy be present.
+    * addoverridebutton - should only be present if the user has permission to add a new override.
+
+    Example context (json):
+    {
+        "id": "url_select_test",
+        "action": "https://example.com/post",
+        "formid": "url_select_form",
+        "sesskey": "sesskey",
+        "navmenu": {
+            "options": [{
+                    "name": "Questions",
+                    "value": "/mod/quiz/edit.php?cmid=123"
+                },
+                {
+                    "name": "Complex grading",
+                    "value": "/mod/quiz/editgrading.php?cmid=123"
+                }
+            ]
+        }
+    }
+}}
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        {{#navmenu}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
+        {{/navmenu}}
+    </div>
+</div>

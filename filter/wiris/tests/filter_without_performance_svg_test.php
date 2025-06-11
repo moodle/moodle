@@ -28,9 +28,6 @@ require_once($CFG->dirroot . '/filter/wiris/filter.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 final class filter_without_performance_svg_test extends advanced_testcase {
-
-
-
     /**
      * @var mixed $wirisfilter The WIRIS filter instance used for testing.
      */

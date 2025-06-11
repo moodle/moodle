@@ -49,7 +49,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statement_test extends advanced_testcase {
+final class statement_test extends advanced_testcase {
 
     /**
      * Returns a valid item for a specific attribute.
@@ -107,7 +107,7 @@ class statement_test extends advanced_testcase {
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
-    public function test_create(bool $useagent, array $extras, array $extravalues) {
+    public function test_create(bool $useagent, array $extras, array $extravalues): void {
 
         $this->resetAfterTest();
 
@@ -171,10 +171,10 @@ class statement_test extends advanced_testcase {
         $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
             if (in_array($extra, $alldefined)) {
-                $this->assertObjectHasAttribute($extra, $data);
+                $this->assertObjectHasProperty($extra, $data);
                 $this->assertNotEmpty($data->$extra);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }
@@ -184,7 +184,7 @@ class statement_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function create_provider() : array {
+    public static function create_provider(): array {
         return [
             'Agent statement with no extras' => [
                 true, [], []
@@ -239,7 +239,7 @@ class statement_test extends advanced_testcase {
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
-    public function test_create_from_data(bool $useagent, array $extras, array $extravalues) {
+    public function test_create_from_data(bool $useagent, array $extras, array $extravalues): void {
         $this->resetAfterTest();
 
         // Create one course with a group.
@@ -305,10 +305,10 @@ class statement_test extends advanced_testcase {
         $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
             if (in_array($extra, $alldefined)) {
-                $this->assertObjectHasAttribute($extra, $data);
+                $this->assertObjectHasProperty($extra, $data);
                 $this->assertNotEmpty($data->object);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }
@@ -317,7 +317,7 @@ class statement_test extends advanced_testcase {
      * Test adding attachments to statement.
      *
      */
-    public function test_add_attachment() {
+    public function test_add_attachment(): void {
 
         // Our statement.
         $statement = new statement();
@@ -340,7 +340,7 @@ class statement_test extends advanced_testcase {
 
         // Check resulting json.
         $statementdata = json_decode(json_encode($statement));
-        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertObjectHasProperty('attachments', $statementdata);
         $this->assertNotEmpty($statementdata->attachments);
         $this->assertCount(1, $statementdata->attachments);
     }
@@ -349,7 +349,7 @@ class statement_test extends advanced_testcase {
      * Test adding attachments to statement.
      *
      */
-    public function test_add_attachment_from_data() {
+    public function test_add_attachment_from_data(): void {
 
         $this->resetAfterTest();
 
@@ -382,7 +382,7 @@ class statement_test extends advanced_testcase {
         $this->assertEquals($itemdata->length, $attachmentdata->length);
 
         $statementdata = json_decode(json_encode($statement));
-        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertObjectHasProperty('attachments', $statementdata);
         $this->assertNotEmpty($statementdata->attachments);
         $this->assertCount(1, $statementdata->attachments);
 
@@ -399,7 +399,7 @@ class statement_test extends advanced_testcase {
      * @param string $method the method to test
      * @param bool $exception if an exception is expected
      */
-    public function test_invalid_gets(string $method, bool $exception) {
+    public function test_invalid_gets(string $method, bool $exception): void {
         $statement = new statement();
         if ($exception) {
             $this->expectException(xapi_exception::class);
@@ -413,7 +413,7 @@ class statement_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_gets_provider() : array {
+    public static function invalid_gets_provider(): array {
         return [
             'Method get_user on empty statement' => ['get_user', true],
             'Method get_all_users on empty statement' => ['get_all_users', true],
@@ -436,7 +436,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get a user from a group statement.
      */
-    public function test_invalid_get_user() {
+    public function test_invalid_get_user(): void {
 
         $this->resetAfterTest();
 
@@ -462,7 +462,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get a group from an agent statement.
      */
-    public function test_invalid_get_group() {
+    public function test_invalid_get_group(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -482,7 +482,7 @@ class statement_test extends advanced_testcase {
     /**
      * Try to get activity Id from a statement with agent object.
      */
-    public function test_invalid_get_activity_id() {
+    public function test_invalid_get_activity_id(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -532,7 +532,7 @@ class statement_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public static function invalid_data_provider(): array {
         return [
             'No actor, no verb, no object'  => [false, false, false],
             'No actor, verb, no object'     => [false, true, false],
@@ -547,7 +547,7 @@ class statement_test extends advanced_testcase {
     /**
      * Test minify statement.
      */
-    public function test_minify() {
+    public function test_minify(): void {
 
         $this->resetAfterTest();
 

@@ -26,12 +26,12 @@ use mod_h5pactivity\local\manager;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Test on H5P activity creation.
      */
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB, $CFG, $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -87,7 +87,7 @@ class generator_test extends \advanced_testcase {
      * Test that a new H5P activity cannot be generated without a valid file
      * other user.
      */
-    public function test_create_file_exception() {
+    public function test_create_file_exception(): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -114,7 +114,7 @@ class generator_test extends \advanced_testcase {
      * @param bool $exception if an exception is expected
      *
      */
-    public function test_create_attempt(array $tracks, int $attempts, int $results, bool $exception) {
+    public function test_create_attempt(array $tracks, int $attempts, int $results, bool $exception): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -158,7 +158,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_attempt_data(): array {
+    public static function create_attempt_data(): array {
         return [
             'Compound statement' => [
                 [
@@ -212,14 +212,6 @@ class generator_test extends \advanced_testcase {
                 [
                     [
                         'interactiontype' => 'sequencing', 'attempt' => 1, 'rawscore' => 2,
-                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
-                    ],
-                ], 1, 1, false,
-            ],
-            'Other statement' => [
-                [
-                    [
-                        'interactiontype' => 'other', 'attempt' => 1, 'rawscore' => 2,
                         'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
                     ],
                 ], 1, 1, false,
@@ -313,7 +305,7 @@ class generator_test extends \advanced_testcase {
      * @param bool $validmod if the activity id is provided
      * @param bool $validuser if the user id is provided
      */
-    public function test_create_attempt_exceptions(bool $validmod, bool $validuser) {
+    public function test_create_attempt_exceptions(bool $validmod, bool $validuser): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -351,7 +343,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_attempt_exceptions_data(): array {
+    public static function create_attempt_exceptions_data(): array {
         return [
             'Invalid user'                  => [true, false],
             'Invalid activity'              => [false, true],

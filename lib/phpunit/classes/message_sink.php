@@ -62,10 +62,44 @@ class phpunit_message_sink {
      * The array indexes are numbered from 0 and the order is matching
      * the creation of events.
      *
+     * @param callable|null $filter Use to filter the messages.
      * @return array
      */
-    public function get_messages() {
+    public function get_messages(?callable $filter = null): array {
+        if ($filter) {
+            return array_filter($this->messages, $filter);
+        }
         return $this->messages;
+    }
+
+    /**
+     * Return all redirected messages for a given component.
+     *
+     * @param string $component Component name.
+     * @return array List of messages.
+     */
+    public function get_messages_by_component(string $component): array {
+        $component = core_component::normalize_componentname($component);
+
+        return $this->get_messages(
+            fn ($message) => core_component::normalize_componentname($message->component) === $component,
+        );
+    }
+
+    /**
+     * Return all redirected messages for a given component and type.
+     *
+     * @param string $component Component name.
+     * @param string $type Message type.
+     * @return array List of messages.
+     */
+    public function get_messages_by_component_and_type(
+        string $component,
+        string $type,
+    ): array {
+        return array_filter($this->get_messages_by_component($component), function($message) use ($type) {
+            return $message->eventtype == $type;
+        });
     }
 
     /**

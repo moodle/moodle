@@ -117,8 +117,9 @@ if ($mform->is_cancelled()) {
 
     user_add_password_history($USER->id, $data->newpassword1);
 
-    if (!empty($CFG->passwordchangelogout)) {
-        \core\session\manager::kill_user_sessions($USER->id, session_id());
+    // Log out all other sessions if mandated by admin, or if set by the user.
+    if (!empty($CFG->passwordchangelogout) || !empty($data->logoutothersessions)) {
+        \core\session\manager::destroy_user_sessions($USER->id, session_id());
     }
 
     if (!empty($data->signoutofotherservices)) {

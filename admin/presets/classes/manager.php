@@ -105,7 +105,6 @@ class manager {
             'adminpresets_auth_shibboleth_admin_setting_special_idp_configtextarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_auth_shibboleth_admin_setting_special_wayf_select' => 'adminpresets_admin_setting_configselect',
             'adminpresets_editor_atto_toolbar_setting' => 'adminpresets_admin_setting_configtext',
-            'adminpresets_editor_tinymce_json_setting_textarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_database_admin_setting_category' => 'adminpresets_admin_setting_configselect',
             'adminpresets_enrol_flatfile_role_setting' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_ldap_admin_setting_category' => 'adminpresets_admin_setting_configselect',
@@ -184,7 +183,8 @@ class manager {
      * @param boolean $sitedbvalues Indicates if $dbsettings comes from the site db or not
      * @param array $settings Array format $array['plugin']['settingname'] = settings_types child class
      * @param array|false $children Array of admin_category children or false
-     * @return    array Array format $array['plugin']['settingname'] = settings_types child class
+     * @return \core_adminpresets\local\setting\adminpresets_setting[][] Array format
+     *    $array['plugin']['settingname'] = adminpresets_setting child class
      */
     public function get_settings(array $dbsettings, bool $sitedbvalues = false, array $settings = [], $children = false): array {
         global $DB;
@@ -309,11 +309,17 @@ class manager {
 
         $classname = null;
 
-        // Getting the appropiate class to get the correct setting value.
+        // Getting the appropriate class to get the correct setting value.
         $settingtype = get_class($settingdata);
-
         // Check if it is a setting from a plugin.
-        $plugindata = explode('_', $settingtype);
+        $namespacedata = explode('\\', $settingtype);
+        if (count($namespacedata) > 1) {
+            $plugindata = explode('_', $namespacedata[0]);
+            $settingtype = end($namespacedata);
+        } else {
+            $plugindata = explode('_', $settingtype, 2);
+        }
+
         $types = \core_component::get_plugin_types();
         if (array_key_exists($plugindata[0], $types)) {
             $plugins = \core_component::get_plugin_list($plugindata[0]);
@@ -755,8 +761,8 @@ class manager {
     public function delete_preset(int $presetid): void {
         global $DB;
 
-        // Check the preset exists.
-        $preset = $DB->get_record('adminpresets', ['id' => $presetid]);
+        // Check the preset exists (cannot delete the pre-installed core "Starter" and "Full" presets).
+        $preset = $DB->get_record('adminpresets', ['id' => $presetid, 'iscore' => self::NONCORE_PRESET]);
         if (!$preset) {
             throw new moodle_exception('errordeleting', 'core_adminpresets');
         }

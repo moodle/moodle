@@ -43,7 +43,7 @@ abstract class scanner {
     /** Scanning result indicating the error. */
     const SCAN_RESULT_ERROR = 2;
 
-    /** @var stdClass the config for antivirus */
+    /** @var \stdClass the config for antivirus */
     protected $config;
     /** @var string scanning notice */
     protected $scanningnotice = '';
@@ -101,7 +101,7 @@ abstract class scanner {
      *
      * @return bool True if plugin has been configured.
      */
-    public abstract function is_configured();
+    abstract public function is_configured();
 
     /**
      * Scan file.
@@ -110,7 +110,7 @@ abstract class scanner {
      * @param string $filename Name of the file (could be different from physical file if temp file is used).
      * @return int Scanning result constants.
      */
-    public abstract function scan_file($file, $filename);
+    abstract public function scan_file($file, $filename);
 
     /**
      * Scan data.
@@ -235,7 +235,7 @@ abstract class scanner {
      *
      * @return array
      */
-    public function get_messages() : array {
+    public function get_messages(): array {
         return $this->messages;
     }
 

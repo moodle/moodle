@@ -42,29 +42,8 @@
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
 
-defined('MOODLE_INTERNAL') || die;
-
 function xmldb_label_upgrade($oldversion) {
     global $CFG, $DB;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2022101300) {
-        $module = $DB->get_field('modules', 'id', ['name' => 'label']);
-        $DB->execute('
-            UPDATE {course_modules}
-               SET visible = 0, visibleoncoursepage = 1
-             WHERE module = :module
-                   AND visible = 1
-                   AND visibleoncoursepage = 0',
-            ['module' => $module]
-        );
-        upgrade_mod_savepoint(true, 2022101300, 'label');
-    }
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
@@ -76,7 +55,7 @@ function xmldb_label_upgrade($oldversion) {
         $params = ['tofind' => '%@@PLUGINFILE@@%'];
         $total = $DB->count_records_select('label', $select, $params);
         if ($total > 0) {
-            $labels = $DB->get_recordset_select('label', $select, $params, 'id, name, intro');
+            $labels = $DB->get_recordset_select('label', $select, $params, '', 'id, name, intro');
 
             // Show a progress bar.
             $pbar = new progress_bar('upgrademodlabelpluginfile', 500, true);
@@ -111,6 +90,18 @@ function xmldb_label_upgrade($oldversion) {
         force_current_language($prevlang);
         upgrade_mod_savepoint(true, 2022112801, 'label');
     }
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

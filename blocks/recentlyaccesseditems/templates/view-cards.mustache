@@ -34,27 +34,30 @@
                 "name": "Forum",
                 "timeaccess": 1539848498,
                 "userid": 2,
-                "viewurl": "http://moodlesite/mod/forum?id=64"
+                "viewurl": "http://moodlesite/mod/forum?id=64",
+                "purpose": "assessment"
             }
         ]
     }
 }}
 
-<div class="card-deck dashboard-card-deck one-row" data-region="items-list" role="list">
+<div data-region="items-list" role="list">
     {{#items}}
-        <a class="card dashboard-card mb-1" href="{{{viewurl}}}" title="{{{name}}}" role="listitem">
-            <div class="card-body p-2 m-1">
-                <div class="d-flex text-truncate">
-                    <div class="d-flex align-self-center activityiconcontainer {{purpose}}">
-                        {{{icon}}}
-                    </div>
-                    <div class="w-100 line-height-3 text-truncate ml-2">
-                        <h6 class="mb-0 text-truncate"><span class="clickable">{{{name}}}</span></h6>
-                        <small class="text-truncate mb-0">{{{coursename}}}</small>
+        <div class="card mb-1" role="listitem">
+            <a href="{{{viewurl}}}" title="{{{name}}}">
+                <div class="card-body p-2 m-1">
+                    <div class="d-flex text-truncate">
+                        <div class="d-flex align-self-center activityiconcontainer">
+                            {{{icon}}}
+                        </div>
+                        <div class="w-100 line-height-3 text-truncate ms-2">
+                            <h6 class="mb-0 text-truncate"><span class="clickable">{{{name}}}</span></h6>
+                            <small class="text-truncate mb-0">{{{coursename}}}</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
     {{/items}}
 </div>
 {{#hasmoreitems}}

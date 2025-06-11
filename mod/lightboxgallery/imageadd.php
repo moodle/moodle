@@ -47,8 +47,6 @@ if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot.'/mod/lightboxgallery/view.php?id='.$cm->id);
 
 } else if (($formdata = $mform->get_data()) && confirm_sesskey()) {
-    require_once($CFG->dirroot . '/lib/uploadlib.php');
-
     $fs = get_file_storage();
     $draftid = file_get_submitted_draft_itemid('image');
     if (!$files = $fs->get_area_files(

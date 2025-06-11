@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_aiplacement/modalfootertext
+
+    Template to display the footer of the AI text modal within the Tiny Editor.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * elementid: The id of the element that will be used to create the modal.
+
+    Example context (json):
+    {
+        "elementid": "exampleId"
+    }
+}}
+<div class="tiny-aiplacement-generate-footer">
+    <button type="button" class="btn btn-secondary" data-action="cancel">
+        {{#str}} cancel, moodle {{/str}}
+    </button>
+    <button id="{{elementid}}_tiny_aiplacement_generatebutton" type="button" class="btn btn-primary" data-action="generate" disabled="disabled">
+        <span class="d-inline-block">
+            {{#pix}} sparkles-white, tiny_aiplacement {{/pix}}
+        </span>
+        <span class="d-inline-block">
+            {{#str}} generatetext, tiny_aiplacement {{/str}}
+        </span>
+    </button>
+    <button id="{{elementid}}_tiny_aiplacement_prevbutton" type="button" class="btn btn-primary hidden" data-action="back">
+        <span class="d-inline-block">
+            {{#str}} back, tiny_aiplacement {{/str}}
+        </span>
+    </button>
+    <button id="{{elementid}}_tiny_aiplacement_insertbutton" type="button" class="btn btn-primary hidden" data-action="inserter">
+        <span class="d-inline-block">
+            {{#str}} insert, tiny_aiplacement {{/str}}
+        </span>
+        <span class="d-inline-block">
+            {{#pix}} t/collapsedchevron, core {{/pix}}
+        </span>
+    </button>
+</div>

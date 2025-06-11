@@ -28,7 +28,7 @@ require_login();
 
 // Ensure the site admin is the page user.
 if (!is_siteadmin($USER->id)) {
-    print_error('need_permission', 'block_backadel');
+    moodle_exception('need_permission', 'block_backadel');
 }
 
 // Page Setup.

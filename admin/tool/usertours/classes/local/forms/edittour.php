@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir . '/formslib.php');
 
-use \tool_usertours\helper;
+use tool_usertours\helper;
+use tool_usertours\tour;
 
 /**
  * Form for editing tours.
@@ -64,7 +65,7 @@ class edittour extends \moodleform {
         $mform->setType('id', PARAM_INT);
 
         // Name of the tour.
-        $mform->addElement('text', 'name', get_string('name', 'tool_usertours'));
+        $mform->addElement('text', 'name', get_string('name', 'tool_usertours'), ['size' => '80']);
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'name', 'tool_usertours');
@@ -75,18 +76,29 @@ class edittour extends \moodleform {
         $mform->addHelpButton('description', 'description', 'tool_usertours');
 
         // Application.
-        $mform->addElement('text', 'pathmatch', get_string('pathmatch', 'tool_usertours'));
+        $mform->addElement('text', 'pathmatch', get_string('pathmatch', 'tool_usertours'), ['size' => '80']);
         $mform->setType('pathmatch', PARAM_RAW);
         $mform->addHelpButton('pathmatch', 'pathmatch', 'tool_usertours');
 
         $mform->addElement('checkbox', 'enabled', get_string('tourisenabled', 'tool_usertours'));
 
-        $mform->addElement('text', 'endtourlabel', get_string('endtourlabel', 'tool_usertours'));
+        $mform->addElement('text', 'endtourlabel', get_string('endtourlabel', 'tool_usertours'), ['size' => '80']);
         $mform->setType('endtourlabel', PARAM_TEXT);
         $mform->addHelpButton('endtourlabel', 'endtourlabel', 'tool_usertours');
 
         $mform->addElement('checkbox', 'displaystepnumbers', get_string('displaystepnumbers', 'tool_usertours'));
         $mform->addHelpButton('displaystepnumbers', 'displaystepnumbers', 'tool_usertours');
+
+        $mform->addElement(
+            'select',
+            'showtourwhen',
+            get_string('showtourwhen', 'tool_usertours'),
+            [
+                tour::SHOW_TOUR_UNTIL_COMPLETE => get_string('showtouruntilcomplete', 'tool_usertours'),
+                tour::SHOW_TOUR_ON_EACH_PAGE_VISIT => get_string('showtoureachtime', 'tool_usertours'),
+            ]
+        );
+        $mform->setDefault('showtourwhen', tour::SHOW_TOUR_UNTIL_COMPLETE);
 
         // Configuration.
         $this->tour->add_config_to_form($mform);

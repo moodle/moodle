@@ -40,39 +40,39 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\output\edit_nav_actions;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-// These params are only passed from page request to request while we stay on
-// this page otherwise they would go in question_edit_setup.
-$scrollpos = optional_param('scrollpos', '', PARAM_INT);
+$mdlscrollto = optional_param('mdlscrollto', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-        question_edit_setup('editq', '/mod/quiz/edit.php', true);
+    question_edit_setup('editq', '/mod/quiz/edit.php', true);
+
+$PAGE->set_url($thispageurl);
+$PAGE->set_secondary_active_tab("mod_quiz_edit");
+
+// You need mod/quiz:manage in addition to question capabilities to access this page.
+require_capability('mod/quiz:manage', $contexts->lowest());
+
+// Get the course object and related bits.
+$course = get_course($quiz->course);
+$quizobj = new quiz_settings($quiz, $cm, $course);
+$structure = $quizobj->get_structure();
+$gradecalculator = $quizobj->get_grade_calculator();
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
-$PAGE->set_url($thispageurl);
-$PAGE->set_secondary_active_tab("mod_quiz_edit");
-
-// Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
-$quizobj = new quiz($quiz, $cm, $course);
-$structure = $quizobj->get_structure();
-
-// You need mod/quiz:manage in addition to question capabilities to access this page.
-require_capability('mod/quiz:manage', $contexts->lowest());
-
 // Process commands ============================================================.
 
 // Get the list of question ids had their check-boxes ticked.
-$selectedslots = array();
+$selectedslots = [];
 $params = (array) data_submitted();
 foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
@@ -81,9 +81,6 @@ foreach ($params as $key => $value) {
 }
 
 $afteractionurl = new moodle_url($thispageurl);
-if ($scrollpos) {
-    $afteractionurl->param('scrollpos', $scrollpos);
-}
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the quiz.
@@ -94,6 +91,10 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
+if ($mdlscrollto) {
+    $afteractionurl->param('mdlscrollto', $mdlscrollto);
+}
+
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
     // Add a single question to the current quiz.
     $structure->check_can_be_edited();
@@ -101,7 +102,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     $thispageurl->param('lastchanged', $addquestion);
     redirect($afteractionurl);
 }
@@ -119,7 +120,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
         }
     }
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
@@ -141,7 +142,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
 
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
@@ -150,9 +151,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     // If rescaling is required save the new maximum.
     $maxgrade = unformat_float(optional_param('maxgrade', '', PARAM_RAW_TRIMMED), true);
     if (is_float($maxgrade) && $maxgrade >= 0) {
-        quiz_set_grade($maxgrade, $quiz);
-        quiz_update_all_final_grades($quiz);
-        quiz_update_grades($quiz, 0, true);
+        $gradecalculator->update_quiz_maximum_grade($maxgrade);
     }
 
     redirect($afteractionurl);
@@ -168,10 +167,6 @@ $event = \mod_quiz\event\edit_page_viewed::create([
 ]);
 $event->trigger();
 
-// Get the question bank view.
-$questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);
-$questionbank->set_quiz_has_attempts($quizhasattempts);
-
 // End of process commands =====================================================.
 
 $PAGE->set_pagelayout('incourse');
@@ -186,30 +181,40 @@ $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING)
 if ($node) {
     $node->make_active();
 }
-echo $OUTPUT->header();
+
+// Add random question - result message.
+if ($message = optional_param('message', '', PARAM_TEXT)) {
+    core\notification::add($message, core\notification::SUCCESS);
+}
+
+$tertiarynav = new edit_nav_actions($cmid, edit_nav_actions::SUMMARY);
+
+// Do output.
+echo $output->header();
+echo $output->render($tertiarynav);
 
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass();
-$quizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
-$quizeditconfig->dialoglisteners = array();
+$quizeditconfig->url = $thispageurl->out(true, ['qbanktool' => '0']);
+$quizeditconfig->dialoglisteners = [];
 $numberoflisteners = $DB->get_field_sql("
     SELECT COALESCE(MAX(page), 1)
       FROM {quiz_slots}
-     WHERE quizid = ?", array($quiz->id));
+     WHERE quizid = ?", [$quiz->id]);
 
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
 }
 
 $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
-$PAGE->requires->js('/question/qengine.js');
+$PAGE->requires->js_call_amd('core_question/question_engine');
 
 // Questions wrapper start.
-echo html_writer::start_tag('div', array('class' => 'mod-quiz-edit-content'));
+echo html_writer::start_tag('div', ['class' => 'mod-quiz-edit-content']);
 
 echo $output->edit_page($quizobj, $structure, $contexts, $thispageurl, $pagevars);
 
 // Questions wrapper end.
 echo html_writer::end_tag('div');
 
-echo $OUTPUT->footer();
+echo $output->footer();

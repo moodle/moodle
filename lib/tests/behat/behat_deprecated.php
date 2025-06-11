@@ -18,8 +18,6 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
 
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-
 /**
  * Steps definitions that are now deprecated and will be removed in the next releases.
  *
@@ -33,18 +31,4 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_deprecated extends behat_deprecated_base {
-
-    /**
-     * Clicks link with specified id|title|alt|text in the flat navigation drawer.
-     *
-     * @When /^I select "(?P<link_string>(?:[^"]|\\")*)" from flat navigation drawer$/
-     * @param string $link
-     * @deprecated Since Moodle 4.0
-     */
-    public function i_select_from_flat_navigation_drawer(string $link) {
-        $this->deprecated_message(['i_select_from_primary_navigation', 'i_select_from_secondary_navigation']);
-
-        $this->execute('behat_navigation::i_open_flat_navigation_drawer');
-        $this->execute('behat_general::i_click_on_in_the', [$link, 'link', '#nav-drawer', 'css_element']);
-    }
 }

@@ -33,14 +33,14 @@ require_once(__DIR__ . '/../../lib/enrollib.php');
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analysers_test extends \advanced_testcase {
+final class analysers_test extends \advanced_testcase {
 
     /**
      * test_courses_analyser
      *
      * @return void
      */
-    public function test_courses_analyser() {
+    public function test_courses_analyser(): void {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -57,7 +57,6 @@ class analysers_test extends \advanced_testcase {
         // Just 1 sample per course.
         $class = new \ReflectionClass('\core\analytics\analyser\courses');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $this->assertCount(1, $sampleids);
         $sampleid = reset($sampleids);
@@ -87,7 +86,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_site_courses_analyser() {
+    public function test_site_courses_analyser(): void {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -107,7 +106,6 @@ class analysers_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\site_courses');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $this->assertCount(3, $sampleids);
 
@@ -130,7 +128,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_student_enrolments_analyser() {
+    public function test_student_enrolments_analyser(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -159,7 +157,6 @@ class analysers_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         // Only students.
         $this->assertCount(2, $sampleids);
@@ -197,7 +194,7 @@ class analysers_test extends \advanced_testcase {
      *
      * @return null
      */
-    public function test_get_analysables_iterator() {
+    public function test_get_analysables_iterator(): void {
         global $DB;
 
         $this->resetAfterTest(true);

@@ -18,13 +18,14 @@ Feature: Test the calendar related features in the attendance module
       | course   | C1              |
       | idnumber | 00001           |
       | name     | Test attendance |
+    And the following "blocks" exist:
+      | blockname         | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month    | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
 
   @javascript
   Scenario: Calendar events can be created automatically with sessions creation
-    Given I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I am on the "Test attendance" "mod_attendance > View" page
+    Given I am on the "Test attendance" "mod_attendance > View" page
     And I click on "Add session" "button"
     And I set the following fields to these values:
       | id_sestime_starthour   | 23 |
@@ -33,5 +34,5 @@ Feature: Test the calendar related features in the attendance module
       | id_sestime_endminute   | 55 |
     And I click on "id_submitbutton" "button"
     And I am on "Course 1" course homepage
-    And I click on "Full calendar" "link"
+    And I follow "Course calendar"
     Then I should see "Test attendance"

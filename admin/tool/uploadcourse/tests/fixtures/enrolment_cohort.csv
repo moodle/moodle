@@ -1,0 +1,6 @@
+shortname,fullname,category_idnumber,enrolment_1,enrolment_1_role,enrolment_1_cohortidnumber
+C1,Course 1,CAT1,cohort,student,Not exist
+C1,Course 1,CAT1,cohort,student,CV3
+C2,Course 2,CAT2,cohort,student,CV4
+C3,Course 3,CAT1,cohort,student,CV5
+C4,Course 3,CAT1,cohort,student1,CV6

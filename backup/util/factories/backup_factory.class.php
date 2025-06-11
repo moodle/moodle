@@ -159,7 +159,7 @@ abstract class backup_factory {
     /**
      * Dispatches the creation of the @backup_plan to the proper format builder
      */
-    static public function build_plan($controller) {
+    public static function build_plan($controller) {
         backup_plan_builder::build_plan($controller);
     }
 }

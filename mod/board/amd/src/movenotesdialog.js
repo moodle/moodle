@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-import ModalFactory from 'core/modal_factory';
+import ModalCancel from 'core/modal_cancel';
 import ModalEvents from 'core/modal_events';
 import Notification from 'core/notification';
 import $ from "jquery";
@@ -110,8 +110,7 @@ const moveLink = (columnId, movingNoteId, targetNoteId, movingNoteColumn, sortOr
  */
 const displayMoveModal = (moveNoteControl) => {
     const modalTitle = moveNoteControl.getAttribute('aria-label');
-    ModalFactory.create({
-        type: ModalFactory.types.CANCEL,
+    ModalCancel.create({
         title: modalTitle,
         body: getDestinationsList(moveNoteControl)
     }).then((modal) => {

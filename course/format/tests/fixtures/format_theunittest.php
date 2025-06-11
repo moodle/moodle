@@ -82,4 +82,25 @@ class format_theunittest extends core_courseformat\base {
             }
         }
     }
+
+    /**
+     * Returns true if this course format uses sections
+     */
+    public function uses_sections() {
+        return true;
+    }
+
+    /**
+     * Returns true if this course format is compatible with content components.
+     *
+     * Using components means the content elements can watch the frontend course state and
+     * react to the changes. Formats with component compatibility can have more interactions
+     * without refreshing the page, like having drag and drop from the course index to reorder
+     * sections and activities.
+     *
+     * @return bool if the format is compatible with components.
+     */
+    public function supports_components() {
+        return true;
+    }
 }

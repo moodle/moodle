@@ -25,8 +25,6 @@
 
 namespace auth_oidc\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event fired when a user authenticated with OIDC, but does not log in.
  */

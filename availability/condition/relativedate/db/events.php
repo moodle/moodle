@@ -18,7 +18,7 @@
  * Events for availability_relativedate
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Stefan Hanauska <stefan.hanauska@altmuehlnet.de>
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

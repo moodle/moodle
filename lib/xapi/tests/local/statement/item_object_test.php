@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_object_test extends advanced_testcase {
+final class item_object_test extends advanced_testcase {
 
     /**
      * Test item creation with agent.
@@ -117,7 +117,7 @@ class item_object_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public static function invalid_data_provider(): array {
         return [
             'Empty or null id' => [
                 '',

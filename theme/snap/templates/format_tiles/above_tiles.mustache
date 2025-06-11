@@ -1,0 +1,108 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_tiles/above_tiles
+
+    Example context (json):
+    {
+        "editing": "0",
+        "section_zero_show": "1",
+        "is_multi_section": "1",
+        "has_filter_buttons": "1",
+        "filternumberedbuttons": [{
+            "id": 12345,
+            "buttonnum": 2,
+            "sections": [3,4,5],
+            "title": "3-5"
+        }]
+    }
+}}
+
+{{#editorwarnings}}
+    <div class="alert alert-{{class}} alert-block fade show"><i class="icon fa fa-{{icon}}"></i>{{{text}}}
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
+        </button>
+    </div>
+{{/editorwarnings}}
+
+<div id="section-zero-container" class="{{^usingjsnav}}format-tiles-no-js{{/usingjsnav}}{{^section_zero_show}} section-zero-empty{{/section_zero_show}}">
+
+    {{! on xs devices, show buttons separately at top }}
+    <div class="d-block d-sm-none">{{>format_tiles/above_tiles_buttons}}</div>
+    <div class="row">
+        <div class="col-sm-11">{{> format_tiles/section_zero}}</div>
+        <div class="col-sm-1 d-none d-sm-block" id="buttonhidesec0">
+            {{! on sm and larger devices, show buttons to right of sec zero }}
+            {{>format_tiles/above_tiles_buttons}}
+        </div>
+    </div>
+
+
+</div>
+{{! Open LMS patch. }}
+{{#has_filter_buttons}}
+    <div id="snap-tiles-with-filter-buttons">
+{{/has_filter_buttons}}
+{{! Open LMS patch end.}}
+{{^editing}}
+        <div id="abovetiles"
+             class="{{#has_filter_buttons}}justify-content-between{{/has_filter_buttons}}{{^has_filter_buttons}}justify-content-end{{/has_filter_buttons}} tilestyle-{{tilestyle}}{{^section_zero_show}} section-zero-empty{{/section_zero_show}}">
+        {{! Open LMS patch. }}
+        <div id="headerabovetiles" class="headerabovetiles" aria-hidden="true">
+        <div id="snap-course-dashboard">
+            <a href="{{urlcoursetools}}" id="snap-course-tools" class="tiles-dashboard">
+                <img src="{{imgurltools}}" class="svg-icon" alt="" />{{#str}}coursetools, theme_snap{{/str}}
+            </a>
+        </div>
+        {{! Open LMS patch end. }}
+        {{#is_multi_section}}
+            {{#has_filter_buttons}}
+                <div id="filterbuttons">
+                    <span id="filterintro">
+                        {{#pix}}filter, format_tiles, {{#str}}filters, format_tiles{{/str}}{{/pix}}
+                    </span>
+                    {{#filternumberedbuttons}}
+                        {{> format_tiles/filterbutton}}
+                    {{/filternumberedbuttons}}
+                    {{#filteroutcomebuttons}}
+                        {{> format_tiles/filterbutton}}
+                    {{/filteroutcomebuttons}}
+                    <div id="filterbutton-all" class="filterbutton" data-buttonid="all" data-sections="[all]">
+                        {{#str}}all, format_tiles{{/str}}
+                    </div>
+                </div>
+            {{/has_filter_buttons}}
+            <div id="tiles-overall-progress-outer" class="ml-auto me-1 mb-2 pt-1 d-none d-sm-block{{#overall_progress_indicator.isComplete}} is-complete{{/overall_progress_indicator.isComplete}}">
+                {{#overall_progress_indicator}}
+                    {{> format_tiles/progress}}
+                {{/overall_progress_indicator}}
+            </div>
+        {{/is_multi_section}}
+        {{^is_multi_section}}
+            {{^editing}}{{#section_zero_show}}
+                <div class="buttonhidesec0 open ms-1" id="buttonhidesec0"></div>
+            {{/section_zero_show}}{{/editing}}
+        {{/is_multi_section}}
+    </div>
+    {{! Open LMS patch. }}
+    {{#has_filter_buttons}}
+        </div>
+    {{/has_filter_buttons}}
+    {{! Open LMS patch end. }}
+{{/editing}}

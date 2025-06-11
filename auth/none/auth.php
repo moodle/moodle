@@ -57,7 +57,7 @@ class auth_plugin_none extends auth_plugin_base {
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    function user_login ($username, $password) {
+    function user_login($username, $password) {
         global $CFG, $DB;
         if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return validate_internal_user_password($user, $password);

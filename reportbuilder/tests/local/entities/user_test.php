@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\entities;
 
 use advanced_testcase;
+use core\context\system;
 
 /**
  * Unit tests for user entity
@@ -28,7 +29,7 @@ use advanced_testcase;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_test extends advanced_testcase {
+final class user_test extends advanced_testcase {
 
     /**
      * Test getting user identity column
@@ -46,6 +47,35 @@ class user_test extends advanced_testcase {
 
         $columnprofilefield = $user->get_identity_column('profile_field_hi');
         $this->assertEquals('user:profilefield_hi', $columnprofilefield->get_unique_identifier());
+    }
+
+    /**
+     * Test getting all user identity columns
+     */
+    public function test_get_identity_columns(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
+        set_config('showuseridentity', 'username,profilefield_hi');
+        $context = system::instance();
+
+        $user = new user();
+        $user->initialise();
+
+        // All columns.
+        $this->assertEqualsCanonicalizing([
+            'user:username',
+            'user:profilefield_hi',
+        ], array_map(
+            fn($column) => $column->get_unique_identifier(),
+            $user->get_identity_columns($context),
+        ));
+
+        // Exclude username.
+        $columns = $user->get_identity_columns($context, ['username']);
+        $this->assertCount(1, $columns);
+        $this->assertEquals('user:profilefield_hi', reset($columns)->get_unique_identifier());
     }
 
     /**
@@ -67,12 +97,42 @@ class user_test extends advanced_testcase {
     }
 
     /**
+     * Test getting all user identity filters
+     */
+    public function test_get_identity_filters(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
+        set_config('showuseridentity', 'username,profilefield_hi');
+        $context = system::instance();
+
+        $user = new user();
+        $user->initialise();
+
+        // All filters.
+        $this->assertEqualsCanonicalizing([
+            'user:username',
+            'user:profilefield_hi',
+        ], array_map(
+            fn($filter) => $filter->get_unique_identifier(),
+            $user->get_identity_columns($context),
+        ));
+
+        // Exclude username.
+        $filters = $user->get_identity_filters($context, ['username']);
+        $this->assertCount(1, $filters);
+        $this->assertEquals('user:profilefield_hi', reset($filters)->get_unique_identifier());
+    }
+
+    /**
      * Data provider for {@see test_get_name_fields_select}
      *
      * @return array
      */
-    public function get_name_fields_select_provider(): array {
+    public static function get_name_fields_select_provider(): array {
         return [
+            ['firstname', ['firstname']],
             ['firstname lastname', ['firstname', 'lastname']],
             ['firstname middlename lastname', ['firstname', 'middlename', 'lastname']],
             ['alternatename lastname firstname', ['alternatename', 'lastname', 'firstname']],
@@ -94,10 +154,15 @@ class user_test extends advanced_testcase {
 
         set_config('alternativefullnameformat', $fullnamedisplay);
 
+        // As a user without permission to view all fields we always get the standard ones.
         $fields = user::get_name_fields_select('u');
         $user = $DB->get_record_sql("SELECT {$fields} FROM {user} u WHERE username = :username", ['username' => 'admin']);
+        $this->assertEquals(['firstname', 'lastname'], array_keys((array) $user));
 
-        // Ensure we received back all name fields.
+        // As the admin we get all name fields from alternativefullnameformat.
+        $this->setAdminUser();
+        $fields = user::get_name_fields_select('u');
+        $user = $DB->get_record_sql("SELECT {$fields} FROM {user} u WHERE username = :username", ['username' => 'admin']);
         $this->assertEquals($expecteduserfields, array_keys((array) $user));
     }
 }

@@ -31,7 +31,7 @@ class block_login extends block_base {
         return array('site' => true);
     }
 
-    function get_content () {
+    function get_content() {
         global $USER, $CFG, $SESSION, $OUTPUT;
         require_once($CFG->libdir . '/authlib.php');
 
@@ -66,18 +66,27 @@ class block_login extends block_base {
 
             $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'">';
 
-            $this->content->text .= '<div class="form-group">';
+            $this->content->text .= '<div class="mb-3">';
             $this->content->text .= '<label for="login_username">'.$strusername.'</label>';
             $this->content->text .= '<input type="text" name="username" id="login_username" ';
             $this->content->text .= ' class="form-control" value="'.s($username).'" autocomplete="username"/></div>';
 
-            $this->content->text .= '<div class="form-group"><label for="login_password">'.get_string('password').'</label>';
+            $this->content->text .= '<div class="mb-3"><label for="login_password">'.get_string('password').'</label>';
 
             $this->content->text .= '<input type="password" name="password" id="login_password" ';
             $this->content->text .= ' class="form-control" value="" autocomplete="current-password"/>';
             $this->content->text .= '</div>';
 
-            $this->content->text .= '<div class="form-group">';
+            // ReCaptcha.
+            if (login_captcha_enabled()) {
+                require_once($CFG->libdir . '/recaptchalib_v2.php');
+                $this->content->text .= '<div class="mb-3">';
+                $this->content->text .= recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey,
+                    current_language(), true);
+                $this->content->text .= '</div>';
+            }
+
+            $this->content->text .= '<div class="mb-3">';
             $this->content->text .= '<input type="submit" class="btn btn-primary btn-block" value="'.get_string('login').'" />';
             $this->content->text .= '</div>';
             $this->content->text .= '<input type="hidden" name="logintoken" value="'.s(\core\session\manager::get_login_token()).'" />';
@@ -107,7 +116,7 @@ class block_login extends block_base {
                     $this->content->text .= '<a class="btn btn-secondary btn-block" ';
                     $this->content->text .= 'href="' . $idp['url']->out() . '" title="' . s($idp['name']) . '">';
                     if (!empty($idp['iconurl'])) {
-                        $this->content->text .= '<img src="' . s($idp['iconurl']) . '" width="24" height="24" class="mr-1"/>';
+                        $this->content->text .= '<img src="' . s($idp['iconurl']) . '" width="24" height="24" class="me-1"/>';
                     }
                     $this->content->text .= s($idp['name']) . '</a></div>';
                 }

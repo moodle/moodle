@@ -36,19 +36,20 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         // Create user and RSS user keys.
         $user = $this->getDataGenerator()->create_user();
         $context = \context_user::instance($user->id);
@@ -61,7 +62,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         // Create user and RSS user keys.
@@ -72,6 +73,7 @@ class provider_test extends provider_testcase {
 
         // Validate exported data.
         $this->setUser($user);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'core_rss');
@@ -83,7 +85,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create user and RSS user keys.
@@ -107,7 +109,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create user and RSS user keys.
@@ -133,7 +135,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'core_rss';
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
@@ -163,7 +165,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'core_rss';
         // Create a user1.
         $user1 = $this->getDataGenerator()->create_user();

@@ -33,7 +33,7 @@ $userid = required_param('userid', PARAM_INT);
 require_login();
 
 if ( ! $course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
+    moodle_exception('nocourseid');
 }
 
 $gpr = new grade_plugin_return(['type' => 'report', 'plugin' => 'forecast', 'courseid' => $courseid, 'userid' => $userid]);

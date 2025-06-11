@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . "/../../../../webservice/lib.php");
 require_once(__DIR__ . "/../../../../user/lib.php");
+require_once(__DIR__ . "/../../../../user/profile/lib.php");
+require_once(__DIR__ . "/../../../../lib/externallib.php");
 
 
 class auto_config {
@@ -272,7 +274,7 @@ class auto_config {
         if ($existing) {
             $this->token = $existing->token;
         } else {
-            $this->token = external_generate_token(EXTERNAL_TOKEN_PERMANENT, $service->id,
+            $this->token = \external_generate_token(EXTERNAL_TOKEN_PERMANENT, $service->id,
                 $this->user->id, $context);
         }
     }

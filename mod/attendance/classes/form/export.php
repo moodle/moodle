@@ -43,6 +43,7 @@ class export extends \moodleform {
         $course        = $this->_customdata['course'];
         $cm            = $this->_customdata['cm'];
         $modcontext    = $this->_customdata['modcontext'];
+        $grouplist    = [];
 
         $mform->addElement('header', 'general', get_string('export', 'attendance'));
 
@@ -62,12 +63,12 @@ class export extends \moodleform {
         $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
         $allusers = get_enrolled_users($modcontext, 'mod/attendance:canbelisted', 0, 'u.id,'.$namefields);
-        $userlist = array();
+        $userlist = [];
         foreach ($allusers as $user) {
             $userlist[$user->id] = fullname($user);
         }
         unset($allusers);
-        $tempusers = $DB->get_records('attendance_tempusers', array('courseid' => $course->id), 'studentid, fullname');
+        $tempusers = $DB->get_records('attendance_tempusers', ['courseid' => $course->id], 'studentid, fullname');
         foreach ($tempusers as $user) {
             $userlist[$user->studentid] = $user->fullname;
         }
@@ -76,15 +77,18 @@ class export extends \moodleform {
             return;
         }
 
-        list($gsql, $gparams) = $DB->get_in_or_equal(array_keys($grouplist), SQL_PARAMS_NAMED);
-        list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userlist), SQL_PARAMS_NAMED);
-        $params = array_merge($gparams, $uparams);
-        $groupmembers = $DB->get_recordset_select('groups_members', "groupid {$gsql} AND userid {$usql}", $params,
-                                                  '', 'groupid, userid');
-        $groupmappings = array();
+        $groupmembers = [];
+        if (!empty($grouplist)) {
+            list($gsql, $gparams) = $DB->get_in_or_equal(array_keys($grouplist), SQL_PARAMS_NAMED);
+            list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userlist), SQL_PARAMS_NAMED);
+            $params = array_merge($gparams, $uparams);
+            $groupmembers = $DB->get_recordset_select('groups_members', "groupid {$gsql} AND userid {$usql}", $params,
+                                                      '', 'groupid, userid');
+        }
+        $groupmappings = [];
         foreach ($groupmembers as $groupmember) {
             if (!isset($groupmappings[$groupmember->groupid])) {
-                $groupmappings[$groupmember->groupid] = array();
+                $groupmappings[$groupmember->groupid] = [];
             }
             $groupmappings[$groupmember->groupid][$groupmember->userid] = $userlist[$groupmember->userid];
         }
@@ -95,15 +99,15 @@ class export extends \moodleform {
         $mform->addElement('select', 'group', get_string('group'), $grouplist);
 
         $mform->addElement('selectyesno', 'selectedusers', get_string('onlyselectedusers', 'mod_attendance'));
-        $sel = $mform->addElement('select', 'users', get_string('users', 'mod_attendance'), $userlist, array('size' => 12));
+        $sel = $mform->addElement('select', 'users', get_string('users', 'mod_attendance'), $userlist, ['size' => 12]);
         $sel->setMultiple(true);
         $mform->disabledIf('users', 'selectedusers', 'eq', 0);
 
-        $opts = array('groupmappings' => $groupmappings);
-        $PAGE->requires->yui_module('moodle-mod_attendance-groupfilter', 'M.mod_attendance.groupfilter.init', array($opts));
+        $opts = ['groupmappings' => $groupmappings];
+        $PAGE->requires->yui_module('moodle-mod_attendance-groupfilter', 'M.mod_attendance.groupfilter.init', [$opts]);
 
-        $ident = array();
-        $checkedfields = array();
+        $ident = [];
+        $checkedfields = [];
 
         $adminsetfields = get_config('attendance', 'customexportfields');
         if (in_array('id', explode(',', $adminsetfields))) {
@@ -124,14 +128,14 @@ class export extends \moodleform {
             if ((is_siteadmin($USER) || $field->visible == PROFILE_VISIBLE_ALL || $field->visible == PROFILE_VISIBLE_TEACHERS)
             && in_array($field->shortname, explode(',', $adminsetfields))) {
                 $ident[] =& $mform->createElement('checkbox', $field->shortname, '',
-                    format_string($field->name, true, array('context' => $modcontext)));
+                    format_string($field->name, true, ['context' => $modcontext]));
                 $mform->setType($field->shortname, PARAM_NOTAGS);
                 $checkedfields['ident['. $field->shortname .']'] = true;
             }
         }
 
         if (count($ident) > 0) {
-            $mform->addGroup($ident, 'ident', get_string('identifyby', 'attendance'), array('<br />'), true);
+            $mform->addGroup($ident, 'ident', get_string('identifyby', 'attendance'), ['<br />'], true);
             $mform->setDefaults($checkedfields);
         }
         $mform->setType('id', PARAM_INT);
@@ -147,9 +151,9 @@ class export extends \moodleform {
         $mform->addElement('date_selector', 'sessionenddate', get_string('endofperiod', 'attendance'));
         $mform->disabledIf('sessionenddate', 'includeallsessions', 'checked');
 
-        $formatoptions = array('excel' => get_string('downloadexcel', 'attendance'),
+        $formatoptions = ['excel' => get_string('downloadexcel', 'attendance'),
                                'ooo' => get_string('downloadooo', 'attendance'),
-                               'text' => get_string('downloadtext', 'attendance'));
+                               'text' => get_string('downloadtext', 'attendance'), ];
         $mform->addElement('select', 'format', get_string('format'), $formatoptions);
 
         $submitstring = get_string('ok');

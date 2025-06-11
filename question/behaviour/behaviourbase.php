@@ -74,7 +74,7 @@ abstract class question_behaviour {
      *
      * @param question_definition $question the question.
      */
-    public abstract function is_compatible_question(question_definition $question);
+    abstract public function is_compatible_question(question_definition $question);
 
     /**
      * @return string the name of this behaviour. For example the name of
@@ -347,7 +347,7 @@ abstract class question_behaviour {
         return $this->qa->get_state()->default_string($showcorrectness);
     }
 
-    public abstract function summarise_action(question_attempt_step $step);
+    abstract public function summarise_action(question_attempt_step $step);
 
     /**
      * Initialise the first step in a question attempt when a new
@@ -467,7 +467,7 @@ abstract class question_behaviour {
      *      information can be accessed using {@link question_attempt_step::get_behaviour_var()}.
      * @return bool either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
      */
-    public abstract function process_action(question_attempt_pending_step $pendingstep);
+    abstract public function process_action(question_attempt_pending_step $pendingstep);
 
     /**
      * Auto-saved data. By default this does nothing. interesting processing is

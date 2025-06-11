@@ -126,7 +126,7 @@ class exported_posts {
         array $discussions,
         array $posts,
         bool $includeinlineattachments = false
-    ) : array {
+    ): array {
         // Format the forums and discussion to make them more easily accessed later.
         $forums = array_reduce($forums, function($carry, $forum) {
             $carry[$forum->get_id()] = $forum;
@@ -225,7 +225,7 @@ class exported_posts {
      * @param post_entity[] $posts The list of posts to process.
      * @return array List of grouped posts. Each group has a discussion, forum, and posts.
      */
-    private function group_posts_by_discussion(array $forums, array $discussions, array $posts) : array {
+    private function group_posts_by_discussion(array $forums, array $discussions, array $posts): array {
         return array_reduce($posts, function($carry, $post) use ($forums, $discussions) {
             $discussionid = $post->get_discussion_id();
             if (!isset($discussions[$discussionid])) {
@@ -261,7 +261,7 @@ class exported_posts {
      * @param post_entity[] $posts The list of posts to process.
      * @return author_entity[]
      */
-    private function get_authors_for_posts(array $posts) : array {
+    private function get_authors_for_posts(array $posts): array {
         $authorvault = $this->vaultfactory->get_author_vault();
         return $authorvault->get_authors_for_posts($posts);
     }
@@ -272,7 +272,7 @@ class exported_posts {
      * @param int[] $authorids The list of author ids to fetch context ids for.
      * @return int[] Context ids indexed by author id
      */
-    private function get_author_context_ids(array $authorids) : array {
+    private function get_author_context_ids(array $authorids): array {
         $authorvault = $this->vaultfactory->get_author_vault();
         return $authorvault->get_context_ids_for_author_ids($authorids);
     }
@@ -284,7 +284,7 @@ class exported_posts {
      * @param array $groupedposts List of posts grouped by discussions.
      * @return stored_file[]
      */
-    private function get_inline_attachments_for_posts(array $groupedposts) : array {
+    private function get_inline_attachments_for_posts(array $groupedposts): array {
         $inlineattachmentsbypostid = [];
         $postattachmentvault = $this->vaultfactory->get_post_attachment_vault();
         $postsbyforum = array_reduce($groupedposts, function($carry, $grouping) {
@@ -322,7 +322,7 @@ class exported_posts {
      * @param array $groupedposts List of posts grouped by discussions.
      * @return stored_file[]
      */
-    private function get_attachments_for_posts(array $groupedposts) : array {
+    private function get_attachments_for_posts(array $groupedposts): array {
         $attachmentsbypostid = [];
         $postattachmentvault = $this->vaultfactory->get_post_attachment_vault();
         $postsbyforum = array_reduce($groupedposts, function($carry, $grouping) {
@@ -363,7 +363,7 @@ class exported_posts {
      * @param array $groupedposts List of posts grouped by discussions.
      * @return array List of groups indexed by forum id and then author id.
      */
-    private function get_author_groups_from_posts(array $groupedposts) : array {
+    private function get_author_groups_from_posts(array $groupedposts): array {
         $groupsbyauthorid = [];
         $authoridsbycourseid = [];
 
@@ -432,7 +432,7 @@ class exported_posts {
      * @param post_entity[] $posts The list of posts to load tags for.
      * @return array Sets of tags indexed by post id.
      */
-    private function get_tags_from_posts(array $posts) : array {
+    private function get_tags_from_posts(array $posts): array {
         $postids = array_map(function($post) {
             return $post->get_id();
         }, $posts);

@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_assign\plugininfo;
+
+use core\plugininfo\base;
+use core_plugin_manager;
+use moodle_url;
+
 /**
  * Assign feedback subplugin info class.
  *
@@ -21,14 +27,12 @@
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_assign\plugininfo;
-
-use core\plugininfo\base, core_plugin_manager, moodle_url;
-
-defined('MOODLE_INTERNAL') || die();
-
-
 class assignfeedback extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown

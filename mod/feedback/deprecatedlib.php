@@ -23,32 +23,22 @@
  */
 
 /**
- * Obtains the automatic completion state for this feedback based on the condition
- * in feedback settings.
- *
  * @deprecated since Moodle 3.11
- * @todo MDL-71196 Final deprecation in Moodle 4.3
- * @see \mod_feedback\completion\custom_completion
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
  */
-function feedback_get_completion_state($course, $cm, $userid, $type) {
-    global $DB;
+function feedback_get_completion_state() {
+    $completionclass = \mod_feedback\completion\custom_completion::class;
+    throw new coding_exception(__FUNCTION__ . "() has been removed, please use the '{$completionclass}' class instead");
+}
 
-    // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
-
-    // Get feedback details.
-    $feedback = $DB->get_record('feedback', array('id' => $cm->instance), '*', MUST_EXIST);
-
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($feedback->completionsubmit) {
-        $params = array('userid' => $userid, 'feedback' => $feedback->id);
-        return $DB->record_exists('feedback_completed', $params);
-    } else {
-        // Completion option is not enabled so just return $type.
-        return $type;
-    }
+/**
+ * Returns true if the current role is faked by switching role feature
+ *
+ * @return bool
+ * @deprecated since Moodle 4.5 - please do not use this function any more, {@see is_role_switched}
+ */
+#[\core\attribute\deprecated('is_role_switched', since: '4.5', mdl: 'MDL-72424')]
+function feedback_check_is_switchrole(): bool {
+    global $USER;
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return isset($USER->switchrole) && is_array($USER->switchrole) && count($USER->switchrole) > 0;
 }

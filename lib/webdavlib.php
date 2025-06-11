@@ -50,8 +50,6 @@ class webdav_client {
     private $_socket = '';
     private $_path ='/';
     private $_auth = false;
-    private $_user;
-    private $_pass;
 
     private $_socket_timeout = 5;
     private $_errno;
@@ -88,6 +86,21 @@ class webdav_client {
      */
     private $oauthtoken;
 
+    /** @var string Username (for basic/digest auth, see $auth). */
+    private $_user;
+
+    /** @var string Password (for basic/digest auth, see $auth). */
+    private $_pass;
+
+    /** @var mixed to store xml data that need to be handled. */
+    private $_lock_ref_cdata;
+
+    /** @var mixed to store the deleted xml data. */
+    private $_delete_cdata;
+
+    /** @var string to store the locked xml data. */
+    private $_lock_cdata;
+
     /**#@-*/
 
     /**
@@ -104,8 +117,8 @@ class webdav_client {
             $this->_server = $server;
         }
         if (!empty($user) && !empty($pass)) {
-            $this->user = $user;
-            $this->pass = $pass;
+            $this->_user = $user;
+            $this->_pass = $pass;
         }
         $this->_auth = $auth;
         $this->_socket = $socket;
@@ -1625,7 +1638,7 @@ EOD;
      * @param resource $fp the file handle to write to (or null)
      * @param string &$buffer the buffer to append to (if $fp is null)
      */
-    static private function update_file_or_buffer($chunk, $fp, &$buffer) {
+    private static function update_file_or_buffer($chunk, $fp, &$buffer) {
         if ($fp) {
             fwrite($fp, $chunk);
         } else {
@@ -1716,7 +1729,7 @@ EOD;
             if (iconv('UTF-8', 'UTF-8', $parts[$i]) == $parts[$i]) {
                 $parts[$i] = rawurlencode($parts[$i]);
             } else {
-                $parts[$i] = rawurlencode(utf8_encode($parts[$i]));
+                $parts[$i] = rawurlencode(\core_text::convert($parts[$i], 'ISO-8859-1', 'UTF-8'));
             }
         }
         return implode('/', $parts);
@@ -1733,7 +1746,7 @@ EOD;
         $fullpath = $path;
         if (iconv('UTF-8', 'UTF-8', $fullpath) == $fullpath) {
             $this->_error_log("filename is utf-8. Needs conversion...");
-            $fullpath = utf8_decode($fullpath);
+            $fullpath = \core_text::convert($fullpath, 'UTF-8', 'ISO-8859-1');
         }
         return $fullpath;
     }

@@ -35,16 +35,16 @@ $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
 global $DB, $CFG, $USER;
 // Relative path must start with '/'.
 if (!$relativepath) {
-        print_error('invalidargorconf');
+        moodle_exception('invalidargorconf');
 } else if ($relativepath[0] != '/') {
-        print_error('pathdoesnotstartslash');
+        moodle_exception('pathdoesnotstartslash');
 }
 
 // Extract relative path components.
 $args = explode('/', ltrim($relativepath, '/'));
 
 if (count($args) < 3) { // Always at least context, component and filearea.
-        print_error('invalidarguments');
+        moodle_exception('invalidarguments');
 }
 
 $contextid = (int)array_shift($args);
@@ -52,7 +52,7 @@ $component = clean_param(array_shift($args), PARAM_ALPHA);
 $filearea  = clean_param(array_shift($args), PARAM_ALPHA);
 
 if ($component != 'user' || $filearea != 'csvprofile') {
-        print_error('invalidargorconf');
+        moodle_exception('invalidargorconf');
 }
 
 $filename = array_pop($args);

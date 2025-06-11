@@ -107,7 +107,6 @@ class notification_list_processor implements templatable, renderable {
 
     /**
      * Export this data so it can be used as the context for a mustache template.
-     * @todo Remove loggedin and loggedoff from context on MDL-73284.
      *
      * @param renderer_base $output
      * @return stdClass
@@ -129,18 +128,6 @@ class notification_list_processor implements templatable, renderable {
             'name' => $processor->name,
             'locked' => false,
             'userconfigured' => $processor->object->is_user_configured(),
-            // Backward compatibility, deprecated attribute.
-            'loggedin' => [
-                'name' => 'loggedin',
-                'displayname' => 'loggedin',
-                'checked' => false,
-            ],
-            // Backward compatibility, deprecated attribute.
-            'loggedoff' => [
-                'name' => 'loggedoff',
-                'displayname' => 'loggedoff',
-                'checked' => false,
-            ],
             'enabled' => false,
             'enabledlabel' => get_string('sendingviaenabled', 'message', $labelparams),
         ];
@@ -151,8 +138,6 @@ class notification_list_processor implements templatable, renderable {
         }
 
         $context['enabled'] = $this->is_preference_enabled($preferencebase.'_enabled', $context['locked']);
-        $context['loggedoff']['checked'] = $context['enabled']; // Backward compatibility, deprecated attribute.
-        $context['loggedin']['checked'] = $context['enabled']; // Backward compatibility, deprecated attribute.
 
         // If settings are disallowed or forced, just display the corresponding message, if not use user settings.
         if ($context['locked']) {

@@ -64,9 +64,11 @@
             style="height: 38px"
         >
         {{#showonlinestatus}}
-            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+            <span class="contact-status icon-size-2 {{#isonline}}online{{/isonline}}">
+                {{#isonline}} {{#pix}} t/online, core, {{#str}} online, core_message {{/str}} {{/pix}} {{/isonline}}
+            </span>
         {{/showonlinestatus}}
-        <div class="w-100 text-truncate ml-2">
+        <div class="w-100 text-truncate ms-2">
             <div class="d-flex">
                 <strong class="m-0">
                     {{fullname}}
@@ -76,7 +78,7 @@
                     </span>
                 </strong>
                 <div
-                    class="ml-auto small {{^lastmessagedate}}hidden{{/lastmessagedate}}"
+                    class="ms-auto small {{^lastmessagedate}}hidden{{/lastmessagedate}}"
                     data-region="last-message-date"
                 >
                     {{#lastmessagedate}}
@@ -91,7 +93,7 @@
         </div>
 
         <span
-            class="badge badge-pill badge-primary {{^unreadcount}}hidden{{/unreadcount}}"
+            class="badge rounded-pill bg-primary text-white {{^unreadcount}}hidden{{/unreadcount}}"
             data-region="unread-count"
         >
             {{unreadcount}}

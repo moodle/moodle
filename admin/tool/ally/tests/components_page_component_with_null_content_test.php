@@ -32,6 +32,10 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once('abstract_testcase.php');
 
+/**
+ * @group     tool_ally
+ * @group     ally
+ */
 class components_page_component_with_null_content_test extends abstract_testcase {
 
     /**

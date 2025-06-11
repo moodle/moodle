@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\application_registration
  */
-class application_registration_test extends \advanced_testcase {
+final class application_registration_test extends \advanced_testcase {
 
     /**
      * Test the creation of an application_registration instance.
@@ -34,7 +34,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_creation(array $args, array $expectations) {
+    public function test_creation(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args));
             $this->assertEquals($args['name'], $reg->get_name());
@@ -59,7 +59,7 @@ class application_registration_test extends \advanced_testcase {
      *
      * @return array the data for testing.
      */
-    public function creation_data_provider(): array {
+    public static function creation_data_provider(): array {
         return [
             'Valid, only required args provided' => [
                 'args' => [
@@ -149,7 +149,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create_draft
      */
-    public function test_create_draft(array $args, array $expectations) {
+    public function test_create_draft(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create_draft(...array_values($args));
             $this->assertEquals($args['name'], $reg->get_name());
@@ -174,7 +174,7 @@ class application_registration_test extends \advanced_testcase {
      *
      * @covers ::complete_registration
      */
-    public function test_complete_registration() {
+    public function test_complete_registration(): void {
         // Create a draft registration which should initially be incomplete.
         $draft = application_registration::create_draft('Test platform name', '1234bfda');
         $this->assertFalse($draft->is_complete());
@@ -203,7 +203,7 @@ class application_registration_test extends \advanced_testcase {
      *
      * @return array the test case data.
      */
-    public function create_draft_data_provider(): array {
+    public static function create_draft_data_provider(): array {
         return [
             'Valid, new draft' => [
                 'args' => [
@@ -246,7 +246,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::add_tool_deployment
      */
-    public function test_add_tool_deployment(array $args, array $expectations) {
+    public function test_add_tool_deployment(array $args, array $expectations): void {
 
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args['registration']));
@@ -268,7 +268,7 @@ class application_registration_test extends \advanced_testcase {
      *
      * @return array the array of test data.
      */
-    public function add_tool_deployment_data_provider(): array {
+    public static function add_tool_deployment_data_provider(): array {
         return [
             'Valid, contains id on registration and valid deployment data provided' => [
                 'args' => [

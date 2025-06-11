@@ -24,6 +24,7 @@
 namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
+use core\invalid_persistent_exception;
 use stdClass;
 use cm_info;
 use context;
@@ -459,7 +460,7 @@ class api {
      *
      * @param int $id The id of the competency to read.
      * @param bool $includerelated Include related tags or not.
-     * @return stdClass
+     * @return competency
      */
     public static function read_competency($id, $includerelated = false) {
         static::require_enabled();
@@ -903,7 +904,7 @@ class api {
      * @param array $hasanycapability Array of capabilities passed to {@link has_any_capability()} in each context.
      * @return context[] An array of contexts where keys are context IDs.
      */
-    public static function get_related_contexts($context, $includes, array $hasanycapability = null) {
+    public static function get_related_contexts($context, $includes, ?array $hasanycapability = null) {
         global $DB;
         static::require_enabled();
 
@@ -4043,7 +4044,7 @@ class api {
      * This method does not copy the related competencies.
      *
      * @param int $frameworkid - framework id
-     * @param competency[] $tree - array of competencies object
+     * @param stdClass[] $tree - list of framework competency nodes
      * @param int $oldparent - old parent id
      * @param int $newparent - new parent id
      * @return competency[] $matchids - List of old competencies ids matched with new competencies object.
@@ -4083,7 +4084,7 @@ class api {
     /**
      * Recursively migrate competency rules.
      *
-     * @param competency[] $tree - array of competencies object
+     * @param array $tree - array of competencies object
      * @param competency[] $matchids - List of old competencies ids matched with new competencies object
      */
     protected static function migrate_competency_tree_rules($tree, $matchids) {
@@ -4116,7 +4117,7 @@ class api {
     /**
      * Archive user competencies in a plan.
      *
-     * @param int $plan The plan object.
+     * @param plan $plan The plan object.
      * @return void
      */
     protected static function archive_user_competencies_in_plan($plan) {
@@ -4166,7 +4167,7 @@ class api {
     /**
      * Delete archived user competencies in a plan.
      *
-     * @param int $plan The plan object.
+     * @param plan $plan The plan object.
      * @return void
      */
     protected static function remove_archived_user_competencies_in_plan($plan) {
@@ -4562,7 +4563,7 @@ class api {
      * @return void
      */
     protected static function apply_competency_rules_from_usercompetency(user_competency $usercompetency,
-                                                                         competency $competency = null, $overridegrade = false) {
+                                                                         ?competency $competency = null, $overridegrade = false) {
 
         // Perform some basic checks.
         if (!$usercompetency->get('proficiency')) {

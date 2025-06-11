@@ -1,0 +1,13 @@
+.ferpa, .ferpa a:link {
+  font-weight: 600 !important;
+  color: #8B0000 !important;
+}
+
+.fa-paw img.icon.navicon {
+  display: none;
+}
+
+.fa-paw a:link {
+  padding-left: .2em;
+  font-family: "Roboto";
+}

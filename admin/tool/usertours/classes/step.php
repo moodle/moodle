@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_usertours;
+
+use context_system;
+use stdClass;
+
 /**
  * Step class.
  *
@@ -21,22 +26,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_usertours;
-
-use context_system;
-use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Step class.
- *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class step {
-
     /**
      * @var     int     $id         The id of the step.
      */
@@ -137,7 +127,7 @@ class step {
         global $DB;
 
         return $this->reload_from_record(
-            $DB->get_record('tool_usertours_steps', array('id' => $id))
+            $DB->get_record('tool_usertours_steps', ['id' => $id])
         );
     }
 
@@ -388,7 +378,7 @@ class step {
     /**
      * Get the link to move this step up in the sortorder.
      *
-     * @return  moodle_url
+     * @return  \moodle_url
      */
     public function get_moveup_link() {
         return helper::get_move_step_link($this->get_id(), helper::MOVE_UP);
@@ -397,7 +387,7 @@ class step {
     /**
      * Get the link to move this step down in the sortorder.
      *
-     * @return  moodle_url
+     * @return  \moodle_url
      */
     public function get_movedown_link() {
         return helper::get_move_step_link($this->get_id(), helper::MOVE_DOWN);
@@ -414,7 +404,7 @@ class step {
      */
     public function get_config($key = null, $default = null) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
 
         if ($key === null) {
@@ -448,7 +438,7 @@ class step {
      */
     public function set_config($key, $value) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
 
         if ($value === null) {
@@ -464,7 +454,7 @@ class step {
     /**
      * Get the edit link for this step.
      *
-     * @return  moodle_url
+     * @return  \moodle_url
      */
     public function get_edit_link() {
         return helper::get_edit_step_link($this->tourid, $this->id);
@@ -473,7 +463,7 @@ class step {
     /**
      * Get the delete link for this step.
      *
-     * @return  moodle_url
+     * @return  \moodle_url
      */
     public function get_delete_link() {
         return helper::get_delete_step_link($this->id);
@@ -497,7 +487,7 @@ class step {
                 'name' => $file->get_filename(),
                 'path' => $file->get_filepath(),
                 'content' => base64_encode($file->get_content()),
-                'encode' => 'base64'
+                'encode' => 'base64',
             ];
         }
 
@@ -572,7 +562,8 @@ class step {
      * @return  $this
      */
     public function persist($force = false) {
-        global $DB;
+        global $CFG, $DB;
+        require_once("{$CFG->libdir}/filelib.php");
 
         if (!$this->dirty && !$force) {
             return $this;
@@ -635,7 +626,7 @@ class step {
             return;
         }
 
-        $DB->delete_records('tool_usertours_steps', array('id' => $this->id));
+        $DB->delete_records('tool_usertours_steps', ['id' => $this->id]);
         $this->get_tour()->reset_step_sortorder();
 
         // Notify of a change to the step configuration.
@@ -674,7 +665,7 @@ class step {
     /**
      * Add the step configuration to the form.
      *
-     * @param   MoodleQuickForm $mform      The form to add configuration to.
+     * @param   \MoodleQuickForm $mform     The form to add configuration to.
      * @return  $this
      */
     public function add_config_to_form(\MoodleQuickForm $mform) {
@@ -694,7 +685,7 @@ class step {
     /**
      * Add the specified step field configuration to the form.
      *
-     * @param   MoodleQuickForm $mform      The form to add configuration to.
+     * @param   \MoodleQuickForm $mform     The form to add configuration to.
      * @param   string          $key        The key to add.
      * @return  $this
      */
@@ -729,6 +720,9 @@ class step {
      * @return  object
      */
     public function prepare_data_for_form() {
+        global $CFG;
+        require_once("{$CFG->libdir}/filelib.php");
+
         $data = $this->to_record();
         foreach (self::get_config_keys() as $key) {
             $data->$key = $this->get_config($key, configuration::get_step_default_value($key));
@@ -817,15 +811,19 @@ class step {
             return $content;
         }
 
-        $content = preg_replace_callback('%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
-            function(array $matches) {
+        $content = preg_replace_callback(
+            '%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
+            function (array $matches) {
                 global $OUTPUT;
                 $component = $matches['component'];
                 if ($component == 'moodle') {
                     $component = 'core';
                 }
-                return \html_writer::img($OUTPUT->image_url($matches['identifier'], $component)->out(false), '',
-                    ['class' => 'img-fluid']);
+                return \html_writer::img(
+                    $OUTPUT->image_url($matches['identifier'], $component)->out(false),
+                    '',
+                    ['class' => 'img-fluid']
+                );
             },
             $content
         );

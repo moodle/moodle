@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event observer handlers for auth_oidc plugin.
+ *
  * @package auth_oidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,6 +24,9 @@
  */
 
 namespace auth_oidc;
+
+use core\event\user_deleted;
+use core\event\user_loggedout;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +39,10 @@ class observers {
     /**
      * Handle user_deleted event - clean up calendar subscriptions.
      *
-     * @param \core\event\user_deleted $event The triggered event.
+     * @param user_deleted $event The triggered event.
      * @return bool Success/Failure.
      */
-    public static function handle_user_deleted(\core\event\user_deleted $event) {
+    public static function handle_user_deleted(user_deleted $event) {
         global $DB;
         $userid = $event->objectid;
         $DB->delete_records('auth_oidc_token', ['userid' => $userid]);

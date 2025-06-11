@@ -1,8 +1,8 @@
 @format @format_weeks
-Feature: Sections can be edited and deleted in weeks format
+Feature: Sections can be edited and deleted in weekly sections format
   In order to rearrange my course contents
   As a teacher
-  I need to edit and Delete weeks
+  I need to edit and delete sections
 
   Background:
     Given the following "users" exist:
@@ -15,7 +15,7 @@ Feature: Sections can be edited and deleted in weeks format
       | activity   | name                   | intro                         | course | idnumber    | section |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     | 0       |
       | book       | Test book name         |                               | C1     | book1       | 1       |
-      | chat       | Test chat name         | Test chat description         | C1     | chat1       | 4       |
+      | lesson     | Test lesson name       | Test lesson description       | C1     | lesson1     | 4       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     | 5       |
     And the following "course enrolments" exist:
       | user | course | role |
@@ -25,36 +25,34 @@ Feature: Sections can be edited and deleted in weeks format
 
   Scenario: View the default name of the general section in weeks format
     When I edit the section "0"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "General"
+    Then the field "Section name" matches value ""
+    And I should see "General"
 
   Scenario: Edit the default name of the general section in weeks format
     When I edit the section "0" and I fill the form with:
-      | Custom | 1                      |
-      | New value for Section name      | This is the general section |
-    Then I should see "This is the general section" in the "This is the general section" "section"
+      | Section name      | This is the general section |
+    Then I should see "This is the general section" in the "page" "region"
 
   Scenario: View the default name of the second section in weeks format
     When I edit the section "2"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "8 May - 14 May"
+    Then the field "Section name" matches value ""
+    And I should see "8 May - 14 May"
 
   Scenario: Edit section summary in weeks format
     When I edit the section "2" and I fill the form with:
-      | Summary | Welcome to section 2 |
-    Then I should see "Welcome to section 2" in the "8 May - 14 May" "section"
+      | Description | Welcome to section 2 |
+    Then I should see "Welcome to section 2" in the "page" "region"
 
   Scenario: Edit section default name in weeks format
     Given I should see "8 May - 14 May" in the "8 May - 14 May" "section"
     When I edit the section "2" and I fill the form with:
-      | Custom | 1                  |
-      | New value for Section name      | This is the second week |
-    Then I should see "This is the second week" in the "This is the second week" "section"
+      | Section name      | This is the second week |
+    Then I should see "This is the second week" in the "page" "region"
     And I should not see "8 May - 14 May"
 
   @javascript
   Scenario: Inline edit section name in weeks format
-    When I set the field "Edit week name" in the "1 May - 7 May" "section" to "Midterm evaluation"
+    When I set the field "Edit section name" in the "1 May - 7 May" "section" to "Midterm evaluation"
     Then I should not see "1 May - 7 May" in the "region-main" "region"
     And "New name for week" "field" should not exist
     And I should see "Midterm evaluation" in the "Midterm evaluation" "section"
@@ -75,7 +73,7 @@ Feature: Sections can be edited and deleted in weeks format
     When I delete section "4"
     And I press "Delete"
     Then I should not see "29 May - 4 June"
-    And I should not see "Test chat name"
+    And I should not see "Test lesson name"
     And I should see "Test choice name" in the "22 May - 28 May" "section"
     And I should see "22 May - 28 May"
 

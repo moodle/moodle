@@ -1,2 +1,0 @@
-sessionstart,mod_chat
-nextsession,mod_chat

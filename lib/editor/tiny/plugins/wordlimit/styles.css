@@ -1,0 +1,39 @@
+div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container div.tox-statusbar__wordlimit {
+    padding-left: 5px;
+    border-left: 1px solid #ccc;
+    margin-left: 5px;
+}
+
+@media only screen and (max-width: 550px) {
+    div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container {
+        flex-wrap: wrap;
+    }
+
+    div.tox.tox-tinymce div.tox-statusbar {
+        min-height: 25px;
+        height: auto;
+    }
+
+    div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container button.tox-statusbar__wordcount {
+        margin-top: 3px;
+    }
+
+    div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container div.tox-statusbar__wordlimit {
+        margin-left: auto;
+        text-align: right;
+        border-left: none;
+        width: 100%;
+    }
+
+    div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container > * {
+        margin-bottom: 3px;
+    }
+}
+
+div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container button.tox-statusbar__wordcount.warning {
+    color: #b85600;
+}
+
+div.tox.tox-tinymce div.tox-statusbar div.tox-statusbar__text-container button.tox-statusbar__wordcount.danger {
+    color: var(--danger);
+}

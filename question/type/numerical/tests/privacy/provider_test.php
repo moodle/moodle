@@ -41,16 +41,16 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  * @copyright  2021 The Open university
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
     // Include the privacy helper which has assertions on it.
 
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('qtype_numerical');
         $actual = provider::get_metadata($collection);
         $this->assertEquals($collection, $actual);
     }
 
-    public function test_export_user_preferences_no_pref() {
+    public function test_export_user_preferences_no_pref(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -67,7 +67,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $value The value stored in the database
      * @param string $expected The expected transformed value
      */
-    public function test_export_user_preferences($name, $value, $expected) {
+    public function test_export_user_preferences($name, $value, $expected): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         set_user_preference("qtype_numerical_$name", $value, $user);
@@ -91,7 +91,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return array Array of valid user preferences.
      */
-    public function user_preference_provider() {
+    public static function user_preference_provider(): array {
         return [
                 'default mark 1.5' => ['defaultmark', 1.5, 1.5],
                 'penalty 20%' => ['penalty', 0.2000000, '20%'],
@@ -113,7 +113,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
                 'multichoice display select menu' => ['multichoicedisplay', \qtype_numerical::UNITSELECT,
                         get_string('unitselect', 'qtype_numerical')],
                 'unitsleft left example' => ['unitsleft', '1', get_string('leftexample', 'qtype_numerical')],
-                'unitsleft left example' => ['unitsleft', '0', get_string('rightexample', 'qtype_numerical')]
+                'unitsleft right example' => ['unitsleft', '0', get_string('rightexample', 'qtype_numerical')],
         ];
     }
 }

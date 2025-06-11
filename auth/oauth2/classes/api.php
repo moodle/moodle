@@ -24,7 +24,6 @@
 namespace auth_oauth2;
 
 use context_user;
-use core_text;
 use stdClass;
 use moodle_exception;
 use moodle_url;
@@ -177,7 +176,10 @@ class api {
         $user = get_complete_user_data('id', $userid);
 
         $data = new stdClass();
-        $data->fullname = fullname($user);
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $data->{$field} = $value;
+        }
         $data->sitename  = format_string($site->fullname);
         $data->admin     = generate_email_signoff();
         $data->issuername = format_string($issuer->get('name'));
@@ -248,14 +250,21 @@ class api {
      * @return bool
      */
     public static function create_new_confirmed_account($userinfo, $issuer) {
-        global $CFG, $DB;
-        require_once($CFG->dirroot.'/user/profile/lib.php');
-        require_once($CFG->dirroot.'/user/lib.php');
+        global $DB, $CFG;
+        // BEGIN LSU case fixes.
+        require_once(dirname(dirname(dirname(__DIR__))).'/config.php');
+        
+        if (!isset($CFG)) {
+            $this_path = dirname(dirname(dirname(__DIR__)));
+        } else {
+            $this_path = $CFG->dirroot;
+        }
+        require_once($this_path.'/user/profile/lib.php');
+        require_once($this_path.'/user/lib.php');
 
         $user = new stdClass();
-        // BEGIN LSU case fixes.
-        $user->username = trim(core_text::strtolower($userinfo['username']));
-        $user->email = trim(core_text::strtolower($userinfo['email']));
+        $user->username = trim(\core_text::strtolower($userinfo['username']));
+        $user->email = trim(\core_text::strtolower($userinfo['email']));
         // END LSU case fixes.
         $user->auth = 'oauth2';
         $user->mnethostid = $CFG->mnet_localhost_id;
@@ -324,7 +333,10 @@ class api {
         $user = get_complete_user_data('id', $user->id);
 
         $data = new stdClass();
-        $data->fullname = fullname($user);
+        $placeholders = \core_user::get_name_placeholders($user);
+        foreach ($placeholders as $field => $value) {
+            $data->{$field} = $value;
+        }
         $data->sitename  = format_string($site->fullname);
         $data->admin     = generate_email_signoff();
 
@@ -350,7 +362,7 @@ class api {
     }
 
     /**
-     * Delete linked login
+     * Delete a users own linked login
      *
      * Requires auth/oauth2:managelinkedlogins capability at the user context.
      *
@@ -358,14 +370,19 @@ class api {
      * @return boolean
      */
     public static function delete_linked_login($linkedloginid) {
-        $login = new linked_login($linkedloginid);
-        $userid = $login->get('userid');
+        global $USER;
 
         if (\core\session\manager::is_loggedinas()) {
             throw new moodle_exception('notwhileloggedinas', 'auth_oauth2');
         }
 
-        $context = context_user::instance($userid);
+        $login = linked_login::get_record([
+            'id' => $linkedloginid,
+            'userid' => $USER->id,
+            'confirmtoken' => '',
+        ], MUST_EXIST);
+
+        $context = context_user::instance($login->get('userid'));
         require_capability('auth/oauth2:managelinkedlogins', $context);
 
         $login->delete();

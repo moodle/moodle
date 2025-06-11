@@ -1,0 +1,143 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_quickmail_sent_message_index">
+    <select id="select_course_filter">
+        <option value="0">{{# str }} fulllistofcourses {{/ str }}</option>
+        {{# userCourseArray }}
+            <option value="{{ userCourseId }}" {{ selectedAttr }}>{{ userCourseName }}</option>
+        {{/ userCourseArray }}
+    </select>
+
+    <table class="table table-hover qm_sent_msgs">
+        <thead>
+            <tr>
+                {{#courseIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=desc">{{# str }} course {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">{{# str }} course {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/courseIsSorted}}
+                {{^courseIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">{{# str }} course {{/ str }}</a></th>
+                {{/courseIsSorted}}
+
+                {{#subjectIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=desc">{{# str }} subject, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">{{# str }} subject, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/subjectIsSorted}}
+                {{^subjectIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">{{# str }} subject, block_quickmail {{/ str }}</a></th>
+                {{/subjectIsSorted}}
+
+                <th>{{# str }} message_preview, block_quickmail {{/ str }}</th>
+                <th>{{# str }} attachments, block_quickmail {{/ str }}</th>
+                <th>{{# str }} recipients, block_quickmail {{/ str }}</th>
+                <th>{{# str }} additional_emails, block_quickmail {{/ str }}</th>
+                
+                {{#sentAtIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=sent&dir=desc">{{# str }} sent_at, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=sent&dir=asc">{{# str }} sent_at, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/sentAtIsSorted}}
+                {{^sentAtIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=sent&dir=asc">{{# str }} sent_at, block_quickmail {{/ str }}</a></th>
+                {{/sentAtIsSorted}}
+
+                {{#toggleSentEdit}}
+                    <th class="qm_tb_col_spcr">
+                        <a href="?courseid={{ courseId }}&sentedit=0">View/Edit</a>
+                        <br>
+                        <input type="checkbox" class="qm_sm_spacer" id="qm_sm_select_all" name="selectAll"/><label for="qm_sm_select_all">Select All</label>
+                    </th>
+                {{/toggleSentEdit}}
+                {{^toggleSentEdit}}
+                    <th><a href="?courseid={{ courseId }}&sentedit=1">View/Edit</a>
+                    </th>
+                {{/toggleSentEdit}}
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ courseName }}</td>
+                    <td>{{ subjectPreview }}</td>
+                    <td>{{ messagePreview }}</td>
+                    <td>{{ attachmentTotal }}</td>
+                    <td>{{ recipientTotal }}</td>
+                    <td>{{ additionalEmailTotal }}</td>
+                    <td>{{ sentAt }}</td>
+                    {{#toggleSentEdit}}
+                        <td>
+                            <input type="checkbox" class="qm_sm_cb" data-msgid="{{ id }}" name="sent_msg_{{id}}" value="">
+                            <a href="#" class="qm_sm_trash btn btn-danger btn-sm" data-msgid="{{ id }}"><i class="fa fa-trash"></i></a>
+                        </td>
+                    {{/toggleSentEdit}}
+                    {{^toggleSentEdit}}
+                        <td><a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} view {{/ str }}</a></td>
+                    {{/toggleSentEdit}}
+                </tr>
+            {{/ tableRows }}
+
+            {{^ tableRows }}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} no_sents, block_quickmail {{/ str }}</td>
+                </tr>
+            {{/ tableRows }}
+
+            {{#toggleSentEdit}}
+                <tr>
+                    <td colspan=6></td>
+                    <td colspan=2 class='alnright'><button type="button" id="qm_sm_selected_remove" style="display:none" class="btn btn-danger">Remove Selected</button></td>
+                </tr>
+            {{/toggleSentEdit}}
+            {{^toggleSentEdit}}
+                {{! Nothing....... }}
+            {{/toggleSentEdit}}
+        </tbody>
+    </table>
+
+    {{< block_quickmail/pagination }}
+    {{/ block_quickmail/pagination }}
+    
+    <a href="{{ urlBack }}" class="btn btn-secondary">{{ urlBackLabel }}</a>
+</div>
+
+{{#js}}
+require(['jquery', 'block_quickmail/sent_messages'], function($, SM) {
+    SM.init();
+});
+{{/js}}

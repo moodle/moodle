@@ -7,9 +7,9 @@
     <TABLE NAME="enrol_workdayhrm" COMMENT="enrol_workdayhrm table retrofitted from MySQL">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="employee_id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="universal_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="school_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="employee_id" TYPE="char" LENGTH="12" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="universal_id" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="school_id" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="work_email" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="legal_first_name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="legal_middle_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
@@ -18,9 +18,9 @@
         <FIELD NAME="preferred_middle_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="preferred_last_name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="company_id" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="manager_employee_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="manager_universal_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="manager_school_id" TYPE="int" LENGTH="9" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_employee_id" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_universal_id" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manager_school_id" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="employee_userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="manager_userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="iscurrent" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>

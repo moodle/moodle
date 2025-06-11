@@ -42,7 +42,7 @@ class test_target_shortname_multiclass extends \core_analytics\local\target\disc
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         // Using a string that exists and contains a corresponding '_help' string.
         return new \lang_string('allowstealthmodules');
     }
@@ -70,7 +70,7 @@ class test_target_shortname_multiclass extends \core_analytics\local\target\disc
      *
      * @return array
      */
-    public static final function get_classes() {
+    final public static function get_classes() {
         return array(0, 1, 2);
     }
 
@@ -205,7 +205,7 @@ class test_target_shortname_multiclass extends \core_analytics\local\target\disc
      * @param \core_analytics\local\time_splitting\base $timesplitting
      * @return bool
      */
-    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting):bool {
+    public function can_use_timesplitting(\core_analytics\local\time_splitting\base $timesplitting): bool {
         return true;
     }
 }

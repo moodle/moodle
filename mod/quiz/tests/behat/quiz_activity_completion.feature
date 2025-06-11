@@ -16,8 +16,6 @@ Feature: View activity completion in the quiz activity
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following config values are set as admin:
-      | grade_item_advanced | hiddenuntil |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -43,7 +41,7 @@ Feature: View activity completion in the quiz activity
       | question       | page |
       | First question | 1    |
 
-  Scenario Outline: View automatic completion items as a student
+  Scenario Outline: A student can complete a quiz activity by achieving a passing grade
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test quiz name"

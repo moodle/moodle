@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template forumreport_summary/filter_dates
+    @template forumreport_summary/filter_dates_popover
 
     Summary report dates filter.
 
@@ -29,11 +29,11 @@
     <h3 class="popover-header">{{# str}} filter:datesname, forumreport_summary {{/ str}}</h3>
     <div class="popover-body" data-region="filter-dates">
         {{{filterdatesform}}}
-        <div id="dates-filter-warning" class="form-control-feedback text-danger hidden float-right">
+        <div id="dates-filter-warning" class="form-control-feedback text-danger hidden float-end">
             {{# str}} filter:datesorderwarning, forumreport_summary {{/ str}}
         </div>
         <br>&nbsp;
-        <button type="button" class="filter-save float-right btn btn-link p-0" aria-label="{{# str}} save {{/ str}}">
+        <button type="button" class="filter-save float-end btn btn-link p-0" aria-label="{{# str}} save {{/ str}}">
             <strong>{{# str}} save {{/ str}}</strong>
         </button>
     </div>

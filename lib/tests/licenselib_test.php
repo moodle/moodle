@@ -33,12 +33,12 @@ require_once(__DIR__.'/../licenselib.php');
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class licenselib_test extends advanced_testcase {
+final class licenselib_test extends advanced_testcase {
 
     /**
      * Test getting licenses from database or cache.
      */
-    public function test_get_licenses() {
+    public function test_get_licenses(): void {
         $this->resetAfterTest();
 
         // Reset the cache, to make sure we are not getting cached licenses.
@@ -50,12 +50,12 @@ class licenselib_test extends advanced_testcase {
         $this->assertArrayHasKey('unknown', $licenses);
         $this->assertArrayHasKey('allrightsreserved', $licenses);
         $this->assertArrayHasKey('public', $licenses);
-        $this->assertArrayHasKey('cc', $licenses);
-        $this->assertArrayHasKey('cc-nd', $licenses);
-        $this->assertArrayHasKey('cc-nc-nd', $licenses);
-        $this->assertArrayHasKey('cc-nc', $licenses);
-        $this->assertArrayHasKey('cc-nc-sa', $licenses);
-        $this->assertArrayHasKey('cc-sa', $licenses);
+        $this->assertArrayHasKey('cc-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nd-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-nd-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-sa-4.0', $licenses);
+        $this->assertArrayHasKey('cc-sa-4.0', $licenses);
 
         // Get the licenses from cache and check again.
         $licenses = license_manager::get_licenses();
@@ -63,18 +63,18 @@ class licenselib_test extends advanced_testcase {
         $this->assertArrayHasKey('unknown', $licenses);
         $this->assertArrayHasKey('allrightsreserved', $licenses);
         $this->assertArrayHasKey('public', $licenses);
-        $this->assertArrayHasKey('cc', $licenses);
-        $this->assertArrayHasKey('cc-nd', $licenses);
-        $this->assertArrayHasKey('cc-nc-nd', $licenses);
-        $this->assertArrayHasKey('cc-nc', $licenses);
-        $this->assertArrayHasKey('cc-nc-sa', $licenses);
-        $this->assertArrayHasKey('cc-sa', $licenses);
+        $this->assertArrayHasKey('cc-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nd-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-nd-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-4.0', $licenses);
+        $this->assertArrayHasKey('cc-nc-sa-4.0', $licenses);
+        $this->assertArrayHasKey('cc-sa-4.0', $licenses);
     }
 
     /**
      * Test saving a license.
      */
-    public function test_save() {
+    public function test_save(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -93,13 +93,13 @@ class licenselib_test extends advanced_testcase {
         $this->assertEquals('mit', $license->shortname);
 
         // Attempting to update a core license should only update sortorder.
-        $license->shortname = 'cc';
+        $license->shortname = 'cc-4.0';
         $license->sortorder = 33;
         license_manager::save($license);
 
         $record = $DB->get_record('license', ['id' => $license->id]);
         $this->assertNotEquals('cc', $record->shortname);
-        $record = $DB->get_record('license', ['shortname' => 'cc']);
+        $record = $DB->get_record('license', ['shortname' => 'cc-4.0']);
         $this->assertEquals(33, $record->sortorder);
 
         // Adding a license with existing custom license shortname should update existing license.
@@ -120,29 +120,29 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test ability to get a license by it's short name.
      */
-    public function test_get_license_by_shortname() {
+    public function test_get_license_by_shortname(): void {
 
-        $license = license_manager::get_license_by_shortname('cc-nc');
+        $license = license_manager::get_license_by_shortname('cc-nc-4.0');
         $actual = $license->fullname;
 
-        $this->assertEquals('Creative Commons - No Commercial', $actual);
+        $this->assertEquals('Creative Commons - NonCommercial 4.0 International', $actual);
         $this->assertNull(license_manager::get_license_by_shortname('somefakelicense'));
     }
 
     /**
      * Test disabling a license.
      */
-    public function test_disable_license() {
+    public function test_disable_license(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Manually set license record to enabled for testing.
-        $DB->set_field('license', 'enabled', license_manager::LICENSE_ENABLED, ['shortname' => 'cc-nc']);
+        $DB->set_field('license', 'enabled', license_manager::LICENSE_ENABLED, ['shortname' => 'cc-nc-4.0']);
 
-        $this->assertTrue(license_manager::disable('cc-nc'));
+        $this->assertTrue(license_manager::disable('cc-nc-4.0'));
 
-        $license = license_manager::get_license_by_shortname('cc-nc');
+        $license = license_manager::get_license_by_shortname('cc-nc-4.0');
         $actual = $license->enabled;
 
         $this->assertEquals(license_manager::LICENSE_DISABLED, $actual);
@@ -151,17 +151,17 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test enabling a license.
      */
-    public function test_enable_license() {
+    public function test_enable_license(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Manually set license record to disabled for testing.
-        $DB->set_field('license', 'enabled', license_manager::LICENSE_DISABLED, ['shortname' => 'cc-nc']);
+        $DB->set_field('license', 'enabled', license_manager::LICENSE_DISABLED, ['shortname' => 'cc-nc-4.0']);
 
-        $this->assertTrue(license_manager::enable('cc-nc'));
+        $this->assertTrue(license_manager::enable('cc-nc-4.0'));
 
-        $license = license_manager::get_license_by_shortname('cc-nc');
+        $license = license_manager::get_license_by_shortname('cc-nc-4.0');
         $actual = $license->enabled;
 
         $this->assertEquals(license_manager::LICENSE_ENABLED, $actual);
@@ -170,7 +170,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test deleting a custom license.
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
 
         // Create a custom license.
@@ -191,7 +191,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test trying to delete a license currently in use by a file.
      */
-    public function test_delete_license_in_use_by_file() {
+    public function test_delete_license_in_use_by_file(): void {
         $this->resetAfterTest();
 
         // Create a custom license.
@@ -226,16 +226,16 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test trying to delete a core license.
      */
-    public function test_delete_license_core() {
+    public function test_delete_license_core(): void {
         // Should not be able to delete a standard/core license.
         $this->expectException(moodle_exception::class);
-        license_manager::delete('cc-nc');
+        license_manager::delete('cc-nc-4.0');
     }
 
     /**
      * Test trying to delete a license which doesn't exist.
      */
-    public function test_delete_license_not_exists() {
+    public function test_delete_license_not_exists(): void {
         // Should throw an exception if license with shortname doesn't exist.
         $this->expectException(moodle_exception::class);
         license_manager::delete('somefakelicense');
@@ -244,7 +244,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test setting active licenses.
      */
-    public function test_set_active_licenses() {
+    public function test_set_active_licenses(): void {
         $this->resetAfterTest();
 
         // Private method used internally, test through disable and enable public methods.
@@ -258,7 +258,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test getting active licenses.
      */
-    public function test_get_active_licenses() {
+    public function test_get_active_licenses(): void {
         $this->resetAfterTest();
 
         license_manager::disable('allrightsreserved');
@@ -277,7 +277,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test getting active licenses as array.
      */
-    public function test_get_active_licenses_as_array() {
+    public function test_get_active_licenses_as_array(): void {
         $this->resetAfterTest();
 
         license_manager::disable('allrightsreserved');
@@ -298,7 +298,7 @@ class licenselib_test extends advanced_testcase {
     /**
      * Test resetting the license cache.
      */
-    public function test_reset_license_cache() {
+    public function test_reset_license_cache(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -312,21 +312,21 @@ class licenselib_test extends advanced_testcase {
         $this->assertEquals($licenses, $cachedlicenses);
 
         // Manually delete a license to see if cache persists.
-        $DB->delete_records('license', ['shortname' => 'cc-nc']);
+        $DB->delete_records('license', ['shortname' => 'cc-nc-4.0']);
         $licenses = license_manager::get_licenses();
 
-        $this->assertArrayHasKey('cc-nc', $licenses);
+        $this->assertArrayHasKey('cc-nc-4.0', $licenses);
 
         license_manager::reset_license_cache();
 
         $licenses = license_manager::get_licenses();
-        $this->assertArrayNotHasKey('cc-nc', $licenses);
+        $this->assertArrayNotHasKey('cc-nc-4.0', $licenses);
     }
 
     /**
      * Test that all licenses are installed correctly.
      */
-    public function test_install_licenses() {
+    public function test_install_licenses(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -335,7 +335,10 @@ class licenselib_test extends advanced_testcase {
 
         license_manager::install_licenses();
 
-        $expectedshortnames = ['allrightsreserved', 'cc', 'cc-nc', 'cc-nc-nd', 'cc-nc-sa', 'cc-nd', 'cc-sa', 'public', 'unknown'];
+        $expectedshortnames = [
+            'allrightsreserved', 'public', 'unknown',
+            'cc-4.0', 'cc-nc-4.0', 'cc-nc-nd-4.0', 'cc-nc-sa-4.0', 'cc-nd-4.0', 'cc-sa-4.0',
+        ];
         $actualshortnames = $DB->get_records_menu('license', null, '', 'id, shortname');
 
         foreach ($expectedshortnames as $expectedshortname) {

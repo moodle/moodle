@@ -45,7 +45,7 @@ class issue_certificates_task extends \core\task\scheduled_task {
      * Execute.
      */
     public function execute() {
-        global $DB;
+        global $CFG, $DB;
 
         // Get the certificatesperrun, includeinnotvisiblecourses, and certificateexecutionperiod configurations.
         $certificatesperrun = (int)get_config('customcert', 'certificatesperrun');
@@ -53,9 +53,17 @@ class issue_certificates_task extends \core\task\scheduled_task {
         $certificateexecutionperiod = (int)get_config('customcert', 'certificateexecutionperiod');
         $offset = (int)get_config('customcert', 'certificate_offset');
 
-        // We are going to issue certificates that have requested someone get emailed.
+        if ($CFG->dbtype === 'oci') {
+            // For Oracle, convert the CLOB to a VARCHAR2 (limiting to 4000 characters) since we are using DISTINCT.
+            $emailothersselect = "DBMS_LOB.SUBSTR(c.emailothers, 4000, 1) AS emailothers";
+            $emailotherslengthsql = "DBMS_LOB.GETLENGTH(c.emailothers)";
+        } else {
+            $emailothersselect = "c.emailothers";
+            $emailotherslengthsql = $DB->sql_length('c.emailothers');
+        }
+
         $emailotherslengthsql = $DB->sql_length('c.emailothers');
-        $sql = "SELECT c.id, c.templateid, c.course, c.requiredtime, c.emailstudents, c.emailteachers, c.emailothers,
+        $sql = "SELECT DISTINCT c.id, c.templateid, c.course, c.requiredtime, c.emailstudents, c.emailteachers, $emailothersselect,
                        ct.id AS templateid, ct.name AS templatename, ct.contextid, co.id AS courseid,
                        co.fullname AS coursefullname, co.shortname AS courseshortname
                   FROM {customcert} c
@@ -66,11 +74,10 @@ class issue_certificates_task extends \core\task\scheduled_task {
                   JOIN {course_categories} cat
                     ON co.category = cat.id
              LEFT JOIN {customcert_issues} ci
-                    ON c.id = ci.customcertid";
-
-        $sql .= " WHERE (c.emailstudents = :emailstudents
-                     OR c.emailteachers = :emailteachers
-                     OR $emailotherslengthsql >= 3)";
+                    ON c.id = ci.customcertid
+                 WHERE (c.emailstudents = :emailstudents
+                    OR c.emailteachers = :emailteachers
+                    OR $emailotherslengthsql >= 3)";
 
         $params = ['emailstudents' => 1, 'emailteachers' => 1];
 
@@ -83,12 +90,10 @@ class issue_certificates_task extends \core\task\scheduled_task {
         // Add condition based on certificate execution period.
         if ($certificateexecutionperiod > 0) {
             // Include courses with no end date or end date greater than the specified period.
-            $sql .= " AND (co.enddate > :enddate OR (co.enddate = 0 AND ci.timecreated > :enddate2))";
+            $sql .= " AND (co.enddate > :enddate OR (co.enddate = 0 AND (ci.timecreated > :enddate2 OR ci.timecreated IS NULL)))";
             $params['enddate'] = time() - $certificateexecutionperiod;
             $params['enddate2'] = $params['enddate'];
         }
-
-        $sql .= " GROUP BY c.id, ct.id, ct.name, ct.contextid, co.id, co.fullname, co.shortname";
 
         // Execute the SQL query.
         $customcerts = $DB->get_records_sql($sql, $params, $offset, $certificatesperrun);

@@ -86,8 +86,8 @@ class cachestore_rediscluster_test extends cachestore_tests {
         $store = $this->create_cachestore_rediscluster();
 
         $this->assertTrue($store->set('foo', 'bar'));
-        $this->assertTrue($store->has_any(array('bat', 'foo')));
-        $this->assertFalse($store->has_any(array('bat', 'baz')));
+        $this->assertTrue($store->has_any(['bat', 'foo']));
+        $this->assertFalse($store->has_any(['bat', 'baz']));
     }
 
     public function test_has_all() {
@@ -95,8 +95,8 @@ class cachestore_rediscluster_test extends cachestore_tests {
 
         $this->assertTrue($store->set('foo', 'bar'));
         $this->assertTrue($store->set('bat', 'baz'));
-        $this->assertTrue($store->has_all(array('foo', 'bat')));
-        $this->assertFalse($store->has_all(array('foo', 'bat', 'this')));
+        $this->assertTrue($store->has_all(['foo', 'bat']));
+        $this->assertFalse($store->has_all(['foo', 'bat', 'this']));
     }
 
     public function test_set_get() {

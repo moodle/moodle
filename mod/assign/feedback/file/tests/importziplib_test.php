@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/assign/feedback/file/importziplib.php');
  * @copyright  2020 Eric Merrill <merrill@oakland.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class importziplib_test extends \advanced_testcase {
+final class importziplib_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -47,7 +47,7 @@ class importziplib_test extends \advanced_testcase {
     /**
      * Test the assignfeedback_file_zip_importer->is_valid_filename_for_import() method.
      */
-    public function test_is_valid_filename_for_import() {
+    public function test_is_valid_filename_for_import(): void {
         // Do the initial assign setup.
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

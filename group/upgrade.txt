@@ -1,12 +1,47 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /group/*,
 information provided here is intended especially for developers.
 
-=== 4.1.4 ===
+=== 4.3 ===
 * The following external methods now return group names correctly formatted:
   - `core_group_get_groups`
   - `core_group_get_course_groups`
   - `core_group_get_course_user_groups`
   - `core_group_get_activity_allowed_groups`
+* Groups now have access to create GeoPattern default images based upon their ID with their associated course context.
+  This can be done by calling the following:
+       moodle_url::make_pluginfile_url(
+           $coursecontext->id,
+           'group',
+           'generated',
+           $group->id,
+           '/',
+           'group.svg'
+       );
+* Added group/grouping custom fields.
+* groups_get_members_join() now includes visibility checks for group memberships.
+* \core_group\visibility::sql_member_visibility_where() no longer prefixes the returned WHERE statement with AND, to
+  give the calling code greater flexibility about how to use it.
+
+=== 4.2 ===
+* `\core_group\visibility` class added to support new `visibility` field in group records. This holds the visibility constants
+  and helper functions for applying visibility restrictions when querying groups or group members in the database.
+* Changes to the group form to support visibility features:
+  - New `visibility` field.
+  - New `participation` field.
+  - `participation` and `enablemessaging` fields are disabled (default: false) when `visibility` is set
+    to `visibility::OWN` or `visibility::NONE`.
+* The following externallib functions now accept `visibility` and `participation` as optional parameters:
+  - create_groups()
+  - update_groups()
+* The following externallib functions now also return `visibility` and `participation` fields in their responses:
+  - create_groups()
+  - get_groups()
+  - get_course_groups()
 
 === 3.11 ===
 

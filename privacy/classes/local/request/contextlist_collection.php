@@ -64,7 +64,7 @@ class contextlist_collection implements \Iterator, \Countable {
      *
      * @return  int
      */
-    public function get_userid() : int {
+    public function get_userid(): int {
         return $this->userid;
     }
 
@@ -94,7 +94,7 @@ class contextlist_collection implements \Iterator, \Countable {
      * @return  array   the associative array of contextlists in this collection, indexed by component name.
      * E.g. mod_assign => contextlist, core_comment => contextlist.
      */
-    public function get_contextlists() : array {
+    public function get_contextlists(): array {
         return $this->contextlists;
     }
 

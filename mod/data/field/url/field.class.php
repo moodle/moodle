@@ -82,7 +82,7 @@ class data_field_url extends data_field_base {
 
         $autolinkable = !empty($this->field->param1) && empty($this->field->param2);
 
-        $str = '<div title="' . s($this->field->description) . '" class="form-inline">';
+        $str = '<div title="' . s($this->field->description) . '" class="d-flex flex-wrap align-items-center">';
 
         $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {
@@ -105,7 +105,7 @@ class data_field_url extends data_field_base {
             $str .= $label;
             $str .= '<input type="text" name="field_' . $this->field->id . '_0" id="' . $fieldid . '" value="' . s($url) . '" ' .
                     'size="40" class="form-control d-inline"/>';
-            $str .= '<button class="btn btn-secondary ml-1" id="filepicker-button-' . $options->client_id . '" ' .
+            $str .= '<button class="btn btn-secondary ms-1" id="filepicker-button-' . $options->client_id . '" ' .
                     'style="display:none">' . $straddlink . '</button></td></tr>';
             $str .= '<tr><td align="right"><span class="mod-data-input">' . get_string('text', 'data') . ':</span></td><td>';
             $str .= '<input type="text" name="field_' . $this->field->id . '_1" id="field_' . $this->field->id . '_1" ' .
@@ -117,7 +117,7 @@ class data_field_url extends data_field_base {
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'"';
             $str .= ' size="40" class="mod-data-input form-control d-inline" />';
             if (count($options->repositories) > 0) {
-                $str .= '<button id="filepicker-button-' . $options->client_id . '" class="visibleifjs btn btn-secondary ml-1">' .
+                $str .= '<button id="filepicker-button-' . $options->client_id . '" class="visibleifjs btn btn-secondary ms-1">' .
                         $straddlink . '</button>';
             }
         }

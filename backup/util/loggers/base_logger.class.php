@@ -47,7 +47,7 @@ abstract class base_logger implements checksumable {
         $this->next = null;
     }
 
-    public final function set_next($next) {
+    final public function set_next($next) {
         // TODO: Check is a base logger
 
         // TODO: Check next hasn't been set already
@@ -76,7 +76,7 @@ abstract class base_logger implements checksumable {
      *
      * @since Moodle 3.1
      */
-    public final function destroy() {
+    final public function destroy() {
         // Recursively destroy the chain.
         if ($this->next !== null) {
             $this->next->destroy();
@@ -112,7 +112,7 @@ abstract class base_logger implements checksumable {
 
     abstract protected function action($message, $level, $options = null); // To implement
 
-    public final function process($message, $level, $options = null) {
+    final public function process($message, $level, $options = null) {
         $result = true;
         if ($this->level != backup::LOG_NONE && $this->level >= $level
             && !(defined('BEHAT_TEST') && BEHAT_TEST)) { // Perform action conditionally.

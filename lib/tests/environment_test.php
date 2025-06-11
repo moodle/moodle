@@ -26,12 +26,12 @@ use environment_results;
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class environment_test extends \advanced_testcase {
+final class environment_test extends \advanced_testcase {
 
     /**
      * Test the environment check status.
      */
-    public function test_environment_check_status() {
+    public function test_environment_check_status(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 
@@ -47,7 +47,7 @@ class environment_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function environment_provider() {
+    public static function environment_provider(): array {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 
@@ -65,7 +65,7 @@ class environment_test extends \advanced_testcase {
      * @dataProvider environment_provider
      * @param environment_results $result
      */
-    public function test_environment($result) {
+    public function test_environment($result): void {
         $sslmessages = ['ssl/tls configuration not supported', 'invalid ssl/tls configuration'];
 
         if ($result->part === 'php_setting'
@@ -73,6 +73,13 @@ class environment_test extends \advanced_testcase {
                 && $result->getLevel() === 'optional'
                 && $result->getStatus() === false) {
             $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
+        }
+
+        if ($result->part === 'php_extension'
+                && $result->getPluginName() !== ''
+                && $result->getLevel() === 'optional'
+                && $result->getStatus() === false) {
+            $this->markTestSkipped('Optional plugin extension is not necessary for unit testing.');
         }
 
         if ($result->part === 'custom_check'
@@ -85,6 +92,10 @@ class environment_test extends \advanced_testcase {
                 // If we're on a 32-bit system, skip 64-bit check. 32-bit PHP has PHP_INT_SIZE set to 4.
                 $this->markTestSkipped('64-bit check is not necessary for unit testing.');
             }
+            if ($result->info === 'oracle_database_usage') {
+                // If we're on a system that uses the Oracle database, skip the Oracle check.
+                $this->markTestSkipped('Oracle database check is not necessary for unit testing.');
+            }
         }
         $info = "{$result->part}:{$result->info}";
         $this->assertTrue($result->getStatus(), "Problem detected in environment ($info), fix all warnings and errors!");
@@ -93,7 +104,7 @@ class environment_test extends \advanced_testcase {
     /**
      * Test the get_list_of_environment_versions() function.
      */
-    public function test_get_list_of_environment_versions() {
+    public function test_get_list_of_environment_versions(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
         // Build a sample xmlised environment.xml.
@@ -139,7 +150,7 @@ END;
     /**
      * Test the environment_verify_plugin() function.
      */
-    public function test_verify_plugin() {
+    public function test_verify_plugin(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
         // Build sample xmlised environment file fragments.
@@ -169,7 +180,7 @@ END;
      * Test the restrict_php_version() function returns true if the current
      * PHP version is greater than the restricted version
      */
-    public function test_restrict_php_version_greater_than_restricted_version() {
+    public function test_restrict_php_version_greater_than_restricted_version(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 
@@ -192,7 +203,7 @@ END;
      * Test the restrict_php_version() function returns true if the current
      * PHP version is equal to the restricted version
      */
-    public function test_restrict_php_version_equal_to_restricted_version() {
+    public function test_restrict_php_version_equal_to_restricted_version(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 
@@ -211,7 +222,7 @@ END;
      * Test the restrict_php_version() function returns false if the current
      * PHP version is less than the restricted version
      */
-    public function test_restrict_php_version_less_than_restricted_version() {
+    public function test_restrict_php_version_less_than_restricted_version(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
 

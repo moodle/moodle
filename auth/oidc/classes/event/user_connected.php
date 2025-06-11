@@ -25,8 +25,6 @@
 
 namespace auth_oidc\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Fired when a user connects to OpenID Connect.
  */

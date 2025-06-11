@@ -24,7 +24,7 @@
 
 namespace cachestore_rediscluster;
 
-use \core\lock\lock as lock;
+use core\lock\lock as lock;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +39,7 @@ class lock_factory extends sharedconn implements \core\lock\lock_factory {
     protected $type;
 
     /** @var array $openlocks - List of held locks - used by auto-release */
-    protected $openlocks = array();
+    protected $openlocks = [];
 
     /**
      * Is available.
@@ -58,7 +58,7 @@ class lock_factory extends sharedconn implements \core\lock\lock_factory {
         $this->type = $type;
         parent::__construct();
 
-        \core_shutdown_manager::register_function(array($this, 'auto_release'));
+        \core_shutdown_manager::register_function([$this, 'auto_release']);
     }
 
     /**

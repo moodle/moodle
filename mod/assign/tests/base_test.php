@@ -22,7 +22,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
-require_once($CFG->dirroot . '/mod/assign/upgradelib.php');
 require_once(__DIR__ . '/fixtures/testable_assign.php');
 
 /**
@@ -33,23 +32,23 @@ require_once(__DIR__ . '/fixtures/testable_assign.php');
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_test extends \advanced_testcase {
+final class base_test extends \advanced_testcase {
 
-    /** @const Default number of students to create */
+    /** @var Default number of students to create */
     const DEFAULT_STUDENT_COUNT = 3;
-    /** @const Default number of teachers to create */
+    /** @var Default number of teachers to create */
     const DEFAULT_TEACHER_COUNT = 2;
-    /** @const Default number of editing teachers to create */
+    /** @var Default number of editing teachers to create */
     const DEFAULT_EDITING_TEACHER_COUNT = 2;
-    /** @const Optional extra number of students to create */
+    /** @var Optional extra number of students to create */
     const EXTRA_STUDENT_COUNT = 40;
-    /** @const Optional number of suspended students */
+    /** @var Optional number of suspended students */
     const EXTRA_SUSPENDED_COUNT = 10;
-    /** @const Optional extra number of teachers to create */
+    /** @var Optional extra number of teachers to create */
     const EXTRA_TEACHER_COUNT = 5;
-    /** @const Optional extra number of editing teachers to create */
+    /** @var Optional extra number of editing teachers to create */
     const EXTRA_EDITING_TEACHER_COUNT = 5;
-    /** @const Number of groups to create */
+    /** @var Number of groups to create */
     const GROUP_COUNT = 6;
 
     /** @var \stdClass $course New course created to hold the assignments */
@@ -84,6 +83,7 @@ class base_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest(true);
 
@@ -211,7 +211,7 @@ class base_test extends \advanced_testcase {
         return new mod_assign_testable_assign($context, $cm, $this->course);
     }
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         $this->assertNotEmpty($this->create_instance());
     }
 

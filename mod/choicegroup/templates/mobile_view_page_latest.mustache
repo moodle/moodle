@@ -118,15 +118,9 @@
 </core-navbar-buttons>
 
 <core-loading [hideUntil]="loaded">
-    <core-course-module-description description="<% choicegroup.intro %>" component="mod_choicegroup" componentId="<% cmid %>"></core-course-module-description>
-
-    <!-- Choice done in offline but not synchronized -->
-    <ion-card class="core-warning-card" *ngIf="hasOffline">
-        <ion-item>
-            <ion-icon name="fas-exclamation-triangle" slot="start"></ion-icon>
-            <ion-label>{{ 'core.hasdatatosync' | translate:{$a: moduleName} }}</ion-label>
-        </ion-item>
-    </ion-card>
+    <core-course-module-info [module]="module" description="<% choicegroup.intro %>" component="mod_choicegroup" componentId="<% cmid %>"
+        [courseId]="courseId" [hasDataToSync]="hasOffline">
+    </core-course-module-info>
 
     <%# choicegroup.message %>
     <ion-list>
@@ -162,16 +156,18 @@
                     <ion-row>
                         <ion-col>
                             <ion-item>
-                                <ion-label><% name %></ion-label>
                                 <%^ choicegroup.multipleenrollmentspossible %>
-                                    <ion-radio slot="end" <%# checked %>checked="true"<%/ checked %> <%# disabled %>disabled="true"<%/ disabled %> [value]="<% id %>"></ion-radio>
+                                    <ion-radio labelPlacement="start" <%# checked %>checked="true"<%/ checked %> <%# disabled %>disabled="true"<%/ disabled %> [value]="<% id %>">
+                                        <% name %>
+                                    </ion-radio>
                                 <%/ choicegroup.multipleenrollmentspossible %>
                                 <%# choicegroup.multipleenrollmentspossible %>
-                                    <ion-checkbox slot="end"
+                                    <ion-checkbox labelPlacement="start"
                                     [(ngModel)]="CONTENT_OTHERDATA.data.responses_<% id %>" name="responses_<% id %>"
                                     <%# checked %>checked="true"<%/ checked %>
                                     <%# disabled %>disabled="true"<%/ disabled %>
                                     [value]="<% id %>">
+                                    <% name %>
                                 </ion-checkbox>
                                 <%/ choicegroup.multipleenrollmentspossible %>
                             </ion-item>

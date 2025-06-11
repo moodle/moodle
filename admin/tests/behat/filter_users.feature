@@ -1,4 +1,4 @@
-@core @core_admin
+@core @core_admin @core_reportbuilder
 Feature: An administrator can filter user accounts by role, cohort and other profile fields
   In order to find the user accounts I am looking for
   As an admin
@@ -33,109 +33,150 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
 
+  @javascript
   Scenario: Filter user accounts by role and cohort
-    When I set the following fields to these values:
-      | courserole_rl | Student |
-      | courserole_ct | any category |
-      | courserole | C1 |
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should see "User Two"
-    And I should see "User Three"
-    And I should not see "User Four"
-    And I set the following fields to these values:
-      | cohort | CH1 |
-    And I press "Add filter"
-    And I should not see "User One"
-    And I should see "User Two"
-    And I should see "User Three"
-    And I should not see "User Four"
-    And I press "Remove all filters"
-    And I should see "User One"
-    And I should see "User Two"
-    And I should see "User Three"
-    And I should see "User Four"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Course role" "core_reportbuilder > Filter" to these values:
+      | Role name         | Student     |
+      | Course short name | C1          |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I set the following fields in the "Cohort ID" "core_reportbuilder > Filter" to these values:
+      | Cohort ID operator | Is equal to |
+      | Cohort ID value    | CH1         |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should see "User Three" in the "reportbuilder-table" "table"
+    And I should see "User Four" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Filter user accounts by confirm and authentication method
-    When I set the following fields to these values:
-      | Confirmed | No |
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should see "User Four"
-    And I set the following fields to these values:
-      | Authentication | manual |
-    And I press "Add filter"
-    And I should see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should not see "User Four"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Confirmed" "core_reportbuilder > Filter" to these values:
+      | Confirmed operator | No |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should see "User Four" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Authentication" "core_reportbuilder > Filter" to these values:
+      | Authentication operator | Is equal to     |
+      | Authentication value    | Manual accounts |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Filter user accounts by enrolled in any course
-    When I set the following fields to these values:
-      | id_anycourses | Yes |
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should see "User Two"
-    And I should see "User Three"
-    And I should not see "User Four"
-    And I press "Remove all filters"
-    And I set the following fields to these values:
-      | id_anycourses | No |
-    And I press "Add filter"
-    And I should not see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should see "User Four"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Enrolled in any course" "core_reportbuilder > Filter" to these values:
+      | Enrolled in any course operator | Yes |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Enrolled in any course" "core_reportbuilder > Filter" to these values:
+      | Enrolled in any course operator | No |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should see "User Four" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Filter user accounts by last IP address
-    When I set the following fields to these values:
-      | id_lastip | 127.0.1.1 |
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should not see "User Four"
-    And I press "Remove all filters"
-    And I set the following fields to these values:
-      | id_lastip | 127.0.1.2 |
-    And I press "Add filter"
-    And I should not see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should see "User Four"
-    And I press "Remove all filters"
-    And I should see "User One"
-    And I should see "User Two"
-    And I should see "User Three"
-    And I should see "User Four"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Last IP address" "core_reportbuilder > Filter" to these values:
+      | Last IP address operator | Is equal to |
+      | Last IP address value    | 127.0.1.1   |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Last IP address" "core_reportbuilder > Filter" to these values:
+      | Last IP address operator | Is equal to |
+      | Last IP address value    | 127.0.1.2   |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should see "User Three" in the "reportbuilder-table" "table"
+    And I should see "User Four" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Filter users by institution and department
-    When I set the field "id_institution" to "moodle"
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should see "User Two"
-    And I should not see "User Three"
-    And I should not see "User Four"
-    And I set the field "id_department" to "red"
-    And I press "Add filter"
-    And I should see "User One"
-    And I should not see "User Two"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Institution" "core_reportbuilder > Filter" to these values:
+      | Institution operator | Is equal to |
+      | Institution value    | moodle      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Department" "core_reportbuilder > Filter" to these values:
+      | Department operator | Is equal to |
+      | Department value    | red         |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Filter users by custom profile field (specific or any)
-    When I set the field "id_profile_fld" to "Favourite frog"
-    And I set the field "id_profile" to "Kermit"
-    And I press "Add filter"
-    Then I should see "User One"
-    And I should not see "User Two"
-    And I should not see "User Three"
-    And I should not see "User Four"
-    And I press "Remove all filters"
-    And I set the field "id_profile_fld" to "any field"
-    And I set the field "id_profile" to "Zombie"
-    And I press "Add filter"
-    And I should see "User Two"
-    And I should not see "User One"
-    And I should not see "User Three"
-    And I should not see "User Four"
+    When I click on "Filters" "button"
+    And I set the following fields in the "Favourite frog" "core_reportbuilder > Filter" to these values:
+      | Favourite frog operator | Is equal to |
+      | Favourite frog value    | Kermit      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I set the following fields in the "Type of undead" "core_reportbuilder > Filter" to these values:
+      | Type of undead operator | Is equal to |
+      | Type of undead value    | Zombie      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+
+  @javascript
+  Scenario: Filter users by full name
+    When I click on "Filters" "button"
+    And I set the following fields in the "Full name" "core_reportbuilder > Filter" to these values:
+      | Full name operator | Is equal to |
+      | Full name value    | User One    |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I set the following fields in the "Full name" "core_reportbuilder > Filter" to these values:
+      | Full name operator | Is equal to |
+      | Full name value    | User Two    |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"

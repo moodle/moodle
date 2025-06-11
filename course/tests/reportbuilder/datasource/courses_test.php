@@ -18,18 +18,10 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
-use core_reportbuilder_testcase;
+use core\context\course;
 use core_reportbuilder_generator;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\tags;
-use core_reportbuilder\local\filters\text;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\local\filters\{boolean_select, date, select, tags, text};
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for courses datasources
@@ -39,7 +31,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class courses_test extends core_reportbuilder_testcase {
+final class courses_test extends core_reportbuilder_testcase {
 
     /**
      * Test default datasource
@@ -49,7 +41,13 @@ class courses_test extends core_reportbuilder_testcase {
 
         // Test subject.
         $category = $this->getDataGenerator()->create_category(['name' => 'My cats']);
-        $course = $this->getDataGenerator()->create_course([
+        $courseone = $this->getDataGenerator()->create_course([
+            'category' => $category->id,
+            'fullname' => 'Feline fine',
+            'shortname' => 'C102',
+            'idnumber' => 'CAT102'
+        ]);
+        $coursetwo = $this->getDataGenerator()->create_course([
             'category' => $category->id,
             'fullname' => 'All about cats',
             'shortname' => 'C101',
@@ -61,16 +59,12 @@ class courses_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
 
-        $contentrow = array_values($content[0]);
-
+        // Default columns are category, shortname, fullname, idnumber. Sorted by category, shortname, fullname.
         $this->assertEquals([
-            $category->get_formatted_name(),
-            $course->shortname,
-            $course->fullname,
-            $course->idnumber,
-        ], $contentrow);
+            [$category->name, $coursetwo->shortname, $coursetwo->fullname, $coursetwo->idnumber],
+            [$category->name, $courseone->shortname, $courseone->fullname, $courseone->idnumber],
+        ], array_map('array_values', $content));
     }
 
     /**
@@ -88,18 +82,23 @@ class courses_test extends core_reportbuilder_testcase {
             'category' => $category->id,
             'fullname' => 'Cats',
             'summary' => 'Course description',
+            'theme' => 'boost',
             'tags' => ['Horses'],
         ]);
+
+        // Add a course image.
+        get_file_storage()->create_file_from_string([
+            'contextid' => course::instance($course->id)->id,
+            'component' => 'course',
+            'filearea' => 'overviewfiles',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'HelloWorld.jpg',
+        ], 'HelloWorld');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
-
-        // Category.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:namewithlink']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:path']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:idnumber']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:description']);
 
         // Course.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:coursefullnamewithlink']);
@@ -117,42 +116,64 @@ class courses_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:theme']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:enablecompletion']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:downloadcontent']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:timecreated']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:timemodified']);
 
         // Tags.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
+
+        // File entity.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:name']);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
-        $courserow = array_values($content[0]);
-
-        // Category.
-        $this->assertStringContainsString($category->get_formatted_name(), $courserow[0]);
-        $this->assertEquals($category->get_nested_name(false), $courserow[1]);
-        $this->assertEquals($category->idnumber, $courserow[2]);
-        $this->assertEquals(format_text($category->description, $category->descriptionformat), $courserow[3]);
+        [
+            $coursenamewithlink,
+            $courseshortnamewithlink,
+            $courseidnumberwithlink,
+            $coursesummary,
+            $courseformat,
+            $coursestartdate,
+            $courseenddate,
+            $coursevisible,
+            $coursegroupmode,
+            $coursegroupmodeforce,
+            $courselang,
+            $coursecalendar,
+            $coursetheme,
+            $coursecompletion,
+            $coursedownload,
+            $coursetimecreated,
+            $coursetimemodified,
+            $tagname,
+            $filename,
+        ] = array_values($content[0]);
 
         // Course.
-        $this->assertStringContainsString($course->fullname, $courserow[4]);
-        $this->assertStringContainsString($course->shortname, $courserow[5]);
-        $this->assertStringContainsString($course->idnumber, $courserow[6]);
-        $this->assertEquals(format_text($course->summary, $course->summaryformat), $courserow[7]);
-        $this->assertEquals('Topics format', $courserow[8]);
-        $this->assertEquals(userdate($course->startdate), $courserow[9]);
-        $this->assertEmpty($courserow[10]);
-        $this->assertEquals('Yes', $courserow[11]);
-        $this->assertEquals('No groups', $courserow[12]);
-        $this->assertEquals('No', $courserow[13]);
-        $this->assertEmpty($courserow[14]);
-        $this->assertEmpty($courserow[15]);
-        $this->assertEmpty($courserow[16]);
-        $this->assertEquals('No', $courserow[17]);
-        $this->assertEmpty($courserow[18]);
+        $this->assertStringContainsString($course->fullname, $coursenamewithlink);
+        $this->assertStringContainsString($course->shortname, $courseshortnamewithlink);
+        $this->assertStringContainsString($course->idnumber, $courseidnumberwithlink);
+        $this->assertEquals(format_text($course->summary, $course->summaryformat), $coursesummary);
+        $this->assertEquals('Custom sections', $courseformat);
+        $this->assertEquals(userdate($course->startdate), $coursestartdate);
+        $this->assertEmpty($courseenddate);
+        $this->assertEquals('Yes', $coursevisible);
+        $this->assertEquals('No groups', $coursegroupmode);
+        $this->assertEquals('No', $coursegroupmodeforce);
+        $this->assertEmpty($courselang);
+        $this->assertEmpty($coursecalendar);
+        $this->assertEquals('Boost', $coursetheme);
+        $this->assertEquals('No', $coursecompletion);
+        $this->assertEmpty($coursedownload);
+        $this->assertEquals(userdate($course->timecreated), $coursetimecreated);
+        $this->assertEquals(userdate($course->timemodified), $coursetimemodified);
 
         // Tags.
-        $this->assertEquals('Horses', $courserow[19]);
-        $this->assertStringContainsString('Horses', $courserow[20]);
+        $this->assertEquals('Horses', $tagname);
+
+        // File.
+        $this->assertEquals('HelloWorld.jpg', $filename);
     }
 
     /**
@@ -198,12 +219,9 @@ class courses_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function datasource_filters_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             // Category.
-            'Filter category' => ['course_category:name', [
-                'course_category:name_value' => -1,
-            ], false],
             'Filter category name' => ['course_category:text', [
                 'course_category:text_operator' => text::IS_EQUAL_TO,
                 'course_category:text_value' => 'Animals',
@@ -211,14 +229,6 @@ class courses_test extends core_reportbuilder_testcase {
             'Filter category name (no match)' => ['course_category:text', [
                 'course_category:text_operator' => text::IS_EQUAL_TO,
                 'course_category:text_value' => 'Fruit',
-            ], false],
-            'Filter category idnumber' => ['course_category:idnumber', [
-                'course_category:idnumber_operator' => text::IS_EQUAL_TO,
-                'course_category:idnumber_value' => 'CAT101',
-            ], true],
-            'Filter category idnumber (no match)' => ['course_category:idnumber', [
-                'course_category:idnumber_operator' => text::CONTAINS,
-                'course_category:idnumber_value' => 'FRUIT',
             ], false],
 
             // Course.
@@ -335,6 +345,22 @@ class courses_test extends core_reportbuilder_testcase {
             'Filter course downloadcontent (no match)' => ['course:downloadcontent', [
                 'course:downloadcontent_operator' => boolean_select::NOT_CHECKED,
             ], false],
+            'Filter course timecreated' => ['course:timecreated', [
+                'course:timecreated_operator' => date::DATE_RANGE,
+                'course:timecreated_from' => 1622502000,
+            ], true],
+            'Filter course timecreated (no match)' => ['course:timecreated', [
+                'course:timecreated_operator' => date::DATE_RANGE,
+                'course:timecreated_to' => 1622502000,
+            ], false],
+            'Filter course timemodified' => ['course:timemodified', [
+                'course:timemodified_operator' => date::DATE_RANGE,
+                'course:timemodified_from' => 1622502000,
+            ], true],
+            'Filter course timemodified (no match)' => ['course:timemodified', [
+                'course:timemodified_operator' => date::DATE_RANGE,
+                'course:timemodified_to' => 1622502000,
+            ], false],
 
             // Tags.
             'Filter tag name' => ['tag:name', [
@@ -343,6 +369,11 @@ class courses_test extends core_reportbuilder_testcase {
             ], false],
             'Filter tag name not empty' => ['tag:name', [
                 'tag:name_operator' => tags::NOT_EMPTY,
+            ], true],
+
+            // File.
+            'Filter file name empty' => ['file:name', [
+                'file:name_operator' => text::IS_EMPTY,
             ], true],
         ];
     }
@@ -359,7 +390,7 @@ class courses_test extends core_reportbuilder_testcase {
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 
-        $category = $this->getDataGenerator()->create_category(['name' => 'Animals', 'idnumber' => 'CAT101']);
+        $category = $this->getDataGenerator()->create_category(['name' => 'Animals']);
         $course = $this->getDataGenerator()->create_course([
             'category' => $category->id,
             'fullname' => 'Equine',
@@ -376,7 +407,7 @@ class courses_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create report containing single column, and given filter.
-        $report = $generator->create_report(['name' => 'Tasks', 'source' => courses::class, 'default' => 0]);
+        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
 
         // Add filter, set it's values.

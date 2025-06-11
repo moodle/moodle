@@ -53,7 +53,7 @@ class provider implements
      * @param  collection $collection An object for storing metadata.
      * @return collection The metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $rolecapabilities = [
             'roleid' => 'privacy:metadata:role_capabilities:roleid',
             'capability' => 'privacy:metadata:role_capabilities:capability',
@@ -100,7 +100,7 @@ class provider implements
      * @param  int $userid The user ID.
      * @return contextlist The list of context IDs.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
 
         $contextlist = new contextlist();

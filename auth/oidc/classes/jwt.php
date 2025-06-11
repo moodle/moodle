@@ -27,8 +27,6 @@ namespace auth_oidc;
 
 use moodle_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for working with JWTs.
  */
@@ -149,7 +147,7 @@ class jwt {
      * @param string $privatekey
      * @return string
      */
-    public function assert_token(string $privatekey) {
+    public function assert_token($privatekey) {
         $assertion = \Firebase\JWT\JWT::encode($this->claims, $privatekey, 'RS256', null, $this->header);
 
         return $assertion;

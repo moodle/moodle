@@ -42,12 +42,15 @@ use stdClass;
 class enrolment extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['user_enrolments' => 'ue', 'enrol' => 'e'];
+    protected function get_default_tables(): array {
+        return [
+            'user_enrolments',
+            'enrol',
+        ];
     }
 
     /**
@@ -88,7 +91,7 @@ class enrolment extends base {
         $userenrolments = $this->get_table_alias('user_enrolments');
         $enrol = $this->get_table_alias('enrol');
 
-        // Enrolment method column.
+        // Enrolment method column (Deprecated since Moodle 4.3, to remove in MDL-78118).
         $columns[] = (new column(
             'method',
             new lang_string('method', 'enrol'),
@@ -98,6 +101,7 @@ class enrolment extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrol}.enrol, {$enrol}.id")
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'enrol:name\' for replacement')
             ->add_callback([enrolment_formatter::class, 'enrolment_name']);
 
         // Enrolment time created.
@@ -152,7 +156,7 @@ class enrolment extends base {
             ->set_is_sortable(true)
             ->add_callback([enrolment_formatter::class, 'enrolment_status']);
 
-        // Role method column.
+        // Role column (Deprecated since Moodle 4.3, to remove in MDL-78118).
         $ctx = database::generate_alias();
         $ra = database::generate_alias();
         $r = database::generate_alias();
@@ -170,6 +174,7 @@ class enrolment extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$r}.id, {$r}.name, {$r}.shortname, {$ctx}.instanceid")
             ->set_is_sortable(true, ["{$r}.shortname"])
+            ->set_is_deprecated('See \'role:name\' for replacement')
             ->add_callback(static function(?string $value, stdClass $row): string {
                 if (!$row->id) {
                     return '';
@@ -212,7 +217,7 @@ class enrolment extends base {
         $userenrolments = $this->get_table_alias('user_enrolments');
         $enrol = $this->get_table_alias('enrol');
 
-        // Enrolment method.
+        // Enrolment method (Deprecated since Moodle 4.3, to remove in MDL-78118).
         $enrolmentmethods = static function(): array {
             return array_map(static function(enrol_plugin $plugin): string {
                 return get_string('pluginname', 'enrol_' . $plugin->get_name());
@@ -226,6 +231,7 @@ class enrolment extends base {
             "{$enrol}.enrol"
         ))
             ->add_joins($this->get_joins())
+            ->set_is_deprecated('See \'enrol:plugin\' for replacement')
             ->set_options_callback($enrolmentmethods);
 
         // Enrolment time created.

@@ -1,0 +1,4 @@
+filter:
+  notPaths:
+    - "node_modules"
+    - "amd/build"

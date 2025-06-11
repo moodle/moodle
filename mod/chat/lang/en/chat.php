@@ -142,7 +142,7 @@ $string['privacy:metadata:messages:timestamp'] = 'The time when the message was 
 $string['privacy:metadata:messages:userid'] = 'The user ID of the author of the message';
 $string['refreshroom'] = 'Refresh room';
 $string['refreshuserlist'] = 'Refresh user list';
-$string['removemessages'] = 'Remove all messages';
+$string['removemessages'] = 'All messages';
 $string['repeatdaily'] = 'At the same time every day';
 $string['repeatnone'] = 'No repeats - publish the specified time only';
 $string['repeattimes'] = 'Repeat/publish session times';
@@ -175,9 +175,3 @@ $string['usingchat_help'] = 'The chat module contains some features to make chat
 * Beeps - You can send a sound to other participants by clicking the "beep" link next to their name. A useful shortcut to beep all the people in the chat at once is to type "beep all".
 * HTML - If you know some HTML code, you can use it in your text to do things like insert images, play sounds or create different coloured text';
 $string['viewreport'] = 'Past sessions';
-
-// Deprecated since Moodle 3.11.
-$string['sessionstart'] = 'The next chat session will start on {$a->date}, ({$a->fromnow} from now)';
-
-// Deprecated since Moodle 4.0.
-$string['nextsession'] = 'Next scheduled session';

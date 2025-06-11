@@ -75,6 +75,9 @@ class behat_reportbuilder extends behat_base {
             new behat_component_named_selector('Condition', [
                 ".//*[@data-region='conditions-form']//*[@data-condition-name=%locator%]",
             ]),
+            new behat_component_named_selector('Audience', [
+                ".//*[@data-region='audiences']//*[@data-audience-title=%locator%]",
+            ]),
         ];
     }
 

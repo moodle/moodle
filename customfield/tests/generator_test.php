@@ -24,7 +24,7 @@ namespace core_customfield;
  * @copyright  2018 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Get generator
@@ -37,7 +37,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test creating category
      */
-    public function test_create_category() {
+    public function test_create_category(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->get_generator();
@@ -50,7 +50,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test creating field
      */
-    public function test_create_field() {
+    public function test_create_field(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->get_generator();
@@ -69,7 +69,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test for function add_instance_data()
      */
-    public function test_add_instance_data() {
+    public function test_add_instance_data(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->get_generator();

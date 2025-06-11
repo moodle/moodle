@@ -30,9 +30,9 @@ use navigation_node_collection;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class view extends navigation_node {
-    /** @var stdClass $context the current context */
+    /** @var \stdClass $context the current context */
     protected $context;
-    /** @var moodle_page $page the moodle page that the navigation belongs to */
+    /** @var \moodle_page $page the moodle page that the navigation belongs to */
     protected $page;
     /** @var bool $initialised A switch to see if the navigation node is initialised */
     protected $initialised = false;

@@ -19,8 +19,6 @@ declare(strict_types=1);
 namespace core\output;
 
 use core\output\dynamic_tabs\base;
-use renderer_base;
-use templatable;
 
 /**
  * Class dynamic tabs
@@ -30,7 +28,6 @@ use templatable;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dynamic_tabs implements templatable {
-
     /** @var base[]  */
     protected $tabs = [];
 
@@ -62,7 +59,7 @@ class dynamic_tabs implements templatable {
      */
     public function export_for_template(renderer_base $output): array {
         $data = [
-            'tabs' => []
+            'tabs' => [],
         ];
 
         foreach ($this->tabs as $tab) {

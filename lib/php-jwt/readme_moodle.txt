@@ -13,3 +13,4 @@ Instructions
 4.  Download the latest release.
 5.  Unzip it in lib as php-jwt.
 6.  Update entry for this library in lib/thirdpartylibs.xml.
+

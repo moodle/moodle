@@ -30,14 +30,14 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2022 Nathan Nguyen <nathannguyen@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class autocomplete_test extends advanced_testcase {
+final class autocomplete_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter}
      *
      * @return array
      */
-    public function get_sql_filter_provider(): array {
+    public static function get_sql_filter_provider(): array {
         return [
             [[], ["Course 1 full name", "Course 2 full name", "Course 3 full name", "PHPUnit test site"]],
             [["course1", "course3"], ["Course 1 full name", "Course 3 full name"]],

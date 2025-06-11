@@ -33,12 +33,13 @@ require_once($CFG->libdir . '/filestorage/file_system_filedir.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \file_system_filedir
  */
-class file_system_filedir_test extends \advanced_testcase {
+final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Shared test setUp.
      */
     public function setUp(): void {
+        parent::setUp();
         // Reset the file storage so that subsequent fetches to get_file_storage are called after
         // configuration is prepared.
         get_file_storage(true);
@@ -50,6 +51,7 @@ class file_system_filedir_test extends \advanced_testcase {
     public function tearDown(): void {
         // Reset the file storage so that subsequent tests will use the standard file storage.
         get_file_storage(true);
+        parent::tearDown();
     }
 
     /**
@@ -92,7 +94,7 @@ class file_system_filedir_test extends \advanced_testcase {
      * @param   string  $filename The file name to use in the stored_file
      * @param   array   $mockedmethods A list of methods you intend to override
      *                  If no methods are specified, only abstract functions are mocked.
-     * @return stored_file
+     * @return \stored_file
      */
     protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = \file_storage::hash_from_string($filecontent);
@@ -120,7 +122,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @param   array   $mockedmethods A list of methods you intend to override
      *                  If no methods are specified, only abstract functions are mocked.
-     * @return file_system
+     * @return \file_system
      */
     protected function get_testable_mock($mockedmethods = []) {
         $fs = $this->getMockBuilder(file_system_filedir::class)
@@ -136,7 +138,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::__construct
      */
-    public function test_readonly_filesystem_filedir() {
+    public function test_readonly_filesystem_filedir(): void {
         $this->resetAfterTest();
 
         // Setup the filedir but remove permissions.
@@ -160,7 +162,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::__construct
      */
-    public function test_readonly_filesystem_trashdir() {
+    public function test_readonly_filesystem_trashdir(): void {
         $this->resetAfterTest();
 
         // Setup the trashdir but remove permissions.
@@ -183,7 +185,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::__construct
      */
-    public function test_warnings_put_in_place() {
+    public function test_warnings_put_in_place(): void {
         $this->resetAfterTest();
 
         $vfileroot = $this->setup_vfile_root(null);
@@ -203,7 +205,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_remote_path_from_hash
      */
-    public function test_get_remote_path_from_hash() {
+    public function test_get_remote_path_from_hash(): void {
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
         $expectedresult = (object) [];
@@ -218,7 +220,6 @@ class file_system_filedir_test extends \advanced_testcase {
             ->willReturn($expectedresult);
 
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_remote_path_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$contenthash]);
 
         $this->assertEquals($expectedresult, $result);
@@ -230,7 +231,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_local_path_from_storedfile
      */
-    public function test_get_local_path_from_storedfile_with_recovery() {
+    public function test_get_local_path_from_storedfile_with_recovery(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
         $fs = $this->get_testable_mock([
@@ -258,7 +259,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_local_path_from_storedfile
      */
-    public function test_get_local_path_from_storedfile_without_recovery() {
+    public function test_get_local_path_from_storedfile_without_recovery(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
         $fs = $this->get_testable_mock([
@@ -289,12 +290,11 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_fulldir_from_hash
      */
-    public function test_get_fulldir_from_hash($hash, $hashdir) {
+    public function test_get_fulldir_from_hash($hash, $hashdir): void {
         global $CFG;
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_fulldir_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/filedir/%s', $CFG->dataroot, $hashdir);
@@ -311,7 +311,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_fulldir_from_storedfile
      */
-    public function test_get_fulldir_from_storedfile($hash, $hashdir) {
+    public function test_get_fulldir_from_storedfile($hash, $hashdir): void {
         global $CFG;
 
         $file = $this->getMockBuilder('stored_file')
@@ -326,7 +326,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod('file_system_filedir', 'get_fulldir_from_storedfile');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         $expectedpath = sprintf('%s/filedir/%s', $CFG->dataroot, $hashdir);
@@ -343,9 +342,8 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_contentdir_from_hash
      */
-    public function test_get_contentdir_from_hash($hash, $hashdir) {
+    public function test_get_contentdir_from_hash($hash, $hashdir): void {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentdir_from_hash');
-        $method->setAccessible(true);
 
         $fs = new file_system_filedir();
         $result = $method->invokeArgs($fs, array($hash));
@@ -363,9 +361,8 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_contentpath_from_hash
      */
-    public function test_get_contentpath_from_hash($hash, $hashdir) {
+    public function test_get_contentpath_from_hash($hash, $hashdir): void {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentpath_from_hash');
-        $method->setAccessible(true);
 
         $fs = new file_system_filedir();
         $result = $method->invokeArgs($fs, array($hash));
@@ -384,12 +381,11 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_trash_fullpath_from_hash
      */
-    public function test_get_trash_fullpath_from_hash($hash, $hashdir) {
+    public function test_get_trash_fullpath_from_hash($hash, $hashdir): void {
         global $CFG;
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_trash_fullpath_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/trashdir/%s/%s', $CFG->dataroot, $hashdir, $hash);
@@ -406,12 +402,11 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::get_trash_fulldir_from_hash
      */
-    public function test_get_trash_fulldir_from_hash($hash, $hashdir) {
+    public function test_get_trash_fulldir_from_hash($hash, $hashdir): void {
         global $CFG;
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_trash_fulldir_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/trashdir/%s', $CFG->dataroot, $hashdir);
@@ -423,7 +418,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::copy_content_from_storedfile
      */
-    public function test_copy_content_from_storedfile() {
+    public function test_copy_content_from_storedfile(): void {
         $this->resetAfterTest();
         global $CFG;
 
@@ -461,7 +456,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file() {
+    public function test_recover_file(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -486,7 +481,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -501,7 +495,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file_already_present() {
+    public function test_recover_file_already_present(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -526,7 +520,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -540,7 +533,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file_size_mismatch() {
+    public function test_recover_file_size_mismatch(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -564,7 +557,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -577,7 +569,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file_has_mismatch() {
+    public function test_recover_file_has_mismatch(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -601,7 +593,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -615,7 +606,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file_alttrash() {
+    public function test_recover_file_alttrash(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -635,7 +626,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -650,7 +640,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::recover_file
      */
-    public function test_recover_file_contentdir_readonly() {
+    public function test_recover_file_contentdir_readonly(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -675,7 +665,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -687,7 +676,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_path
      */
-    public function test_add_file_from_path() {
+    public function test_add_file_from_path(): void {
         $this->resetAfterTest();
         global $CFG;
 
@@ -723,7 +712,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_path
      */
-    public function test_add_file_from_path_file_unavailable() {
+    public function test_add_file_from_path_file_unavailable(): void {
         $this->resetAfterTest();
 
         // Setup the filedir.
@@ -743,7 +732,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_path
      */
-    public function test_add_file_from_path_mismatched_hash() {
+    public function test_add_file_from_path_mismatched_hash(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -765,7 +754,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_path
      */
-    public function test_add_file_from_path_existing_content_invalid() {
+    public function test_add_file_from_path_existing_content_invalid(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -810,7 +799,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_path
      */
-    public function test_add_file_from_path_existing_cannot_write_hashpath() {
+    public function test_add_file_from_path_existing_cannot_write_hashpath(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -843,7 +832,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_string
      */
-    public function test_add_file_from_string() {
+    public function test_add_file_from_string(): void {
         $this->resetAfterTest();
         global $CFG;
 
@@ -870,7 +859,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_string
      */
-    public function test_add_file_from_string_existing_cannot_write_hashpath() {
+    public function test_add_file_from_string_existing_cannot_write_hashpath(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -901,7 +890,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::add_file_from_string
      */
-    public function test_add_file_from_string_existing_matches() {
+    public function test_add_file_from_string_existing_matches(): void {
         $this->resetAfterTest();
         global $CFG;
 
@@ -935,7 +924,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::remove_file
      */
-    public function test_remove_file_missing() {
+    public function test_remove_file_missing(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -958,7 +947,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::remove_file
      */
-    public function test_remove_file_existing_trash() {
+    public function test_remove_file_existing_trash(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -987,7 +976,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::remove_file
      */
-    public function test_remove_file_empty() {
+    public function test_remove_file_empty(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -1010,7 +999,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::remove_file
      */
-    public function test_remove_file_in_use() {
+    public function test_remove_file_in_use(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -1043,7 +1032,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::remove_file
      */
-    public function test_remove_file_expired() {
+    public function test_remove_file_expired(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -1075,7 +1064,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @covers ::empty_trash
      */
-    public function test_empty_trash() {
+    public function test_empty_trash(): void {
         $this->resetAfterTest();
 
         $filecontent = 'example content';
@@ -1092,7 +1081,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'empty_trash');
-        $method->setAccessible(true);
         $result = $method->invoke($fs);
 
         $this->assertTrue($vfileroot->hasChild('filedir/0f/f3/' . $contenthash));
@@ -1107,7 +1095,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function contenthash_dataprovider() {
+    public static function contenthash_dataprovider(): array {
         return array(
             array(
                 'contenthash'   => 'eee4943847a35a4b6942c6f96daafde06bcfdfab',

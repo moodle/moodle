@@ -47,7 +47,7 @@ class enrol_instance_updated extends base {
      * @param \stdClass $enrol record from DB table 'enrol'
      * @return \core\event\base returns instance of new event
      */
-    public static final function create_from_record($enrol) {
+    final public static function create_from_record($enrol) {
         $event = static::create(array(
             'context'  => \context_course::instance($enrol->courseid),
             'objectid' => $enrol->id,

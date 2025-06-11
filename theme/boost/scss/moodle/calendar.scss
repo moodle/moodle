@@ -9,12 +9,20 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 $calendarEventOtherColor: #ced4da !default; // Pale gray.
 
 // Border colours for the event colour indicators.
-$calendarEventCategoryBorder: 2px solid #9e619f !default; // Purple.
-$calendarEventCourseBorder: 2px solid #d34600 !default; // Red-orange.
-$calendarEventGlobalBorder: 2px solid #2b8713 !default; // Green.
-$calendarEventGroupBorder: 2px solid #9a6e02 !default; // Dark orange.
-$calendarEventUserBorder: 2px solid #4e7c91 !default; // Blue.
-$calendarEventOtherBorder: 2px solid #687889 !default; // Gray.
+$calendarEventCategoryBorderColor:#9e619f !default; // Purple.
+$calendarEventCourseBorderColor:#d34600 !default; // Red-orange.
+$calendarEventGlobalBorderColor:#2b8713 !default; // Green.
+$calendarEventGroupBorderColor:#9a6e02 !default; // Dark orange.
+$calendarEventUserBorderColor:#4e7c91 !default; // Blue.
+$calendarEventOtherBorderColor:#687889 !default; // Gray.
+
+// Border for the event colour indicators.
+$calendarEventCategoryBorder: 2px solid $calendarEventCategoryBorderColor !default; // Purple.
+$calendarEventCourseBorder: 2px solid $calendarEventCourseBorderColor !default; // Red-orange.
+$calendarEventGlobalBorder: 2px solid $calendarEventGlobalBorderColor !default; // Green.
+$calendarEventGroupBorder: 2px solid $calendarEventGroupBorderColor !default; // Dark orange.
+$calendarEventUserBorder: 2px solid $calendarEventUserBorderColor !default; // Blue.
+$calendarEventOtherBorder: 2px solid $calendarEventOtherBorderColor !default; // Gray.
 
 // This will be the colour of mini-calendar links, hide/show filter icons, edit/delete icon buttons.
 $calendarEventColor: #0d5ca1 !default;
@@ -276,7 +284,7 @@ $calendarCurrentDateBackground: $primary;
         }
 
         .clickable:hover {
-            background-color: #ededed;
+            background-color: $calendar-month-clickable-bg;
         }
     }
 
@@ -290,10 +298,10 @@ $calendarCurrentDateBackground: $primary;
     .calendar_event_site,
     .calendar_event_group,
     .calendar_event_user {
-        &:hover {
-            a {
-                color: $link-hover-color;
-                text-decoration: $link-hover-decoration;
+        a:has(> .icon) {
+            &:hover {
+                color: darken($calendarEventColor, 15%);
+                text-decoration: $link-decoration;
             }
         }
     }
@@ -549,7 +557,7 @@ $calendarCurrentDateBackground: $primary;
                 }
                 .calendarwrapper {
                     .arrow_text {
-                        display: none;
+                        @include sr-only;
                     }
                 }
             }
@@ -601,7 +609,7 @@ table.calendartable caption {
 }
 
 @media (min-width: 768px) {
-    section:not(#region-main) {
+    [data-blockregion]:not([data-blockregion="content"]) {
         .block {
             &.block_calendar_month {
                 .maincalendar {
@@ -620,7 +628,10 @@ table.calendartable caption {
                         .previous,
                         .next {
                             width: 30%;
-                            font-size: 0.8em;
+
+                            .arrow_text {
+                                display: none;
+                            }
                         }
                     }
 
@@ -657,7 +668,7 @@ table.calendartable caption {
                                 &.clickable:not(.today):hover {
                                     .day-number-circle {
                                         border-radius: 50%;
-                                        background-color: #ededed;
+                                        background-color: $calendar-month-clickable-bg;
                                     }
                                 }
                             }

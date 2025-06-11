@@ -19,20 +19,22 @@ namespace core;
 /**
  * Test core_user class.
  *
+ * @covers \core_user
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_test extends \advanced_testcase {
+final class user_test extends \advanced_testcase {
 
     /**
      * Setup test data.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
-    public function test_get_user() {
+    public function test_get_user(): void {
         global $CFG;
 
 
@@ -82,7 +84,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_user_by_username method.
      */
-    public function test_get_user_by_username() {
+    public function test_get_user_by_username(): void {
         $record = array();
         $record['username'] = 'johndoe';
         $record['email'] = 'johndoe@example.com';
@@ -111,7 +113,7 @@ class user_test extends \advanced_testcase {
         $this->assertFalse(\core_user::get_user_by_username('janedoe'));
     }
 
-    public function test_search() {
+    public function test_search(): void {
         global $DB;
 
         self::init_search_tests();
@@ -177,12 +179,12 @@ class user_test extends \advanced_testcase {
         $this->assertEquals('House', $result[0]->lastname);
         $this->assertEquals('house@x.x', $result[0]->email);
         $this->assertEquals(0, $result[0]->deleted);
-        $this->assertObjectHasAttribute('firstnamephonetic', $result[0]);
-        $this->assertObjectHasAttribute('lastnamephonetic', $result[0]);
-        $this->assertObjectHasAttribute('middlename', $result[0]);
-        $this->assertObjectHasAttribute('alternatename', $result[0]);
-        $this->assertObjectHasAttribute('imagealt', $result[0]);
-        $this->assertObjectHasAttribute('username', $result[0]);
+        $this->assertObjectHasProperty('firstnamephonetic', $result[0]);
+        $this->assertObjectHasProperty('lastnamephonetic', $result[0]);
+        $this->assertObjectHasProperty('middlename', $result[0]);
+        $this->assertObjectHasProperty('alternatename', $result[0]);
+        $this->assertObjectHasProperty('imagealt', $result[0]);
+        $this->assertObjectHasProperty('username', $result[0]);
 
         // Now search by lastname, both names, and partials, case-insensitive.
         $this->assertEquals($result, \core_user::search('House'));
@@ -284,9 +286,39 @@ class user_test extends \advanced_testcase {
     }
 
     /**
+     * The search function had a bug where it failed if you have no identify fields (or only custom
+     * ones).
+     */
+    public function test_search_no_identity_fields(): void {
+        self::init_search_tests();
+
+        // Set no user identity fields.
+        set_config('showuseridentity', '');
+
+        // Set up course for test with teacher in.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $generator->create_user(['firstname' => 'Alberto', 'lastname' => 'Unwin',
+            'email' => 'a.unwin@x.x']);
+        $generator->enrol_user($teacher->id, $course->id, 'teacher');
+
+        // Admin user has site-wide permissions, this uses one variant of the query.
+        $this->setAdminUser();
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
+
+        // Teacher has course-wide permissions, this uses another variant.
+        $this->setUser($teacher);
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
+    }
+
+    /**
      * Tests the search() function with limits on the number to return.
      */
-    public function test_search_with_count() {
+    public function test_search_with_count(): void {
         self::init_search_tests();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
@@ -315,7 +347,7 @@ class user_test extends \advanced_testcase {
      * are not in the same group. This is checked by the user profile permission thing and not
      * currently by the original query.
      */
-    public function test_search_group_permissions() {
+    public function test_search_group_permissions(): void {
         global $DB;
 
         self::init_search_tests();
@@ -358,7 +390,7 @@ class user_test extends \advanced_testcase {
      * are not in the same group. This is checked by the user profile permission thing and not
      * currently by the original query.
      */
-    public function test_search_deleted_users() {
+    public function test_search_deleted_users(): void {
         self::init_search_tests();
 
         // Create one user to do the searching.
@@ -412,7 +444,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test require_active_user
      */
-    public function test_require_active_user() {
+    public function test_require_active_user(): void {
         global $DB;
 
         // Create a default user for the test.
@@ -480,7 +512,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_property_definition() method.
      */
-    public function test_get_property_definition() {
+    public function test_get_property_definition(): void {
         // Try to get a existing property.
         $properties = \core_user::get_property_definition('id');
         $this->assertEquals($properties['type'], PARAM_INT);
@@ -505,7 +537,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test validate() method.
      */
-    public function test_validate() {
+    public function test_validate(): void {
 
         // Create user with just with username and firstname.
         $record = array('username' => 's10', 'firstname' => 'Bebe Stevens');
@@ -535,7 +567,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test clean_data() method.
      */
-    public function test_clean_data() {
+    public function test_clean_data(): void {
         $this->resetAfterTest(false);
 
         $user = new \stdClass();
@@ -562,7 +594,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test clean_field() method.
      */
-    public function test_clean_field() {
+    public function test_clean_field(): void {
 
         // Create a 'malicious' user object/
         $user = new \stdClass();
@@ -588,7 +620,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_property_type() method.
      */
-    public function test_get_property_type() {
+    public function test_get_property_type(): void {
 
         // Fetch valid properties and verify if the type is correct.
         $type = \core_user::get_property_type('username');
@@ -611,7 +643,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_property_null() method.
      */
-    public function test_get_property_null() {
+    public function test_get_property_null(): void {
         // Fetch valid properties and verify if it is NULL_ALLOWED or NULL_NOT_ALLOWED.
         $property = \core_user::get_property_null('username');
         $this->assertEquals(NULL_NOT_ALLOWED, $property);
@@ -635,7 +667,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_property_choices() method.
      */
-    public function test_get_property_choices() {
+    public function test_get_property_choices(): void {
 
         // Test against country property choices.
         $choices = \core_user::get_property_choices('country');
@@ -670,7 +702,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test get_property_default().
      */
-    public function test_get_property_default() {
+    public function test_get_property_default(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -704,7 +736,7 @@ class user_test extends \advanced_testcase {
     /**
      * Ensure that the noreply user is not cached.
      */
-    public function test_get_noreply_user() {
+    public function test_get_noreply_user(): void {
         global $CFG;
 
         // Create a new fake language 'xx' with the 'noreplyname'.
@@ -727,7 +759,7 @@ class user_test extends \advanced_testcase {
     /**
      * Test is_real_user method.
      */
-    public function test_is_real_user() {
+    public function test_is_real_user(): void {
         global $CFG, $USER;
 
         // Real users are real users.
@@ -767,7 +799,7 @@ class user_test extends \advanced_testcase {
     /**
      * Tests for the {@see \core_user::awaiting_action()} method.
      */
-    public function test_awaiting_action() {
+    public function test_awaiting_action(): void {
         global $CFG, $DB, $USER;
 
         $guest = \core_user::get_user($CFG->siteguest);
@@ -812,5 +844,168 @@ class user_test extends \advanced_testcase {
         $CFG->sitepolicy = 'https://example.com';
         $this->assertFalse(\core_user::awaiting_action($admin));
         $this->assertTrue(\core_user::awaiting_action($manager));
+    }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_fullname
+     */
+    public function test_display_name(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+        $context = \context_system::instance();
+
+        // Show real name as the force names config are not set.
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context));
+
+        // With override, still show real name.
+        $options = ['override' => true];
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context, $options));
+
+        // Set the force names config.
+        set_config('forcefirstname', 'Bruce');
+        set_config('forcelastname', 'Simpson');
+
+        // Show forced names.
+        $this->assertEquals('Bruce Simpson', \core_user::get_fullname($user, $context));
+
+        // With override, show real name.
+        $options = ['override' => true];
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context, $options));
+    }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_profile_url
+     */
+    public function test_display_profile_url(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+
+        // Display profile url at site context.
+        $this->assertEquals("https://www.example.com/moodle/user/profile.php?id={$user->id}",
+            \core_user::get_profile_url($user)->out());
+
+        // Display profile url at course context.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        $this->assertEquals("https://www.example.com/moodle/user/view.php?id={$user->id}&amp;course={$course->id}",
+            \core_user::get_profile_url($user, $coursecontext));
+
+        // Throw error if userid is invalid.
+        unset($user->id);
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage('User id is required when displaying profile url.');
+        \core_user::get_profile_url($user, $coursecontext);
+    }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_profile_picture
+     */
+    public function test_display_profile_picture(): void {
+        global $OUTPUT, $CFG;
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+        $user2 = $this->getDataGenerator()->create_user(['picture' => 1]);
+
+        // Display profile picture.
+        $context = \context_system::instance();
+        // No image, show initials.
+        $this->assertStringContainsString(
+            "<span class=\"userinitials size-35\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span></a>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context)));
+        // With Image.
+        $expectedimagesrc = $CFG->wwwroot . '/pluginfile.php/' . \context_user::instance($user2->id)->id .
+            '/user/icon/boost/f2?rev=1';
+        $this->assertStringContainsString($expectedimagesrc,
+            $OUTPUT->render(\core_user::get_profile_picture($user2, $context)));
+
+        // Display profile picture with options.
+        $options = ['size' => 50, 'includefullname' => true];
+        $this->assertStringContainsString(
+            "<span class=\"userinitials size-50\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span>John Doe</a>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
+
+        // Display profile picture with options, no link.
+        $options = ['link' => false];
+        $this->assertEquals(
+            "<span class=\"userinitials size-35\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
+    }
+
+    /**
+     * Test that user with Letter avatar respect language preference.
+     *
+     * @param array $userdata
+     * @param string $fullnameconfig
+     * @param string $expected
+     * @return void
+     * @covers       \core_user::get_initials
+     * @dataProvider user_name_provider
+     */
+    public function test_get_initials(array $userdata, string $fullnameconfig, string $expected): void {
+        $this->resetAfterTest();
+        // Create a user.
+        $page = new \moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(\context_system::instance());
+        $renderer = $page->get_renderer('core');
+        $user1 =
+            $this->getDataGenerator()->create_user(
+                array_merge(
+                    ['picture' => 0, 'email' => 'user1@example.com'],
+                    $userdata
+                )
+            );
+        set_config('fullnamedisplay', $fullnameconfig);
+        $initials = \core_user::get_initials($user1);
+        $this->assertEquals($expected, $initials);
+    }
+
+    /**
+     * Provider of user configuration for testing initials rendering
+     *
+     * @return array[]
+     */
+    public static function user_name_provider(): array {
+        return [
+            'simple user' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'language',
+                'expected' => 'fl',
+            ],
+            'simple user with lastname firstname in language settings' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'lastname firstname',
+                'expected' => 'lf',
+            ],
+            'simple user with no surname' => [
+                'user' => ['firstname' => '', 'lastname' => 'L'],
+                'fullnamedisplay' => 'language',
+                'expected' => 'L',
+            ],
+            'simple user with a middle name' => [
+                'user' => ['firstname' => 'f', 'lastname' => 'l', 'middlename' => 'm'],
+                'fullnamedisplay' => 'middlename lastname',
+                'expected' => 'ml',
+            ],
+            'user with a middle name & fullnamedisplay contains 3 names' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last', 'middlename' => 'middle'],
+                'fullnamedisplay' => 'firstname middlename lastname',
+                'expected' => 'fl',
+            ],
+            'simple user with a namefield consisting of one element' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'lastname',
+                'expected' => 'l',
+            ],
+        ];
     }
 }

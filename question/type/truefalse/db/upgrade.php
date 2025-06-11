@@ -29,26 +29,19 @@
  * @return bool
  */
 function xmldb_qtype_truefalse_upgrade(int $oldversion): bool {
-    global $DB;
-
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2022071900) {
-
-        // Define field showstandardinstruction to be added to question_truefalse.
-        $table = new xmldb_table('question_truefalse');
-        $field = new xmldb_field('showstandardinstruction', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'falseanswer');
-
-        // Conditionally launch add field showstandardinstruction.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Truefalse savepoint reached.
-        upgrade_plugin_savepoint(true, 2022071900, 'qtype', 'truefalse');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

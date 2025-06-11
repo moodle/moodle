@@ -64,7 +64,7 @@ class component_content extends component {
                                 $title = null, $url = null) {
         parent::__construct($id, $component, $table, $field, $courseid, $timemodified, $contentformat, $title);
         $this->content = $content;
-        $this->contenthash = sha1($this->content);
+        $this->contenthash = is_string($this->content) ? sha1($this->content) : '';
         $this->contenturl = $url ? $url instanceof moodle_url ? $url->out() : $url : $url;
         $this->embeddedfiles = [];
     }

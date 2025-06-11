@@ -36,27 +36,27 @@ $sort = optional_param('tsort', 'timesent', PARAM_ALPHA);
 if (!empty($category)) {
     $context = context_coursecat::instance($category);
     $coursecat = core_course_category::get($category);
-    $courses = $coursecat->get_courses(array('recursive' => true, 'idonly' => true));
+    $courses = $coursecat->get_courses(['recursive' => true, 'idonly' => true]);
     $PAGE->set_category_by_id($category);
     require_login();
 } else if (!empty($attendancecm)) {
     $cm             = get_coursemodule_from_id('attendance', $attendancecm, 0, false, MUST_EXIST);
-    $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-    $courses = array($course->id);
+    $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+    $courses = [$course->id];
     $context = context_module::instance($cm->id);
     require_login($course, false, $cm);
 } else {
     admin_externalpage_setup('managemodules');
     $context = context_system::instance();
-    $courses = array(); // Show all courses.
+    $courses = []; // Show all courses.
 }
 // Check permissions.
 require_capability('mod/attendance:viewreports', $context);
 
 $exportfilename = 'attendance-absentee.csv';
 
-$PAGE->set_url('/mod/attendance/absentee.php', array('category' => $category, 'id' => $attendancecm));
+$PAGE->set_url('/mod/attendance/absentee.php', ['category' => $category, 'id' => $attendancecm]);
 
 $PAGE->set_heading($SITE->fullname);
 
@@ -80,24 +80,26 @@ if (!$table->is_downloading($download, $exportfilename)) {
     }
 
 }
-$columns = array('coursename', 'aname', 'userid');
-$headers = array(get_string('course'),
+$columns = ['coursename', 'aname', 'userid'];
+$headers = [get_string('course'),
     get_string('pluginname', 'attendance'),
-    get_string('user'));
+    get_string('user'), ];
 
-$extrafields = array();
+$extrafields = [];
 if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
     $extrafields = explode(',', $CFG->showuseridentity);
     foreach ($extrafields as $field) {
-        $columns[] = $field;
-        $headers[] = get_string($field);
+        if (strpos($field, 'profile_field') !== 0) {
+            $columns[] = $field;
+            $headers[] = get_string($field);
+        }
     }
 }
-$columns = array_merge($columns, array('numtakensessions', 'percent', 'timesent'));
-$headers = array_merge($headers, array(
+$columns = array_merge($columns, ['numtakensessions', 'percent', 'timesent']);
+$headers = array_merge($headers, [
     get_string('takensessions', 'attendance'),
     get_string('averageattendance', 'attendance'),
-    get_string('triggered', 'attendance')));
+    get_string('triggered', 'attendance')]);
 
 $table->define_columns($columns);
 $table->define_headers($headers);
@@ -105,7 +107,7 @@ $table->define_headers($headers);
 $table->sortable(true);
 $table->set_attribute('cellspacing', '0');
 $table->set_attribute('class', 'generaltable generalbox');
-$table->show_download_buttons_at(array(TABLE_P_BOTTOM));
+$table->show_download_buttons_at([TABLE_P_BOTTOM]);
 $table->setup();
 
 // Work out direction of sort required.
@@ -130,13 +132,13 @@ if (!empty($sort)) {
 
 $records = attendance_get_users_to_notify($courses, $orderby);
 foreach ($records as $record) {
-    $row = array();
+    $row = [];
     if (!$table->is_downloading($download, $exportfilename)) {
-        $url = new moodle_url('/mod/attendance/index.php', array('id' => $record->courseid));
+        $url = new moodle_url('/mod/attendance/index.php', ['id' => $record->courseid]);
         $row[] = html_writer::link($url, $record->coursename);
 
-        $url = new moodle_url('/mod/attendance/view.php', array('studentid' => $record->userid,
-            'id' => $record->cmid, 'view' => ATT_VIEW_ALL));
+        $url = new moodle_url('/mod/attendance/view.php', ['studentid' => $record->userid,
+            'id' => $record->cmid, 'view' => ATT_VIEW_ALL]);
         $row[] = html_writer::link($url, $record->aname);
 
         $row[] = html_writer::link($url, fullname($record));

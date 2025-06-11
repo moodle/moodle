@@ -33,6 +33,16 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         new lang_string('enablecourserelativedates', 'core_admin'),
         new lang_string('enablecourserelativedates_desc', 'core_admin'), 0));
 
+    // Sharing to MoodleNet setting.
+    $temp->add(new admin_setting_configcheckbox('enablesharingtomoodlenet',
+        new lang_string('enablesharingtomoodlenet', 'core_admin'),
+        new lang_string('enablesharingtomoodlenet_desc', 'core_admin'), 0));
+
+    // New communication subsystem setting.
+    $temp->add(new admin_setting_configcheckbox('enablecommunicationsubsystem',
+        new lang_string('enablecommunicationsubsystem', 'core_admin'),
+        new lang_string('enablecommunicationsubsystem_desc', 'core_admin'), 0));
+
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage
@@ -51,6 +61,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
              100 => new lang_string('debugsqltrace100', 'admin'))));
     $temp->add(new admin_setting_configcheckbox('debugvalidators', new lang_string('debugvalidators', 'admin'), new lang_string('configdebugvalidators', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('debugpageinfo', new lang_string('debugpageinfo', 'admin'), new lang_string('configdebugpageinfo', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('debugtemplateinfo', new lang_string('debugtemplateinfo', 'admin'), new lang_string('debugtemplateinfo_desc', 'admin'), 0));
     $ADMIN->add('development', $temp);
 
     // "Profiling" settingpage (conditionally if the 'xhprof' extension is available only).
@@ -98,7 +109,16 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // Add the 'profiling' page to admin block.
     $ADMIN->add('development', $temp);
 
-     // Web service test clients DO NOT COMMIT : THE EXTERNAL WEB PAGE IS NOT AN ADMIN PAGE !!!!!
+    $ADMIN->add(
+        parentname: 'development',
+        something: new admin_externalpage(
+            name: 'swaggerui',
+            visiblename: new lang_string('swaggerui', 'admin'),
+            url: "$CFG->wwwroot/admin/swaggerui.php",
+        ),
+    );
+
+    // Web service test clients DO NOT COMMIT : THE EXTERNAL WEB PAGE IS NOT AN ADMIN PAGE !!!!!
     $ADMIN->add('development', new admin_externalpage('testclient', new lang_string('testclient', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/testclient.php"));
 
 
@@ -110,4 +130,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
 
     $ADMIN->add('development', new admin_externalpage('thirdpartylibs', new lang_string('thirdpartylibs','admin'), "$CFG->wwwroot/$CFG->admin/thirdpartylibs.php"));
+
+    $ADMIN->add('development', new admin_externalpage('hooksoverview',
+        new lang_string('hooksoverview', 'admin'), "$CFG->wwwroot/$CFG->admin/hooks.php"));
 } // end of speedup

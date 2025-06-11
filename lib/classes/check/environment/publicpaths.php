@@ -83,6 +83,7 @@ class publicpaths extends check {
                     '.git/HEAD',
                     '.github/FUNDING.yml',
                     '.stylelintrc',
+                    '.upgradenotes/',
                 ],
             ],
             [
@@ -140,11 +141,15 @@ class publicpaths extends check {
                 ],
             ],
             [
-                'pattern'   => '/upgrade.txt',
+                'pattern'   => '\/(upgrade\.txt|UPGRADING\.md|UPGRADING\-CURRENT\.md)',
                 '404'       => [
                     'auth/manual/upgrade.txt',
                     'lib/upgrade.txt',
+                    'UPGRADING.md',
+                    'UPGRADING-CURRENT.md',
+                    'reportbuilder/UPGRADING.md',
                 ],
+                'summary' => get_string('check_upgradefile_info', 'report_security'),
             ],
             [
                 'pattern'   => 'phpunit.xml',
@@ -295,7 +300,7 @@ class publicpaths extends check {
     /**
      * Link to the dev docs for more info.
      *
-     * @return action_link|null
+     * @return \action_link|null
      */
     public function get_action_link(): ?\action_link {
         return new \action_link(

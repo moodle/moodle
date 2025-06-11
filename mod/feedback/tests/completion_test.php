@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/feedback/classes/completion.php');
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class completion_test extends \advanced_testcase {
+final class completion_test extends \advanced_testcase {
     /**
      * Returns the number of pages with visible elements for the current state of the feedback completion.
      * @param mod_feedback_completion $completion
@@ -50,7 +50,7 @@ class completion_test extends \advanced_testcase {
      * Tests get_pages for transitive dependencies.
      * @throws coding_exception
      */
-    public function test_get_pages() {
+    public function test_get_pages(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

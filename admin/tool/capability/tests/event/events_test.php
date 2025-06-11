@@ -31,12 +31,13 @@ namespace tool_capability\event;
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->setAdminUser();
         $this->resetAfterTest();
     }
@@ -44,7 +45,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the report viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         $event = \tool_capability\event\report_viewed::create();
 
         // Trigger and capture the event.
@@ -55,8 +56,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\tool_capability\event\report_viewed', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, "admin", "tool capability", "tool/capability/index.php");
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/admin/tool/capability/index.php');
         $this->assertEquals($url, $event->get_url());

@@ -36,12 +36,15 @@ use stdClass;
 class access extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['user_lastaccess' => 'ula', 'user' => 'u'];
+    protected function get_default_tables(): array {
+        return [
+            'user_lastaccess',
+            'user',
+        ];
     }
 
     /**
@@ -93,15 +96,13 @@ class access extends base {
             ->add_field("{$tablealias}.timeaccess")
             ->add_field("{$user}.id", 'userid')
             ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate'])
-            ->add_callback(static function(string $value, stdClass $row): string {
-                if (!$row->userid) {
+            ->add_callback(static function(?int $value, stdClass $row, $arguments, ?string $aggregation): string {
+                if ($row->userid === null && $aggregation === null) {
                     return '';
-                }
-                if ($value === '') {
+                } else if ($value === null) {
                     return get_string('never');
                 }
-                return $value;
+                return format::userdate($value, $row);
             });
 
         return $columns;

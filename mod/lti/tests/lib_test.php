@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Prepares things before this test case is initialised
@@ -45,13 +45,14 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/lib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Test lti_view
      * @return void
      */
-    public function test_lti_view() {
+    public function test_lti_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -93,7 +94,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test deleting LTI instance.
      */
-    public function test_lti_delete_instance() {
+    public function test_lti_delete_instance(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -105,7 +106,7 @@ class lib_test extends \advanced_testcase {
         course_delete_module($cm->id);
     }
 
-    public function test_lti_core_calendar_provide_event_action() {
+    public function test_lti_core_calendar_provide_event_action(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -131,7 +132,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lti_core_calendar_provide_event_action_as_non_user() {
+    public function test_lti_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -159,7 +160,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lti_core_calendar_provide_event_action_for_user() {
+    public function test_lti_core_calendar_provide_event_action_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -194,7 +195,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_lti_core_calendar_provide_event_action_already_completed() {
+    public function test_lti_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -228,7 +229,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lti_core_calendar_provide_event_action_already_completed_as_non_user() {
+    public function test_lti_core_calendar_provide_event_action_already_completed_as_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -266,7 +267,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_lti_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_lti_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -331,7 +332,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test verifying the output of the lti_get_course_content_items and lti_get_all_content_items callbacks.
      */
-    public function test_content_item_callbacks() {
+    public function test_content_item_callbacks(): void {
         $this->resetAfterTest();
         global $DB, $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
@@ -412,43 +413,44 @@ class lib_test extends \advanced_testcase {
         // The lti_get_lti_types_by_course method (used by the callbacks) assumes the global user.
         $this->setUser($teacher);
 
-        // Teacher in course1 should be able to see the default module item ('external tool'),
-        // the site preconfigured tool and the tool created in course1.
+        // Teacher in course1 should be able to see the site preconfigured tool and the tool created in course1.
         $courseitems = lti_get_course_content_items($defaultmodulecontentitem, $teacher, $course);
-        $this->assertCount(3, $courseitems);
+        $this->assertCount(2, $courseitems);
         $ids = [];
         foreach ($courseitems as $item) {
             $ids[] = $item->get_id();
         }
-        $this->assertContains(1, $ids);
         $this->assertContains($sitetoolrecord->id + 1, $ids);
         $this->assertContains($course1toolrecord->id + 1, $ids);
         $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
 
-        // The content items for teacher2 in course2 include the default module content item ('external tool'),
-        // the site preconfigured tool and the tool created in course2.
+        // The content items for teacher2 in course2 include the site preconfigured tool and the tool created in course2.
         $this->setUser($teacher2);
         $course2items = lti_get_course_content_items($defaultmodulecontentitem, $teacher2, $course2);
-        $this->assertCount(3, $course2items);
+        $this->assertCount(2, $course2items);
         $ids = [];
         foreach ($course2items as $item) {
             $ids[] = $item->get_id();
         }
-        $this->assertContains(1, $ids);
         $this->assertContains($sitetoolrecord->id + 1, $ids);
         $this->assertContains($course2toolrecord->id + 1, $ids);
         $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
 
-        // When fetching all content items, we expect to see all items available in activity choosers (in any course),
-        // plus the default module content item ('external tool').
+        // Removing the capability to use preconfigured (site or course level) tools, should result in no content items.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/lti:addpreconfiguredinstance', CAP_PROHIBIT, $teacherrole->id,
+            \core\context\course::instance($course2->id));
+        $course2items = lti_get_course_content_items($defaultmodulecontentitem, $teacher2, $course2);
+        $this->assertCount(0, $course2items);
+
+        // When fetching all content items, we expect to see all items available in activity choosers (in any course).
         $this->setAdminUser();
         $allitems = mod_lti_get_all_content_items($defaultmodulecontentitem);
-        $this->assertCount(4, $allitems);
+        $this->assertCount(3, $allitems);
         $ids = [];
         foreach ($allitems as $item) {
             $ids[] = $item->get_id();
         }
-        $this->assertContains(1, $ids);
         $this->assertContains($sitetoolrecord->id + 1, $ids);
         $this->assertContains($course1toolrecord->id + 1, $ids);
         $this->assertContains($course2toolrecord->id + 1, $ids);

@@ -22,6 +22,9 @@
  * @copyright  Microsoft, Inc.
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'Microsoft OneNote';
 $string['submissiontitle'] = 'Submission: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
 $string['feedbacktitle'] = 'Feedback: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
@@ -50,3 +53,6 @@ $string['privacy:metadata:local_onenote_assign_pages:submission_teacher_page_id'
 $string['privacy:metadata:local_onenote_assign_pages:feedback_teacher_page_id'] = 'The page ID for the teacher feedback';
 $string['privacy:metadata:local_onenote_assign_pages:teacher_lastviewed'] = 'The time the teacher last viewed the submission';
 $string['privacy:metadata:local_onenote_assign_pages:student_lastmodified'] = 'The time the student last modified the submission';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

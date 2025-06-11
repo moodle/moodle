@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /** @var stdClass $plugin */
-$plugin->version   = 2017101100;
+$plugin->version   = 2024040200;
 $plugin->requires  = 2015051100;
 $plugin->component = 'local_aws_sdk';
 $plugin->maturity  = MATURITY_STABLE;

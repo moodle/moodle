@@ -1,0 +1,109 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_quickmail_broadcast_recipient_filter_results">
+    <h4>{{ foundUsersHeadingText }}</h4>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {{#firstnameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=desc">{{# str }} firstname {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=asc">{{# str }} firstname {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/firstnameIsSorted}}
+                {{^firstnameIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=asc">{{# str }} firstname {{/ str }}</a></th>
+                {{/firstnameIsSorted}}
+
+                {{#lastnameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=desc">{{# str }} lastname {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=asc">{{# str }} lastname {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/lastnameIsSorted}}
+                {{^lastnameIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=asc">{{# str }} lastname {{/ str }}</a></th>
+                {{/lastnameIsSorted}}
+
+                {{#emailIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=desc">{{# str }} email {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=asc">{{# str }} email {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/emailIsSorted}}
+                {{^emailIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=asc">{{# str }} email {{/ str }}</a></th>
+                {{/emailIsSorted}}
+
+                {{#cityIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=desc">{{# str }} city {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=asc">{{# str }} city {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/cityIsSorted}}
+                {{^cityIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=asc">{{# str }} city {{/ str }}</a></th>
+                {{/cityIsSorted}}
+
+                {{#lastaccessIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=desc">{{# str }} lastaccess {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=asc">{{# str }} lastaccess {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/lastaccessIsSorted}}
+                {{^lastaccessIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=asc">{{# str }} lastaccess {{/ str }}</a></th>
+                {{/lastaccessIsSorted}}
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ firstname }}</td>
+                    <td>{{ lastname }}</td>
+                    <td>{{ email }}</td>
+                    <td>{{ city }}</td>
+                    <td>{{ lastaccess }}</td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+</div>

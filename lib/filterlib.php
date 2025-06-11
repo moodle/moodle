@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_ON', 1);
 /** The states a filter can be in, stored in the filter_active table. */
@@ -40,572 +38,6 @@ define('TEXTFILTER_DISABLED', -9999);
  */
 define('TEXTFILTER_EXCL_SEPARATOR', chr(0x1F) . '%' . chr(0x1F));
 
-
-/**
- * Class to manage the filtering of strings. It is intended that this class is
- * only used by weblib.php. Client code should probably be using the
- * format_text and format_string functions.
- *
- * This class is a singleton.
- *
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filter_manager {
-    /**
-     * @var moodle_text_filter[][] This list of active filters, by context, for filtering content.
-     * An array contextid => ordered array of filter name => filter objects.
-     */
-    protected $textfilters = array();
-
-    /**
-     * @var moodle_text_filter[][] This list of active filters, by context, for filtering strings.
-     * An array contextid => ordered array of filter name => filter objects.
-     */
-    protected $stringfilters = array();
-
-    /** @var array Exploded version of $CFG->stringfilters. */
-    protected $stringfilternames = array();
-
-    /** @var filter_manager Holds the singleton instance. */
-    protected static $singletoninstance;
-
-    /**
-     * Constructor. Protected. Use {@link instance()} instead.
-     */
-    protected function __construct() {
-        $this->stringfilternames = filter_get_string_filters();
-    }
-
-    /**
-     * Factory method. Use this to get the filter manager.
-     *
-     * @return filter_manager the singleton instance.
-     */
-    public static function instance() {
-        global $CFG;
-        if (is_null(self::$singletoninstance)) {
-            if (!empty($CFG->perfdebug) and $CFG->perfdebug > 7) {
-                self::$singletoninstance = new performance_measuring_filter_manager();
-            } else {
-                self::$singletoninstance = new self();
-            }
-        }
-        return self::$singletoninstance;
-    }
-
-    /**
-     * Resets the caches, usually to be called between unit tests
-     */
-    public static function reset_caches() {
-        if (self::$singletoninstance) {
-            self::$singletoninstance->unload_all_filters();
-        }
-        self::$singletoninstance = null;
-    }
-
-    /**
-     * Unloads all filters and other cached information
-     */
-    protected function unload_all_filters() {
-        $this->textfilters = array();
-        $this->stringfilters = array();
-        $this->stringfilternames = array();
-    }
-
-    /**
-     * Load all the filters required by this context.
-     *
-     * @param context $context the context.
-     */
-    protected function load_filters($context) {
-        $filters = filter_get_active_in_context($context);
-        $this->textfilters[$context->id] = array();
-        $this->stringfilters[$context->id] = array();
-        foreach ($filters as $filtername => $localconfig) {
-            $filter = $this->make_filter_object($filtername, $context, $localconfig);
-            if (is_null($filter)) {
-                continue;
-            }
-            $this->textfilters[$context->id][$filtername] = $filter;
-            if (in_array($filtername, $this->stringfilternames)) {
-                $this->stringfilters[$context->id][$filtername] = $filter;
-            }
-        }
-    }
-
-    /**
-     * Factory method for creating a filter.
-     *
-     * @param string $filtername The filter name, for example 'tex'.
-     * @param context $context context object.
-     * @param array $localconfig array of local configuration variables for this filter.
-     * @return moodle_text_filter The filter, or null, if this type of filter is
-     *      not recognised or could not be created.
-     */
-    protected function make_filter_object($filtername, $context, $localconfig) {
-        global $CFG;
-        $path = $CFG->dirroot .'/filter/'. $filtername .'/filter.php';
-        if (!is_readable($path)) {
-            return null;
-        }
-        include_once($path);
-
-        $filterclassname = 'filter_' . $filtername;
-        if (class_exists($filterclassname)) {
-            return new $filterclassname($context, $localconfig);
-        }
-
-        return null;
-    }
-
-    /**
-     * Apply a list of filters to some content.
-     * @param string $text
-     * @param moodle_text_filter[] $filterchain array filter name => filter object.
-     * @param array $options options passed to the filters.
-     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
-     * @return string $text
-     */
-    protected function apply_filter_chain($text, $filterchain, array $options = array(),
-            array $skipfilters = null) {
-        if (!isset($options['stage'])) {
-            $filtermethod = 'filter';
-        } else if (in_array($options['stage'], ['pre_format', 'pre_clean', 'post_clean', 'string'], true)) {
-            $filtermethod = 'filter_stage_' . $options['stage'];
-        } else {
-            $filtermethod = 'filter';
-            debugging('Invalid filter stage specified in options: ' . $options['stage'], DEBUG_DEVELOPER);
-        }
-        if ($text === null || $text === '') {
-            // Nothing to filter.
-            return '';
-        }
-        foreach ($filterchain as $filtername => $filter) {
-            if ($skipfilters !== null && in_array($filtername, $skipfilters)) {
-                continue;
-            }
-            $text = $filter->$filtermethod($text, $options);
-        }
-        return $text;
-    }
-
-    /**
-     * Get all the filters that apply to a given context for calls to format_text.
-     *
-     * @param context $context
-     * @return moodle_text_filter[] A text filter
-     */
-    protected function get_text_filters($context) {
-        if (!isset($this->textfilters[$context->id])) {
-            $this->load_filters($context);
-        }
-        return $this->textfilters[$context->id];
-    }
-
-    /**
-     * Get all the filters that apply to a given context for calls to format_string.
-     *
-     * @param context $context the context.
-     * @return moodle_text_filter[] A text filter
-     */
-    protected function get_string_filters($context) {
-        if (!isset($this->stringfilters[$context->id])) {
-            $this->load_filters($context);
-        }
-        return $this->stringfilters[$context->id];
-    }
-
-    /**
-     * Filter some text
-     *
-     * @param string $text The text to filter
-     * @param context $context the context.
-     * @param array $options options passed to the filters
-     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
-     * @return string resulting text
-     */
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
-        $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options, $skipfilters);
-        if (!isset($options['stage']) || $options['stage'] === 'post_clean') {
-            // Remove <nolink> tags for XHTML compatibility after the last filtering stage.
-            $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
-        }
-        return $text;
-    }
-
-    /**
-     * Filter a piece of string
-     *
-     * @param string $string The text to filter
-     * @param context $context the context.
-     * @return string resulting string
-     */
-    public function filter_string($string, $context) {
-        return $this->apply_filter_chain($string, $this->get_string_filters($context), ['stage' => 'string']);
-    }
-
-    /**
-     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     */
-    public function text_filtering_hash() {
-        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
-    }
-
-    /**
-     * Setup page with filters requirements and other prepare stuff.
-     *
-     * This method is used by {@see format_text()} and {@see format_string()}
-     * in order to allow filters to setup any page requirement (js, css...)
-     * or perform any action needed to get them prepared before filtering itself
-     * happens by calling to each every active setup() method.
-     *
-     * Note it's executed for each piece of text filtered, so filter implementations
-     * are responsible of controlling the cardinality of the executions that may
-     * be different depending of the stuff to prepare.
-     *
-     * @param moodle_page $page the page we are going to add requirements to.
-     * @param context $context the context which contents are going to be filtered.
-     * @since Moodle 2.3
-     */
-    public function setup_page_for_filters($page, $context) {
-        $filters = $this->get_text_filters($context);
-        foreach ($filters as $filter) {
-            $filter->setup($page, $context);
-        }
-    }
-
-    /**
-     * Setup the page for globally available filters.
-     *
-     * This helps setting up the page for filters which may be applied to
-     * the page, even if they do not belong to the current context, or are
-     * not yet visible because the content is lazily added (ajax). This method
-     * always uses to the system context which determines the globally
-     * available filters.
-     *
-     * This should only ever be called once per request.
-     *
-     * @param moodle_page $page The page.
-     * @since Moodle 3.2
-     */
-    public function setup_page_for_globally_available_filters($page) {
-        $context = context_system::instance();
-        $filterdata = filter_get_globally_enabled_filters_with_config();
-        foreach ($filterdata as $name => $config) {
-            if (isset($this->textfilters[$context->id][$name])) {
-                $filter = $this->textfilters[$context->id][$name];
-            } else {
-                $filter = $this->make_filter_object($name, $context, $config);
-                if (is_null($filter)) {
-                    continue;
-                }
-            }
-            $filter->setup($page, $context);
-        }
-    }
-}
-
-
-/**
- * Filter manager subclass that does nothing. Having this simplifies the logic
- * of format_text, etc.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class null_filter_manager {
-    /**
-     * As for the equivalent {@link filter_manager} method.
-     *
-     * @param string $text The text to filter
-     * @param context $context not used.
-     * @param array $options not used
-     * @param array $skipfilters not used
-     * @return string resulting text.
-     */
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
-        return $text;
-    }
-
-    /**
-     * As for the equivalent {@link filter_manager} method.
-     *
-     * @param string $string The text to filter
-     * @param context $context not used.
-     * @return string resulting string
-     */
-    public function filter_string($string, $context) {
-        return $string;
-    }
-
-    /**
-     * As for the equivalent {@link filter_manager} method.
-     *
-     * @deprecated Since Moodle 3.0 MDL-50491.
-     */
-    public function text_filtering_hash() {
-        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
-    }
-}
-
-
-/**
- * Filter manager subclass that tracks how much work it does.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class performance_measuring_filter_manager extends filter_manager {
-    /** @var int number of filter objects created. */
-    protected $filterscreated = 0;
-
-    /** @var int number of calls to filter_text. */
-    protected $textsfiltered = 0;
-
-    /** @var int number of calls to filter_string. */
-    protected $stringsfiltered = 0;
-
-    protected function unload_all_filters() {
-        parent::unload_all_filters();
-        $this->filterscreated = 0;
-        $this->textsfiltered = 0;
-        $this->stringsfiltered = 0;
-    }
-
-    protected function make_filter_object($filtername, $context, $localconfig) {
-        $this->filterscreated++;
-        return parent::make_filter_object($filtername, $context, $localconfig);
-    }
-
-    public function filter_text($text, $context, array $options = array(),
-            array $skipfilters = null) {
-        if (!isset($options['stage']) || $options['stage'] === 'post_clean') {
-            $this->textsfiltered++;
-        }
-        return parent::filter_text($text, $context, $options, $skipfilters);
-    }
-
-    public function filter_string($string, $context) {
-        $this->stringsfiltered++;
-        return parent::filter_string($string, $context);
-    }
-
-    /**
-     * Return performance information, in the form required by {@link get_performance_info()}.
-     * @return array the performance info.
-     */
-    public function get_performance_summary() {
-        return array(array(
-            'contextswithfilters' => count($this->textfilters),
-            'filterscreated' => $this->filterscreated,
-            'textsfiltered' => $this->textsfiltered,
-            'stringsfiltered' => $this->stringsfiltered,
-        ), array(
-            'contextswithfilters' => 'Contexts for which filters were loaded',
-            'filterscreated' => 'Filters created',
-            'textsfiltered' => 'Pieces of content filtered',
-            'stringsfiltered' => 'Strings filtered',
-        ));
-    }
-}
-
-
-/**
- * Base class for text filters. You just need to override this class and
- * implement the filter method.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class moodle_text_filter {
-    /** @var context The context we are in. */
-    protected $context;
-
-    /** @var array Any local configuration for this filter in this context. */
-    protected $localconfig;
-
-    /**
-     * Set any context-specific configuration for this filter.
-     *
-     * @param context $context The current context.
-     * @param array $localconfig Any context-specific configuration for this filter.
-     */
-    public function __construct($context, array $localconfig) {
-        $this->context = $context;
-        $this->localconfig = $localconfig;
-    }
-
-    /**
-     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     */
-    public function hash() {
-        throw new coding_exception('moodle_text_filter::hash() can not be used any more');
-    }
-
-    /**
-     * Setup page with filter requirements and other prepare stuff.
-     *
-     * Override this method if the filter needs to setup page
-     * requirements or needs other stuff to be executed.
-     *
-     * Note this method is invoked from {@see setup_page_for_filters()}
-     * for each piece of text being filtered, so it is responsible
-     * for controlling its own execution cardinality.
-     *
-     * @param moodle_page $page the page we are going to add requirements to.
-     * @param context $context the context which contents are going to be filtered.
-     * @since Moodle 2.3
-     */
-    public function setup($page, $context) {
-        // Override me, if needed.
-    }
-
-    /**
-     * Override this function to actually implement the filtering.
-     *
-     * Filter developers must make sure that filtering done after text cleaning
-     * does not introduce security vulnerabilities.
-     *
-     * @param string $text some HTML content to process.
-     * @param array $options options passed to the filters
-     * @return string the HTML content after the filtering has been applied.
-     */
-    public abstract function filter($text, array $options = array());
-
-    /**
-     * Filter text before changing format to HTML.
-     *
-     * @param string $text
-     * @param array $options
-     * @return string
-     */
-    public function filter_stage_pre_format(string $text, array $options): string {
-        // NOTE: override if necessary.
-        return $text;
-    }
-
-    /**
-     * Filter HTML text before sanitising text.
-     *
-     * NOTE: this is called even if $options['noclean'] is true and text is not cleaned.
-     *
-     * @param string $text
-     * @param array $options
-     * @return string
-     */
-    public function filter_stage_pre_clean(string $text, array $options): string {
-        // NOTE: override if necessary.
-        return $text;
-    }
-
-    /**
-     * Filter HTML text at the very end after text is sanitised.
-     *
-     * NOTE: this is called even if $options['noclean'] is true and text is not cleaned.
-     *
-     * @param string $text
-     * @param array $options
-     * @return string
-     */
-    public function filter_stage_post_clean(string $text, array $options): string {
-        // NOTE: override if necessary.
-        return $this->filter($text, $options);
-    }
-
-    /**
-     * Filter simple text coming from format_string().
-     *
-     * Note that unless $CFG->formatstringstriptags is disabled
-     * HTML tags are not expected in returned value.
-     *
-     * @param string $text
-     * @param array $options
-     * @return string
-     */
-    public function filter_stage_string(string $text, array $options): string {
-        // NOTE: override if necessary.
-        return $this->filter($text, $options);
-    }
-}
-
-
-/**
- * This is just a little object to define a phrase and some instructions
- * for how to process it.  Filters can create an array of these to pass
- * to the @{link filter_phrases()} function below.
- *
- * Note that although the fields here are public, you almost certainly should
- * never use that. All that is supported is contructing new instances of this
- * class, and then passing an array of them to filter_phrases.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filterobject {
-    /** @var string this is the phrase that should be matched. */
-    public $phrase;
-
-    /** @var bool whether to match complete words. If true, 'T' won't be matched in 'Tim'. */
-    public $fullmatch;
-
-    /** @var bool whether the match needs to be case sensitive. */
-    public $casesensitive;
-
-    /** @var string HTML to insert before any match. */
-    public $hreftagbegin;
-    /** @var string HTML to insert after any match. */
-    public $hreftagend;
-
-    /** @var null|string replacement text to go inside begin and end. If not set,
-     * the body of the replacement will be the original phrase.
-     */
-    public $replacementphrase;
-
-    /** @var null|string once initialised, holds the regexp for matching this phrase. */
-    public $workregexp = null;
-
-    /** @var null|string once initialised, holds the mangled HTML to replace the regexp with. */
-    public $workreplacementphrase = null;
-
-    /**
-     * Constructor.
-     *
-     * @param string $phrase this is the phrase that should be matched.
-     * @param string $hreftagbegin HTML to insert before any match. Default '<span class="highlight">'.
-     * @param string $hreftagend HTML to insert after any match. Default '</span>'.
-     * @param bool $casesensitive whether the match needs to be case sensitive
-     * @param bool $fullmatch whether to match complete words. If true, 'T' won't be matched in 'Tim'.
-     * @param mixed $replacementphrase replacement text to go inside begin and end. If not set,
-     * the body of the replacement will be the original phrase.
-     * @param callback $replacementcallback if set, then this will be called just before
-     * $hreftagbegin, $hreftagend and $replacementphrase are needed, so they can be computed only if required.
-     * The call made is
-     * list($linkobject->hreftagbegin, $linkobject->hreftagend, $linkobject->replacementphrase) =
-     *         call_user_func_array($linkobject->replacementcallback, $linkobject->replacementcallbackdata);
-     * so the return should be an array [$hreftagbegin, $hreftagend, $replacementphrase], the last of which may be null.
-     * @param array $replacementcallbackdata data to be passed to $replacementcallback (optional).
-     */
-    public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
-            $hreftagend = '</span>',
-            $casesensitive = false,
-            $fullmatch = false,
-            $replacementphrase = null,
-            $replacementcallback = null,
-            array $replacementcallbackdata = null) {
-
-        $this->phrase                  = $phrase;
-        $this->hreftagbegin            = $hreftagbegin;
-        $this->hreftagend              = $hreftagend;
-        $this->casesensitive           = !empty($casesensitive);
-        $this->fullmatch               = !empty($fullmatch);
-        $this->replacementphrase       = $replacementphrase;
-        $this->replacementcallback     = $replacementcallback;
-        $this->replacementcallbackdata = $replacementcallbackdata;
-    }
-}
 
 /**
  * Look up the name of this filter
@@ -638,7 +70,7 @@ function filter_get_name($filter) {
 function filter_get_all_installed() {
     $filternames = array();
     foreach (core_component::get_plugin_list('filter') as $filter => $fulldir) {
-        if (is_readable("$fulldir/filter.php")) {
+        if (class_exists("\\filter_{$filter}\\text_filter") || is_readable("$fulldir/filter.php")) {
             $filternames[$filter] = filter_get_name($filter);
         }
     }
@@ -1099,32 +531,49 @@ function filter_get_active_in_context($context) {
 
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 
-    // The following SQL is tricky. It is explained on
-    // http://docs.moodle.org/dev/Filter_enable/disable_by_context.
-    $sql = "SELECT active.filter, fc.name, fc.value
-         FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder
-             FROM {filter_active} f
-             JOIN {context} ctx ON f.contextid = ctx.id
-             WHERE ctx.id IN ($contextids)
-             GROUP BY filter
-             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
-         ) active
-         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id
-         ORDER BY active.sortorder";
-    $rs = $DB->get_recordset_sql($sql);
+    // Postgres recordset performance is much better with a limit.
+    // This should be much larger than anything needed in practice. The code below checks we don't hit this limit.
+    $maxpossiblerows = 10000;
+    // The key line in the following query is the HAVING clause.
+    // If a filter is disabled at system context, then there is a row with active -9999 and depth 1,
+    // so the -MIN is always large, and the MAX will be smaller than that and this filter won't be returned.
+    // Otherwise, there will be a bunch of +/-1s at various depths,
+    // and this clause verifies there is a +1 that deeper than any -1.
+    $rows = $DB->get_recordset_sql("
+            SELECT active.filter, fc.name, fc.value
+
+              FROM (
+                    SELECT fa.filter, MAX(fa.sortorder) AS sortorder
+                      FROM {filter_active} fa
+                      JOIN {context} ctx ON fa.contextid = ctx.id
+                     WHERE ctx.id IN ($contextids)
+                  GROUP BY fa.filter
+                    HAVING MAX(fa.active * ctx.depth) > -MIN(fa.active * ctx.depth)
+                   ) active
+         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = ?
+
+          ORDER BY active.sortorder
+        ", [$context->id], 0, $maxpossiblerows);
 
     // Massage the data into the specified format to return.
-    $filters = array();
-    foreach ($rs as $row) {
+    $filters = [];
+    $rowcount = 0;
+    foreach ($rows as $row) {
+        $rowcount += 1;
         if (!isset($filters[$row->filter])) {
-            $filters[$row->filter] = array();
+            $filters[$row->filter] = [];
         }
         if (!is_null($row->name)) {
             $filters[$row->filter][$row->name] = $row->value;
         }
     }
+    $rows->close();
 
-    $rs->close();
+    if ($rowcount >= $maxpossiblerows) {
+        // If this ever did happen, which seems essentially impossible, then it would lead to very subtle and
+        // hard to understand bugs, so ensure it leads to an unmissable error.
+        throw new coding_exception('Hit the row limit that should never be hit in filter_get_active_in_context.');
+    }
 
     return $filters;
 }
@@ -1308,6 +757,16 @@ function filter_get_global_states() {
     global $DB;
     $context = context_system::instance();
     return $DB->get_records('filter_active', array('contextid' => $context->id), 'sortorder', 'filter,active,sortorder');
+}
+
+/**
+ * Retrieve all the filters and their states (including overridden ones in any context).
+ *
+ * @return array filters objects containing filter name, context, active state and sort order.
+ */
+function filter_get_all_states(): array {
+    global $DB;
+    return $DB->get_records('filter_active');
 }
 
 /**

@@ -419,6 +419,7 @@ function($, Templates, Strings, Ally, ImageCover, Util) {
 
                 var selectors = [
                     '#' + s + ' > .content div[class*="summarytext"] .no-overflow',
+                    '#' + s + ' > .section-item div[class*="summarytext"] .no-overflow', // Moodle 4.4+
                     'body.theme-snap #' + s + ' > .content > .summary > div > .no-overflow' // Snap.
                 ];
                 $(selectors.join(',')).attr('data-ally-richcontent', ident);
@@ -434,17 +435,26 @@ function($, Templates, Strings, Ally, ImageCover, Util) {
          * @param {string} module
          * @param {array} additionalSelectors
          */
-        var annotateModuleIntros = function(introMapping, module, additionalSelectors) {
-            for (var i in introMapping) {
-                var annotation = introMapping[i];
-                var selectors = [
+        const annotateModuleIntros = function(introMapping, module, additionalSelectors) {
+            for (const i in introMapping) {
+                const annotation = introMapping[i];
+
+                // Description selector for when activity modules show a description on the course page.
+                // We need to be specific here for non course pages to skip this.
+                const descriptionSelector = self.config.moodleversion >= 2023100900 ?
+                    // Selector for Moodle 4.3+
+                    'li.activity.modtype_' + module + '#module-' + i + ' .activity-description .no-overflow > .no-overflow' :
+                    // Selector for < Moodle 4.3
+                    'li.activity.modtype_' + module + '#module-' + i + ' .description .no-overflow > .no-overflow';
+
+                const selectors = [
                     'body.path-mod-' + module + '.cmid-' + i + ' #intro > .no-overflow',
-                    // We need to be specific here for non course pages to skip this.
-                    'li.activity.modtype_' + module + '#module-' + i + ' .description .no-overflow > .no-overflow',
+                    descriptionSelector,
                     'li.snap-activity.modtype_' + module + '#module-' + i + ' .contentafterlink > .no-overflow'
                 ];
+
                 if (additionalSelectors) {
-                    for (var a in additionalSelectors) {
+                    for (const a in additionalSelectors) {
                         selectors.push(additionalSelectors[a].replace('{{i}}', i));
                     }
                 }
@@ -580,6 +590,7 @@ chapterId;
 
             // Annotate content.
             var content = mapping.lesson_pages;
+
             for (var p in content) {
                 if (document.body.id === "page-mod-lesson-edit") {
                     var xpath = '//a[@id="lesson-' + p + '"]//ancestor::table//tbody/tr/td/div[contains(@class, "no-overflow")]';
@@ -702,6 +713,7 @@ chapterId;
          */
         var annotateModules = function(moduleMapping) {
             var dfd = $.Deferred();
+
             if (moduleMapping.mod_forum !== undefined) {
                 annotateForums(moduleMapping.mod_forum);
             }
@@ -906,13 +918,23 @@ chapterId;
                         }
                     });
 
-                    document.addEventListener('eventTypes.filterContentUpdated', () => {
+                    // BEGIN LSU Fix for Ally to work with Snap
+                    // document.addEventListener('core_filters/contentUpdated', () => {
                         // When Snap lazy loads a section it triggers this event.
                         // We can ensure everything has been processed on lazy load by recalling the second
                         // stage initialization.
-                        self.initStageTwo();
-                    });
-
+                        // self.initStageTwo();
+                    // });
+                    if (!self.hasContentUpdatedListener) { // Open LMS Patch for INT-20689: Prevent infinite loop.
+                        document.addEventListener('core_filters/contentUpdated', () => {
+                            // When Snap lazy loads a section it triggers this event.
+                            // We can ensure everything has been processed on lazy load by recalling the second
+                            // stage initialization.
+                            self.initStageTwo();
+                        });
+                        self.hasContentUpdatedListener = true;
+                    }
+                    // BEGIN LSU Fix for Ally to work with Snap
                 }
             }
         };

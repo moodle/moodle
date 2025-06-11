@@ -52,7 +52,7 @@ class backup_filename_setting extends backup_generic_setting {
         parent::__construct($name, $vtype, $value, $visibility, $status);
     }
 
-    public function set_ui_filename($label, $value, array $options = null) {
+    public function set_ui_filename($label, $value, ?array $options = null) {
         $this->make_ui(self::UI_HTML_TEXTFIELD, $label, null, $options);
         $this->set_value($value);
     }
@@ -185,6 +185,45 @@ class backup_section_included_setting extends section_backup_setting {}
  */
 class backup_section_userinfo_setting extends section_backup_setting {}
 
+/**
+ * Subsection base class (section delegated to a course module).
+ */
+class subsection_backup_setting extends section_backup_setting {
+    /**
+     * Class constructor.
+     *
+     * @param string $name Name of the setting
+     * @param string $vtype Type of the setting, for example base_setting::IS_TEXT
+     * @param mixed $value Value of the setting
+     * @param bool $visibility Is the setting visible in the UI, for example base_setting::VISIBLE
+     * @param int $status Status of the setting with regards to the locking, for example base_setting::NOT_LOCKED
+     */
+    public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
+        parent::__construct($name, $vtype, $value, $visibility, $status);
+        $this->level = self::SUBSECTION_LEVEL;
+    }
+}
+
+/**
+ * generic section setting to pass various settings between tasks and steps
+ */
+class backup_subsection_generic_setting extends subsection_backup_setting {
+}
+
+/**
+ * Setting to define if one section is included or no. Activities _included
+ * settings depend of them if available
+ */
+class backup_subsection_included_setting extends subsection_backup_setting {
+}
+
+/**
+ * section backup setting to control if section will include
+ * user information or no, depends of @backup_users_setting
+ */
+class backup_subsection_userinfo_setting extends subsection_backup_setting {
+}
+
 
 // Activity backup settings
 
@@ -207,7 +246,53 @@ class backup_activity_included_setting extends activity_backup_setting {}
 class backup_activity_userinfo_setting extends activity_backup_setting {}
 
 /**
+ * Subactivity base class (activity inside a delegated section).
+ */
+class subactivity_backup_setting extends activity_backup_setting {
+    /**
+     * Class constructor.
+     *
+     * @param string $name Name of the setting
+     * @param string $vtype Type of the setting, for example base_setting::IS_TEXT
+     * @param mixed $value Value of the setting
+     * @param bool $visibility Is the setting visible in the UI, for example base_setting::VISIBLE
+     * @param int $status Status of the setting with regards to the locking, for example base_setting::NOT_LOCKED
+     */
+    public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
+        parent::__construct($name, $vtype, $value, $visibility, $status);
+        $this->level = self::SUBACTIVITY_LEVEL;
+    }
+}
+
+/**
+ * Generic subactivity (activity inside a delegated section) setting to pass various settings between tasks and steps
+ */
+class backup_subactivity_generic_setting extends subactivity_backup_setting {
+}
+
+/**
+ * Subactivity (activity inside a delegated section) backup setting to control if activity will
+ * be included or no, depends of @backup_activities_setting and
+ * optionally parent section included setting
+ */
+class backup_subactivity_included_setting extends subactivity_backup_setting {
+}
+
+/**
+ * Subactivity (activity inside a delegated section) backup setting to control if activity will include
+ * user information or no, depends of @backup_users_setting
+ */
+class backup_subactivity_userinfo_setting extends subactivity_backup_setting {
+}
+
+/**
  * Root setting to control if backup will include content bank content or no
  */
 class backup_contentbankcontent_setting extends backup_generic_setting {
+}
+
+/**
+ * Root setting to control if backup will include xAPI state or not.
+ */
+class backup_xapistate_setting extends backup_generic_setting {
 }

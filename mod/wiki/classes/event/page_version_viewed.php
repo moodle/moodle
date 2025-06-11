@@ -71,17 +71,6 @@ class page_version_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return(array($this->courseid, 'wiki', 'history',
-            'viewversion.php?pageid=' . $this->objectid . '&versionid=' . $this->other['versionid'],
-            $this->objectid, $this->contextinstanceid));
-    }
-
-    /**
      * Get URL related to the action.
      *
      * @return \moodle_url

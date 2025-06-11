@@ -35,12 +35,12 @@ use core_xapi\xapi_exception;
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_context_test extends advanced_testcase {
+final class item_context_test extends advanced_testcase {
 
     /**
      * Test item creation.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $data = $this->get_generic_data();
         $item = item_context::create_from_data($data);

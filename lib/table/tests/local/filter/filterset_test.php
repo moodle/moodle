@@ -40,7 +40,7 @@ use moodle_exception;
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filterset_test extends advanced_testcase {
+final class filterset_test extends advanced_testcase {
     /**
      * Ensure that it is possibly to set the join type.
      */

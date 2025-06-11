@@ -37,8 +37,3 @@ $string['logoutdesc'] = '(Logout when you finish using Dropbox)';
 $string['oauth2redirecturi'] = 'OAuth 2 Redirect URI';
 $string['privacy:metadata:repository_dropbox'] = 'The Dropbox repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
 $string['privacy:metadata:repository_dropbox:query'] = 'The Dropbox repository user search text query.';
-
-// Deprecated since Moodle 4.0.
-$string['apikey'] = 'Dropbox API key';
-$string['secret'] = 'Dropbox secret';
-$string['instruction'] = 'You can get your API Key and secret from <a href="https://www.dropbox.com/developers/apps">Dropbox developers</a>. When setting up your key please select "Full Dropbox" as the "Access level".';

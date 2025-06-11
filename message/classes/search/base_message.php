@@ -204,7 +204,7 @@ abstract class base_message extends \core_search\base {
      *
      * @return \core_search\document_icon
      */
-    public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
+    public function get_doc_icon(\core_search\document $doc): \core_search\document_icon {
         return new \core_search\document_icon('t/message');
     }
 

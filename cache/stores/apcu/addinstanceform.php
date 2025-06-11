@@ -13,17 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * The library file for the apcu cache store.
- *
- * This file is part of the apcu cache store, it contains the API for interacting with an instance of the store.
- *
- * @package    cachestore_apcu
- * @copyright  2014 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot.'/cache/forms.php');
+
 /**
  * Form for adding a apcu instance.
  *

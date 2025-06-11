@@ -22,10 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['buttontitle'] = 'Equation editor';
 $string['cursorinfo'] = 'An arrow indicates the position that new elements from the element library will be inserted.';
 $string['editequation'] = 'Edit equation using <a href="{$a}" target="_blank">TeX</a>';
-$string['buttontitle'] = 'Equation editor';
-$string['helplinktext'] = 'Equation helper';
 $string['librarygroup1'] = 'Operators';
 $string['librarygroup1_desc'] = 'TeX commands listed on the operators tab.';
 $string['librarygroup2'] = 'Arrows';
@@ -35,8 +34,11 @@ $string['librarygroup3_desc'] = 'TeX commands listed on the Greek symbols tab.';
 $string['librarygroup4'] = 'Advanced';
 $string['librarygroup4_desc'] = 'TeX commands listed on the advanced tab.';
 $string['modaltitle'] = 'Equation editor';
-$string['saveequation'] = 'Save equation';
-$string['settings'] = 'Equation editor settings';
-$string['pluginname'] = 'Tiny equation editor';
+$string['pluginname'] = 'Equation editor';
 $string['preview'] = 'Equation preview';
 $string['privacy:metadata'] = 'The equation editor for TinyMCE does not store any personal data.';
+$string['saveequation'] = 'Save equation';
+$string['settings'] = 'Equation editor settings';
+
+// Deprecated since Moodle 4.5.
+$string['helplinktext'] = 'Equation helper';

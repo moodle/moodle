@@ -17,14 +17,17 @@
 namespace tool_ally;
 
 use tool_ally\adminsetting\ally_configpasswordunmask;
+use advanced_testcase;
 
 /**
- * @package tool_admin
- * @author    Guy Thomas <citricity@gmail.com>
+ * @package   tool_ally
+ * @author    Guy Thomas <dev@citri.city>
  * @copyright Copyright (c) 2017 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adminsetting_ally_configpasswordunmask_test extends \advanced_testcase {
+class adminsetting_ally_configpasswordunmask_test extends advanced_testcase {
     /**
      * Test ally configpasswordunmask settings are trimmed.
      */

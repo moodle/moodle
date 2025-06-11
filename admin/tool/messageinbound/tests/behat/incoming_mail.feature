@@ -23,3 +23,13 @@ Feature: Incoming mail configuration
     When I navigate to "Server > Email > Incoming mail configuration" in site administration
     Then "OAuth 2 service" "select" should exist
     And I should see "Testing service" in the "OAuth 2 service" "select"
+
+  @javascript
+  Scenario: Check character limitations of mailbox name
+    When I navigate to "Server > Email > Incoming mail configuration" in site administration
+    And I set the field "Mailbox name" to "frogfrogfrogfrog"
+    Then I should see "Maximum of 15 characters"
+    And the "disabled" attribute of "form#adminsettings button[type='submit']" "css_element" should contain "true"
+    And I set the field "Mailbox name" to "frogfrogfrogfro"
+    And I should not see "Maximum of 15 characters"
+    And the "disabled" attribute of "form#adminsettings button[type='submit']" "css_element" should not be set

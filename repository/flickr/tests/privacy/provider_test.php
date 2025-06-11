@@ -36,18 +36,19 @@ use core_privacy\tests\provider_testcase;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Overriding setUp() function to always reset after tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test for provider::export_user_preferences().
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         global $DB;
 
         // Test setup.

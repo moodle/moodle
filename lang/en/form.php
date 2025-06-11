@@ -39,7 +39,8 @@ $string['err_minlength'] = 'You must enter at least {$a->format} characters here
 $string['err_nonzero'] = 'You must enter a number not starting with a 0 here.';
 $string['err_nopunctuation'] = 'You must enter no punctuation characters here.';
 $string['err_numeric'] = 'You must enter a number here.';
-$string['err_positiveint'] = 'You must enter a number that is greater than 0.';
+$string['err_positiveduration'] = 'This duration cannot be negative.';
+$string['err_positiveint'] = 'You must enter a whole number that is greater than 0.';
 $string['err_rangelength'] = 'You must enter between {$a->format[0]} and {$a->format[1]} characters here.';
 $string['err_required'] = 'You must supply a value here.';
 $string['err_wrappingwhitespace'] = 'The value must not start or end with whitespace.';
@@ -50,6 +51,7 @@ $string['filetypesnotall'] = 'It is not allowed to select \'All file types\' her
 $string['filetypesnotallowed'] = 'These file types are not allowed here: {$a}';
 $string['filetypesothers'] = 'Other files';
 $string['filetypesunknown'] = 'Unknown file types: {$a}';
+$string['formactions'] = 'Form actions';
 $string['general'] = 'General';
 $string['hideadvanced'] = 'Hide advanced';
 $string['hour'] = 'Hour';
@@ -86,8 +88,6 @@ $string['suggestions'] = 'Suggestions';
 $string['time'] = 'Time';
 $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';
+$string['togglesensitive'] = 'Toggle sensitive';
 $string['unmaskpassword'] = 'Unmask';
 $string['year'] = 'Year';
-
-// Deprecated since Moodle 3.10.
-$string['filetypesnotwhitelisted'] = 'These file types are not allowed here: {$a}';

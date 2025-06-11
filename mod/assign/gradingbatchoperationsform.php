@@ -33,12 +33,31 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since 4.5
+ * @todo Final deprecation in Moodle 6.0. See MDL-82869.
  */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '4.5',
+    reason: 'It is no longer used.',
+    mdl: 'MDL-80750',
+)]
 class mod_assign_grading_batch_operations_form extends moodleform {
     /**
      * Define this form - called by the parent constructor.
+     *
+     * @deprecated since 4.5
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'It is no longer used.',
+        mdl: 'MDL-80750'
+    )]
     public function definition() {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+
+        global $CFG;
         $mform = $this->_form;
         $instance = $this->_customdata;
 
@@ -46,6 +65,11 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $options = array();
         $options['lock'] = get_string('locksubmissions', 'assign');
         $options['unlock'] = get_string('unlocksubmissions', 'assign');
+        if (!empty($CFG->messaging) &&
+            has_all_capabilities(['moodle/site:sendmessage', 'moodle/course:bulkmessaging'], $instance['context'])
+        ) {
+            $options['message'] = get_string('messageselectadd');
+        }
         $options['downloadselected'] = get_string('downloadselectedsubmissions', 'assign');
         if ($instance['submissiondrafts']) {
             $options['reverttodraft'] = get_string('reverttodraft', 'assign');
@@ -56,7 +80,10 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         if ($instance['duedate'] && has_capability('mod/assign:grantextension', $instance['context'])) {
             $options['grantextension'] = get_string('grantextension', 'assign');
         }
-        if ($instance['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL) {
+        $multipleattemptsallowed = $instance['maxattempts'] > 1 ||
+            $instance['maxattempts'] == ASSIGN_UNLIMITED_ATTEMPTS;
+
+        if ($multipleattemptsallowed && $instance['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL) {
             $options['addattempt'] = get_string('addattempt', 'assign');
         }
 
@@ -91,4 +118,3 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $mform->addElement('group', 'actionsgrp', $batchdescription, $objs, ' ', false);
     }
 }
-

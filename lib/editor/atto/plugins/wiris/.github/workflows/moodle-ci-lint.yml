@@ -76,7 +76,7 @@ jobs:
       # 3.3. Code validations
       - name: Moodle Code Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci codechecker --max-warnings 30 ./plugin
+        run: moodle-plugin-ci codechecker ./plugin
 
       - name: Check upgrade savepoints
         if: ${{ always() }}

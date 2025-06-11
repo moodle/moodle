@@ -17,14 +17,14 @@
 namespace core_cache;
 
 /**
- * Unit tests for cache_store functionality.
+ * Unit tests for \core_cache\store functionality.
  *
  * @package core_cache
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_cache\store
  */
-class store_test extends \advanced_testcase {
-
+final class store_test extends \advanced_testcase {
     /**
      * Tests the default implementation of cache_size_details, which does some
      * complicated statistics.
@@ -67,11 +67,11 @@ class store_test extends \advanced_testcase {
     protected static function create_static_store(): \cachestore_static {
         require_once(__DIR__ . '/../stores/static/lib.php');
         $store = new \cachestore_static('frog');
-        $definition = \cache_definition::load('zombie', [
-                'mode' => \cache_store::MODE_REQUEST,
-                'component' => 'phpunit',
-                'area' => 'store_test',
-                'simplekeys' => true
+        $definition = definition::load('zombie', [
+            'mode' => store::MODE_REQUEST,
+            'component' => 'phpunit',
+            'area' => 'store_test',
+            'simplekeys' => true,
         ]);
         $store->initialise($definition);
         return $store;

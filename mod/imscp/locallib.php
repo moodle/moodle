@@ -38,12 +38,7 @@ require_once("$CFG->libdir/resourcelib.php");
 function imscp_print_content($imscp, $cm, $course) {
     global $PAGE, $CFG;
 
-    $items = unserialize($imscp->structure);
-    $first = reset($items);
-    $context = context_module::instance($cm->id);
-    $urlbase = "$CFG->wwwroot/pluginfile.php";
-    $path = '/'.$context->id.'/mod_imscp/content/'.$imscp->revision.'/'.$first['href'];
-    $firsturl = file_encode_url($urlbase, $path, false);
+    $items = array_filter((array) unserialize_array($imscp->structure));
 
     echo '<div id="imscp_layout">';
     echo '<div id="imscp_toc">';
@@ -60,7 +55,6 @@ function imscp_print_content($imscp, $cm, $course) {
     echo '</div>';
 
     $PAGE->requires->js_init_call('M.mod_imscp.init');
-    return;
 }
 
 /**
@@ -117,11 +111,9 @@ function imscp_parse_structure($imscp, $context) {
  */
 function imscp_parse_manifestfile($manifestfilecontents, $imscp, $context) {
     $doc = new DOMDocument();
-    $oldentities = imscp_libxml_disable_entity_loader(true);
     if (!$doc->loadXML($manifestfilecontents, LIBXML_NONET)) {
         return null;
     }
-    imscp_libxml_disable_entity_loader($oldentities);
 
     // We put this fake URL as base in order to detect path changes caused by xml:base attributes.
     $doc->documentURI = 'http://grrr/';
@@ -221,11 +213,9 @@ function imscp_recursive_href($manifestfilename, $imscp, $context) {
     }
 
     $doc = new DOMDocument();
-    $oldentities = imscp_libxml_disable_entity_loader(true);
     if (!$doc->loadXML($manifestfile->get_content(), LIBXML_NONET)) {
         return null;
     }
-    imscp_libxml_disable_entity_loader($oldentities);
 
     $xmlresources = $doc->getElementsByTagName('resource');
     foreach ($xmlresources as $res) {
@@ -283,11 +273,11 @@ function imscp_recursive_item($xmlitem, $level, $resources) {
  *
  * @param bool $value
  * @return bool
+ *
+ * @deprecated since Moodle 4.3
  */
 function imscp_libxml_disable_entity_loader(bool $value): bool {
-    if (PHP_VERSION_ID < 80000) {
-        return (bool)libxml_disable_entity_loader($value);
-    }
+    debugging(__FUNCTION__ . '() is deprecated, please do not use it any more', DEBUG_DEVELOPER);
     return true;
 }
 

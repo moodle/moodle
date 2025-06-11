@@ -65,7 +65,7 @@ export default class Component extends BaseComponent {
      * @return {Component}
      */
     static init(target, selectors) {
-        return new Component({
+        return new this({
             element: document.getElementById(target),
             reactive: getCurrentCourseEditor(),
             selectors,
@@ -91,7 +91,7 @@ export default class Component extends BaseComponent {
             this.cms[cm.dataset.id] = cm;
         });
 
-        // Set the page item if any.
+        this._expandPageCmSectionIfNecessary(state);
         this._refreshPageItem({element: state.course, state});
 
         // Configure Aria Tree.
@@ -131,9 +131,9 @@ export default class Component extends BaseComponent {
             const toggler = section.querySelector(this.selectors.COLLAPSE);
             const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
 
-            if (isChevron || isCollapsed) {
-                // Update the state.
-                const sectionId = section.getAttribute('data-id');
+            // Update the state.
+            const sectionId = section.getAttribute('data-id');
+            if (!sectionlink || isCollapsed) {
                 this.reactive.dispatch(
                     'sectionIndexCollapsed',
                     [sectionId],
@@ -220,6 +220,20 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Expand a section if the current page is a section's cm.
+     *
+     * @private
+     * @param {Object} state the course state.
+     */
+    _expandPageCmSectionIfNecessary(state) {
+        const pageCmInfo = this.reactive.getPageAnchorCmInfo();
+        if (!pageCmInfo) {
+            return;
+        }
+        this._expandSectionNode(state.section.get(pageCmInfo.sectionid), true);
+    }
+
+    /**
      * Create a newcm instance.
      *
      * @param {object} param
@@ -286,6 +300,9 @@ export default class Component extends BaseComponent {
     _refreshSectionCmlist({element}) {
         const cmlist = element.cmlist ?? [];
         const listparent = this.getElement(this.selectors.SECTION_CMLIST, element.id);
+        if (!listparent) {
+            return;
+        }
         this._fixOrder(listparent, cmlist, this.cms);
     }
 
@@ -293,10 +310,10 @@ export default class Component extends BaseComponent {
      * Refresh the section list.
      *
      * @param {object} param
-     * @param {Object} param.element
+     * @param {Object} param.state
      */
-    _refreshCourseSectionlist({element}) {
-        const sectionlist = element.sectionlist ?? [];
+    _refreshCourseSectionlist({state}) {
+        const sectionlist = this.reactive.getExporter().listedSectionIds(state);
         this._fixOrder(this.element, sectionlist, this.sections);
     }
 
@@ -324,11 +341,11 @@ export default class Component extends BaseComponent {
             const item = allitems[itemid];
             // Get the current element at that position.
             const currentitem = container.children[index];
-            if (currentitem === undefined) {
+            if (currentitem === undefined && item != undefined) {
                 container.append(item);
                 return;
             }
-            if (currentitem !== item) {
+            if (currentitem !== item && item) {
                 container.insertBefore(item, currentitem);
             }
         });

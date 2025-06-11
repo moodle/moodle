@@ -29,18 +29,19 @@ use core_privacy\tests\provider_testcase;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test returning metadata.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('message_email');
         $collection = \message_email\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -49,7 +50,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
 
         $contextlist = \message_email\privacy\provider::get_contexts_for_userid($user->id);

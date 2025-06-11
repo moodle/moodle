@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_grader/collapse/collapseresultitems
+
+    Context variables required for this template:
+    * name - The 'system' name that we search against.
+    * displayName - The 'end user' name that the user can search against.
+    * category - The category that a gradable item is within.
+
+    Example context (json):
+    {
+        "name": "42",
+        "displayName": "The meaning of life",
+        "category": "Hitchhikers grade category"
+    }
+}}
+<li class="w-100 result-row form-check mb-1">
+    <label class="selected-option-info d-block pe-3 text-truncate form-check-label">
+        <input class="form-check-input" data-collapse="{{name}}" type="checkbox" value="">
+        <span class="selected-option-text w-100 p-0">
+            {{{displayName}}}
+        </span>
+        {{#category}}
+            <span class="d-block w-100 pull-left text-muted text-truncate small">
+                {{category}}
+            </span>
+        {{/category}}
+    </label>
+</li>

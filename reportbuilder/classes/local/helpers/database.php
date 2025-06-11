@@ -39,47 +39,49 @@ class database {
     /**
      * Generates unique table/column alias that must be used in generated SQL
      *
+     * @param string $suffix Optional string to append to alias
      * @return string
      */
-    public static function generate_alias(): string {
+    public static function generate_alias(string $suffix = ''): string {
         static $aliascount = 0;
 
-        return static::GENERATE_ALIAS_PREFIX . ($aliascount++);
+        return static::GENERATE_ALIAS_PREFIX . ($aliascount++) . $suffix;
     }
 
     /**
      * Generate multiple unique table/column aliases, see {@see generate_alias} for info
      *
      * @param int $count
+     * @param string $suffix
      * @return string[]
      */
-    public static function generate_aliases(int $count): array {
-        return array_map([
-            static::class, 'generate_alias'
-        ], array_fill(0, $count, null));
+    public static function generate_aliases(int $count, string $suffix = ''): array {
+        return array_map([static::class, 'generate_alias'], array_fill(0, $count, $suffix));
     }
 
     /**
      * Generates unique parameter name that must be used in generated SQL
      *
+     * When passing the returned value to {@see \moodle_database::get_in_or_equal} it's recommended to define the suffix
+     *
+     * @param string $suffix Optional string to append to parameter name
      * @return string
      */
-    public static function generate_param_name(): string {
+    public static function generate_param_name(string $suffix = ''): string {
         static $paramcount = 0;
 
-        return static::GENERATE_PARAM_PREFIX . ($paramcount++);
+        return static::GENERATE_PARAM_PREFIX . ($paramcount++) . $suffix;
     }
 
     /**
      * Generate multiple unique parameter names, see {@see generate_param_name} for info
      *
      * @param int $count
+     * @param string $suffix
      * @return string[]
      */
-    public static function generate_param_names(int $count): array {
-        return array_map([
-            static::class, 'generate_param_name'
-        ], array_fill(0, $count, null));
+    public static function generate_param_names(int $count, string $suffix = ''): array {
+        return array_map([static::class, 'generate_param_name'], array_fill(0, $count, $suffix));
     }
 
     /**
@@ -106,7 +108,7 @@ class database {
      * primarily to ensure uniqueness when the expression is to be used as part of a larger query
      *
      * @param string $sql
-     * @param array $params
+     * @param array $params Parameter names
      * @param callable $callback Method that takes a single string parameter, and returns another string
      * @return string
      */
@@ -125,13 +127,34 @@ class database {
     }
 
     /**
+     * Replace parameter names within given SQL expression, returning updated SQL and parameter elements
+     *
+     * {@see sql_replace_parameter_names}
+     *
+     * @param string $sql
+     * @param array $params Parameter name/values
+     * @param callable $callback
+     * @return array [$sql, $params]
+     */
+    public static function sql_replace_parameters(string $sql, array $params, callable $callback): array {
+        $transformedsql = static::sql_replace_parameter_names($sql, array_keys($params), $callback);
+
+        $transformedparams = [];
+        foreach ($params as $name => $value) {
+            $transformedparams[$callback($name)] = $value;
+        }
+
+        return [$transformedsql, $transformedparams];
+    }
+
+    /**
      * Generate SQL expression for sorting group concatenated fields
      *
      * @param string $field The original field or SQL expression
      * @param string|null $sort A valid SQL ORDER BY to sort the concatenated fields, if omitted then $field will be used
      * @return string
      */
-    public static function sql_group_concat_sort(string $field, string $sort = null): string {
+    public static function sql_group_concat_sort(string $field, ?string $sort = null): string {
         global $DB;
 
         // Fallback to sorting by the specified field, unless it contains parameters which would be duplicated.

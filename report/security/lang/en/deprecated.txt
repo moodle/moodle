@@ -1,4 +1,0 @@
-check_mediafilterswf_details,report_security
-check_mediafilterswf_error,report_security
-check_mediafilterswf_name,report_security
-check_mediafilterswf_ok,report_security

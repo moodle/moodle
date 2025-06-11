@@ -112,6 +112,9 @@ class query {
      */
     public function get_capability_string() {
         $capabilities = report_lsusql_capability_options();
+        if ($this->record->capability == 'report/customsql:view') {
+            return $capabilities['report/lsusql:view'];
+        }
         return $capabilities[$this->record->capability];
     }
 

@@ -75,7 +75,7 @@ class user_pdf {
 
         $studentidfield = \get_config('report_lpmonitoring', 'studentidmapping');
 
-        $user = $DB->get_record("user", array("id" => $userid));
+        $user = $DB->get_record("user", ["id" => $userid]);
         \profile_load_data($user);
 
         $this->user = new \stdClass();
@@ -91,7 +91,7 @@ class user_pdf {
         // Grab the name of the configured field.
         if ($studentidfield != 'id') {
             $shortname = explode("profile_field_", $studentidfield)[1];
-            $userfield = $DB->get_record('user_info_field', array('shortname' => $shortname));
+            $userfield = $DB->get_record('user_info_field', ['shortname' => $shortname]);
             $this->idfieldname = $userfield->name;
         } else {
             $this->idfieldname = 'ID';
@@ -129,7 +129,7 @@ class user_pdf {
             }
 
             if (!is_array($this->plans)) {
-                $this->plans = array();
+                $this->plans = [];
             }
 
             $tmpplan = new \stdClass();
@@ -137,7 +137,7 @@ class user_pdf {
             $tmpplan->firstpage = $firstpage;
 
             if (!isset($tmpplan->competencies) || !is_array($tmpplan->competencies)) {
-                $tmpplan->competencies = array();
+                $tmpplan->competencies = [];
             }
 
             $i = 0; // Counter for what competency we're on.
@@ -153,7 +153,7 @@ class user_pdf {
                 $tmpcomp->shortname = $comp->competency->shortname;
                 $tmpcomp->idnumber = $comp->competency->idnumber;
 
-                $tmpframework = $DB->get_record('competency_framework', array('id' => $comp->competency->competencyframeworkid));
+                $tmpframework = $DB->get_record('competency_framework', ['id' => $comp->competency->competencyframeworkid]);
                 $tmpcomp->framework = $tmpframework->shortname;
 
                 // Grab the taxonomy so we can label properly.
@@ -325,7 +325,7 @@ class user_pdf {
                                             INNER JOIN {user_info_data} d ON d.userid = u.id
                                             INNER JOIN {user_info_field} f ON f.id = d.fieldid
                                             WHERE f.shortname = ? AND d.data = ?",
-                                            array($fieldname, $value));
+                                            [$fieldname, $value]);
         if (count($results) !== 1) {
             throw new \Exception(get_string("profilefieldnotuniqueerror", "report_lpmonitoring", count($results)));
         } else {
@@ -356,7 +356,7 @@ class user_pdf {
                                 INNER JOIN {competency_templatecohort} tc ON tc.templateid = p.templateid
                                 INNER JOIN {cohort} c ON c.id = tc.cohortid
                                 WHERE p.id = :planid AND c.idnumber = :cohort AND p.userid = :userid" ,
-                                array('planid' => $planid, 'cohort' => $cohort, 'userid' => $userid));
+                                ['planid' => $planid, 'cohort' => $cohort, 'userid' => $userid]);
 
         if (count($cohortmatch) == 0) {
             return false;
@@ -384,7 +384,7 @@ class user_pdf {
                             INNER JOIN {cohort} c ON c.id = tc.cohortid
                             WHERE " . $DB->sql_like('c.idnumber', ':progno') . "
                             AND p.id = :planid AND p.userid = :userid" ,
-                            array('planid' => $planid, 'progno' => $DB->sql_like_escape($progno) . '-%', 'userid' => $userid));
+                            ['planid' => $planid, 'progno' => $DB->sql_like_escape($progno) . '-%', 'userid' => $userid]);
 
         // Nothing found. Try with origtemplateid before giving up.
         if (count($cohortmatch) == 0) {
@@ -393,7 +393,7 @@ class user_pdf {
                                 INNER JOIN {cohort} c ON c.id = tc.cohortid
                                 WHERE " . $DB->sql_like('c.idnumber', ':progno') . "
                                 AND p.id = :planid AND p.userid = :userid" ,
-                                array('planid' => $planid, 'progno' => $DB->sql_like_escape($progno) . '-%', 'userid' => $userid));
+                                ['planid' => $planid, 'progno' => $DB->sql_like_escape($progno) . '-%', 'userid' => $userid]);
         }
 
         if (count($cohortmatch) == 0) {
@@ -405,10 +405,10 @@ class user_pdf {
                                 (SELECT tc.templateid FROM {competency_templatecohort} tc
                                  WHERE tc.templateid = p.templateid OR tc.templateid = p.origtemplateid)
                                 AND p.id = :planid AND p.userid = :userid",
-                                array('planid' => $planid, 'userid' => $userid));
+                                ['planid' => $planid, 'userid' => $userid]);
             if ($pid) {
                 if (is_null($this->forceplans)) {
-                    $this->forceplans = array();
+                    $this->forceplans = [];
                 }
                 $this->forceplans[] = $pid;
             }

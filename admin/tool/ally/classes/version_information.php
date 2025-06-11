@@ -61,6 +61,11 @@ class version_information {
     public $reportally;
 
     /**
+     * @var stdClass
+     */
+    public object $system;
+
+    /**
      * Constructor.
      */
     public function __construct() {

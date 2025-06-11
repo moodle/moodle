@@ -1,9 +1,0 @@
-{
-    "moodle-backup-confirmcancel": {
-        "requires": [
-            "node",
-            "node-event-simulate",
-            "moodle-core-notification-confirm"
-        ]
-    }
-}

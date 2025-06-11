@@ -84,7 +84,7 @@ class site implements \core_analytics\analysable {
 
         // Much faster than reading the first log in the site.
         $admins = get_admins();
-        $this->start = 9999999999;
+        $this->start = self::MAX_TIME;
         foreach ($admins as $admin) {
             if ($admin->firstaccess < $this->start) {
                 $this->start = $admin->firstaccess;

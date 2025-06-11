@@ -26,6 +26,7 @@ namespace core\task;
 
 use core_component;
 use core_plugin_manager;
+use core\check\result;
 
 /**
  * Abstract class for common properties of scheduled_task and adhoc_task.
@@ -41,11 +42,8 @@ abstract class task_base {
     /** @var \core\lock\lock $cronlock - The lock controlling the entire cron process. */
     private $cronlock = null;
 
-    /** @var $string $component - The component this task belongs to. */
+    /** @var string $component - The component this task belongs to. */
     private $component = '';
-
-    /** @var bool $blocking - Does this task block the entire cron process. */
-    private $blocking = false;
 
     /** @var int $faildelay - Exponentially increasing fail delay */
     private $faildelay = 0;
@@ -119,18 +117,38 @@ abstract class task_base {
 
     /**
      * Setter for $blocking.
-     * @param bool $blocking
+     *
+     * Please note that task blocking is no longer supported.
+     * If you are using it in older versions of Moodle you are strongly advised to rewrite your code
+     * as has a detrimental impact upon performance.
+     *
+     * @deprecated since Moodle 4.4 See MDL-67667
+     * @todo Remove in MDL-81509
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.4',
+        reason: 'Blocking tasks are no longer supported',
+    )]
     public function set_blocking($blocking) {
-        $this->blocking = $blocking;
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
     }
 
     /**
      * Getter for $blocking.
+     *
      * @return bool
+     * @deprecated since Moodle 4.4 See MDL-67667
+     * @todo Remove in MDL-81509
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.4',
+        reason: 'Blocking tasks are no longer supported',
+    )]
     public function is_blocking() {
-        return $this->blocking;
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return false;
     }
 
     /**
@@ -191,7 +209,7 @@ abstract class task_base {
      * Do the job.
      * Throw exceptions on errors (the job will be retried).
      */
-    public abstract function execute();
+    abstract public function execute();
 
     /**
      * Setter for $timestarted.
@@ -257,4 +275,40 @@ abstract class task_base {
             return $plugininfo && ($plugininfo->is_enabled() !== false);
         }
     }
+
+    /**
+     * Returns task runtime
+     * @return int
+     */
+    public function get_runtime() {
+        return time() - $this->timestarted;
+    }
+
+    /**
+     * Returns if the task has been running for too long
+     * @return result
+     */
+    public function get_runtime_result() {
+        global $CFG;
+        $runtime = $this->get_runtime();
+        $runtimeerror = $CFG->taskruntimeerror;
+        $runtimewarn = $CFG->taskruntimewarn;
+
+        $status = result::OK;
+        $details = '';
+
+        if ($runtime > $runtimewarn) {
+            $status = result::WARNING;
+            $details = get_string('slowtask', 'tool_task', format_time($runtimewarn));
+        }
+
+        if ($runtime > $runtimeerror) {
+            $status = result::ERROR;
+            $details = get_string('slowtask', 'tool_task', format_time($runtimeerror));
+        }
+
+        // This result is aggregated with other running tasks checks before display.
+        return new result($status, '', $details);
+    }
+
 }

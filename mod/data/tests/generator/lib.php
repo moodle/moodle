@@ -68,7 +68,7 @@ class mod_data_generator extends testing_module_generator {
      * @param array $options
      * @return StdClass
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         // Note, the parent class does not type $record to cast to array and then to object.
         $record = (object) (array) $record;
 
@@ -85,11 +85,11 @@ class mod_data_generator extends testing_module_generator {
     /**
      * Creates a field for a mod_data instance.
      *
-     * @param StdClass $record
-     * @param mod_data $data
-     * @return data_field_{type}
+     * @param stdClass $record
+     * @param stdClass|null $data
+     * @return data_field_base
      */
-    public function create_field(stdClass $record = null, $data = null) {
+    public function create_field(?stdClass $record = null, $data = null) {
         $record = (array) $record;
 
         $this->databasefieldcount++;
@@ -214,7 +214,7 @@ class mod_data_generator extends testing_module_generator {
      * @param int $userid if defined, it will be the author of the entry
      * @return int id of the generated record in table {data_records}
      */
-    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null, int $userid = 0) {
+    public function create_entry($data, array $contents, $groupid = 0, $tags = [], ?array $options = null, int $userid = 0) {
         global $DB, $USER, $CFG;
 
         // Set current user if defined.
@@ -325,7 +325,7 @@ class mod_data_generator extends testing_module_generator {
                     get_file_storage()->create_file_from_string(['component' => 'user', 'filearea' => 'draft',
                         'contextid' => $usercontext->id, 'itemid' => $itemid, 'filepath' => '/',
                         'filename' => $filename],
-                        file_get_contents($CFG->dirroot.'/mod/data/pix/monologo.png'));
+                        file_get_contents($CFG->dirroot.'/mod/data/field/picture/pix/sample.png'));
                 }
 
                 $fieldname = 'field_' . $fieldid . '_file';
@@ -387,7 +387,7 @@ class mod_data_generator extends testing_module_generator {
      * @param stdClass|null $record The preset information, like 'name'.
      * @return preset The preset that has been created.
      */
-    public function create_preset(stdClass $instance, stdClass $record = null): preset {
+    public function create_preset(stdClass $instance, ?stdClass $record = null): preset {
         global $USER;
 
         if (is_null($record)) {

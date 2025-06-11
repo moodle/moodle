@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\resource_link
  */
-class resource_link_test extends \advanced_testcase {
+final class resource_link_test extends \advanced_testcase {
     /**
      * Test creation of the object instances.
      *
@@ -33,7 +33,7 @@ class resource_link_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_create(array $args, array $expectations) {
+    public function test_create(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
             $this->expectExceptionMessage($expectations['exceptionmessage']);
@@ -54,7 +54,7 @@ class resource_link_test extends \advanced_testcase {
      * Data provider for testing object instantiation.
      * @return array the data for testing.
      */
-    public function instantiation_data_provider(): array {
+    public static function instantiation_data_provider(): array {
         return [
             'Valid creation, no context or id provided' => [
                 'args' => [
@@ -120,7 +120,7 @@ class resource_link_test extends \advanced_testcase {
      * @dataProvider add_grade_service_provider
      * @covers ::add_grade_service
      */
-    public function test_add_grade_service(array $args, array $expected) {
+    public function test_add_grade_service(array $args, array $expected): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertNull($reslink->get_grade_service());
 
@@ -140,7 +140,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @return array the array of test case data.
      */
-    public function add_grade_service_provider(): array {
+    public static function add_grade_service_provider(): array {
         return [
             'Valid, both URLs, some scopes' => [
                 'args' => [
@@ -212,7 +212,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @covers ::add_names_and_roles_service
      */
-    public function test_add_names_and_roles_service() {
+    public function test_add_names_and_roles_service(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertNull($reslink->get_names_and_roles_service());
         $reslink->add_names_and_roles_service(new \moodle_url('https://lms.example.com/10/memberships'), ['2.0']);
@@ -228,7 +228,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @covers ::add_user
      */
-    public function test_add_user() {
+    public function test_add_user(): void {
         global $CFG;
         $reslinkwithid = resource_link::create('res-link-id-123', 24, 44, 66, 33);
         $user = $reslinkwithid->add_user(2, 'platform-user-id-123', $CFG->lang, 'Sydney', 'AU', 'Test university', '99');
@@ -246,7 +246,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @covers ::set_resourceid
      */
-    public function test_set_resource_id() {
+    public function test_set_resource_id(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertEquals(44, $reslink->get_resourceid());
         $reslink->set_resourceid(333);
@@ -261,7 +261,7 @@ class resource_link_test extends \advanced_testcase {
      *
      * @covers ::set_contextid
      */
-    public function test_set_context_id() {
+    public function test_set_context_id(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertEquals(null, $reslink->get_contextid());
         $reslink->set_contextid(333);

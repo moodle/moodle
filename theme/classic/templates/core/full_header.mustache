@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_classic/header
+    @template core/full_header
 
     This template renders the header.
 
@@ -33,12 +33,12 @@
         <div class="card {{^contextheader}}border-0 bg-transparent{{/contextheader}}">
             <div class="card-body {{^contextheader}}p-2{{/contextheader}}">
                 <div class="d-flex align-items-center">
-                    <div class="mr-auto">
+                    <div class="me-auto">
                     {{{contextheader}}}
                     </div>
                     <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
                         {{#headeractions}}
-                            <div class="header-action ml-2">{{{.}}}</div>
+                            <div class="header-action ms-2">{{{.}}}</div>
                         {{/headeractions}}
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                         {{{navbar}}}
                     </div>
                     {{/hasnavbar}}
-                    <div class="ml-auto d-flex">
+                    <div class="ms-auto d-flex">
                         {{{pageheadingbutton}}}
                     </div>
                     <div id="course-header">
@@ -57,6 +57,12 @@
                 </div>
             </div>
         </div>
-        {{> core/welcome }}
+        {{#welcomemessage}}
+            <div class="card border-0 mt-3">
+                <div class="card-body py-0">
+                    {{> core/welcome }}
+                </div>
+            </div>
+        {{/welcomemessage}}
     </div>
 </header>

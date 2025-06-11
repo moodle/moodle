@@ -22,8 +22,6 @@
  * @copyright  Microsoft, Inc. (based on files by NetSpot {@link http://www.netspot.com.au})
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Code run after the assignfeedback_onenote module database tables have been created.
  * Moves the feedback onenote plugin down

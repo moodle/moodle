@@ -31,13 +31,13 @@ $userid = required_param('userid', PARAM_INT);
 $action = optional_param('action', null, PARAM_ALPHA);
 
 $cm = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-$tempuser = $DB->get_record('attendance_tempusers', array('id' => $userid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+$tempuser = $DB->get_record('attendance_tempusers', ['id' => $userid], '*', MUST_EXIST);
 
 $att = new mod_attendance_structure($att, $cm, $course);
 
-$params = array('userid' => $tempuser->id);
+$params = ['userid' => $tempuser->id];
 if ($action) {
     $params['action'] = $action;
 }
@@ -60,19 +60,19 @@ if ($action == 'delete') {
         require_sesskey();
 
         // Remove the user from the grades table, the attendance log and the tempusers table.
-        $DB->delete_records('grade_grades', array('userid' => $tempuser->studentid));
-        $DB->delete_records('attendance_log', array('studentid' => $tempuser->studentid));
-        $DB->delete_records('attendance_tempusers', array('id' => $tempuser->id));
+        $DB->delete_records('grade_grades', ['userid' => $tempuser->studentid]);
+        $DB->delete_records('attendance_log', ['studentid' => $tempuser->studentid]);
+        $DB->delete_records('attendance_tempusers', ['id' => $tempuser->id]);
 
         redirect($att->url_managetemp());
     } else {
 
-        $info = (object)array(
+        $info = (object)[
             'fullname' => $tempuser->fullname,
             'email' => $tempuser->email,
-        );
+        ];
         $msg = get_string('confirmdeleteuser', 'attendance', $info);
-        $continue = new moodle_url($PAGE->url, array('confirm' => 1, 'sesskey' => sesskey()));
+        $continue = new moodle_url($PAGE->url, ['confirm' => 1, 'sesskey' => sesskey()]);
 
         echo $output->header();
         echo $output->confirm($msg, $continue, $att->url_managetemp());

@@ -13,38 +13,35 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Privacy tests for core_user.
- *
- * @package    core_user
- * @category   test
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace core_user\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-use \core_privacy\tests\provider_testcase;
-use \core_user\privacy\provider;
-use \core_privacy\local\request\approved_userlist;
-use \core_privacy\local\request\transform;
-
-require_once($CFG->dirroot . "/user/lib.php");
+use core\tests\session\mock_handler;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\transform;
+use core_user\privacy\provider;
 
 /**
  * Unit tests for core_user.
  *
+ * @package core_user
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_user\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . "/user/lib.php");
+    }
 
     /**
      * Check that context information is returned correctly.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         // Create some other users as well.
@@ -59,7 +56,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported as expected for a user.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
             'firstaccess' => 1535760000,
@@ -141,7 +138,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for one user.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
@@ -210,7 +207,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for one user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user([
@@ -286,7 +283,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'core_user';
@@ -312,7 +309,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -405,8 +402,8 @@ class provider_test extends provider_testcase {
     /**
      * Create user data for a user.
      *
-     * @param  stdClass $user A user object.
-     * @param  stdClass $course A course.
+     * @param  \stdClass $user A user object.
+     * @param  \stdClass $course A course.
      */
     protected function create_data_for_user($user, $course) {
         global $DB;
@@ -475,7 +472,8 @@ class provider_test extends provider_testcase {
             'firstip' => '0.0.0.0',
             'lastip' => '0.0.0.0'
         ];
-        $DB->insert_record('sessions', $usersessions);
+        $mockhandler = new mock_handler();
+        $mockhandler->add_test_session($usersessions);
     }
 
     /**

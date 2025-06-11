@@ -1,6 +1,48 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes for code that uses the question API.
 
-=== 4.1.4 ===
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `submit_tags_form`
+  - `get_bulk_action_key`
+  - `preview_question_url`
+  - `process_actions`
+  - `process_actions_needing_ui`
+  - `question_is_only_child_of_top_category_in_context`
+  - `question_is_top_category`
+  - `question_can_delete_cat`
+  - `print_choose_qtype_to_add_form`
+  - `create_new_question_button`
+  - `question_preview_link`
+  - `core_question_output_fragment_tags_form`
+  - `render_qbank_chooser`
+  - `qbank_chooser`
+  - `qbank_chooser_types`
+  - `qbank_chooser_qtype`
+  - `qbank_chooser_title`
+
+* The following previously deprecated files have been removed and can no longer be used:
+  - `question/amd/src/edit_tags.js`
+  - `question/amd/src/repository.js`
+  - `question/amd/src/selectors.js`
+  - `question/category_class.php`
+  - `question/category_form.php`
+  - `question/export_form.php`
+  - `question/import_form.php`
+  - `question/move_form.php`
+  - `question/previewlib.php`
+  - `question/yui/src/preview/js/preview.js`
+
+* The following previously deprecated JS functions have been removed and can no longer be used:
+  - `M.core_scroll_manager.scroll_to_saved_pos`
+  - `M.core_question_engine.init_form`
+  - `M.core_question_engine.prevent_repeat_submission`
+
+=== 4.3 ===
 
 1) The core_question_generator::update_question has been changed so that it no longer modifies the $question
    object that was passed in. Instead, the update question is returned (which was already the case).
@@ -16,18 +58,66 @@ This files describes API changes for code that uses the question API.
 3) In the past, the methods get_last_calculated_time() and get_cached() of \core_question\statistics\responses\analyser
    and \core_question\statistics\questions\all_calculated_for_qubaid_condition
    only returned the pre-computed statistics if they were computed less than 15 minutes ago. Now, they will
-   always return any computed statistics that exist. The constants TIME_TO_CACHE in those classes
-   will be deprecated in Moodle 4.3.
+   always return any computed statistics that exist. Therefore, the constants TIME_TO_CACHE in those classes
+   have been deprecated.
 
 4) The cache() methods of classes analysis_for_question, analysis_for_subpart, analysis_for_class
    and analysis_for_actual_response now take an optional $calculationtime, which is used the time
    stored in the database. If not given, time() is used.
 
+5) The "Start again with these options" text is changed "Save preview options and start again". If you use this text in behat test, please use the new text
+   or use the id of the button id_saverestart instead.
+
+6) The question bank tertiary navigation is now built using the `plugin_feature::get_navigation_node()` functions from qbank plugins.
+   This allows plugins to extend the navigation with their own links.
+
+7) The tertiary navigation now allows pages to add their own action button next to the navigation menu by calling
+   `set_action_button()` on the `qbank_action_menu` object. This means plugin pages can include their own button like the
+   category management page has "Add category".
+
+8) The question bank view now has additional hooks for qbank plugins to modify how the question bank is displayed.
+   `\core_question\local\bank\column_manager_base` defines methods for setting the order, visibility and width of columns, and
+   for providing a list of actions to be displayed in each column's header. Any qbank plugin can return a subclass of this from
+   its `plugin_features::get_column_manager()` method to implement its own logic for these methods. Only one column manager can be
+   active at a time, so in the case of multiple enabled plugins providing a column manager, the first one will be used by component
+   name sorted alphabetically.
+   Plugins can also define `plugin_features::get_question_bank_controls()` returning a list of renderables that will be displayed
+   above the question bank table, to provide additional functionality on the question bank page.
+
+9) CSS selectors using #categoryquestions to address the table on the question bank page have now been changed to use
+  .question-bank-table. This applies to the same styles to preview on the qbank_columnsortorder admin screen. It is important
+  that the styles match on these pages so that the defaults have the expected result in the question bank.
+
+=== 4.2 ===
+
+1) The question/qengine.js has been deprecated. We create core_question/question_engine
+   and core/scroll_manager to replace it.
+
+2) For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
+   The affected classes are:
+   * restore_qbank_customfields_plugin
+   * category_condition
+   * tag_condition
+   * question_behaviour_attempt_updater
+   * question_engine_attempt_upgrader
+   * qformat_blackboard_six
+   * qtype_multianswer_edit_form
+   * qtype_ddimageortext_drop_zone
+   * qtype_randomsamatch_qe2_attempt_updater
+   * qformat_default
+
+   Some existing code and variables must be removed while working on this issue, including:
+   * Removed $replace in class qtype_calculated_variable_substituter
+   * Removed $wizarddisplay qtype_calculatedsimple_edit_form::definition_inner()
+   * Removed '$question->places[$placeno]->fieldname = $fieldname' in qtype_ddtoimage_renderer_base::formulation_and_controls()
+   * Removed $mc->single in qtype_multianswer_test_helper::make_multianswer_question_multiple()
+
+3) display_move_form() in qbank_managecategories\question_category_object class is deprecated and moved the logic to
+   the question/bank/managecategories/category.php.
 
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().
-
 
 === 4.0.5 ===
 

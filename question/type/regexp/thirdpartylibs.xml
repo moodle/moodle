@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>combinations/YourCombinations.php</location>
+    <name>YourCombinations</name>
+    <description>An efficient combinatorics library for PHP 8 to generate and get the list of all Permutations and Combinations with the ability to enable or disable repetition. (utilizing generators)</description>
+    <version></version>
+    <license>GPL-3.0 license</license>
+    <repository>https://github.com/BaseMax/YourCombinationsPHP</repository>
+    <copyrights>
+      <copyright>2022 Max Base</copyright>
+    </copyrights>
+    <customised/>
+  </library>
+</libraries>

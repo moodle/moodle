@@ -1,5 +1,27 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in /admin/tool/dataprivacy/*
 Information provided here is intended especially for developers.
+
+=== 4.4 ===
+* tool_dataprivacy\external\data_request_exporter now returns and additional optional field "downloadlink"
+  with the link to download a zip file containing the results of an export data request.
+
+=== 4.3 ===
+* New add_request_contexts_with_status function adds the contexts from the contextlist_collection to
+  the request with the status provided.
+* New get_approved_contextlist_collection_for_request function finds all request contextlists having
+  at least on approved context, and returns them as in a contextlist_collection.
+* New update_request_contexts_with_status function sets the status of all contexts associated with
+  the request.
+* New approve_contexts_belonging_to_request function approves the contexts which are children of the
+  provided course contexts.
+* New get_course_contexts_for_view_filter function gets list of course context for user to filter.
+* New submit_selected_courses_form function fetches the list of course which user can select to export
+  data through form.
 
 === 4.1 ===
 * New `api::can_create_data_download_request_for_self` method for determining whether user has permission to create their

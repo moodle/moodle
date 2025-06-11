@@ -77,8 +77,8 @@ class data_field_latlong extends data_field_base {
             }
         }
         $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
-        $str .= '<table class="form-inline"><tr><td align="right">';
+        $str .= '<fieldset><legend><span class="accesshide">'.s($this->field->name).'</span></legend>';
+        $str .= '<table class="d-flex flex-wrap align-items-center"><tr><td align="right">';
         $classes = 'mod-data-input form-control-static';
         $str .= '<label for="field_'.$this->field->id.'_0" class="' . $classes . '">' . get_string('latitude', 'data');
         if ($this->field->required) {
@@ -227,7 +227,7 @@ class data_field_latlong extends data_field_base {
             }
             // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
             // which allows the "Go" button to refer to the drop-down selector.
-            $str .= '\n</select><input type="button" class="btn ml-1 btn-secondary" value="' . get_string('go');
+            $str .= '\n</select><input type="button" class="btn ms-1 btn-secondary" value="' . get_string('go');
             $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
             $str .= '</form>';
         } else {
@@ -338,5 +338,60 @@ class data_field_latlong extends data_field_base {
             $configs["param$i"] = $this->field->{"param$i"};
         }
         return $configs;
+    }
+
+    public function get_field_params(): array {
+        global $DB;
+
+        $data = parent::get_field_params();
+        $data['dataid'] = $this->data->id;
+
+        if (isset($this->field->param1)) {
+            $data["param1"] = $this->field->param1;
+            if (isset($this->linkoutservices)) {
+                $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
+                foreach ($this->linkoutservices as $servicename => $serviceurl) {
+                    $servicename = htmlspecialchars($servicename);
+                    $data['latlonglinkservices'][] = [
+                        'name' => $servicename,
+                        'selected' => in_array($servicename, $serviceschosen),
+                    ];
+                    unset($serviceschosen[$servicename]);
+                }
+                $data['latlonglinkservicessize'] = count($this->linkoutservices);
+            }
+        }
+
+        $data["otherfields"][] = [
+            'value' => -1,
+            'name' => get_string('entry', 'data') . " #",
+            'selected' => $this->field->param2 == -1,
+        ];
+        $data['otherfields'][] = [
+            'value' => -2,
+            'name' => get_string('latitude', 'data') . "/" . get_string('longitude', 'data'),
+            'selected' => $this->field->param2 == -2,
+        ];
+
+        // Fetch all "suitable" other fields that exist for this database.
+        $textfields = $DB->get_records('data_fields', ['dataid' => $this->data->id, 'type' => 'text']);
+        if (count($textfields) > 0) {
+            $data['otherfieldsoptgroups']['label'] = get_string('latlongotherfields', 'data') . ":";
+            foreach ($textfields as $textfield) {
+                $data['otherfieldsoptgroups']['options'][] = [
+                    'value' => $textfield->id,
+                    'name' => $textfield->name,
+                    'selected' => $this->field->param2 == $textfield->id,
+                ];
+            }
+        }
+        if (isset($data['otherfieldsoptgroups'])) {
+            $data['otherfields'][] = $data['otherfieldsoptgroups'];
+        }
+        if (isset($this->field->id)) {
+            $data['fieldid'] = $this->field->id;
+        }
+
+        return $data;
     }
 }

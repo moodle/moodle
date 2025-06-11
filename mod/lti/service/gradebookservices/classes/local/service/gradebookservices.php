@@ -446,7 +446,7 @@ class gradebookservices extends service_base {
      */
     public function add_standalone_lineitem(string $courseid, string $label, float $maximumscore,
             string $baseurl, ?int $ltilinkid, ?string $resourceid, ?string $tag, int $typeid,
-            int $toolproxyid = null) : int {
+            ?int $toolproxyid = null): int {
         global $DB;
         $params = array();
         $params['itemname'] = $label;
@@ -529,7 +529,6 @@ class gradebookservices extends service_base {
         }
 
         if ($gradeitem->is_manual_item()) {
-            // TODO: LSU Deal with this as well.
             $result = $gradeitem->update_final_grade($userid, $finalgrade, null, $feedback, FORMAT_PLAIN, null, $timemodified);
         } else {
             if (!$grade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $userid))) {
@@ -542,11 +541,6 @@ class gradebookservices extends service_base {
             $grade->feedbackformat = $feedbackformat;
             $grade->feedback = $feedback;
             $grade->rawgrade = $finalgrade;
-
-            // BEGIN LSU #1286 LTI grade dates.
-            $grade->dategraded = $timemodified;
-            // END LSU #1286 LTI grade dates.
-
             $status = grade_update($source, $gradeitem->courseid,
                 $gradeitem->itemtype, $gradeitem->itemmodule,
                 $gradeitem->iteminstance, $gradeitem->itemnumber, $grade);
@@ -640,7 +634,6 @@ class gradebookservices extends service_base {
             } else {
                 $result->scoreOf = "{$endpoint}?type_id={$typeid}";
             }
-            // TODO: LSU CHECK THIS LINE.
             $result->timestamp = date('c', $grade->timemodified);
         }
         return $result;
@@ -735,7 +728,7 @@ class gradebookservices extends service_base {
      *
      */
     public static function update_coupled_gradebookservices(object $ltiinstance,
-            ?string $resourceid, ?string $tag, ?\moodle_url $subreviewurl, ?string $subreviewparams) : void {
+            ?string $resourceid, ?string $tag, ?\moodle_url $subreviewurl, ?string $subreviewparams): void {
         global $DB;
 
         if ($ltiinstance && $ltiinstance->typeid) {

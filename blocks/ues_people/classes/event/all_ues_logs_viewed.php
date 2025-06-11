@@ -46,8 +46,8 @@ class all_ues_logs_viewed extends \core\event\base {
         return new \moodle_url('/block/ues_people/index.php', array('id' => $this->courseid));
     }
 
-    public function get_legacy_logdata() {
-        // Override if you are migrating an add_to_log() call.
-        return array($this->courseid, 'ues_people', 'view all', 'index.php?id='.$this->courseid, '');
-    }
+    // public function get_legacy_logdata() {
+    //     // Override if you are migrating an add_to_log() call.
+    //     return array($this->courseid, 'ues_people', 'view all', 'index.php?id='.$this->courseid, '');
+    // }
 }

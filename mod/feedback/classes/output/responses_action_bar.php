@@ -54,7 +54,7 @@ class responses_action_bar extends base_action_bar {
             $options[$reporturl->out(false)] = get_string('show_entries', 'feedback');
             $selected = $this->currenturl->compare($reporturl, URL_MATCH_BASE) ? $reporturl : $this->currenturl;
 
-            if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO && $this->course != SITEID) {
+            if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO && $this->course->id != SITEID) {
                 $nonrespondenturl = new moodle_url('/mod/feedback/show_nonrespondents.php', $this->urlparams);
                 $options[$nonrespondenturl->out(false)] = get_string('show_nonrespondents', 'feedback');
                 $selected = $this->currenturl->compare($nonrespondenturl, URL_MATCH_BASE) ? $nonrespondenturl : $this->currenturl;;

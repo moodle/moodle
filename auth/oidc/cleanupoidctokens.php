@@ -65,12 +65,14 @@ if ($tokenstoclean) {
     $table->head = [
         get_string('table_token_id', 'auth_oidc'),
         get_string('table_oidc_username', 'auth_oidc'),
+        get_string('table_oidc_unique_identifier', 'auth_oidc'),
         get_string('table_token_unique_id', 'auth_oidc'),
         get_string('table_matching_status', 'auth_oidc'),
         get_string('table_matching_details', 'auth_oidc'),
         get_string('table_action', 'auth_oidc'),
     ];
     $table->colclasses = [
+        'leftalign',
         'leftalign',
         'leftalign',
         'leftalign',
@@ -85,6 +87,7 @@ if ($tokenstoclean) {
         $table->data[] = [
             $item->id,
             $item->oidcusername,
+            $item->useridentifier,
             $item->oidcuniqueid,
             $item->matchingstatus,
             $item->details,

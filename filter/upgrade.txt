@@ -1,11 +1,18 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
-=== 4.1.5 ===
+=== 4.3 ===
 
 * Filters can be applied at different stages - before text format conversion, before text cleaning or after text cleaning.
 It is recommended that add-on filter developers use early formatting stages to prevent security issues caused by
 modification of already sanitised text.
+
+* The moodle-filter_mathjaxloader-loader yui module has been deprecated. We create amd filter_mathjaxloader/loader to replace it.
 
 === 4.0 ===
 

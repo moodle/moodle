@@ -24,18 +24,13 @@ Feature: Using the lesson activities which support point scale
 
   @javascript
   Scenario: Lesson rescale grade should not be possible when users are graded
-    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Numerical question |
-      | Page contents | What is 1 + 2? |
-      | id_answer_editor_0 | 3 |
-      | id_jumpto_0 | End of lesson |
-      | id_enableotheranswers | 1 |
-      | id_jumpto_6 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > page" exist:
+      | lesson           | qtype   | title              | content        |
+      | Test lesson name | numeric | Numerical question | What is 1 + 2? |
+    And the following "mod_lesson > answers" exist:
+      | page               | answer          | jumpto        | score |
+      | Numerical question | 3               | End of lesson | 1     |
+      | Numerical question | @#wronganswer#@ | Next page     | 0     |
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "5"
     And I press "Submit"

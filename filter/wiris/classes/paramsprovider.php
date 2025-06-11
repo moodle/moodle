@@ -31,9 +31,6 @@ require_once($CFG->dirroot . '/filter/wiris/integration/lib/com/wiris/plugin/api
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_wiris_paramsprovider implements com_wiris_plugin_api_ParamsProvider {
-
-
-
     /**
      * @var array $parameters The list of parameters.
      */

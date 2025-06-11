@@ -16,8 +16,8 @@
 
 namespace cachestore_static;
 
-use cache_definition;
-use cache_store;
+use core_cache\definition;
+use core_cache\store;
 use cachestore_static;
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/cache/stores/static/lib.php');
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \cachestore_tests {
+final class store_test extends \cachestore_tests {
     /**
      * Returns the static class name
      * @return string
@@ -46,16 +46,16 @@ class store_test extends \cachestore_tests {
     /**
      * Test the maxsize option.
      */
-    public function test_maxsize() {
+    public function test_maxsize(): void {
         $defid = 'phpunit/testmaxsize';
         $config = \cache_config_testing::instance();
         $config->phpunit_add_definition($defid, array(
-            'mode' => cache_store::MODE_REQUEST,
+            'mode' => store::MODE_REQUEST,
             'component' => 'phpunit',
             'area' => 'testmaxsize',
             'maxsize' => 3
         ));
-        $definition = cache_definition::load($defid, $config->get_definition_by_id($defid));
+        $definition = definition::load($defid, $config->get_definition_by_id($defid));
         $instance = cachestore_static::initialise_test_instance($definition);
 
         $this->assertTrue($instance->set('key1', 'value1'));
@@ -119,7 +119,7 @@ class store_test extends \cachestore_tests {
     /**
      * Simple test to verify igbinary availability and check basic serialization is working ok.
      */
-    public function test_igbinary_serializer() {
+    public function test_igbinary_serializer(): void {
         // Skip if igbinary is not available.
         if (!extension_loaded('igbinary')) {
             $this->markTestSkipped('Cannot test igbinary serializer. Extension missing');
@@ -128,11 +128,11 @@ class store_test extends \cachestore_tests {
         $defid = 'phpunit/igbinary';
         $config = \cache_config_testing::instance();
         $config->phpunit_add_definition($defid, array(
-            'mode' => cache_store::MODE_REQUEST,
+            'mode' => store::MODE_REQUEST,
             'component' => 'phpunit',
             'area' => 'testigbinary'
         ));
-        $definition = cache_definition::load($defid, $config->get_definition_by_id($defid));
+        $definition = definition::load($defid, $config->get_definition_by_id($defid));
         $instance = cachestore_static::initialise_test_instance($definition);
         // Prepare an object.
         $obj = new \stdClass();

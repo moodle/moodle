@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class checks_test extends \advanced_testcase {
+final class checks_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -69,7 +69,7 @@ class checks_test extends \advanced_testcase {
     /*
      * test backup_check class
      */
-    public function test_backup_check() {
+    public function test_backup_check(): void {
 
         // Check against existing course module/section course or fail
         $this->assertTrue(backup_check::check_id(backup::TYPE_1ACTIVITY, $this->moduleid));

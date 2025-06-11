@@ -6,11 +6,11 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
+      | teacher1 | Teacher | First | teacher1@example.com |
       | student1 | Student | First | student1@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
@@ -18,16 +18,10 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
       | student1 | C1     | student        |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
-      | assign | C1 | a1 | Test assignment one | Submit something! | 300 |
-      | assign | C1 | a2 | Test assignment two | Submit something! | 100 |
-      | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
-      | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
+      | assign | C1 | a1 | Test assignment one | Submit something! | 30 |
+      | assign | C1 | a2 | Test assignment two | Submit something! | 10 |
+      | assign | C1 | a3 | Test assignment three | Submit something! | 15 |
+      | assign | C1 | a4 | Test assignment four | Submit nothing! | 15 |
     And I log out
 
   # Given I am a teacher in a course with completion tracking enabled and activities present.
@@ -37,28 +31,27 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I navigate to "Course completion" in current page administration
-    And I select "Bulk edit activity completion" from the "Course completion tertiary navigation" singleselect
+    And I set the field "Course completion tertiary navigation" to "Bulk edit activity completion"
     And I click on "Test assignment one" "checkbox"
     And I click on "Test assignment two" "checkbox"
     And I click on "Edit" "button"
-    And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must make a submission"
-    And I select "Show activity as complete when conditions are met" from the "completion" singleselect
-    And I click on "completionview" "checkbox"
-    And I click on "completionusegrade" "checkbox"
-    And I click on "completionsubmit" "checkbox"
+    And I set the following fields to these values:
+      | Add requirements           | 1 |
+      | View the activity          | 1 |
+      | Make a submission          | 1 |
+      | Receive a grade            | 1 |
     And I click on "Save changes" "button"
     Then I should see "Changes saved"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
-    And I should see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
-    And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
-    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
+    And I should see "View the activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
+    And I should see "Receive a grade" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
+    And I should see "Make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-    And I should see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-    And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+    And I should see "View the activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+    And I should see "Receive a grade" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+    And I should see "Make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
 
   # Same conditions as above,
@@ -68,21 +61,27 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I navigate to "Course completion" in current page administration
-    And I select "Bulk edit activity completion" from the "Course completion tertiary navigation" singleselect
+    And I set the field "Course completion tertiary navigation" to "Bulk edit activity completion"
     And I click on "Test assignment one" "checkbox"
     And I click on "Test assignment two" "checkbox"
     And I click on "Edit" "button"
-    And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must make a submission"
-    And I select "Show activity as complete when conditions are met" from the "completion" singleselect
-    And I click on "completionusegrade" "checkbox"
-    And I click on "completionpassgrade" "checkbox"
+    And I set the field "Add requirements" to "1"
+    And I should see "Make a submission"
+    And I set the field "Receive a grade" to "1"
+    And I set the field "Passing grade" to "1"
     And I click on "Save changes" "button"
     Then I should see "Changes saved"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
-    And I should see "Student must receive a passing grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
+    And I should see "Passing grade" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-    And I should see "Student must receive a passing grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+    And I should see "Passing grade" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the bulk edit activity completion page
+    Given I am on the "Course 1" course page logged in as "teacher1"
+    When I navigate to "Course completion" in current page administration
+    And I set the field "Course completion tertiary navigation" to "Bulk edit activity completion"
+    And the page should meet accessibility standards

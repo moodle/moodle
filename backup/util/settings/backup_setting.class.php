@@ -37,6 +37,12 @@ abstract class backup_setting extends base_setting implements checksumable {
     const SECTION_LEVEL  = 9;
     const ACTIVITY_LEVEL = 13;
 
+    /** @var int the subsection level. */
+    const SUBSECTION_LEVEL = 17;
+
+    /** @var int the activity inside a subsection level. */
+    const SUBACTIVITY_LEVEL = 21;
+
     /** @var int Level of the setting, eg {@link self::ROOT_LEVEL} */
     protected $level;
 
@@ -64,7 +70,7 @@ abstract class backup_setting extends base_setting implements checksumable {
      * @param array $attributes
      * @param array $options
      */
-    public function make_ui($type, $label, array $attributes = null, array $options = null) {
+    public function make_ui($type, $label, ?array $attributes = null, ?array $options = null) {
         $this->uisetting = backup_setting_ui::make($this, $type, $label, $attributes, $options);
         if (is_array($options) || is_object($options)) {
             $options = (array)$options;
@@ -96,7 +102,12 @@ abstract class backup_setting extends base_setting implements checksumable {
         }
         // Check the dependency level is >= current level
         if ($dependentsetting->get_level() < $this->level) {
-            throw new backup_setting_exception('cannot_add_upper_level_dependency');
+            throw new backup_setting_exception('cannot_add_upper_level_dependency', [
+                $dependentsetting->get_level(),
+                $dependentsetting->get_name(),
+                $this->level,
+                $this->get_name(),
+            ]);
         }
         parent::add_dependency($dependentsetting, $type, $options);
     }

@@ -1,0 +1,56 @@
+language: php
+
+sudo: required
+
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.6"
+  apt:
+    packages:
+      - openjdk-8-jre-headless
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+php:
+ - 7.0
+ - 7.2
+
+env:
+  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=pgsql MOODLE_BRANCH=master
+  - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=mysqli MOODLE_BRANCH=master
+  - DB=mariadb MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mariadb MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mariadb MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=mariadb MOODLE_BRANCH=master
+  
+before_install:
+  - phpenv config-rm xdebug.ini
+  - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+  - git fetch --unshallow --tags
+  - git symbolic-ref --short HEAD || git checkout -b behat_fix
+  - nvm install 8.9
+  - nvm use 8.9
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phpunit --coverage-text
+  - moodle-plugin-ci phpunit --coverage-clover
+  - moodle-plugin-ci behat
+  - moodle-plugin-ci behat --profile chrome
+
+after_success:
+  - moodle-plugin-ci coveralls-upload

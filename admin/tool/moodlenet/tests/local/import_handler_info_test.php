@@ -28,7 +28,7 @@ use tool_moodlenet\local\import_strategy_file;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_handler_info_test extends \advanced_testcase {
+final class import_handler_info_test extends \advanced_testcase {
 
     /**
      * Test init and the getters.
@@ -38,7 +38,7 @@ class import_handler_info_test extends \advanced_testcase {
      * @param string $description description of the mod.
      * @param bool $expectexception whether we expect an exception during init or not.
      */
-    public function test_initialisation($modname, $description, $expectexception) {
+    public function test_initialisation($modname, $description, $expectexception): void {
         $this->resetAfterTest();
         // Skip those cases we cannot init.
         if ($expectexception) {
@@ -59,7 +59,7 @@ class import_handler_info_test extends \advanced_testcase {
      *
      * @return array the data for creation of the info object.
      */
-    public function handler_info_data_provider() {
+    public static function handler_info_data_provider(): array {
         return [
             'All data present' => ['label', 'Add a label to the course', false],
             'Empty module name' => ['', 'Add a file resource to the course', true],

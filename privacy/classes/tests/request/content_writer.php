@@ -157,7 +157,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   \context        $context    The context to use
      */
-    public function set_context(\context $context) : \core_privacy\local\request\content_writer {
+    public function set_context(\context $context): \core_privacy\local\request\content_writer {
         $this->context = $context;
 
         if (isset($this->data->{$this->context->id}) && empty((array) $this->data->{$this->context->id})) {
@@ -210,7 +210,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @return  \context
      */
-    public function get_current_context() : \context {
+    public function get_current_context(): \context {
         return $this->context;
     }
 
@@ -220,7 +220,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   \stdClass       $data       The data to be exported
      */
-    public function export_data(array $subcontext, \stdClass $data) : \core_privacy\local\request\content_writer {
+    public function export_data(array $subcontext, \stdClass $data): \core_privacy\local\request\content_writer {
         $current = $this->fetch_root($this->data, $subcontext);
         $current->data = $data;
 
@@ -231,7 +231,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * Get all data within the subcontext.
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
-     * @return  array                       The metadata as a series of keys to value + descrition objects.
+     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
      */
     public function get_data(array $subcontext = []) {
         return $this->fetch_data_root($this->data, $subcontext);
@@ -248,8 +248,12 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $description    The description of the value.
      * @return  $this
      */
-    public function export_metadata(array $subcontext, string $key, $value, string $description)
-            : \core_privacy\local\request\content_writer {
+    public function export_metadata(
+        array $subcontext,
+        string $key,
+        $value,
+        string $description
+    ): \core_privacy\local\request\content_writer {
         $current = $this->fetch_root($this->metadata, $subcontext);
         $current->data[$key] = (object) [
                 'value' => $value,
@@ -263,7 +267,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * Get all metadata within the subcontext.
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
-     * @return  array                       The metadata as a series of keys to value + descrition objects.
+     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
      */
     public function get_all_metadata(array $subcontext = []) {
         return $this->fetch_data_root($this->metadata, $subcontext);
@@ -275,7 +279,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $key        The metadata to be fetched within the context + subcontext.
      * @param   boolean         $valueonly  Whether to fetch only the value, rather than the value + description.
-     * @return  array                       The metadata as a series of keys to value + descrition objects.
+     * @return  \stdClass|array|null        The metadata as a series of keys to value + description objects.
      */
     public function get_metadata(array $subcontext, $key, $valueonly = true) {
         $keys = $this->get_all_metadata($subcontext);
@@ -300,7 +304,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $name       The name of the file to be exported.
      * @param   \stdClass       $data       The related data to export.
      */
-    public function export_related_data(array $subcontext, $name, $data) : \core_privacy\local\request\content_writer {
+    public function export_related_data(array $subcontext, $name, $data): \core_privacy\local\request\content_writer {
         $current = $this->fetch_root($this->relateddata, $subcontext);
         $current->data[$name] = $data;
 
@@ -312,7 +316,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $filename   The name of the intended filename.
-     * @return  array                       The metadata as a series of keys to value + descrition objects.
+     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
      */
     public function get_related_data(array $subcontext = [], $filename = null) {
         $current = $this->fetch_data_root($this->relateddata, $subcontext);
@@ -335,7 +339,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $filename   The name of the file to be exported.
      * @param   string          $filecontent    The content to be exported.
      */
-    public function export_custom_file(array $subcontext, $filename, $filecontent) : \core_privacy\local\request\content_writer {
+    public function export_custom_file(array $subcontext, $filename, $filecontent): \core_privacy\local\request\content_writer {
         $filename = clean_param($filename, PARAM_FILE);
 
         $current = $this->fetch_root($this->customfiles, $subcontext);
@@ -393,7 +397,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $filearea   The filearea within that component.
      * @param   string          $itemid     Which item those files belong to.
      */
-    public function export_area_files(array $subcontext, $component, $filearea, $itemid) : \core_privacy\local\request\content_writer  {
+    public function export_area_files(array $subcontext, $component, $filearea, $itemid): \core_privacy\local\request\content_writer  {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, $component, $filearea, $itemid);
         foreach ($files as $file) {
@@ -409,7 +413,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   \stored_file    $file       The file to be exported.
      */
-    public function export_file(array $subcontext, \stored_file $file) : \core_privacy\local\request\content_writer  {
+    public function export_file(array $subcontext, \stored_file $file): \core_privacy\local\request\content_writer  {
         if (!$file->is_directory()) {
             $filepath = $file->get_filepath();
             // Directory separator in the stored_file class should always be '/'. The following line is just a fail safe.
@@ -449,7 +453,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
         string $key,
         string $value,
         string $description
-    ) : \core_privacy\local\request\content_writer {
+    ): \core_privacy\local\request\content_writer {
         $prefs = $this->fetch_root($this->userprefs, []);
 
         if (!isset($prefs->{$component})) {
@@ -500,7 +504,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @return  string
      */
-    public function finalise_content() : string {
+    public function finalise_content(): string {
         return 'mock_path';
     }
 
@@ -510,7 +514,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass   $base The base to use - e.g. $this->data
      * @param   array       $subcontext The subcontext to fetch
      * @param   int         $temporarycontextid A temporary context ID to use for the fetch.
-     * @return  array
+     * @return  \stdClass|array
      */
     protected function fetch_root($base, $subcontext, $temporarycontextid = null) {
         $contextid = !empty($temporarycontextid) ? $temporarycontextid : $this->context->id;
@@ -540,7 +544,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   \stdClass   $base The base to use - e.g. $this->data
      * @param   array       $subcontext The subcontext to fetch
-     * @return  array
+     * @return  \stdClass|array
      */
     protected function fetch_data_root($base, $subcontext) {
         $root = $this->fetch_root($base, $subcontext);

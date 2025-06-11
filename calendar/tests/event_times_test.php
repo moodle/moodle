@@ -25,14 +25,14 @@ use core_calendar\local\event\value_objects\event_times;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_times_test extends \advanced_testcase {
+final class event_times_test extends \advanced_testcase {
     /**
      * Test event times class getters.
      *
-     * @dataProvider getters_testcases()
+     * @dataProvider getters_testcases
      * @param array $constructorparams Associative array of constructor parameters.
      */
-    public function test_getters($constructorparams) {
+    public function test_getters($constructorparams): void {
         $eventtimes = new event_times(
             $constructorparams['start_time'],
             $constructorparams['end_time'],
@@ -51,7 +51,7 @@ class event_times_test extends \advanced_testcase {
     /**
      * Test cases for getters test.
      */
-    public function getters_testcases() {
+    public static function getters_testcases(): array {
         return [
             'Dataset 1' => [
                 'constructorparams' => [

@@ -48,80 +48,80 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'competencyid' => array(
-                'type' => PARAM_INT
-            ),
-            'scaleid' => array(
-                'type' => PARAM_INT
-            ),
-            'isproficient' => array(
-                'type' => PARAM_BOOL
-            ),
-            'isnotproficient' => array(
-                'type' => PARAM_BOOL
-            ),
-            'isnotrated' => array(
-                'type' => PARAM_BOOL
-            ),
-            'finalgradename' => array(
+        return [
+            'competencyid' => [
+                'type' => PARAM_INT,
+            ],
+            'scaleid' => [
+                'type' => PARAM_INT,
+            ],
+            'isproficient' => [
+                'type' => PARAM_BOOL,
+            ],
+            'isnotproficient' => [
+                'type' => PARAM_BOOL,
+            ],
+            'isnotrated' => [
+                'type' => PARAM_BOOL,
+            ],
+            'finalgradename' => [
                 'type' => PARAM_RAW,
                 'default' => null,
                 'null' => NULL_ALLOWED,
-            ),
-            'finalgradecolor' => array(
+            ],
+            'finalgradecolor' => [
                 'type' => PARAM_RAW,
                 'default' => null,
                 'null' => NULL_ALLOWED,
-            ),
-            'cangrade' => array(
-                'type' => PARAM_BOOL
-            ),
-            'hasevidence' => array(
-                'type' => PARAM_BOOL
-            ),
-            'hasrating' => array(
-                'type' => PARAM_BOOL
-            ),
-            'hasratingincms' => array(
-                'type' => PARAM_BOOL
-            ),
-            'nbevidence' => array(
-                'type' => PARAM_INT
-            ),
-            'listevidence' => array(
+            ],
+            'cangrade' => [
+                'type' => PARAM_BOOL,
+            ],
+            'hasevidence' => [
+                'type' => PARAM_BOOL,
+            ],
+            'hasrating' => [
+                'type' => PARAM_BOOL,
+            ],
+            'hasratingincms' => [
+                'type' => PARAM_BOOL,
+            ],
+            'nbevidence' => [
+                'type' => PARAM_INT,
+            ],
+            'listevidence' => [
                 'type' => report_user_evidence_summary_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'nbcoursestotal' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcoursesrated' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcmstotal' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcmsrated' => array(
-                'type' => PARAM_INT
-            ),
-            'listtotalcourses' => array(
+                'multiple' => true,
+            ],
+            'nbcoursestotal' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcoursesrated' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcmstotal' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcmsrated' => [
+                'type' => PARAM_INT,
+            ],
+            'listtotalcourses' => [
                 'type' => linked_course_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'listtotalcms' => array(
+                'multiple' => true,
+            ],
+            'listtotalcms' => [
                 'type' => linked_cm_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'scalecompetencyitems' => array(
+                'multiple' => true,
+            ],
+            'scalecompetencyitems' => [
                 'type' => scale_competency_item_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'competencypath' => array(
+                'multiple' => true,
+            ],
+            'competencypath' => [
                 'type' => competency_path_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -164,25 +164,25 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
         // Prior learning evidences.
         $result->nbevidence = count($data->userevidences);
         $result->hasevidence = $result->nbevidence > 0 ? true : false;
-        $result->listevidence = array();
+        $result->listevidence = [];
         foreach ($data->userevidences as $userevidence) {
             $userevidencerecord = new user_evidence($userevidence->id);
             $context = $userevidencerecord->get_context();
             $userevidencesummaryexporter = new report_user_evidence_summary_exporter($userevidencerecord,
-                    array('context' => $context));
+                    ['context' => $context]);
             $result->listevidence[] = $userevidencesummaryexporter->export($output);
         }
 
         // Liste of courses linked to the competency.
         $result->nbcoursestotal = 0;
         $result->nbcoursesrated = 0;
-        $result->listtotalcourses = array();
+        $result->listtotalcourses = [];
 
         foreach ($data->courses as $coursedata) {
             $relatedinfo = new \stdClass();
             $relatedinfo->userid = $data->userid;
             $relatedinfo->competencyid = $data->competency->get('id');
-            $totalcourseexporter = new linked_course_exporter($coursedata, array('relatedinfo' => $relatedinfo));
+            $totalcourseexporter = new linked_course_exporter($coursedata, ['relatedinfo' => $relatedinfo]);
             $totalcourse = $totalcourseexporter->export($output);
             if ($totalcourse->rated) {
                 $result->nbcoursesrated++;
@@ -195,13 +195,13 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
         // List of courses modules linked to the competency.
         $result->nbcmstotal = 0;
         $result->nbcmsrated = 0;
-        $result->listtotalcms = array();
+        $result->listtotalcms = [];
 
         foreach ($data->cms as $cmdata) {
             $relatedinfo = new \stdClass();
             $relatedinfo->userid = $data->userid;
             $relatedinfo->competencyid = $data->competency->get('id');
-            $totalcmexporter = new linked_cm_exporter($cmdata, array('relatedinfo' => $relatedinfo));
+            $totalcmexporter = new linked_cm_exporter($cmdata, ['relatedinfo' => $relatedinfo]);
             $totalcm = $totalcmexporter->export($output);
             if ($totalcm->rated) {
                 $result->nbcmsrated++;
@@ -212,7 +212,7 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
         $result->hasratingincms = $result->nbcmsrated > 0 ? true : false;
 
         // Information for each scale value.
-        $result->scalecompetencyitems = array();
+        $result->scalecompetencyitems = [];
         foreach ($data->scale as $id => $scalename) {
             $scaleinfo = new \stdClass();
             $scaleinfo->value = $id;
@@ -223,8 +223,11 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
             $relatedinfo->userid = $data->userid;
             $relatedinfo->competencyid = $data->competency->get('id');
 
-            $scalecompetencyitemexporter = new scale_competency_item_exporter($scaleinfo, array('courses' => $data->courses,
-                'relatedinfo' => $relatedinfo, 'cms' => $data->cms));
+            $scalecompetencyitemexporter = new scale_competency_item_exporter($scaleinfo, [
+                'courses' => $data->courses,
+                'relatedinfo' => $relatedinfo,
+                'cms' => $data->cms,
+            ]);
             $result->scalecompetencyitems[] = $scalecompetencyitemexporter->export($output);
         }
 
@@ -232,9 +235,9 @@ class lpmonitoring_competency_detail_exporter extends \core\external\exporter {
         $competencypathexporter = new competency_path_exporter([
             'ancestors' => $data->competency->get_ancestors(),
             'framework' => $data->framework,
-            'context' => $data->framework->get_context()
+            'context' => $data->framework->get_context(),
         ]);
-        $result->competencypath = array();
+        $result->competencypath = [];
         $result->competencypath[] = $competencypathexporter->export($output);
 
         return (array) $result;

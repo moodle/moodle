@@ -48,17 +48,19 @@ $string['databaseupgradegroups'] = 'Groups version is now {$a}';
 $string['defaultgrouping'] = 'Default grouping';
 $string['defaultgroupingname'] = 'Grouping';
 $string['defaultgroupname'] = 'Group';
-$string['deleteallgroupings'] = 'Delete all groupings';
-$string['deleteallgroups'] = 'Delete all groups';
+$string['deleteallgroupings'] = 'All groupings';
+$string['deleteallgroups'] = 'All groups';
 $string['deletegroupconfirm'] = 'Are you sure you want to delete group \'{$a}\'?';
 $string['deletegrouping'] = 'Delete grouping';
 $string['deletegroupingconfirm'] = 'Are you sure you want to delete grouping \'{$a}\'? (Groups in the grouping are not deleted.)';
 $string['deletegroupsconfirm'] = 'Are you sure you want to delete the following groups?';
-$string['deleteselectedgroup'] = 'Delete selected group';
+$string['deleteselectedgroup'] = 'Delete';
+$string['disablemessagingaction'] = 'Disable messaging';
 $string['editgroupingsettings'] = 'Edit grouping settings';
 $string['editgroupsettings'] = 'Edit group settings';
 $string['editusersgroupsa'] = 'Edit groups for "{$a}"';
 $string['enablemessaging'] = 'Group messaging';
+$string['enablemessagingaction'] = 'Enable messaging';
 $string['enablemessaging_help'] = 'If enabled, group members can send messages to the others in their group via the messaging drawer.';
 $string['encoding'] = 'Encoding';
 $string['enrolmentkey'] = 'Enrolment key';
@@ -69,6 +71,8 @@ $string['enrolmentkeyalreadyinuse'] = 'This enrolment key is already used for an
 $string['erroraddremoveuser'] = 'Error adding/removing user {$a} to group';
 $string['erroreditgroup'] = 'Error creating/updating group {$a}';
 $string['erroreditgrouping'] = 'Error creating/updating grouping {$a}';
+$string['erroraddtogroup'] = 'Invalid value for addtogroup. It should be 0 for no group mode or 1 for a new group to be created.';
+$string['erroraddtogroupgroupname'] = 'You cannot specify groupname when addtogroup is set.';
 $string['errorinvalidgroup'] = 'Error, invalid group {$a}';
 $string['errorremovenotpermitted'] = 'You do not have permission to remove automatically-added group member {$a}';
 $string['errorselectone'] = 'Please select a single group before choosing this option';
@@ -111,6 +115,8 @@ $string['groupmembers'] = 'Group members';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
+$string['groupmode_groupsseparate_help'] = 'Students are divided into groups and can only see their group\'s work.';
+$string['groupmode_groupsvisible_help'] = 'Students are divided into groups, but can see the work of other groups.';
 $string['groupmode_help'] = '* No groups
 * Separate groups: Students are divided into groups and can only see their group\'s work.
 * Visible groups: Students are divided into groups, but can see the work of other groups.
@@ -169,9 +175,15 @@ $string['nousersinrole'] = 'There are no suitable users in the selected role';
 $string['number'] = 'Group/member count';
 $string['numgroups'] = 'Number of groups';
 $string['nummembers'] = 'Members per group';
+$string['manageactions'] = 'Manage';
+$string['messagingdisabled'] = 'Successfully disabled messaging in {$a} group(s)';
+$string['messagingenabled'] = 'Successfully enabled messaging in {$a} group(s)';
 $string['mygroups'] = 'My groups';
 $string['othergroups'] = 'Other groups';
 $string['overview'] = 'Overview';
+$string['participation'] = 'Show group in dropdown menu for activities in group mode';
+$string['participation_help'] = 'Should group members be able to select this group for activities in separate or visible groups mode? (Only applicable if group membership is visible or only visible to members.)';
+$string['participationshort'] = 'Participation';
 $string['potentialmembers'] = 'Potential members: {$a}';
 $string['potentialmembs'] = 'Potential members';
 $string['printerfriendly'] = 'Printer-friendly display';
@@ -184,8 +196,8 @@ $string['random'] = 'Randomly';
 $string['removegroupfromselectedgrouping'] = 'Remove group from grouping';
 $string['removefromgroup'] = 'Remove user from group {$a}';
 $string['removefromgroupconfirm'] = 'Do you really want to remove user "{$a->user}" from group "{$a->group}"?';
-$string['removegroupingsmembers'] = 'Remove all groups from groupings';
-$string['removegroupsmembers'] = 'Remove all group members';
+$string['removegroupingsmembers'] = 'All groups from groupings';
+$string['removegroupsmembers'] = 'All group members';
 $string['removeselectedusers'] = 'Remove selected users';
 $string['selectfromgroup'] = 'Select members from group';
 $string['selectfromgrouping'] = 'Select members from grouping';
@@ -196,7 +208,19 @@ $string['toomanygroups'] = 'Insufficient users to populate this number of groups
 $string['usercount'] = 'User count';
 $string['usercounttotal'] = 'User count ({$a})';
 $string['usergroupmembership'] = 'Selected user\'s membership:';
-$string['memberofgroup'] = 'Group member of: {$a}';
+$string['visibility'] = 'Group membership visibility';
+$string['visibility_help'] = '* Visible - all course participants can view who is in the group
+* Only visible to members - course participants not in the group can’t view the group or its members
+* Only see own membership - a user can see they are in the group but can’t view other group members
+* Hidden - only teachers can view the group and its members
 
-// Deprecated since Moodle 3.11.
-$string['hidepicture'] = 'Hide picture';
+Users with the view hidden groups capability can always view group membership.
+
+Note that you can\'t change this setting if the group has members.';
+$string['visibilityshort'] = 'Visibility';
+$string['visibilityall'] = 'Visible';
+$string['visibilitymembers'] = 'Only visible to members';
+$string['visibilityown'] = 'Only see own membership';
+$string['visibilitynone'] = 'Hidden';
+$string['memberofgroup'] = 'Group member of: {$a}';
+$string['withselected'] = 'With selected';

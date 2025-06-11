@@ -9,8 +9,10 @@ Feature: Manage notification preferences - Email
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
+    # Turn off the course welcome message, so we can easily test other messages.
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging                | 1 | core         |
+      | sendcoursewelcomemessage | 0 | enrol_manual |
 
   Scenario: Disable email notifications for everybody
     Given I log in as "admin"
@@ -213,3 +215,15 @@ Feature: Manage notification preferences - Email
     And I open the notification popover
     # Confirm the submission notification is NOT visible.
     And I should not see "You have submitted your assignment submission for Test assignment name" in the "#nav-notification-popover-container" "css_element"
+
+  Scenario: Toggle notification preferences hides/displays options
+    Given I log in as "admin"
+    When I follow "Preferences" in the user menu
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    Then I should see "Subscribed forum posts"
+    And I navigate to "Messaging > Notification settings" in site administration
+    And I click on "Subscribed forum posts" "checkbox"
+    And I click on "Save changes" "button"
+    And I follow "Preferences" in the user menu
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I should not see "Subscribed forum posts"

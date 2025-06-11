@@ -1,0 +1,244 @@
+#page-block-quickmail label {
+    font-weight: 500;
+    color: dimgray;
+}
+
+#page-block-quickmail label[for=id_select_signature_id] {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-block-quickmail .field-label.user-field-label {
+    margin: 0 10px 5px 0;
+    padding: 0 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #222;
+    font-family: sans-serif;
+    border-radius: .25em;
+    border: 1px solid #aaa;
+    background-color: #f3f3f3;
+    display: inline-block;
+}
+
+#page-block-quickmail #create-alternative-modal-container .form-control.has-error {
+    border: 1px solid red;
+}
+
+#page-block-quickmail div.manage_signatures_component img.spinner-img {
+    margin-left: 30px;
+    display: none;
+}
+
+#page-block-quickmail ul.pagination > li.page-item {
+    display: inline;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component span.recipients {
+    display: inline-block;
+    background-color: #666;
+    color: white;
+    border: none;
+    margin: 3px 6px 3px 0;
+    padding: 3px 6px;
+    border-radius: .5em;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component small.success + div span.recipients {
+    background-color: transparent;
+    color: #333;
+    font-weight: 100;
+    border: 1px solid #999;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.additional + div span.recipients {
+    background-color: transparent;
+    color: #333;
+    font-weight: 100;
+    border: 1px solid #999;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component small.failed + div span.recipients:after,
+#page-block-quickmail div.block_quickmail_view_message_component small.failed + div span.recipients:after,
+#page-block-quickmail div.block_quickmail_view_message_component small.pending + div span.recipients:after,
+#page-block-quickmail div.block_quickmail_view_message_component small.pending + div span.recipients:after {
+    content: " - pending";
+}
+
+#page-block-quickmail div.block_quickmail_sent_message_index tr:nth-child(even) {
+    background-color: #e5e5e5;
+}
+
+#page-block-quickmail small.text-muted {
+    font-weight: bold;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6 {
+    margin-bottom: 0;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.failed {
+    color: red;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.success {
+    color: green;
+}
+
+#page-block-quickmail div.qm_links {
+    text-align: center;
+}
+
+#page-block-quickmail div.qm_links a.qml {
+    text-align: center;
+    display: inline-block;
+    margin: 1em;
+    width: 12em;
+    height: 12em;
+    border: 1px solid lightgray;
+    border-radius: 1.5em;
+    padding: 1em;
+    vertical-align: bottom;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: 50% 65%;
+    background-color: #fff;
+    font-size: 10px;
+}
+
+.device-type-mobile div.qm_links a.qml {
+    width: 9em !important; /* stylelint-disable-line declaration-no-important */
+    height: 9em !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-block-quickmail div.qm_links a.qml:hover {
+    background-size: 90%;
+    color: transparent;
+    text-decoration: none;
+    background-position: 50% 50%;
+    transition: background-size .25s, color .1s, background-position .25s;
+}
+
+#page-block-quickmail div.qm_links a.qml:active {
+    background-size: 1000%;
+    color: transparent;
+    /* transition-timing-function: ease-out; */
+    transition: background-size .5s ease-out;
+}
+
+#page-block-quickmail div.qm_links a.qml.compose {
+    background-image: url('assets/email.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.draft {
+    background-image: url('assets/template.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.queued {
+    background-image: url('assets/duration.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.sent {
+    background-image: url('assets/message.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.signatures {
+    background-image: url('assets/edit.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.alternate {
+    background-image: url('assets/add.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.configuration {
+    background-image: url('assets/cogs.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.notifications {
+    background-image: url('assets/insert_time.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.create_notification {
+    background-image: url('assets/calendar.svg');
+}
+
+#page-block-quickmail div.msflex {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 90%;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom,
+#page-block-quickmail div.msflex div.multiselectto {
+    width: auto;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom select,
+#page-block-quickmail div.msflex div.multiselectto select {
+    min-width: 10em;
+    width: auto;
+    height: 24.5em;
+    overflow: auto;
+    margin: 0;
+    font-size: .8em;
+}
+
+#page-block-quickmail div.msflex div.msbuttons {
+    text-align: center;
+    width: auto;
+    margin: 0 1em;
+}
+
+#page-block-quickmail div.msflex div.msbuttons div.femptylabel div.fitemtitle {
+    display: none;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom div.fitem_fselect.multiselectfrom div.fitemtitle,
+#page-block-quickmail div.msflex div.multiselectto div.fitem_fselect.multiselectto div.fitemtitle {
+    display: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-block-quickmail div.msflex div.femptylabel div.felement {
+    margin: 0;
+}
+
+
+/* ================================================ */
+
+/* Subject */
+#qm-mform-compose input.form-control {
+    width: 50%;
+}
+
+/* Auto Suggest Forms */
+#qm-mform-compose .form-autocomplete-suggestions {
+    min-width: 362px;
+}
+#qm-mform-compose .qm_autocomplete > input {
+    width: 100%;
+}
+#qm-mform-compose .qm_autocomplete {
+    width: 50%;
+}
+
+@media screen and (max-width: 821px) {
+    #qm-mform-compose select.custom-select {
+        width: 100%;
+    }
+    #qm-mform-compose .qm_autocomplete {
+        width: 100%;
+    }
+
+    #qm-mform-compose input.form-control {
+        width: 100%;
+    }
+}
+
+th.qm_tb_col_spcr {
+    min-width: 120px;
+}
+
+.alnright {
+    text-align: right;
+}

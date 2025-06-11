@@ -34,6 +34,9 @@ use stdClass;
 use core\oauth2\issuer;
 use core\oauth2\client;
 
+if (!isset($CFG)) {
+    require_once(dirname(dirname(dirname(__DIR__))).'/config.php');
+}
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -63,7 +66,6 @@ class auth extends \auth_plugin_base {
     public function __construct() {
         $this->authtype = 'oauth2';
         $this->config = get_config('auth_oauth2');
-        $this->customfields = $this->get_custom_user_profile_fields();
     }
 
     /**
@@ -310,7 +312,7 @@ class auth extends \auth_plugin_base {
             return $userdata;
         }
 
-        $allfields = array_merge($this->userfields, $this->customfields);
+        $allfields = array_merge($this->userfields, $this->get_custom_user_profile_fields());
 
         // Go through each field from the external data.
         foreach ($externaldata as $fieldname => $value) {
@@ -409,13 +411,13 @@ class auth extends \auth_plugin_base {
             return $email;
         }
 
-        // Handle case-insensitive #EXT# using regex
+        // Handle case-insensitive #EXT# using regex.
         $local = preg_replace('/#ext#/i', '', $email);
 
-        // Extract local part before the @
+        // Extract local part before the @.
         $local = explode('@', $local)[0];
 
-        // Find the last underscore (to separate username from domain)
+        // Find the last underscore (to separate username from domain).
         $lastunderscore = strrpos($local, '_');
         if ($lastunderscore !== false) {
             $username = substr($local, 0, $lastunderscore);
@@ -423,7 +425,7 @@ class auth extends \auth_plugin_base {
             return $username . '@' . $domainpart;
         }
 
-        // Otherwise return the original email unmodified
+        // Otherwise return the original email unmodified.
         return $email;
     }
     // END LSU External Domains Fixes.
@@ -539,7 +541,7 @@ class auth extends \auth_plugin_base {
             $userinfo['email'] = $rawuserinfo->userPrincipalName;
         }
         // END LSU userPrincipalName to email mapping.
-
+ 
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
             // Trigger login failed event.
             $failurereason = AUTH_LOGIN_NOUSER;
@@ -786,7 +788,7 @@ class auth extends \auth_plugin_base {
      * @param stdClass $user A user object
      * @return string[] An array of strings with keys subject and message
      */
-    public function get_password_change_info(stdClass $user) : array {
+    public function get_password_change_info(stdClass $user): array {
         $site = get_site();
 
         $data = new stdClass();

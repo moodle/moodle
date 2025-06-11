@@ -28,7 +28,7 @@ use restore_dbops;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_attempt_test extends \advanced_testcase {
+final class restore_attempt_test extends \advanced_testcase {
 
     /**
      * Load required libraries
@@ -37,6 +37,7 @@ class restore_attempt_test extends \advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/backup/util/includes/restore_includes.php");
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -53,7 +54,7 @@ class restore_attempt_test extends \advanced_testcase {
         // Contains a quiz with four attempts from different users. The users are as follows (user ID -> user):
         // 3 -> User 01, 4 -> User 02, 5 -> User 03, 6 -> User 04.
         // The user details for User 02 and User 03 have been removed from the backup file.
-        $testfixture = __DIR__ . '/fixtures/question_attempts_missing_users.mbz';
+        $testfixture = self::get_fixture_path(__NAMESPACE__, 'question_attempts_missing_users.mbz');
 
         // Extract our test fixture, ready to be restored.
         $backuptempdir = 'aaa';

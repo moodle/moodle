@@ -25,9 +25,7 @@
 
 namespace auth_oidc\form;
 
-use html_writer;
 use moodleform;
-use tool_brickfield\local\areas\mod_choice\option;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,8 +48,8 @@ class application extends moodleform {
 
         // IdP type.
         $idptypeoptions = [
-            AUTH_OIDC_IDP_TYPE_AZURE_AD => get_string('idp_type_azuread', 'auth_oidc'),
-            AUTH_OIDC_IDP_TYPE_MICROSOFT => get_string('idp_type_microsoft', 'auth_oidc'),
+            AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID => get_string('idp_type_microsoft_entra_id', 'auth_oidc'),
+            AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM => get_string('idp_type_microsoft_identity_platform', 'auth_oidc'),
             AUTH_OIDC_IDP_TYPE_OTHER => get_string('idp_type_other', 'auth_oidc'),
         ];
         $mform->addElement('select', 'idptype', auth_oidc_config_name_in_form('idptype'), $idptypeoptions);
@@ -72,7 +70,7 @@ class application extends moodleform {
             AUTH_OIDC_AUTH_METHOD_SECRET => get_string('auth_method_secret', 'auth_oidc'),
         ];
         if (isset($this->_customdata['oidcconfig']->idptype) &&
-            $this->_customdata['oidcconfig']->idptype == AUTH_OIDC_IDP_TYPE_MICROSOFT) {
+            $this->_customdata['oidcconfig']->idptype == AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM) {
             $authmethodoptions[AUTH_OIDC_AUTH_METHOD_CERTIFICATE] = get_string('auth_method_certificate', 'auth_oidc');
         }
         $mform->addElement('select', 'clientauthmethod', auth_oidc_config_name_in_form('clientauthmethod'), $authmethodoptions);
@@ -85,19 +83,50 @@ class application extends moodleform {
         $mform->disabledIf('clientsecret', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_SECRET);
         $mform->addElement('static', 'clientsecret_help', '', get_string('clientsecret_help', 'auth_oidc'));
 
+        // Certificate source.
+        $mform->addElement('select', 'clientcertsource', auth_oidc_config_name_in_form('clientcertsource'), [
+            AUTH_OIDC_AUTH_CERT_SOURCE_TEXT => get_string('cert_source_text', 'auth_oidc'),
+            AUTH_OIDC_AUTH_CERT_SOURCE_FILE => get_string('cert_source_path', 'auth_oidc'),
+        ]);
+        $mform->setDefault('clientcertsource', 0);
+        $mform->disabledIf('clientcertsource', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->addElement('static', 'clientcertsource_help', '', get_string('clientcertsource_help', 'auth_oidc'));
+
         // Certificate private key.
         $mform->addElement('textarea', 'clientprivatekey', auth_oidc_config_name_in_form('clientprivatekey'),
-            ['rows' => 10, 'cols' => 80]);
+            ['rows' => 10, 'cols' => 80, 'class' => 'cert_textarea']);
         $mform->setType('clientprivatekey', PARAM_TEXT);
         $mform->disabledIf('clientprivatekey', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientprivatekey', 'clientcertsource', 'neq', AUTH_OIDC_AUTH_CERT_SOURCE_TEXT);
         $mform->addElement('static', 'clientprivatekey_help', '', get_string('clientprivatekey_help', 'auth_oidc'));
 
         // Certificate certificate.
         $mform->addElement('textarea', 'clientcert', auth_oidc_config_name_in_form('clientcert'),
-            ['rows' => 10, 'cols' => 80]);
+            ['rows' => 10, 'cols' => 80, 'class' => 'cert_textarea']);
         $mform->setType('clientcert', PARAM_TEXT);
         $mform->disabledIf('clientcert', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientcert', 'clientcertsource', 'neq', AUTH_OIDC_AUTH_CERT_SOURCE_TEXT);
         $mform->addElement('static', 'clientcert_help', '', get_string('clientcert_help', 'auth_oidc'));
+
+        // Certificate file of private key.
+        $mform->addElement('text', 'clientprivatekeyfile', auth_oidc_config_name_in_form('clientprivatekeyfile'), ['size' => 60]);
+        $mform->setType('clientprivatekeyfile', PARAM_FILE);
+        $mform->disabledIf('clientprivatekeyfile', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientprivatekeyfile', 'clientcertsource', 'neq', AUTH_OIDC_AUTH_CERT_SOURCE_FILE);
+        $mform->addElement('static', 'clientprivatekeyfile_help', '', get_string('clientprivatekeyfile_help', 'auth_oidc'));
+
+        // Certificate file of certificate or public key.
+        $mform->addElement('text', 'clientcertfile', auth_oidc_config_name_in_form('clientcertfile'), ['size' => 60]);
+        $mform->setType('clientcertfile', PARAM_FILE);
+        $mform->disabledIf('clientcertfile', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientcertfile', 'clientcertsource', 'neq', AUTH_OIDC_AUTH_CERT_SOURCE_FILE);
+        $mform->addElement('static', 'clientcertfile_help', '', get_string('clientcertfile_help', 'auth_oidc'));
+
+        // Certificate file passphrase.
+        $mform->addElement('text', 'clientcertpassphrase', auth_oidc_config_name_in_form('clientcertpassphrase'), ['size' => 60]);
+        $mform->setType('clientcertpassphrase', PARAM_TEXT);
+        $mform->disabledIf('clientcertpassphrase', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->addElement('static', 'clientcertpassphrase_help', '', get_string('clientcertpassphrase_help', 'auth_oidc'));
 
         // Endpoints header.
         $mform->addElement('header', 'endpoints', get_string('settings_section_endpoints', 'auth_oidc'));
@@ -106,18 +135,18 @@ class application extends moodleform {
         // Authorization endpoint.
         $mform->addElement('text', 'authendpoint', auth_oidc_config_name_in_form('authendpoint'), ['size' => 60]);
         $mform->setType('authendpoint', PARAM_URL);
-        $mform->setDefault('authendpoint', 'https://login.microsoftonline.com/common/oauth2/authorize');
+        $mform->setDefault('authendpoint', 'https://login.microsoftonline.com/organizations/oauth2/authorize');
         $mform->addElement('static', 'authendpoint_help', '', get_string('authendpoint_help', 'auth_oidc'));
         $mform->addRule('authendpoint', null, 'required', null, 'client');
 
         // Token endpoint.
         $mform->addElement('text', 'tokenendpoint', auth_oidc_config_name_in_form('tokenendpoint'), ['size' => 60]);
         $mform->setType('tokenendpoint', PARAM_URL);
-        $mform->setDefault('tokenendpoint', 'https://login.microsoftonline.com/common/oauth2/token');
+        $mform->setDefault('tokenendpoint', 'https://login.microsoftonline.com/organizations/oauth2/token');
         $mform->addElement('static', 'tokenendpoint_help', '', get_string('tokenendpoint_help', 'auth_oidc'));
         $mform->addRule('tokenendpoint', null, 'required', null, 'client');
 
-        // "Other parameters" header.
+        // Other parameters header.
         $mform->addElement('header', 'otherparams', get_string('settings_section_other_params', 'auth_oidc'));
         $mform->setExpanded('otherparams');
 
@@ -133,6 +162,21 @@ class application extends moodleform {
         $mform->setDefault('oidcscope', 'openid profile email');
         $mform->addElement('static', 'oidcscope_help', '', get_string('oidcscope_help', 'auth_oidc'));
 
+        // Secret expiry notifications recipients.
+        if (auth_oidc_is_local_365_installed()) {
+            $mform->addElement('header', 'secretexpirynotification',
+                get_string('settings_section_secret_expiry_notification', 'auth_oidc'));
+            $mform->setExpanded('secretexpirynotification');
+
+            $mform->addElement('text', 'secretexpiryrecipients', auth_oidc_config_name_in_form('secretexpiryrecipients'),
+                ['size' => 256]);
+            $mform->setType('secretexpiryrecipients', PARAM_TEXT);
+            $mform->disabledIf('secretexpiryrecipients', 'clientauthmethod', 'neq', AUTH_OIDC_AUTH_METHOD_SECRET);
+            $mform->disabledIf('secretexpiryrecipients', 'idptype', 'eq', AUTH_OIDC_IDP_TYPE_OTHER);
+
+            $mform->addElement('static', 'secretexpiryrecipients_help', '', get_string('secretexpiryrecipients_help', 'auth_oidc'));
+        }
+
         // Save buttons.
         $this->add_action_buttons();
     }
@@ -140,11 +184,11 @@ class application extends moodleform {
     /**
      * Additional validate rules.
      *
-     * @param $data
-     * @param $files
-     * @return array
+     * @param array $data Submitted data for validation.
+     * @param array $files Uploaded files for validation.
+     * @return array An array of validation errors, if any.
      */
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         if (!isset($data['clientauthmethod'])) {
@@ -153,13 +197,13 @@ class application extends moodleform {
 
         // Validate "clientauthmethod" according to "idptype".
         switch ($data['idptype']) {
-            case AUTH_OIDC_IDP_TYPE_AZURE_AD:
+            case AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID:
             case AUTH_OIDC_IDP_TYPE_OTHER:
                 if ($data['clientauthmethod'] != AUTH_OIDC_AUTH_METHOD_SECRET) {
                     $errors['clientauthmethod'] = get_string('error_invalid_client_authentication_method', 'auth_oidc');
                 }
                 break;
-            case AUTH_OIDC_IDP_TYPE_MICROSOFT:
+            case AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM:
                 if (!in_array($data['clientauthmethod'], [AUTH_OIDC_AUTH_METHOD_SECRET, AUTH_OIDC_AUTH_METHOD_CERTIFICATE])) {
                     $errors['clientauthmethod'] = get_string('error_invalid_client_authentication_method', 'auth_oidc');
                 }
@@ -174,32 +218,59 @@ class application extends moodleform {
                 }
                 break;
             case AUTH_OIDC_AUTH_METHOD_CERTIFICATE:
-                if (empty(trim($data['clientprivatekey']))) {
-                    $errors['clientprivatekey'] = get_string('error_empty_client_private_key', 'auth_oidc');
-                }
-                if (empty(trim($data['clientcert']))) {
-                    $errors['clientcert'] = get_string('error_empty_client_cert', 'auth_oidc');
+                switch ($data['clientcertsource']) {
+                    case AUTH_OIDC_AUTH_CERT_SOURCE_TEXT:
+                        if (empty(trim($data['clientprivatekey']))) {
+                            $errors['clientprivatekey'] = get_string('error_empty_client_private_key', 'auth_oidc');
+                        }
+                        if (empty(trim($data['clientcert']))) {
+                            $errors['clientcert'] = get_string('error_empty_client_cert', 'auth_oidc');
+                        }
+                        break;
+                    case AUTH_OIDC_AUTH_CERT_SOURCE_FILE:
+                        if (empty(trim($data['clientprivatekeyfile']))) {
+                            $errors['clientprivatekeyfile'] = get_string('error_empty_client_private_key_file', 'auth_oidc');
+                        }
+                        if (empty(trim($data['clientcertfile']))) {
+                            $errors['clientcertfile'] = get_string('error_empty_client_cert_file', 'auth_oidc');
+                        }
+                        break;
                 }
                 break;
         }
 
         // Validate endpoints.
-        if (in_array($data['idptype'], [AUTH_OIDC_IDP_TYPE_AZURE_AD, AUTH_OIDC_IDP_TYPE_MICROSOFT])) {
-            // Validate authendpoint.
+        if (in_array($data['idptype'], [AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID, AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM])) {
+            // Ensure authendpoint version matches IdP type.
             $authendpointidptype = auth_oidc_determine_endpoint_version($data['authendpoint']);
             if ($authendpointidptype != $data['idptype']) {
                 $errors['authendpoint'] = get_string('error_endpoint_mismatch_auth_endpoint', 'auth_oidc');
             }
 
-            // Validate tokenendpoint.
+            // Ensure tokenendpoint version matches IdP type.
             $tokenendpointtype = auth_oidc_determine_endpoint_version($data['tokenendpoint']);
             if ($tokenendpointtype != $data['idptype']) {
                 $errors['tokenendpoint'] = get_string('error_endpoint_mismatch_token_endpoint', 'auth_oidc');
             }
+
+            // If "certificate" authentication method is used, ensure tenant specific endpoints are used.
+            if ($data['idptype'] == AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM &&
+                $data['clientauthmethod'] == AUTH_OIDC_AUTH_METHOD_CERTIFICATE) {
+                if (strpos($data['authendpoint'], '/common/') !== false ||
+                    strpos($data['authendpoint'], '/organizations/') !== false ||
+                    strpos($data['authendpoint'], '/consumers/') !== false) {
+                    $errors['authendpoint'] = get_string('error_tenant_specific_endpoint_required', 'auth_oidc');
+                }
+                if (strpos($data['tokenendpoint'], '/common/') !== false ||
+                    strpos($data['tokenendpoint'], '/organizations/') !== false ||
+                    strpos($data['tokenendpoint'], '/consumers/') !== false) {
+                    $errors['tokenendpoint'] = get_string('error_tenant_specific_endpoint_required', 'auth_oidc');
+                }
+            }
         }
 
         // Validate oidcresource.
-        if (in_array($data['idptype'], [AUTH_OIDC_IDP_TYPE_AZURE_AD, AUTH_OIDC_IDP_TYPE_OTHER])) {
+        if (in_array($data['idptype'], [AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID, AUTH_OIDC_IDP_TYPE_OTHER])) {
             if (empty(trim($data['oidcresource']))) {
                 $errors['oidcresource'] = get_string('error_empty_oidcresource', 'auth_oidc');
             }

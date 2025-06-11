@@ -18,7 +18,7 @@
  * Front-end class.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,68 +33,68 @@ use stdClass;
  * Front-end class.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class frontend extends \core_availability\frontend {
-
     /**
      * Gets additional parameters for the plugin's initInner function.
      *
      * Default returns no parameters.
      *
      * @param stdClass $course Course object
-     * @param cm_info $cm Course-module currently being edited (null if none)
-     * @param section_info $section Section currently being edited (null if none)
+     * @param cm_info|null $cm Course-module currently being edited (null if none)
+     * @param section_info|null $section Section currently being edited (null if none)
      * @return array Array of parameters for the JavaScript function
      */
-    protected function get_javascript_init_params($course, cm_info $cm = null, section_info $section = null) {
+    protected function get_javascript_init_params($course, ?cm_info $cm = null, ?section_info $section = null) {
         global $DB;
-        $optionsdwm = self::convert_associative_array_for_js(condition::options_dwm(), 'field', 'display');
+        $optionsdwm = self::convert_associative_array_for_js(condition::options_dwm(2), 'field', 'display');
         $optionsstart = [
-            (object)['field' => 1, 'display' => condition::options_start(1)],
-            (object)['field' => 6, 'display' => condition::options_start(6)],
+            ['field' => 1, 'display' => condition::options_start(1)],
+            ['field' => 6, 'display' => condition::options_start(6)],
         ];
         if ($course->enddate != 0) {
-            $optionsstart[] = (object)['field' => 5, 'display' => condition::options_start(5)];
-            $optionsstart[] = (object)['field' => 2, 'display' => condition::options_start(2)];
+            $optionsstart[] = ['field' => 5, 'display' => condition::options_start(5)];
+            $optionsstart[] = ['field' => 2, 'display' => condition::options_start(2)];
         }
-        $optionsstart[] = (object)['field' => 3, 'display' => condition::options_start(3)];
+        $optionsstart[] = ['field' => 3, 'display' => condition::options_start(3)];
         if ($DB->count_records_select('enrol', 'courseid = :courseid AND enrolenddate > 0', ['courseid' => $course->id]) > 0) {
-            $optionsstart[] = (object)['field' => 4, 'display' => condition::options_start(4)];
+            $optionsstart[] = ['field' => 4, 'display' => condition::options_start(4)];
         }
         $activitysel = [];
-        if ($course->enablecompletion != 0) {
-            $currentcmid = $cm ? $cm->id : 0;
+        if ($course->enablecompletion) {
             $modinfo = get_fast_modinfo($course);
-
+            $str = get_string('section');
             $s = [];
+            $enabled = false;
             // Gets only sections with content.
-            foreach ($modinfo->get_sections() as $sectionnum => $section) {
-                $sectioninfo = $modinfo->get_section_info($sectionnum);
-                $s['name'] = $sectioninfo->name;
-                if (empty($s['name'])) {
-                    $s['name'] = get_string('section') . ' ' . $sectionnum;
-                }
+            foreach ($modinfo->get_sections() as $sectionnum => $cursection) {
+                $name = $modinfo->get_section_info($sectionnum)->name;
+                $s['name'] = empty($name) ? "$str $sectionnum" : format_string($name);
                 $s['coursemodules'] = [];
-                foreach ($section as $cmid) {
-                    if ($currentcmid == $cmid) {
+                foreach ($cursection as $cmid) {
+                    if ($cm && $cm->id === $cmid) {
                         continue;
                     }
                     $module = $modinfo->get_cm($cmid);
-                    // Get only course modules which are not deleted.
+                    // Get only course modules which are not being deleted.
                     if ($module->deletioninprogress == 0) {
+                        $compused = $module->completion > 0;
                         $s['coursemodules'][] = [
                             'id' => $cmid,
-                            'name' => $module->name,
-                            'completionenabled' => $module->completion > 0,
+                            'name' => format_string($module->name),
+                            'completionenabled' => $compused,
                         ];
+                        $enabled = $compused ? true : $enabled;
                     }
                 }
                 $activitysel[] = $s;
             }
-            $optionsstart[] = (object)['field' => 7, 'display' => condition::options_start(7)];
+            if ($enabled) {
+                $optionsstart[] = ['field' => 7, 'display' => condition::options_start(7)];
+            }
         }
         return [$optionsdwm, $optionsstart, is_null($section), [], $activitysel];
     }

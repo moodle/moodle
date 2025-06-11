@@ -28,11 +28,11 @@ require_once('crosslist_form.php');
 require_login();
 
 if (!cps_crosslist::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_crosslist::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_crosslist::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -40,7 +40,7 @@ $teacher = ues_teacher::get(array('userid' => $USER->id));
 $sections = cps_unwant::active_sections_for($teacher);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $semesters = ues_semester::merge_sections($sections);

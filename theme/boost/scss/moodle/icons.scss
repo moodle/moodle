@@ -4,9 +4,15 @@
 // Size of default icons.
 $icon-width: 16px;
 $icon-height: 16px;
+// Size of medium icons.
+$icon-medium-width: 32px;
+$icon-medium-height: 32px;
 // Size of big icons.
 $icon-big-width: 64px;
 $icon-big-height: 64px;
+// Size of icon boxes.
+$icon-box-width: 48px;
+$icon-box-height: 48px;
 
 // stylelint-disable
 $iconsizes: () !default;
@@ -23,9 +29,8 @@ $iconsizes: map-merge((
 // stylelint-enable
 
 .icon {
-    font-size: $icon-height;
-    width: $icon-width;
-    height: $icon-height;
+    max-width: map-get($iconsizes, 4);
+    max-height: map-get($iconsizes, 4);
     margin: 0;
     padding: 0;
     box-sizing: content-box;
@@ -35,11 +40,32 @@ $iconsizes: map-merge((
         margin-right: 0;
     }
 
+    &.iconsize-medium {
+        font-size: $icon-medium-height;
+        width: $icon-medium-width;
+        height: $icon-medium-height;
+        max-width: $icon-medium-width;
+        max-height: $icon-medium-height;
+    }
+
     &.iconsize-big {
         width: $icon-big-width;
         height: $icon-big-height;
+        max-width: $icon-big-width;
+        max-height: $icon-big-height;
         font-size: $icon-big-height;
     }
+
+    &.emoticon {
+        max-width: map-get($iconsizes, 3);
+        max-height: map-get($iconsizes, 3);
+    }
+}
+
+// Force size for the SVG icons.
+img.icon {
+    width: 16px;
+    height: 16px;
 }
 
 .navbar-dark a .icon {
@@ -124,37 +150,93 @@ $iconsizes: map-merge((
     }
 }
 
-
+// Revisit these styles when MDL-78284 lands with new icons.
+// Icon container will be removed and icons will be used directly.
 .activityiconcontainer {
     width: $activity-iconcontainer-width;
     height: $activity-iconcontainer-height;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: $gray-100;
     border-radius: 4px;
     padding: 0.7rem;
     .activityicon,
     .icon {
         margin: 0;
-        font-size: 24px;
-        height: 24px;
-        width: 24px;
+        font-size: $icon-medium-width;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
+        max-height: $icon-medium-width;
+        max-width: $icon-medium-height;
     }
     &.small {
         width: $activity-iconcontainer-width - 10px;
         height: $activity-iconcontainer-height - 10px;
+        max-width: $activity-iconcontainer-width - 10px;
+        max-height: $activity-iconcontainer-height - 10px;
+    }
+    &.smaller {
+        width: $activity-iconcontainer-width - 20px;
+        height: $activity-iconcontainer-width - 20px;
+        max-width: $activity-iconcontainer-width - 20px;
+        max-height: $activity-iconcontainer-width - 20px;
+        .activityicon {
+            width: $icon-medium-width;
+            height: $icon-medium-height;
+            max-width: $icon-medium-width;
+            max-height: $icon-medium-height;
+        }
     }
 }
 
 @each $type, $value in $activity-icon-colors {
     .activityiconcontainer.#{$type} {
-        background-color: $value;
-        .activityicon,
-        .icon {
-            &:not(.nofilter) {
-                filter: brightness(0) invert(1);
+        &:not(.isbranded) {
+            .activityicon,
+            .icon {
+                &:not(.nofilter) {
+                    filter: $value;
+                }
             }
+        }
+    }
+}
+
+.icon-box {
+    width: $icon-box-width;
+    height: $icon-box-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 12px;
+    padding: 0.7rem;
+
+    .icon {
+        margin: 0;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
+    }
+}
+
+.icon-circle {
+    display: inline-block;
+    background-color: darken($gray-400, 4%);
+    border-radius: 50%;
+    padding: 1.3rem;
+
+    .icon {
+        margin: 0;
+        text-align: center;
+        max-width: unset;
+        max-height: unset;
+        color: $black;
+    }
+
+    &.reversed {
+        background-color: darken($gray-400, 8%);
+        .icon {
+            color: $white;
         }
     }
 }

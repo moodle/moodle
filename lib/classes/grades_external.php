@@ -23,9 +23,15 @@
  * @since Moodle 2.7
  */
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/gradelib.php");
 require_once("$CFG->dirroot/grade/edit/tree/lib.php");
 require_once("$CFG->dirroot/grade/querylib.php");
@@ -116,7 +122,7 @@ class core_grades_external extends external_api {
             )
         );
 
-        list($itemtype, $itemmodule) = normalize_component($params['component']);
+        list($itemtype, $itemmodule) = \core_component::normalize_component($params['component']);
 
         if (! $cm = get_coursemodule_from_id($itemmodule, $activityid)) {
             throw new moodle_exception('invalidcoursemodule');
@@ -172,7 +178,7 @@ class core_grades_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.7
      */
     public static function update_grades_returns() {
@@ -181,109 +187,5 @@ class core_grades_external extends external_api {
             'A value like ' . GRADE_UPDATE_OK . ' => OK, ' . GRADE_UPDATE_FAILED . ' => FAILED
             as defined in lib/grade/constants.php'
         );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
-     * @todo MDL-71325 This will be deleted in Moodle 4.3.
-     * @see core_grades\external\create_gradecategories::create_gradecategories()
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.10
-     */
-    public static function create_gradecategory_parameters() {
-        return new external_function_parameters(
-            [
-                'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_REQUIRED),
-                'fullname' => new external_value(PARAM_TEXT, 'fullname of category', VALUE_REQUIRED),
-                'options' => new external_single_structure([
-                    'aggregation' => new external_value(PARAM_INT, 'aggregation method', VALUE_OPTIONAL),
-                    'aggregateonlygraded' => new external_value(PARAM_BOOL, 'exclude empty grades', VALUE_OPTIONAL),
-                    'aggregateoutcomes' => new external_value(PARAM_BOOL, 'aggregate outcomes', VALUE_OPTIONAL),
-                    'droplow' => new external_value(PARAM_INT, 'drop low grades', VALUE_OPTIONAL),
-                    'itemname' => new external_value(PARAM_TEXT, 'the category total name', VALUE_OPTIONAL),
-                    'iteminfo' => new external_value(PARAM_TEXT, 'the category iteminfo', VALUE_OPTIONAL),
-                    'idnumber' => new external_value(PARAM_TEXT, 'the category idnumber', VALUE_OPTIONAL),
-                    'gradetype' => new external_value(PARAM_INT, 'the grade type', VALUE_OPTIONAL),
-                    'grademax' => new external_value(PARAM_INT, 'the grade max', VALUE_OPTIONAL),
-                    'grademin' => new external_value(PARAM_INT, 'the grade min', VALUE_OPTIONAL),
-                    'gradepass' => new external_value(PARAM_INT, 'the grade to pass', VALUE_OPTIONAL),
-                    'display' => new external_value(PARAM_INT, 'the display type', VALUE_OPTIONAL),
-                    'decimals' => new external_value(PARAM_INT, 'the decimal count', VALUE_OPTIONAL),
-                    'hiddenuntil' => new external_value(PARAM_INT, 'grades hidden until', VALUE_OPTIONAL),
-                    'locktime' => new external_value(PARAM_INT, 'lock grades after', VALUE_OPTIONAL),
-                    'weightoverride' => new external_value(PARAM_BOOL, 'weight adjusted', VALUE_OPTIONAL),
-                    'aggregationcoef2' => new external_value(PARAM_RAW, 'weight coefficient', VALUE_OPTIONAL),
-                    'parentcategoryid' => new external_value(PARAM_INT, 'The parent category id', VALUE_OPTIONAL),
-                    'parentcategoryidnumber' => new external_value(PARAM_TEXT, 'the parent category idnumber', VALUE_OPTIONAL),
-                ], 'optional category data', VALUE_DEFAULT, [])
-            ]
-        );
-    }
-
-    /**
-     * Creates a gradecategory inside of the specified course.
-     *
-     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
-     * @todo MDL-71325 This will be deleted in Moodle 4.3.
-     * @see core_grades\external\create_gradecategories::create_gradecategories()
-     *
-     * @param int $courseid the courseid to create the gradecategory in.
-     * @param string $fullname the fullname of the grade category to create.
-     * @param array $options array of options to set.
-     *
-     * @return array array of created categoryid and warnings.
-     */
-    public static function create_gradecategory(int $courseid, string $fullname, array $options) {
-        global $CFG, $DB;
-
-        $params = self::validate_parameters(self::create_gradecategory_parameters(),
-            ['courseid' => $courseid, 'fullname' => $fullname, 'options' => $options]);
-
-        // Now params are validated, update the references.
-        $courseid = $params['courseid'];
-        $fullname = $params['fullname'];
-        $options = $params['options'];
-
-        // Check that the context and permissions are OK.
-        $context = context_course::instance($courseid);
-        self::validate_context($context);
-        require_capability('moodle/grade:manage', $context);
-
-        $categories = [];
-        $categories[] = ['fullname' => $fullname, 'options' => $options];
-        // Call through to webservice class for multiple creations,
-        // Where the majority of the this functionality moved with the deprecation of this function.
-        $result = \core_grades\external\create_gradecategories::create_gradecategories_from_data($courseid, $categories);
-
-        return['categoryid' => $result['categoryids'][0], 'warnings' => []];
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
-     * @todo MDL-71325 This will be deleted in Moodle 4.3.
-     * @see core_grades\external\create_gradecategories::create_gradecategories()
-     *
-     * @return external_description
-     * @since Moodle 3.10
-     */
-    public static function create_gradecategory_returns() {
-        return new external_single_structure([
-            'categoryid' => new external_value(PARAM_INT, 'The ID of the created category', VALUE_OPTIONAL),
-            'warnings' => new external_warnings(),
-        ]);
-    }
-
-    /**
-     * Marking the method as deprecated. See MDL-71031 for details.
-     * @since Moodle 3.11
-     * @return bool
-     */
-    public static function create_gradecategory_is_deprecated() {
-        return true;
     }
 }

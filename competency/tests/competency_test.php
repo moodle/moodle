@@ -23,9 +23,9 @@ namespace core_competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_test extends \advanced_testcase {
+final class competency_test extends \advanced_testcase {
 
-    public function test_get_framework_depth() {
+    public function test_get_framework_depth(): void {
         $this->resetAfterTest();
 
         $ccg = $this->getDataGenerator()->get_plugin_generator('core_competency');

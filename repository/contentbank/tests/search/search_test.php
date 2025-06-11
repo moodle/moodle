@@ -37,7 +37,7 @@ require_once("$CFG->dirroot/repository/lib.php");
  * @copyright  2020 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
 
     /**
      * Test get_search_contents() by searching through some existing content using different search terms.
@@ -47,7 +47,7 @@ class search_test extends \advanced_testcase {
      * @param string $search The search string
      * @param array $expected The array containing the expected content names that should be returned by the search
      */
-    public function test_get_search_contents(array $contentnames, string $search, array $expected) {
+    public function test_get_search_contents(array $contentnames, string $search, array $expected): void {
         $this->resetAfterTest();
 
         $admin = get_admin();
@@ -75,7 +75,7 @@ class search_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_search_contents_provider(): array {
+    public static function get_search_contents_provider(): array {
         return [
             'Search for existing pattern found within the name of content items' => [
                 [
@@ -139,7 +139,7 @@ class search_test extends \advanced_testcase {
      * all existing content bank content. By default, admins, managers should be able to view every existing content
      * that matches the search criteria.
      */
-    public function test_get_search_contents_user_can_access_all_content() {
+    public function test_get_search_contents_user_can_access_all_content(): void {
         $this->resetAfterTest(true);
 
         // Create a course in default category by default.
@@ -183,7 +183,7 @@ class search_test extends \advanced_testcase {
      * the search criteria AND is in the courses they are enrolled, course categories of the enrolled courses
      * and system content. Other authenticated users should be able to access only the system content.
      */
-    public function test_get_search_contents_user_can_access_certain_content() {
+    public function test_get_search_contents_user_can_access_certain_content(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

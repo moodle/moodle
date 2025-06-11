@@ -52,7 +52,7 @@ abstract class backup_block_task extends backup_task {
         }
 
         $this->blockid    = $blockid;
-        $this->blockname  = $block->blockname;
+        $this->blockname  = clean_param($block->blockname, PARAM_PLUGIN);
         $this->contextid  = context_block::instance($this->blockid)->id;
         $this->moduleid   = $moduleid;
         $this->modulename = null;
@@ -213,7 +213,7 @@ abstract class backup_block_task extends backup_task {
      * Code the transformations to perform in the block in
      * order to get transportable (encoded) links
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         throw new coding_exception('encode_content_links() method needs to be overridden in each subclass of backup_block_task');
     }
 }

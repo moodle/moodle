@@ -50,11 +50,11 @@
 <div class="list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 {{#courseview}}px-0{{/courseview}}{{^courseview}}px-2{{/courseview}}"
         data-region="event-list-item">
     <div class="d-flex flex-wrap pb-1">
-        <div class="d-flex mr-auto pb-1 mw-100 timeline-name">
-            <small class="text-right text-nowrap align-self-center ml-1">
+        <div class="d-flex me-auto pb-1 mw-100 timeline-name">
+            <small class="text-end text-nowrap align-self-center ms-1">
                 {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
             </small>
-            <div class="activityiconcontainer small {{purpose}} courseicon align-self-top align-self-center mx-3  mb-1 mb-sm-0 text-nowrap">
+            <div class="activityiconcontainer small courseicon align-self-top align-self-center mx-3  mb-1 mb-sm-0 text-nowrap">
                 {{#icon}}
                 {{#iconurl}}
                     <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon {{iconclass}}">
@@ -67,7 +67,7 @@
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
                 <div class="d-flex">
                     <h6 class="event-name mb-0 pb-1 text-truncate">
-                        {{#overdue}}<span class="badge badge-pill badge-danger ml-1 float-right">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
+                        {{#overdue}}<span class="badge rounded-pill bg-danger text-white ms-1 float-end">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
                         <a href="{{url}}"
                                 title="{{name}}"
                                 aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
@@ -93,7 +93,7 @@
                     title="{{action.name}}">
                 {{{action.name}}}
                 {{#action.showitemcount}}
-                <span class="badge badge-secondary">{{action.itemcount}}</span>
+                <span class="badge bg-secondary text-dark">{{action.itemcount}}</span>
                 {{/action.showitemcount}}
                 </a>
             </h6>

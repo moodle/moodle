@@ -1,0 +1,35 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_grades/status_icons
+
+    Template for the grade status icons.
+
+    Example context (json):
+    {
+        "classes": "gradestatus",
+        "hidden": true,
+        "locked": true,
+        "overridden": false,
+        "excluded": false,
+        "feedback": false
+    }
+}}
+<div class="text-muted {{classes}}">
+    {{#hidden}}{{#pix}}i/show, moodle, {{#str}} hidden, grades {{/str}}{{/pix}}{{/hidden}}
+    {{#locked}}{{#pix}}i/lock, moodle, {{#str}} locked, grades {{/str}}{{/pix}}{{/locked}}
+    {{#overridden}}{{#pix}}i/overriden_grade, moodle, {{#str}} overridden, grades {{/str}}{{/pix}}{{/overridden}}
+    {{#excluded}}{{#pix}}i/excluded, moodle, {{#str}} excluded, grades {{/str}}{{/pix}}{{/excluded}}
+    {{#feedback}}{{#pix}}i/asterisk, moodle, {{#str}} feedbackprovided, grades {{/str}}{{/pix}}{{/feedback}}
+</div>

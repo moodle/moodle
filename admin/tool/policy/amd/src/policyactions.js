@@ -24,9 +24,8 @@ define([
     'jquery',
     'core/ajax',
     'core/notification',
-    'core/modal_factory',
-    'core/modal_events'],
-function($, Ajax, Notification, ModalFactory, ModalEvents) {
+    'core/modal',
+], function($, Ajax, Notification, Modal) {
 
     /**
      * PolicyActions class.
@@ -62,24 +61,12 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
             var modalTitle = $.Deferred();
             var modalBody = $.Deferred();
 
-            var modal = ModalFactory.create({
+            var modal = Modal.create({
                 title: modalTitle,
                 body: modalBody,
-                large: true
-            })
-            .then(function(modal) {
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                return modal;
-            })
-            .then(function(modal) {
-                modal.show();
-
-                return modal;
+                large: true,
+                removeOnClose: true,
+                show: true,
             })
             .catch(Notification.exception);
 
@@ -97,7 +84,6 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
             }).catch(function(message) {
                 modal.then(function(modal) {
                     modal.hide();
-                    modal.destroy();
 
                     return modal;
                 })

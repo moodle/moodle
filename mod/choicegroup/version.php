@@ -17,20 +17,17 @@
 /**
  * Version information
  *
- * @package    mod
- * @subpackage choicegroup
- * @copyright  2013-2015 Université de Lausanne
+ * @package    mod_choicegroup
+ * @copyright  2013-2024 Université de Lausanne
  * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2023110900;
-$plugin->requires  = 2021051700; // Moodle 3.11
+$plugin->version  = 2024111301;
+$plugin->requires  = 2023100900; // Moodle 4.3.
+$plugin->supported = [403, 405];
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release = '1.42.1 for Moodle 3.11-4.2 (Build: 2023110900)';
-
+$plugin->release = '1.48 for Moodle 4.3-4.5 (Build: 2024111301)';
 $plugin->component = 'mod_choicegroup';
-$plugin->cron = 0;
-

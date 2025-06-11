@@ -1,9 +1,24 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in the lti code.
 
-=== 4.1.2 ===
+=== 4.3 ===
+
+* The `lti_libxml_disable_entity_loader` method is deprecated, as it is no longer required from PHP 8.0
+* The `mod_lti_mod_form` constructor will now throw an exception if called without passing a typeid as manual configuration of
+  instances is now unsupported.
+* The `lti_get_lti_types_by_course` method is deprecated. Please use mod_lti\local\types_helper::get_lti_types_by_course instead.
+* The capability `mod/lti:addmanualinstance` is now deprecated. Since manual instance creation is no longer supported, there is no
+  substitute for this capability.
+
+=== 4.2 ===
 
 * get_jwt_claim_mappings() function has been added to service_base class. It allows a service subplugin to be
   compatible with LTI 1.3 by exposing its 1.1 custom parameters to LTI 1.3 claim mapping.
+* The `serialise_tool_proxy` method, deprecated since 3.10, has been removed and can no longer be used
 
 === 4.1 ===
 

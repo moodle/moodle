@@ -46,7 +46,7 @@ class mock_info_section extends info_section {
      * @param int $userid Userid for modinfo (if used)
      * @param \section_info $section Section object
      */
-    public function __construct($userid = 0, \section_info $section = null) {
+    public function __construct($userid = 0, ?\section_info $section = null) {
         parent::__construct($section);
         $this->userid = $userid;
         $this->section = $section;
@@ -110,7 +110,7 @@ class mock_info_section extends info_section {
      *
      * @param \section_info $section
      */
-    public function set_section (\section_info $section) {
+    public function set_section(\section_info $section) {
         $this->section = $section;
     }
 }

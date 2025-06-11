@@ -38,7 +38,7 @@ use core_privacy\tests\provider_testcase;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass User without any AICC/SCORM attempt. */
     protected $student0;
@@ -55,7 +55,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
@@ -73,7 +73,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the user IDs for the context related to this plugin.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
@@ -95,7 +95,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
@@ -151,15 +151,15 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
 
-        // Before deletion, we should have 8 entries in the scorm_scoes_track table.
-        $count = $DB->count_records('scorm_scoes_track');
+        // Before deletion, we should have 8 entries in the scorm_scoes_value table.
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(8, $count);
         // Before deletion, we should have 4 entries in the scorm_aicc_session table.
         $count = $DB->count_records('scorm_aicc_session');
@@ -168,8 +168,8 @@ class provider_test extends provider_testcase {
         // Delete data based on the context.
         provider::delete_data_for_all_users_in_context($this->context);
 
-        // After deletion, the scorm_scoes_track entries should have been deleted.
-        $count = $DB->count_records('scorm_scoes_track');
+        // After deletion, the scorm_scoes_value entries should have been deleted.
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(0, $count);
         // After deletion, the scorm_aicc_session entries should have been deleted.
         $count = $DB->count_records('scorm_aicc_session');
@@ -179,15 +179,15 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
 
-        // Before deletion, we should have 8 entries in the scorm_scoes_track table.
-        $count = $DB->count_records('scorm_scoes_track');
+        // Before deletion, we should have 8 entries in the scorm_scoes_value table.
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(8, $count);
         // Before deletion, we should have 4 entries in the scorm_aicc_session table.
         $count = $DB->count_records('scorm_aicc_session');
@@ -196,10 +196,10 @@ class provider_test extends provider_testcase {
         $approvedcontextlist = new approved_contextlist($this->student1, 'scorm', [$this->context->id]);
         provider::delete_data_for_user($approvedcontextlist);
 
-        // After deletion, the scorm_scoes_track entries for the first student should have been deleted.
-        $count = $DB->count_records('scorm_scoes_track', ['userid' => $this->student1->id]);
+        // After deletion, the scorm_attempt entries for the first student should have been deleted.
+        $count = $DB->count_records('scorm_attempt', ['userid' => $this->student1->id]);
         $this->assertEquals(0, $count);
-        $count = $DB->count_records('scorm_scoes_track');
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(4, $count);
         // After deletion, the scorm_aicc_session entries for the first student should have been deleted.
         $count = $DB->count_records('scorm_aicc_session', ['userid' => $this->student1->id]);
@@ -214,7 +214,7 @@ class provider_test extends provider_testcase {
         // Delete scoes_track for student0 (nothing has to be removed).
         $approvedcontextlist = new approved_contextlist($this->student0, 'scorm', [$this->context->id]);
         provider::delete_data_for_user($approvedcontextlist);
-        $count = $DB->count_records('scorm_scoes_track');
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(4, $count);
         $count = $DB->count_records('scorm_aicc_session');
         $this->assertEquals(2, $count);
@@ -223,7 +223,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $component = 'mod_scorm';
 
@@ -231,8 +231,8 @@ class provider_test extends provider_testcase {
         $this->setAdminUser();
         $this->scorm_setup_test_scenario_data();
 
-        // Before deletion, we should have 8 entries in the scorm_scoes_track table.
-        $count = $DB->count_records('scorm_scoes_track');
+        // Before deletion, we should have 8 entries in the scorm_scoes_value table.
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(8, $count);
         // Before deletion, we should have 4 entries in the scorm_aicc_session table.
         $count = $DB->count_records('scorm_aicc_session');
@@ -243,10 +243,10 @@ class provider_test extends provider_testcase {
         $approvedlist = new approved_userlist($this->context, $component, $approveduserids);
         provider::delete_data_for_users($approvedlist);
 
-        // After deletion, the scorm_scoes_track entries for the first student should have been deleted.
-        $count = $DB->count_records('scorm_scoes_track', ['userid' => $this->student1->id]);
+        // After deletion, the scorm_attempt entries for the first student should have been deleted.
+        $count = $DB->count_records('scorm_attempt', ['userid' => $this->student1->id]);
         $this->assertEquals(0, $count);
-        $count = $DB->count_records('scorm_scoes_track');
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(4, $count);
 
         // After deletion, the scorm_aicc_session entries for the first student should have been deleted.
@@ -264,7 +264,7 @@ class provider_test extends provider_testcase {
         $approvedlist = new approved_userlist($this->context, $component, $approveduserids);
         provider::delete_data_for_users($approvedlist);
 
-        $count = $DB->count_records('scorm_scoes_track');
+        $count = $DB->count_records('scorm_scoes_value');
         $this->assertEquals(4, $count);
         $count = $DB->count_records('scorm_aicc_session');
         $this->assertEquals(2, $count);

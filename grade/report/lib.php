@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_user\fields;
+
 require_once($CFG->libdir.'/gradelib.php');
 
 /**
@@ -90,12 +92,6 @@ abstract class grade_report {
      */
     public $page;
 
-    /**
-     * Array of cached language strings (using get_string() all the time takes a long time!).
-     * @var array $lang_strings
-     */
-    public $lang_strings = array();
-
     // GROUP VARIABLES (including SQL)
 
     /**
@@ -155,6 +151,40 @@ abstract class grade_report {
     protected $userwheresql_params = array();
 
     /**
+     * To store user data
+     * @var stdClass $user
+     */
+    public $user;
+
+    /**
+     * show course/category totals if they contain hidden items
+     * @var array $showtotalsifcontainhidden
+     */
+    public $showtotalsifcontainhidden = [];
+
+    /**
+     * To store a link to preferences page
+     * @var string $preferences_page
+     */
+    protected $preferences_page;
+
+    /**
+     * If the user is wanting to search for a particular user within searchable fields their needle will be placed here.
+     * @var string $usersearch
+     */
+    protected string $usersearch = '';
+
+    /**
+     * If the user is wanting to show only one particular user their id will be placed here.
+     * @var int $userid
+     */
+    protected int $userid = -1;
+
+    // BEGIN LSU To avoid "creation of dynamic property" warning
+    protected $lang_strings = array();
+    // END LSU To avoid "creation of dynamic property" warning
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -186,6 +216,10 @@ abstract class grade_report {
         $this->preferences_page = $CFG->wwwroot.'/grade/report/grader/preferences.php?id='.$courseid;
 
         // init gtree in child class
+
+        // Set any url params.
+        $this->usersearch = optional_param('gpr_search', '', PARAM_NOTAGS);
+        $this->userid = optional_param('gpr_userid', -1, PARAM_INT);
     }
 
     /**
@@ -271,13 +305,51 @@ abstract class grade_report {
     abstract public function process_action($target, $action);
 
     /**
+     * Add additional links specific to plugin
+     * @param context_course $context Course context
+     * @param int $courseid Course ID
+     * @param array  $element An array representing an element in the grade_tree
+     * @param grade_plugin_return $gpr A grade_plugin_return object
+     * @param string $mode Mode (user or grade item)
+     * @param stdClass $templatecontext Template context
+     * @param bool $otherplugins If we need to insert links to other plugins
+     * @return ?stdClass Updated template context
+     */
+    public static function get_additional_context(context_course $context, int $courseid, array $element,
+            grade_plugin_return $gpr, string $mode, stdClass $templatecontext, bool $otherplugins = false): ?stdClass {
+
+        if (!$otherplugins) {
+            $component = 'gradereport_' . $gpr->plugin;
+            $params = [$context, $courseid, $element, $gpr, $mode, $templatecontext];
+            return component_callback($component, 'get_report_link', $params);
+        } else {
+            // Loop through all installed grade reports.
+            foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+                $params = [$context, $courseid, $element, $gpr, $mode, $templatecontext];
+                $component = 'gradereport_' . $plugin;
+                $templatecontextupdated = component_callback($component, 'get_report_link', $params);
+                if ($templatecontextupdated) {
+                    $templatecontext = $templatecontextupdated;
+                }
+            }
+            return $templatecontext;
+        }
+    }
+
+    /**
      * First checks the cached language strings, then returns match if found, or uses get_string()
      * to get it from the DB, caches it then returns it.
+     *
+     * @deprecated since 4.2
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      * @param string $strcode
      * @param string $section Optional language section
      * @return string
      */
     public function get_lang_string($strcode, $section=null) {
+        debugging('grade_report::get_lang_string() is deprecated, please use' .
+            ' get_string() instead.', DEBUG_DEVELOPER);
+
         if (empty($this->lang_strings[$strcode])) {
             $this->lang_strings[$strcode] = get_string($strcode, $section);
         }
@@ -407,21 +479,43 @@ abstract class grade_report {
             $this->userwheresql .= ' AND '.$DB->sql_like('u.lastname', ':lastname', false, false);
             $this->userwheresql_params['lastname'] = $SESSION->gradereport[$filtersurnamekey] . '%';
         }
+
+        // When a user wants to view a particular user rather than a set of users.
+        // By omission when selecting one user, also allow passing the search value around.
+        if ($this->userid !== -1) {
+            $this->userwheresql .= " AND u.id = :uid";
+            $this->userwheresql_params['uid'] = $this->userid;
+        }
+
+        // A user wants to return a subset of learners that match their search criteria.
+        if ($this->usersearch !== '' && $this->userid === -1) {
+            [
+                'where' => $keywordswhere,
+                'params' => $keywordsparams,
+            ] = \core_user::get_users_search_sql($this->context, $this->usersearch);
+            $this->userwheresql .= " AND $keywordswhere";
+            $this->userwheresql_params = array_merge($this->userwheresql_params, $keywordsparams);
+        }
     }
 
     /**
      * Returns an arrow icon inside an <a> tag, for the purpose of sorting a column.
      * @param string $direction
-     * @param moodle_url $sortlink
+     * @param moodle_url|null $sortlink
      */
-    protected function get_sort_arrow($direction='move', $sortlink=null) {
+    protected function get_sort_arrow(string $direction = 'down', ?moodle_url $sortlink = null) {
         global $OUTPUT;
-        $pix = array('up' => 't/sort_desc', 'down' => 't/sort_asc', 'move' => 't/sort');
-        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'asc');
-        $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
-
+        $pix = ['up' => 't/sort_desc', 'down' => 't/sort_asc'];
+        $matrix = ['up' => 'desc', 'down' => 'asc'];
+        $strsort = get_string($matrix[$direction], 'moodle');
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
-        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
+
+        if (!empty($sortlink)) {
+            $sortlink->param('sort', ($direction == 'up' ? 'asc' : 'desc'));
+        }
+
+        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort, 'data-collapse' => 'sort',
+            'class' => 'arrow_link py-1']);
     }
 
     /**
@@ -580,7 +674,6 @@ abstract class grade_report {
 
     /**
      * Calculate average grade for a given grade item.
-     * Based on calculate_averages function from grade/report/user/lib.php
      *
      * @param grade_item $gradeitem Grade item
      * @param array $info Ungraded grade items counts and report preferences.
@@ -624,16 +717,33 @@ abstract class grade_report {
     }
 
     /**
-     * Get ungraded grade items info and sum of all grade items in a course.
-     * Based on calculate_averages function from grade/report/user/lib.php
+     * To check if we only need to include active enrolments.
      *
+     * @return bool
+     */
+    public function show_only_active(): bool {
+        global $CFG;
+
+        // Limit to users with an active enrolment.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        return $showonlyactiveenrol ||
+            !has_capability('moodle/course:viewsuspendedusers', $this->context);
+    }
+
+    /**
+     * Get ungraded grade items info and sum of all grade items in a course.
+     *
+     * @param bool $grouponly If we want to compute group average only.
+     * @param bool $includehiddengrades Include hidden grades.
+     * @param bool $showonlyactiveenrol Whether to only include active enrolments.
      * @return array Ungraded grade items counts with report preferences.
      */
-    public function ungraded_counts(): array {
+    public function ungraded_counts(bool $grouponly = false, bool $includehiddengrades = false, $showonlyactiveenrol = true): array {
         global $DB;
 
         $groupid = null;
-        if (isset($this->gpr->groupid)) {
+        if ($grouponly && isset($this->gpr->groupid)) {
             $groupid = $this->gpr->groupid;
         }
 
@@ -654,20 +764,20 @@ abstract class grade_report {
         list($gradebookrolessql, $gradebookrolesparams) =
             $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
-        // Limit to users with an active enrolment.
-        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-        $showonlyactiveenrol = $showonlyactiveenrol ||
-            !has_capability('moodle/course:viewsuspendedusers', $this->context);
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
         $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
         $params['courseid'] = $this->courseid;
 
-        // Aggregate on whole course only.
         if (empty($groupid)) {
+            // Aggregate on whole course only.
             $this->groupsql = null;
             $this->groupwheresql = null;
+        }
+
+        $includesql = '';
+        if (!$includehiddengrades) {
+            $includesql = 'AND gg.hidden = 0';
         }
 
         // Empty grades must be evaluated as grademin, NOT always 0.
@@ -686,7 +796,7 @@ abstract class grade_report {
                                   AND ra.contextid $relatedctxsql
                            ) rainner ON rainner.userid = u.id
                       LEFT JOIN {grade_grades} gg
-                             ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
+                             ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL $includesql)
                       $this->groupsql
                      WHERE gi.courseid = :courseid
                            AND gg.finalgrade IS NULL
@@ -710,7 +820,7 @@ abstract class grade_report {
                      WHERE gi.courseid = :courseid
                        AND u.deleted = 0
                        AND gg.finalgrade IS NOT NULL
-                       AND gg.hidden = 0
+                       $includesql
                        $this->groupwheresql
                   GROUP BY gg.itemid";
 
@@ -755,5 +865,88 @@ abstract class grade_report {
 
         return $modnames;
     }
-}
 
+    /**
+     * Load a valid list of gradable users in a course.
+     *
+     * @param int $courseid The course ID.
+     * @param int|null $groupid The group ID (optional).
+     * @return array A list of enrolled gradable users.
+     */
+    public static function get_gradable_users(int $courseid, ?int $groupid = null): array {
+        global $CFG;
+        require_once($CFG->dirroot . '/grade/lib.php');
+
+        $context = context_course::instance($courseid);
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $onlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol) ||
+            !has_capability('moodle/course:viewsuspendedusers', $context);
+
+        return get_gradable_users($courseid, $groupid, $onlyactiveenrol);
+    }
+
+    /**
+     * Returns a row of grade items averages
+     *
+     * @param array $ungradedcounts Ungraded grade items counts with report preferences.
+     * @return html_table_row Row with averages
+     */
+    protected function format_averages(array $ungradedcounts): html_table_row {
+
+        $avgrow = new html_table_row();
+        $avgrow->attributes['class'] = 'avg';
+
+        $averagesdisplaytype = $ungradedcounts['report']['averagesdisplaytype'];
+        $averagesdecimalpoints = $ungradedcounts['report']['averagesdecimalpoints'];
+        $shownumberofgrades = $ungradedcounts['report']['shownumberofgrades'];
+
+        foreach ($this->gtree->items as $gradeitem) {
+            if ($gradeitem->needsupdate) {
+                $avgrow->cells[$gradeitem->id] = $this->format_average_cell($gradeitem);
+            } else {
+                $aggr = $this->calculate_average($gradeitem, $ungradedcounts);
+
+                if (empty($aggr['average'])) {
+                    $avgrow->cells[$gradeitem->id] =
+                        $this->format_average_cell($gradeitem, $aggr, $ungradedcounts['report']['shownumberofgrades']);
+                } else {
+                    // Determine which display type to use for this average.
+                    if (isset($USER->editing) && $USER->editing) {
+                        $displaytype = GRADE_DISPLAY_TYPE_REAL;
+                    } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) {
+                        // No ==0 here, please resave the report and user preferences.
+                        $displaytype = $gradeitem->get_displaytype();
+                    } else {
+                        $displaytype = $averagesdisplaytype;
+                    }
+
+                    // Override grade_item setting if a display preference (not inherit) was set for the averages.
+                    if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+                        $decimalpoints = $gradeitem->get_decimals();
+                    } else {
+                        $decimalpoints = $averagesdecimalpoints;
+                    }
+
+                    $aggr['average'] = grade_format_gradevalue($aggr['average'],
+                        $gradeitem, true, $displaytype, $decimalpoints);
+
+                    $avgrow->cells[$gradeitem->id] = $this->format_average_cell($gradeitem, $aggr, $shownumberofgrades);
+                }
+            }
+        }
+        return $avgrow;
+    }
+
+    /**
+     * Returns a row of grade items averages. Override this method to change the format of the average cell.
+     *
+     * @param grade_item $gradeitem Grade item.
+     * @param array|null $aggr Average value and meancount information.
+     * @param bool|null $shownumberofgrades Whether to show number of grades.
+     * @return html_table_cell table cell.
+     */
+    protected function format_average_cell(grade_item $gradeitem, ?array $aggr = null, ?bool $shownumberofgrades = null): html_table_cell {
+        return new html_table_cell();
+    }
+
+}

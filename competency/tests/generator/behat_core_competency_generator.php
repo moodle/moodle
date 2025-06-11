@@ -57,7 +57,13 @@ class behat_core_competency_generator extends behat_generator_base {
                 'singular' => 'plan',
                 'datagenerator' => 'plan',
                 'required' => ['name'],
-                'switchids' => ['user' => 'userid'],
+                'switchids' => ['user' => 'userid', 'status' => 'status'],
+            ],
+            'plan_competencies' => [
+                'singular' => 'plan_competency',
+                'datagenerator' => 'plan_competency',
+                'required' => ['plan', 'competency'],
+                'switchids' => ['competency' => 'competencyid', 'plan' => 'planid'],
             ],
             'related_competencies' => [
                 'singular' => 'related_competency',
@@ -83,14 +89,38 @@ class behat_core_competency_generator extends behat_generator_base {
                 'required' => ['plan', 'competency', 'user'],
                 'switchids' => ['plan' => 'planid', 'competency' => 'competencyid', 'user' => 'userid'],
             ],
+            'user_evidence' => [
+                'singular' => 'user_evidence',
+                'datagenerator' => 'user_evidence',
+                'required' => ['user', 'name'],
+                'switchids' => ['user' => 'userid'],
+            ],
+            'user_evidence_competency' => [
+                'singular' => 'user_evidence_competency',
+                'datagenerator' => 'user_evidence_competency',
+                'required' => ['userevidence', 'competency'],
+                'switchids' => ['userevidence' => 'userevidenceid', 'competency' => 'competencyid'],
+            ],
+            'templates' => [
+                'singular' => 'template',
+                'datagenerator' => 'template',
+                'required' => ['shortname'],
+                'switchids' => ['context' => 'contextid'],
+            ],
+            'template_competencies' => [
+                'singular' => 'template_competency',
+                'datagenerator' => 'template_competency',
+                'required' => ['template', 'competency'],
+                'switchids' => ['template' => 'templateid', 'competency' => 'competencyid'],
+            ],
         ];
     }
 
     /**
-     * Get the competecy framework id using an idnumber.
+     * Get the competency framework id using an idnumber.
      *
      * @param string $idnumber
-     * @return int The competecy framework id
+     * @return int The competency framework id
      */
     protected function get_competencyframework_id(string $idnumber): int {
         global $DB;
@@ -103,10 +133,10 @@ class behat_core_competency_generator extends behat_generator_base {
     }
 
     /**
-     * Get the competecy id using an idnumber.
+     * Get the competency id using an idnumber.
      *
      * @param string $idnumber
-     * @return int The competecy id
+     * @return int The competency id
      */
     protected function get_competency_id(string $idnumber): int {
         global $DB;
@@ -135,13 +165,29 @@ class behat_core_competency_generator extends behat_generator_base {
     }
 
     /**
-     * Get the related competecy id using an idnumber.
+     * Get the related competency id using an idnumber.
      *
      * @param string $idnumber
-     * @return int The related competecy id
+     * @return int The related competency id
      */
     protected function get_relatedcompetency_id(string $idnumber): int {
         return $this->get_competency_id($idnumber);
+    }
+
+    /**
+     * Get the template id by shortname.
+     *
+     * @param string $shortname The template name.
+     * @return int
+     */
+    protected function get_template_id(string $shortname): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('competency_template', 'id', ['shortname' => $shortname])) {
+            throw new Exception('The specified template with name "' . $shortname . '" could not be found.');
+        }
+
+        return $id;
     }
 
     /**
@@ -208,6 +254,8 @@ class behat_core_competency_generator extends behat_generator_base {
      * @return array Processed data.
      */
     protected function preprocess_plan(array $data): array {
+        global $DB, $USER;
+
         if (isset($data['competencies'])) {
             $competencies = array_map('trim', str_getcsv($data['competencies']));
             $data['competencyids'] = array_map([$this, 'get_competency_id'], $competencies);
@@ -215,11 +263,20 @@ class behat_core_competency_generator extends behat_generator_base {
             unset($data['competencies']);
         }
 
-        global $USER;
+        if (isset($data['reviewer'])) {
+            if (is_number($data['reviewer'])) {
+                $data['reviewerid'] = $data['reviewer'];
+            } else {
+                if (!$userid = $DB->get_field('user', 'id', ['username' => $data['reviewer']])) {
+                    throw new Exception('The specified user "' . $data['reviewer'] . '" could not be found.');
+                }
+                $data['reviewerid'] = $userid;
+            }
+            unset($data['reviewer']);
+        }
 
         return $data + [
             'userid' => $USER->id,
-            'status' => plan::STATUS_ACTIVE,
         ];
     }
 
@@ -257,5 +314,82 @@ class behat_core_competency_generator extends behat_generator_base {
      */
     protected function get_data_generator(): core_competency_generator {
         return $this->componentdatagenerator;
+    }
+
+    /**
+     * Get the user evidence id using a name.
+     *
+     * @param string $name User evidence name.
+     * @return int The user evidence id
+     */
+    protected function get_userevidence_id(string $name): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('competency_userevidence', 'id', ['name' => $name])) {
+            throw new Exception('The specified user evidence with name "' . $name . '" could not be found.');
+        }
+
+        return $id;
+    }
+
+    /**
+     * Get the template competency id using a name.
+     *
+     * @param string $name Template competency name.
+     * @return int The template competency id
+     */
+    protected function get_templatecompetency_id(string $name): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('competency_template', 'id', ['name' => $name])) {
+            throw new Exception('The specified template competency with name "' . $name . '" could not be found.');
+        }
+
+        return $id;
+    }
+
+    /**
+     * Get the context id using a contextid.
+     *
+     * @param string $contextid Context id.
+     * @return int The context id
+     */
+    protected function get_context_id(string $contextid): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('context', 'id', ['id' => $contextid])) {
+            throw new Exception('The specified context with id "' . $contextid . '" could not be found.');
+        }
+
+        return $id;
+    }
+
+    /**
+     * Get the status id by status name.
+     *
+     * @param string $name Status name.
+     * @return int
+     */
+    protected function get_status_id(string $name): int {
+
+        switch ($name) {
+            case 'draft':
+                $status = plan::STATUS_DRAFT;
+                break;
+            case 'in review':
+                $status = plan::STATUS_IN_REVIEW;
+                break;
+            case 'waiting for review':
+                $status = plan::STATUS_WAITING_FOR_REVIEW;
+                break;
+            case 'complete':
+                $status = plan::STATUS_COMPLETE;
+                break;
+            default:
+                $status = plan::STATUS_ACTIVE;
+                break;
+        }
+
+        return $status;
     }
 }

@@ -367,6 +367,11 @@ class cli_helper {
                     $firstoption = reset($selectoptions);
                     $default = $firstoption['attr']['value'];
                 }
+
+                // The menu profile field type allows for an empty default value, handle that here.
+                if (preg_match('/^profile_field_/', $name) && $default === '') {
+                    $possiblevalues[] = $default;
+                }
             }
 
             if ($element instanceof \HTML_QuickForm_checkbox) {

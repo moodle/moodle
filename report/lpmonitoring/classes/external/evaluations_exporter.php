@@ -42,23 +42,23 @@ class evaluations_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'iscourse' => array(
-                'type' => PARAM_BOOL
-            ),
-            'elementid' => array(
-                'type' => PARAM_INT
-            ),
-            'isnotrated' => array(
-                'type' => PARAM_BOOL
-            ),
-            'color' => array(
-                'type' => PARAM_TEXT
-            ),
-            'name' => array(
-                'type' => PARAM_TEXT
-            )
-        );
+        return [
+            'iscourse' => [
+                'type' => PARAM_BOOL,
+            ],
+            'elementid' => [
+                'type' => PARAM_INT,
+            ],
+            'isnotrated' => [
+                'type' => PARAM_BOOL,
+            ],
+            'color' => [
+                'type' => PARAM_TEXT,
+            ],
+            'name' => [
+                'type' => PARAM_TEXT,
+            ],
+        ];
     }
 
     /**

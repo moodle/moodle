@@ -23,8 +23,8 @@ namespace tool_log;
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends \advanced_testcase {
-    public function test_get_log_manager() {
+final class manager_test extends \advanced_testcase {
+    public function test_get_log_manager(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -36,15 +36,14 @@ class manager_test extends \advanced_testcase {
         $this->assertCount(0, $stores);
 
         $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/standard/version.php");
-        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/legacy/version.php");
 
-        set_config('enabled_stores', 'logstore_standard,logstore_legacy', 'tool_log');
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
         $manager = get_log_manager(true);
         $this->assertInstanceOf('core\log\manager', $manager);
 
         $stores = $manager->get_readers();
         $this->assertIsArray($stores);
-        $this->assertCount(2, $stores);
+        $this->assertCount(1, $stores);
         foreach ($stores as $key => $store) {
             $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);
@@ -61,7 +60,7 @@ class manager_test extends \advanced_testcase {
 
         $stores = $manager->get_readers('core\log\sql_reader');
         $this->assertIsArray($stores);
-        $this->assertCount(2, $stores);
+        $this->assertCount(1, $stores);
         foreach ($stores as $key => $store) {
             $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);

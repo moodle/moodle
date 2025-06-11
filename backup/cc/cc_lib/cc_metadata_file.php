@@ -32,7 +32,7 @@ class cc_metadata_file_educational{
 
     public $value   = array();
 
-    public function set_value ($value){
+    public function set_value($value){
         $arr = array($value);
         $this->value[] = $arr;
     }

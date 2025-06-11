@@ -39,11 +39,10 @@ Feature: In an assignment, rich content should have annotations.
       | student1 | C1     | student |
       | teacher1 | C1     | teacher |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a "assign" activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name | Test assignment with single html element |
       | Description     | <p>Submit your papers here<br> <i>so they are</i> <br> <strong>graded</strong> </p> |
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a "assign" activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name | Test assignment with multiple html elements |
       | Description     | <p>Submit your papers here</p> <br> <i>so they are</i> <br> <strong>graded</strong> |
     And I log out

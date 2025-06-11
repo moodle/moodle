@@ -60,7 +60,7 @@ class mod_attendance_summary {
      * @param int $startdate Attendance sessions startdate
      * @param int $enddate Attendance sessions enddate
      */
-    public function __construct($attendanceid, $userids=array(), $startdate = '', $enddate = '') {
+    public function __construct($attendanceid, $userids=[], $startdate = '', $enddate = '') {
         $this->attendanceid = $attendanceid;
 
         $this->compute_users_points($userids, $startdate, $enddate);
@@ -102,7 +102,7 @@ class mod_attendance_summary {
      * @return array
      */
     public function get_user_taken_sessions_percentages() {
-        $percentages = array();
+        $percentages = [];
 
         foreach ($this->userspoints as $userid => $userpoints) {
             $percentages[$userid] = attendance_calc_fraction($userpoints->points, $userpoints->maxpoints);
@@ -116,7 +116,7 @@ class mod_attendance_summary {
      *
      * @param int $userid User instance id
      *
-     * @return array
+     * @return stdClass
      */
     public function get_taken_sessions_summary_for($userid) {
         $usersummary = new stdClass();
@@ -134,7 +134,7 @@ class mod_attendance_summary {
         if (isset($this->userstakensessionsbyacronym[$userid])) {
             $usersummary->userstakensessionsbyacronym = $this->userstakensessionsbyacronym[$userid];
         } else {
-            $usersummary->userstakensessionsbyacronym = array();
+            $usersummary->userstakensessionsbyacronym = [];
         }
 
         $usersummary->pointssessionscompleted = format_float($usersummary->takensessionspoints, 1, true, true) . ' / ' .
@@ -204,17 +204,17 @@ class mod_attendance_summary {
      * @param int $enddate Attendance sessions enddate
      * @return  (userid, numtakensessions, points, maxpoints)
      */
-    private function compute_users_points($userids=array(), $startdate = '', $enddate = '') {
+    private function compute_users_points($userids=[], $startdate = '', $enddate = '') {
         global $DB;
 
         list($this->course, $cm) = get_course_and_cm_from_instance($this->attendanceid, 'attendance');
         $this->groupmode = $cm->effectivegroupmode;
 
-        $params = array(
+        $params = [
             'attid'      => $this->attendanceid,
             'attid2'     => $this->attendanceid,
             'cstartdate' => $this->course->startdate,
-            );
+            ];
 
         $where = '';
         if (!empty($userids)) {
@@ -268,16 +268,16 @@ class mod_attendance_summary {
      * @param int $enddate Attendance sessions enddate
      * @return  null
      */
-    private function compute_users_taken_sessions_by_acronym($userids=array(), $startdate = '', $enddate = '') {
+    private function compute_users_taken_sessions_by_acronym($userids=[], $startdate = '', $enddate = '') {
         global $DB;
 
         list($this->course, $cm) = get_course_and_cm_from_instance($this->attendanceid, 'attendance');
         $this->groupmode = $cm->effectivegroupmode;
 
-        $params = array(
+        $params = [
             'attid'      => $this->attendanceid,
             'cstartdate' => $this->course->startdate,
-            );
+            ];
 
         $where = '';
         if (!empty($userids)) {
@@ -315,7 +315,7 @@ class mod_attendance_summary {
                    AND ats.lasttaken != 0
                    {$where}
               GROUP BY atl.studentid, sts.setnumber, sts.acronym";
-        $this->userstakensessionsbyacronym = array();
+        $this->userstakensessionsbyacronym = [];
         $records = $DB->get_recordset_sql($sql, $params);
         foreach ($records as $rec) {
             $this->userstakensessionsbyacronym[$rec->userid][$rec->setnumber][$rec->acronym] = $rec->numtakensessions;
@@ -331,11 +331,11 @@ class mod_attendance_summary {
     private function compute_maxpoints_by_group_session() {
         global $DB;
 
-        $params = array(
+        $params = [
             'attid'      => $this->attendanceid,
             'attid2'     => $this->attendanceid,
             'cstartdate' => $this->course->startdate,
-            );
+            ];
 
         $where = '';
         if (!$this->with_groups()) {

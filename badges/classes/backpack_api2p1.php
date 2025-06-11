@@ -81,7 +81,7 @@ class backpack_api2p1 {
         if (!empty($externalbackpack)) {
             $this->externalbackpack = $externalbackpack;
             $this->backpackapiversion = $externalbackpack->apiversion;
-            $this->get_clientid = $this->get_clientid($externalbackpack->oauth2_issuerid);
+            $this->get_clientid($externalbackpack->oauth2_issuerid);
 
             if (!($this->tokendata = $this->get_stored_token($externalbackpack->id))
                 && $this->backpackapiversion != OPEN_BADGES_V2P1) {

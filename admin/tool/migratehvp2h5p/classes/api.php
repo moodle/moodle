@@ -53,22 +53,22 @@ use tool_migratehvp2h5p\event\hvp_migrated;
  */
 class api {
 
-    /** @var value to indicate the original hvp activity must be deleted after migration */
+    /** @var int Value to indicate the original hvp activity must be deleted after migration */
     public const DELETEORIGINAL = 0;
 
-    /** @var value to indicate to keep the original hvp activity after migration */
+    /** @var int Value to indicate to keep the original hvp activity after migration */
     public const KEEPORIGINAL = 1;
 
-    /** @var value to indicate to hide the original hvp activity after migration */
+    /** @var int Value to indicate to hide the original hvp activity after migration */
     public const HIDEORIGINAL = 2;
 
-    /** @var value to indicate the original hvp activity must not be copied to content bank. */
+    /** @var int Value to indicate the original hvp activity must not be copied to content bank. */
     public const COPY2CBNO = 0;
 
-    /** @var value to indicate the original hvp activity must be copied to content bank and then linked to the new activity. */
+    /** @var int Value to indicate the original hvp activity must be copied to content bank and then linked to the new activity. */
     public const COPY2CBYESWITHLINK = 1;
 
-    /** @var value to indicate the original hvp activity must be copied to content bank too. */
+    /** @var int Value to indicate the original hvp activity must be copied to content bank too. */
     public const COPY2CBYESWITHOUTLINK = 2;
 
     /**
@@ -353,7 +353,7 @@ class api {
         $h5pactivity->gradeitem = self::duplicate_grade_item($hvpgradeitem, $h5pactivity);
 
         // Update couse_module information.
-        $h5pcm = self::add_course_module_to_section($hvpcm, $h5pactivity->cm->id);
+        self::add_course_module_to_section($hvpcm, $h5pactivity->cm->id);
 
         self::copy_tags($hvpcm, $h5pactivity);
         self::copy_competencies($hvpcm, $h5pactivity);
@@ -663,18 +663,18 @@ class api {
      *
      * @param stdClass $hvpcm
      * @param int      $h5pcmid
-     * @return stdClass The course module object for the h5pactivity.
+     * @return stdClass|null The course module object for the h5pactivity.
      */
-    private static function add_course_module_to_section(stdClass $hvpcm, int $h5pcmid): stdClass {
+    private static function add_course_module_to_section(stdClass $hvpcm, int $h5pcmid): ?stdClass {
         global $DB;
 
         $h5pcm = get_coursemodule_from_id('', $h5pcmid, $hvpcm->course);
         if (!$h5pcm) {
-            return false;
+            return null;
         }
         $section = $DB->get_record('course_sections', ['id' => $h5pcm->section]);
         if (!$section) {
-            return false;
+            return null;
         }
 
         $h5pcm->section = course_add_cm_to_section($h5pcm->course, $h5pcm->id, $section->section, $hvpcm->id);

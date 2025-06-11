@@ -23,8 +23,6 @@
  * @copyright  Microsoft, Inc. (based on files by NetSpot {@link http://www.netspot.com.au})
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Provides the information to backup submission files
  * This just adds its filearea to the annotations and records the number of files

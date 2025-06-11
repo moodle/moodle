@@ -102,12 +102,16 @@ class custom_report_columns_sorting_exporter extends exporter {
             $columntitle = $column->get_title();
             $columnheading = $persistent->get_formatted_heading($report->get_context());
 
-            $columnsortascending = ($persistent->get('sortdirection') == SORT_ASC);
             $sortenabledtitle = $persistent->get('sortenabled') ? 'columnsortdisable' : 'columnsortenable';
-            $sortdirectiontitle = $columnsortascending ? 'columnsortdirectiondesc' : 'columnsortdirectionasc';
 
-            $icon = $columnsortascending ? 't/uplong' : 't/downlong';
-            $sorticon = new pix_icon($icon, get_string($sortdirectiontitle, 'core_reportbuilder', $columntitle));
+            // The icon should reflect the current sort order, with prompt to invert the order.
+            if ($persistent->get('sortdirection') === SORT_ASC) {
+                $sorticon = 't/sort_asc';
+                $sorticonstr = 'columnsortdirectiondesc';
+            } else {
+                $sorticon = 't/sort_desc';
+                $sorticonstr = 'columnsortdirectionasc';
+            }
 
             return [
                 'id' => $persistent->get('id'),
@@ -116,7 +120,8 @@ class custom_report_columns_sorting_exporter extends exporter {
                 'sortdirection' => $persistent->get('sortdirection'),
                 'sortenabled' => $persistent->get('sortenabled'),
                 'sortorder' => $persistent->get('sortorder'),
-                'sorticon' => $sorticon->export_for_pix(),
+                'sorticon' => (new pix_icon($sorticon, get_string($sorticonstr, 'core_reportbuilder', $columntitle)))
+                    ->export_for_pix(),
                 'movetitle' => get_string('movesorting', 'core_reportbuilder', $columntitle),
                 'sortenabledtitle' => get_string($sortenabledtitle, 'core_reportbuilder', $columntitle),
             ];

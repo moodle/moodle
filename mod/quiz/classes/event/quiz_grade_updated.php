@@ -57,7 +57,7 @@ class quiz_grade_updated extends \core\event\base {
 
     public function get_url() {
         return new \moodle_url('/mod/quiz/edit.php', [
-            'cmid' => $this->contextinstanceid
+            'cmid' => $this->contextinstanceid,
         ]);
     }
 

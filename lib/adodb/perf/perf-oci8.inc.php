@@ -23,7 +23,7 @@
 if (!defined('ADODB_DIR')) die();
 
 
-class perf_oci8 extends ADODB_perf{
+class perf_oci8 extends adodb_perf{
 
 	var $noShowIxora = 15; // if the sql for suspicious sql is taking too long, then disable ixora
 

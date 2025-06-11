@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool
- * @subpackage mergeusers
+ * @package tool_mergeusers
  * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
  * @author John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
@@ -56,7 +55,7 @@ class olduser {
 
         // 2. update profile picture
         // get source, common image
-        $fullpath = dirname(dirname(__DIR__))."/pix/suspended.jpg";
+        $fullpath = dirname(dirname(dirname(__DIR__))) . "/pix/suspended.jpg";
         if (!file_exists($fullpath)) {
             return; //do nothing; aborting, given that the image does not exist
         }

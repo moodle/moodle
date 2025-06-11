@@ -39,16 +39,17 @@ use core_privacy\tests\request\approved_contextlist;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Check the exporting of comments for a user id in a context.
      */
-    public function test_export_comments() {
+    public function test_export_comments(): void {
         $course = $this->getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);
 
@@ -98,7 +99,7 @@ class provider_test extends provider_testcase {
     /**
      * Tests the deletion of all comments in a context.
      */
-    public function test_delete_comments_for_all_users() {
+    public function test_delete_comments_for_all_users(): void {
         global $DB;
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -166,7 +167,7 @@ class provider_test extends provider_testcase {
     /**
      * Tests the deletion of all comments in a context.
      */
-    public function test_delete_comments_for_all_users_select() {
+    public function test_delete_comments_for_all_users_select(): void {
         global $DB;
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -236,7 +237,7 @@ class provider_test extends provider_testcase {
     /**
      * Tests deletion of comments for a specified user and contexts.
      */
-    public function test_delete_comments_for_user() {
+    public function test_delete_comments_for_user(): void {
         global $DB;
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -319,7 +320,7 @@ class provider_test extends provider_testcase {
     /**
      * Tests deletion of comments for a specified userlist and context.
      */
-    public function test_delete_comments_for_users() {
+    public function test_delete_comments_for_users(): void {
         global $DB;
 
         $course1 = $this->getDataGenerator()->create_course();

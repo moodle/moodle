@@ -39,18 +39,37 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configtext('defaultcity', new lang_string('defaultcity', 'core_admin'),
             new lang_string('defaultcity_help', 'core_admin'), ''));
 
+        $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
+            new lang_string('configallcountrycodes', 'core_admin')));
+
         $temp->add(new admin_setting_heading('iplookup', new lang_string('iplookup', 'core_admin'),
             new lang_string('iplookupinfo', 'core_admin')));
 
         $temp->add(new admin_setting_configfile('geoip2file', new lang_string('geoipfile', 'core_admin'),
             new lang_string('configgeoipfile', 'core_admin', $CFG->dataroot . '/geoip/'),
-            $CFG->dataroot . '/geoip/GeoLite2-City.mmdb'));
+            $CFG->dataroot . '/geoip/GeoIP-City.mmdb'));
+
+        $temp->add(new admin_setting_configselect('geoipdbedition',
+            new lang_string('geoipdbedition', 'core_admin'),
+            new lang_string('geoipdbedition_desc', 'core_admin'), 'GeoLite2-City',
+            ['GeoLite2-City' => 'GeoLite2-City', 'GeoIP2-City' => 'GeoIP2-City']));
+
+        $temp->add(new admin_setting_configtext('geoipmaxmindaccid',
+            new lang_string('geoipmaxmindaccid', 'core_admin'),
+            new lang_string('geoipmaxmindaccid_desc', 'core_admin'),
+            '',
+            PARAM_TEXT,
+        ));
+
+        $temp->add(new admin_setting_configtext('geoipmaxmindlicensekey',
+            new lang_string('geoipmaxmindlicensekey', 'core_admin'),
+            new lang_string('geoipmaxmindlicensekey_desc', 'core_admin'),
+            '',
+            PARAM_TEXT,
+        ));
 
         $temp->add(new admin_setting_configtext('googlemapkey3', new lang_string('googlemapkey3', 'core_admin'),
             new lang_string('googlemapkey3_help', 'core_admin'), '', PARAM_RAW, 60));
-
-        $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
-            new lang_string('configallcountrycodes', 'core_admin')));
     }
 
     $ADMIN->add('location', $temp);

@@ -26,21 +26,12 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core\task\send_login_notifications
  */
-class send_login_notifications_test extends \advanced_testcase {
-
-    /**
-     * Load required classes
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-
-        require_once($CFG->libdir . '/externallib.php');
-    }
+final class send_login_notifications_test extends \advanced_testcase {
 
     /**
      * Test new login notification.
      */
-    public function test_login_notification() {
+    public function test_login_notification(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -71,7 +62,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of same IP from last login.
      */
-    public function test_login_notification_skip_same_ip() {
+    public function test_login_notification_skip_same_ip(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -99,7 +90,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of same browser from last login.
      */
-    public function test_login_notification_skip_same_browser() {
+    public function test_login_notification_skip_same_browser(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -128,7 +119,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of auto-login from the mobile app (skip duplicated notifications).
      */
-    public function test_login_notification_skip_mobileapp() {
+    public function test_login_notification_skip_mobileapp(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -191,7 +182,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification.
      */
-    public function test_mobile_app_login_notification() {
+    public function test_mobile_app_login_notification(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -203,7 +194,7 @@ class send_login_notifications_test extends \advanced_testcase {
         $USER->lastip = '1.2.3.4.6'; // Different ip that current.
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
@@ -221,7 +212,7 @@ class send_login_notifications_test extends \advanced_testcase {
         ];
         $DB->insert_record('user_devices', $fakedevice);
 
-        external_log_token_request($token);
+        \core_external\util::log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();
@@ -241,7 +232,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification skipped becase of same last ip.
      */
-    public function test_mobile_app_login_notification_skip_same_ip() {
+    public function test_mobile_app_login_notification_skip_same_ip(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -252,7 +243,7 @@ class send_login_notifications_test extends \advanced_testcase {
         // Mock data for test.
         $USER->lastip = '0.0.0.0';
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
@@ -270,7 +261,7 @@ class send_login_notifications_test extends \advanced_testcase {
         ];
         $DB->insert_record('user_devices', $fakedevice);
 
-        external_log_token_request($token);
+        \core_external\util::log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();
@@ -288,7 +279,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification skipped becase of same device.
      */
-    public function test_mobile_app_login_notification_skip_same_device() {
+    public function test_mobile_app_login_notification_skip_same_device(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -299,10 +290,10 @@ class send_login_notifications_test extends \advanced_testcase {
         // Mock data for test.
         $USER->lastip = '1.2.3.4.6';    // New ip.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
-        external_log_token_request($token);
+        \core_external\util::log_token_request($token);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();

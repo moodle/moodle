@@ -27,14 +27,14 @@ Feature: Using the local_bulkenrol plugin
       | local/bulkenrol:enrolusers | Allow      |
     And I log out
 
-  Scenario Outline: Access the bulk enrolment page via the participants page jump menu
+  Scenario Outline: Access the bulk enrolment page via the participants page tertiary menu
     Given the following config values are set as admin:
       | config     | value        | plugin          |
       | navigation | <navigation> | local_bulkenrol |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     Then I should see "User bulk enrolment" in the "#region-main h2" "css_element"
 
     Examples:
@@ -42,7 +42,7 @@ Feature: Using the local_bulkenrol plugin
       | navpart  |
       | navboth    |
 
-  Scenario Outline: Access the bulk enrolment page via the participants page jump menu
+  Scenario Outline: Access the bulk enrolment page via the course page tertiary menu
     Given the following config values are set as admin:
       | config     | value        | plugin          |
       | navigation | <navigation> | local_bulkenrol |

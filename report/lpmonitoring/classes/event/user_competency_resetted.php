@@ -49,11 +49,11 @@ class user_competency_resetted extends base {
             throw new \coding_exception('The user competency ID must be set.');
         }
 
-        $params = array(
+        $params = [
             'contextid' => $usercompetency->get_context()->id,
             'objectid' => $usercompetency->get('id'),
-            'relateduserid' => $usercompetency->get('userid')
-        );
+            'relateduserid' => $usercompetency->get('userid'),
+        ];
 
         $event = static::create($params);
         $event->add_record_snapshot(user_competency::TABLE, $usercompetency->to_record());

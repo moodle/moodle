@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Prepares things before this test case is initialised
@@ -45,13 +45,14 @@ class lib_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/mod/url/lib.php');
         require_once($CFG->dirroot . '/mod/url/locallib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Tests the url_appears_valid_url function
      * @return void
      */
-    public function test_url_appears_valid_url() {
+    public function test_url_appears_valid_url(): void {
         $this->assertTrue(url_appears_valid_url('http://example'));
         $this->assertTrue(url_appears_valid_url('http://www.example.com'));
         $this->assertTrue(url_appears_valid_url('http://www.examplé.com'));
@@ -98,7 +99,7 @@ class lib_test extends \advanced_testcase {
      * Test url_view
      * @return void
      */
-    public function test_url_view() {
+    public function test_url_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -139,7 +140,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test mod_url_core_calendar_provide_event_action with user override
      */
-    public function test_url_core_calendar_provide_event_action_user_override() {
+    public function test_url_core_calendar_provide_event_action_user_override(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest();
@@ -185,7 +186,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent2->is_actionable());
     }
 
-    public function test_url_core_calendar_provide_event_action() {
+    public function test_url_core_calendar_provide_event_action(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -211,7 +212,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_url_core_calendar_provide_event_action_already_completed() {
+    public function test_url_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $this->resetAfterTest();

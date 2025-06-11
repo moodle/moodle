@@ -54,8 +54,7 @@ Feature: Backpack badges
     When I log in as "student1"
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
-    Then I should see "https://dc.imsglobal.org"
-    And I should see "Not connected"
+    Then I should see "Choose..." in the "Backpack provider" "select"
 
   @javascript
   Scenario: User has been connected backpack
@@ -99,11 +98,14 @@ Feature: Backpack badges
     And I log in as "admin"
     And I navigate to "Badges > Manage backpacks" in site administration
     When I press "Add a new backpack"
-    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
+    And I set the field "apiversion" to "2"
     And I set the field "backpackweburl" to "aaa"
     And I press "Save changes"
     And I should see "Invalid URL"
     And I set the field "backpackweburl" to "http://backpackweburl.cat"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
     And I press "Save changes"
     Then I should see "http://backpackweburl.cat"
     And "Delete" "icon" should exist in the "http://backpackweburl.cat" "table_row"
@@ -142,23 +144,20 @@ Feature: Backpack badges
     And I log in as "admin"
     And I navigate to "Badges > Manage backpacks" in site administration
     When I press "Add a new backpack"
-    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
-    And I set the field "backpackweburl" to "http://backpackweburl.cat"
     And I set the field "apiversion" to "2.1"
+    And I set the field "backpackweburl" to "http://backpackweburl.cat"
+    And I should not see "Backpack API URL"
     Then "Include authentication details with the backpack" "checkbox" should not be visible
     And I should not see "Badge issuer email address"
     And I should not see "Badge issuer password"
-    And I set the field "apiversion" to "1"
-    And "Include authentication details with the backpack" "checkbox" should be visible
-    And I click on "includeauthdetails" "checkbox"
-    And I should see "Badge issuer email address"
-    And I should not see "Badge issuer password"
     And I set the field "apiversion" to "2"
     And "Include authentication details with the backpack" "checkbox" should be visible
+    And I click on "includeauthdetails" "checkbox"
     And I should see "Badge issuer email address"
     And I should see "Badge issuer password"
     And I set the field "backpackemail" to "test@test.com"
     And I set the field "password" to "123456"
+    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
     And I press "Save changes"
     And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
     And the field "Include authentication details with the backpack" matches value "1"
@@ -168,7 +167,6 @@ Feature: Backpack badges
     And the field "Include authentication details with the backpack" matches value "0"
     And I click on "includeauthdetails" "checkbox"
     And I should not see "test@test.com"
-    And I log out
 
   @javascript
   Scenario: View backpack form as a student
@@ -176,9 +174,11 @@ Feature: Backpack badges
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
     When I set the field "externalbackpackid" to "https://dc.imsglobal.org"
-    Then I should not see "Email address"
+    Then I should not see "Log in to your backpack"
+    And I should not see "Email address"
     And I should not see "Password"
-    And I set the field "externalbackpackid" to "https://test.com/"
+    But I set the field "externalbackpackid" to "https://test.com/"
+    And I should see "Log in to your backpack"
     And I should see "Email address"
     And I should see "Password"
 
@@ -187,6 +187,8 @@ Feature: Backpack badges
     Given I log in as "student1"
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
+    When I click on "Connect to backpack" "button"
+    Then I should see "Backpack provider can't be blank"
     And I set the field "externalbackpackid" to "https://test.com/"
     And I set the field "password" to ""
     When I click on "Connect to backpack" "button"

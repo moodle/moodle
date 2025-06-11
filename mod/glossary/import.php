@@ -188,6 +188,11 @@ if ($xml = glossary_read_imported_file($result)) {
             throw new \moodle_exception('errorparsingxml', 'glossary');
         }
         $newentry->definition = trusttext_strip($definition);
+
+        if (isset($xmlentry['#']['DEFINITIONTRUST'][0]['#'])) {
+            $newentry->definitiontrust = !empty($xmlentry['#']['DEFINITIONTRUST'][0]['#']) && trusttext_trusted($context);
+        }
+
         if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
             $newentry->casesensitive = $xmlentry['#']['CASESENSITIVE'][0]['#'];
         } else {

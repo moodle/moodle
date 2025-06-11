@@ -2020,6 +2020,13 @@ final class S3Request
 	 */
 	public $response;
 
+	/**
+	 * Filename or resource to write to.
+	 *
+	 * @var string
+	 * @access public
+	 */
+	public $file;
 
 	/**
 	* Constructor

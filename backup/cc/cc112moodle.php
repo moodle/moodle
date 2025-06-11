@@ -60,7 +60,7 @@ class cc112moodle extends cc2moodle {
         parent::__construct($path_to_manifest);
     }
 
-    public function generate_moodle_xml () {
+    public function generate_moodle_xml() {
 
         global $CFG;
         $cdir = static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files';
@@ -123,7 +123,7 @@ class cc112moodle extends cc2moodle {
         if (array_key_exists("index", self::$instances)) {
 
             if (!file_put_contents(static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', $result_xml)) {
-                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_tmp_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
+                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
             } else {
                 $status = true;
             }
@@ -137,7 +137,7 @@ class cc112moodle extends cc2moodle {
 
     }
 
-    public function convert_to_moodle_type ($cc_type) {
+    public function convert_to_moodle_type($cc_type) {
         $type = parent::convert_to_moodle_type($cc_type);
 
         if ($type == TYPE_UNKNOWN) {
@@ -149,7 +149,7 @@ class cc112moodle extends cc2moodle {
         return $type;
     }
 
-    protected function create_node_question_categories () {
+    protected function create_node_question_categories() {
 
         $quiz = new cc11_quiz();
 
@@ -160,7 +160,7 @@ class cc112moodle extends cc2moodle {
         return $node_course_question_categories;
     }
 
-    protected function create_code_info_details_mod () {
+    protected function create_code_info_details_mod() {
         $result = parent::create_code_info_details_mod();
 
         $count_blti = $this->count_instances(MOODLE_TYPE_LTI);
@@ -199,7 +199,7 @@ class cc112moodle extends cc2moodle {
         return $mod_visible;
     }
 
-    protected function create_node_course_modules_mod () {
+    protected function create_node_course_modules_mod() {
         $labels = new cc_label();
         $resources = new cc11_resource();
         $forums = new cc11_forum();

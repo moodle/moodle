@@ -77,9 +77,9 @@
             <header id="post-header-{{id}}-{{uniqid}}">
                 {{^isdeleted}}
                     <div class="d-flex flex-wrap align-items-center mb-1">
-                        <div class="mr-2" tabindex="-1">
+                        <div class="me-2" tabindex="-1">
                             {{#author}}
-                                <h4 class="h6 d-lg-inline-block mb-0 author-header mr-1">
+                                <h4 class="h6 d-lg-inline-block mb-0 author-header ms-1">
                                     {{#parentauthorname}}
                                         {{#isprivatereply}}
                                             <span class="text-danger">
@@ -113,10 +113,10 @@
                             {{/core/time_element}}
                         </div>
 
-                        <div class="d-flex align-items-center ml-auto">
+                        <div class="d-flex align-items-center ms-auto">
                             {{#author.groups}}
                                 {{#urls.image}}
-                                    <div class="mr-2">
+                                    <div class="me-2">
                                         {{#urls.group}}
                                             <a href="{{urls.group}}" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
                                                 <img
@@ -251,7 +251,7 @@
                 {{/hasreplycount}}
             </header>
 
-            <div class="post-message pr-md-5" id="post-content-{{id}}">
+            <div class="post-message pe-md-5" id="post-content-{{id}}">
                 {{{message}}}
             </div>
 
@@ -307,14 +307,14 @@
                             <div>{{{.}}}</div>
                         {{/html.rating}}
                     {{/readonly}}
-                    <div class="ml-auto d-flex flex-column">
+                    <div class="ms-auto d-flex flex-column">
                         {{#haswordcount}}
-                            <span class="ml-auto badge badge-light">
+                            <span class="ms-auto badge bg-light text-dark">
                                 {{#str}} numwords, core, {{wordcount}} {{/str}}
                             </span>
                         {{/haswordcount}}
                         {{#html.taglist}}
-                            <div class="d-inline-block ml-auto {{#haswordcount}}mt-2{{/haswordcount}}">{{{.}}}</div>
+                            <div class="d-inline-block ms-auto {{#haswordcount}}mt-2{{/haswordcount}}">{{{.}}}</div>
                         {{/html.taglist}}
                     </div>
                 </div>
@@ -346,7 +346,7 @@
                     {{/readonly}}
                 {{/isdeleted}}
                 {{#discussionlocked}}
-                    <div><span class="badge badge-danger mt-2">{{#str}} locked, mod_forum {{/str}}</span></div>
+                    <div><span class="badge bg-danger text-white mt-2">{{#str}} locked, mod_forum {{/str}}</span></div>
                 {{/discussionlocked}}
             {{/footer}}
         </div>

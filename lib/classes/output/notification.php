@@ -33,8 +33,7 @@ namespace core\output;
  * @package core
  * @category output
  */
-class notification implements \renderable, \templatable {
-
+class notification implements renderable, templatable {
     /**
      * A notification of level 'success'.
      */
@@ -61,6 +60,16 @@ class notification implements \renderable, \templatable {
     protected $message = '';
 
     /**
+     * @var string Title payload.
+     */
+    protected ?string $title = null;
+
+    /**
+     * @var string Title icon name.
+     */
+    protected ?string $titleicon = null;
+
+    /**
      * @var string Message type.
      */
     protected $messagetype = self::NOTIFY_WARNING;
@@ -78,7 +87,7 @@ class notification implements \renderable, \templatable {
     /**
      * @var array $extraclasses A list of any extra classes that may be required.
      */
-    protected $extraclasses = array();
+    protected $extraclasses = [];
 
     /**
      * Notification constructor.
@@ -86,8 +95,17 @@ class notification implements \renderable, \templatable {
      * @param string $message the message to print out
      * @param ?string $messagetype one of the NOTIFY_* constants..
      * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
+     * @param ?string $title the title of the notification
+     * @param ?string $titleicon if the title should have an icon you can give the icon name with the component
+     *  (e.g. 'i/circleinfo, core' or 'i/circleinfo' if the icon is from core
      */
-    public function __construct($message, $messagetype = null, $closebutton = true) {
+    public function __construct(
+        $message,
+        $messagetype = null,
+        $closebutton = true,
+        ?string $title = null,
+        ?string $titleicon = null
+    ) {
         $this->message = $message;
 
         if (empty($messagetype)) {
@@ -97,6 +115,10 @@ class notification implements \renderable, \templatable {
         $this->messagetype = $messagetype;
 
         $this->closebutton = $closebutton;
+
+        $this->title = $title;
+
+        $this->titleicon = $titleicon;
     }
 
     /**
@@ -129,7 +151,7 @@ class notification implements \renderable, \templatable {
      * @param array $classes
      * @return $this
      */
-    public function set_extra_classes($classes = array()) {
+    public function set_extra_classes($classes = []) {
         $this->extraclasses = $classes;
 
         return $this;
@@ -156,11 +178,23 @@ class notification implements \renderable, \templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        return array(
+        $titleicon = null;
+        if (!empty($this->titleicon)) {
+            $icon = $this->titleicon;
+            $component = 'core';
+            if (strpos($icon, ',') !== false) {
+                list($icon, $component) = explode(',', $icon);
+            }
+            $titleicon = (object) [
+                'icon' => $icon,
+                'component' => $component,
+            ];
+        }
+        return [
             'message'       => clean_text($this->message),
             'extraclasses'  => implode(' ', $this->extraclasses),
             'announce'      => $this->announce,
@@ -169,9 +203,16 @@ class notification implements \renderable, \templatable {
             'isinfo'            => $this->messagetype === 'info',
             'iswarning'         => $this->messagetype === 'warning',
             'iserror'           => $this->messagetype === 'error',
-        );
+            'title'             => $this->title,
+            'titleicon'         => $titleicon,
+        ];
     }
 
+    /**
+     * Get the name of the template to use for this templatable.
+     *
+     * @return string
+     */
     public function get_template_name() {
         $templatemappings = [
             // Current types mapped to template names.

@@ -34,12 +34,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -77,7 +77,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -167,7 +167,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -232,7 +232,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -304,7 +304,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that only users with a course and module context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -394,7 +394,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();

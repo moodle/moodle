@@ -16,6 +16,7 @@
 
 namespace Moodle\BehatExtension\Driver;
 
+use Behat\Mink\Exception\DriverException;
 use OAndreyev\Mink\Driver\WebDriver as UpstreamDriver;
 
 // phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
@@ -78,5 +79,16 @@ class WebDriver extends UpstreamDriver {
      */
     public function post_key($key, $xpath) {
         throw new \Exception('No longer used - please use keyDown and keyUp');
+    }
+
+    #[\Override]
+    public function stop(): void {
+        try {
+            parent::stop();
+        } catch (DriverException $e) {
+            error_log($e->getMessage());
+            $rcp = new \ReflectionProperty(parent::class, 'webDriver');
+            $rcp->setValue($this, null);
+        }
     }
 }

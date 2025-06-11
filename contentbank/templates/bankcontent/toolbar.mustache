@@ -58,13 +58,21 @@
     {{#dropdown}}
         {{>core_contentbank/bankcontent/toolbar_dropdown}}
     {{/dropdown}}
-    {{^dropdown}}
+    {{#button}}
         <a href="{{ link }}" class="icon-no-margin btn btn-secondary text-nowrap" title="{{ name }}" data-action="{{ action }}">
             {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
         </a>
-    {{/dropdown}}
+    {{/button}}
+    {{#checkbox}}
+        <div class="me-3 align-middle pt-1 text-nowrap">
+            <input type="checkbox" id="{{ id }}" class="{{ class }}" name="{{ name }}"
+                data-action="{{ action }}" {{#checked}}checked="checked"{{/checked}}>
+
+            <label for="{{ id }}">{{ label }}</label>
+        </div>
+    {{/checkbox}}
 {{/tools}}
-<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}} ml-2"
+<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}} ms-2"
 title="{{#str}}  displayicons, contentbank  {{/str}}"
 data-action="viewgrid">
     {{#pix}}a/view_icon_active, core, {{#str}} displayicons, contentbank {{/str}} {{/pix}}
@@ -72,5 +80,5 @@ data-action="viewgrid">
 <button class="icon-no-margin btn btn-secondary {{#viewlist}}active{{/viewlist}}"
 title="{{#str}} displaydetails, contentbank {{/str}}"
 data-action="viewlist">
-    {{#pix}}t/viewdetails, core, {{#str}} displaydetails, contentbank {{/str}} {{/pix}}
+    {{#pix}}a/view_list_active, core, {{#str}} displaydetails, contentbank {{/str}} {{/pix}}
 </button>

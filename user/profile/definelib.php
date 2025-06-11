@@ -510,52 +510,6 @@ function profile_save_category(stdClass $data): void {
 }
 
 /**
- * Edit a category
- *
- * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
- * @todo MDL-71413 This will be deleted in Moodle 4.3.
- * @see profile_save_category()
- *
- * @param int $id
- * @param string $redirect
- */
-function profile_edit_category($id, $redirect) {
-    global $DB, $OUTPUT, $CFG;
-
-    debugging('Function profile_edit_category() is deprecated without replacement, see also profile_save_category()',
-        DEBUG_DEVELOPER);
-
-    $categoryform = new \core_user\form\profile_category_form();
-
-    if ($category = $DB->get_record('user_info_category', array('id' => $id))) {
-        $categoryform->set_data($category);
-    }
-
-    if ($categoryform->is_cancelled()) {
-        redirect($redirect);
-    } else {
-        if ($data = $categoryform->get_data()) {
-            profile_save_category($data);
-            redirect($redirect);
-        }
-
-        if (empty($id)) {
-            $strheading = get_string('profilecreatenewcategory', 'admin');
-        } else {
-            $strheading = get_string('profileeditcategory', 'admin', format_string($category->name));
-        }
-
-        // Print the page.
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($strheading);
-        $categoryform->display();
-        echo $OUTPUT->footer();
-        die;
-    }
-
-}
-
-/**
  * Save updated field definition or create a new field
  *
  * @param stdClass $data data from the form profile_field_form
@@ -594,53 +548,6 @@ function profile_save_field(stdClass $data, array $editors): void {
     $formfield->define_save($data);
     profile_reorder_fields();
     profile_reorder_categories();
-}
-
-/**
- * Edit a profile field.
- *
- * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
- * @todo MDL-71413 This will be deleted in Moodle 4.3.
- * @see profile_save_field()
- *
- * @param int $id
- * @param string $datatype
- * @param string $redirect
- */
-function profile_edit_field($id, $datatype, $redirect) {
-    global $OUTPUT, $PAGE;
-
-    debugging('Function profile_edit_field() is deprecated without replacement, see also profile_save_field()',
-        DEBUG_DEVELOPER);
-
-    $fieldform = new \core_user\form\profile_field_form();
-    $fieldform->set_data_for_dynamic_submission();
-
-    if ($fieldform->is_cancelled()) {
-        redirect($redirect);
-
-    } else {
-        if ($data = $fieldform->get_data()) {
-            profile_save_field($data, $fieldform->editors());
-            redirect($redirect);
-        }
-
-        $datatypes = profile_list_datatypes();
-
-        if (empty($id)) {
-            $strheading = get_string('profilecreatenewfield', 'admin', $datatypes[$datatype]);
-        } else {
-            $strheading = get_string('profileeditfield', 'admin', format_string($fieldform->get_field_record()->name));
-        }
-
-        // Print the page.
-        $PAGE->navbar->add($strheading);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($strheading);
-        $fieldform->display();
-        echo $OUTPUT->footer();
-        die;
-    }
 }
 
 /**

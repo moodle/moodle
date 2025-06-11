@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class object_must_have_valid_title_test
  */
-class object_must_have_valid_title_test extends all_checks {
+final class object_must_have_valid_title_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'object_must_have_valid_title';
 
@@ -129,7 +129,7 @@ EOD;
     /**
      * Test that embed element within object element.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'object');
     }
@@ -137,7 +137,7 @@ EOD;
     /**
      * Test for embed element within object element.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass1);
         $this->assertEmpty($results);
 

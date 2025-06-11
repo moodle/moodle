@@ -1,82 +1,174 @@
 /**
-* Reportbuilder.
+* Reportbuilder styles.
 */
 
-/* Table */
+//
+// General styles
+//
+
+// Button styles when a toggle button is active.
+.reportbuilder-wrapper {
+    .btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
+    .dropdown.show .btn-outline-secondary[data-toggle="dropdown"] {
+        color: color-yiq($gray-600);
+        background-color: $gray-600;
+        border-color: $gray-600;
+    }
+}
+
+//
+// Table
+//
+
 .reportbuilder-table {
     td {
         @extend .align-middle;
     }
     .action-menu .menubar {
         justify-content: end;
+        .btn.btn-icon {
+            height: $icon-medium-height;
+            width: $icon-medium-width;
+            @include border-radius();
+        }
     }
 }
 
-/* Filters */
-.reportbuilder-wrapper {
-    .filters-dropdown {
-        width: 27rem;
-        padding: 0;
-        z-index: $zindex-modal;
-        overflow: hidden;
-        @include media-breakpoint-down(sm) {
-            width: 100%;
+//
+// Filters
+//
+
+$rb-filters-dropdown-width: 27rem !default;
+$rb-filters-dropdown-height: 30rem !default;
+$rb-filters-footer-height: 4rem;
+
+.reportbuilder-wrapper .filters-dropdown {
+    width: $rb-filters-dropdown-width;
+    padding: 0 0 $rb-filters-footer-height 0;
+    z-index: $zindex-modal;
+    overflow: hidden;
+    @include media-breakpoint-down(sm) {
+        width: 100%;
+    }
+}
+.reportbuilder-filters-sidebar {
+    max-height: $rb-filters-dropdown-height;
+    overflow-y: auto;
+    border-bottom: 1px solid $dropdown-border-color;
+    @include thin-scrolls($white);
+    @include scroll-shadow();
+
+    .filter {
+        &:not(:nth-last-child(2)) {
+            border-bottom: 1px solid $dropdown-border-color;
         }
-        .reportbuilder-filters-sidebar {
-            max-height: calc(100vh - #{$navbar-height} - 1rem);
+        .filter-name:hover {
+            white-space: normal;
+            text-overflow: clip;
+            word-break: break-all;
+        }
+    }
+    .fitem[data-groupname="buttonar"] {
+        position: absolute;
+        bottom: 0;
+        height: $rb-filters-footer-height;
+        align-items: center;
+        .col-form-label {
+            display: none !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+//
+// Inline forms
+//
+
+.reportbuilder-filters-wrapper,
+.reportbuilder-conditions-list {
+    .mform.full-width-labels {
+        .fdate_selector {
+            flex-wrap: wrap;
+        }
+        .fitem {
+            margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+            max-width: 100%;
+        }
+        .fitem:not(.row):last-child {
+            flex: 1;
+            min-width: 0;
+            span,
+            .custom-select {
+                width: 100%;
+            }
+        }
+    }
+}
+
+//
+// Custom Reports
+//
+
+$rb-left-sidebar-width: 250px !default;
+$rb-right-sidebar-width: 350px !default;
+
+// Reportbuilder full page layout
+
+@include media-breakpoint-up(lg) {
+    $tabs-height: 83px;
+    $sidebar-margin-top: $navbar-height + $tabs-height + 20px;
+    .path-admin-reportbuilder.pagelayout-popup {
+        // Fix for behat-site defined in theme/boost/scss/moodle/debug.scss:7 is not needed. Override it.
+        &.behat-site .fixed-top {
+            position: fixed;
+        }
+        #region-main {
+            border: none;
+            padding: 0;
+        }
+        #maincontent {
+            visibility: hidden;
+        }
+        .dynamictabs .nav-tabs {
+            position: fixed;
+            z-index: $zindex-fixed;
+            width: calc(100% - 35px);
+            padding-top: 1.25rem;
+            background-color: $white;
+            // Small hack to simulate padding bottom after nav-tabs border.
+            box-shadow: 0 1.25rem 0 $white;
+        }
+        .dynamictabs .tab-content {
+            padding-top: $tabs-height;
+        }
+        .reportbuilder-sidebar-menu {
+            position: fixed;
+            .reportbuilder-sidebar-menu-cards {
+                max-height: calc(100vh - #{$sidebar-margin-top} - 52px); // 52px corresponds to "search" input size.
+            }
+        }
+        .reportbuilder-sidebar-settings {
+            position: fixed;
+            right: 30px;
+            max-height: calc(100vh - #{$sidebar-margin-top});
+        }
+        .reportbuilder-report[data-editing] .reportbuilder-report-container {
+            max-height: calc(100vh - #{$sidebar-margin-top});
             overflow-y: auto;
-            @include thin-scrolls($white);
+            @include thin-scrolls($gray-100);
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
+            margin-right: calc(#{$rb-right-sidebar-width} + 1rem);
         }
-    }
-    .reportbuilder-filters-wrapper,
-    .reportbuilder-conditions-list {
-        .mform {
-            &.full-width-labels {
-                .fitem.row {
-                    > .col-md-3,
-                    > .col-md-9 {
-                        flex: 0 0 100%;
-                        max-width: 100%;
-                    }
-                    .fdate_selector {
-                        flex-wrap: wrap;
-                    }
-                }
-            }
-            .form-group {
-                margin-bottom: 0;
-                max-width: 100%;
-                > span {
-                    max-width: 100%;
-                }
-            }
-        }
-        .filter {
-            .filter-header {
-                font-size: $h5-font-size;
-                .filter-name {
-                    font-size: 1rem;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    padding-right: 1rem;
-                }
-                .filter-name:hover {
-                    white-space: normal;
-                    text-overflow: clip;
-                    word-break: break-all;
-                }
-            }
+        .reportbuilder-audiences-container {
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
         }
     }
 }
+// Fix popper.js behaviour in fullpage report (using 'popup' page layout).
+#page-admin-reportbuilder-edit #page {
+    overflow-y: auto;
+}
 
-/**
-* Custom Reports.
-*/
-
-$rb-left-sidebar-width: 250px;
-$rb-right-sidebar-width: 350px;
+// Main content in "Editor" tab (report table)
 
 .reportbuilder-report-container {
     @extend .flex-fill;
@@ -89,8 +181,7 @@ $rb-right-sidebar-width: 350px;
 .reportbuilder-editor-table-container {
     overflow-x: auto;
 }
-
-/* Custom table headers */
+// Custom table headers.
 .reportbuilder-table th {
     button[data-action="report-remove-column"],
     span[data-drag-type="move"] {
@@ -107,7 +198,8 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/* Sidebar menu */
+// Left sidebar menu in "Editor" tab (columns)
+
 .reportbuilder-sidebar-menu {
     @include media-breakpoint-up(lg) {
         width: $rb-left-sidebar-width;
@@ -127,7 +219,8 @@ $rb-right-sidebar-width: 350px;
     @include thin-scrolls($gray-100);
 }
 
-/* Settings sidebar */
+// Right sidebar menu in "Editor" tab  (settings)
+
 .reportbuilder-sidebar-settings {
     overflow-y: auto;
     @include thin-scrolls($gray-100);
@@ -135,6 +228,21 @@ $rb-right-sidebar-width: 350px;
         width: $rb-right-sidebar-width;
         flex-shrink: 0;
     }
+
+    // Improve autocomplete styles.
+    div[data-region="settings-conditions"] .reportbuilder-conditions-select,
+    div[data-region="settings-filters"] .reportbuilder-filters-select {
+        .form-autocomplete-selection {
+            display: none;
+        }
+        .form-autocomplete-input {
+            width: 100%;
+        }
+        .form-autocomplete-suggestions {
+            width: calc(100% - 2 * #{map-get($spacers, 2)});
+        }
+    }
+
     .list-group-item {
         padding: .75rem;
         .icon {
@@ -172,85 +280,36 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/* Add button styles when a toggle button is active. */
-.reportbuilder-wrapper {
-    button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
-    .dropdown.show button.btn-outline-secondary[data-toggle="dropdown"] {
-        color: color-yiq($gray-600);
-        background-color: $gray-600;
-        border-color: $gray-600;
+// Drag&drop styles
+
+$rb-sortable-list-drag-color: lighten($primary, 40%);
+
+@keyframes sortable-list-drag-color-reset {
+    from {
+        background-color: $rb-sortable-list-drag-color;
+    }
+    to {
+        background-color: inherit;
     }
 }
 
-/* Drag&drop styles. */
 .reportbuilder-sortable-list li,
 .reportbuilder-table th,
 .reportbuilder-conditions-list .condition {
     &.sortable-list-current-position {
-        background-color: lighten($primary, 40%);
+        background-color: $rb-sortable-list-drag-color;
     }
     &.sortable-list-is-dragged {
         background-color: $white;
         opacity: 0.85;
     }
-}
-
-/* Reportbuilder full page styles. */
-@include media-breakpoint-up(lg) {
-    $tabs-height: 83px;
-    $sidebar-margin-top: $navbar-height + $tabs-height + 20px;
-    .path-admin-reportbuilder.pagelayout-popup {
-        // Fix for behat-site defined in theme/boost/scss/moodle/debug.scss:7 is not needed. Override it.
-        &.behat-site .fixed-top {
-            position: fixed;
-        }
-        #region-main {
-            border: none;
-            padding: 0;
-        }
-        #maincontent {
-            visibility: hidden;
-        }
-        .dynamictabs .nav-tabs {
-            position: fixed;
-            z-index: $zindex-fixed;
-            width: calc(100% - 35px);
-            padding-top: 1.25rem;
-            background-color: $white;
-            box-shadow: 0 1.25rem 0 $white; // Small hack to simulate padding bottom after nav-tabs border.
-        }
-        .dynamictabs .tab-content {
-            padding-top: $tabs-height;
-        }
-        .reportbuilder-sidebar-menu {
-            position: fixed;
-            .reportbuilder-sidebar-menu-cards {
-                max-height: calc(100vh - #{$sidebar-margin-top} - 52px); // 52px corresponds to "search" input size.
-            }
-        }
-        .reportbuilder-sidebar-settings {
-            position: fixed;
-            right: 30px;
-            max-height: calc(100vh - #{$sidebar-margin-top});
-        }
-        .reportbuilder-report[data-editing] .reportbuilder-report-container {
-            max-height: calc(100vh - #{$sidebar-margin-top});
-            overflow-y: auto;
-            @include thin-scrolls($gray-100);
-            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
-            margin-right: calc(#{$rb-right-sidebar-width} + 1rem);
-        }
-        .reportbuilder-audiences-container {
-            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
-        }
+    &.sortable-list-is-dropped {
+        animation: sortable-list-drag-color-reset 1s ease;
     }
 }
-// Fix popper.js behaviour in fullpage report (using 'popup' page layout).
-#page-admin-reportbuilder-edit #page {
-    overflow-y: auto;
-}
 
-/* Toggle cards. */
+// Toggle cards
+
 .reportbuilder-toggle-card {
     .card-header {
         border-bottom: none;
@@ -261,7 +320,6 @@ $rb-right-sidebar-width: 350px;
     .toggle-card-button {
         i.toggle-card-icon {
             color: $gray-600;
-            font-size: 1.5em;
             font-weight: 700;
         }
         // Toggle icons using standard bootstrap collapse.
@@ -282,19 +340,17 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/**
-* Audiences.
-*/
+// Audiences tab
 
 .reportbuilder-audiences-container {
-    /* 'OR' separator. */
+    // 'OR' separator.
     .audience-separator {
         text-transform: uppercase;
         &::before,
         &::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid rgba(0, 0, 0, .125);
+            border-bottom: 1px solid $report-audience-border-color;
         }
         &:not(:empty)::before {
             margin-right: 1rem;
@@ -303,7 +359,7 @@ $rb-right-sidebar-width: 350px;
             margin-left: 1rem;
         }
     }
-    /* Card action icons. */
+    // Card action icons.
     .instance-card {
         .card-header {
             i.icon {
@@ -313,7 +369,12 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/* Report table card view styles */
+//
+// Card view.
+//
+
+// Mixin to covert a report table in a card
+
 @mixin table-cards {
     table.reportbuilder-table {
         thead {
@@ -379,9 +440,19 @@ $rb-right-sidebar-width: 350px;
     }
 }
 
-/* Report table card view for small screens */
+// Logic to apply card-view mixin when necessary
+
 .reportbuilder-report[data-report-type="0"]:not([data-editing]) {
+    // Report card view for small screens (if not forcing table).
     @include media-breakpoint-down(xs) {
-        @include table-cards;
+        &:not([data-force-table]) {
+            @include table-cards;
+        }
+    }
+    // Report card view for bigger screens (if forcing card).
+    @include media-breakpoint-up(sm) {
+        &[data-force-card] {
+            @include table-cards;
+        }
     }
 }

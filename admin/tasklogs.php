@@ -24,6 +24,7 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
+require_once("tool/task/lib.php");
 
 use core_admin\reportbuilder\local\systemreports\task_logs;
 use core_reportbuilder\system_report_factory;
@@ -49,9 +50,41 @@ if (null !== $logid) {
     if ($download) {
         $filename = str_replace('\\', '_', $log->classname) . "-{$log->id}.log";
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
+        readstring_accel($log->output, 'text/plain');
+        exit;
     }
 
-    readstring_accel($log->output, 'text/plain');
+    try {
+        $class = new $log->classname;
+        $title = $class->get_name();
+    } catch (Exception $e) {
+        $title = $log->classname;
+    }
+    $title .= " ($log->id)";
+
+    $PAGE->navbar->add($title, '');
+    echo $OUTPUT->header();
+    echo html_writer::start_tag('pre', ['class' => 'task-output', 'style' => 'min-height: 24lh']);
+
+    echo tool_task_mtrace_wrapper($log->output);
+    echo html_writer::end_tag('pre');
+    echo $OUTPUT->action_link(
+        new moodle_url('/admin/tasklogs.php'),
+        $strheading,
+        null,
+        null,
+        new pix_icon('i/log', ''),
+    );
+    echo ' ';
+    echo $OUTPUT->action_link(
+        new moodle_url('/admin/tasklogs.php', ['logid' => $log->id, 'download' => true]),
+        new lang_string('download'),
+        null,
+        null,
+        new pix_icon('t/download', ''),
+    );
+
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -60,7 +93,7 @@ $report = system_report_factory::create(task_logs::class, context_system::instan
 
 if (!empty($filter)) {
     $report->set_filter_values([
-        'task_log:name_values' => $filter,
+        'task_log:name_values' => trim($filter, '\\'),
     ]);
 }
 

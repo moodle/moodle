@@ -24,7 +24,7 @@ $template = $DB->get_record('gradereport_builder_template', $tp, '*', MUST_EXIST
 $result = grade_report_gradebook_builder::build_gradebook($courseid, $template);
 
 if (is_string($result)) {
-    print_error($result, 'gradereport_gradebook_builder');
+    moodle_exception($result, 'gradereport_gradebook_builder');
 }
 
 redirect(new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)));

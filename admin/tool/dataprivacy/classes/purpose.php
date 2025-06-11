@@ -54,7 +54,7 @@ class purpose extends \core\persistent {
      * @param int $id If set, this is the id of an existing record, used to load the data.
      * @param stdClass $record If set will be passed to {@link self::from_record()}.
      */
-    public function __construct($id = 0, stdClass $record = null) {
+    public function __construct($id = 0, ?stdClass $record = null) {
         global $CFG;
 
         if ($id) {
@@ -185,7 +185,7 @@ class purpose extends \core\persistent {
      *
      * @return  array
      */
-    public function get_purpose_overrides() : array {
+    public function get_purpose_overrides(): array {
         return purpose_override::get_overrides_for_purpose($this);
     }
 }

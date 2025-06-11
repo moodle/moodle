@@ -138,5 +138,17 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
                        get_string('configenabletimedposts', 'forum'), 1));
+
+    $settings->add(new admin_setting_heading('defaultsettings', get_string('announcementsettings', 'mod_forum'),
+                        get_string('announcementsettings_help', 'mod_forum')));
+
+    // Default number of attachments allowed per post in announcement forums.
+    $settings->add(new admin_setting_configtext('forum_announcementmaxattachments', get_string('maxattachments', 'forum'),
+                       get_string('configmaxattachments', 'forum'), 1, PARAM_INT));
+
+    // Default Subscription mode setting for announcement forums.
+    $options = forum_get_subscriptionmode_options();
+    $settings->add(new admin_setting_configselect('forum_announcementsubscription', get_string('subscriptionmode', 'forum'),
+        get_string('configsubscriptiontype', 'forum'), FORUM_FORCESUBSCRIBE, $options));
 }
 

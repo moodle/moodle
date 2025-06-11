@@ -24,15 +24,12 @@ Feature: In a lesson activity, teachers can view detailed statistics report
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
 
   Scenario: View detailed statistics in a lesson when empty string is given as answer
-    Given I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Numerical question |
-      | Page contents | What is 1 + 0.5? |
-      | id_answer_editor_0 | 1.5 |
-      | id_jumpto_0 | End of lesson |
-    And I press "Save page"
+    Given the following "mod_lesson > page" exist:
+      | lesson           | qtype   | title              | content          |
+      | Test lesson name | numeric | Numerical question | What is 1 + 0.5? |
+    And the following "mod_lesson > answer" exist:
+      | page               | answer | jumpto          | score |
+      | Numerical question | 1.5    | End of lesson   | 1     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I press "Submit"
     And I log out

@@ -38,7 +38,7 @@ use core_privacy\local\request\writer;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Rate something as a user.
@@ -70,7 +70,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that the get_sql_join function returns valid SQL which returns the correct list of rated itemids.
      */
-    public function test_get_sql_join() {
+    public function test_get_sql_join(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -158,7 +158,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Ensure that the get_sql_join function returns valid SQL which returns the correct list of rated itemids.
      * This makes use of the optional inner join argument.
      */
-    public function test_get_sql_join_inner() {
+    public function test_get_sql_join_inner(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -245,7 +245,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that export_area_ratings exports all ratings that a user has made, and all ratings for a users own content.
      */
-    public function test_export_area_ratings() {
+    public function test_export_area_ratings(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -283,6 +283,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = [];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course1->id, true);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $rating = $writer->get_related_data($subcontext, 'rating');
@@ -293,6 +294,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course2->id, true);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -304,6 +306,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course3->id, true);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -315,6 +318,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo', 'files'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'files', $course3->id, true);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -327,6 +331,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['user'];
         provider::export_area_ratings($u3->id, $context, $subcontext, 'user', 'user', $u3->id, false);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -338,7 +343,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_ratings() method.
      */
-    public function test_delete_ratings() {
+    public function test_delete_ratings(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -385,7 +390,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_ratings_select() method.
      */
-    public function test_delete_ratings_select() {
+    public function test_delete_ratings_select(): void {
         global $DB;
         $this->resetAfterTest();
 

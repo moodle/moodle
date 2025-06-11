@@ -186,7 +186,7 @@ class local_content {
         if (isset($parts[4])) {
             $args[] = $parts[4];
         }
-        return call_user_func_array(['self', 'get_html_content'], $args);
+        return call_user_func_array([local_content::class, 'get_html_content'], $args);
     }
 
     /**

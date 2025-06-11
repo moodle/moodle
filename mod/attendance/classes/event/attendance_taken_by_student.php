@@ -73,19 +73,9 @@ class attendance_taken_by_student extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/take.php', array('id' => $this->contextinstanceid,
+        return new \moodle_url('/take.php', ['id' => $this->contextinstanceid,
                                                                  'sessionid' => $this->other['sessionid'],
-                                                                 'grouptype' => $this->other['grouptype']));
-    }
-
-    /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'attendance', 'taken', $this->get_url(),
-            '', $this->contextinstanceid);
+                                                                 'grouptype' => $this->other['grouptype']]);
     }
 
     /**
@@ -94,7 +84,7 @@ class attendance_taken_by_student extends \core\event\base {
      * @return array of parameters for object mapping.
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'attendance', 'restore' => 'attendance');
+        return ['db' => 'attendance', 'restore' => 'attendance'];
     }
 
     /**

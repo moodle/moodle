@@ -287,8 +287,8 @@ function core_login_process_password_set($token) {
             throw new \moodle_exception('errorpasswordupdate', 'auth');
         }
         user_add_password_history($user->id, $data->password);
-        if (!empty($CFG->passwordchangelogout)) {
-            \core\session\manager::kill_user_sessions($user->id, session_id());
+        if (!empty($CFG->passwordchangelogout) || !empty($data->logoutothersessions)) {
+            \core\session\manager::destroy_user_sessions($user->id, session_id());
         }
         // Reset login lockout (if present) before a new password is set.
         login_unlock_account($user);
@@ -361,6 +361,9 @@ function core_login_get_return_url() {
             if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                 $urltogo = $CFG->wwwroot.'/my/courses.php';
             }
+        }
+        if ($homepage === HOMEPAGE_URL) {
+            $urltogo = (string) get_default_home_page_url();
         }
     }
     return $urltogo;

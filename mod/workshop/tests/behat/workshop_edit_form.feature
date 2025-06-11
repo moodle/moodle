@@ -17,17 +17,15 @@ Feature: Workshop assessment with grade to pass
       | student1 | c1     | student        |
       | teacher1 | c1     | editingteacher |
 
-  @javascript
   Scenario: Setup workshop with assessment grade and pass grade set
     And I log in as "teacher1"
-    And I am on "Course1" course homepage with editing mode on
-    And I add a "Workshop" to section "0"
-    And I expand all fieldsets
+    And I add a workshop activity to course "Course1" section "0"
     When I set the following fields to these values:
-      | Workshop name          | Test workshop                                     |
-      | Completion tracking    | Show activity as complete when conditions are met |
-      | Require grade          | Assessment                                        |
-      | completionpassgrade    | 1                                                 |
+      | Workshop name             | Test workshop |
+      | Add requirements          | 1             |
+      | Receive a grade           | 1             |
+      | completiongradeitemnumber | Assessment    |
+      | Passing grade             | 1             |
     And I press "Save and display"
     And I should see "This activity does not have a valid grade to pass set. It may be set in the Grade section of the activity settings."
     And I set the field "Assessment grade to pass" to ""
@@ -44,4 +42,4 @@ Feature: Workshop assessment with grade to pass
     And I should see "You must enter a number here."
     And I set the field "Assessment grade to pass" to "10"
     And I press "Save and display"
-    Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
+    Then "Setup phase" "heading" should exist

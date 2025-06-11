@@ -165,7 +165,7 @@ if (!empty($capabilities)) {
     $attrs = array('type'=>'submit', 'name'=>'savechanges', 'value'=>get_string('savechanges'), 'class'=>'btn btn-primary');
     echo html_writer::empty_tag('input', $attrs);
     $attrs = array('type' => 'submit', 'name' => 'cancel', 'value' => get_string('cancel'),
-        'class' => 'btn btn-secondary ml-1');
+        'class' => 'btn btn-secondary ms-1');
     echo html_writer::empty_tag('input', $attrs);
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');

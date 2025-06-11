@@ -36,7 +36,7 @@ use \core_privacy\local\request\userlist_base;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\userlist_base
  */
-class userlist_base_test extends advanced_testcase {
+final class userlist_base_test extends advanced_testcase {
     /**
      * Ensure that get_userids returns the list of unique userids.
      *
@@ -46,7 +46,7 @@ class userlist_base_test extends advanced_testcase {
      * @param   int     $count Expected count
      * @covers ::get_userids
      */
-    public function test_get_userids($input, $expected, $count) {
+    public function test_get_userids($input, $expected, $count): void {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
         $uut->set_userids($input);
 
@@ -64,7 +64,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_userids_provider() {
+    public static function get_userids_provider(): array {
         return [
             'basic' => [
                 [1, 2, 3, 4, 5],
@@ -89,7 +89,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::get_users
      */
-    public function test_get_users() {
+    public function test_get_users(): void {
         $this->resetAfterTest();
 
         $users = [];
@@ -127,7 +127,7 @@ class userlist_base_test extends advanced_testcase {
      * @param   int     $count Expected count
      * @covers ::count
      */
-    public function test_countable($input, $expected, $count) {
+    public function test_countable($input, $expected, $count): void {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
         $uut->set_userids($input);
 
@@ -143,7 +143,7 @@ class userlist_base_test extends advanced_testcase {
      * @covers ::rewind
      * @covers ::valid
      */
-    public function test_user_iteration() {
+    public function test_user_iteration(): void {
         $this->resetAfterTest();
 
         $users = [];
@@ -175,7 +175,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::count
      */
-    public function test_current_user_one_user() {
+    public function test_current_user_one_user(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -196,7 +196,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::count
      */
-    public function test_current_user_invalid() {
+    public function test_current_user_invalid(): void {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
         $uut->set_userids([-100]);
 
@@ -209,7 +209,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::count
      */
-    public function test_current_user_two_users() {
+    public function test_current_user_two_users(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -226,7 +226,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::set_component
      */
-    public function test_set_component_in_constructor() {
+    public function test_set_component_in_constructor(): void {
         $uut = new test_userlist_base(\context_system::instance(), 'core_tests');
         $this->assertEquals('core_tests', $uut->get_component());
     }
@@ -236,7 +236,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @covers ::__construct
      */
-    public function test_set_context_in_constructor() {
+    public function test_set_context_in_constructor(): void {
         $context = \context_user::instance(\core_user::get_user_by_username('admin')->id);
 
         $uut = new test_userlist_base($context, 'core_tests');
@@ -256,7 +256,7 @@ class test_userlist_base extends userlist_base {
      *
      * @param   int[]   $contexids  The list of contextids to use.
      */
-    public function set_userids(array $userids) : userlist_base {
+    public function set_userids(array $userids): userlist_base {
         return parent::set_userids($userids);
     }
 }

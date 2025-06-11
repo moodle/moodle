@@ -1,14 +1,15 @@
 @mixin toast-icon($content) {
-    @include fa-icon();
+    @extend .fa-solid;
     margin: 2px 5px 0 0;
-    content: $content;
+    content: fa-content($content);
 }
 
 @mixin toast-variant($color) {
-    background-color: rgba(theme-color-level($color, $alert-bg-level), .95);
-    color: theme-color-level($color, $alert-color-level);
+    $color-value: map-get($theme-colors, $color);
+    background-color: rgba(shift-color($color-value, $alert-bg-scale), .95);
+    color: shift-color($color-value, $alert-color-scale);
     .toast-header {
-        color: theme-color-level($color, $alert-color-level);
+        color: shift-color($color-value, $alert-color-scale);
     }
 }
 
@@ -43,7 +44,7 @@
         }
     }
 
-    .close {
+    .btn-close {
         color: inherit;
     }
 }

@@ -54,9 +54,11 @@
             >
         {{/imageurl}}
         {{#showonlinestatus}}
-            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+            <span class="contact-status icon-size-2 {{#isonline}}online{{/isonline}}">
+                {{#isonline}} {{#pix}} t/online, core, {{#str}} online, core_message {{/str}} {{/pix}} {{/isonline}}
+            </span>
         {{/showonlinestatus}}
-        <div class="w-100 text-truncate ml-2 my-2">
+        <div class="w-100 text-truncate ms-2 my-2">
             <div class="d-flex">
                 <strong class="m-0 text-truncate">{{name}}</strong>
                 <span class="{{^isblocked}}hidden{{/isblocked}}" data-region="contact-icon-blocked">
@@ -98,14 +100,14 @@
             </div>
             <div class="d-flex align-self-center align-items-center">
                 <span
-                    class="badge badge-pill badge-primary {{^unreadcount}}hidden{{/unreadcount}}"
+                    class="badge rounded-pill bg-primary text-white {{^unreadcount}}hidden{{/unreadcount}}"
                     data-region="unread-count"
                 >
                     <span aria-hidden="true">{{unreadcount}}</span>
                     <span class="sr-only">{{#str}} unreadmessages, core_message, {{unreadcount}} {{/str}}</span>
                 </span>
 
-                <div class="text-muted ml-auto">
+                <div class="text-muted ms-auto">
                     {{> core_message/message_drawer_icon_forward }}
                 </div>
             </div>

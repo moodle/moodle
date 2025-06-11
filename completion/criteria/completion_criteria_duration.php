@@ -241,8 +241,8 @@ class completion_criteria_duration extends completion_criteria {
             AND cc.id IS NULL
             AND
             (
-                ue.timestart > 0 AND ue.timestart + cr.enrolperiod < ?
-             OR ue.timecreated > 0 AND ue.timecreated + cr.enrolperiod < ?
+                (ue.timestart > 0 AND (ue.timestart + cr.enrolperiod) < ?)
+             OR (ue.timestart = 0 AND ue.timecreated > 0 AND (ue.timecreated + cr.enrolperiod) < ?)
             )
         ';
 

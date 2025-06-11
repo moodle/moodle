@@ -31,7 +31,7 @@ M.availability_grouping.form.initInner = function(groupings) {
 
 M.availability_grouping.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<label><span class="pr-3">' + M.util.get_string('title', 'availability_grouping') + '</span> ' +
+    var html = '<label><span class="pe-3">' + M.util.get_string('title', 'availability_grouping') + '</span> ' +
             '<span class="availability-group">' +
             '<select name="id" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
@@ -41,7 +41,7 @@ M.availability_grouping.form.getNode = function(json) {
         html += '<option value="' + grouping.id + '">' + grouping.name + '</option>';
     }
     html += '</select></span></label>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial value if specified.
     if (json.id !== undefined &&

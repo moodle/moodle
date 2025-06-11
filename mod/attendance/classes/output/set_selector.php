@@ -55,7 +55,7 @@ class set_selector implements renderable {
      * @return moodle_url
      */
     public function url($statusset) {
-        $params = array();
+        $params = [];
         $params['statusset'] = $statusset;
 
         return $this->att->url_preferences($params);

@@ -30,13 +30,13 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_badge_action_bar_test extends \advanced_testcase {
+final class manage_badge_action_bar_test extends \advanced_testcase {
     /**
      * Data provider for test_generate_badge_navigation
      *
      * @return array
      */
-    public function generate_badge_navigation_provider(): array {
+    public static function generate_badge_navigation_provider(): array {
         return [
             "Test tertiary nav as an editing teacher" => [
                 "editingteacher", [
@@ -69,9 +69,7 @@ class manage_badge_action_bar_test extends \advanced_testcase {
                 ]
             ],
             "Test tertiary nav as a student" => [
-                "student", [
-                    'Overview'
-                ]
+                "student", [],
             ]
         ];
     }
@@ -84,7 +82,7 @@ class manage_badge_action_bar_test extends \advanced_testcase {
      * @param array $expected
      * @covers ::generate_badge_navigation
      */
-    public function test_generate_badge_navigation(string $role, array $expected) {
+    public function test_generate_badge_navigation(string $role, array $expected): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -134,7 +132,6 @@ class manage_badge_action_bar_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(manage_badge_action_bar::class);
         $rcm = $rc->getMethod('generate_badge_navigation');
-        $rcm->setAccessible(true);
         $content = $rcm->invoke($actionbar);
         $this->assertEquals($expected, array_values($content));
     }

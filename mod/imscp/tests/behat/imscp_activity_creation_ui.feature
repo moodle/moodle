@@ -8,9 +8,8 @@ Feature: Create an IMSCP activity through UI
       | Course 1 | C1        | topics |
 
   Scenario: IMS activity is created using UI
-    Given I am on the "Course 1" course page logged in as admin
-    And I turn editing mode on
-    And I add a "IMS content package" to section "1"
+    Given I log in as "admin"
+    And I add a imscp activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name        | Test IMS content package 2           |
       | Description | Test IMS content package description |

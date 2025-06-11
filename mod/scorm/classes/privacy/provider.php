@@ -14,17 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy class for requesting user data.
- *
- * @package    mod_scorm
- * @copyright  2018 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_scorm\privacy;
 
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->dirroot}/mod/scorm/locallib.php");
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
@@ -38,6 +33,7 @@ use core_privacy\local\request\writer;
 /**
  * Privacy class for requesting user data.
  *
+ * @package    mod_scorm
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,14 +48,11 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
-        $collection->add_database_table('scorm_scoes_track', [
+    public static function get_metadata(collection $collection): collection {
+        $collection->add_database_table('scorm_attempt', [
                 'userid' => 'privacy:metadata:userid',
                 'attempt' => 'privacy:metadata:attempt',
-                'element' => 'privacy:metadata:scoes_track:element',
-                'value' => 'privacy:metadata:scoes_track:value',
-                'timemodified' => 'privacy:metadata:timemodified'
-            ], 'privacy:metadata:scorm_scoes_track');
+            ], 'privacy:metadata:scorm_attempt');
 
         $collection->add_database_table('scorm_aicc_session', [
                 'userid' => 'privacy:metadata:userid',
@@ -85,7 +78,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                   FROM {%s} ss
                   JOIN {modules} m
@@ -100,7 +93,7 @@ class provider implements
 
         $params = ['modlevel' => CONTEXT_MODULE, 'userid' => $userid];
         $contextlist = new contextlist();
-        $contextlist->add_from_sql(sprintf($sql, 'scorm_scoes_track'), $params);
+        $contextlist->add_from_sql(sprintf($sql, 'scorm_attempt'), $params);
         $contextlist->add_from_sql(sprintf($sql, 'scorm_aicc_session'), $params);
 
         return $contextlist;
@@ -132,7 +125,7 @@ class provider implements
 
         $params = ['modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
 
-        $userlist->add_from_sql('userid', sprintf($sql, 'scorm_scoes_track'), $params);
+        $userlist->add_from_sql('userid', sprintf($sql, 'scorm_attempt'), $params);
         $userlist->add_from_sql('userid', sprintf($sql, 'scorm_aicc_session'), $params);
     }
 
@@ -168,19 +161,21 @@ class provider implements
 
         // Get scoes_track data.
         list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
-        $sql = "SELECT ss.id,
-                       ss.attempt,
-                       ss.element,
-                       ss.value,
-                       ss.timemodified,
+        $sql = "SELECT v.id,
+                       a.attempt,
+                       e.element,
+                       v.value,
+                       v.timemodified,
                        ctx.id as contextid
-                  FROM {scorm_scoes_track} ss
+                  FROM {scorm_attempt} a
+                  JOIN {scorm_scoes_value} v ON a.id = v.attemptid
+                  JOIN {scorm_element} e on e.id = v.elementid
                   JOIN {course_modules} cm
-                    ON cm.instance = ss.scormid
+                    ON cm.instance = a.scormid
                   JOIN {context} ctx
                     ON ctx.instanceid = cm.id
                  WHERE ctx.id $insql
-                   AND ss.userid = :userid";
+                   AND a.userid = :userid";
         $params = array_merge($inparams, ['userid' => $userid]);
 
         $alldata = [];
@@ -280,8 +275,9 @@ class provider implements
                  WHERE cm.id = :cmid";
         $params = ['cmid' => $context->instanceid];
 
-        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
+        $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
+        scorm_delete_tracks($coursemodule->instance);
     }
 
     /**
@@ -319,8 +315,13 @@ class provider implements
                    AND ctx.id $insql";
         $params = array_merge($inparams, ['userid' => $userid]);
 
-        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
+                scorm_delete_tracks($coursemodule->instance, null, $userid);
+            }
+        }
     }
 
     /**
@@ -353,8 +354,11 @@ class provider implements
                    AND ss.userid $insql";
         $params = array_merge($inparams, ['contextid' => $context->id]);
 
-        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
+        $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
+        foreach ($userlist->get_userids() as $userid) {
+            scorm_delete_tracks($coursemodule->instance, null, $userid);
+        }
     }
 
     /**

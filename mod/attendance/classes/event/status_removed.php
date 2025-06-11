@@ -75,17 +75,7 @@ class status_removed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/attendance/preferences.php', array('id' => $this->contextinstanceid));
-    }
-
-    /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'attendance', 'status removed', $this->get_url(),
-            $this->other['acronym'] . ' - ' . $this->other['description'], $this->contextinstanceid);
+        return new \moodle_url('/mod/attendance/preferences.php', ['id' => $this->contextinstanceid]);
     }
 
     /**
@@ -94,7 +84,7 @@ class status_removed extends \core\event\base {
      * @return array of parameters for object mapping.
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'attendance', 'restore' => 'attendance');
+        return ['db' => 'attendance', 'restore' => 'attendance'];
     }
 
 }

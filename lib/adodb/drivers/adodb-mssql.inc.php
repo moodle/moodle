@@ -541,7 +541,6 @@ order by constraint_name, referenced_table_name, keyno";
 	function SelectDB($dbName)
 	{
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		if ($this->_connectionID) {
 			return @mssql_select_db($dbName);
 		}
@@ -726,7 +725,6 @@ order by constraint_name, referenced_table_name, keyno";
 		return $this->Execute($sql) != false;
 	}
 
-	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr=false)
 	{
 		$this->_errorMsg = false;

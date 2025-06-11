@@ -71,57 +71,9 @@ class block_calendar_upcoming extends block_base {
     }
 
     /**
-     * Get the upcoming event block content.
-     *
-     * @param array $events list of events
-     * @param \moodle_url|string $linkhref link to event referer
-     * @param boolean $showcourselink whether links to courses should be shown
-     * @return string|null $content html block content
      * @deprecated since 3.4
      */
-    public static function get_upcoming_content($events, $linkhref = null, $showcourselink = false) {
-        debugging(
-                'get_upcoming_content() is deprecated. ' .
-                'Please see block_calendar_upcoming::get_content() for the correct API usage.',
-                DEBUG_DEVELOPER
-            );
-
-        $content = '';
-        $lines = count($events);
-
-        if (!$lines) {
-            return $content;
-        }
-
-        for ($i = 0; $i < $lines; ++$i) {
-            if (!isset($events[$i]->time)) {
-                continue;
-            }
-            $events[$i] = calendar_add_event_metadata($events[$i]);
-            $content .= '<div class="event"><span class="icon c0">' . $events[$i]->icon . '</span>';
-            if (!empty($events[$i]->referer)) {
-                // That's an activity event, so let's provide the hyperlink.
-                $content .= $events[$i]->referer;
-            } else {
-                if (!empty($linkhref)) {
-                    $href = calendar_get_link_href(new \moodle_url(CALENDAR_URL . $linkhref), 0, 0, 0,
-                        $events[$i]->timestart);
-                    $href->set_anchor('event_' . $events[$i]->id);
-                    $content .= \html_writer::link($href, $events[$i]->name);
-                } else {
-                    $content .= $events[$i]->name;
-                }
-            }
-            $events[$i]->time = str_replace('&raquo;', '<br />&raquo;', $events[$i]->time);
-            if ($showcourselink && !empty($events[$i]->courselink)) {
-                $content .= \html_writer::div($events[$i]->courselink, 'course');
-            }
-            $content .= '<div class="date">' . $events[$i]->time . '</div></div>';
-            if ($i < $lines - 1) {
-                $content .= '<hr />';
-            }
-        }
-
-        return $content;
+    public static function get_upcoming_content() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 }

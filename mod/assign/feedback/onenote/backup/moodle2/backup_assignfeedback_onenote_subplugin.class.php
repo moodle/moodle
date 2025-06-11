@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides the information to backup feedback files. This just adds its filearea to the annotations and records the number of files.
+ * Provides the information to backup feedback files.
+ * This just adds its filearea to the annotations and records the number of files.
+ *
  * @package   assignfeedback_onenote
  * @author Vinayak (Vin) Bhalerao (v-vibhal@microsoft.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +29,6 @@
  *
  * @package   assignfeedback_onenote
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Restore subplugin class.
@@ -41,6 +42,7 @@ class backup_assignfeedback_onenote_subplugin extends backup_subplugin {
 
     /**
      * Returns the subplugin information to attach to feedback element
+     *
      * @return backup_subplugin_element
      */
     protected function define_grade_subplugin_structure() {
@@ -48,16 +50,17 @@ class backup_assignfeedback_onenote_subplugin extends backup_subplugin {
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
-        $subpluginelement = new backup_nested_element('feedback_onenote', null, array('numfiles', 'grade'));
+        $subpluginelement = new backup_nested_element('feedback_onenote', null, ['numfiles', 'grade']);
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
         $subpluginwrapper->add_child($subpluginelement);
 
         // Set source to populate the data.
-        $subpluginelement->set_source_table('assignfeedback_onenote', array('grade' => backup::VAR_PARENTID));
+        $subpluginelement->set_source_table('assignfeedback_onenote', ['grade' => backup::VAR_PARENTID]);
         // The parent is the grade.
         $subpluginelement->annotate_files('assignfeedback_onenote', 'feedback_files', 'grade');
+
         return $subplugin;
     }
 

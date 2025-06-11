@@ -28,12 +28,12 @@ require_once(__DIR__ . '/../block_rss_client.php');
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cron_test extends \advanced_testcase {
+final class cron_test extends \advanced_testcase {
     /**
      * Test that when a record has a skipuntil time that is greater
      * than the current time the attempt is skipped.
      */
-    public function test_skip() {
+    public function test_skip(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         // Create a RSS feed record with a skip until time set to the future.
@@ -67,7 +67,7 @@ class cron_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function skip_time_increase_provider() : array {
+    public static function skip_time_increase_provider(): array {
         return [
             'Never failed' => [
                 'skiptime' => 0,
@@ -93,7 +93,7 @@ class cron_test extends \advanced_testcase {
      *
      * @dataProvider    skip_time_increase_provider
      */
-    public function test_error($skiptime, $skipuntil, $newvalue) {
+    public function test_error($skiptime, $skipuntil, $newvalue): void {
         global $DB, $CFG;
         $this->resetAfterTest();
 

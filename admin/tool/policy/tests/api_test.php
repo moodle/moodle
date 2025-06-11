@@ -26,18 +26,18 @@ use tool_policy\test\helper;
  * @copyright 2018 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Test the common operations with a policy document and its versions.
      */
-    public function test_policy_document_life_cycle() {
+    public function test_policy_document_life_cycle(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
         // Prepare the form data for adding a new policy document.
         $formdata = api::form_policydoc_data(new policy_version(0));
-        $this->assertObjectHasAttribute('name', $formdata);
+        $this->assertObjectHasProperty('name', $formdata);
         $this->assertArrayHasKey('text', $formdata->summary_editor);
         $this->assertArrayHasKey('format', $formdata->content_editor);
 
@@ -134,7 +134,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test changing the sort order of the policy documents.
      */
-    public function test_policy_sortorder() {
+    public function test_policy_sortorder(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -193,7 +193,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test that list of policies can be filtered by audience
      */
-    public function test_list_policies_audience() {
+    public function test_list_policies_audience(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -235,7 +235,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::can_user_view_policy_version()} method.
      */
-    public function test_can_user_view_policy_version() {
+    public function test_can_user_view_policy_version(): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -313,7 +313,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::can_accept_policies()} method.
      */
-    public function test_can_accept_policies() {
+    public function test_can_accept_policies(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -389,7 +389,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::can_decline_policies()} method.
      */
-    public function test_can_decline_policies() {
+    public function test_can_decline_policies(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -471,7 +471,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::can_revoke_policies()} method.
      */
-    public function test_can_revoke_policies() {
+    public function test_can_revoke_policies(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -553,7 +553,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test {@link api::fix_revision_values()} behaviour.
      */
-    public function test_fix_revision_values() {
+    public function test_fix_revision_values(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -578,8 +578,8 @@ class api_test extends \advanced_testcase {
     /**
      * Test that accepting policy updates 'policyagreed'
      */
-    public function test_accept_policies() {
-        global $DB;
+    public function test_accept_policies(): void {
+        global $DB, $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -623,12 +623,18 @@ class api_test extends \advanced_testcase {
 
         api::accept_policies([$policy3->id]);
         $this->assertEquals(1, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
+
+        // Ensure policies are always accepted when all are responded regardless the $USER->policyagreed value.
+        $USER->policyagreed = 1;
+        $DB->set_field('user', 'policyagreed', 0, ['id' => $user2->id]);
+        api::accept_policies([$policy3->id]);
+        $this->assertEquals(1, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
     }
 
     /**
      * Test that activating a new policy resets everybody's policyagreed flag in the database.
      */
-    public function test_reset_policyagreed() {
+    public function test_reset_policyagreed(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -672,7 +678,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::get_user_minors()} method.
      */
-    public function test_get_user_minors() {
+    public function test_get_user_minors(): void {
         $this->resetAfterTest();
 
         // A mother having two children, each child having own father.
@@ -721,7 +727,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link api::create_acceptances_user_created()} method.
      */
-    public function test_create_acceptances_user_created() {
+    public function test_create_acceptances_user_created(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -750,7 +756,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test that user can login if sitepolicyhandler is set but there are no policies.
      */
-    public function test_login_with_handler_without_policies() {
+    public function test_login_with_handler_without_policies(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -765,7 +771,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test the three-state logic of the value returned by {@link api::is_user_version_accepted()}.
      */
-    public function test_is_user_version_accepted() {
+    public function test_is_user_version_accepted(): void {
 
         $preloadedacceptances = [
             4 => (object) [
@@ -788,7 +794,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test the functionality of {@link api::get_agreement_optional()}.
      */
-    public function test_get_agreement_optional() {
+    public function test_get_agreement_optional(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

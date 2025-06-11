@@ -24,6 +24,8 @@
  */
 namespace mod_book;
 
+use core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -37,14 +39,15 @@ require_once($CFG->dirroot . '/mod/book/lib.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
-    public function test_export_contents() {
+    public function test_export_contents(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/course/externallib.php');
 
@@ -90,7 +93,7 @@ class lib_test extends \advanced_testcase {
 
         // Now, test the function via the external API.
         $contents = \core_course_external::get_course_contents($course->id, array());
-        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
+        $contents = external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(4, $contents[0]['modules'][0]['contents']);
 
@@ -145,7 +148,7 @@ class lib_test extends \advanced_testcase {
 
         // Now, test the function via the external API.
         $contents = \core_course_external::get_course_contents($course->id, array());
-        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
+        $contents = external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(5, $contents[0]['modules'][0]['contents']);
 
@@ -194,7 +197,7 @@ class lib_test extends \advanced_testcase {
      * Test book_view
      * @return void
      */
-    public function test_book_view() {
+    public function test_book_view(): void {
         global $CFG, $DB;
 
         $CFG->enablecompletion = 1;
@@ -240,7 +243,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(1, $completiondata->completionstate);
     }
 
-    public function test_book_core_calendar_provide_event_action() {
+    public function test_book_core_calendar_provide_event_action(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
@@ -263,7 +266,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_book_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_book_core_calendar_provide_event_action_in_hidden_section(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
@@ -291,7 +294,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_book_core_calendar_provide_event_action_for_user() {
+    public function test_book_core_calendar_provide_event_action_for_user(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
@@ -320,7 +323,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_book_core_calendar_provide_event_action_as_non_user() {
+    public function test_book_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -345,7 +348,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_book_core_calendar_provide_event_action_already_completed() {
+    public function test_book_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -376,7 +379,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_book_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_book_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -431,7 +434,7 @@ class lib_test extends \advanced_testcase {
         return \calendar_event::create($event);
     }
 
-    public function test_mod_book_get_tagged_chapters() {
+    public function test_mod_book_get_tagged_chapters(): void {
         global $DB;
 
         $this->resetAfterTest();

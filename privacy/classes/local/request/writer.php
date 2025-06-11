@@ -55,7 +55,7 @@ class writer {
      *
      * @return  content_writer
      */
-    protected function get_writer_instance() : content_writer {
+    protected function get_writer_instance(): content_writer {
         if (null === $this->realwriter) {
             if (PHPUNIT_TEST) {
                 $this->realwriter = new \core_privacy\tests\request\content_writer(static::instance());
@@ -75,7 +75,7 @@ class writer {
      */
     public static function setup_real_writer_instance() {
         if (!PHPUNIT_TEST) {
-            throw new coding_exception('setup_real_writer_instance() is only for use with PHPUnit tests.');
+            throw new \coding_exception('setup_real_writer_instance() is only for use with PHPUnit tests.');
         }
 
         $instance = static::instance();
@@ -88,7 +88,7 @@ class writer {
     /**
      * Return an instance of
      */
-    protected static final function instance() {
+    final protected static function instance() {
         if (null === self::$instance) {
             self::$instance = new static();
         }
@@ -99,7 +99,7 @@ class writer {
     /**
      * Reset the writer and content_writer.
      */
-    public static final function reset() {
+    final public static function reset() {
         static::$instance = null;
     }
 
@@ -109,7 +109,7 @@ class writer {
      * @param   \context        $context    The context to apply
      * @return  content_writer              The content_writer
      */
-    public static function with_context(\context $context) : content_writer {
+    public static function with_context(\context $context): content_writer {
         return static::instance()
             ->get_writer_instance()
             ->set_context($context);
@@ -129,7 +129,7 @@ class writer {
         string $key,
         string $value,
         string $description
-    ) : content_writer {
+    ): content_writer {
         return static::with_context(\context_system::instance())
             ->export_user_preference($component, $key, $value, $description);
     }

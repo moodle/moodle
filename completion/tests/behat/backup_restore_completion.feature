@@ -26,13 +26,15 @@ Feature: Backup and restore the activity with the completion
       | completionusegrade                  | 1                       |
       | gradepass                           | 50                      |
       | completionpassgrade                 | 1                       |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I log out
 
   @javascript @_file_upload
   Scenario: Restore the legacy assignment with completion condition.
     Given I am on the "Course 1" "restore" page logged in as "admin"
-    And I press "Manage backup files"
+    And I press "Manage course backups"
     And I upload "completion/tests/fixtures/legacy_course_completion.mbz" file to "Files" filemanager
     And I press "Save changes"
     And I restore "legacy_course_completion.mbz" backup into a new course using this options:

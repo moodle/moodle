@@ -61,6 +61,9 @@
     {{#courseindex}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-courseindex{{/id}}
+            {{$drawerheadercontent}}
+                {{> theme_boost/courseindexdrawercontrols}}
+            {{/drawerheadercontent}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
             {{$drawercontent}}
                 {{{courseindex}}}
@@ -76,10 +79,10 @@
             {{$id}}theme_boost-drawers-blocks{{/id}}
             {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawercontent}}
-                <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                <div class="d-print-none">
                     {{{ addblockbutton }}}
                     {{{ sidepreblocks }}}
-                </section>
+                </div>
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
             {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
@@ -109,7 +112,7 @@
                     </div>
                 {{/courseindex}}
                 {{#hasblocks}}
-                    <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
+                    <div class="drawer-toggler drawer-right-toggle ms-auto d-print-none">
                         <button
                             class="btn icon-no-margin"
                             data-toggler="drawers"
@@ -139,7 +142,7 @@
                         <div> {{{ regionmainsettingsmenu }}} </div>
                     </div>
                     {{/hasregionmainsettingsmenu}}
-                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                    <div id="region-main">
 
                         {{#hasregionmainsettingsmenu}}
                             <div class="region_main_settings_menu_proxy"></div>
@@ -159,7 +162,7 @@
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
 
-                    </section>
+                    </div>
                 </div>
             </div>
         </div>

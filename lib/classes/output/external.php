@@ -14,31 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper to load strings from string_manager.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use core_component;
-use moodle_exception;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use context_system;
-use theme_config;
 use core\external\output\icon_system\load_fontawesome_map;
 
 /**
  * This class contains a list of webservice functions related to output.
  *
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
@@ -50,13 +39,12 @@ class external extends external_api {
      * @return external_function_parameters
      */
     public static function load_template_parameters() {
-        return new external_function_parameters(
-                array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
-                      'template' => new external_value(PARAM_SAFEPATH, 'name of the template'),
-                      'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
-                      'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false)
-                         )
-            );
+        return new external_function_parameters([
+            'component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
+            'template' => new external_value(PARAM_SAFEPATH, 'name of the template'),
+            'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
+            'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false),
+        ]);
     }
 
     /**
@@ -71,11 +59,15 @@ class external extends external_api {
         global $DB, $CFG, $PAGE;
 
         $PAGE->set_context(context_system::instance());
-        $params = self::validate_parameters(self::load_template_parameters(),
-                                            array('component' => $component,
-                                                  'template' => $template,
-                                                  'themename' => $themename,
-                                                  'includecomments' => $includecomments));
+        $params = self::validate_parameters(
+            self::load_template_parameters(),
+            [
+                'component' => $component,
+                'template' => $template,
+                'themename' => $themename,
+                'includecomments' => $includecomments,
+            ],
+        );
 
         $loader = new mustache_template_source_loader();
         // Will throw exceptions if the template does not exist.
@@ -83,14 +75,14 @@ class external extends external_api {
             $params['component'],
             $params['template'],
             $params['themename'],
-            $params['includecomments']
+            $params['includecomments'],
         );
     }
 
     /**
      * Returns description of load_template() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_template_returns() {
         return new external_value(PARAM_RAW, 'template');
@@ -119,14 +111,14 @@ class external extends external_api {
      * @param string $themename The name of the current theme.
      * @param bool $includecomments Whether to strip comments from the template source.
      * @param string $lang moodle translation language, null means use current.
-     * @return string the template
+     * @return array the template
      */
     public static function load_template_with_dependencies(
         string $component,
         string $template,
         string $themename,
         bool $includecomments = false,
-        string $lang = null
+        ?string $lang = null
     ) {
         global $DB, $CFG, $PAGE;
 
@@ -137,7 +129,7 @@ class external extends external_api {
                 'template' => $template,
                 'themename' => $themename,
                 'includecomments' => $includecomments,
-                'lang' => $lang
+                'lang' => $lang,
             ]
         );
 
@@ -152,14 +144,14 @@ class external extends external_api {
             [],
             $params['lang']
         );
-        $formatdependencies = function($dependency) {
+        $formatdependencies = function ($dependency) {
             $results = [];
             foreach ($dependency as $dependencycomponent => $dependencyvalues) {
                 foreach ($dependencyvalues as $dependencyname => $dependencyvalue) {
                     array_push($results, [
                         'component' => $dependencycomponent,
                         'name' => $dependencyname,
-                        'value' => $dependencyvalue
+                        'value' => $dependencyvalue,
                     ]);
                 }
             }
@@ -170,25 +162,25 @@ class external extends external_api {
         // by external functions (because they don't support dynamic keys).
         return [
             'templates' => $formatdependencies($dependencies['templates']),
-            'strings' => $formatdependencies($dependencies['strings'])
+            'strings' => $formatdependencies($dependencies['strings']),
         ];
     }
 
     /**
      * Returns description of load_template_with_dependencies() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_template_with_dependencies_returns() {
         $resourcestructure = new external_single_structure([
             'component' => new external_value(PARAM_COMPONENT, 'component containing the resource'),
             'name' => new external_value(PARAM_TEXT, 'name of the resource'),
-            'value' => new external_value(PARAM_RAW, 'resource value')
+            'value' => new external_value(PARAM_RAW, 'resource value'),
         ]);
 
         return new external_single_structure([
             'templates' => new external_multiple_structure($resourcestructure),
-            'strings' => new external_multiple_structure($resourcestructure)
+            'strings' => new external_multiple_structure($resourcestructure),
         ]);
     }
 
@@ -216,7 +208,7 @@ class external extends external_api {
     /**
      * Returns description of load_icon_map() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_fontawesome_icon_map_returns() {
         return load_fontawesome_map::execute_returns();

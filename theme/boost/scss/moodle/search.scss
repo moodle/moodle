@@ -39,6 +39,9 @@
     }
     .btn-close {
         right: 2.2rem;
+        opacity: inherit;
+        font-size: inherit;
+        line-height: inherit;
     }
     .btn-submit {
         background-color: $gray-100;
@@ -67,7 +70,7 @@
     background-color: $white;
     z-index: $zindex-popover;
     height: $navbar-height;
-    .form-inline {
+    .searchform-navbar {
         width: auto;
         margin-left: auto;
         margin-right: auto;

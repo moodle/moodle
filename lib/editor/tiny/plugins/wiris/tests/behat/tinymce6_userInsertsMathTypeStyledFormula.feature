@@ -19,7 +19,7 @@ Feature: Insert MathType styled formula editor
     And the "urltolink" filter is "off"
     And I log in as "admin"
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-57 - User inserts MathType styled
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser

@@ -14,19 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * external API for core library
- *
- * @package    core_webservice
- * @category   external
- * @copyright  2012 Jerome Mouneyrac <jerome@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once("$CFG->libdir/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Web service related functions
@@ -60,7 +52,7 @@ class core_external extends external_api {
                     // It is a not named string parameter.
                     $strparams = $stringparam['value'];
                 }
-            }  else {
+            } else {
                 // There are more than one parameter.
                 foreach ($stringparams as $stringparam) {
 
@@ -120,7 +112,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.4
      */
     public static function get_string_returns() {
@@ -189,7 +181,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.4
      */
     public static function get_strings_returns() {
@@ -281,7 +273,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_user_dates() result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_user_dates_returns() {
         return new external_single_structure(
@@ -341,7 +333,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_component_strings() result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.4
      */
     public static function get_component_strings_returns() {
@@ -429,7 +421,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_fragment() result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.1
      */
     public static function get_fragment_returns() {
@@ -486,7 +478,7 @@ class core_external extends external_api {
      * Return structure for update_inplace_editable()
      *
      * @since Moodle 3.1
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function update_inplace_editable_returns() {
         return new external_single_structure(
@@ -502,7 +494,7 @@ class core_external extends external_api {
                     'key' => new external_value(PARAM_RAW, 'Edit icon key', VALUE_OPTIONAL),
                     'component' => new external_value(PARAM_COMPONENT, 'Edit icon component', VALUE_OPTIONAL),
                     'title' => new external_value(PARAM_NOTAGS, 'Edit icon title', VALUE_OPTIONAL),
-                ]),
+                ], 'Edit icon', VALUE_OPTIONAL),
                 'type' => new external_value(PARAM_ALPHA, 'type of the element (text, toggle, select)', VALUE_OPTIONAL),
                 'options' => new external_value(PARAM_RAW, 'options of the element, format depends on type', VALUE_OPTIONAL),
                 'linkeverything' => new external_value(PARAM_INT, 'Should everything be wrapped in the edit link or link displayed separately', VALUE_OPTIONAL),
@@ -526,7 +518,7 @@ class core_external extends external_api {
     /**
      * Returns description of fetch_notifications() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.1
      */
     public static function fetch_notifications_returns() {

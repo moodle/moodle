@@ -22,7 +22,7 @@
  * @author     Andrew Hancox <andrewdchancox@googlemail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_mergeusers_enrolments_testcase extends advanced_testcase {
+class enrolments_test extends advanced_testcase {
     /**
      * Setup the test.
      */

@@ -49,7 +49,7 @@ class scale_competency_item_statistics_exporter extends exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('users' => '\\stdClass[]');
+        return ['users' => '\\stdClass[]'];
     }
 
     /**
@@ -58,17 +58,17 @@ class scale_competency_item_statistics_exporter extends exporter {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'value' => array(
-                'type' => PARAM_INT
-            ),
-            'name' => array(
-                'type' => PARAM_RAW
-            ),
-            'color' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'value' => [
+                'type' => PARAM_INT,
+            ],
+            'name' => [
+                'type' => PARAM_RAW,
+            ],
+            'color' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -77,15 +77,15 @@ class scale_competency_item_statistics_exporter extends exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'nbusers' => array(
-                'type' => PARAM_INT
-            ),
-            'listusers' => array(
+        return [
+            'nbusers' => [
+                'type' => PARAM_INT,
+            ],
+            'listusers' => [
                 'type' => scale_value_user_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -99,7 +99,7 @@ class scale_competency_item_statistics_exporter extends exporter {
         $result = new \stdClass();
 
         $result->nbusers = 0;
-        $result->listusers = array();
+        $result->listusers = [];
 
         foreach ($this->related['users'] as $user) {
             $uc = (isset($user->usercompetency)) ? $user->usercompetency : $user->usercompetencyplan;

@@ -31,6 +31,11 @@
     Example context (json):
     {
         "overridesnav": {
+            "id": "url_select_test",
+            "action": "https://example.com/post",
+            "formid": "url_select_form",
+            "sesskey": "sesskey",
+            "label": "core/url_select",
             "options": [{
                     "name": "User overrides",
                     "value": "/mod/quiz/overrides.php?cmid=71&mode=user"
@@ -39,13 +44,16 @@
                     "name": "Group overrides",
                     "value": "/mod/quiz/overrides.php?cmid=71&mode=group"
                 }
-            ]
+            ],
+            "disabled": false,
+            "title": "Some cool title"
         },
         "addoverridebutton": {
             "id": "single_button1234",
+            "type": "primary",
             "method": "get",
             "url": "http://localhost/moodle/mod/quiz/overrideedit.php",
-            "lablel": "Add user override",
+            "label": "Add user override",
             "classes": "singlebutton",
             "disabled": false,
             "params": [

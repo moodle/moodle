@@ -39,12 +39,12 @@ use gradingform_guide\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Ensure that export_user_preferences returns no data if the user has no data.
      */
-    public function test_export_user_preferences_not_defined() {
+    public function test_export_user_preferences_not_defined(): void {
         $user = \core_user::get_user_by_username('admin');
         provider::export_user_preferences($user->id);
 
@@ -55,7 +55,7 @@ class provider_test extends provider_testcase {
     /**
      * Ensure that export_user_preferences returns single preferences.
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         $this->resetAfterTest();
 
         // Define a user preference.
@@ -67,6 +67,7 @@ class provider_test extends provider_testcase {
         // Validate exported data.
         provider::export_user_preferences($user->id);
         $context = \context_user::instance($user->id);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradingform_guide');
@@ -82,7 +83,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the export of guide data.
      */
-    public function test_get_gradingform_export_data() {
+    public function test_get_gradingform_export_data(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -120,7 +121,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the deletion of guide user information via the instance ID.
      */
-    public function test_delete_gradingform_for_instances() {
+    public function test_delete_gradingform_for_instances(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -172,8 +173,8 @@ class provider_test extends provider_testcase {
     /**
      * Generate a guide controller with sample data required for testing of this class.
      *
-     * @param context_module $context
-     * @return gradingform_guide_controller
+     * @param \context_module $context
+     * @return \gradingform_guide_controller
      */
     protected function get_test_guide(\context_module $context): \gradingform_guide_controller {
         $generator = \testing_util::get_data_generator();
@@ -185,7 +186,7 @@ class provider_test extends provider_testcase {
     /**
      * Fetch a set of sample data.
      *
-     * @param gradingform_guide_controller $controller
+     * @param \gradingform_guide_controller $controller
      * @param int $itemid
      * @param float $spellingscore
      * @param string $spellingremark

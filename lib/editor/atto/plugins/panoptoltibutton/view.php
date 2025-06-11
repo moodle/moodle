@@ -22,33 +22,63 @@
  * @author     Panopto with contributions from David Shepard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(__FILE__) . '/lib/panopto_lti_utility.php');
 
-function init_panoptoltibutton_view() {
-    global $CFG;
-    if (empty($CFG)) {
-        require_once(dirname(__FILE__) . '/../../../../../config.php');
+global $DB, $CFG, $COURSE;
+if (empty($CFG)) {
+    require_once(dirname(__FILE__) . '/../../../../../config.php');
+}
+require_once($CFG->dirroot . '/blocks/panopto/lib/block_panopto_lib.php');
+require_once($CFG->libdir  . '/accesslib.php'); // Access control functions.
+require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
+require_once($CFG->dirroot . '/blocks/panopto/lib/lti/panoptoblock_lti_utility.php');
+
+$configuredserverarray = panopto_get_configured_panopto_servers();
+
+$contenturl = optional_param('contenturl', '', PARAM_URL);
+
+$contentverified = false;
+
+if ($contenturl) {
+    foreach ($configuredserverarray as $possibleserver) {
+        $contenthost = parse_url($contenturl, PHP_URL_HOST);
+
+        if (stripos($contenthost, $possibleserver) !== false) {
+            $contentverified = true;
+            break;
+        }
     }
-    require_once($CFG->dirroot . '/mod/lti/lib.php');
-    require_once($CFG->dirroot . '/mod/lti/locallib.php');
+} else {
+    $contentverified = true;
+}
 
-    $courseid  = required_param('course', PARAM_INT);
+if ($contentverified) {
     $resourcelinkid = required_param('resourcelinkid', PARAM_ALPHANUMEXT);
     $ltitypeid = required_param('ltitypeid', PARAM_INT);
-    $contenturl = optional_param('contenturl', '', PARAM_URL);
     $customdata = optional_param('custom', '', PARAM_RAW_TRIMMED);
 
-    $course = get_course($courseid);
-
-    $context = context_course::instance($courseid);
+    require_login();
 
     // Make sure $ltitypeid is valid.
     $ltitype = $DB->get_record('lti_types', ['id' => $ltitypeid], '*', MUST_EXIST);
 
-    require_login($course);
-    require_capability('mod/lti:view', $context);
-
     $lti = new stdClass();
+
+    // Try to detect if we are viewing content from an iframe nested in course, get the Id param if it exists.
+    $courseid = 0;
+    if (!empty($_SERVER['HTTP_REFERER']) && (strpos($_SERVER['HTTP_REFERER'], "/course/view.php") !== false)) {
+        $components = parse_url($_SERVER['HTTP_REFERER']);
+        parse_str($components['query'], $results);
+
+        if (!empty($results['id'])) {
+            $lti->course = $results['id'];
+            $course = $DB->get_record('course', ['id' => $results['id']], '*', MUST_EXIST);
+            $courseid = $course->id;
+            $context = context_course::instance($results['id']);
+            $PAGE->set_context($context);
+            require_login($course, true);
+        }
+    }
 
     $lti->id = $resourcelinkid;
     $lti->typeid = $ltitypeid;
@@ -59,14 +89,26 @@ function init_panoptoltibutton_view() {
     $lti->debuglaunch = false;
     if ($customdata) {
         $decoded = json_decode($customdata, true);
-        
+
         foreach ($decoded as $key => $value) {
             $lti->custom->$key = $value;
         }
     }
-    
-    \panopto_lti_utility::panoptoltibutton_launch_tool($lti);
+
+    // LTI 1.3 login request.
+    $config = lti_get_type_type_config($ltitypeid);
+    if ($config->lti_ltiversion === LTI_VERSION_1P3) {
+        if (!isset($SESSION->lti_initiatelogin_status)) {
+            echo lti_initiate_login($courseid,
+                "atto_panoptoltibutton,'',{$ltitypeid},{$resourcelinkid},{$contenturl},{$customdata}",
+                $lti,
+                $config
+            );
+            exit;
+        }
+    }
+
+    echo \panoptoblock_lti_utility::launch_tool($lti);
+} else {
+    echo get_string('invalid_content_host', 'atto_panoptoltibutton');
 }
-
-init_panoptoltibutton_view();
-

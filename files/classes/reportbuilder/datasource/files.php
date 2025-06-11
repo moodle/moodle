@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_files\reportbuilder\datasource;
 
+use core\reportbuilder\local\entities\context;
 use core_files\reportbuilder\local\entities\file;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
@@ -51,6 +52,13 @@ class files extends datasource {
         $this->set_main_table('files', $filesalias);
         $this->add_entity($fileentity);
 
+        // Join the context entity.
+        $contextentity = new context();
+        $contextalias = $contextentity->get_table_alias('context');
+        $this->add_entity($contextentity
+            ->add_join("LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$filesalias}.contextid")
+        );
+
         // Join the user entity.
         $userentity = new user();
         $useralias = $userentity->get_table_alias('user');
@@ -69,12 +77,24 @@ class files extends datasource {
      */
     public function get_default_columns(): array {
         return [
-            'file:context',
+            'context:name',
             'user:fullname',
             'file:name',
             'file:type',
             'file:size',
             'file:timecreated',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'context:name' => SORT_ASC,
+            'file:timecreated' => SORT_ASC,
         ];
     }
 

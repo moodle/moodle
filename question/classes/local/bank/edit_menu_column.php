@@ -24,12 +24,14 @@
 
 namespace core_question\local\bank;
 
+use \core\plugininfo\qbank;
+
 /**
  * A question bank column which gathers together all the actions into a menu.
  *
  * This question bank column, if added to the question bank, will
  * replace all of the other columns which implement the
- * {@see menuable_action} interface and replace them with a single
+ * {@see menu_action_column_base} interface and replace them with a single
  * column containing an Edit menu.
  *
  * @copyright 2019 The Open University
@@ -37,33 +39,6 @@ namespace core_question\local\bank;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_menu_column extends column_base {
-    /**
-     * @var menuable_action[]
-     */
-    protected $actions;
-
-    /**
-     * Set up the list of actions that should be shown in the menu.
-     *
-     * This takes a list of column object (the list from a question
-     * bank view). It extracts all the ones that should go in the menu
-     * and stores them for later use. Then it returns the remaining columns.
-     *
-     * @param column_base[] $allcolumns a set of columns.
-     * @return column_base[] the non-action columns from the set.
-     */
-    public function claim_menuable_columns($allcolumns): array {
-        $remainingcolumns = [];
-        foreach ($allcolumns as $key => $column) {
-            if ($column instanceof menuable_action) {
-                $this->actions[$key] = $column;
-            } else {
-                $remainingcolumns[$key] = $column;
-            }
-        }
-        return $remainingcolumns;
-    }
-
     public function get_title() {
         return get_string('actions');
     }
@@ -74,11 +49,13 @@ class edit_menu_column extends column_base {
 
     protected function display_content($question, $rowclasses): void {
         global $OUTPUT;
+        $actions = $this->qbank->get_question_actions();
 
         $menu = new \action_menu();
         $menu->set_menu_trigger(get_string('edit'));
-        foreach ($this->actions as $actioncolumn) {
-            $action = $actioncolumn->get_action_menu_link($question);
+        $menu->set_boundary('window');
+        foreach ($actions as $action) {
+            $action = $action->get_action_menu_link($question);
             if ($action) {
                 $menu->add($action);
             }
@@ -93,21 +70,21 @@ class edit_menu_column extends column_base {
         echo $OUTPUT->render($menu);
     }
 
-    public function get_required_fields():array {
+    public function get_required_fields(): array {
         return ['q.qtype'];
     }
 
     /**
      * Get menuable actions.
      *
-     * @return menuable_action Menuable actions.
+     * @return menu_action_column_base Menuable actions.
      */
     public function get_actions(): array {
         return $this->actions;
     }
 
     public function get_extra_classes(): array {
-        return ['pr-3'];
+        return ['pe-3'];
     }
 
 }

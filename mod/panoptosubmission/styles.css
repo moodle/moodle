@@ -1,0 +1,114 @@
+.mod-panoptosubmission-player-container {
+    -webkit-transition: opacity .5s ease-in-out;
+    -moz-transition: opacity .5s ease-in-out;
+    transition: opacity .5s ease-in-out;
+}
+
+.mod-panoptosubmission-player-container.no-session {
+    display: none;
+    opacity: 0;
+}
+
+.mod-panoptosubmission-session-container {
+    position: relative;
+    min-height: 150px;
+}
+
+.mod-panoptosubmission-session-container .mod-panoptosubmission-thumbnail-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    opacity: 0;
+    -webkit-transition: opacity .5s ease-in-out;
+    -moz-transition: opacity .5s ease-in-out;
+    transition: opacity .5s ease-in-out;
+}
+
+.mod-panoptosubmission-session-container .mod-panoptosubmission-player-iframe {
+    opacity: 1;
+    -webkit-transition: visibility .5s ease-in-out, opacity .5s ease-in-out, height .5s ease-in-out;
+    -moz-transition: visibility .5s ease-in-out, opacity .5s ease-in-out, height .5s ease-in-out;
+    transition: visibility .5s ease-in-out, opacity .5s ease-in-out, height .5s ease-in-out;
+}
+
+.mod-panoptosubmission-session-container.session-hidden .mod-panoptosubmission-thumbnail-container {
+    opacity: 1;
+}
+
+.mod-panoptosubmission-session-container.session-hidden .mod-panoptosubmission-player-iframe {
+    opacity: 0;
+    height: 0px;
+}
+
+.mod-panoptosubmission-thumbnail {
+    display: block;
+}
+
+.mod-panoptosubmission-session-title {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.mod-panoptosubmission-show-session-toggle {
+    font-size: 16px;
+    text-decoration: underline;
+    margin-bottom: 5px;
+}
+
+.mod-panoptosubmission-status-graded {
+    color: black;
+    background-color: #cfefcf;
+}
+
+.mod-panoptosubmission-status-not-graded {
+    color: black;
+    background-color: #ffff7f;
+}
+
+.mod-panoptosubmission-status-not-submitted {
+    color: black;
+    background-color: #efefef;
+}
+
+.mod-panoptosubmission-overduesubmission {
+    color: red;
+}
+
+.mod-panoptosubmission-latesubmission {
+    color: red;
+}
+
+.mod-panoptosubmission-grade-input-container {
+    white-space: nowrap;
+}
+
+.mod-panoptosubmission-grade-input-container .mod-panoptosubmission-grade-input-box {
+    width: 100px;
+}
+
+/* Modal */
+.mod-panoptosubmission-modal-custom-size {
+    height: auto;
+}
+
+.mod-panoptosubmission-modal-dialog-custom {
+    width: 100%;
+    max-width: 100%;
+}
+
+.mod-panoptosubmission-modal-content-custom {
+    height: 100%;
+    max-height: 100%;
+}
+
+.mod-panoptosubmission-modal-body-custom {
+    height: 100%;
+    overflow: hidden;
+}
+
+.mod-panoptosubmission-iframe-custom {
+    width: 100%;
+    height: 100%;
+}

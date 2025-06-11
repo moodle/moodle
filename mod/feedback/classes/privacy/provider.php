@@ -59,7 +59,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $completedfields = [
             'userid' => 'privacy:metadata:completed:userid',
             'timemodified' => 'privacy:metadata:completed:timemodified',
@@ -85,7 +85,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {%s} fc

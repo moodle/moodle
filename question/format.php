@@ -54,6 +54,8 @@ class qformat_default {
     protected $importcontext = null;
     /** @var bool $displayprogress Whether to display progress. */
     public $displayprogress = true;
+    /** @var context[] */
+    public $contexts;
 
     // functions to indicate import/export functionality
     // override to return true if implemented
@@ -166,7 +168,7 @@ class qformat_default {
 
     /**
      * set an array of contexts.
-     * @param array $contexts Moodle course variable
+     * @param context[] $contexts
      */
     public function setContexts($contexts) {
         $this->contexts = $contexts;
@@ -362,7 +364,7 @@ class qformat_default {
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
             echo $OUTPUT->notification(get_string('importparseerror', 'question'));
-            return true;
+            return false;
         }
 
         // get list of valid answer grades
@@ -386,8 +388,8 @@ class qformat_default {
                     }
                 }
                 if ($invalidfractions) {
-                    echo $OUTPUT->notification(get_string('invalidgrade', 'question',
-                            implode(', ', $invalidfractions)));
+                    $a = ['grades' => implode(', ', $invalidfractions), 'question' => $question->name];
+                    echo $OUTPUT->notification(get_string('invalidgradequestion', 'question', $a));
                     ++$gradeerrors;
                     continue;
                 } else {
@@ -400,6 +402,7 @@ class qformat_default {
 
         // check for errors before we continue
         if ($this->stoponerror && $gradeerrors > 0) {
+            echo $OUTPUT->notification(get_string('importparseerror', 'question'));
             return false;
         }
 
@@ -957,15 +960,16 @@ class qformat_default {
             $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $qcategory]);
             $question->contextid = $contextid;
             $question->idnumber = $questionbankentry->idnumber;
+
+            // Do not export hidden questions.
+            if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN) {
+                continue;
+            }
+
             if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_READY) {
                 $question->status = 0;
             } else {
                 $question->status = 1;
-            }
-
-            // do not export hidden questions
-            if (!empty($question->hidden)) {
-                continue;
             }
 
             // do not export random questions

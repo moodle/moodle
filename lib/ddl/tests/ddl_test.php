@@ -33,7 +33,7 @@ use xmldb_table;
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ddl_test extends \database_driver_testcase {
+final class ddl_test extends \database_driver_testcase {
     /** @var xmldb_table[] keys are table name. Created in setUp. */
     private $tables = array();
     /** @var array table name => array of stdClass test records loaded into that table. Created in setUp. */
@@ -164,7 +164,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of table_exists()
      */
-    public function test_table_exists() {
+    public function test_table_exists(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -209,7 +209,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of create_table()
      */
-    public function test_create_table() {
+    public function test_create_table(): void {
 
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
@@ -559,7 +559,7 @@ class ddl_test extends \database_driver_testcase {
      * InnoDB is known to failed during data insertion instead
      * of table creation when text fields contain actual data.
      */
-    public function test_row_size_limits() {
+    public function test_row_size_limits(): void {
 
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
@@ -644,7 +644,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of drop_table()
      */
-    public function test_drop_table() {
+    public function test_drop_table(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -677,7 +677,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of rename_table()
      */
-    public function test_rename_table() {
+    public function test_rename_table(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -712,7 +712,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of field_exists()
      */
-    public function test_field_exists() {
+    public function test_field_exists(): void {
         $dbman = $this->tdb->get_manager();
 
         $table = $this->create_deftable('test_table0');
@@ -776,7 +776,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of add_field()
      */
-    public function test_add_field() {
+    public function test_add_field(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -941,7 +941,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of drop_field()
      */
-    public function test_drop_field() {
+    public function test_drop_field(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -998,7 +998,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of change_field_type()
      */
-    public function test_change_field_type() {
+    public function test_change_field_type(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1158,7 +1158,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Test behaviour of test_change_field_precision()
      */
-    public function test_change_field_precision() {
+    public function test_change_field_precision(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1674,7 +1674,7 @@ class ddl_test extends \database_driver_testcase {
         $this->assertTrue($dbman->table_exists('test_table1'));
     }
 
-    public function test_temp_tables() {
+    public function test_temp_tables(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1791,7 +1791,7 @@ class ddl_test extends \database_driver_testcase {
         $this->assertFalse($dbman->table_exists('test_temp'));
     }
 
-    public function test_concurrent_temp_tables() {
+    public function test_concurrent_temp_tables(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1839,7 +1839,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * get_columns should return an empty array for ex-temptables.
      */
-    public function test_leftover_temp_tables_columns() {
+    public function test_leftover_temp_tables_columns(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1857,7 +1857,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Deleting a temp table should not purge the whole cache
      */
-    public function test_leftover_temp_tables_cache() {
+    public function test_leftover_temp_tables_cache(): void {
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1885,7 +1885,6 @@ class ddl_test extends \database_driver_testcase {
 
         $rc = new \ReflectionClass('moodle_database');
         $rcm = $rc->getMethod('get_temp_tables_cache');
-        $rcm->setAccessible(true);
         $metacachetemp = $rcm->invokeArgs($DB, []);
 
         // Data of test_table0 should be removed from the cache.
@@ -1896,7 +1895,6 @@ class ddl_test extends \database_driver_testcase {
 
         $rc = new \ReflectionClass('moodle_database');
         $rcm = $rc->getMethod('get_metacache');
-        $rcm->setAccessible(true);
         $metacache = $rcm->invokeArgs($DB, []);
 
         // Data of test_table2 should be intact.
@@ -1906,7 +1904,7 @@ class ddl_test extends \database_driver_testcase {
         $dbman->drop_table($table1);
     }
 
-    public function test_reset_sequence() {
+    public function test_reset_sequence(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1945,12 +1943,12 @@ class ddl_test extends \database_driver_testcase {
         $dbman->drop_table($table);
     }
 
-    public function test_reserved_words() {
+    public function test_reserved_words(): void {
         $reserved = sql_generator::getAllReservedWords();
         $this->assertTrue(count($reserved) > 1);
     }
 
-    public function test_index_hints() {
+    public function test_index_hints(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1994,7 +1992,7 @@ class ddl_test extends \database_driver_testcase {
         $this->assertTrue($dbman->index_exists($table, $index));
     }
 
-    public function test_index_max_bytes() {
+    public function test_index_max_bytes(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2042,7 +2040,7 @@ class ddl_test extends \database_driver_testcase {
         }
     }
 
-    public function test_index_composed_max_bytes() {
+    public function test_index_composed_max_bytes(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2101,7 +2099,7 @@ class ddl_test extends \database_driver_testcase {
         }
     }
 
-    public function test_char_size_limit() {
+    public function test_char_size_limit(): void {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2176,7 +2174,7 @@ class ddl_test extends \database_driver_testcase {
         }
     }
 
-    public function test_object_name() {
+    public function test_object_name(): void {
         $gen = $this->tdb->get_manager()->generator;
 
         // This will form short object name and max length should not be exceeded.
@@ -2266,7 +2264,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-value pair fixture.
      */
-    public function get_enc_quoted_provider() {
+    public static function get_enc_quoted_provider(): array {
         return array(
             // Reserved: some examples from SQL-92.
             [true, 'from'],
@@ -2284,7 +2282,7 @@ class ddl_test extends \database_driver_testcase {
      * @param bool $reserved Whether the column name is reserved or not.
      * @param string $columnname The column name to be quoted, according to the value of $reserved.
      **/
-    public function test_get_enc_quoted($reserved, $columnname) {
+    public function test_get_enc_quoted($reserved, $columnname): void {
         $DB = $this->tdb;
         $gen = $DB->get_manager()->generator;
 
@@ -2315,7 +2313,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-old-new tuple fixture.
      */
-    public function sql_generator_get_rename_field_sql_provider() {
+    public static function sql_generator_get_rename_field_sql_provider(): array {
         return array(
             // Reserved: an example from SQL-92.
             // Both names should be reserved.
@@ -2333,7 +2331,7 @@ class ddl_test extends \database_driver_testcase {
      * @param string $oldcolumnname The column name to be renamed.
      * @param string $newcolumnname The new column name.
      **/
-    public function test_sql_generator_get_rename_field_sql($reserved, $oldcolumnname, $newcolumnname) {
+    public function test_sql_generator_get_rename_field_sql($reserved, $oldcolumnname, $newcolumnname): void {
         $DB = $this->tdb;
         $gen = $DB->get_manager()->generator;
         $prefix = $DB->get_prefix();
@@ -2402,7 +2400,7 @@ class ddl_test extends \database_driver_testcase {
         }
     }
 
-    public function test_get_nullable_fields_in_index() {
+    public function test_get_nullable_fields_in_index(): void {
         $DB = $this->tdb;
         $gen = $DB->get_manager()->generator;
 
@@ -2452,7 +2450,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * Tests check_database_schema().
      */
-    public function test_check_database_schema() {
+    public function test_check_database_schema(): void {
         global $CFG, $DB;
 
         $dbmanager = $DB->get_manager();

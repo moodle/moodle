@@ -38,19 +38,20 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         // Create system cohort and category cohort.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
@@ -79,7 +80,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Create system cohort and category cohort.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
@@ -122,7 +123,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create system cohort and category cohort.
@@ -167,7 +168,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create system cohort and category cohort.
@@ -224,7 +225,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users within a course context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'core_cohort';
 
         // Create system cohort and category cohort.
@@ -280,7 +281,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'core_cohort';
 
         // Create system cohort and category cohort.

@@ -24,11 +24,12 @@ namespace antivirus_clamav;
  * @copyright  2016 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scanner_test extends \advanced_testcase {
+final class scanner_test extends \advanced_testcase {
     /** @var string temporary file used in testing */
     protected $tempfile;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         // Create tempfile.
@@ -39,9 +40,10 @@ class scanner_test extends \advanced_testcase {
 
     protected function tearDown(): void {
         @unlink($this->tempfile);
+        parent::tearDown();
     }
 
-    public function test_scan_file_not_exists() {
+    public function test_scan_file_not_exists(): void {
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
             ->onlyMethods(array('scan_file_execute_commandline', 'message_admins'))
             ->getMock();
@@ -54,7 +56,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_scan_file_no_virus() {
+    public function test_scan_file_no_virus(): void {
         $methods = array(
             'scan_file_execute_commandline',
             'scan_file_execute_socket',
@@ -95,7 +97,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(0, $antivirus->scan_file($this->tempfile, ''));
     }
 
-    public function test_scan_file_virus() {
+    public function test_scan_file_virus(): void {
         $methods = array(
             'scan_file_execute_commandline',
             'scan_file_execute_socket',
@@ -136,7 +138,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(1, $antivirus->scan_file($this->tempfile, ''));
     }
 
-    public function test_scan_file_error_donothing() {
+    public function test_scan_file_error_donothing(): void {
         $methods = array(
             'scan_file_execute_commandline',
             'scan_file_execute_socket',
@@ -183,7 +185,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(2, $antivirus->scan_file($this->tempfile, ''));
     }
 
-    public function test_scan_file_error_actlikevirus() {
+    public function test_scan_file_error_actlikevirus(): void {
         $methods = array(
             'scan_file_execute_commandline',
             'scan_file_execute_socket',
@@ -233,7 +235,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(1, $antivirus->scan_file($this->tempfile, ''));
     }
 
-    public function test_scan_file_error_tryagain() {
+    public function test_scan_file_error_tryagain(): void {
         $methods = array(
                 'scan_file_execute_commandline',
                 'scan_file_execute_unixsocket',
@@ -265,7 +267,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertFileDoesNotExist($this->tempfile);
     }
 
-    public function test_scan_data_no_virus() {
+    public function test_scan_data_no_virus(): void {
         $methods = array(
             'scan_data_execute_socket',
             'message_admins',
@@ -299,7 +301,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(0, $antivirus->scan_data(''));
     }
 
-    public function test_scan_data_virus() {
+    public function test_scan_data_virus(): void {
         $methods = array(
             'scan_data_execute_socket',
             'message_admins',
@@ -333,7 +335,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(1, $antivirus->scan_data(''));
     }
 
-    public function test_scan_data_error_donothing() {
+    public function test_scan_data_error_donothing(): void {
         $methods = array(
             'scan_data_execute_socket',
             'message_admins',
@@ -371,7 +373,7 @@ class scanner_test extends \advanced_testcase {
         $this->assertEquals(2, $antivirus->scan_data(''));
     }
 
-    public function test_scan_data_error_actlikevirus() {
+    public function test_scan_data_error_actlikevirus(): void {
         $methods = array(
             'scan_data_execute_socket',
             'message_admins',

@@ -22,7 +22,7 @@ use advanced_testcase;
 use coding_exception;
 use core_grades\component_gradeitem;
 use core_grades\component_gradeitems;
-use external_api;
+use core_external\external_api;
 use mod_forum\local\entities\forum as forum_entity;
 use moodle_exception;
 
@@ -34,13 +34,7 @@ use moodle_exception;
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fetch_test extends advanced_testcase {
-
-    public static function setupBeforeClass(): void {
-        global $CFG;
-        require_once("{$CFG->libdir}/externallib.php");
-    }
-
+final class fetch_test extends advanced_testcase {
     /**
      * Ensure that an execute with an invalid component is rejected.
      */
@@ -230,7 +224,7 @@ class fetch_test extends advanced_testcase {
     /**
      * Executes and performs all the assertions of the fetch method with the given parameters.
      */
-    private function execute_and_assert_fetch ($forum, $controller, $definition, $fetcheruser, $grader, $gradeduser) {
+    private function execute_and_assert_fetch($forum, $controller, $definition, $fetcheruser, $grader, $gradeduser) {
         $generator = \testing_util::get_data_generator();
         $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
 

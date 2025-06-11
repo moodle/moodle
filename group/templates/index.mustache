@@ -34,6 +34,7 @@
     * groups array The list of groups.
     * members array The list of members, grouped based on roles.
     * undeletablegroups string A JSON string containing an array of group IDs that a user cannot delete.
+    * messagingsettingsvisible bool Wether the messaging settings buttons should be visible.
 
     Example context (json):
     {
@@ -42,6 +43,7 @@
         "editgroupsettingsdisabled": false,
         "deletegroupdisabled": false,
         "addmembersdisabled": false,
+        "messagingenabled": true,
         "groups": [
             {
                 "value": "1",
@@ -80,7 +82,7 @@
         <div class="row rtl-compatible">
             <div class="col-md-6 mb-1">
                 <input type="hidden" name="id" value="{{courseid}}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="groups">
                         <span id="groupslabel">{{#str}}groups{{/str}}</span>
                         <span id="thegrouping">&nbsp;</span>
@@ -91,27 +93,37 @@
                         {{/groups}}
                     </select>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_updatemembers" id="updatemembers" value="{{#str}}showmembersforgroup, group{{/str}}" class="btn btn-secondary" />
+                <h3> {{#str}} withselected, group {{/str}} </h3>
+                <div class="mb-3">
+                    <button type="submit" name="action" id="updatemembers" value="updatemembers" class="btn btn-secondary">{{#str}}showmembersforgroup, group{{/str}}</button>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="{{#str}}editgroupsettings, group{{/str}}" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-secondary" />
+                <div class="mb-3">
+                    <button type="submit" name="action" id="showeditgroupsettingsform" value="showgroupsettingsform" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-secondary">{{#str}}editgroupsettings, group{{/str}}</button>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_deletegroup" id="deletegroup" value="{{#str}}deleteselectedgroup, group{{/str}}" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-secondary" />
+                <div class="mb-3">
+                    <button type="submit" name="action" id="deletegroup" value="deletegroup" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-secondary">{{#str}}deleteselectedgroup, group{{/str}}</button>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="{{#str}}creategroup, group{{/str}}" class="btn btn-secondary" />
+                {{#messagingsettingsvisible}}
+                    <div class="mb-3">
+                        <button type="submit" name="action" id="disablemessaging" value="disablemessaging" class="btn btn-secondary" disabled="disabled">{{#str}}disablemessagingaction, group{{/str}}</button>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" name="action" id="enablemessaging" value="enablemessaging" class="btn btn-secondary" disabled="disabled">{{#str}}enablemessagingaction, group{{/str}}</button>
+                    </div>
+                {{/messagingsettingsvisible}}
+                <h3> {{#str}} manageactions, group {{/str}} </h3>
+                <div class="mb-3">
+                    <button type="submit" name="action" id="showcreateorphangroupform" value="showcreateorphangroupform" class="btn btn-secondary">{{#str}}creategroup, group{{/str}}</button>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="{{#str}}autocreategroups, group{{/str}}" class="btn btn-secondary" />
+                <div class="mb-3">
+                    <button type="submit" name="action" id="showautocreategroupsform" value="showautocreategroupsform" class="btn btn-secondary">{{#str}}autocreategroups, group{{/str}}</button>
                 </div>
-                <div class="form-group">
-                    <input type="submit" name="act_showimportgroups" id="showimportgroups" value="{{#str}}importgroups, group{{/str}}" class="btn btn-secondary" />
+                <div class="mb-3">
+                    <button type="submit" name="action" id="showimportgroups" value="showimportgroups" class="btn btn-secondary">{{#str}}importgroups, group{{/str}}</button>
                 </div>
             </div>
             <div class="col-md-6 mb-1">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="members">
                         <span id="memberslabel">{{#str}}membersofselectedgroup, group{{/str}}</span>
                         <span id="thegroup">{{{selectedgroup}}}</span>
@@ -126,8 +138,8 @@
                         {{/members}}
                     </select>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="{{#str}}adduserstogroup, group{{/str}}" class="btn btn-secondary" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="act_showaddmembersform" id="showaddmembersform"/>
+                <div class="mb-3">
+                    <button type="submit" value="showaddmembersform" class="btn btn-secondary" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="action" id="showaddmembersform">{{#str}}adduserstogroup, group{{/str}}</button>
                 </div>
             </div>
         </div>
@@ -142,4 +154,7 @@
         var undeletableGroups = JSON.parse('{{{undeletablegroups}}}');
         M.core_group.groupslist(Y, undeletableGroups);
     });
+{{/js}}
+{{#js}}
+    require(['core_group/index'], (module) => module.init());
 {{/js}}

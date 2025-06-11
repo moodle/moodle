@@ -357,7 +357,7 @@ class manager {
      *
      * @return \core_analytics\local\target\base[]
      */
-    public static function get_all_targets() : array {
+    public static function get_all_targets(): array {
         if (self::$alltargets !== null) {
             return self::$alltargets;
         }
@@ -533,7 +533,7 @@ class manager {
      * @param  int|null $newmodelid A new model to add to the list of models with insights in the provided context.
      * @return int[]
      */
-    public static function cached_models_with_insights(\context $context, int $newmodelid = null) {
+    public static function cached_models_with_insights(\context $context, ?int $newmodelid = null) {
 
         $cache = \cache::make('core', 'contextwithinsights');
         $modelids = $cache->get($context->id);
@@ -778,6 +778,27 @@ class manager {
             } else {
                 $model['enabled'] = clean_param($model['enabled'], PARAM_BOOL);
             }
+
+            // For the core models only, automatically remove references to modules that do not
+            // exist. This allows you to install without error if there are missing plugins.
+            if ($componentname === 'moodle') {
+                $updatedindicators = [];
+                $allmodules = [];
+                foreach ($model['indicators'] as $indicator) {
+                    if (preg_match('~^\\\\mod_([^\\\\]+)\\\\~', $indicator, $matches)) {
+                        if (!$allmodules) {
+                            // The first time, get all modules.
+                            $allmodules = \core\plugin_manager::instance()->get_present_plugins('mod');
+                        }
+                        if (!array_key_exists($matches[1], $allmodules)) {
+                            // Module does not exist, so skip indicator.
+                            continue;
+                        }
+                    }
+                    $updatedindicators[] = $indicator;
+                }
+                $model['indicators'] = $updatedindicators;
+            }
         }
 
         static::validate_models_declaration($models);
@@ -909,7 +930,7 @@ class manager {
      * @param array $model Model declaration
      * @return string complying with PARAM_ALPHANUM rules and starting with an 'id' prefix
      */
-    public static function model_declaration_identifier(array $model) : string {
+    public static function model_declaration_identifier(array $model): string {
         return 'id'.sha1(serialize($model));
     }
 
@@ -941,7 +962,7 @@ class manager {
      * @param  string|null $query
      * @return array Associative array with contextid as key and the short version of the context name as value.
      */
-    public static function get_potential_context_restrictions(?array $contextlevels = null, string $query = null) {
+    public static function get_potential_context_restrictions(?array $contextlevels = null, ?string $query = null) {
         global $DB;
 
         if (empty($contextlevels) && !is_null($contextlevels)) {

@@ -22,7 +22,7 @@ require_once('provider.php');
 require_login();
 
 if (!is_siteadmin($USER->id)) {
-    print_error('no_permission', 'local_online', '/my');
+    moodle_exception('no_permission', 'local_online', '/my');
 }
 
 $provider = new online_enrollment_provider();

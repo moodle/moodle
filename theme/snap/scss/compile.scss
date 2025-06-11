@@ -1,0 +1,7 @@
+// This file is for dev purposes only, changes here do not affect the Theme output.
+// In order to quickl compile the sass and check for syntax errors with the libsass
+// library, use the following command line.
+// scss -I ../boost/scss/ scss/compile.scss
+@import 'pre';
+@import 'boost';
+@import 'post';

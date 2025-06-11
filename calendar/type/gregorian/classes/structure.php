@@ -276,13 +276,6 @@ class structure extends type_base {
     /**
      * Returns a formatted string that represents a date in user time.
      *
-     * Returns a formatted string that represents a date in user time
-     * <b>WARNING: note that the format is for strftime(), not date().</b>
-     * Because of a bug in most Windows time libraries, we can't use
-     * the nicer %e, so we have to use %d which has leading zeroes.
-     * A lot of the fuss in the function is just getting rid of these leading
-     * zeroes as efficiently as possible.
-     *
      * If parameter fixday = true (default), then take off leading
      * zero from %d, else maintain it.
      *
@@ -303,43 +296,62 @@ class structure extends type_base {
             $format = get_string('strftimedaydatetime', 'langconfig');
         }
 
-        if (!empty($CFG->nofixday)) { // Config.php can force %d not to be fixed.
-            $fixday = false;
-        } else if ($fixday) {
-            $formatnoday = str_replace('%d', 'DD', $format);
-            $fixday = ($formatnoday != $format);
-            $format = $formatnoday;
+        // Note: This historical logic was about fixing 12-hour time to remove
+        // unnecessary leading zero was required because on Windows, PHP strftime
+        // function did not support the correct 'hour without leading zero' parameter (%l).
+        // This is no longer required because we use IntlDateFormatter.
+        // Unfortunately though the original implementation was done incorrectly.
+        // The documentation for strftime notes that for the "%l" and "%e" specifiers where
+        // no leading zero is used, a space is used instead.
+        // As a result we switch to the new format specifiers "%l" and "%e", wrap them in placeholders
+        // and then remove the spaces.
+
+        if (empty($CFG->nofixday) && $fixday) {
+            // Config.php can force %d not to be fixed, but only if the format did not specify it.
+            $format = str_replace(
+                '%d',
+                'DDHH%eHHDD',
+                $format,
+            );
         }
 
-        // Note: This logic about fixing 12-hour time to remove unnecessary leading
-        // zero is required because on Windows, PHP strftime function does not
-        // support the correct 'hour without leading zero' parameter (%l).
-        if (!empty($CFG->nofixhour)) {
-            // Config.php can force %I not to be fixed.
-            $fixhour = false;
-        } else if ($fixhour) {
-            $formatnohour = str_replace('%I', 'HH', $format);
-            $fixhour = ($formatnohour != $format);
-            $format = $formatnohour;
+        if (empty($CFG->nofixhour) && $fixhour) {
+            $format = str_replace(
+                '%I',
+                'DDHH%lHHDD',
+                $format,
+            );
         }
 
-        $time = (int)$time; // Moodle allows rubbish in input...
-        $datestring = date_format_string($time, $format, $timezone);
+        if (is_string($time) && !is_numeric($time)) {
+            debugging(
+                "Invalid time passed to timestamp_to_date_string: '{$time}'",
+                DEBUG_DEVELOPER,
+            );
+            $time = 0;
+        }
+
+        if ($time === null || $time === '') {
+            $time = 0;
+        }
+
+        $time = new \DateTime("@{$time}", new \DateTimeZone(date_default_timezone_get()));
 
         date_default_timezone_set(\core_date::get_user_timezone($timezone));
 
-        if ($fixday) {
-            $daystring  = ltrim(str_replace(array(' 0', ' '), '', date(' d', $time)));
-            $datestring = str_replace('DD', $daystring, $datestring);
-        }
-        if ($fixhour) {
-            $hourstring = ltrim(str_replace(array(' 0', ' '), '', date(' h', $time)));
-            $datestring = str_replace('HH', $hourstring, $datestring);
-        }
+        $formattedtime = \core_date::strftime(
+            $format,
+            $time,
+            get_string('locale', 'langconfig'),
+        );
 
         \core_date::set_default_server_timezone();
 
-        return $datestring;
+        // Use a simple regex to remove the placeholders and any leading spaces to match the historically
+        // generated format.
+        $formattedtime = preg_replace('/DDHH ?(\d{1,2})HHDD/', '$1', $formattedtime);
+
+        return $formattedtime;
     }
 
     /**

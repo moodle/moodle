@@ -5,13 +5,13 @@ Feature: See the competencies for an activity
   I need to see the competencies linked to one activity in the breakdown report.
 
   Background:
-    Given the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
+    Given the following "core_competency > frameworks" exist:
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework |
+      | Test-Comp1 | ID-FW1              |
+      | Test-Comp2 | ID-FW1              |
     Given the following "courses" exist:
       | shortname | fullname   |
       | C1        | Course 1 |
@@ -42,7 +42,7 @@ Feature: See the competencies for an activity
     And I select "Test-Comp2" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     And I am on the PageName1 "page activity editing" page
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Course competencies" to "Test-Comp1"
     And I press "Save and return to course"
 
@@ -65,3 +65,10 @@ Feature: See the competencies for an activity
     And I click on "PageName1" "autocomplete_selection"
     And I should see "Test-Comp1"
     And I should see "Test-Comp2"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the user competency summary dialogue
+    Given I navigate to "Reports" in current page administration
+    When I click on "Competency breakdown" "link"
+    And I click on "Not rated" "link"
+    And the page should meet accessibility standards

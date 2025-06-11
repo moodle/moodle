@@ -68,7 +68,7 @@ class table {
      *
      * @return  string
      */
-    public function get_from_sql() : string {
+    public function get_from_sql(): string {
         return "{{$this->tablename}} {$this->tablealias}";
     }
 
@@ -77,7 +77,7 @@ class table {
      *
      * @return  array       The list of columns in a table. The array key is the column name with an applied prefix.
      */
-    protected function get_fieldlist() : array {
+    protected function get_fieldlist(): array {
         global $DB;
 
         if (null === $this->fields) {
@@ -99,7 +99,7 @@ class table {
      *
      * @return  string      The SQL to use in the SELECT
      */
-    public function get_field_select() : string {
+    public function get_field_select(): string {
         $fieldlist = $this->get_fieldlist();
 
         return implode(', ', array_map(function($fieldname, $fieldalias) {
@@ -115,7 +115,7 @@ class table {
      * @param   stdClass    $result The result retrieved from the database with fields to be extracted
      * @return  stdClass    The extracted result
      */
-    public function extract_from_result(stdClass $result) : stdClass {
+    public function extract_from_result(stdClass $result): stdClass {
         $record = new stdClass();
 
         $fieldlist = $this->get_fieldlist();

@@ -27,6 +27,7 @@ define('NO_OUTPUT_BUFFERING', true);
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
+require_once($CFG->dirroot.'/grade/report/lib.php');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', null, PARAM_INT);
@@ -36,7 +37,7 @@ $userid   = optional_param('userid', null, PARAM_INT);
 $itemid = optional_param('itemid', null, PARAM_INT);
 $itemtype = optional_param('item', null, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', 100, PARAM_INT);
+$perpage = optional_param('perpage', null, PARAM_INT);
 
 $edit = optional_param('edit', -1, PARAM_BOOL); // Sticky editing mode.
 
@@ -90,7 +91,8 @@ switch ($itemtype) {
         // If there is a stored user item (last viewed) in a session variable, bypass the user select zero state
         // and display this user item. Also, make sure that the stored last viewed user is part of the current
         // list of gradable users in this course.
-        if ($lastvieweduseritemid && array_key_exists($lastvieweduseritemid, get_gradable_users($courseid, $currentgroup))) {
+        if ($lastvieweduseritemid &&
+                array_key_exists($lastvieweduseritemid, grade_report::get_gradable_users($courseid, $currentgroup))) {
             $itemtype = 'user';
             $itemid = $lastvieweduseritemid;
         } else {
@@ -103,7 +105,7 @@ switch ($itemtype) {
         }
         // If the item id (user id) cannot be defined or the user id is not part of the list of gradable users,
         // display the user select zero state.
-        if (is_null($itemid) || !array_key_exists($itemid, get_gradable_users($courseid, $currentgroup))) {
+        if (is_null($itemid) || !array_key_exists($itemid, grade_report::get_gradable_users($courseid, $currentgroup))) {
             $itemtype = 'user_select';
         }
         break;
@@ -162,13 +164,19 @@ if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
 
 $reportname = $report->screen->heading();
 
+$baseurl = new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid, 'item' => $itemtype]);
 if ($itemtype == 'user' || $itemtype == 'user_select') {
+    $PAGE->requires->js_call_amd('gradereport_singleview/user', 'init', [$baseurl->out(false)]);
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'user');
 } else if ($itemtype == 'grade' || $itemtype == 'grade_select') {
+    $PAGE->requires->js_call_amd('gradereport_singleview/grade', 'init', [$baseurl->out(false)]);
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'grade');
 } else {
     $actionbar = new \core_grades\output\general_action_bar($context, new moodle_url('/grade/report/singleview/index.php',
         ['id' => $courseid]), 'report', 'singleview');
+}
+if ($course->groupmode && $itemtype !== 'select') {
+    $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 
 if ($itemtype == 'user') {
@@ -216,13 +224,13 @@ if ($data = data_submitted()) {
 // Make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
-echo $report->output();
 // Save the screen state in a session variable as last viewed state.
 $SESSION->gradereport_singleview["itemtype-{$context->id}"] = $itemtype;
 if ($itemid) {
     $SESSION->gradereport_singleview["{$itemtype}item-{$context->id}"] = $itemid;
 }
 
+$stickyfooter = '';
 if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 'user_select')) {
     $item = (isset($userid)) ? $userid : $itemid;
 
@@ -236,9 +244,22 @@ if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 
 
     $userreportrenderer = $PAGE->get_renderer('gradereport_singleview');
     // Add previous/next user navigation.
-    echo $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
+    $footercontent = $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
+
+    $buttonhtml = implode(' ', $report->screen->buttons($report->screen->is_readonly()));
+    $footercontent .= $report->screen->bulk_insert() . $buttonhtml;
+
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    $stickyfooter = $OUTPUT->render($stickyfooter);
+
+    $gui->close();
 }
 
+echo $OUTPUT->render_from_template('gradereport_singleview/report', [
+    'table' => $report->output(),
+    'stickyfooter' => $stickyfooter,
+    'sesskey' => sesskey()
+]);
 $event = \gradereport_singleview\event\grade_report_viewed::create(
     [
         'context' => $context,

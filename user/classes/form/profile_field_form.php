@@ -38,7 +38,7 @@ class profile_field_form extends dynamic_form {
     /**
      * Define the form
      */
-    public function definition () {
+    public function definition() {
         global $CFG;
         require_once($CFG->dirroot.'/user/profile/definelib.php');
 
@@ -65,7 +65,7 @@ class profile_field_form extends dynamic_form {
     /**
      * Alter definition based on existing or submitted data
      */
-    public function definition_after_data () {
+    public function definition_after_data() {
         $mform = $this->_form;
         $this->field->define_after_data($mform);
     }

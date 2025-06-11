@@ -38,13 +38,14 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
-    public function test_scorm_update_calendar() {
+    public function test_scorm_update_calendar(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -77,7 +78,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($time, $event->timesort);
     }
 
-    public function test_scorm_update_calendar_time_open_update() {
+    public function test_scorm_update_calendar_time_open_update(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -114,7 +115,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($time + DAYSECS, $event->timesort);
     }
 
-    public function test_scorm_update_calendar_time_open_delete() {
+    public function test_scorm_update_calendar_time_open_delete(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -142,7 +143,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('event'));
     }
 
-    public function test_scorm_update_calendar_time_close() {
+    public function test_scorm_update_calendar_time_close(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -175,7 +176,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($time, $event->timesort);
     }
 
-    public function test_scorm_update_calendar_time_close_update() {
+    public function test_scorm_update_calendar_time_close_update(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -212,7 +213,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($time + DAYSECS, $event->timesort);
     }
 
-    public function test_scorm_update_calendar_time_close_delete() {
+    public function test_scorm_update_calendar_time_close_delete(): void {
         global $DB;
 
         $this->setAdminUser();

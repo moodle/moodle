@@ -28,6 +28,11 @@ mv GeoIP2-php-X.Y.Z/src/ /path/to/moodle/lib/maxmind/GeoIp2/
 mv MaxMind-DB-Reader-php-X.Y.Z/src/MaxMind/ /path/to/moodle/lib/maxmind/MaxMind/
 
 4) Update other MaxMind related files:
+mv GeoIP2-php-X.Y.Z/CHANGELOG.md /path/to/moodle/lib/maxmind/GeoIp2/
+mv GeoIP2-php-X.Y.Z/README.md /path/to/moodle/lib/maxmind/GeoIp2/
+mv GeoIP2-php-X.Y.Z/composer.json /path/to/moodle/lib/maxmind/GeoIp2/
+mv GeoIP2-php-X.Y.Z/LICENSE /path/to/moodle/lib/maxmind/GeoIp2/
+
 mv MaxMind-DB-Reader-php-X.Y.Z/LICENSE /path/to/moodle/lib/maxmind/MaxMind/
 mv MaxMind-DB-Reader-php-X.Y.Z/CHANGELOG.md /path/to/moodle/lib/maxmind/MaxMind/
 mv MaxMind-DB-Reader-php-X.Y.Z/README.md /path/to/moodle/lib/maxmind/MaxMind/

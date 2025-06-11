@@ -69,6 +69,7 @@ class course_content_item_exporter extends exporter {
             'archetype' => ['type' => PARAM_RAW, 'description' => 'The archetype of the module exposing the content item'],
             'componentname' => ['type' => PARAM_TEXT, 'description' => 'The name of the component exposing the content item'],
             'purpose' => ['type' => PARAM_TEXT, 'description' => 'The purpose of the component exposing the content item'],
+            'branded' => ['type' => PARAM_BOOL, 'description' => ' Whether this content item is branded or not'],
         ];
     }
 
@@ -138,7 +139,8 @@ class course_content_item_exporter extends exporter {
             'favourite' => $favourite,
             'legacyitem' => ($this->contentitem->get_id() == -1),
             'recommended' => $recommended,
-            'purpose' => $this->contentitem->get_purpose()
+            'purpose' => $this->contentitem->get_purpose(),
+            'branded' => $this->contentitem->is_branded(),
         ];
 
         return $properties;

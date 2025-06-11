@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains event class for displaying the day view.
- *
- * @package   core_calendar
- * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
 
 use core\external\exporter;
+use core_date;
+use DateTimeImmutable;
 use renderer_base;
 use moodle_url;
 
@@ -148,9 +142,6 @@ class day_exporter extends exporter {
             'nextperiod' => [
                 'type' => PARAM_INT,
             ],
-            'navigation' => [
-                'type' => PARAM_RAW,
-            ],
             'haslastdayofevent' => [
                 'type' => PARAM_BOOL,
                 'default' => false,
@@ -169,7 +160,10 @@ class day_exporter extends exporter {
         $timestamp = $this->data[0];
         // Need to account for user's timezone.
         $usernow = usergetdate(time());
-        $today = new \DateTimeImmutable();
+        $today = new DateTimeImmutable(
+            timezone: core_date::get_user_timezone_object(),
+        );
+
         // The start time should use the day's date but the current
         // time of the day (adjusted for user's timezone).
         $neweventstarttime = $today->setTimestamp($timestamp)->setTime(
@@ -183,7 +177,6 @@ class day_exporter extends exporter {
             'neweventtimestamp' => $neweventstarttime->getTimestamp(),
             'previousperiod' => $this->get_previous_day_timestamp($daytimestamp),
             'nextperiod' => $this->get_next_day_timestamp($daytimestamp),
-            'navigation' => $this->get_navigation(),
             'viewdaylink' => $this->url->out(false),
         ];
 
@@ -262,18 +255,6 @@ class day_exporter extends exporter {
      */
     protected function get_next_day_timestamp($daytimestamp) {
         return $this->related['type']->get_next_day($daytimestamp);
-    }
-
-    /**
-     * Get the calendar navigation controls.
-     *
-     * @return string The html code to the calendar top navigation.
-     */
-    protected function get_navigation() {
-        return calendar_top_controls('day', [
-            'id' => $this->calendar->courseid,
-            'time' => $this->calendar->time,
-        ]);
     }
 
     /**

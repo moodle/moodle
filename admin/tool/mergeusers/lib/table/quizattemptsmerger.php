@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -85,8 +86,8 @@ class QuizAttemptsMerger extends GenericTableMerger
     }
 
     /**
-     * This TableMerger processes quiz_attempts accordingly, regrading when 
-     * necessary. So that tables quiz_grades and quiz_grades_history 
+     * This TableMerger processes quiz_attempts accordingly, regrading when
+     * necessary. So that tables quiz_grades and quiz_grades_history
      * have to be omitted from processing by other TableMergers.
      *
      * @return array
@@ -128,7 +129,7 @@ class QuizAttemptsMerger extends GenericTableMerger
 
     /**
      * Merges the records related to the given users given in $data,
-     * updating/appending the list of $errorMessages and $actionLog, 
+     * updating/appending the list of $errorMessages and $actionLog,
      * by having the union of all attempts and being renumbered by
      * the timestart of each attempt.
      *
@@ -142,7 +143,7 @@ class QuizAttemptsMerger extends GenericTableMerger
 
         $tableName = $CFG->prefix . $data['tableName'];
 
-        // we want to find all quiz attempts made from both users if any.
+        // We want to find all quiz attempts made from both users if any.
         $sql = "
             SELECT *
             FROM
@@ -154,7 +155,7 @@ class QuizAttemptsMerger extends GenericTableMerger
 
         $allAttempts = $DB->get_records_sql($sql, array($data['fromid'], $data['toid']));
 
-        // when there are attempts, check what we have to do with them.
+        // When there are attempts, check what we have to do with them.
         if ($allAttempts) {
 
             $toid = $data['toid'];
@@ -163,49 +164,49 @@ class QuizAttemptsMerger extends GenericTableMerger
                 ' WHERE id = ',
             );
 
-            // list of quiz ids necessary to recalculate.
+            // List of quiz ids necessary to recalculate.
             $quizzes = array();
-            // list of attempts organized by quiz id
+            // List of attempts organized by quiz id.
             $attemptsByQuiz = array();
-            // list of users that have attempts per quiz
+            // List of users that have attempts per quiz.
             $userids = array();
 
-            // organize all attempts by quiz and userid
+            // Organize all attempts by quiz and userid.
             foreach ($allAttempts as $attempt) {
                 $attemptsByQuiz[$attempt->quiz][] = $attempt;
                 $userids[$attempt->quiz][$attempt->userid] = $attempt->userid;
             }
 
-            // processing attempts quiz by quiz
+            // Processing attempts quiz by quiz.
             foreach ($attemptsByQuiz as $quiz => $attempts) {
 
-                // do nothing when there is only the target user.
+                // Do nothing when there is only the target user.
                 if (count($userids[$quiz]) === 1 && isset($userids[$quiz][$toid])) {
-                    // all attempts are for the target user only; do nothing.
+                    // All attempts are for the target user only; do nothing.
                     continue;
                 }
 
                 // Now we know that we have to gather all attempts and renumber them
                 // by their timestart.
-                // 
-                // In order to prevent key collisions for (userid, quiz and attempt), 
+                //
+                // In order to prevent key collisions for (userid, quiz and attempt),
                 // we adopt the following procedure:
-                // 
+                //
                 //   1. Renumber all attempts updating their attempt to $max + $nattempt.
                 //   2. Update all above attempts to subtract $max to their attempt value.
-                //   
+                //
                 // In step 1. we have $max set to the total number of attempts from both
                 // users, and $nattempt is just an incremental value.
-                // 
+                //
                 // In step 2. we renumber all attempts to start from 1 by just subtracting
                 // the $max value to their attempt column.
-                // 
                 //
-                // total number of attempts from both users.
+                //
+                // Total number of attempts from both users.
                 $max = count($attempts);
-                // update the list of quiz ids to be recalculated its grade.
+                // Update the list of quiz ids to be recalculated its grade.
                 $quizzes[$quiz] = $quiz;
-                // number of attempt when renumbering
+                // Number of attempt when renumbering
                 $nattempt = 1;
 
                 // Renumber all attempts and updating userid when necessary.
@@ -227,11 +228,10 @@ class QuizAttemptsMerger extends GenericTableMerger
                     }
 
                     $nattempt++;
-                    unset($sets); // free mem
+                    unset($sets); // Free mem.
                 }
 
-                // Remove the offset of $max from their attempt column to make
-                // them start by 1 as expected.
+                // Remove the offset of $max from their attempt column to make them start by 1 as expected.
                 $updateAll = "UPDATE " . $tableName .
                     " SET attempt = attempt - $max " .
                     " WHERE quiz = $quiz AND userid = $toid";
@@ -244,14 +244,14 @@ class QuizAttemptsMerger extends GenericTableMerger
                 }
             }
 
-            // recalculate grades for updated quizzes.
+            // Recalculate grades for updated quizzes.
             $this->updateAllQuizzes($data, $quizzes, $actionLog);
         }
     }
 
     /**
      * Overriding the default implementation to add a final task: updateQuizzes.
-     * 
+     *
      * @param array $data array with details of merging.
      * @param array $recordsToModify list of record ids to update with $toid.
      * @param string $fieldName field name of the table to update.
@@ -273,7 +273,7 @@ class QuizAttemptsMerger extends GenericTableMerger
     protected function updateAllQuizzes($data, $ids, &$actionLog)
     {
         if (empty($ids)) {
-            // if no ids... do nothing.
+            // If no ids... do nothing.
             return;
         }
 
@@ -299,9 +299,10 @@ class QuizAttemptsMerger extends GenericTableMerger
         if ($quizzes) {
             $actionLog[] = get_string('qa_grades', 'tool_mergeusers', implode(', ', array_keys($quizzes)));
             foreach ($quizzes as $quiz) {
-                // https://moodle.org/mod/forum/discuss.php?d=258979
-                // recalculate grades for affected quizzes.
-                quiz_update_all_final_grades($quiz);
+                // See https://moodle.org/mod/forum/discuss.php?d=258979.
+                // Recalculate grades for affected quizzes.
+                $quizobj = quiz_settings::create($quiz->id);
+                $quizobj->get_grade_calculator()->recompute_all_final_grades();
             }
         }
     }

@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/type/essay/edit_essay_form.php');
  * @copyright  2021 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_form_test extends \advanced_testcase {
+final class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *
@@ -102,7 +102,7 @@ class edit_form_test extends \advanced_testcase {
      *
      * @return array, an array of all possible options.
      */
-    public function user_preference_provider(): array {
+    public static function user_preference_provider(): array {
         $valid = [];
         $invalid = ['attachmentsrequired' => get_string('mustrequirefewer', 'qtype_essay')];
         return [

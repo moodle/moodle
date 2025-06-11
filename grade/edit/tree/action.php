@@ -62,10 +62,11 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-
             // BEGIN LSU Visibility Issues.
+            // if (!$object->can_control_visibility()) {
+            //    throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
+            // }
             // END LSU Visibility Issues.
-
             $object->set_hidden(1, true);
         }
         break;
@@ -78,10 +79,11 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-
             // BEGIN LSU Visibility Issues.
+            // if (!$object->can_control_visibility()) {
+            //    throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
+            // }
             // END LSU Visibility Issues.
-
             $object->set_hidden(0, true);
         }
         break;
@@ -94,7 +96,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_locked(1, true, true);
+            $object->set_locked(1, false, true);
         }
         break;
 
@@ -106,7 +108,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_locked(0, true, true);
+            $object->set_locked(0, false, true);
         }
         break;
 

@@ -42,7 +42,7 @@ class data_controller extends \core_customfield\data_controller {
      * Return the name of the field where the information is stored
      * @return string
      */
-    public function datafield() : string {
+    public function datafield(): string {
         return 'intvalue';
     }
 

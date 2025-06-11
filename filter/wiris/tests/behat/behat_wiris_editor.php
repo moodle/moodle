@@ -38,10 +38,6 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_wiris_editor extends behat_wiris_base {
-
-
-
-
     /**
      * Once the editor has been opened and focused, set the MathType formula to the specified value.
      *
@@ -327,9 +323,9 @@ class behat_wiris_editor extends behat_wiris_base {
         })()";
 
         $this->getSession()->executeScript($javascript);
-        $div = $this->getSession()->getPage()->find('xpath', '//div[@id="'.$locator.'"]');
+        $div = $this->getSession()->getPage()->find('xpath', '//div[@id="' . $locator . '"]');
         if (empty($div)) {
-            throw new ExpectationException('div with locator \''.$locator.'\' not found', $this->getSession());
+            throw new ExpectationException('div with locator \'' . $locator . '\' not found', $this->getSession());
         }
         $divname = $div->getAttribute("name");
         $this->getSession()->getDriver()->switchToDiv($divname);
@@ -349,9 +345,9 @@ class behat_wiris_editor extends behat_wiris_base {
         })()";
 
         $this->getSession()->executeScript($javascript);
-        $iframe = $this->getSession()->getPage()->find('xpath', '//iframe[@id="'.$locator.'"]');
+        $iframe = $this->getSession()->getPage()->find('xpath', '//iframe[@id="' . $locator . '"]');
         if (empty($iframe)) {
-            throw new ExpectationException('Iframe with locator \''.$locator.'\' not found', $this->getSession());
+            throw new ExpectationException('Iframe with locator \'' . $locator . '\' not found', $this->getSession());
         }
         $iframename = $iframe->getAttribute("name");
         $this->getSession()->getDriver()->switchToIFrame($iframename);

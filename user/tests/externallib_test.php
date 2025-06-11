@@ -26,10 +26,10 @@
 
 namespace core_user;
 
+use core_external\external_api;
 use core_files_external;
 use core_user_external;
 use externallib_advanced_testcase;
-use external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,12 +39,18 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/user/externallib.php');
 require_once($CFG->dirroot . '/files/externallib.php');
 
-class externallib_test extends externallib_advanced_testcase {
+/**
+ * Tests for the user external functions.
+ *
+ * @package core_user
+ * @covers \core_user_external
+ */
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_users
      */
-    public function test_get_users() {
+    public function test_get_users(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -101,7 +107,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_user_external::get_users($searchparams);
 
         // We need to execute the return values cleaning process to simulate the web service server
-        $result = \external_api::clean_returnvalue(core_user_external::get_users_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_users_returns(), $result);
 
         // Check we retrieve the good total number of enrolled users + no error on capability.
         $expectedreturnedusers = 1;
@@ -179,12 +185,30 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_users_by_field
      */
-    public function test_get_users_by_field() {
+    public function test_get_users_by_field(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
 
-        $course = self::getDataGenerator()->create_course();
+        $generator = self::getDataGenerator();
+
+        // Create complex user profile field supporting multi-lang.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $name = '<span lang="en" class="multilang">Employment status</span>'.
+            '<span lang="es" class="multilang">Estado de Empleo</span>';
+        $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
+        $generator->create_custom_profile_field(
+            [
+                'datatype' => 'menu',
+                'shortname' => 'employmentstatus',
+                'name' => $name,
+                'param1' => $statuses
+            ]
+        );
+
+        $course = $generator->create_course();
         $user1 = array(
             'username' => 'usernametest1',
             'idnumber' => 'idnumbertest1',
@@ -200,14 +224,16 @@ class externallib_test extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'country' => 'AU',
+            'profile_field_jobposition' => 'Manager',
+            'profile_field_employmentstatus' => explode('\n', $statuses)[2],
         );
-        $user1 = self::getDataGenerator()->create_user($user1);
+        $user1 = $generator->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }
-        $user2 = self::getDataGenerator()->create_user(
+        $user2 = $generator->create_user(
                 array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
 
         $generatedusers = array();
@@ -218,9 +244,9 @@ class externallib_test extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // call as admin and receive all possible fields.
         $this->setAdminUser();
@@ -232,7 +258,7 @@ class externallib_test extends externallib_advanced_testcase {
             // Call the external function.
             $returnedusers = core_user_external::get_users_by_field($fieldtosearch,
                         array($USER->{$fieldtosearch}, $user1->{$fieldtosearch}, $user2->{$fieldtosearch}));
-            $returnedusers = \external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
+            $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
             // Expected result differ following the searched field
             // Admin user in the PHPunit framework doesn't have an idnumber.
@@ -289,7 +315,16 @@ class externallib_test extends externallib_advanced_testcase {
                 }
                 // Default language and no theme were used for the user.
                 $this->assertEquals($CFG->lang, $returneduser['lang']);
+                $this->assertEquals($generateduser->trackforums, $returneduser['trackforums']);
                 $this->assertEmpty($returneduser['theme']);
+
+                if ($returneduser['id'] == $user1->id) {
+                    $this->assertCount(1, $returneduser['customfields']);
+                    $dbvalue = explode('\n', $statuses)[2];
+                    $this->assertEquals($dbvalue, $returneduser['customfields'][0]['value']);
+                    $this->assertEquals('Employment status', $returneduser['customfields'][0]['name']);
+                    $this->assertEquals('Other', $returneduser['customfields'][0]['displayvalue']);
+                }
             }
         }
 
@@ -299,7 +334,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
                     array($USER->username, $user1->username, $user2->username));
-        $returnedusers = \external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned
         $this->assertEquals(1, count($returnedusers));
@@ -310,7 +345,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
             array($USER->username, $user1->username, $user2->username));
-        $returnedusers = \external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned still.
         $this->assertEquals(1, count($returnedusers));
@@ -322,6 +357,24 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $return = new \stdClass();
+
+        $generator = self::getDataGenerator();
+
+        // Create complex user profile field supporting multi-lang.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $name = '<span lang="en" class="multilang">Employment status</span>' .
+            '<span lang="es" class="multilang">Estado de Empleo</span>';
+        $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
+        $generator->create_custom_profile_field(
+            [
+                'datatype' => 'menu',
+                'shortname' => 'employmentstatus',
+                'name' => $name,
+                'param1' => $statuses,
+            ]
+        );
 
         // Create the course and fetch its context.
         $return->course = self::getDataGenerator()->create_course();
@@ -339,7 +392,8 @@ class externallib_test extends externallib_advanced_testcase {
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'country' => 'AU'
+            'country' => 'AU',
+            'profile_field_employmentstatus' => explode('\n', $statuses)[2],
         );
         $return->user1 = self::getDataGenerator()->create_user($return->user1);
         if (!empty($CFG->usetags)) {
@@ -369,7 +423,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_course_user_profiles
      */
-    public function test_get_course_user_profiles() {
+    public function test_get_course_user_profiles(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -381,13 +435,13 @@ class externallib_test extends externallib_advanced_testcase {
                     array('userid' => $USER->id, 'courseid' => $data->course->id)));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
 
         // Check we retrieve the good total number of enrolled users + no error on capability.
         $this->assertEquals(1, count($enrolledusers));
     }
 
-    public function test_get_user_course_profile_as_admin() {
+    public function test_get_user_course_profile_as_admin(): void {
         global $USER, $CFG;
 
         global $USER, $CFG;
@@ -405,7 +459,7 @@ class externallib_test extends externallib_advanced_testcase {
             array('userid' => $data->user1->id, 'courseid' => $data->course->id)));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
         // Check we get the requested user and that is in a group.
         $this->assertCount(1, $enrolledusers);
         $this->assertCount(1, $enrolledusers[0]['groups']);
@@ -425,6 +479,11 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals(FORMAT_HTML, $enrolleduser['descriptionformat']);
                 $this->assertEquals($data->user1->city, $enrolleduser['city']);
                 $this->assertEquals($data->user1->country, $enrolleduser['country']);
+                // Default language was used for the user.
+                $this->assertEquals($CFG->lang, $enrolleduser['lang']);
+                $this->assertEquals('Employment status', $enrolleduser['customfields'][0]['name']);
+                $this->assertEquals('Other', $enrolleduser['customfields'][0]['displayvalue']);
+
                 if (!empty($CFG->usetags)) {
                     $this->assertEquals(implode(', ', $data->user1->interests), $enrolleduser['interests']);
                 }
@@ -435,7 +494,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_users
      */
-    public function test_create_users() {
+    public function test_create_users(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -486,7 +545,7 @@ class externallib_test extends externallib_advanced_testcase {
         $createdusers = core_user_external::create_users(array($user1, $user2));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $createdusers = \external_api::clean_returnvalue(core_user_external::create_users_returns(), $createdusers);
+        $createdusers = external_api::clean_returnvalue(core_user_external::create_users_returns(), $createdusers);
 
         // Check we retrieve the good total number of created users + no error on capability.
         $this->assertCount(2, $createdusers);
@@ -534,7 +593,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_users with password and createpassword parameter not set.
      */
-    public function test_create_users_empty_password() {
+    public function test_create_users_empty_password(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -553,7 +612,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Data provider for \core_user_externallib_testcase::test_create_users_with_same_emails().
      */
-    public function create_users_provider_with_same_emails() {
+    public static function create_users_provider_with_same_emails(): array {
         return [
             'Same emails allowed, same case' => [
                 1, false
@@ -577,7 +636,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @param int $sameemailallowed The value to set for $CFG->allowaccountssameemail.
      * @param boolean $differentcase Whether to user a different case for the other user.
      */
-    public function test_create_users_with_same_emails($sameemailallowed, $differentcase) {
+    public function test_create_users_with_same_emails($sameemailallowed, $differentcase): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -622,7 +681,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @param array $data User data to attempt to register.
      * @param string $expectmessage Expected exception message.
      */
-    public function test_create_users_invalid_parameter(array $data, $expectmessage) {
+    public function test_create_users_invalid_parameter(array $data, $expectmessage): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -639,7 +698,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function data_create_users_invalid_parameter() {
+    public static function data_create_users_invalid_parameter(): array {
         return [
             'blank_username' => [
                 'data' => [
@@ -696,7 +755,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_users
      */
-    public function test_delete_users() {
+    public function test_delete_users(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -727,7 +786,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_users
      */
-    public function test_update_users() {
+    public function test_update_users(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -745,7 +804,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the files api to create a file.
         $draftfile = core_files_external::upload($contextid, 'user', 'draft', 0, '/',
                 $filename, $filecontent, null, null);
-        $draftfile = \external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
 
         $draftid = $draftfile['itemid'];
 
@@ -802,7 +861,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function.
         $returnvalue = core_user_external::update_users(array($user1, $user2, $user3, $user4));
-        $returnvalue = \external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
 
         // Check warnings.
         $this->assertEquals($user2['id'], $returnvalue['warnings'][0]['itemid']); // Guest user.
@@ -856,7 +915,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Updating user with an invalid email.
         $user5['email'] = 'bogus';
         $returnvalue = core_user_external::update_users(array($user5));
-        $returnvalue = \external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
         $this->assertEquals('useremailinvalid', $returnvalue['warnings'][0]['warningcode']);
         $this->assertStringContainsString('Invalid email address',
             $returnvalue['warnings'][0]['message']);
@@ -864,7 +923,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Updating user with a duplicate email.
         $user5['email'] = $user1['email'];
         $returnvalue = core_user_external::update_users(array($user1, $user5));
-        $returnvalue = \external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
         $this->assertEquals('useremailduplicate', $returnvalue['warnings'][0]['warningcode']);
         $this->assertStringContainsString('Duplicate email address',
                 $returnvalue['warnings'][0]['message']);
@@ -872,7 +931,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Updating a user that does not exist.
         $user5['id'] = -1;
         $returnvalue = core_user_external::update_users(array($user5));
-        $returnvalue = \external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
         $this->assertEquals('invaliduserid', $returnvalue['warnings'][0]['warningcode']);
         $this->assertStringContainsString('Invalid user ID',
                 $returnvalue['warnings'][0]['message']);
@@ -882,7 +941,7 @@ class externallib_test extends externallib_advanced_testcase {
         user_update_user($user1); // Update user not using webservice.
         unset($user1['mnethostid']); // The mnet host ID field is not in the allowed field list for the webservice.
         $returnvalue = core_user_external::update_users(array($user1));
-        $returnvalue = \external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
         $this->assertEquals('usernotupdatedremote', $returnvalue['warnings'][0]['warningcode']);
         $this->assertStringContainsString('User is a remote user',
                 $returnvalue['warnings'][0]['message']);
@@ -898,7 +957,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function users_with_same_emails() {
+    public static function users_with_same_emails(): array {
         return [
             'Same emails not allowed: Update name using exactly the same email' => [
                 0, 'John', 's1@example.com', 'Johnny', 's1@example.com', false, true
@@ -934,7 +993,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @param boolean $successexpected Whether we expect that the target user's email/name will be updated.
      */
     public function test_update_users_emails_with_different_cases($allowsameemail, $currentname, $currentemail,
-                                                                  $newname, $newemail, $withanotheruser, $successexpected) {
+                                                                  $newname, $newemail, $withanotheruser, $successexpected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -981,7 +1040,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_user_private_files
      */
-    public function test_add_user_private_files() {
+    public function test_add_user_private_files(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -1004,7 +1063,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the files api to create a file.
         $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                                                  $filename, $filecontent, $contextlevel, $instanceid);
-        $draftfile = \external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
 
         $draftid = $draftfile['itemid'];
         // Make sure the file was created.
@@ -1027,7 +1086,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_user_private_files quota
      */
-    public function test_add_user_private_files_quota() {
+    public function test_add_user_private_files_quota(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -1050,7 +1109,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the files api to create a file.
         $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
             $filename, $filecontent, $contextlevel, $instanceid);
-        $draftfile = \external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
         $draftid = $draftfile['itemid'];
 
         // Call the external function to add the file to private files.
@@ -1075,7 +1134,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add user device
      */
-    public function test_add_user_device() {
+    public function test_add_user_device(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -1104,7 +1163,7 @@ class externallib_test extends externallib_advanced_testcase {
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
                                                         $device['version'], $device['pushid'], $device['uuid']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $warnings = \external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
         $this->assertCount(1, $warnings);
 
         // Test update an existing device.
@@ -1123,14 +1182,14 @@ class externallib_test extends externallib_advanced_testcase {
         $device['pushid'] = 'new different than before';
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
                                                         $device['version'], $device['pushid'], $device['uuid']);
-        $warnings = \external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
         $this->assertEquals(2, $DB->count_records('user_devices'));
     }
 
     /**
      * Test remove user device
      */
-    public function test_remove_user_device() {
+    public function test_remove_user_device(): void {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -1161,31 +1220,31 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try to remove a device that does not exist.
         $result = core_user_external::remove_user_device('1234567890');
-        $result = \external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
         $this->assertFalse($result['removed']);
         $this->assertCount(1, $result['warnings']);
 
         // Try to remove a device that does not exist for an existing app.
         $result = core_user_external::remove_user_device('1234567890', $device['appid']);
-        $result = \external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
         $this->assertFalse($result['removed']);
         $this->assertCount(1, $result['warnings']);
 
         // Remove an existing device for an existing app. This will remove one of the two devices.
         $result = core_user_external::remove_user_device($device['uuid'], $device['appid']);
-        $result = \external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
         $this->assertTrue($result['removed']);
 
         // Remove all the devices. This must remove the remaining device.
         $result = core_user_external::remove_user_device($device['uuid']);
-        $result = \external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
         $this->assertTrue($result['removed']);
     }
 
     /**
      * Test get_user_preferences
      */
-    public function test_get_user_preferences() {
+    public function test_get_user_preferences(): void {
         $this->resetAfterTest(true);
 
         $user = self::getDataGenerator()->create_user();
@@ -1195,7 +1254,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user);
 
         $result = core_user_external::get_user_preferences();
-        $result = \external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         // Expect 3, _lastloaded is always returned.
         $this->assertCount(3, $result['preferences']);
@@ -1210,14 +1269,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Retrieve just one preference.
         $result = core_user_external::get_user_preferences('some_random_text');
-        $result = \external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['preferences']);
         $this->assertEquals('text', $result['preferences'][0]['value']);
 
         // Retrieve non-existent preference.
         $result = core_user_external::get_user_preferences('non_existent');
-        $result = \external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['preferences']);
         $this->assertEquals(null, $result['preferences'][0]['value']);
@@ -1225,7 +1284,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check that as admin we can retrieve all the preferences for any user.
         $this->setAdminUser();
         $result = core_user_external::get_user_preferences('', $user->id);
-        $result = \external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(3, $result['preferences']);
 
@@ -1248,7 +1307,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_picture
      */
-    public function test_update_picture() {
+    public function test_update_picture(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -1268,7 +1327,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Change user profile image.
         $result = core_user_external::update_picture($draftid);
-        $result = \external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
         // The new revision is in the url for the user.
         $this->assertStringContainsString($picture, $result['profileimageurl']);
@@ -1277,7 +1336,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Delete image.
         $result = core_user_external::update_picture(0, true);
-        $result = \external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
         // No picture.
         $this->assertEquals(0, $picture);
@@ -1291,7 +1350,7 @@ class externallib_test extends externallib_advanced_testcase {
         $draftid = $draftfile['itemid'];
 
         $result = core_user_external::update_picture($draftid, false, $user->id);
-        $result = \external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         // The new revision is in the url for the user.
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
         $this->assertStringContainsString($picture, $result['profileimageurl']);
@@ -1301,7 +1360,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_picture disabled
      */
-    public function test_update_picture_disabled() {
+    public function test_update_picture_disabled(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $CFG->disableuserimages = true;
@@ -1314,7 +1373,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test set_user_preferences
      */
-    public function test_set_user_preferences_save() {
+    public function test_set_user_preferences_save(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1331,27 +1390,27 @@ class externallib_test extends externallib_advanced_testcase {
             ),
             array(
                 'name' => 'htmleditor',
-                'value' => 'tinymce',
+                'value' => 'tiny',
                 'userid' => $user2->id,
             )
         );
 
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['saved']);
 
         // Get preference from DB to avoid cache.
         $this->assertEquals('atto', $DB->get_field('user_preferences', 'value',
             array('userid' => $user1->id, 'name' => 'htmleditor')));
-        $this->assertEquals('tinymce', $DB->get_field('user_preferences', 'value',
+        $this->assertEquals('tiny', $DB->get_field('user_preferences', 'value',
             array('userid' => $user2->id, 'name' => 'htmleditor')));
     }
 
     /**
      * Test set_user_preferences
      */
-    public function test_set_user_preferences_save_invalid_pref() {
+    public function test_set_user_preferences_save_invalid_pref(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1368,7 +1427,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertCount(0, $result['saved']);
         $this->assertEquals('nopermission', $result['warnings'][0]['warningcode']);
@@ -1380,7 +1439,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test set_user_preferences for an invalid user
      */
-    public function test_set_user_preferences_invalid_user() {
+    public function test_set_user_preferences_invalid_user(): void {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
@@ -1393,7 +1452,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertCount(0, $result['saved']);
         $this->assertEquals('invaliduser', $result['warnings'][0]['warningcode']);
@@ -1403,7 +1462,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test set_user_preferences using an invalid preference
      */
-    public function test_set_user_preferences_invalid_preference() {
+    public function test_set_user_preferences_invalid_preference(): void {
         global $USER, $DB;
 
         $this->resetAfterTest(true);
@@ -1418,7 +1477,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['saved']);
         // Cleaned valud of the preference was saved.
@@ -1429,7 +1488,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test set_user_preferences for other user not being admin
      */
-    public function test_set_user_preferences_capability() {
+    public function test_set_user_preferences_capability(): void {
         $this->resetAfterTest(true);
 
         $user1 = self::getDataGenerator()->create_user();
@@ -1455,7 +1514,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_user_preferences unsetting an existing preference.
      */
-    public function test_update_user_preferences_unset() {
+    public function test_update_user_preferences_unset(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -1472,7 +1531,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['saved']);
 
@@ -1489,7 +1548,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test agree_site_policy
      */
-    public function test_agree_site_policy() {
+    public function test_agree_site_policy(): void {
         global $CFG, $DB, $USER;
         $this->resetAfterTest(true);
 
@@ -1498,7 +1557,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Site policy not set.
         $result = core_user_external::agree_site_policy();
-        $result = \external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('nositepolicy', $result['warnings'][0]['warningcode']);
@@ -1508,7 +1567,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(0, $USER->policyagreed);
 
         $result = core_user_external::agree_site_policy();
-        $result = \external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $USER->policyagreed);
@@ -1516,7 +1575,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Try again, we should get a warning.
         $result = core_user_external::agree_site_policy();
-        $result = \external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('alreadyagreed', $result['warnings'][0]['warningcode']);
@@ -1540,7 +1599,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_private_files_info
      */
-    public function test_get_private_files_info() {
+    public function test_get_private_files_info(): void {
 
         $this->resetAfterTest(true);
         $user = self::getDataGenerator()->create_user();
@@ -1561,7 +1620,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get my private files information.
         $result = core_user_external::get_private_files_info();
-        $result = \external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
         $this->assertEquals(1, $result['filecount']);
         $this->assertEquals($file->get_filesize(), $result['filesize']);
         $this->assertEquals(0, $result['foldercount']);
@@ -1570,7 +1629,7 @@ class externallib_test extends externallib_advanced_testcase {
         // As admin, get user information.
         $this->setAdminUser();
         $result = core_user_external::get_private_files_info($user->id);
-        $result = \external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
         $this->assertEquals(1, $result['filecount']);
         $this->assertEquals($file->get_filesize(), $result['filesize']);
         $this->assertEquals(0, $result['foldercount']);
@@ -1580,7 +1639,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_private_files_info missing permissions.
      */
-    public function test_get_private_files_info_missing_permissions() {
+    public function test_get_private_files_info_missing_permissions(): void {
 
         $this->resetAfterTest(true);
         $user1 = self::getDataGenerator()->create_user();
@@ -1595,7 +1654,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test the functionality of the {@see \core_user\external\search_identity} class.
      */
-    public function test_external_search_identity() {
+    public function test_external_search_identity(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -1647,7 +1706,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->maxusersperpage = 3;
 
         $result = \core_user\external\search_identity::execute('Lastt');
-        $result = \external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
 
         $this->assertEquals(2, count($result['list']));
         $this->assertEquals(3, $result['maxusersperpage']);
@@ -1664,7 +1723,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->maxusersperpage = 2;
 
         $result = \core_user\external\search_identity::execute('Firstt');
-        $result = \external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
 
         $this->assertEquals(2, count($result['list']));
         $this->assertEquals(2, $result['maxusersperpage']);
@@ -1679,7 +1738,7 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->maxusersperpage = 2;
 
         $result = \core_user\external\search_identity::execute('City One');
-        $result = \external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
 
         $this->assertEquals(0, count($result['list']));
         $this->assertEquals(2, $result['maxusersperpage']);
@@ -1694,7 +1753,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = \core_user\external\search_identity::execute('City One');
-        $result = \external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
 
         $this->assertEquals(2, count($result['list']));
         $this->assertEquals(2, $result['maxusersperpage']);
@@ -1704,7 +1763,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test functionality of the {@see \core_user\external\search_identity} class with alternativefullnameformat defined.
      */
-    public function test_external_search_identity_with_alternativefullnameformat() {
+    public function test_external_search_identity_with_alternativefullnameformat(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -1725,7 +1784,7 @@ class externallib_test extends externallib_advanced_testcase {
             '<ruby>lastname firstname <rp>(</rp><rt>lastnamephonetic firstnamephonetic</rt><rp>)</rp></ruby>';
 
         $result = \core_user\external\search_identity::execute('Ak');
-        $result = \external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
 
         $this->assertEquals(1, count($result['list']));
         $this->assertEquals(3, $result['maxusersperpage']);
@@ -1740,7 +1799,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test verifying that update_user_preferences prevents changes to the default homepage for other users.
      */
-    public function test_update_user_preferences_homepage_permission_callback() {
+    public function test_update_user_preferences_homepage_permission_callback(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -1760,7 +1819,7 @@ class externallib_test extends externallib_advanced_testcase {
             ]
         ];
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertCount(0, $result['saved']);
 

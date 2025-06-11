@@ -186,7 +186,7 @@ Feature: The my overview block allows users to group courses by custom fields
       | displaygroupingcustomfield | 1          | block_myoverview |
       | customfiltergrouping       | textfield2 | block_myoverview |
     And I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Edit" "link" in the "Text field 2" "table_row"
     And I set the field "Visible to" to "Nobody"
     And I press "Save changes"

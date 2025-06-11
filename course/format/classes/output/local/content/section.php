@@ -70,6 +70,9 @@ class section implements named_templatable, renderable {
     /** @var optional move here output class */
     protected $movehereclass;
 
+    /** @var optional visibility output class */
+    protected $visibilityclass;
+
     /** @var bool if the title is hidden for some reason */
     protected $hidetitle = false;
 
@@ -79,6 +82,8 @@ class section implements named_templatable, renderable {
     /** @var bool if the section is considered stealth */
     protected $isstealth = false;
 
+    /** @var string control menu class. */
+    protected $controlmenuclass;
 
     /**
      * Constructor.
@@ -90,9 +95,7 @@ class section implements named_templatable, renderable {
         $this->format = $format;
         $this->section = $section;
 
-        if ($section->section > $format->get_last_section_number()) {
-            $this->isstealth = true;
-        }
+        $this->isstealth = $section->is_orphan();
 
         // Load output classes names from format.
         $this->headerclass = $format->get_output_classname('content\\section\\header');
@@ -102,6 +105,16 @@ class section implements named_templatable, renderable {
         $this->controlmenuclass = $format->get_output_classname('content\\section\\controlmenu');
         $this->availabilityclass = $format->get_output_classname('content\\section\\availability');
         $this->movehereclass = $format->get_output_classname('content\\section\\movehere');
+        $this->visibilityclass = $format->get_output_classname('content\\section\\visibility');
+    }
+
+    /**
+     * Check if the section is considered stealth.
+     *
+     * @return bool
+     */
+    public function is_stealth(): bool {
+        return $this->isstealth;
     }
 
     /**
@@ -140,12 +153,15 @@ class section implements named_templatable, renderable {
         $data = (object)[
             'num' => $section->section ?? '0',
             'id' => $section->id,
-            'sectionreturnid' => $format->get_section_number(),
+            'sectionreturnnum' => $format->get_sectionnum(),
             'insertafter' => false,
             'summary' => $summary->export_for_template($output),
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
-            'editing' => $PAGE->user_is_editing()
+            'editing' => $PAGE->user_is_editing(),
+            'displayonesection' => ($course->id != SITEID && $format->get_sectionid() == $section->id),
+            // Section name is used as data attribute is to facilitate behat locators.
+            'sectionname' => $format->get_section_name($section),
         ];
 
         $haspartials = [];
@@ -178,7 +194,7 @@ class section implements named_templatable, renderable {
         $headerdata = $header->export_for_template($output);
 
         // When a section is displayed alone the title goes over the section, not inside it.
-        if ($section->section != 0 && $section->section == $format->get_section_number()) {
+        if ($section->section != 0 && $section->section == $format->get_sectionnum()) {
             $data->singleheader = $headerdata;
         } else {
             $data->header = $headerdata;
@@ -200,7 +216,7 @@ class section implements named_templatable, renderable {
         $format = $this->format;
 
         $showsummary = ($section->section != 0 &&
-            $section->section != $format->get_section_number() &&
+            $section->section != $format->get_sectionnum() &&
             $format->get_course_display() == COURSE_DISPLAY_MULTIPAGE &&
             !$format->show_editor()
         );
@@ -253,8 +269,6 @@ class section implements named_templatable, renderable {
     protected function add_visibility_data(stdClass &$data, renderer_base $output): bool {
         global $USER;
         $result = false;
-        $course = $this->format->get_course();
-        $context = context_course::instance($course->id);
         // Check if it is a stealth sections (orphaned).
         if ($this->isstealth) {
             $data->isstealth = true;
@@ -263,13 +277,16 @@ class section implements named_templatable, renderable {
         }
         if (!$this->section->visible) {
             $data->ishidden = true;
-            $data->notavailable = true;
+            $course = $this->format->get_course();
+            $context = context_course::instance($course->id);
             if (has_capability('moodle/course:viewhiddensections', $context, $USER)) {
-                $data->hiddenfromstudents = true;
-                $data->notavailable = false;
                 $result = true;
             }
         }
+        /* @var \core_courseformat\output\local\content\section\visibility $visibility By default the visibility class used
+         * here but can be overriden by any course format */
+        $visibility = new $this->visibilityclass($this->format, $this->section);
+        $data->visibility = $visibility->export_for_template($output);
         return $result;
     }
 
@@ -281,12 +298,18 @@ class section implements named_templatable, renderable {
      * @return bool if the cm has name data
      */
     protected function add_editor_data(stdClass &$data, renderer_base $output): bool {
-        if (!$this->format->show_editor()) {
+        $course = $this->format->get_course();
+        $coursecontext = context_course::instance($course->id);
+        $editcaps = [];
+        if (has_capability('moodle/course:sectionvisibility', $coursecontext)) {
+            $editcaps = ['moodle/course:sectionvisibility'];
+        }
+        if (!$this->format->show_editor($editcaps)) {
             return false;
         }
 
-        $course = $this->format->get_course();
-        if (empty($this->hidecontrols)) {
+        // In a single section page the control menu is located in the page header.
+        if (empty($this->hidecontrols) && $this->format->get_sectionid() != $this->section->id) {
             $controlmenu = new $this->controlmenuclass($this->format, $this->section);
             $data->controlmenu = $controlmenu->export_for_template($output);
         }
@@ -294,7 +317,7 @@ class section implements named_templatable, renderable {
             $data->cmcontrols = $output->course_section_add_cm_control(
                 $course,
                 $this->section->section,
-                $this->format->get_section_number()
+                $this->format->get_sectionnum()
             );
         }
         return true;
@@ -318,14 +341,7 @@ class section implements named_templatable, renderable {
             $data->collapsemenu = true;
         }
 
-        $data->contentcollapsed = false;
-        $preferences = $format->get_sections_preferences();
-        if (isset($preferences[$section->id])) {
-            $sectionpreferences = $preferences[$section->id];
-            if (!empty($sectionpreferences->contentcollapsed)) {
-                $data->contentcollapsed = true;
-            }
-        }
+        $data->contentcollapsed = $this->is_section_collapsed();
 
         if ($format->is_section_current($section)) {
             $data->iscurrent = true;
@@ -334,5 +350,31 @@ class section implements named_templatable, renderable {
             );
         }
         return true;
+    }
+
+    /**
+     * Returns true if the current section should be shown collapsed.
+     *
+     * @return bool
+     */
+    protected function is_section_collapsed(): bool {
+        global $PAGE;
+
+        $contentcollapsed = false;
+        $preferences = $this->format->get_sections_preferences();
+        if (isset($preferences[$this->section->id])) {
+            $sectionpreferences = $preferences[$this->section->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $contentcollapsed = true;
+            }
+        }
+
+        // No matter if the user's preference was to collapse the section or not: If the
+        // 'expandsection' parameter has been specified, it will be shown uncollapsed.
+        $expandsection = $PAGE->url->get_param('expandsection');
+        if ($expandsection !== null && $this->section->section == $expandsection) {
+            $contentcollapsed = false;
+        }
+        return $contentcollapsed;
     }
 }

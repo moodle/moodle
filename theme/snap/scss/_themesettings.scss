@@ -1,0 +1,423 @@
+// -------------------------
+// Snap theme setting page.
+// -------------------------
+// -------------------------
+// Main form.
+// -------------------------
+
+/* stylelint-disable declaration-no-important*/
+
+#page-admin-setting-themesettingsnap {
+    #region-main,
+    .settingsform {
+        max-width: 100%;
+    }
+
+    h3.main {
+        clear: both;
+        width: 100%;
+    }
+
+    .form-description,
+    .dndupload-message {
+        font-size: small;
+    }
+
+    .filemanager-toolbar {
+        @extend .sr-only;
+    }
+
+    // Save button on large screen.
+    @include media-breakpoint-up(sm) {
+        button[type=submit] {
+            margin-left: 27%;
+        }
+    }
+    // Shortname on small screen.
+    @include media-breakpoint-down(lg) {
+        .form-shortname {
+            display: none;
+        }
+    }
+}
+
+// -------------------------
+// Tab styles.
+// -------------------------
+#snap-admin-tabs {
+    display: block;
+
+    border-bottom: 0;
+    .nav-item {
+        float: none;
+        margin: 0 !important;
+    }
+    .nav-link {
+        border: none !important;
+    }
+}
+
+// -------------------------
+// Tab - Basics.
+// -------------------------
+#page-admin-setting-themesettingsnap .tab-pane:not(#themesnapcolorcategories) {
+
+    #admin-fullname,
+    #admin-themecolor,
+    #admin-navbarbg,
+    #admin-navbarlink,
+    #admin-navbarbuttoncolor,
+    #admin-navbarbuttonlink,
+    #admin-logo,
+    #admin-favicon,
+    #admin-enabledlogin,
+    #admin-enabledloginorder,
+    #admin-footerbg,
+    #admin-footertxt {
+        width: 50%;
+        float: left;
+    }
+
+    #admin-headingfont {
+        width: 100%;
+    }
+
+    #admin-customisenavbutton,
+    #admin-customisecustommenu {
+        clear: left;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    #admin-subtitle,
+    #admin-customcss {
+        clear: both;
+        input {
+            width: 100%;
+        }
+    }
+
+    .admin_colourpicker {
+        display: block;
+        float: left;
+        height: 40px;
+        width: 30px;
+        margin: 1px 4px;
+    }
+
+    .loadingicon,
+    .colourdialogue,
+    .previewcolour {
+        display: none;
+    }
+
+    .currentcolour {
+        // Size is set with a style tag so need to !important to override.
+        height: 35px !important;
+        width: 35px !important;
+        position: static;
+        border-radius: 100%;
+        border: thin solid #eee;
+        margin-left: 0;
+    }
+
+    .admin_colourpicker + input {
+        margin-left: .5rem;
+    }
+
+    #id_s_theme_snap_customcss {
+        font-family: $font-family-monospace;
+    }
+
+    // These form items are a checkbox which makes other bigger items disappear,
+    // so this style makes the item preseve the height of the form row.
+    #admin-advancedfeedsenable {
+        min-height: 13.1em;
+    }
+
+    #admin-pbb_enable {
+        min-height: 12em;
+    }
+}
+#page-admin-setting-themesettingsnap .tab-pane#themesnapcolorcategories {
+
+    #id_s_theme_snap_category_color {
+        font-family: monospace;
+    }
+}
+
+// -------------------------
+// Tab - Cover display.
+// -------------------------
+#themesnapcoverdisplay.active {
+    @include make-row();
+
+    div[id^="admin-slide_"] {
+        @include make-col(4);
+
+        .form-defaultinfo {
+            display: none;
+        }
+        float: left;
+        width: 33%;
+    }
+    #admin-slide_one_image,
+    #admin-slide_one_title,
+    #admin-slide_one_subtitle {
+        clear: left;
+    }
+}
+// -------------------------
+// Tab - Snap Feeds.
+// -------------------------
+#themesnapfeeds.active {
+    #admin-forumpoststoggle,
+    #admin-advancedfeedsenable {
+        clear: both;
+    }
+
+    .form-item {
+        @include make-col(4);
+        float: left;
+        width: 33.33%;
+    }
+}
+// -------------------------
+// Tab - Feature spots.
+// -------------------------
+#themesnapfeaturespots.active {
+    #admin-feature_spot_title_color,
+    #admin-feature_spot_description_color {
+        display: inline-block;
+        max-width: 50%;
+        width: 50%;
+    }
+    .formsettingheading {
+        font-family: $font-family-sans-serif;
+    }
+
+    #admin-fs_heading {
+        input {
+            font-size: $h4-font-size;
+        }
+    }
+
+    #admin-fs_one_title,
+    #admin-fs_two_title,
+    #admin-fs_three_title {
+        input {
+            font-size: $h5-font-size;
+        }
+    }
+
+    #admin-fs_one_title,
+    #admin-fs_two_title,
+    #admin-fs_three_title,
+    #admin-fs_four_title,
+    #admin-fs_five_title,
+    #admin-fs_six_title,
+    #admin-fs_one_title_link,
+    #admin-fs_two_title_link,
+    #admin-fs_three_title_link,
+    #admin-fs_four_title_link,
+    #admin-fs_five_title_link,
+    #admin-fs_six_title_link,
+    #admin-fs_one_title_link_cb,
+    #admin-fs_two_title_link_cb,
+    #admin-fs_three_title_link_cb,
+    #admin-fs_four_title_link_cb,
+    #admin-fs_five_title_link_cb,
+    #admin-fs_six_title_link_cb,
+    #admin-fs_one_image,
+    #admin-fs_two_image,
+    #admin-fs_three_image,
+    #admin-fs_four_image,
+    #admin-fs_five_image,
+    #admin-fs_six_image,
+    #admin-fs_one_text,
+    #admin-fs_two_text,
+    #admin-fs_three_text,
+    #admin-fs_four_text,
+    #admin-fs_five_text,
+    #admin-fs_six_text {
+        float: left;
+        width: 33.3%;
+        margin: 0;
+
+        .form-defaultinfo {
+            display: none;
+        }
+    }
+
+    // To avoid unnecessary line break in the settings page.
+    #admin-fs_one_title_link,
+    #admin-fs_two_title_link,
+    #admin-fs_three_title_link,
+    #admin-fs_one_title_link_cb,
+    #admin-fs_two_title_link_cb,
+    #admin-fs_three_title_link_cb {
+        .form-shortname {
+            display: none;
+        }
+    }
+
+    .fs-title-links {
+        display: inline-block;
+    }
+
+    #admin-fs_one_title_link,
+    #admin-fs_two_title_link,
+    #admin-fs_three_title_link,
+    #admin-fs_one_title_link_cb,
+    #admin-fs_two_title_link_cb,
+    #admin-fs_three_title_link_cb {
+
+        .form-defaultinfo {
+            display: block;
+        }
+    }
+
+    #admin-fs_one_image,
+    #admin-fs_one_title,
+    #admin-fs_one_text,
+    #admin-fs_four_image,
+    #admin-fs_four_title,
+    #admin-fs_four_text {
+        clear: left;
+    }
+}
+
+// -------------------------
+// Tab - Featured categories and courses.
+// -------------------------
+#themesnapfeaturedcategoriesandcourses.active {
+
+    .formsettingheading {
+        font-family: $font-family-sans-serif;
+    }
+
+    .form-defaultinfo,
+    .form-shortname {
+        display: none;
+    }
+
+    #admin-fc_one,
+    #admin-fc_two,
+    #admin-fc_three,
+    #admin-fc_four,
+    #admin-fc_five,
+    #admin-fc_six,
+    #admin-fc_seven,
+    #admin-fc_eight {
+        width: 25%;
+        float: left;
+        padding: 1em;
+    }
+
+    #admin-fcat_one,
+    #admin-fcat_two,
+    #admin-fcat_three,
+    #admin-fcat_four,
+    #admin-fcat_five,
+    #admin-fcat_six,
+    #admin-fcat_seven,
+    #admin-fcat_eight {
+        width: 25%;
+        float: left;
+        padding: 1em;
+    }
+
+    #admin-fc_browse_all,
+    #admin-fcat_browse_all {
+        clear: both;
+    }
+}
+
+// -------------------------
+// Tab - Course display.
+// -------------------------
+#themesnapcoursedisplay.active {
+    @include make-row();
+
+    .form-item {
+        border-bottom: 1px solid $brand-primary;
+        margin-bottom: 1rem;
+    }
+
+    #s_theme_snap_leftnav_list,
+    #s_theme_snap_leftnav_top,
+    #s_theme_snap_resourcedisplay_list,
+    #s_theme_snap_resourcedisplay_card {
+        @include make-col(6);
+        text-align: center;
+        margin-right: 1em;
+
+        + br {
+            display: none;
+        }
+        &:before {
+            display: block;
+        }
+    }
+    #s_theme_snap_leftnav_list:before {
+        content: url("[[pix:theme|toc_list]]");
+    }
+    #s_theme_snap_leftnav_top:before {
+        content: url("[[pix:theme|toc_top]]");
+    }
+
+    #s_theme_snap_resourcedisplay_list:before {
+        content: url("[[pix:theme|list]]");
+    }
+    #s_theme_snap_resourcedisplay_card:before {
+        content: url("[[pix:theme|cards]]");
+    }
+
+    // Course footer.
+    @include media-breakpoint-up(sm) {
+        #admin-coursefootertoggle .form-description {
+            background-image: url("[[pix:theme|coursefooter]]");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center 4em; // Padding for description text.
+            height: 300px;
+        }
+    }
+}
+
+// -------------------------
+// Tab - Social media.
+// -------------------------
+#themesnapsocialmedia.active {
+    @include make-row();
+    .form-item {
+        @include make-col(6);
+        float: left;
+    }
+}
+// -------------------------
+// Tab - Profile based branding.
+// -------------------------
+#themesnappbb.active {
+    .form-item {
+        @include make-col(6);
+        float: left;
+    }
+}
+
+// -------------------------
+// Tab - Login page.
+// -------------------------
+#themesnaplogin.active {
+    div[id^="admin-loginsettingbgimage_"] {
+        float: left;
+        width: 33%;
+    }
+    #snap_login_templates {
+        padding: 3em 0;
+        a .img-responsive {
+            margin-right: 3em;
+            width: 350px;
+        }
+    }
+}

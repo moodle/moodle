@@ -1,4 +1,4 @@
-@mod @mod_survey @core_completion
+@mod @mod_survey @core_completion @javascript
 Feature: A teacher can use activity completion to track a student progress
   In order to use activity completion
   As a teacher
@@ -16,6 +16,7 @@ Feature: A teacher can use activity completion to track a student progress
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "survey" "mod" plugin
     And I log in as "teacher1"
 
   Scenario: Require survey view
@@ -50,14 +51,13 @@ Feature: A teacher can use activity completion to track a student progress
     And I follow "Test survey name"
     And the "Submit answers" completion condition of "Test survey name" is displayed as "done"
 
-  @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the survey activity as done but a teacher cannot
     Given the following "activities" exist:
       | activity   | name                   | course | idnumber    | completion |
       | survey     | Test survey name       | C1     | survey1     | 1          |
     And I am on "Course 1" course homepage
     # Teacher view.
-    And the manual completion button for "Test survey name" should be disabled
+    And "Test survey name" should have the "Mark as done" completion condition
     # Student view.
     When I am on the "survey1" Activity page logged in as student1
     Then the manual completion button of "Test survey name" is displayed as "Mark as done"

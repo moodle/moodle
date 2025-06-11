@@ -93,4 +93,13 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
         }
         return $result;
     }
+
+    #[\Override]
+    public function define_excluded_identity_hash_fields(): array {
+        return [
+            '/options/trueanswer',
+            '/options/falseanswer',
+            '/options/question',
+        ];
+    }
 }

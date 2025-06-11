@@ -23,7 +23,7 @@ namespace availability_profile;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_test extends \advanced_testcase {
+final class condition_test extends \advanced_testcase {
     /** @var profile_define_text Profile field for testing */
     protected $profilefield;
 
@@ -37,6 +37,7 @@ class condition_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $DB, $CFG;
+        parent::setUp();
 
         $this->resetAfterTest();
 
@@ -55,7 +56,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests constructing and using date condition as part of tree.
      */
-    public function test_in_tree() {
+    public function test_in_tree(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -84,7 +85,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions. Also tests the
      * string conversion feature (intended for debugging only).
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // No parameters.
         $structure = new \stdClass();
         try {
@@ -188,7 +189,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the save() function.
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)array('cf' => 'frogtype', 'op' => condition::OP_IS_EMPTY);
         $cond = new condition($structure);
         $structure->type = 'profile';
@@ -206,7 +207,7 @@ class condition_test extends \advanced_testcase {
      * get_full_information because that function is called from is_available
      * and we test its values here.
      */
-    public function test_is_available() {
+    public function test_is_available(): void {
         global $USER, $SITE, $DB;
         $this->setAdminUser();
         $info = new \core_availability\mock_info();
@@ -314,7 +315,7 @@ class condition_test extends \advanced_testcase {
      * not be offered in the menu because their data is not included in user
      * object
      */
-    public function test_custom_textarea_field() {
+    public function test_custom_textarea_field(): void {
         global $USER, $SITE, $DB;
         $this->setAdminUser();
         $info = new \core_availability\mock_info();
@@ -396,7 +397,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the filter_users (bulk checking) function.
      */
-    public function test_filter_users() {
+    public function test_filter_users(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $CFG->enableavailability = true;
@@ -443,7 +444,7 @@ class condition_test extends \advanced_testcase {
      * Tests getting user list SQL. This is a different test from the above because
      * there is some additional code in this function so more variants need testing.
      */
-    public function test_get_user_list_sql() {
+    public function test_get_user_list_sql(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $CFG->enableavailability = true;

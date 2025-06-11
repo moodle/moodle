@@ -259,6 +259,8 @@ class dbTable extends dbObject {
 	 */
 	var $currentPlatform = true;
 
+	/** @var dbData Stores information about table data. */
+	var $data;
 
 	/**
 	 * Iniitializes a new table object.
@@ -448,7 +450,7 @@ class dbTable extends dbObject {
 	 * @param string $type	ADODB datadict field type.
 	 * @param string $size	Field size
 	 * @param array $opts	Field options array
-	 * @return array Field specifier array
+	 * @return void
 	 */
 	function addField( $name, $type, $size = NULL, $opts = NULL ) {
 		$field_id = $this->fieldID( $name );
@@ -484,7 +486,7 @@ class dbTable extends dbObject {
 	 * @param string $field	Field name
 	 * @param string $opt ADOdb field option
 	 * @param mixed $value Field option value
-	 * @return array Field specifier array
+	 * @return void
 	 */
 	function addFieldOpt( $field, $opt, $value = NULL ) {
 		if( $this->currentPlatform ) {
@@ -764,7 +766,7 @@ class dbIndex extends dbObject {
 	 * Adds a field to the index
 	 *
 	 * @param string $name Field name
-	 * @return string Field list
+	 * @return string[] Field list
 	 */
 	function addField( $name ) {
 		$this->columns[$this->fieldID( $name )] = $name;
@@ -777,7 +779,7 @@ class dbIndex extends dbObject {
 	 * Adds options to the index
 	 *
 	 * @param string $opt Comma-separated list of index options.
-	 * @return string Option list
+	 * @return string[] Option list
 	 */
 	function addIndexOpt( $opt ) {
 		$this->opts[] = $opt;
@@ -829,6 +831,9 @@ class dbData extends dbObject {
 	var $data = array();
 
 	var $row;
+
+	/** @var string Field name */
+	var $current_field;
 
 	/**
 	 * Initializes the new dbData object.
@@ -924,10 +929,10 @@ class dbData extends dbObject {
 	}
 
 	/**
-	 * Adds options to the index
+	 * Adds data.
 	 *
-	 * @param string $opt Comma-separated list of index options.
-	 * @return string Option list
+	 * @param string $cdata Data to add
+	 * @return void
 	 */
 	function addData( $cdata ) {
 		// check we're in a valid field
@@ -1401,6 +1406,9 @@ class adoSchema {
 	 */
 	var $existingData;
 
+	/**  @var dbTable A table object. */
+	var $obj;
+
 	/**
 	 * Creates an adoSchema object
 	 *
@@ -1774,7 +1782,7 @@ class adoSchema {
 			$sqlArray = $this->sqlArray;
 		}
 		if( !isset( $sqlArray ) ) {
-			return FALSE;
+			return false;
 		}
 
 		$fp = fopen( $filename, "w" );

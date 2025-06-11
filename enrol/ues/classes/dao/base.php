@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+#[\AllowDynamicProperties]
+
 /**
  * UES base class.
  *
@@ -33,7 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class ues_base {
-
     /**
      * Protected static helper function to maintain calling class static overrides.
      */

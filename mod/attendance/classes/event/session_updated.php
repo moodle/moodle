@@ -73,19 +73,9 @@ class session_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/attendance/sessions.php', array('id' => $this->contextinstanceid,
+        return new \moodle_url('/mod/attendance/sessions.php', ['id' => $this->contextinstanceid,
                                                                      'sessionid' => $this->other['sessionid'],
-                                                                     'action' => $this->other['action']));
-    }
-
-    /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'attendance', 'session updated', $this->get_url(),
-            $this->other['info'], $this->contextinstanceid);
+                                                                     'action' => $this->other['action']]);
     }
 
     /**
@@ -94,7 +84,7 @@ class session_updated extends \core\event\base {
      * @return array of parameters for object mapping.
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'attendance', 'restore' => 'attendance');
+        return ['db' => 'attendance', 'restore' => 'attendance'];
     }
 
     /**

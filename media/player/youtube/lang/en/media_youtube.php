@@ -27,3 +27,5 @@ $string['pluginname_help'] = 'The video-sharing website youtube.com. Video and p
 $string['privacy:metadata'] = 'The Youtube media plugin does not store any personal data.';
 $string['supportsvideo'] = 'YouTube videos';
 $string['supportsplaylist'] = 'YouTube playlists';
+$string['nocookie'] = 'Use no cookie domain';
+$string['nocookie_desc'] = 'Use youtube-nocookie.com domain for embedding videos. This reduces the number of third party cookies used in embedding. This domain is also not blocked by some adblockers.';

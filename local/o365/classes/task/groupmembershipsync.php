@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Ad-hoc task to sync group memberships in connected courses.
+ * Ad-hoc task to sync Moodle course role assignment changes to Microsoft Groups.
  *
  * @package local_o365
  * @author Lai Wei <lai.wei@enovation.ie>
@@ -31,8 +31,13 @@ use local_o365\utils;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/local/o365/lib.php');
+
 /**
- * Ad-hoc task to sync group memberships in connected courses.
+ * Ad-hoc task to sync Moodle course role assignment changes to Microsoft Groups.
+ *
+ * @package     local_o365
+ * @subpackage  local_o365\task
  */
 class groupmembershipsync extends adhoc_task {
     /**
@@ -41,6 +46,13 @@ class groupmembershipsync extends adhoc_task {
      * @return false|void
      */
     public function execute() {
+        // If the sync direction is Teams to Moodle, we don't want to sync the course membership. Exiting.
+        $courseusersyncdirection = get_config('local_o365', 'courseusersyncdirection');
+        if ($courseusersyncdirection == COURSE_USER_SYNC_DIRECTION_TEAMS_TO_MOODLE) {
+            mtrace('Sync direction is Teams to Moodle. Exiting.');
+            return false;
+        }
+
         if (utils::is_connected() !== true || \local_o365\feature\coursesync\utils::is_enabled() !== true) {
             return false;
         }
@@ -49,9 +61,9 @@ class groupmembershipsync extends adhoc_task {
         if ($graphclient) {
             $coursesync = new main($graphclient);
 
-            $coursesenabled = \local_o365\feature\coursesync\utils::get_enabled_courses();
+            $coursesenabled = \local_o365\feature\coursesync\utils::get_enabled_courses(true);
             foreach ($coursesenabled as $courseid) {
-                $coursesync->resync_group_owners_and_members($courseid);
+                $coursesync->process_course_team_user_sync_from_moodle_to_microsoft($courseid);
             }
         }
     }

@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/grade/report/user/lib.php');
  * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * @var stdClass The user.
@@ -53,6 +53,7 @@ class lib_test extends \advanced_testcase {
     private $tree;
 
     public function setUp(): void {
+        parent::setUp();
         $this->user = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();
@@ -62,14 +63,13 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the gradereport_user_myprofile_navigation() function.
      */
-    public function test_gradereport_user_myprofile_navigation() {
+    public function test_gradereport_user_myprofile_navigation(): void {
         $this->setAdminUser();
         $iscurrentuser = false;
 
         gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('grade', $nodes->getValue($this->tree));
     }
 
@@ -77,14 +77,13 @@ class lib_test extends \advanced_testcase {
      * Tests the gradereport_user_myprofile_navigation() function for a user
      * without permission to view the grade node.
      */
-    public function test_gradereport_user_myprofile_navigation_without_permission() {
+    public function test_gradereport_user_myprofile_navigation_without_permission(): void {
         $this->setUser($this->user);
         $iscurrentuser = true;
 
         gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('grade', $nodes->getValue($this->tree));
     }
 }

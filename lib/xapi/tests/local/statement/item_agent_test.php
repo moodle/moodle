@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_agent_test extends advanced_testcase {
+final class item_agent_test extends advanced_testcase {
 
     /**
      * Test item creation.
@@ -143,7 +143,7 @@ class item_agent_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public static function invalid_data_provider(): array {
         return [
             'Wrong objecttype' => [
                 'Invalid', true, true
@@ -203,7 +203,7 @@ class item_agent_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function unspupported_create_provider() : array {
+    public static function unspupported_create_provider(): array {
         return [
             'Both mbox and account' => [
                 true, true, false, false

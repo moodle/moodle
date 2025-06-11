@@ -47,18 +47,6 @@ class unittest_executed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
     }
-
-    public static function get_legacy_eventname() {
-        return 'test_legacy';
-    }
-
-    protected function get_legacy_eventdata() {
-        return array($this->data['courseid'], $this->data['other']['sample']);
-    }
-
-    protected function get_legacy_logdata() {
-        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['other']['sample']);
-    }
 }
 
 
@@ -254,33 +242,6 @@ class course_module_viewed_noinit extends \core\event\course_module_viewed {
  * Event for testing core\event\grade_report_viewed.
  */
 class grade_report_viewed extends \core\event\grade_report_viewed {
-}
-
-/**
- * Event to test context used in event functions
- */
-class context_used_in_event extends \core\event\base {
-    public function get_description() {
-        return $this->context->instanceid . " Description";
-    }
-
-    protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->context = \context_system::instance();
-    }
-
-    public function get_url() {
-        return new \moodle_url('/somepath/somefile.php', array('id' => $this->context->instanceid));
-    }
-
-    protected function get_legacy_eventdata() {
-        return array($this->data['courseid'], $this->context->instanceid);
-    }
-
-    protected function get_legacy_logdata() {
-        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id=' . $this->context->instanceid);
-    }
 }
 
 /**

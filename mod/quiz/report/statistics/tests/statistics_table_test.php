@@ -31,15 +31,14 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php')
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statistics_table_test extends \advanced_testcase {
+final class statistics_table_test extends \advanced_testcase {
 
-    public function test_format_percentage() {
+    public function test_format_percentage(): void {
         $table = new quiz_statistics_table();
 
         // The format_percentage method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_percentage');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '84.758%',
@@ -52,13 +51,12 @@ class statistics_table_test extends \advanced_testcase {
         );
     }
 
-    public function test_format_percentage_range() {
+    public function test_format_percentage_range(): void {
         $table = new quiz_statistics_table();
 
         // The format_percentage_range method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_percentage_range');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '54.400% − 84.758%',
@@ -71,13 +69,12 @@ class statistics_table_test extends \advanced_testcase {
         );
     }
 
-    public function test_format_range() {
+    public function test_format_range(): void {
         $table = new quiz_statistics_table();
 
         // The format_range method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_range');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '5 − 10',

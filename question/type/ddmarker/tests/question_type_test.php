@@ -32,27 +32,29 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = question_bank::get_qtype('ddmarker');;
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        parent::tearDown();
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'ddmarker');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_save_question() {
+    public function test_save_question(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');

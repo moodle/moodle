@@ -24,14 +24,14 @@
 "use strict";
 
 import $ from 'jquery';
-import CustomEvents from 'core/custom_interaction_events';
 import {dispatchEvent} from 'core/event_dispatcher';
+import AutoComplete from 'core/form-autocomplete';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import SortableList from 'core/sortable_list';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import DynamicForm from 'core_form/dynamicform';
@@ -69,10 +69,14 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
  * Initialise conditions form, must be called on each init because the form container is re-created when switching editor modes
  */
 const initConditionsForm = () => {
-    CustomEvents.define(reportSelectors.actions.reportAddCondition, [CustomEvents.events.accessibleChange]);
+    const reportElement = document.querySelector(reportSelectors.regions.report);
+
+    // Enhance condition selector.
+    const reportAddCondition = reportElement.querySelector(reportSelectors.actions.reportAddCondition);
+    AutoComplete.enhanceField(reportAddCondition, false, '', getString('selectacondition', 'core_reportbuilder'))
+        .catch(Notification.exception);
 
     // Handle dynamic conditions form.
-    const reportElement = document.querySelector(reportSelectors.regions.report);
     const conditionFormContainer = reportElement.querySelector(reportSelectors.regions.settingsConditions);
     if (!conditionFormContainer) {
         return;
@@ -134,6 +138,7 @@ export const init = initialized => {
         'resetall',
         'resetconditions',
         'resetconditionsconfirm',
+        'selectacondition',
     ]);
 
     prefetchStrings('core', [
@@ -145,14 +150,14 @@ export const init = initialized => {
         return;
     }
 
-    // Add condition to report. Use custom events helper to ensure consistency across platforms.
-    $(document).on(CustomEvents.events.accessibleChange, reportSelectors.actions.reportAddCondition, event => {
+    // Add condition to report.
+    document.addEventListener('change', event => {
         const reportAddCondition = event.target.closest(reportSelectors.actions.reportAddCondition);
         if (reportAddCondition) {
             event.preventDefault();
 
             // Check if dropdown is closed with no condition selected.
-            if (reportAddCondition.selectedIndex === 0) {
+            if (reportAddCondition.value === "" || reportAddCondition.value === "0") {
                 return;
             }
 
@@ -223,8 +228,10 @@ export const init = initialized => {
                 targetConditionPosition--;
             }
 
-            reorderCondition(reportElement.dataset.reportId, conditionId, targetConditionPosition)
-                .then(data => reloadSettingsConditionsRegion(reportElement, data))
+            // Re-order condition, giving drop event transition time to finish.
+            const reorderPromise = reorderCondition(reportElement.dataset.reportId, conditionId, targetConditionPosition);
+            Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
+                .then(([data]) => reloadSettingsConditionsRegion(reportElement, data))
                 .then(() => getString('conditionmoved', 'core_reportbuilder', info.element.data('conditionName')))
                 .then(addToast)
                 .then(() => {

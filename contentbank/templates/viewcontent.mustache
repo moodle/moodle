@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_contentbank/view_content
+    @template core_contentbank/viewcontent
 
     View content page.
 
@@ -36,12 +36,16 @@
         "contenthtml" : "<iframe src=\"http://something/h5p/embed.php?url=h5pfileurl\"></iframe>",
         "usercanedit" : true,
         "editcontenturl" : "http://something/contentbank/edit.php?contextid=1&plugin=h5p&id=1",
-        "closeurl" : "http://moodle.test/h5pcb/moodle/contentbank/index.php"
+        "closeurl" : "http://moodle.test/h5pcb/moodle/contentbank/index.php",
+        "customfieldshtml" : "custom fields html"
     }
 }}
 <div class="core_contentbank_viewcontent">
     {{>core_contentbank/viewcontent/toolbarview}}
     <div class="mt-1 mb-1" data-region="viewcontent-content">
         {{{ contenthtml }}}
+    </div>
+    <div class="ps-2 pt-3">
+        {{{ customfieldshtml }}}
     </div>
 </div>

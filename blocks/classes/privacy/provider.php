@@ -53,7 +53,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_user_preference('blockIDhidden', 'privacy:metadata:userpref:hiddenblock');
         $collection->add_user_preference('docked_block_instance_ID', 'privacy:metadata:userpref:dockedinstance');
         return $collection;
@@ -65,7 +65,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
+    public static function get_contexts_for_userid(int $userid): \core_privacy\local\request\contextlist {
         global $DB;
         $contextlist = new \core_privacy\local\request\contextlist();
 

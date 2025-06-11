@@ -27,7 +27,7 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.8
  */
-class deleted_test extends \advanced_testcase {
+final class deleted_test extends \advanced_testcase {
 
     /**
      * Setup test.
@@ -41,7 +41,7 @@ class deleted_test extends \advanced_testcase {
      * test_event_h5p_deleted description
      * @runInSeparateProcess
      */
-    public function test_event_h5p_deleted() {
+    public function test_event_h5p_deleted(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();

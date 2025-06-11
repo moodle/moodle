@@ -25,16 +25,21 @@
         "contextid": 1,
         "type": 1,
         "parameters": [],
+        "attributes": [{
+            "name": "data-custom",
+            "value": "1"
+        }],
         "table": "table",
         "filterspresent": true,
         "filtersform": "form"
     }
 }}
-<div class="reportbuilder-report"
+<div class="reportbuilder-report {{classes}}"
         data-region="core_reportbuilder/report"
         data-report-id="{{id}}"
         data-report-type="{{type}}"
-        data-parameter="{{parameters}}">
+        data-parameter="{{parameters}}"
+        {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
             <div class="reportbuilder-wrapper">
                 {{#filterspresent}}
                     <div class="dropdown d-flex justify-content-end">

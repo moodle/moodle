@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.p
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use external_api;
+use core_external\external_api;
 
 /**
  * Core content bank external functions tests.
@@ -43,14 +43,14 @@ use external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\external\rename_content
  */
-class rename_content_test extends \externallib_advanced_testcase {
+final class rename_content_test extends \externallib_advanced_testcase {
 
     /**
      * Data provider for test_rename_content.
      *
      * @return  array
      */
-    public function rename_content_provider() {
+    public static function rename_content_provider(): array {
         return [
             'Standard name' => ['New name', 'New name', true],
             'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017', true],
@@ -74,7 +74,7 @@ class rename_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_rename_content_with_permission(string $newname, string $expectedname, bool $expectedresult) {
+    public function test_rename_content_with_permission(string $newname, string $expectedname, bool $expectedresult): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -111,7 +111,7 @@ class rename_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_rename_content_without_permission() {
+    public function test_rename_content_without_permission(): void {
         global $DB;
         $this->resetAfterTest();
 

@@ -1,4 +1,15 @@
-This files describes API changes in the book code.
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This file describes API changes in the book code.
+
+=== 4.4 ===
+
+* The previously deprecated `book_get_nav_types` method has been removed, along with the `BOOK_LINK_*` constants
+* book_get_nav_classes() has been deprecated and won't have replacement because it's not required anymore. It should have been
+  deprecated together with book_get_nav_types.
 
 === 4.0 ===
 

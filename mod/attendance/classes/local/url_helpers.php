@@ -41,7 +41,7 @@ class url_helpers {
      * @return mixed
      */
     public static function url_take($att, $sessionid, $grouptype) {
-        $params = array('sessionid' => $sessionid);
+        $params = ['sessionid' => $sessionid];
         if (isset($grouptype)) {
             $params['grouptype'] = $grouptype;
         }
@@ -58,9 +58,9 @@ class url_helpers {
      */
     public static function url_sessions($att, $sessionid=null, $action=null) {
         if (isset($sessionid) && isset($action)) {
-            $params = array('sessionid' => $sessionid, 'action' => $action);
+            $params = ['sessionid' => $sessionid, 'action' => $action];
         } else {
-            $params = array();
+            $params = [];
         }
 
         return $att->url_sessions($params);
@@ -72,7 +72,7 @@ class url_helpers {
      * @param array $params
      * @return mixed
      */
-    public static function url_view($att, $params=array()) {
+    public static function url_view($att, $params=[]) {
         return $att->url_view($params);
     }
 }

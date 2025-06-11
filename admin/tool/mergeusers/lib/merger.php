@@ -22,7 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once __DIR__ . '/autoload.php';
+defined('MOODLE_INTERNAL') || die;
+
+global $CFG;
+require_once($CFG->dirroot . '/lib/clilib.php');
+require_once(__DIR__ . '/autoload.php');
 
 class Merger {
     /**
@@ -38,14 +42,11 @@ class Merger {
         $this->mut = $mut;
         $this->logger = new tool_mergeusers_logger();
 
-        // to catch Ctrl+C interruptions, we need this stuff.
+        // To catch Ctrl+C interruptions, we need this stuff.
         declare(ticks = 1);
 
         if (extension_loaded('pcntl')) {
-            pcntl_signal(SIGINT, array(
-                $this,
-                'aborting'
-            ));
+            pcntl_signal(SIGINT, [$this, 'aborting']);
         }
     }
 
@@ -55,9 +56,9 @@ class Merger {
      */
     public function aborting($signo) {
         if (defined("CLI_SCRIPT")) {
-            echo "\n\n" . get_string('ok') . ", exit!\n\n";
+            echo "\n\nAborting!\n\n";
         }
-        exit(0); //quiting normally after all ;-)
+        exit(0); // Exiting without error.
     }
 
     /**
@@ -66,16 +67,23 @@ class Merger {
      * @param Gathering $gathering List of merging actions.
      */
     public function merge(Gathering $gathering) {
+        $numberoperations = 0;
         foreach ($gathering as $action) {
             list($success, $log, $id) = $this->mut->merge($action->toid, $action->fromid);
 
-            // only shows results on cli script
+            // Only shows results on cli script.
             if (defined("CLI_SCRIPT")) {
-                echo (($success)?get_string("success"):get_string("error")) . ". Log id: " . $id . "\n\n";
+                $status = ($success) ? "Success" : "Error";
+
+                cli_writeln('');
+                cli_writeln("From {$action->fromid} to {$action->toid}: $status; Log id: $id");
+                cli_writeln('');
             }
+            $numberoperations++;
         }
+
         if (defined("CLI_SCRIPT")) {
-            echo get_string('ok') .", exit!\n\n";
+            cli_writeln("${numberoperations} merge operations performed. Bye!");
         }
     }
 }

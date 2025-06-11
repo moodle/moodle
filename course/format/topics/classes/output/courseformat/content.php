@@ -25,6 +25,7 @@
 namespace format_topics\output\courseformat;
 
 use core_courseformat\output\local\content as content_base;
+use renderer_base;
 
 /**
  * Base class to render a course content.
@@ -36,10 +37,21 @@ use core_courseformat\output\local\content as content_base;
 class content extends content_base {
 
     /**
-     * @var bool Topic format has add section after each topic.
-     *
-     * The responsible for the buttons is core_courseformat\output\local\content\section.
+     * @var bool Topic format has also add section after each topic.
      */
-    protected $hasaddsection = false;
+    protected $hasaddsection = true;
+
+    /**
+     * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
+     *
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass data context for a mustache template
+     */
+    public function export_for_template(renderer_base $output) {
+        global $PAGE;
+        $PAGE->requires->js_call_amd('format_topics/mutations', 'init');
+        $PAGE->requires->js_call_amd('format_topics/section', 'init');
+        return parent::export_for_template($output);
+    }
 
 }

@@ -29,9 +29,9 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
-    public function test_informationitem_feedback_description() {
+    public function test_informationitem_feedback_description(): void {
 
         // Create a description question.
         $description = \test_question_maker::make_question('description');

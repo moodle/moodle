@@ -68,6 +68,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
 
         $orderedgroup = $question->get_ordered_choices(1);
         $hiddenfields = '';
+        $dragitems = '';
         foreach ($orderedgroup as $choiceno => $drag) {
             $classes = ['marker', 'user-select-none', 'choice' . $choiceno];
             $attr = [];
@@ -81,32 +82,32 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             }
             $dragoutput = html_writer::start_span(join(' ', $classes), $attr);
             $targeticonhtml = $this->output->image_icon('crosshairs', '', $componentname, ['class' => 'target']);
-            $markertext = html_writer::span($drag->text, 'markertext');
+            $markertext = html_writer::span(question_utils::format_question_fragment($drag->text, $this->page->context),
+                'markertext');
             $dragoutput .= $targeticonhtml . $markertext;
             $dragoutput .= html_writer::end_span();
-            $output .= $dragoutput;
+            $dragitems .= $dragoutput;
             $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite, $drag->noofdrags);
         }
-
+        $output .= $dragitems;
         $output .= html_writer::end_div();
+        // Add extra hidden drag items so we can make sure the filter will be applied.
+        $output .= html_writer::div($dragitems, 'dd-original d-none');
         $output .= html_writer::end_div();
-
-        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
-            $visibledropzones = $question->get_drop_zones_without_hit($response);
-        } else {
-            $visibledropzones = [];
-        }
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::div($question->get_validation_error($qa->get_last_qt_data()), 'validationerror');
         }
 
+        $visibledropzones = [];
         if ($question->showmisplaced && $qa->get_state()->is_finished()) {
-            $wrongparts = $question->get_drop_zones_without_hit($response);
-            if (count($wrongparts) !== 0) {
+            $visibledropzones = $question->get_drop_zones_without_hit($response);
+            if (count($visibledropzones) !== 0) {
                 $wrongpartsstringspans = [];
-                foreach ($wrongparts as $wrongpart) {
-                    $wrongpartsstringspans[] = html_writer::span($wrongpart->markertext, 'wrongpart');
+                foreach ($visibledropzones as $visibledropzone) {
+                    $visibledropzone->markertext = question_utils::format_question_fragment(
+                        $visibledropzone->markertext, $this->page->context);
+                    $wrongpartsstringspans[] = html_writer::span($visibledropzone->markertext, 'wrongpart');
                 }
                 $wrongpartsstring = join(', ', $wrongpartsstringspans);
                 $output .= html_writer::span(get_string('followingarewrongandhighlighted', 'qtype_ddmarker', $wrongpartsstring),

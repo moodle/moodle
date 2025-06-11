@@ -1,0 +1,112 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/categorynode
+
+    Provides a template for the course categories tree view.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * id Course category ID.
+    * parent Course category parent ID.
+    * name Course category name.
+    * haschildren Course category has any sub-category - true/false.
+
+    Example context (json):
+    {
+        "id": "5",
+        "parent": "0",
+        "name": "Example 1",
+        "nodes": [{
+                "id": "6",
+                "parent": "5",
+                "name": "Sub category 1",
+                "nodes": [{
+                    "id": "7",
+                    "parent": "6",
+                    "name": "Sub Sub category 1",
+                    "nodes": [],
+                    "haschildren": "0"
+                }],
+                "haschildren": "1"
+            },
+            {
+                "id": "8",
+                "parent": "5",
+                "name": "Sub category 2",
+                "nodes": [{
+                    "id": "9",
+                    "parent": "8",
+                    "name": "Sub Sub category 2",
+                    "nodes": [],
+                    "haschildren": "0"
+                }],
+                "haschildren": "1"
+            },
+            {
+                "id": "593",
+                "parent": "5",
+                "name": "Sub category 3",
+                "nodes": [],
+                "haschildren": "1"
+            }
+        ],
+        "haschildren": "1"
+    }
+}}
+
+
+{{^id}}
+    <div class="accordion modltitree" id="accordion">
+{{/id}}
+    {{#nodes}}
+        {{#haschildren}}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <input type="checkbox" class="lticoursecategories" id="cat-{{{id}}}" name="lticoursecategories" value="{{{id}}}">
+                <label for="cat-{{{id}}}">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion{{{id}}}" href="#collapse{{{id}}}" aria-expanded="true">
+                        <span>{{{name}}}</span>
+                    </a>
+                </label>
+            </div>
+            <div id="collapse{{{id}}}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="accordion" id="accordion{{{id}}}">
+                        {{>mod_lti/categorynode}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/haschildren}}
+        {{^haschildren}}
+        <p>
+            <label for="cat-{{{id}}}">
+            <input type="checkbox" class="lticoursecategories" id="cat-{{{id}}}" name="lticoursecategories" value="{{{id}}}">
+                <span>{{{name}}}</span>
+            </label>
+        </p>
+        {{/haschildren}}
+    {{/nodes}}
+{{^id}}
+    </div>
+{{/id}}

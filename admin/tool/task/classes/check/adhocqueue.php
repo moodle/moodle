@@ -14,20 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Ad hoc queue checks
- *
- * @package    tool_task
- * @copyright  2020 Brendan Heywood (brendan@catalyst-au.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_task\check;
 
-defined('MOODLE_INTERNAL') || die();
-
+use action_link;
 use core\check\check;
 use core\check\result;
+use moodle_url;
 
 /**
  * Ad hoc queue checks
@@ -42,7 +34,7 @@ class adhocqueue extends check {
      * Return result
      * @return result
      */
-    public function get_result() : result {
+    public function get_result(): result {
         global $DB, $CFG;
 
         $stats = $DB->get_record_sql('
@@ -80,5 +72,17 @@ class adhocqueue extends check {
         }
 
         return new result($status, $summary, $details);
+    }
+
+    /**
+     * Link to the Ad hoc tasks report
+     *
+     * @return action_link|null
+     */
+    public function get_action_link(): ?action_link {
+        return new action_link(
+            new moodle_url('/admin/tool/task/adhoctasks.php'),
+            get_string('adhoctasks', 'tool_task'),
+        );
     }
 }

@@ -74,7 +74,8 @@ if ($mform->is_cancelled()) {
     // Make sure at least one chapter exists.
     $chapters = book_preload_chapters($book);
     if (!$chapters) {
-        redirect(new moodle_url('/course/view.php', array('id' => $course->id))); // Back to course view.
+        $section = $DB->get_record('course_sections', ['id' => $cm->section]);
+        redirect(course_get_url($course, $section)); // Back to course view.
     }
 
     if (empty($chapter->id)) {

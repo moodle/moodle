@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\filters;
 
 use core_course_category;
+use lang_string;
 use MoodleQuickForm;
 use core_reportbuilder\local\helpers\database;
 
@@ -36,20 +37,43 @@ use core_reportbuilder\local\helpers\database;
  */
 class category extends base {
 
+    /** @var int Category is equal to */
+    public const EQUAL_TO = 0;
+
+    /** @var int Category is not equal to */
+    public const NOT_EQUAL_TO = 1;
+
+    /**
+     * Returns an array of comparison operators
+     *
+     * @return array
+     */
+    private function get_operators(): array {
+        $operators = [
+            self::EQUAL_TO => new lang_string('filterisequalto', 'core_reportbuilder'),
+            self::NOT_EQUAL_TO => new lang_string('filterisnotequalto', 'core_reportbuilder'),
+        ];
+
+        return $this->filter->restrict_limited_operators($operators);
+    }
+
     /**
      * Setup form
      *
      * @param MoodleQuickForm $mform
      */
     public function setup_form(MoodleQuickForm $mform): void {
-        $label = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
+        $operatorlabel = get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header());
+        $mform->addElement('select', "{$this->name}_operator", $operatorlabel, $this->get_operators())
+            ->setHiddenLabel(true);
 
         // See MDL-74627: in order to set the default value to "No selection" we need to prepend an empty value.
         $requiredcapabilities = $this->filter->get_options()['requiredcapabilities'] ?? '';
         $categories = [0 => ''] + core_course_category::make_categories_list($requiredcapabilities);
 
-        $mform->addElement('autocomplete', "{$this->name}_value", $label, $categories)->setHiddenLabel(true);
-        $mform->addElement('advcheckbox', "{$this->name}_subcategories", get_string('viewallsubcategories'));
+        $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
+        $mform->addElement('autocomplete', "{$this->name}_value", $valuelabel, $categories)->setHiddenLabel(true);
+        $mform->addElement('advcheckbox', "{$this->name}_subcategories", get_string('includesubcategories'));
     }
 
     /**
@@ -63,6 +87,7 @@ class category extends base {
 
         [$fieldsql, $params] = $this->filter->get_field_sql_and_params();
 
+        $operator = (int) ($values["{$this->name}_operator"] ?? self::EQUAL_TO);
         $category = (int) ($values["{$this->name}_value"] ?? 0);
         $subcategories = !empty($values["{$this->name}_subcategories"]);
 
@@ -90,6 +115,11 @@ class category extends base {
                   FROM {course_categories}
                  WHERE " . $DB->sql_like('path', ":{$paramcategorypath}") . "
             )";
+        }
+
+        // If specified "Not equal to", then negate the entire clause.
+        if ($operator === self::NOT_EQUAL_TO) {
+            $sql = "NOT ({$sql})";
         }
 
         return [$sql, $params];

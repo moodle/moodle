@@ -24,8 +24,8 @@ namespace mod_page;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
-    public function test_generator() {
+final class generator_test extends \advanced_testcase {
+    public function test_generator(): void {
         global $DB, $SITE;
 
         $this->resetAfterTest(true);

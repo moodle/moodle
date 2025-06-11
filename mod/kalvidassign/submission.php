@@ -68,6 +68,11 @@ if (empty($entryid)) {
     print_error('emptyentryid', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
 }
 
+// If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
+if (empty($source)) {
+    print_error('activity_not_migrated', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
+}
+
 $param = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);
 $submission = $DB->get_record('kalvidassign_submission', $param);
 
@@ -137,6 +142,12 @@ if ($submission) {
                     'context'   => context_module::instance($cm->id)
         ));
         $event->trigger();
+
+        // update completionsubmit state if enabled on kalvidassign
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) && $kalvidassignobj->completionsubmit) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
     } else {
         notice(get_string('failedtoinsertsubmission', 'kalvidassign'), $url, $course);
     }

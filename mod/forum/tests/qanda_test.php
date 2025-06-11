@@ -33,7 +33,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright  2013 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qanda_test extends \advanced_testcase {
+final class qanda_test extends \advanced_testcase {
     // Make use of the cron tester trait.
     use mod_forum_tests_cron_trait;
 
@@ -52,6 +52,7 @@ class qanda_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
@@ -82,13 +83,14 @@ class qanda_test extends \advanced_testcase {
         $this->mailsink->clear();
         $this->mailsink->close();
         unset($this->mailsink);
+        parent::tearDown();
     }
 
     /**
      * Test that a user who has not posted in a q&a forum does not receive
      * notificatinos.
      */
-    public function test_user_has_not_posted() {
+    public function test_user_has_not_posted(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);

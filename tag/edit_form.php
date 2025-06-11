@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * @package    core_tag
- * @category   tag
- * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
@@ -42,7 +34,7 @@ class tag_edit_form extends moodleform {
      * Overrides the abstract moodleform::definition method for defining what the form that is to be
      * presented to the user.
      */
-    function definition () {
+    function definition() {
 
         $mform =& $this->_form;
 
@@ -57,8 +49,7 @@ class tag_edit_form extends moodleform {
         $systemcontext   = context_system::instance();
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-            $mform->addElement('text', 'rawname', get_string('name', 'tag'),
-                    'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
+            $mform->addElement('text', 'rawname', get_string('name', 'tag'), ['maxlength' => TAG_MAX_LENGTH, 'size' => 50]);
             $mform->setType('rawname', PARAM_TAG);
         }
 

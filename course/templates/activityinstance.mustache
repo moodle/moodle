@@ -24,7 +24,7 @@
         "activities": [{
             "cmid": "4",
             "modname": "Test activity",
-            "icon": "https://raw.githubusercontent.com/moodle/moodle/master/mod/feedback/pix/monologo.png",
+            "icon": "https://raw.githubusercontent.com/moodle/moodle/master/mod/feedback/pix/monologo.svg",
             "completionstatus": {
                 "string": "Manual",
                 "icon": "https://raw.githubusercontent.com/moodle/moodle/master/pix/i/completion-manual-enabled.png"
@@ -39,24 +39,24 @@
         <div>
             {{#canmanage}}
             <label class="accesshide" for="selectactivity_{{cmid}}">{{#str}}select, completion{{/str}} {{modname}}</label>
-            <input type="checkbox" id="selectactivity_{{cmid}}" class="mr-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
+            <input type="checkbox" id="selectactivity_{{cmid}}" class="me-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
             {{/canmanage}}
             <a href="{{url}}">
-            <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
+            <img src="{{icon}}" class="activityicon" alt="">
             <span class="instancename">{{{modname}}}</span>
             </a>
         </div>
     </div>
     <div class="activity-completionstatus col-6" id="completionstatus_{{cmid}}">
-        <div class="col-sm-1  pl-0">
+        <div class="col-sm-1  ps-0">
             {{#completionstatus.icon}}
                 {{{completionstatus.icon}}}
             {{/completionstatus.icon}}
             {{^completionstatus.icon}}
-                <span class="mr-3"></span>
+                <span class="me-3"></span>
             {{/completionstatus.icon}}
         </div>
-        <div class="col-sm-11  pl-0">
+        <div class="col-sm-11  ps-0">
             <span class="text-muted muted">{{{completionstatus.string}}}</span>
         </div>
     </div>

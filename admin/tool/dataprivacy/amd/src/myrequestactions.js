@@ -24,7 +24,7 @@
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
-import {get_strings as getStrings} from 'core/str';
+import {getStrings} from 'core/str';
 
 const SELECTORS = {
     CANCEL_REQUEST: '[data-action="cancel"][data-requestid]',

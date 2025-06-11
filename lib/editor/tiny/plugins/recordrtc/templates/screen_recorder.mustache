@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_recordrtc/screen_recorder
+
+    Audio recorder template.
+
+    Example context (json):
+    {
+        "isallowedpausing": true
+    }
+}}
+{{< core/modal }}
+    {{$title}}{{#str}} screentitle, tiny_recordrtc {{/str}}{{/title}}
+    {{$body}}
+        {{> core/local/toast/wrapper }}
+        <div class="tiny_recordrtc container-fluid">
+            <div  data-purpose="security-warning" class="row hide">
+                <div class="col-12">
+                    <div id="alert-danger" class="alert alert-danger">
+                        <strong>
+                            {{#str}} insecurealert_title, tiny_recordrtc {{/str}}
+                        </strong>
+                        {{#str}} insecurealert, tiny_recordrtc {{/str}}
+                    </div>
+                </div>
+            </div>
+            <div data-purpose="player-container" class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <video></video>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div data-purpose="start-stop-container" class="row">
+                <div class="col-1"></div>
+                <div class="col-10 d-inline-flex w-100">
+                    <button class="btn btn-lg btn-outline-danger btn-block" data-action="startstop">
+                        {{#str}} startrecording, tiny_recordrtc {{/str}}
+                    </button>
+                    {{#isallowedpausing}}
+                        <button class="btn btn-lg btn-outline-primary ms-3 hidden" data-action="pauseresume">
+                            {{#str}} pause, tiny_recordrtc {{/str}}
+                        </button>
+                    {{/isallowedpausing}}
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div data-purpose="upload-container" class="row hide">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <button class="btn btn-lg btn-primary btn-block" data-action="upload">
+                        {{#str}} attachrecording, tiny_recordrtc {{/str}}
+                    </button>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        </div>
+    {{/body}}
+
+    {{$footer}}
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

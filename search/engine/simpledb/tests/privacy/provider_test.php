@@ -40,10 +40,38 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
+
+    /** @var \search_simpledb\engine database engine. */
+    protected $engine;
+
+    /** @var \testable_core_search core search class adapted to unit test. */
+    protected $search;
+
+    /** @var \core_search_generator core search generator class adapted to unit test. */
+    protected $generator = null;
+
+    /** @var \stdClass course record.*/
+    protected $c1;
+
+    /** @var \stdClass course record.*/
+    protected $c2;
+
+    /** @var \context_course context instance. */
+    protected $c1context;
+
+    /** @var \context_course context instance. */
+    protected $c2context;
+
+    /** @var \stdClass user record. */
+    protected $u1;
+
+    /** @var \stdClass user record. */
+    protected $u2;
 
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         if ($this->requires_manual_index_update()) {
             // We need to update fulltext index manually, which requires an alter table statement.
@@ -119,7 +147,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching contexts for a given user ID.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         // Ensure both contexts are found for both users.
         $expected = [$this->c1context->id, $this->c2context->id];
         sort($expected);
@@ -144,7 +172,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching user IDs for a given context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'search_simpledb';
 
         // Ensure both users are found for both contexts.
@@ -175,7 +203,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->u1, 'search_simpledb',
@@ -198,7 +226,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_delete_data_for_all_users() {
+    public function test_delete_data_for_all_users(): void {
         global $DB;
 
         $this->assertEquals(8, $DB->count_records('search_simpledb_index'));
@@ -218,7 +246,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->u1, 'search_simpledb',
@@ -243,7 +271,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data for an approved userlist.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $component = 'search_simpledb';
         $select = 'contextid = :contextid AND (owneruserid = :owneruserid OR userid = :userid)';

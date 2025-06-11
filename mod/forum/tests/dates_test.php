@@ -37,13 +37,13 @@ use core\activity_dates;
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dates_test extends advanced_testcase {
+final class dates_test extends advanced_testcase {
 
     /**
      * Data provider for get_dates_for_module().
      * @return array[]
      */
-    public function get_dates_for_module_provider(): array {
+    public static function get_dates_for_module_provider(): array {
         $now = time();
         $before = $now - DAYSECS;
         $after = $now + DAYSECS;
@@ -72,7 +72,7 @@ class dates_test extends advanced_testcase {
      * @param int|null $duedate Forum's due date.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
-    public function test_get_dates_for_module(?int $duedate, array $expected) {
+    public function test_get_dates_for_module(?int $duedate, array $expected): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

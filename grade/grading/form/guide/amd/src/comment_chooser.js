@@ -20,7 +20,8 @@
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function($, templates, notification) {
+define(['jquery', 'core/templates', 'core/key_codes', 'core/notification', 'core/yui'],
+        function($, templates, keycodes, notification) {
 
     // Private variables and functions.
 
@@ -89,9 +90,8 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function($
                     $(document).off('keypress', commentOptionId).on('keypress', commentOptionId, function() {
                         var keyCode = event.which || event.keyCode;
 
-                        // Enter or space key.
-                        if (keyCode == 13 || keyCode == 32) {
-                            // Trigger click event.
+                        // Trigger click event when user presses space.
+                        if (keyCode === keycodes.space) {
                             $(commentOptionId).click();
                         }
                     });

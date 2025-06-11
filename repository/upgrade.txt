@@ -1,7 +1,15 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /repository/ repository system,
 information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 https://moodledev.io/docs/apis/plugintypes/repository
+
+=== 4.3 ===
+* The base `repository` class method `get_file_size` has been deprecated and should not be used any more
 
 === 4.0 ===
 * The repository_boxnet has been completely removed.

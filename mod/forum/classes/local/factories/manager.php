@@ -75,7 +75,7 @@ class manager {
      *
      * @return rating_manager
      */
-    public function get_rating_manager() : rating_manager {
+    public function get_rating_manager(): rating_manager {
         return new rating_manager();
     }
 }

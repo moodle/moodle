@@ -16,7 +16,7 @@
 }}
 {{!
 
-    @template theme_boost/editswitch
+    @template core/editswitch
 
     This template renders the top navbar.
 
@@ -31,10 +31,10 @@
         "legacyseturl": "/editmode.php"
     }
 }}
-<div class="divider border-left h-75 align-self-center ml-1 mr-3"></div>
+<div class="divider border-start h-75 align-self-center ms-1 me-3"></div>
 <form action="{{{legacyseturl}}}" method="post" class="d-flex align-items-center editmode-switch-form">
     <div class="input-group">
-        <label class="mr-2 mb-0 {{#checked}}text-primary{{/checked}}" for="{{uniqid}}-editingswitch">
+        <label class="me-2 mb-0 {{#checked}}text-primary{{/checked}}" for="{{uniqid}}-editingswitch">
             {{#str}} editmode {{/str}}
         </label>
         <div class="custom-control custom-switch">

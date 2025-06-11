@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="communication/provider/matrix/db" VERSION="20230719" COMMENT="Stores the matrix room information associated with the communication instance."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="matrix_room" COMMENT="Stores the matrix room information associated with the communication instance.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="commid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the communication record"/>
+        <FIELD NAME="roomid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the matrix room instance"/>
+        <FIELD NAME="topic" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Topic of the matrix room instance."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_commid" TYPE="foreign" FIELDS="commid" REFTABLE="communication" REFFIELDS="id" COMMENT="Foreign key for communication reference"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

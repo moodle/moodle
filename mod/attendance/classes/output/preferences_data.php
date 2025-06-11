@@ -63,7 +63,7 @@ class preferences_data implements renderable {
      * @param bool $significantparams
      * @return moodle_url
      */
-    public function url($params=array(), $significantparams=true) {
+    public function url($params=[], $significantparams=true) {
         if ($significantparams) {
             $params = array_merge($this->att->pageparams->get_significant_params(), $params);
         }

@@ -6,7 +6,8 @@
             "event",
             "event-valuechange",
             "node-event-delegate",
-            "io-form"
+            "io-form",
+            "datatype-date-format"
         ]
     }
 }

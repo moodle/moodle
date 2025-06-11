@@ -77,7 +77,7 @@ class issuer_management {
      * @return array parseurl [scheme => https/http, host=>'hostname', port=>443, path=>'path']
      * @throws configuration_exception if an endpoint is undefined
      */
-    public static function parse_endpoint_url(string $endpointname, \core\oauth2\issuer $issuer) : array {
+    public static function parse_endpoint_url(string $endpointname, \core\oauth2\issuer $issuer): array {
         $url = $issuer->get_endpoint_url($endpointname);
         if (empty($url)) {
             throw new configuration_exception(get_string('endpointnotdefined', 'repository_nextcloud', $endpointname));

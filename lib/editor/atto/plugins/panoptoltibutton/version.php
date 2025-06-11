@@ -26,6 +26,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version    = 2020091600;
-$plugin->requires   = 2017110800;
-$plugin->component  = 'atto_panoptoltibutton';
+// The current plugin version (Date: YYYYMMDDXX).
+$plugin->version = 2024120600;
+
+// Requires this Moodle version - 3.9.0.
+$plugin->requires = 2020061500;
+
+// Full name of the plugin (used for diagnostics).
+$plugin->component = 'atto_panoptoltibutton';
+
+// Dependencies.
+$plugin->dependencies = [
+    'block_panopto' => 2022122000,
+    'mod_lti' => ANY_VERSION,
+];

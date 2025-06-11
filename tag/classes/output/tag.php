@@ -14,21 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class core_tag\output\tag
- *
- * @package   core_tag
- * @copyright 2015 Marina Glancy
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_tag\output;
 
 use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use moodle_url;
 use core_tag_tag;
 
 /**
@@ -74,17 +65,20 @@ class tag implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG;
-        require_once($CFG->libdir . '/externallib.php');
-
         $r = new stdClass();
         $r->id = (int)$this->record->id;
         $r->tagcollid = clean_param($this->record->tagcollid, PARAM_INT);
         $r->rawname = clean_param($this->record->rawname, PARAM_TAG);
         $r->name = clean_param($this->record->name, PARAM_TAG);
-        $format = clean_param($this->record->descriptionformat, PARAM_INT);
-        list($r->description, $r->descriptionformat) = external_format_text($this->record->description,
-            $format, \context_system::instance()->id, 'core', 'tag', $r->id);
+        [$r->description, $r->descriptionformat] = \core_external\util::format_text(
+            $this->record->description,
+            $this->record->descriptionformat,
+            \context_system::instance(),
+            'tag',
+            'description',
+            $r->id,
+        );
+
         $r->flag = clean_param($this->record->flag, PARAM_INT);
         if (isset($this->record->isstandard)) {
             $r->isstandard = clean_param($this->record->isstandard, PARAM_INT) ? 1 : 0;

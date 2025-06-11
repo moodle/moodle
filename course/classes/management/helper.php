@@ -179,7 +179,7 @@ class helper {
         // View link.
         $actions['view'] = [
             'url' => new \moodle_url('/course/index.php', ['categoryid' => $category->id]),
-            'icon' => null,
+            'icon' => new \pix_icon('i/viewcategory', new \lang_string('view')),
             'string' => get_string('view')
         ];
 
@@ -1010,7 +1010,7 @@ class helper {
      * @return array
      */
     public static function get_course_copy_capabilities(): array {
-        return array('moodle/backup:backupcourse', 'moodle/restore:restorecourse', 'moodle/course:view', 'moodle/course:create');
+        return array('moodle/backup:backupcourse', 'moodle/restore:restorecourse', 'moodle/course:create');
     }
 
     /**

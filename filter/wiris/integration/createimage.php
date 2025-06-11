@@ -4,7 +4,12 @@ require_once ('pluginbuilder.php');
 
 $provider = $pluginBuilder->getCustomParamsProvider();
 
-$mml = $provider->getRequiredParameter('mml');
+try {
+    $mml = $provider->getRequiredParameter('mml');
+} catch (Exception $e) {
+    exit("Error: Required parameter 'mml' not found.");
+}
+
 $render = $pluginBuilder->newRender();
 
 $outp = null;

@@ -23,9 +23,9 @@
  * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace auth_oidc;
 
-use \auth_oidc\privacy\provider;
+use auth_oidc\privacy\provider;
 
 /**
  * Privacy test for auth_oidc
@@ -35,20 +35,23 @@ use \auth_oidc\privacy\provider;
  * @group office365
  * @group office365_privacy
  */
-class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
+final class privacy_provider_test extends \core_privacy\tests\provider_testcase {
+
     /**
      * Tests set up.
      */
-    public function setUp():void {
-        global $CFG;
+    public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
     /**
      * Check that a user context is returned if there is any user data for this user.
+     *
+     * @covers \auth_oidc\privacy\provider::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
@@ -67,14 +70,16 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test that only users with a user context are fetched.
+     *
+     * @covers \auth_oidc\privacy\provider::get_users_in_context
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'auth_oidc';
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         // The list of users should not return anything yet (related data still haven't been created).
         $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
@@ -93,15 +98,17 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $userlist = new \core_privacy\local\request\userlist(context_system::instance(), $component);
+        $userlist = new \core_privacy\local\request\userlist(\context_system::instance(), $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
     }
 
     /**
      * Test that user data is exported correctly.
+     *
+     * @covers \auth_oidc\privacy\provider::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Create a user record.
         $user = $this->getDataGenerator()->create_user();
         $tokenrecord = self::create_token($user->id);
@@ -111,19 +118,19 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
         $writer = \core_privacy\local\request\writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
-        $approvedlist = new core_privacy\local\request\approved_contextlist($user, 'auth_oidc', [$usercontext->id]);
+        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'auth_oidc', [$usercontext->id]);
         provider::export_user_data($approvedlist);
         // Token.
         $data = $writer->get_data([
-            get_string('privacy:metadata:auth_oidc', 'auth_oidc'),
-            get_string('privacy:metadata:auth_oidc_token', 'auth_oidc')
+                get_string('privacy:metadata:auth_oidc', 'auth_oidc'),
+                get_string('privacy:metadata:auth_oidc_token', 'auth_oidc'),
         ]);
         $this->assertEquals($tokenrecord->userid, $data->userid);
         $this->assertEquals($tokenrecord->token, $data->token);
         // Previous login.
         $data = $writer->get_data([
-            get_string('privacy:metadata:auth_oidc', 'auth_oidc'),
-            get_string('privacy:metadata:auth_oidc_prevlogin', 'auth_oidc')
+                get_string('privacy:metadata:auth_oidc', 'auth_oidc'),
+                get_string('privacy:metadata:auth_oidc_prevlogin', 'auth_oidc'),
         ]);
         $this->assertEquals($prevloginrecord->userid, $data->userid);
         $this->assertEquals($prevloginrecord->method, $data->method);
@@ -132,8 +139,10 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test deleting all user data for a specific context.
+     *
+     * @covers \auth_oidc\privacy\provider::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create a user record.
@@ -163,8 +172,10 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * This should work identical to the above test.
+     *
+     * @covers \auth_oidc\privacy\provider::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create a user record.
@@ -195,20 +206,22 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test that data for users in approved userlist is deleted.
+     *
+     * @covers \auth_oidc\privacy\provider::delete_data_for_users
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'auth_oidc';
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         self::create_token($user1->id);
         self::create_prevlogin($user1->id);
 
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         self::create_token($user2->id);
         self::create_prevlogin($user2->id);
 
@@ -244,7 +257,7 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
         $this->assertCount(1, $userlist2);
 
         // User data should be only removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new \core_privacy\local\request\approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.
@@ -259,16 +272,17 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
      * Create a token record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
+     * @throws \dml_exception
      */
-    static private function create_token(int $userid) : \stdClass {
+    private static function create_token(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oidcuniqid = "user@example.com";
         $record->username = "user@example.com";
         $record->userid = $userid;
         $record->oidcusername = "user@example.com";
+        $record->useridentifier = "user@example.com";
         $record->scope = "All";
         $record->tokenresource = "https://graph.microsoft.com";
         $record->authcode = "authcode123";
@@ -284,12 +298,12 @@ class auth_oidc_privacy_testcase extends \core_privacy\tests\provider_testcase {
      * Create a previous login record for the specified userid.
      *
      * @param int $userid
-     * @return stdClass
-     * @throws dml_exception
+     * @return \stdClass
+     * @throws \dml_exception
      */
-    static private function create_prevlogin(int $userid) : \stdClass {
+    private static function create_prevlogin(int $userid): \stdClass {
         global $DB;
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->userid = $userid;
         $record->method = "manual";
         $record->password = "abc123";

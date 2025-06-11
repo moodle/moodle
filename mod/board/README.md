@@ -40,7 +40,7 @@ has been received from Athlone Institute of Technology under the SATLE fund from
 National Forum, and also from UCL.
 
 ## Version support ##
-This plugin has been developed to work on Moodle releases 4.00, 4.01, 4.02 and 4.03.
+This plugin has been developed to work on Moodle releases 4.00, 4.01, 4.02, 4.03, 4.04, and 4.05.
 
 ## Development ##
 This plugin has been developed and is maintained by Brickfield Education Labs.
@@ -51,7 +51,7 @@ This module uses code derived from ["jquery.editable.amd.js"](https://github.com
 This code written by [Victor Jonsson](http://victorjonsson.se/) is licensed under [GNU GPLv2](http://www.gnu.org/licenses/gpl-2.0.html).
 
 ### Icon design ###
-Many thanks to [Stuart Lamour](https://github.com/stuartlamour) for our new board icon!
+Many thanks to [Stuart Lamour](https://github.com/stuartlamour) for our new board icon! Also thanks to [Luca Bosch](https://github.com/lucaboesch) for our updated 4.04 icon!
 
 ## Documentation ##
 All public documentation for this plugin is maintained at the

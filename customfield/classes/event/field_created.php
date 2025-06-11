@@ -53,7 +53,7 @@ class field_created extends \core\event\base {
      * @param field_controller $field
      * @return field_created
      */
-    public static function create_from_object(field_controller $field) : field_created {
+    public static function create_from_object(field_controller $field): field_created {
         $eventparams = [
             'objectid' => $field->get('id'),
             'context'  => $field->get_handler()->get_configuration_context(),

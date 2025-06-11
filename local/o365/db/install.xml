@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/o365/db" VERSION="20220708" COMMENT="XMLDB file for Moodle local/o365 plugin"
+<XMLDB PATH="local/o365/db" VERSION="20241004" COMMENT="XMLDB file for Moodle local/o365 plugin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -56,7 +56,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="muserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="moodle user id"/>
-        <FIELD NAME="aadupn" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="aad upn"/>
+        <FIELD NAME="entraidupn" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="entra ID upn"/>
         <FIELD NAME="uselogin" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="whether the connection uses login"/>
       </FIELDS>
       <KEYS>
@@ -64,7 +64,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="muserid" UNIQUE="true" FIELDS="muserid"/>
-        <INDEX NAME="aadupn" UNIQUE="true" FIELDS="aadupn"/>
+        <INDEX NAME="entraidupn" UNIQUE="true" FIELDS="entraidupn"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="local_o365_token" COMMENT="Stores tokens.">
@@ -152,27 +152,40 @@
         <INDEX NAME="usrcal" UNIQUE="true" FIELDS="user_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_o365_notif" COMMENT="List of processed assignment notifications.">
+    <TABLE NAME="local_o365_teams_cache" COMMENT="Stores Teams cache">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="assignid" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="assignment ID"/>
-        <FIELD NAME="timenotified" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="when was the notification sent"/>
+        <FIELD NAME="objectid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="264" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="assignid" UNIQUE="false" FIELDS="assignid"/>
-      </INDEXES>
     </TABLE>
-    <TABLE NAME="local_o365_teams_cache" COMMENT="Stores Teams cache">
+    <TABLE NAME="local_o365_groups_cache" COMMENT="Stores Groups cache">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="objectid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="objectid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="256" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="not_found_since" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_o365_course_request" COMMENT="Table to store course requests for o365">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="requestid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="teamoid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="teamname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseshortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="requeststatus" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

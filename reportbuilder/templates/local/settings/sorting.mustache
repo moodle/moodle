@@ -28,12 +28,14 @@
                 "title": "Email address",
                 "sortdirection": "4",
                 "sortenabled": true,
+                "sortenabledtitle": "Disable initial sorting for column 'Email address'",
                 "sortorder": 1,
                 "sorticon": [{
-                    "key": "t/uplong",
-                    "component": "core",
-                    "title": "Sort column 'Email address' ascending"
+                    "key": "t/sort_asc",
+                    "component": "moodle",
+                    "title": "Change initial sorting for column 'Email address' to descending"
                 }],
+                "movetitle": "Move sorting for column 'Email address'",
                 "heading": "Email address"
             }]
         }]
@@ -43,7 +45,7 @@
 <div class="p-2" data-region="settings-sorting">
     {{#sorting}}
         {{#hassortablecolumns}}
-            <ul class="list-group reportbuilder-sortable-list ml-0">
+            <ul class="list-group reportbuilder-sortable-list ms-0">
                 {{#sortablecolumns}}
                     <li class="list-group-item list-group-item-action d-flex align-items-center text-dark"
                         data-column-sort-id="{{id}}"
@@ -52,7 +54,7 @@
                         data-column-sort-position="{{sortorder}}">
                         {{>core/drag_handle}}
                         {{#sorticon}}
-                            <span class="float-right">
+                            <span class="float-end">
                                 <button id="toggle-sort-direction-{{id}}"
                                         class="btn btn-link p-0"
                                         data-action="report-toggle-sort-direction"
@@ -65,7 +67,7 @@
                         {{/sorticon}}
                         <input id="toggle-sort-{{id}}" title="{{{sortenabledtitle}}}" data-action="report-toggle-column-sorting" type="checkbox" {{#sortenabled}}checked{{/sortenabled}}>
                         <label for="toggle-sort-{{id}}" class="mb-0">
-                            <span class="ml-2 text-dark {{^sortenabled}}text-muted{{/sortenabled}}">{{{heading}}}</span>
+                            <span class="ms-2 text-dark {{^sortenabled}}text-muted{{/sortenabled}}">{{{heading}}}</span>
                             <span class="sr-only">{{{sortenabledtitle}}}</span>
                         </label>
                     </li>

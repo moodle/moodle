@@ -1,0 +1,122 @@
+.wds.menu-list {
+    list-style: none;
+    padding: 0;
+}
+
+.wds .menu-item {
+}
+
+.wds .menu-link {
+    text-decoration: none;
+}
+
+.wds .menu-link:hover {
+    text-decoration: underline;
+}
+
+.wds i.fa {
+    text-align: center;
+    width: 1.75em;
+}
+
+.wds a img.fa {
+    text-align: center;
+    width: 1.75em;
+}
+
+.wds-text-input {
+  margin-top: 2rem;
+  margin-bottom: -.5rem !important;
+}
+
+.wds-text-input.wds-first {
+  margin-top: 0;
+}
+
+#page-blocks-wdsprefs-unwantview .form-group.fitem {
+  padding-bottom: 0 !important;
+}
+
+.mform .d-flex .fitem.wdsprefsradio {
+  margin: unset !important;
+}
+
+.mform .checkbox.crosslisted {
+  padding-left: 1em;
+}
+
+/* Dual list styling */
+.duallist-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.duallist-available {
+    flex: 1;
+}
+
+.duallist-available select {
+    width: 100%;
+    min-height: 300px;
+}
+
+.duallist-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    width: 120px;
+}
+
+.duallist-controls button {
+    white-space: nowrap;
+    width: 9.5em;
+    height: 3em;
+}
+
+.duallist-shells {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 3em;
+}
+
+.duallist-shell {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.duallist-shell.active-shell {
+    border-color: #1177d1;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(17, 119, 209, 0.3);
+}
+
+.duallist-shell select {
+    width: 100%;
+    min-height: 150px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .duallist-container {
+        flex-direction: column;
+    }
+    
+    .duallist-controls {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+}

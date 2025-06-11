@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * PHPUnit related utilities.
@@ -21,11 +21,11 @@
  *
  * @package    tool_phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    die; // no access from web!
+    die; // No access from web!
 }
 
 define('IGNORE_COMPONENT_CACHE', true);
@@ -34,9 +34,9 @@ require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 require_once(__DIR__.'/../../../../lib/testing/lib.php');
 
-// now get cli options
+// Now get cli options.
 list($options, $unrecognized) = cli_get_params(
-    array(
+    [
         'drop'                  => false,
         'install'               => false,
         'buildconfig'           => false,
@@ -44,22 +44,20 @@ list($options, $unrecognized) = cli_get_params(
         'diag'                  => false,
         'run'                   => false,
         'help'                  => false,
-    ),
-    array(
-        'h' => 'help'
-    )
+    ],
+    [
+        'h' => 'help',
+    ]
 );
 
-if (file_exists(__DIR__.'/../../../../vendor/phpunit/phpunit/composer.json')) {
-    // Composer packages present.
-    require_once(__DIR__.'/../../../../vendor/autoload.php');
-
-} else {
-    // Note: installation via PEAR is not supported any more.
+// Basic check to see if phpunit is installed.
+if (!file_exists(__DIR__.'/../../../../vendor/phpunit/phpunit/composer.json') ||
+        !file_exists(__DIR__.'/../../../../vendor/bin/phpunit') ||
+        !file_exists(__DIR__.'/../../../../vendor/autoload.php')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
 }
 
-if ($options['install'] or $options['drop']) {
+if ($options['install'] || $options['drop']) {
     define('CACHE_DISABLE_ALL', true);
 }
 
@@ -67,22 +65,23 @@ if ($options['run']) {
     unset($options);
     unset($unrecognized);
 
-    foreach ($_SERVER['argv'] as $k=>$v) {
+    foreach ($_SERVER['argv'] as $k => $v) {
         if (strpos($v, '--run') === 0) {
             unset($_SERVER['argv'][$k]);
             $_SERVER['argc'] = $_SERVER['argc'] - 1;
         }
     }
     $_SERVER['argv'] = array_values($_SERVER['argv']);
-    PHPUnit\TextUI\Command::main();
+    require(__DIR__ . '/../../../../vendor/bin/phpunit');
     exit(0);
 }
 
 define('PHPUNIT_UTIL', true);
 
+require(__DIR__.'/../../../../vendor/autoload.php');
 require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
 
-// from now on this is a regular moodle CLI_SCRIPT
+// From now on this is a regular moodle CLI_SCRIPT.
 
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/upgradelib.php');
@@ -100,7 +99,7 @@ $install = $options['install'];
 $buildconfig = $options['buildconfig'];
 $buildcomponentconfigs = $options['buildcomponentconfigs'];
 
-if ($options['help'] or (!$drop and !$install and !$buildconfig and !$buildcomponentconfigs and !$diag)) {
+if ($options['help'] || (!$drop && !$install && !$buildconfig && !$buildcomponentconfigs && !$diag)) {
     $help = "Various PHPUnit utility functions
 
 Options:
@@ -132,7 +131,10 @@ if ($diag) {
     if (phpunit_util::build_config_file()) {
         exit(0);
     } else {
-        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create main /phpunit.xml configuration file, verify dirroot permissions');
+        phpunit_bootstrap_error(
+            PHPUNIT_EXITCODE_CONFIGWARNING,
+            'Can not create main /phpunit.xml configuration file, verify dirroot permissions'
+        );
     }
 
 } else if ($buildcomponentconfigs) {
@@ -140,10 +142,10 @@ if ($diag) {
     exit(0);
 
 } else if ($drop) {
-    // make sure tests do not run in parallel
+    // Make sure tests do not run in parallel.
     test_lock::acquire('phpunit');
     phpunit_util::drop_site(true);
-    // note: we must stop here because $CFG is messed up and we can not reinstall, sorry
+    // Note: we must stop here because $CFG is messed up and we can not reinstall, sorry.
     exit(0);
 
 } else if ($install) {

@@ -26,8 +26,7 @@ define(['jquery',
     'core/ajax',
     'core/notification',
     'core/str',
-    'report_lpmonitoring/fieldsettoggler',
-    'report_lpmonitoring/bootstrap-colorpicker'],
+    'report_lpmonitoring/fieldsettoggler'],
     function($, templates, ajax, notification, str, fieldsettoggler) {
 
         /**
@@ -174,7 +173,6 @@ define(['jquery',
         ScaleColorConfiguration.prototype.loadScaleConfiguration = function() {
             var self = this,
                 requests;
-            $('.scalevalue').colorpicker('destroy');
             $("#loaderscalevalues").show();
             $('#submitScaleColorButton').prop('disabled', true);
             $(self.scaleValuesSelector).hide();
@@ -190,7 +188,6 @@ define(['jquery',
                     templates.runTemplateJS(js);
                     $("#loaderscalevalues").hide();
                     $(self.scaleValuesSelector).show();
-                    $('.scalevalue').colorpicker();
                     $('#submitScaleColorButton').prop('disabled', false);
                 });
             }).fail(notification.exception);
@@ -210,7 +207,7 @@ define(['jquery',
                 requests;
 
             valuescaleid = 1;
-            $('#savecolor input[type=text]').each(function () {
+            $('#savecolor input[type=color]').each(function () {
                 if ($(this).val() !== '') {
                     colors.push({id : valuescaleid, color : $(this).val()});
                     valuescaleid++;

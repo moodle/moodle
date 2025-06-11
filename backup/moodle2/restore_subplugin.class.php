@@ -36,10 +36,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class restore_subplugin {
 
+    /** @var string */
     protected $subplugintype;
+    /** @var string */
     protected $subpluginname;
+    /** @var restore_path_element */
     protected $connectionpoint;
+    /** @var restore_step */
     protected $step;
+    /** @var restore_task */
     protected $task;
 
     public function __construct($subplugintype, $subpluginname, $step) {

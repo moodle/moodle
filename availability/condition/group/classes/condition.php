@@ -71,7 +71,7 @@ class condition extends \core_availability\condition {
         $allow = true;
         if (!has_capability('moodle/site:accessallgroups', $context, $userid)) {
             // Get all groups the user belongs to.
-            $groups = $info->get_modinfo()->get_groups();
+            $groups = $info->get_groups(0, $userid);
             if ($this->groupid) {
                 $allow = in_array($this->groupid, $groups);
             } else {

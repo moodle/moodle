@@ -27,23 +27,33 @@ namespace mod_quiz\question\bank;
  */
 class question_name_text_column extends question_name_column {
 
+    #[\Override]
     public function get_name(): string {
         return 'questionnametext';
     }
 
+    #[\Override]
+    public function get_default_width(): int {
+        // In the places this is used, this seems to make it use all the available space, without overflowing.
+        return 800;
+    }
+
+    #[\Override]
     protected function display_content($question, $rowclasses): void {
         echo \html_writer::start_tag('div');
         $labelfor = $this->label_for($question);
         if ($labelfor) {
             echo \html_writer::start_tag('label', ['for' => $labelfor]);
         }
-        echo quiz_question_tostring($question, false, true, true, $question->tags);
+        echo quiz_question_tostring($question, false, true, true,
+            $question->tags, false);
         if ($labelfor) {
             echo \html_writer::end_tag('label');
         }
         echo \html_writer::end_tag('div');
     }
 
+    #[\Override]
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
@@ -52,6 +62,7 @@ class question_name_text_column extends question_name_column {
         return $fields;
     }
 
+    #[\Override]
     public function load_additional_data(array $questions) {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);

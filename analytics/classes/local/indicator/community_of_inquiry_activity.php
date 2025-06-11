@@ -146,7 +146,7 @@ abstract class community_of_inquiry_activity extends linear {
      *
      * @var string The activity name (e.g. assign or quiz)
      */
-    public final function get_activity_type() {
+    final public function get_activity_type() {
         $class = get_class($this);
         $package = stristr($class, "\\", true);
         $type = str_replace("mod_", "", $package);
@@ -197,7 +197,7 @@ abstract class community_of_inquiry_activity extends linear {
      * @param \stdClass|false $user
      * @return bool
      */
-    protected final function any_log($contextid, $user) {
+    final protected function any_log($contextid, $user) {
         if (empty($this->activitylogs[$contextid])) {
             return false;
         }
@@ -221,7 +221,7 @@ abstract class community_of_inquiry_activity extends linear {
      * @param \stdClass|false $user
      * @return bool
      */
-    protected final function any_write_log($contextid, $user) {
+    final protected function any_write_log($contextid, $user) {
         if (empty($this->activitylogs[$contextid])) {
             return false;
         }

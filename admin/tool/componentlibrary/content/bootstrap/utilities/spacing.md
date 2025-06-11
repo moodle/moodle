@@ -52,7 +52,7 @@ Here are some representative examples of these classes:
   margin-top: 0 !important;
 }
 
-.ml-1 {
+.ms-1 {
   margin-left: ($spacer * .25) !important;
 }
 

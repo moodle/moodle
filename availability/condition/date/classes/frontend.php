@@ -84,8 +84,8 @@ class frontend extends \core_availability\frontend {
                 'hour' => $wrongfields['hours'], 'minute' => $wrongfields['minutes']);
     }
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $CFG, $OUTPUT;
         require_once($CFG->libdir . '/formslib.php');
 

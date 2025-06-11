@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Externallib.php file for attendance plugin.
  *
@@ -41,13 +42,13 @@ class mod_attendance_external extends external_api {
      */
     public static function add_attendance_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'name' => new external_value(PARAM_TEXT, 'attendance name'),
                 'intro' => new external_value(PARAM_RAW, 'attendance description', VALUE_DEFAULT, ''),
                 'groupmode' => new external_value(PARAM_INT,
                     'group mode (0 - no groups, 1 - separate groups, 2 - visible groups)', VALUE_DEFAULT, 0),
-            )
+            ]
         );
     }
 
@@ -64,15 +65,15 @@ class mod_attendance_external extends external_api {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/course/modlib.php');
 
-        $params = self::validate_parameters(self::add_attendance_parameters(), array(
+        $params = self::validate_parameters(self::add_attendance_parameters(), [
             'courseid' => $courseid,
             'name' => $name,
             'intro' => $intro,
             'groupmode' => $groupmode,
-        ));
+        ]);
 
         // Get course.
-        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
 
         // Verify permissions.
         list($module, $context) = can_add_moduleinfo($course, 'attendance', 0);
@@ -80,7 +81,7 @@ class mod_attendance_external extends external_api {
         require_capability('mod/attendance:addinstance', $context);
 
         // Verify group mode.
-        if (!in_array($params['groupmode'], array(NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS))) {
+        if (!in_array($params['groupmode'], [NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS])) {
             throw new invalid_parameter_exception('Group mode is invalid.');
         }
 
@@ -103,7 +104,7 @@ class mod_attendance_external extends external_api {
         // Add the module to the course.
         $moduleinfo = add_moduleinfo($moduleinfo, $course);
 
-        return array('attendanceid' => $moduleinfo->instance);
+        return ['attendanceid' => $moduleinfo->instance];
     }
 
     /**
@@ -112,9 +113,9 @@ class mod_attendance_external extends external_api {
      * @return external_multiple_structure
      */
     public static function add_attendance_returns() {
-        return new external_single_structure(array(
+        return new external_single_structure([
             'attendanceid' => new external_value(PARAM_INT, 'instance id of the created attendance'),
-        ));
+        ]);
     }
 
     /**
@@ -124,9 +125,9 @@ class mod_attendance_external extends external_api {
      */
     public static function remove_attendance_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'attendanceid' => new external_value(PARAM_INT, 'attendance instance id'),
-            )
+            ]
         );
     }
 
@@ -136,9 +137,9 @@ class mod_attendance_external extends external_api {
      * @param int $attendanceid
      */
     public static function remove_attendance(int $attendanceid) {
-        $params = self::validate_parameters(self::remove_attendance_parameters(), array(
+        $params = self::validate_parameters(self::remove_attendance_parameters(), [
             'attendanceid' => $attendanceid,
-        ));
+        ]);
 
         $cm = get_coursemodule_from_instance('attendance', $params['attendanceid'], 0, false, MUST_EXIST);
 
@@ -169,14 +170,14 @@ class mod_attendance_external extends external_api {
      */
     public static function add_session_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'attendanceid' => new external_value(PARAM_INT, 'attendance instance id'),
                 'description' => new external_value(PARAM_RAW, 'description', VALUE_DEFAULT, ''),
                 'sessiontime' => new external_value(PARAM_INT, 'session start timestamp'),
                 'duration' => new external_value(PARAM_INT, 'session duration (seconds)', VALUE_DEFAULT, 0),
                 'groupid' => new external_value(PARAM_INT, 'group id', VALUE_DEFAULT, 0),
                 'addcalendarevent' => new external_value(PARAM_BOOL, 'add calendar event', VALUE_DEFAULT, true),
-            )
+            ]
         );
     }
 
@@ -195,18 +196,18 @@ class mod_attendance_external extends external_api {
                                        bool $addcalendarevent) {
         global $USER, $DB;
 
-        $params = self::validate_parameters(self::add_session_parameters(), array(
+        $params = self::validate_parameters(self::add_session_parameters(), [
             'attendanceid' => $attendanceid,
             'description' => $description,
             'sessiontime' => $sessiontime,
             'duration' => $duration,
             'groupid' => $groupid,
             'addcalendarevent' => $addcalendarevent,
-        ));
+        ]);
 
         $cm = get_coursemodule_from_instance('attendance', $params['attendanceid'], 0, false, MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-        $attendance = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+        $attendance = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
         // Check permissions.
         $context = context_module::instance($cm->id);
@@ -260,7 +261,7 @@ class mod_attendance_external extends external_api {
         $sess->studentsearlyopentime = get_config('attendance', 'studentsearlyopentime');
 
         $sessionid = $attendance->add_session($sess);
-        return array('sessionid' => $sessionid);
+        return ['sessionid' => $sessionid];
     }
 
     /**
@@ -269,9 +270,9 @@ class mod_attendance_external extends external_api {
      * @return external_multiple_structure
      */
     public static function add_session_returns() {
-        return new external_single_structure(array(
+        return new external_single_structure([
             'sessionid' => new external_value(PARAM_INT, 'id of the created session'),
-        ));
+        ]);
     }
 
     /**
@@ -281,9 +282,9 @@ class mod_attendance_external extends external_api {
      */
     public static function remove_session_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'sessionid' => new external_value(PARAM_INT, 'session id'),
-            )
+            ]
         );
     }
 
@@ -297,12 +298,12 @@ class mod_attendance_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::remove_session_parameters(),
-            array('sessionid' => $sessionid));
+            ['sessionid' => $sessionid]);
 
-        $session = $DB->get_record('attendance_sessions', array('id' => $params['sessionid']), '*', MUST_EXIST);
-        $attendance = $DB->get_record('attendance', array('id' => $session->attendanceid), '*', MUST_EXIST);
+        $session = $DB->get_record('attendance_sessions', ['id' => $params['sessionid']], '*', MUST_EXIST);
+        $attendance = $DB->get_record('attendance', ['id' => $session->attendanceid], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('attendance', $attendance->id, 0, false, MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
         // Check permissions.
         $context = context_module::instance($cm->id);
@@ -313,7 +314,7 @@ class mod_attendance_external extends external_api {
         $attendance = new mod_attendance_structure($attendance, $cm, $course, $context);
 
         // Delete session.
-        $attendance->delete_sessions(array($sessionid));
+        $attendance->delete_sessions([$sessionid]);
         attendance_update_users_grade($attendance);
 
         return true;
@@ -334,7 +335,7 @@ class mod_attendance_external extends external_api {
      */
     public static function get_courses_with_today_sessions_parameters() {
         return new external_function_parameters (
-                    array('userid' => new external_value(PARAM_INT, 'User id.',  VALUE_DEFAULT, 0)));
+                    ['userid' => new external_value(PARAM_INT, 'User id.',  VALUE_DEFAULT, 0)]);
     }
 
     /**
@@ -345,12 +346,12 @@ class mod_attendance_external extends external_api {
     public static function get_courses_with_today_sessions($userid) {
         global $DB;
 
-        $params = self::validate_parameters(self::get_courses_with_today_sessions_parameters(), array(
+        $params = self::validate_parameters(self::get_courses_with_today_sessions_parameters(), [
             'userid' => $userid,
-        ));
+        ]);
 
         // Check user id is valid.
-        $user = $DB->get_record('user', array('id' => $params['userid']), '*', MUST_EXIST);
+        $user = $DB->get_record('user', ['id' => $params['userid']], '*', MUST_EXIST);
 
         // Capability check is done in get_courses_with_today_sessions
         // as it switches contexts in loop for each course.
@@ -363,7 +364,7 @@ class mod_attendance_external extends external_api {
      * @return array
      */
     private static function get_session_structure() {
-        $session = array('id' => new external_value(PARAM_INT, 'Session id.'),
+        $session = ['id' => new external_value(PARAM_INT, 'Session id.'),
                          'attendanceid' => new external_value(PARAM_INT, 'Attendance id.'),
                          'groupid' => new external_value(PARAM_INT, 'Group id.'),
                          'sessdate' => new external_value(PARAM_INT, 'Session date.'),
@@ -380,7 +381,7 @@ class mod_attendance_external extends external_api {
                          'preventsharediptime' => new external_value(PARAM_INT, 'Time delay before IP address is allowed again.'),
                          'statusset' => new external_value(PARAM_INT, 'Session statusset.'),
                          'includeqrcode' => new external_value(PARAM_INT, 'Include QR code when displaying password'),
-                         'studentsearlyopentime' => new external_value(PARAM_INT, 'Duration to allow session to opened early'));
+                         'studentsearlyopentime' => new external_value(PARAM_INT, 'Duration to allow session to opened early'), ];
 
         return $session;
     }
@@ -392,14 +393,14 @@ class mod_attendance_external extends external_api {
     public static function get_courses_with_today_sessions_returns() {
         $todaysessions = self::get_session_structure();
 
-        $attendanceinstances = array('name' => new external_value(PARAM_TEXT, 'Attendance name.'),
+        $attendanceinstances = ['name' => new external_value(PARAM_TEXT, 'Attendance name.'),
                                       'today_sessions' => new external_multiple_structure(
-                                                          new external_single_structure($todaysessions)));
+                                                          new external_single_structure($todaysessions)), ];
 
-        $courses = array('shortname' => new external_value(PARAM_TEXT, 'short name of a moodle course.'),
+        $courses = ['shortname' => new external_value(PARAM_TEXT, 'short name of a moodle course.'),
                          'fullname' => new external_value(PARAM_TEXT, 'full name of a moodle course.'),
                          'attendance_instances' => new external_multiple_structure(
-                                                   new external_single_structure($attendanceinstances)));
+                                                   new external_single_structure($attendanceinstances)), ];
 
         return new external_multiple_structure(new external_single_structure(($courses)));
     }
@@ -411,7 +412,7 @@ class mod_attendance_external extends external_api {
      */
     public static function get_session_parameters() {
         return new external_function_parameters (
-                    array('sessionid' => new external_value(PARAM_INT, 'session id')));
+                    ['sessionid' => new external_value(PARAM_INT, 'session id')]);
     }
 
     /**
@@ -423,22 +424,22 @@ class mod_attendance_external extends external_api {
     public static function get_session($sessionid) {
         global $DB;
 
-        $params = self::validate_parameters(self::get_session_parameters(), array(
+        $params = self::validate_parameters(self::get_session_parameters(), [
             'sessionid' => $sessionid,
-        ));
+        ]);
 
-        $session = $DB->get_record('attendance_sessions', array('id' => $params['sessionid']), '*', MUST_EXIST);
-        $attendance = $DB->get_record('attendance', array('id' => $session->attendanceid), '*', MUST_EXIST);
+        $session = $DB->get_record('attendance_sessions', ['id' => $params['sessionid']], '*', MUST_EXIST);
+        $attendance = $DB->get_record('attendance', ['id' => $session->attendanceid], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('attendance', $attendance->id, 0, false, MUST_EXIST);
 
         // Check permissions.
         $context = context_module::instance($cm->id);
         self::validate_context($context);
-        $capabilities = array(
+        $capabilities = [
             'mod/attendance:manageattendances',
             'mod/attendance:takeattendances',
-            'mod/attendance:changeattendances'
-        );
+            'mod/attendance:changeattendances',
+        ];
         if (!has_any_capability($capabilities, $context)) {
             throw new invalid_parameter_exception('Invalid session id or no permissions.');
         }
@@ -452,23 +453,23 @@ class mod_attendance_external extends external_api {
      * @return external_single_structure
      */
     public static function get_session_returns() {
-        $statuses = array('id' => new external_value(PARAM_INT, 'Status id.'),
+        $statuses = ['id' => new external_value(PARAM_INT, 'Status id.'),
                           'attendanceid' => new external_value(PARAM_INT, 'Attendance id.'),
                           'acronym' => new external_value(PARAM_TEXT, 'Status acronym.'),
                           'description' => new external_value(PARAM_RAW, 'Status description.'),
                           'grade' => new external_value(PARAM_FLOAT, 'Status grade.'),
                           'visible' => new external_value(PARAM_INT, 'Status visibility.'),
                           'deleted' => new external_value(PARAM_INT, 'informs if this session was deleted.'),
-                          'setnumber' => new external_value(PARAM_INT, 'Set number.'));
+                          'setnumber' => new external_value(PARAM_INT, 'Set number.'), ];
 
-        $users = array('id' => new external_value(PARAM_INT, 'User id.'),
+        $users = ['id' => new external_value(PARAM_INT, 'User id.'),
                        'firstname' => new external_value(PARAM_TEXT, 'User first name.'),
-                       'lastname' => new external_value(PARAM_TEXT, 'User last name.'));
+                       'lastname' => new external_value(PARAM_TEXT, 'User last name.'), ];
 
-        $attendancelog = array('studentid' => new external_value(PARAM_INT, 'Student id.'),
+        $attendancelog = ['studentid' => new external_value(PARAM_INT, 'Student id.'),
                                 'statusid' => new external_value(PARAM_TEXT, 'Status id (last time).'),
                                 'remarks' => new external_value(PARAM_TEXT, 'Last remark.'),
-                                'id' => new external_value(PARAM_TEXT, 'log id.'));
+                                'id' => new external_value(PARAM_TEXT, 'log id.'), ];
 
         $session = self::get_session_structure();
         $session['courseid'] = new external_value(PARAM_INT, 'Course moodle id.');
@@ -486,11 +487,11 @@ class mod_attendance_external extends external_api {
      */
     public static function update_user_status_parameters() {
         return new external_function_parameters(
-                    array('sessionid' => new external_value(PARAM_INT, 'Session id'),
+                    ['sessionid' => new external_value(PARAM_INT, 'Session id'),
                           'studentid' => new external_value(PARAM_INT, 'Student id'),
                           'takenbyid' => new external_value(PARAM_INT, 'Id of the user who took this session'),
                           'statusid' => new external_value(PARAM_INT, 'Status id'),
-                          'statusset' => new external_value(PARAM_TEXT, 'Status set of session')));
+                          'statusset' => new external_value(PARAM_TEXT, 'Status set of session')]);
     }
 
     /**
@@ -505,15 +506,15 @@ class mod_attendance_external extends external_api {
     public static function update_user_status($sessionid, $studentid, $takenbyid, $statusid, $statusset) {
         global $DB;
 
-        $params = self::validate_parameters(self::update_user_status_parameters(), array(
+        $params = self::validate_parameters(self::update_user_status_parameters(), [
             'sessionid' => $sessionid,
             'studentid' => $studentid,
             'takenbyid' => $takenbyid,
             'statusid' => $statusid,
             'statusset' => $statusset,
-        ));
+        ]);
 
-        $session = $DB->get_record('attendance_sessions', array('id' => $params['sessionid']), '*', MUST_EXIST);
+        $session = $DB->get_record('attendance_sessions', ['id' => $params['sessionid']], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('attendance', $session->attendanceid, 0, false, MUST_EXIST);
 
         // Check permissions.
@@ -530,9 +531,10 @@ class mod_attendance_external extends external_api {
         }
 
         // Check user id is valid.
-        $student = $DB->get_record('user', array('id' => $params['studentid']), '*', MUST_EXIST);
-        $takenby = $DB->get_record('user', array('id' => $params['takenbyid']), '*', MUST_EXIST);
+        $student = $DB->get_record('user', ['id' => $params['studentid']], '*', MUST_EXIST);
+        $takenby = $DB->get_record('user', ['id' => $params['takenbyid']], '*', MUST_EXIST);
 
+        // phpcs:disable moodle.Commenting.TodoComment
         // TODO: Verify statusset and statusid.
 
         return attendance_handler::update_user_status($params['sessionid'], $params['studentid'], $params['takenbyid'],
@@ -554,9 +556,9 @@ class mod_attendance_external extends external_api {
      */
     public static function get_sessions_parameters() {
         return new external_function_parameters(
-                    array(
+                    [
                         'attendanceid' => new external_value(PARAM_INT, 'Attendance id.', VALUE_REQUIRED),
-                    )
+                    ]
                 );
     }
 
@@ -575,20 +577,20 @@ class mod_attendance_external extends external_api {
      * @param int $attendanceid
      */
     public static function get_sessions($attendanceid) {
-         $params = self::validate_parameters(self::get_sessions_parameters(), array(
+         $params = self::validate_parameters(self::get_sessions_parameters(), [
             'attendanceid' => $attendanceid,
-         ));
+         ]);
 
         // Check permissions.
         $cm = get_coursemodule_from_instance('attendance', $attendanceid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        $capabilities = array(
+        $capabilities = [
             'mod/attendance:manageattendances',
             'mod/attendance:takeattendances',
-            'mod/attendance:changeattendances'
-        );
+            'mod/attendance:changeattendances',
+        ];
         if (!has_any_capability($capabilities, $context)) {
             throw new invalid_parameter_exception('Invalid session id or no permissions.');
         }

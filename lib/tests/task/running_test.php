@@ -16,10 +16,6 @@
 
 namespace core\task;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/../fixtures/task_fixtures.php');
-
 /**
  * This file contains unit tests for the 'task running' data.
  *
@@ -28,12 +24,16 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class running_test extends \advanced_testcase {
+final class running_test extends \advanced_testcase {
+    public static function setUpBeforeClass(): void {
+        require_once(__DIR__ . '/../fixtures/task_fixtures.php');
+        parent::setUpBeforeClass();
+    }
 
     /**
      * Test for ad-hoc tasks.
      */
-    public function test_adhoc_task_running() {
+    public function test_adhoc_task_running(): void {
         $this->resetAfterTest();
 
         // Specify lock factory. The reason is that Postgres locks don't work within a single
@@ -87,7 +87,7 @@ class running_test extends \advanced_testcase {
     /**
      * Test for scheduled tasks.
      */
-    public function test_scheduled_task_running() {
+    public function test_scheduled_task_running(): void {
         global $DB;
         $this->resetAfterTest();
 

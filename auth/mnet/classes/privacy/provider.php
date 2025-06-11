@@ -49,7 +49,7 @@ class provider implements
      * @param   collection $collection The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $sessionfields = [
                 'userid' => 'privacy:metadata:mnet_session:userid',
@@ -130,7 +130,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist   $contextlist  The list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                   FROM {mnet_log} ml
                   JOIN {context} ctx ON ctx.instanceid = ml.userid AND ctx.contextlevel = :contextlevel

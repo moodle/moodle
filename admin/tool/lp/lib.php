@@ -225,7 +225,7 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
  */
 function tool_lp_get_fontawesome_icon_map() {
     return [
-        'tool_lp:url' => 'fa-external-link'
+        'tool_lp:url' => 'fa-arrow-up-right-from-square',
     ];
 }
 

@@ -36,12 +36,12 @@ require_once($CFG->libdir . '/licenselib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group      tool_licensemanager
  */
-class manager_test extends advanced_testcase {
+final class manager_test extends advanced_testcase {
 
     /**
      * Test editing a license.
      */
-    public function test_edit_existing_license() {
+    public function test_edit_existing_license(): void {
         $this->resetAfterTest();
 
         // Create initial custom license to edit.
@@ -70,7 +70,6 @@ class manager_test extends advanced_testcase {
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'edit');
-        $method->setAccessible(true); // Allow accessing of private method.
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_UPDATE, $testlicense->shortname);
 
         // Should not create a new license when updating an existing license.
@@ -85,12 +84,11 @@ class manager_test extends advanced_testcase {
         $this->assertSame(date('Ymd', $formdata['version']) . '00', $actual->version);
     }
 
-    public function test_edit_license_not_exists() {
+    public function test_edit_license_not_exists(): void {
         $manager = new \tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'edit');
-        $method->setAccessible(true); // Allow accessing of private method.
 
         // Attempt to update a license that doesn't exist.
         $formdata = [
@@ -106,12 +104,11 @@ class manager_test extends advanced_testcase {
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_UPDATE, $formdata['shortname']);
     }
 
-    public function test_edit_license_no_shortname() {
+    public function test_edit_license_no_shortname(): void {
         $manager = new \tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'edit');
-        $method->setAccessible(true); // Allow accessing of private method.
 
         // Attempt to update a license without passing license shortname.
         $formdata = [
@@ -129,7 +126,7 @@ class manager_test extends advanced_testcase {
     /**
      * Test creating a new license.
      */
-    public function test_edit_create_license() {
+    public function test_edit_create_license(): void {
         $this->resetAfterTest();
 
         $licensecount = count(license_manager::get_licenses());
@@ -148,7 +145,6 @@ class manager_test extends advanced_testcase {
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'edit');
-        $method->setAccessible(true); // Allow accessing of private method.
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_CREATE, $formdata['shortname']);
 
         // Should create a new license in database.
@@ -170,28 +166,27 @@ class manager_test extends advanced_testcase {
     /**
      * Test changing the order of licenses.
      */
-    public function test_change_license_order() {
+    public function test_change_license_order(): void {
         $this->resetAfterTest();
 
         $licenseorder = array_keys(license_manager::get_licenses());
-        $initialposition = array_search('cc-nc', $licenseorder);
+        $initialposition = array_search('cc-nc-4.0', $licenseorder);
 
         $manager = new tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'change_license_order');
-        $method->setAccessible(true); // Allow accessing of private method.
-        $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_UP, 'cc-nc');
+        $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_UP, 'cc-nc-4.0');
 
         $licenseorder = array_keys(license_manager::get_licenses());
-        $newposition = array_search('cc-nc', $licenseorder);
+        $newposition = array_search('cc-nc-4.0', $licenseorder);
 
         $this->assertLessThan($initialposition, $newposition);
 
         $initialposition = array_search('allrightsreserved', $licenseorder);
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_DOWN, 'allrightsreserved');
         $licenseorder = array_keys(license_manager::get_licenses());
-        $newposition = array_search('cc-nc', $licenseorder);
+        $newposition = array_search('cc-nc-4.0', $licenseorder);
 
         $this->assertGreaterThan($initialposition, $newposition);
     }

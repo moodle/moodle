@@ -24,6 +24,11 @@
 
 $messageproviders = array (
 
-    'expiry_notification' => array(),
+    'expiry_notification' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 
 );

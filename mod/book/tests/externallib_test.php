@@ -16,6 +16,7 @@
 
 namespace mod_book;
 
+use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_book_external;
 
@@ -34,12 +35,12 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test view_book
      */
-    public function test_view_book() {
+    public function test_view_book(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -81,7 +82,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_book_external::view_book($book->id, 0);
-        $result = \external_api::clean_returnvalue(mod_book_external::view_book_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_book_external::view_book_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(2, $events);
@@ -100,7 +101,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($chapter->id, $event->objectid);
 
         $result = mod_book_external::view_book($book->id, $chapter->id);
-        $result = \external_api::clean_returnvalue(mod_book_external::view_book_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_book_external::view_book_returns(), $result);
 
         $events = $sink->get_events();
         // We expect a total of 3 events.
@@ -131,7 +132,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_books_by_courses
      */
-    public function test_get_books_by_courses() {
+    public function test_get_books_by_courses(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -156,7 +157,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $books = mod_book_external::get_books_by_courses();
         // We need to execute the return values cleaning process to simulate the web service server.
-        $books = \external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
         $this->assertCount(1, $books['books']);
         $this->assertEquals('First Book', $books['books'][0]['name']);
         // We see 10 fields.
@@ -168,7 +169,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Student1 is not enrolled in course2. The webservice will return a warning!
         $books = mod_book_external::get_books_by_courses(array($course2->id));
         // We need to execute the return values cleaning process to simulate the web service server.
-        $books = \external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
         $this->assertCount(0, $books['books']);
         $this->assertEquals(1, $books['warnings'][0]['warningcode']);
 
@@ -177,7 +178,7 @@ class externallib_test extends externallib_advanced_testcase {
         // As Admin we can see this book.
         $books = mod_book_external::get_books_by_courses(array($course2->id));
         // We need to execute the return values cleaning process to simulate the web service server.
-        $books = \external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
 
         $this->assertCount(1, $books['books']);
         $this->assertEquals('Second Book', $books['books'][0]['name']);
@@ -190,7 +191,7 @@ class externallib_test extends externallib_advanced_testcase {
         self::getDataGenerator()->enrol_user($student1->id,  $course2->id, $studentrole->id);
         $this->setUser($student1);
         $books = mod_book_external::get_books_by_courses();
-        $books = \external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
         $this->assertCount(2, $books['books']);
 
     }

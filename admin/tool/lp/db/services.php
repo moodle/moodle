@@ -128,7 +128,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Search for users.',
         'type'         => 'read',
-        'capabilities' => '',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     // This function was originally in this plugin but has been moved to core.
@@ -136,10 +136,9 @@ $functions = array(
         'classname'    => 'core_cohort_external',
         'methodname'   => 'search_cohorts',
         'classpath'    => 'cohort/externallib.php',
-        'description'  => 'Search for cohorts.',
+        'description'  => 'Search for cohorts. This method is deprecated, please call \'core_cohort_search_cohorts\' instead',
         'type'         => 'read',
         'capabilities' => 'moodle/cohort:view',
-        'ajax'         => true,
     ),
 
     // User evidence.

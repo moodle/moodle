@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -39,7 +39,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test that the assessable_uploaded event is fired when an online text submission is saved.
      */
-    public function test_assessable_uploaded() {
+    public function test_assessable_uploaded(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -79,14 +79,13 @@ class events_test extends \advanced_testcase {
         $expected->courseid = $course->id;
         $expected->userid = $student->id;
         $expected->content = 'Submission text';
-        $this->assertEventLegacyData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test that the submission_created event is fired when an onlinetext submission is saved.
      */
-    public function test_submission_created() {
+    public function test_submission_created(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -125,7 +124,7 @@ class events_test extends \advanced_testcase {
      * Test that the submission_updated event is fired when an onlinetext
      * submission is saved and an existing submission already exists.
      */
-    public function test_submission_updated() {
+    public function test_submission_updated(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

@@ -21,16 +21,20 @@ Feature: Courses can be created in Single Activity mode
       | moodle/course:manageactivities | allow   |
       | moodle/course:viewparticipants | allow   |
       | moodle/role:assign             | allow   |
-      | mod/quiz:addinstance           | allow   |
+    And I enable "subsection" "mod" plugin
     When I log in as "kevin"
     And I am on site homepage
     And I press "Add a new course"
     And I set the following fields to these values:
       | Course full name  | My first course |
       | Course short name | myfirstcourse |
-      | Format | Single activity format |
+      | Format | Single activity |
     And I press "Update format"
     Then I should see "Quiz" in the "Type of activity" "field"
-    And I should not see "Forum" in the "Type of activity" "field"
+    And I should see "Forum" in the "Type of activity" "field"
+    # Check that not all the activity types are in the dropdown.
+    And I should not see "Text and media" in the "Type of activity" "field"
+    And I should not see "Subsection" in the "Type of activity" "field"
+    And I set the field "Type of activity" to "Quiz"
     And I press "Save and display"
-    And I should see "Adding a new Quiz"
+    And I should see "New Quiz"

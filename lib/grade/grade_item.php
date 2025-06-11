@@ -263,6 +263,22 @@ class grade_item extends grade_object {
     public $markasoverriddenwhengraded = true;
 
     /**
+     * @var int course module ID
+     */
+    public $cmid;
+
+    /**
+     * @var string average information.
+     */
+    public $avg;
+
+    /**
+     * Category name.
+     * @var string
+     */
+    public $category;
+
+    /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from the database
      *
      * @param array $params An array with required parameters for this grade object.
@@ -415,16 +431,18 @@ class grade_item extends grade_object {
     public function delete($source=null) {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
-        $this->delete_all_grades($source);
-        $success = parent::delete($source);
-        $transaction->allow_commit();
-
-        if ($success) {
-            $event = \core\event\grade_item_deleted::create_from_grade_item($this);
-            $event->trigger();
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $this->delete_all_grades($source);
+            $success = parent::delete($source);
+            if ($success) {
+                $event = \core\event\grade_item_deleted::create_from_grade_item($this);
+                $event->trigger();
+            }
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
         return $success;
     }
 
@@ -437,27 +455,30 @@ class grade_item extends grade_object {
     public function delete_all_grades($source=null) {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
+        try {
+            $transaction = $DB->start_delegated_transaction();
 
-        if (!$this->is_course_item()) {
-            $this->force_regrading();
-        }
-
-        if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
-            foreach ($grades as $grade) {
-                $grade->delete($source);
+            if (!$this->is_course_item()) {
+                $this->force_regrading();
             }
+
+            if ($grades = grade_grade::fetch_all(['itemid' => $this->id])) {
+                foreach ($grades as $grade) {
+                    $grade->delete($source);
+                }
+            }
+
+            // Delete all the historical files.
+            // We only support feedback files for modules atm.
+            if ($this->is_external_item()) {
+                $fs = new file_storage();
+                $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+            }
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
-        // Delete all the historical files.
-        // We only support feedback files for modules atm.
-        if ($this->is_external_item()) {
-            $fs = new file_storage();
-            $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
-        }
-
-        $transaction->allow_commit();
-
         return true;
     }
 
@@ -633,12 +654,16 @@ class grade_item extends grade_object {
      */
     public function set_locked($lockedstate, $cascade=false, $refresh=true) {
         if ($lockedstate) {
-        /// setting lock
-            if ($this->needsupdate) {
-                return false; // can not lock grade without first having final grade
+            // Setting lock.
+            if (empty($this->id)) {
+                return false;
+            } else if ($this->needsupdate) {
+                // Can not lock grade without first having final grade,
+                // so we schedule it to be locked as soon as regrading is finished.
+                $this->locktime = time() - 1;
+            } else {
+                $this->locked = time();
             }
-
-            $this->locked = time();
             $this->update();
 
             if ($cascade) {
@@ -753,7 +778,7 @@ class grade_item extends grade_object {
      * @param string $groupwheresql Where conditions for $groupsql
      * @return int The number of hidden grades
      */
-    public function has_hidden_grades($groupsql="", array $params=null, $groupwheresql="") {
+    public function has_hidden_grades($groupsql="", ?array $params=null, $groupwheresql="") {
         global $DB;
         $params = (array)$params;
         $params['itemid'] = $this->id;
@@ -2264,25 +2289,21 @@ class grade_item extends grade_object {
         list($usql, $params) = $DB->get_in_or_equal($gis);
 
         if ($userid) {
-            $usersql = "AND g.userid=?";
+            $usersql = "AND userid=?";
             $params[] = $userid;
         } else {
             $usersql = "";
         }
 
-        $grade_inst = new grade_grade();
-        $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+        $gradeinst = new grade_grade();
+        $fields = implode(',', $gradeinst->required_fields);
 
         $params[] = $this->courseid;
-        $sql = "SELECT $fields
-                  FROM {grade_grades} g, {grade_items} gi
-                 WHERE gi.id = g.itemid AND gi.id $usql $usersql AND gi.courseid=?
-                 ORDER BY g.userid";
 
         $return = true;
 
         // group the grades by userid and use formula on the group
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_select('grade_grades', "itemid $usql $usersql", $params, 'userid', $fields);
         if ($rs->valid()) {
             $prevuser = 0;
             $grade_records   = array();

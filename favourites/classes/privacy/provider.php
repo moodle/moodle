@@ -48,7 +48,7 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         return $collection->add_database_table('favourite', [
             'userid' => 'privacy:metadata:favourite:userid',
             'component' => 'privacy:metadata:favourite:component',
@@ -85,7 +85,7 @@ class provider implements
      * @param string $itemtype the type of the favourited items.
      */
     public static function add_contexts_for_userid(\core_privacy\local\request\contextlist $contextlist, int $userid,
-                                                   string $component, string $itemtype = null) {
+                                                   string $component, ?string $itemtype = null) {
         $sql = "SELECT contextid
                   FROM {favourite} f
                  WHERE userid = :userid
@@ -109,7 +109,7 @@ class provider implements
      * @return void
      */
     public static function add_userids_for_context(\core_privacy\local\request\userlist $userlist,
-                                                   string $itemtype = null) {
+                                                   ?string $itemtype = null) {
         if (empty($userlist)) {
             return;
         }

@@ -130,7 +130,7 @@ trait moodle_read_slave_trait {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    abstract protected function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, array $dboptions = null): bool;
+    abstract protected function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, ?array $dboptions = null): bool;
 
     /**
      * Connect to db
@@ -145,7 +145,7 @@ trait moodle_read_slave_trait {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions = null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions = null) {
         $this->pdbhost = $dbhost;
         $this->pdbuser = $dbuser;
         $this->pdbpass = $dbpass;

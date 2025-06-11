@@ -23,13 +23,12 @@ Feature: A teacher can password protect a lesson
       | name        | Test lesson             |
       | usepassword | 1                       |
       | password    | moodle_rules            |
-    And I am on the "Test lesson" "lesson activity" page logged in as teacher1
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | Description | The first one |
-    And I press "Save page"
+    Given the following "mod_lesson > page" exist:
+      | lesson      | qtype   | title           | content             |
+      | Test lesson | content | First page name | First page contents |
+    And the following "mod_lesson > answer" exist:
+      | page            | answer        | jumpto    |
+      | First page name | The first one | Next page |
     When I am on the "Test lesson" "lesson activity" page logged in as student1
     Then I should see "Test lesson is a password protected lesson"
     And I should not see "First page contents"

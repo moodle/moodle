@@ -29,6 +29,9 @@ namespace mod_choicegroup;
 
 use core\activity_dates;
 
+/**
+ * Class for fetching the important dates in mod_choicegroup for a given module instance and a user.
+ */
 class dates extends activity_dates {
 
     /**

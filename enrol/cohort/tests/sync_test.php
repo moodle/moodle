@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_test extends \advanced_testcase {
+final class sync_test extends \advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
@@ -47,7 +47,7 @@ class sync_test extends \advanced_testcase {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
 
-    public function test_handler_sync() {
+    public function test_handler_sync(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -323,7 +323,7 @@ class sync_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('groups_members', array('component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
     }
 
-    public function test_sync_course() {
+    public function test_sync_course(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -535,7 +535,7 @@ class sync_test extends \advanced_testcase {
         $this->assertTrue(groups_is_member($group2->id, $user4->id));
     }
 
-    public function test_sync_all_courses() {
+    public function test_sync_all_courses(): void {
         global $DB;
 
         $this->resetAfterTest();

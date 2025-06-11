@@ -27,9 +27,10 @@ use core_favourites\local\entity\favourite;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_test extends \advanced_testcase {
+final class repository_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -49,7 +50,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Verify the basic create operation can create records, and is validated.
      */
-    public function test_add() {
+    public function test_add(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -67,13 +68,13 @@ class repository_test extends \advanced_testcase {
 
         // Verify we get the record back.
         $this->assertInstanceOf(favourite::class, $favourite);
-        $this->assertObjectHasAttribute('id', $favourite);
+        $this->assertObjectHasProperty('id', $favourite);
         $this->assertEquals('core_course', $favourite->component);
         $this->assertEquals('course', $favourite->itemtype);
 
         // Verify the returned object has additional properties, created as part of the add.
-        $this->assertObjectHasAttribute('ordering', $favourite);
-        $this->assertObjectHasAttribute('timecreated', $favourite);
+        $this->assertObjectHasProperty('ordering', $favourite);
+        $this->assertObjectHasProperty('timecreated', $favourite);
         $this->assertGreaterThanOrEqual($timenow, $favourite->timecreated);
 
         // Try to save the same record again and confirm the store throws an exception.
@@ -82,31 +83,9 @@ class repository_test extends \advanced_testcase {
     }
 
     /**
-     * Tests that malformed favourites cannot be saved.
-     */
-    public function test_add_malformed_favourite() {
-        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
-
-        // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourite_repository($user1context);
-
-        $favcourse = new favourite(
-            'core_course',
-            'course',
-            $course1context->instanceid,
-            $course1context->id,
-            $user1context->instanceid
-        );
-        $favcourse->something = 'something';
-
-        $this->expectException('moodle_exception');
-        $favouritesrepo->add($favcourse);
-    }
-
-    /**
      * Tests that incomplete favourites cannot be saved.
      */
-    public function test_add_incomplete_favourite() {
+    public function test_add_incomplete_favourite(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and try to favourite a course.
@@ -125,7 +104,7 @@ class repository_test extends \advanced_testcase {
         $favouritesrepo->add($favcourse);
     }
 
-    public function test_add_all_basic() {
+    public function test_add_all_basic(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite several courses.
@@ -159,8 +138,8 @@ class repository_test extends \advanced_testcase {
             $this->assertEquals('course', $favourite->itemtype);
 
             // Verify the returned object has additional properties, created as part of the add.
-            $this->assertObjectHasAttribute('ordering', $favourite);
-            $this->assertObjectHasAttribute('timecreated', $favourite);
+            $this->assertObjectHasProperty('ordering', $favourite);
+            $this->assertObjectHasProperty('timecreated', $favourite);
             $this->assertGreaterThanOrEqual($timenow, $favourite->timecreated);
         }
 
@@ -172,7 +151,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Tests reading from the repository by instance id.
      */
-    public function test_find() {
+    public function test_find(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -189,7 +168,7 @@ class repository_test extends \advanced_testcase {
         // Now, from the repo, get the single favourite we just created, by id.
         $userfavourite = $favouritesrepo->find($favourite->id);
         $this->assertInstanceOf(favourite::class, $userfavourite);
-        $this->assertObjectHasAttribute('timecreated', $userfavourite);
+        $this->assertObjectHasProperty('timecreated', $userfavourite);
 
         // Try to get a favourite we know doesn't exist.
         // We expect an exception in this case.
@@ -200,7 +179,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test verifying that find_all() returns all favourites, or an empty array.
      */
-    public function test_find_all() {
+    public function test_find_all(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         $favouritesrepo = new favourite_repository($user1context);
@@ -231,15 +210,15 @@ class repository_test extends \advanced_testcase {
         $this->assertCount(4, $favourites);
         foreach ($favourites as $fav) {
             $this->assertInstanceOf(favourite::class, $fav);
-            $this->assertObjectHasAttribute('id', $fav);
-            $this->assertObjectHasAttribute('timecreated', $fav);
+            $this->assertObjectHasProperty('id', $fav);
+            $this->assertObjectHasProperty('timecreated', $fav);
         }
     }
 
     /**
      * Testing the pagination of the find_all method.
      */
-    public function test_find_all_pagination() {
+    public function test_find_all_pagination(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         $favouritesrepo = new favourite_repository($user1context);
@@ -281,7 +260,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test retrieval of a user's favourites for a given criteria, in this case, area.
      */
-    public function test_find_by() {
+    public function test_find_by(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -329,7 +308,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Testing the pagination of the find_by method.
      */
-    public function test_find_by_pagination() {
+    public function test_find_by_pagination(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         $favouritesrepo = new favourite_repository($user1context);
@@ -375,7 +354,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the count_by() method.
      */
-    public function test_count_by() {
+    public function test_count_by(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and add 2 favourites in different areas.
@@ -409,7 +388,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the exists() function.
      */
-    public function test_exists() {
+    public function test_exists(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -433,7 +412,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the exists_by() method.
      */
-    public function test_exists_by() {
+    public function test_exists_by(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
@@ -490,7 +469,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the update() method, by simulating a user changing the ordering of a favourite.
      */
-    public function test_update() {
+    public function test_update(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -512,7 +491,7 @@ class repository_test extends \advanced_testcase {
         $this->assertEquals('1', $favourite1->ordering);
     }
 
-    public function test_delete() {
+    public function test_delete(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
@@ -537,7 +516,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the delete_by() method.
      */
-    public function test_delete_by() {
+    public function test_delete_by(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
@@ -598,7 +577,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test the find_favourite() method for an existing favourite.
      */
-    public function test_find_favourite_basic() {
+    public function test_find_favourite_basic(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
@@ -628,7 +607,7 @@ class repository_test extends \advanced_testcase {
     /**
      * Test confirming the repository throws an exception in find_favourite if the favourite can't be found.
      */
-    public function test_find_favourite_nonexistent_favourite() {
+    public function test_find_favourite_nonexistent_favourite(): void {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Confirm we get an exception.

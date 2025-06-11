@@ -53,34 +53,66 @@ class mod_assign_extension_form extends moodleform {
         $this->instance = $instance;
 
         // Get the assignment class.
+        /** @var assign $assign */
         $assign = $params['assign'];
         $userlist = $params['userlist'];
-        $usercount = 0;
-        $usershtml = '';
 
+        // Load current extensions for all selected users.
+        [$usercondition, $params] = $DB->get_in_or_equal($userlist);
+        array_unshift($params, $assign->get_instance()->id);
+        $userinfo = $DB->get_records_sql("
+                SELECT u.*, auf.extensionduedate
+                  FROM {user} u
+             LEFT JOIN {assign_user_flags} auf ON auf.userid = u.id AND auf.assignment = ?
+                 WHERE u.id $usercondition
+            ", $params);
+
+        // Prepare display of up to 5 users.
         // TODO Does not support custom user profile fields (MDL-70456).
         $extrauserfields = \core_user\fields::get_identity_fields($assign->get_context(), false);
+        $displayedusercount = 0;
+        $usershtml = '';
         foreach ($userlist as $userid) {
-            if ($usercount >= 5) {
+            $displayedusercount += 1;
+            if ($displayedusercount > 5) {
                 $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);
                 break;
             }
-            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
-            $usershtml .= $assign->get_renderer()->render(new assign_user_summary($user,
-                                                                    $assign->get_course()->id,
-                                                                    has_capability('moodle/site:viewfullnames',
-                                                                    $assign->get_course_context()),
-                                                                    $assign->is_blind_marking(),
-                                                                    $assign->get_uniqueid_for_user($user->id),
-                                                                    $extrauserfields,
-                                                                    !$assign->is_active_user($userid)));
-                $usercount += 1;
+            $user = $userinfo[$userid];
+            $usershtml .= $assign->get_renderer()->render(
+                new assign_user_summary($user,
+                    $assign->get_course()->id,
+                    has_capability('moodle/site:viewfullnames',
+                        $assign->get_course_context()),
+                    $assign->is_blind_marking(),
+                    $assign->get_uniqueid_for_user($user->id),
+                    $extrauserfields,
+                    !$assign->is_active_user($userid)
+                ),
+            );
         }
 
-        $userscount = count($userlist);
+        // Find the range of extensions that currently exist for these users.
+        $earliestextension = null;
+        $lateststextension = 0;
+        $userswithoutanextension = 0;
+        foreach ($userlist as $userid) {
+            $user = $userinfo[$userid];
 
-        $listusersmessage = get_string('grantextensionforusers', 'assign', $userscount);
+            if ($user->extensionduedate) {
+                $lateststextension = max($lateststextension, $user->extensionduedate);
+                if ($earliestextension !== null) {
+                    $earliestextension = min($earliestextension, $user->extensionduedate);
+                } else {
+                    $earliestextension = $user->extensionduedate;
+                }
+            } else {
+                $userswithoutanextension += 1;
+            }
+        }
+
+        $listusersmessage = get_string('grantextensionforusers', 'assign', count($userlist));
         $mform->addElement('header', 'general', $listusersmessage);
         $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $usershtml);
 
@@ -98,9 +130,39 @@ class mod_assign_extension_form extends moodleform {
             $mform->addElement('static', 'cutoffdate', get_string('cutoffdate', 'assign'), userdate($instance->cutoffdate));
             $finaldate = $instance->cutoffdate;
         }
+
+        if ($userswithoutanextension == count($userlist)) {
+            // All users don't have an extension yet.
+            $currentdatesdisplay = get_string('extensionduedatenone', 'assign');
+
+        } else {
+            if ($earliestextension == $lateststextension) {
+                $currentdatesdisplay = userdate($lateststextension);
+            } else {
+                $currentdatesdisplay = get_string('extensionduedaterange', 'assign', (object) [
+                    'earliest' => userdate($earliestextension),
+                    'latest' => userdate($lateststextension),
+                ]);
+            }
+            if ($userswithoutanextension) {
+                $currentdatesdisplay .= '<br>' . get_string('extensionduedatewithout', 'assign', $userswithoutanextension);
+            }
+        }
+
+        $mform->addElement('static', 'currentextension', get_string('extensionduedatecurrent', 'assign'),
+            $currentdatesdisplay);
+
+        if ($lateststextension) {
+            // If there are existing extensions, edit based on the current (latest) value.
+            $defaultdate = $lateststextension;
+        } else {
+            // Otherwise take the later of the deadline and one minute before midnight tonight (server time).
+            $endoftoday = new DateTimeImmutable('today 23:59', core_date::get_server_timezone_object());
+            $defaultdate = max($finaldate, $endoftoday->getTimestamp());
+        }
         $mform->addElement('date_time_selector', 'extensionduedate',
                            get_string('extensionduedate', 'assign'), array('optional'=>true));
-        $mform->setDefault('extensionduedate', $finaldate);
+        $mform->setDefault('extensionduedate', $defaultdate);
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

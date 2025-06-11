@@ -29,11 +29,37 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @return array of check objects
  */
-function tool_task_status_checks() : array {
+function tool_task_status_checks(): array {
     return [
         new \tool_task\check\cronrunning(),
         new \tool_task\check\maxfaildelay(),
         new \tool_task\check\adhocqueue(),
+        new \tool_task\check\longrunningtasks(),
     ];
 }
 
+/**
+ * Function used to handle mtrace by outputting the text to normal browser window.
+ *
+ * @param string $message Message to output
+ * @param string $eol End of line character
+ */
+function tool_task_mtrace_wrapper(string $message, string $eol = ''): void {
+    $message = s($message);
+
+    // We autolink urls and emails here but can't use format_text as it does
+    // more than we need and has side effects which are not useful in this context.
+    $urlpattern = '/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/';
+    $message = preg_replace_callback($urlpattern, function($matches) {
+        $url = $matches[0];
+        return html_writer::link($url, $url, ['target' => '_blank']);
+    }, $message);
+
+    $emailpattern = '/[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/';
+    $message = preg_replace_callback($emailpattern, function($matches) {
+        $email = $matches[0];
+        return html_writer::link('mailto:' . $email, $email);
+    }, $message);
+
+    echo $message . $eol;
+}

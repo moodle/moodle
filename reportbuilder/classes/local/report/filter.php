@@ -21,7 +21,7 @@ namespace core_reportbuilder\local\report;
 use lang_string;
 use moodle_exception;
 use core_reportbuilder\local\filters\base;
-use core_reportbuilder\local\helpers\database;
+use core_reportbuilder\local\helpers\{database, join_trait};
 use core_reportbuilder\local\models\filter as filter_model;
 
 /**
@@ -33,17 +33,7 @@ use core_reportbuilder\local\models\filter as filter_model;
  */
 final class filter {
 
-    /** @var string $filterclass */
-    private $filterclass;
-
-    /** @var string $name */
-    private $name;
-
-    /** @var lang_string $header */
-    private $header;
-
-    /** @var string $entity */
-    private $entityname;
+    use join_trait;
 
     /** @var string $fieldsql */
     private $fieldsql = '';
@@ -51,20 +41,23 @@ final class filter {
     /** @var array $fieldparams */
     private $fieldparams = [];
 
-    /** @var string[] $joins */
-    protected $joins = [];
-
     /** @var bool $available */
-    protected $available = true;
+    private $available = true;
+
+    /** @var bool $deprecated */
+    private $deprecated = false;
+
+    /** @var string $deprecatedmessage */
+    private $deprecatedmessage;
 
     /** @var mixed $options */
-    protected $options;
+    private $options;
 
     /** @var array $limitoperators */
-    protected $limitoperators = [];
+    private $limitoperators = [];
 
     /** @var filter_model $persistent */
-    protected $persistent;
+    private $persistent;
 
     /**
      * Filter constructor
@@ -80,21 +73,20 @@ final class filter {
      * @throws moodle_exception For invalid filter class
      */
     public function __construct(
-        string $filterclass,
-        string $name,
-        lang_string $header,
-        string $entityname,
+        /** @var string Filter type class to use, must extend {@see base} filter class */
+        private readonly string $filterclass,
+        /** @var string Internal name of the filter */
+        private readonly string $name,
+        /** @var lang_string Title of the filter used in reports */
+        private lang_string $header,
+        /** @var string Name of the entity this filter belongs to */
+        private readonly string $entityname,
         string $fieldsql = '',
-        array $fieldparams = []
+        array $fieldparams = [],
     ) {
         if (!class_exists($filterclass) || !is_subclass_of($filterclass, base::class)) {
             throw new moodle_exception('filterinvalid', 'reportbuilder', '', null, $filterclass);
         }
-
-        $this->filterclass = $filterclass;
-        $this->name = $name;
-        $this->header = $header;
-        $this->entityname = $entityname;
 
         if ($fieldsql !== '') {
             $this->set_field_sql($fieldsql, $fieldparams);
@@ -155,44 +147,6 @@ final class filter {
      */
     public function get_unique_identifier(): string {
         return $this->get_entity_name() . ':' . $this->get_name();
-    }
-
-    /**
-     * Return joins
-     *
-     * @return string[]
-     */
-    public function get_joins(): array {
-        return array_values($this->joins);
-    }
-
-    /**
-     * Add join clause required for this filter to join to existing tables/entities
-     *
-     * This is necessary in the case where {@see set_field_sql} is selecting data from a table that isn't otherwise queried
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Add multiple join clauses required for this filter, passing each to {@see add_join}
-     *
-     * Typically when defining filters in entities, you should pass {@see \core_reportbuilder\local\report\base::get_joins} to
-     * this method, so that all entity joins are included in the report when your filter is used in it
-     *
-     * @param string[] $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
     }
 
     /**
@@ -277,6 +231,37 @@ final class filter {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
+    }
+
+    /**
+     * Set deprecated state of the filter, in which case it will still be shown when already present in existing reports but
+     * won't be available for selection in the report editor
+     *
+     * @param string $deprecatedmessage
+     * @return self
+     */
+    public function set_is_deprecated(string $deprecatedmessage = ''): self {
+        $this->deprecated = true;
+        $this->deprecatedmessage = $deprecatedmessage;
+        return $this;
+    }
+
+    /**
+     * Return deprecated state of the filter
+     *
+     * @return bool
+     */
+    public function get_is_deprecated(): bool {
+        return $this->deprecated;
+    }
+
+    /**
+     * Return deprecated message of the filter
+     *
+     * @return string
+     */
+    public function get_is_deprecated_message(): string {
+        return $this->deprecatedmessage;
     }
 
     /**

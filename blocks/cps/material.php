@@ -28,11 +28,11 @@ require_once('material_form.php');
 require_login();
 
 if (!cps_material::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_material::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_material::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -42,7 +42,7 @@ $nonprimaries = (bool) get_config('block_cps', 'material_nonprimary');
 $sections = $teacher->sections(!$nonprimaries);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $s = ues::gen_str('block_cps');

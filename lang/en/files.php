@@ -25,6 +25,32 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['contenthash'] = 'Content hash';
+$string['eventfileaddedtodraftarea'] = 'File added to draft area';
+$string['eventfiledeletedfromdraftarea'] = 'File deleted from draft area';
+$string['redactor'] = 'File redaction';
+$string['redactor:exifremover'] = 'EXIF remover';
+$string['redactor:exifremover:emptyremovetags'] = 'Remove tags can not be empty!';
+$string['redactor:exifremover:enabled'] = 'Enable EXIF remover';
+$string['redactor:exifremover:enabled_desc'] = 'By default, EXIF Remover only supports JPG files using PHP GD, or ExifTool if it is configured.
+This degrades the quality of the image and removes the orientation tag.
+
+To enhance the performance of EXIF Remover, please configure the ExifTool settings below.
+
+More information about installing ExifTool can be found at {$a->link}';
+$string['redactor:exifremover:failedprocessexiftool'] = 'Redaction failed: failed to process file with ExifTool!';
+$string['redactor:exifremover:failedprocessgd'] = 'Redaction failed: failed to process file with PHP gd!';
+$string['redactor:exifremover:heading'] = 'ExifTool';
+$string['redactor:exifremover:mimetype'] = 'Supported MIME types';
+$string['redactor:exifremover:mimetype_desc'] = 'To add new MIME types, ensure they\'re included in the <a href="./tool/filetypes/index.php">File Types</a>.';
+$string['redactor:exifremover:removetags'] = 'The EXIF tags that will be removed.';
+$string['redactor:exifremover:removetags_desc'] = 'The EXIF tags that need to be removed.';
+$string['redactor:exifremover:tag:all'] = 'All';
+$string['redactor:exifremover:tag:gps'] = 'GPS only';
+$string['redactor:exifremover:tooldoesnotexist'] = 'Redaction failed: ExifTool does not exist!';
+$string['redactor:exifremover:toolpath'] = 'Path to ExifTool';
+$string['redactor:exifremover:toolpath_desc'] = 'To use the ExifTool, please provide the path to the ExifTool executable.
+Typically, on Unix/Linux systems, the path is /usr/bin/exiftool.';
 $string['privacy:metadata:file_conversions'] = 'A record of the file conversions performed by a user.';
 $string['privacy:metadata:file_conversion:usermodified'] = 'The user who started the file conversion.';
 $string['privacy:metadata:files'] = 'A record of the files uploaded or shared by users';

@@ -33,8 +33,8 @@ $pageparams->statusid       = optional_param('statusid', null, PARAM_INT);
 $pageparams->statusset      = optional_param('statusset', 0, PARAM_INT); // Set of statuses to view.
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -56,13 +56,14 @@ $PAGE->force_settings_menu(true);
 $PAGE->set_cacheable(true);
 $PAGE->navbar->add(get_string('settings', 'attendance'));
 $PAGE->requires->js_call_amd('mod_attendance/statusset', 'init');
-$errors = array();
+$errors = [];
 
 // Check sesskey if we are performing an action.
 if (!empty($att->pageparams->action)) {
     require_sesskey();
 }
 $notification = '';
+// phpcs:disable moodle.Commenting.TodoComment
 // TODO: combine this with the stuff in defaultstatus.php to avoid code duplication.
 switch ($att->pageparams->action) {
     case mod_attendance_preferences_page_params::ACTION_ADD:
@@ -109,7 +110,7 @@ switch ($att->pageparams->action) {
         $message .= str_repeat(html_writer::empty_tag('br'), 2);
         $message .= $status->acronym.': '.
                     ($status->description ? $status->description : get_string('nodescription', 'attendance'));
-        $params = array_merge($att->pageparams->get_significant_params(), array('confirm' => 1));
+        $params = array_merge($att->pageparams->get_significant_params(), ['confirm' => 1]);
         echo $OUTPUT->header();
         echo $OUTPUT->confirm($message, $att->url_preferences($params), $att->url_preferences());
         echo $OUTPUT->footer();
@@ -157,7 +158,8 @@ switch ($att->pageparams->action) {
                 $studentavailability[$id] = '';
             }
             $errors[$id] = attendance_update_status($status, $acronym[$id], $description[$id], $grade[$id],
-                                                    null, $att->context, $att->cm, $studentavailability[$id], $availablebeforesession[$id], $setunmarked);
+                                                    null, $att->context, $att->cm, $studentavailability[$id],
+                                                    $availablebeforesession[$id], $setunmarked);
         }
         attendance_update_users_grade($att);
         break;

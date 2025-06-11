@@ -23,7 +23,7 @@
  */
 namespace tool_ally;
 
-use Prophecy\Argument;
+use tool_ally\prophesize_deprecation_workaround_mixin;
 use tool_ally\push_config;
 use tool_ally\push_file_updates;
 use tool_ally\task\file_updates_task;
@@ -31,15 +31,19 @@ use tool_ally\task\file_updates_task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/abstract_testcase.php');
+require_once(__DIR__.'/prophesize_deprecation_workaround_mixin.php');
 
 /**
  * Tests for file updates task.
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2016 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_updates_task_test extends abstract_testcase {
+    use prophesize_deprecation_workaround_mixin;
 
     /**
      * First run should set the timestamp then exit.
@@ -51,7 +55,7 @@ class file_updates_task_test extends abstract_testcase {
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $task->updates = $this->prophesize(push_file_updates::class)->reveal();
+        $task->updates = $this->createMock(push_file_updates::class);
 
         $expected = time();
         $task->execute();
@@ -64,7 +68,7 @@ class file_updates_task_test extends abstract_testcase {
      */
     public function test_invalid_config() {
         $task          = new file_updates_task();
-        $task->updates = $this->prophesize(push_file_updates::class)->reveal();
+        $task->updates = $this->createMock(push_file_updates::class);
 
         $task->execute();
 
@@ -91,9 +95,11 @@ class file_updates_task_test extends abstract_testcase {
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $updates = $this->prophesize(push_file_updates::class);
-        $updates->send(Argument::type('array'))->willReturn(true);
-        $task->updates = $updates->reveal();
+        $updates = $this->createMock(push_file_updates::class);
+        $updates->method('send')
+            ->with($this->isType('array')) // Expect an array as the argument
+            ->willReturn(true);
+        $task->updates = $updates;
 
         $task->execute();
 
@@ -114,17 +120,19 @@ class file_updates_task_test extends abstract_testcase {
             $this->getDataGenerator()->create_module('resource', ['course' => $course->id]);
         }
 
-        $updates = $this->prophesize(push_file_updates::class);
-        $updates->send(Argument::type('array'))->willReturn(true);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(3);
+        $updates = $this->createMock(push_file_updates::class);
+        $updates->method('send')
+            ->with($this->isType('array')) // Ensure the argument is an array
+            ->willReturn(true);
+
+        $updates->expects($this->exactly(3))
+            ->method('send');
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret', 2);
-        $task->updates = $updates->reveal();
+        $task->updates = $updates;
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
     }
 
     /**
@@ -140,17 +148,18 @@ class file_updates_task_test extends abstract_testcase {
 
         $this->dataset_from_array(include(__DIR__.'/fixtures/deleted_files.php'))->to_database();
 
-        $updates = $this->prophesize(push_file_updates::class);
-        $updates->send(Argument::type('array'))->willReturn(true);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(3);
+        $updates = $this->createMock(push_file_updates::class);
+        $updates->method('send')
+            ->with($this->isType('array')) // Ensure the argument is an array
+            ->willReturn(true);
+        $updates->expects($this->exactly(3))
+            ->method('send');
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret', 2);
-        $task->updates = $updates->reveal();
+        $task->updates = $updates;
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
 
         $this->assertEmpty($DB->get_records('tool_ally_deleted_files'));
     }

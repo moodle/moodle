@@ -8,7 +8,7 @@ A definition:
 
      $definitions = array(
         'string' => array(                            // Required, unique to the component
-            'mode' => cache_store::MODE_APPLICATION,  // Required
+            'mode' => \core_cache\store::MODE_APPLICATION,  // Required
             'simplekeys' => false,                    // Optional
             'simpledata' => false,                    // Optional
             'requireidentifiers' => array(            // Optional
@@ -16,8 +16,7 @@ A definition:
             ),
             'requiredataguarantee' => false,          // Optional
             'requiremultipleidentifiers' => false,    // Optional
-            'requirelockingread' => false,            // Optional
-            'requirelockingwrite' => false,           // Optional
+            'requirelockingbeforewrite' => false,     // Optional
             'requiresearchable' => false,             // Optional
             'maxsize' => null,                        // Optional
             'overrideclass' => null,                  // Optional
@@ -39,7 +38,7 @@ A definition:
 
 Getting something from a cache using the definition:
 
-    $cache = cache::make('core', 'string');
+    $cache = \core_cache\cache::make('core', 'string');
     if (!$component = $cache->get('component')) {
         // get returns false if its not there and can't be loaded.
         $component = generate_data();
@@ -48,7 +47,7 @@ Getting something from a cache using the definition:
 
 The same thing but using params:
 
-    $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'string');
+    $cache = \core_cache\cache::make_from_params(\core_cache\store::MODE_APPLICATION, 'core', 'string');
     if (!$component = $cache->get('component')) {
         // get returns false if its not there and can't be loaded.
         $component = generate_data();
@@ -57,7 +56,7 @@ The same thing but using params:
 
 If a data source had been specified in the definition, the following would be all that was needed.
 
-    $cache = cache::make('core', 'string');
+    $cache = \core_cache\cache::make('core', 'string');
     $component = $cache->get('component');
 
 Disabling the cache stores.
@@ -68,9 +67,9 @@ While the cache API must still be functional in order for calls to it to work it
     define('CACHE_DISABLE_STORES', true);
 
     // Disable the cache within your script when you want with:
-    cache_factory::disable_stores();
+    \core_cache\factory::disable_stores();
     // If you disabled it using the above means you can re-enable it with:
-    cache_factory::reset();
+    \core_cache\factory::reset();
 
 Disabling the cache entirely.
 Like above there are times when you want the cache to avoid initialising anything it doesn't absolutely need. Things such as installation and upgrade require this functionality.
@@ -91,7 +90,7 @@ The loader is central to the whole thing.
 It is used by the end developer to get an object that handles caching.
 90% of end developers will not need to know or use anything else in the cache API.
 In order to get a loader you must use one of two static methods, make or make_from_params.
-The loader has been kept as simple as possible, interaction is summarised by the cache_loader interface.
+The loader has been kept as simple as possible, interaction is summarised by the core_cache\loader_interface interface.
 Internally there is lots of magic going on. The important parts to know about are:
 * There are two ways to get a loader, the first with a definition (discussed below) the second with params. When params are used they are turned into an adhoc definition with default params.
 * A loader is passed three things when being constructed, a definition, a store, and another loader or datasource if there is either.
@@ -107,9 +106,9 @@ The store is the bridge between the cache API and a cache solution.
 Cache store plugins exist within moodle/cache/store.
 The administrator of a site can configure multiple instances of each plugin, the configuration gets initialised as a store for the loader when required in code (during construction of the loader).
 The following points highlight things you should know about stores.
-* A cache_store interface is used to define the requirements of a store plugin.
-* The store plugin can inherit the cache_is_lockable interface to handle its own locking.
-* The store plugin can inherit the cache_is_key_aware interface to handle is own has checks.
+* A \core_cache\store interface is used to define the requirements of a store plugin.
+* The store plugin can inherit the \core_cache\lockable_cache_interface interface to handle its own locking.
+* The store plugin can inherit the \core_cache\key_aware_cache_interface interface to handle is own has checks.
 * Store plugins inform the cache API about the things they support. Features can be required by a definition.
   * Data guarantee - Data is guaranteed to exist in the cache once it is set there. It is never cleaned up to free space or because it has not been recently used.
   * Multiple identifiers - Rather than a single string key, the parts that make up the key are passed as an array.
@@ -137,13 +136,12 @@ The following optional settings can also be defined:
 * requireidentifiers - Any identifiers the definition requires. Must be provided when creating the loader.
 * requiredataguarantee - If set to true then only stores that support data guarantee will be used.
 * requiremultipleidentifiers - If set to true then only stores that support multiple identifiers will be used.
-* requirelockingread - If set to true a lock will be acquired for reading. Don't use this setting unless you have a REALLY good reason to.
-* requirelockingwrite - If set to true a lock will be acquired before writing to the cache. Avoid this unless necessary.
+* requirelockingbeforewrite - If set to true the system will throw an error if you write to a cache without having a lock on the relevant key.
 * requiresearchable - If set to true only stores that support key searching will be used for this definition. Its not recommended to use this unless absolutely unavoidable.
 * maxsize - This gives a cache an indication about the maximum items it should store. Cache stores don't have to use this, it is up to them to decide if its required.
 * overrideclass - If provided this class will be used for the loader. It must extend one of the core loader classes (based upon mode).
 * overrideclassfile - Included if required when using the overrideclass param.
-* datasource - If provided this class will be used as a data source for the definition. It must implement the cache_data_source interface.
+* datasource - If provided this class will be used as a data source for the definition. It must implement the \core_cache\data_source_interface interface.
 * datasourcefile - Included if required when using the datasource param.
 * staticacceleration - Any data passing through the cache will be held onto to make subsequent requests for it faster.
 * staticaccelerationsize - If set to an int this will be the maximum number of items stored in the static acceleration array.
@@ -173,7 +171,7 @@ By default all sharing options are available to select. This particular option a
 ### Data source
 Data sources allow cache _misses_ (requests for a key that doesn't exist) to be handled and loaded internally.
 The loader gets used as the last resort if provided and means that code using the cache doesn't need to handle the situation that information isn't cached.
-They can be specified in a cache definition and must implement the cache_data_source interface.
+They can be specified in a cache definition and must implement the \core_cache\data_source_interface interface.
 
 ### How it all chains together.
 Consider the following:
@@ -214,12 +212,12 @@ Other internal magic you should be aware of
 The following should fill you in on a bit more of the behind-the-scenes stuff for the cache API.
 
 ### Helper class
-There is a helper class called cache_helper which is abstract with static methods.
+There is a helper class called \core_cache\helper which is abstract with static methods.
 This class handles much of the internal generation and initialisation requirements.
 In normal use this class will not be needed outside of the API (mostly internal use only)
 
 ### Configuration
-There are two configuration classes cache_config and cache_config_writer.
+There are two configuration classes \core_cache\config and \core_cache\config_writer.
 The reader class is used for every request, the writer is only used when modifying the configuration.
 Because the cache API is designed to cache database configuration and meta data it must be able to operate prior to database configuration being loaded.
 To get around this we store the configuration information in a file in the dataroot.
@@ -242,16 +240,11 @@ Both the cache API and the cache stores have tests.
 Please be aware that several of the cache stores require configuration in order to be able operate in the tests.
 Tests for stores requiring configuration that haven't been configured will be skipped.
 All configuration is done in your sites config.php through definitions.
-The following snippet illustrates how to configure the three core cache stores that require configuration.
-
-    define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');
-    define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');
-    define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
 
 As of Moodle 2.8 it is also possible to set the default cache stores used when running tests.
 You can do this by adding the following define to your config.php file:
 
-    // xxx is one of Memcache, Memcached, mongodb or other cachestore with a test define.
+    // xxx is one of the installed stored (for example redis) or other cachestore with a test define.
     define('TEST_CACHE_USING_APPLICATION_STORE', 'xxx');
 
 This allows you to run tests against a defined test store. It uses the defined value to identify a store to test against with a matching TEST_CACHESTORE define.

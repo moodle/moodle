@@ -344,7 +344,7 @@ class lesson_page_type_multichoice extends lesson_page {
 
         foreach ($answers as $answer) {
             $answertext = format_text($answer->answer,$answer->answerformat,$formattextdefoptions);
-            $correctresponsetext = html_writer::div(get_string('correctresponse', 'lesson'), 'badge badge-success');
+            $correctresponsetext = html_writer::div(get_string('correctresponse', 'lesson'), 'badge bg-success text-white');
             if ($this->properties->qoption) {
                 if ($useranswer == null) {
                     $userresponse = array();

@@ -51,7 +51,7 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->link_subsystem('core_user', 'privacy:metadata:usersubsystem');
         $collection->add_database_table('message_airnotifier_devices', [
                 'userdeviceid' => 'privacy:metadata:userdeviceid',
@@ -78,7 +78,7 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                   FROM {message_airnotifier_devices} mad
                   JOIN {user_devices} ud ON ud.id = mad.userdeviceid
@@ -195,7 +195,7 @@ class provider implements
      * @param  int $userid The user ID
      * @return array An array of records.
      */
-    protected static function get_records(int $userid) : array {
+    protected static function get_records(int $userid): array {
         global $DB;
         $sql = "SELECT mad.id, mad.enable, ud.appid, ud.name, ud.model, ud.platform, ud.version, ud.timecreated, ud.timemodified,
                         ud.pushid

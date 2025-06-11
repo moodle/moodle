@@ -1,9 +1,49 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
-=== 4.1.6 ===
+=== 4.4 ===
+* The grade_structure::get_element_icon() function has been deprecated. Please use grade_helper::get_element_icon() instead.
+* The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
+* The grade_structure::get_element_header() function has been deprecated. Please use grade_helper::get_element_header() instead.
+* The grade_structure::get_activity_link() functions has been deprecated. Please use grade_helper::get_activity_link() instead.
+* The `grade_helper::get_activity_link` method will only return URL to activities view.php page (no longer to the grade.php page)
+* Some changes to how print_grade_page_head() sets the page title:
+  * If a non-empty `$heading` parameter is passed, it will be used as the page title's unique identifying information.
+  * Add support for grade report plugins that define an `editingmode_title` lang string. If the grade report plugin defines this
+    language string, it will be used for the page title's unique identifying information when editing mode is turned on.
+* The function gradeimport_csv_load_data::insert_grade_record() now has extra parameter $gradeitem to carry over the grade item related info
+  for validation.
+* The function get_gradable_users() in grade/lib.php has extra param now to retrieve only active enrolments.
+* A new webservice core_grades_get_gradable_users has been added to retrieve gradable users for a course.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `grade_print_tabs`
+  - `print_grade_plugin_selector`
+
+=== 4.3 ===
+* The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
+* The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying
+  `core_grades_external::create_gradecategory` methods
+* User, Group & Grade item JS classes have been added to easily enable the creation of combobox search components.
+  Refer to the dev docs on details of how to implement this feature if desired.
+* basewidget.js has been deprecated and its uses replaced with the new JS classes mentioned above.
+* With the basewidget being deprecated all usages of it in core have now been migrated and the files that used it removed.
+  The basewidget itself will go through the proper deprecation process and be removed in a future version.
+* The following webservices have had some optional parameters changed:
+  - grade/classes/external/get_enrolled_users_for_selector
+    - profileimage -> profileimageurl & profileimageurlsmall
+    - return changed to use the core_user_external::user_description() method instead of a custom baked one.
+  - grade/classes/external/get_groups_for_selector
+    - Has been relocated to core_group_external::get_groups_for_selector()
+    - groupimageurl is now available as an optional parameter to give the user an image either set or generated for the group.
 * The grade `itemname` property contained in the return structure of the following external methods is now PARAM_CLEANHTML:
+  - `core_grades_get_gradeitems`
   - `gradereport_user_get_grade_items`
+* The grade_helper::get_lang_string() function has been deprecated. Please use get_string() instead.
 
 === 4.1 ===
 * The $importactiveurl parameter in the constructor of the core_grades\output\import_action_bar class has been deprecated and is not used anymore.

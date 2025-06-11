@@ -48,8 +48,3 @@ $string['viewcourse'] = 'View course';
 $string['privacy:metadata:timelinesortpreference'] = 'The user sort preference for the timeline block.';
 $string['privacy:metadata:timelinefilterpreference'] = 'The user day filter preference for the timeline block.';
 $string['privacy:metadata:timelinelimitpreference'] = 'The user page limit preference for the timeline block.';
-
-// Deprecated since Moodle 4.0.
-$string['ariaeventlistpagelimit'] = 'Show {$a} activities per page';
-$string['ariaeventlistpaginationnavdates'] = 'Timeline activities pagination';
-$string['ariaeventlistpaginationnavcourses'] = 'Timeline activities for course {$a} pagination';

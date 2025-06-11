@@ -16,10 +16,11 @@
 
 namespace mod_quiz;
 
+use core_question\local\bank\condition;
 use core_question\local\bank\question_version_status;
+use core_question_generator;
+use mod_quiz_generator;
 use question_engine;
-use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,8 +34,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @category  test
  * @copyright 2014 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\quiz_attempt
  */
-class attempt_test extends \advanced_testcase {
+final class attempt_test extends \advanced_testcase {
 
     /**
      * Create quiz and attempt data with layout.
@@ -52,13 +54,9 @@ class attempt_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(['course' => $course->id,
-            'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout, 'navmethod' => $navmethod]);
+            'grade' => 100.0, 'sumgrades' => 2, 'navmethod' => $navmethod]);
 
-        $quizobj = quiz::create($quiz->id, $user->id);
-
-
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
@@ -74,15 +72,11 @@ class attempt_test extends \advanced_testcase {
             quiz_add_quiz_question($question->id, $quiz, $page);
         }
 
-        $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
-
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null, false, [], [], $user->id);
         return quiz_attempt::create($attempt->id);
     }
 
-    public function test_attempt_url() {
+    public function test_attempt_url(): void {
         $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0,3,4,0,5,6,0');
 
         $attemptid = $attempt->get_attempt()->id;
@@ -226,7 +220,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Tests attempt page titles when all questions are on a single page.
      */
-    public function test_attempt_titles_single() {
+    public function test_attempt_titles_single(): void {
         $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0');
 
         // Attempt page.
@@ -242,7 +236,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Tests attempt page titles when questions are on multiple pages, but are reviewed on a single page.
      */
-    public function test_attempt_titles_multiple_single() {
+    public function test_attempt_titles_multiple_single(): void {
         $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0,3,4,0,5,6,0');
 
         // Attempt page.
@@ -260,7 +254,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Tests attempt page titles when questions are on multiple pages, and they are reviewed on multiple pages as well.
      */
-    public function test_attempt_titles_multiple_multiple() {
+    public function test_attempt_titles_multiple_multiple(): void {
         $attempt = $this->create_quiz_and_attempt_with_layout(
                 '1,2,3,4,5,6,7,8,9,10,0,11,12,13,14,15,16,17,18,19,20,0,' .
                 '21,22,23,24,25,26,27,28,29,30,0,31,32,33,34,35,36,37,38,39,40,0,' .
@@ -284,15 +278,15 @@ class attempt_test extends \advanced_testcase {
         $this->assertEquals('Quiz 1: Attempt review', $attempt->review_page_title(1, true));
     }
 
-    public function test_is_participant() {
+    public function test_is_participant(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
-        $quizobj = quiz::create($quiz->id);
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quizobj = quiz_settings::create($quiz->id);
 
         // Login as student.
         $this->setUser($student);
@@ -314,7 +308,7 @@ class attempt_test extends \advanced_testcase {
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled and can participate');
 
-        $this->getDataGenerator()->enrol_user(2, $course->id, [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->getDataGenerator()->enrol_user(2, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
         $this->assertEquals(true, $quizobj->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
@@ -322,7 +316,7 @@ class attempt_test extends \advanced_testcase {
     /**
      * Test quiz_prepare_and_start_new_attempt function
      */
-    public function test_quiz_prepare_and_start_new_attempt() {
+    public function test_quiz_prepare_and_start_new_attempt(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -340,7 +334,7 @@ class attempt_test extends \advanced_testcase {
         $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         quiz_add_quiz_question($question->id, $quiz, 1);
 
-        $quizobj = quiz::create($quiz->id);
+        $quizobj = quiz_settings::create($quiz->id);
 
         // Login as student1.
         $this->setUser($student1);
@@ -380,10 +374,53 @@ class attempt_test extends \advanced_testcase {
     }
 
     /**
+     * Test quiz_prepare_and_start_new_attempt function
+     */
+    public function test_quiz_prepare_and_start_new_attempt_random_draft(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        // Create quiz.
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        // Create question with 2 versions. V1 ready. V2 draft.
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null,
+                ['questiontext' => 'V1', 'category' => $category->id]);
+        $questiongenerator->update_question($question, null,
+                ['questiontext' => 'V2', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Add a random question form that category.
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $quizobj = quiz_settings::create($quiz->id);
+        $quizobj->get_structure()->add_random_questions(1, 1, $filtercondition);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
+
+        // Create an attempt.
+        $quizobj = quiz_settings::create($quiz->id);
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+        $this->assertEquals(1, $attempt->preview);
+    }
+
+    /**
      * Test check_page_access function
      * @covers \quiz_attempt::check_page_access
      */
-    public function test_check_page_access() {
+    public function test_check_page_access(): void {
         $timenow = time();
 
         // Free navigation.
@@ -457,7 +494,7 @@ class attempt_test extends \advanced_testcase {
                 ['category' => $cat->id, 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
         quiz_add_quiz_question($question->id, $quiz, 1);
 
-        $quizobj = quiz::create($quiz->id);
+        $quizobj = quiz_settings::create($quiz->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $attempt = quiz_create_attempt($quizobj, 1, false, time(), false, $student1->id);
@@ -490,16 +527,17 @@ class attempt_test extends \advanced_testcase {
         $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         quiz_add_quiz_question($question->id, $quiz, 1);
 
-        $quizobj = quiz::create($quiz->id);
+        $quizobj = quiz_settings::create($quiz->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $attempt = quiz_create_attempt($quizobj, 1, false, time(), false, $student1->id);
         $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, 1, time());
         $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
-
         $DB->set_field('question_versions', 'status', question_version_status::QUESTION_STATUS_DRAFT,
                 ['questionid' => $question->id]);
-        $quizobj = quiz::create($quiz->id);
+        // We need to reset the cache since the question has been edited by changing its status to draft.
+        \question_bank::notify_question_edited($question->id);
+        $quizobj = quiz_settings::create($quiz->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $newattempt = quiz_create_attempt($quizobj, 2, $attempt, time(), false, $student1->id);
@@ -508,55 +546,29 @@ class attempt_test extends \advanced_testcase {
         quiz_start_attempt_built_on_last($quba, $newattempt, $attempt);
     }
 
-    /**
-     * Starting a new attempt and check the summary previous attempts table.
-     *
-     * @covers ::view_table()
-     */
-    public function test_view_table(): void {
-        global $PAGE;
-        $this->resetAfterTest();
+    public function test_get_grade_item_totals(): void {
+        $attemptobj = $this->create_quiz_and_attempt_with_layout('1,2,3,0');
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $timenow = time();
-        // Create attempt object.
-        $attempt = $this->create_quiz_and_attempt_with_layout('1,1,0');
-        // Finish attempt.
-        $attempt->process_finish($timenow, false);
+        // Set up some section grades.
+        $listeninggrade = $quizgenerator->create_grade_item(['quizid' => $attemptobj->get_quizid(), 'name' => 'Listening']);
+        $readinggrade = $quizgenerator->create_grade_item(['quizid' => $attemptobj->get_quizid(), 'name' => 'Reading']);
+        $structure = $attemptobj->get_quizobj()->get_structure();
+        $structure->update_slot_grade_item($structure->get_slot_by_number(1), $listeninggrade->id);
+        $structure->update_slot_grade_item($structure->get_slot_by_number(2), $listeninggrade->id);
+        $structure->update_slot_grade_item($structure->get_slot_by_number(3), $readinggrade->id);
 
-        $quiz = $attempt->get_quiz();
-        $context = $attempt->get_quizobj()->get_context();
+        // Reload the attempt and verify.
+        $attemptobj = quiz_attempt::create($attemptobj->get_attemptid());
+        $grades = $attemptobj->get_grade_item_totals();
 
-        // Prepare view object.
-        $viewobj = new \mod_quiz_view_object();
-        $viewobj->attemptcolumn = true;
-        $viewobj->markcolumn = true;
-        $viewobj->gradecolumn = true;
-        $viewobj->canreviewmine = true;
-        $viewobj->mygrade = 0.00;
-        $viewobj->feedbackcolumn = false;
-        $viewobj->attempts = $attempt;
-        $viewobj->attemptobjs[] = new quiz_attempt($attempt->get_attempt(),
-            $quiz, $attempt->get_cm(), $attempt->get_course(), false);
-        $viewobj->accessmanager = new \quiz_access_manager($attempt->get_quizobj(), $timenow,
-            has_capability('mod/quiz:ignoretimelimits', $context, null, false));
-
-        // Render summary previous attempts table.
-        $renderer = $PAGE->get_renderer('mod_quiz');
-        $table = $renderer->view_table($quiz, $context, $viewobj);
-        $captionpattern = '/<caption\b[^>]*>' . get_string('summaryofattempts', 'quiz') . '<\/caption>/';
-
-        // Check caption existed.
-        $this->assertMatchesRegularExpression($captionpattern, $table);
-        // Check column attempt.
-        $this->assertMatchesRegularExpression('/<td\b[^>]*>' . $attempt->get_attempt_number() . '<\/td>/', $table);
-        // Check column state.
-        $this->assertMatchesRegularExpression('/<td\b[^>]*>' . ucfirst($attempt->get_state()) . '.+?<\/td>/', $table);
-        // Check column marks.
-        $this->assertMatchesRegularExpression('/<td\b[^>]* c2.+?' .
-            quiz_format_grade($quiz, $attempt->get_sum_marks()) .'<\/td>/', $table);
-        // Check column grades.
-        $this->assertMatchesRegularExpression('/<td\b[^>]* c2.+?0\.00<\/td>/', $table);
-        // Check column review.
-        $this->assertMatchesRegularExpression('/<td\b[^>]*>.+?Review<\/a><\/td>/', $table);
+        // All grades zero because student has not done the quiz yet, but this is a sufficent test.
+        $this->assertEquals('Listening', $grades[$listeninggrade->id]->name);
+        $this->assertEquals(0, $grades[$listeninggrade->id]->grade);
+        $this->assertEquals(2, $grades[$listeninggrade->id]->maxgrade);
+        $this->assertEquals('Reading', $grades[$readinggrade->id]->name);
+        $this->assertEquals(0, $grades[$readinggrade->id]->grade);
+        $this->assertEquals(1, $grades[$readinggrade->id]->maxgrade);
     }
 }

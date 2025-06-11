@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \advanced_testcase {
-    public function test_get_question_summary() {
+final class question_test extends \advanced_testcase {
+    public function test_get_question_summary(): void {
         $essay = \test_question_maker::make_an_essay_question();
         $essay->questiontext = 'Hello <img src="http://example.com/globe.png" alt="world" />';
         $this->assertEquals('Hello [world]', $essay->get_question_summary());
@@ -80,7 +80,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array List of data sets (test cases)
      */
-    public function summarise_response_provider(): array {
+    public static function summarise_response_provider(): array {
         return [
             'text input required, not attachments required'  =>
                 [1, 0, 'This is the text input for this essay.', 0, 'This is the text input for this essay.'],
@@ -100,7 +100,7 @@ class question_test extends \advanced_testcase {
         ];
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = '';
@@ -144,7 +144,7 @@ class question_test extends \advanced_testcase {
                 array('answer' => '0')));
     }
 
-    public function test_is_same_response_with_template() {
+    public function test_is_same_response_with_template(): void {
         $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = 'Once upon a time';
@@ -188,7 +188,7 @@ class question_test extends \advanced_testcase {
                 array('answer' => '0')));
     }
 
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $this->resetAfterTest(true);
 
         // Create sample attachments.
@@ -280,9 +280,9 @@ class question_test extends \advanced_testcase {
 
         // Test the case in which we're in "no inline response" mode,
         // in which the response is not required (as it's not provided).
-        $essay->reponserequired = 0;
+        $essay->responserequired = 0;
         $essay->responseformat = 'noinline';
-        $essay->attachmensrequired = 1;
+        $essay->attachmentsrequired = 1;
 
         $this->assertFalse($essay->is_complete_response(
                 array()));
@@ -294,7 +294,7 @@ class question_test extends \advanced_testcase {
                 array('attachments' => $attachments[1])));
 
         // Ensure that responserequired is ignored when we're in inline response mode.
-        $essay->reponserequired = 1;
+        $essay->responserequired = 1;
         $this->assertTrue($essay->is_complete_response(
                 array('attachments' => $attachments[1])));
     }
@@ -302,7 +302,7 @@ class question_test extends \advanced_testcase {
     /**
      * test_get_question_definition_for_external_rendering
      */
-    public function test_get_question_definition_for_external_rendering() {
+    public function test_get_question_definition_for_external_rendering(): void {
         $this->resetAfterTest();
 
         $essay = \test_question_maker::make_an_essay_question();
@@ -331,7 +331,7 @@ class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_min_max_wordlimit_test_cases()
+     * @dataProvider get_min_max_wordlimit_test_cases
      * @param  int $responserequired whether response required (yes = 1, no = 0)
      * @param  int $minwordlimit minimum word limit
      * @param  int $maxwordlimit maximum word limit
@@ -353,7 +353,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array the test cases.
      */
-    public function get_min_max_wordlimit_test_cases(): array {
+    public static function get_min_max_wordlimit_test_cases(): array {
         return [
             'text input required, min/max word limit not set'  => [1, 0, 0, ''],
             'text input required, min/max word limit valid (within the boundaries)'  => [1, 10, 25, ''],
@@ -370,7 +370,7 @@ class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_word_count_message_for_review_test_cases()
+     * @dataProvider get_word_count_message_for_review_test_cases
      * @param int|null $minwordlimit minimum word limit
      * @param int|null $maxwordlimit maximum word limit
      * @param string $expected error message | null
@@ -389,7 +389,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array the test cases.
      */
-    public function get_word_count_message_for_review_test_cases() {
+    public static function get_word_count_message_for_review_test_cases(): array {
         return [
             'No limit' =>
                     [null, null, ''],

@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \rating
  */
-class rating_test extends \advanced_testcase {
+final class rating_test extends \advanced_testcase {
 
     protected $syscontext;
     protected $neededcaps = array('view', 'viewall', 'viewany', 'rate');
@@ -52,7 +52,7 @@ class rating_test extends \advanced_testcase {
     /**
      * Test the current get_ratings method main sql
      */
-    public function test_get_ratings_sql() {
+    public function test_get_ratings_sql(): void {
         global $DB;
 
         // We load 3 items. Each is rated twice. For simplicity itemid == user id of the item owner.
@@ -279,7 +279,7 @@ class rating_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_aggregate_string_provider() {
+    public static function get_aggregate_string_provider(): array {
         return [
             'Non-numeric aggregate produces empty string' => [
                 RATING_AGGREGATE_NONE,
@@ -345,7 +345,7 @@ class rating_test extends \advanced_testcase {
      *
      * @dataProvider get_aggregate_string_provider
      */
-    public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation) {
+    public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation): void {
         $options = new \stdClass();
         $options->aggregate = $aggregate;
         $options->context = null;

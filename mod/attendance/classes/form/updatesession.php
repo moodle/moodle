@@ -45,11 +45,10 @@ class updatesession extends \moodleform {
         $modcontext    = $this->_customdata['modcontext'];
         $sessionid     = $this->_customdata['sessionid'];
 
-        if (!$sess = $DB->get_record('attendance_sessions', array('id' => $sessionid) )) {
-            error('No such session in this course');
-        }
-        $attendancesubnet = $DB->get_field('attendance', 'subnet', array('id' => $sess->attendanceid));
-        $defopts = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $modcontext);
+        $sess = $DB->get_record('attendance_sessions', ['id' => $sessionid], '*', MUST_EXIST);
+
+        $attendancesubnet = $DB->get_field('attendance', 'subnet', ['id' => $sess->attendanceid]);
+        $defopts = ['maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $modcontext];
         $sess = file_prepare_standard_editor($sess, 'description', $defopts, $modcontext, 'mod_attendance', 'session', $sess->id);
 
         $starttime = $sess->sessdate - usergetmidnight($sess->sessdate);
@@ -61,10 +60,10 @@ class updatesession extends \moodleform {
         $endhour = floor($endtime / HOURSECS);
         $endminute = floor(($endtime - $endhour * HOURSECS) / MINSECS);
 
-        $data = array(
+        $data = [
             'sessiondate' => $sess->sessdate,
-            'sestime' => array('starthour' => $starthour, 'startminute' => $startminute,
-            'endhour' => $endhour, 'endminute' => $endminute),
+            'sestime' => ['starthour' => $starthour, 'startminute' => $startminute,
+            'endhour' => $endhour, 'endminute' => $endminute, ],
             'sdescription' => $sess->description_editor,
             'calendarevent' => $sess->calendarevent,
             'studentscanmark' => $sess->studentscanmark,
@@ -80,8 +79,8 @@ class updatesession extends \moodleform {
             'includeqrcode' => $sess->includeqrcode,
             'rotateqrcode' => $sess->rotateqrcode,
             'automarkcmid' => $sess->automarkcmid,
-            'studentsearlyopentime' => $sess->studentsearlyopentime
-        );
+            'studentsearlyopentime' => $sess->studentsearlyopentime,
+        ];
         if ($sess->subnet == $attendancesubnet) {
             $data['usedefaultsubnet'] = 1;
         } else {
@@ -93,7 +92,7 @@ class updatesession extends \moodleform {
         if ($sess->groupid == 0) {
             $strtype = get_string('commonsession', 'attendance');
         } else {
-            $groupname = $DB->get_field('groups', 'name', array('id' => $sess->groupid));
+            $groupname = $DB->get_field('groups', 'name', ['id' => $sess->groupid]);
             $strtype = get_string('group') . ': ' . $groupname;
         }
         $mform->addElement('static', 'sessiontypedescription', get_string('sessiontype', 'attendance'), $strtype);
@@ -113,7 +112,7 @@ class updatesession extends \moodleform {
         $mform->setType('statusset', PARAM_INT);
 
         $mform->addElement('editor', 'sdescription', get_string('description', 'attendance'),
-                           array('rows' => 1, 'columns' => 80), $defopts);
+                           ['rows' => 1, 'columns' => 80], $defopts);
         $mform->setType('sdescription', PARAM_RAW);
 
         if (!empty(get_config('attendance', 'enablecalendar'))) {
@@ -187,14 +186,14 @@ class updatesession extends \moodleform {
             $mform->hideif('autoassignstatus', 'studentscanmark', 'notchecked');
         }
 
-        $mgroup = array();
+        $mgroup = [];
         $mgroup[] = & $mform->createElement('text', 'subnet', get_string('requiresubnet', 'attendance'));
         $mform->setDefault('subnet', $this->_customdata['att']->subnet);
         $mgroup[] = & $mform->createElement('checkbox', 'usedefaultsubnet', get_string('usedefaultsubnet', 'attendance'));
         $mform->setDefault('usedefaultsubnet', 1);
         $mform->setType('subnet', PARAM_TEXT);
 
-        $mform->addGroup($mgroup, 'subnetgrp', get_string('requiresubnet', 'attendance'), array(' '), false);
+        $mform->addGroup($mgroup, 'subnetgrp', get_string('requiresubnet', 'attendance'), [' '], false);
         $mform->setAdvanced('subnetgrp');
         $mform->addHelpButton('subnetgrp', 'requiresubnet', 'attendance');
         $mform->hideif('subnet', 'usedefaultsubnet', 'checked');
@@ -202,14 +201,14 @@ class updatesession extends \moodleform {
         $mform->addElement('hidden', 'automarkcompleted', '0');
         $mform->settype('automarkcompleted', PARAM_INT);
 
-        $mgroup3 = array();
+        $mgroup3 = [];
         $options = attendance_get_sharedipoptions();
         $mgroup3[] = & $mform->createElement('select', 'preventsharedip',
             get_string('preventsharedip', 'attendance'), $options);
         $mgroup3[] = & $mform->createElement('text', 'preventsharediptime',
             get_string('preventsharediptime', 'attendance'), '', 'test');
         $mform->addGroup($mgroup3, 'preventsharedgroup',
-            get_string('preventsharedip', 'attendance'), array(' '), false);
+            get_string('preventsharedip', 'attendance'), [' '], false);
         $mform->addHelpButton('preventsharedgroup', 'preventsharedip', 'attendance');
         $mform->setAdvanced('preventsharedgroup');
         $mform->setType('preventsharediptime', PARAM_INT);
@@ -249,7 +248,7 @@ class updatesession extends \moodleform {
             FROM {attendance_statuses}
             WHERE deleted = 0 AND (attendanceid = 0 or attendanceid = ?)
             AND setnumber = ? AND setunmarked = 1';
-            $params = array($cm->instance, $data['statusset']);
+            $params = [$cm->instance, $data['statusset']];
             if (!$DB->record_exists_sql($sql, $params)) {
                 $errors['automark'] = get_string('noabsentstatusset', 'attendance');
             }

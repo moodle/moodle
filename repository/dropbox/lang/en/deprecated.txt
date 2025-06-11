@@ -1,3 +1,0 @@
-apikey,repository_dropbox
-secret,repository_dropbox
-instruction,repository_dropbox

@@ -80,7 +80,7 @@ class core_customfield_generator extends component_generator_base {
      * @param array|stdClass $record
      * @return field_controller
      */
-    public function create_field($record) : field_controller {
+    public function create_field($record): field_controller {
         $this->fieldcount++;
         $i = $this->fieldcount;
         $record = (object) $record;
@@ -97,7 +97,7 @@ class core_customfield_generator extends component_generator_base {
         if (!isset($record->shortname)) {
             $record->shortname = "fld$i";
         }
-        if (!isset($record->description)) {
+        if (!property_exists($record, 'description')) {
             $record->description = "Field $i description";
         }
         if (!isset($record->descriptionformat)) {
@@ -124,6 +124,7 @@ class core_customfield_generator extends component_generator_base {
             'locked' => 0,
             'visibility' => 2,
             'defaultvalue' => '',
+            'defaultvalueformat' => FORMAT_MOODLE,
             'displaysize' => 0,
             'maxlength' => 0,
             'ispassword' => 0,
@@ -149,13 +150,12 @@ class core_customfield_generator extends component_generator_base {
      * @param mixed $value
      * @return \core_customfield\data_controller
      */
-    public function add_instance_data(field_controller $field, int $instanceid, $value) : \core_customfield\data_controller {
+    public function add_instance_data(field_controller $field, int $instanceid, $value): \core_customfield\data_controller {
         $data = \core_customfield\data_controller::create(0, (object)['instanceid' => $instanceid], $field);
         $data->set('contextid', $data->get_context()->id);
 
         $rc = new ReflectionClass(get_class($data));
         $rcm = $rc->getMethod('get_form_element_name');
-        $rcm->setAccessible(true);
         $formelementname = $rcm->invokeArgs($data, []);
         $record = (object)[$formelementname => $value];
         $data->instance_form_save($record);

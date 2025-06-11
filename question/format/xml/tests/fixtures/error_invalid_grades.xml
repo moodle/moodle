@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 1  -->
+  <question type="multichoice">
+    <name>
+      <text><![CDATA[Question with <strong>invalid grades</strong> : x > 1 & x < 2]]></text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[Select all prime numbers :<br>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <single>false</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>abc</answernumbering>
+    <showstandardinstruction>0</showstandardinstruction>
+    <correctfeedback format="html">
+      <text>Your answer is correct.</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Your answer is partially correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>Your answer is incorrect.</text>
+    </incorrectfeedback>
+    <shownumcorrect/>
+    <answer fraction="-50" format="html">
+      <text><![CDATA[<p dir="ltr" style="text-align: left;">1<br></p>]]></text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="33" format="html"> <!-- Invalid grade. -->
+      <text><![CDATA[<p dir="ltr" style="text-align: left;">2<br></p>]]></text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="33.33333" format="html">
+      <text><![CDATA[<p dir="ltr" style="text-align: left;">3<br></p>]]></text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="-50" format="html">
+      <text><![CDATA[<p dir="ltr" style="text-align: left;">4<br></p>]]></text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="33.33333" format="html">
+      <text><![CDATA[<p dir="ltr" style="text-align: left;">5<br></p>]]></text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+</quiz>

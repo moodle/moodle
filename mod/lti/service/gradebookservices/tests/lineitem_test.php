@@ -28,14 +28,14 @@ use ltiservice_gradebookservices\local\service\gradebookservices;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_lti\service\gradebookservices\local\resources\lineitem
  */
-class lineitem_test extends \advanced_testcase {
+final class lineitem_test extends \advanced_testcase {
 
     /**
      * @covers ::execute
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_nosubreview() {
+    public function test_execute_put_nosubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();
@@ -79,7 +79,7 @@ class lineitem_test extends \advanced_testcase {
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_withsubreview() {
+    public function test_execute_put_withsubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();
@@ -130,7 +130,7 @@ class lineitem_test extends \advanced_testcase {
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_addsubreview() {
+    public function test_execute_put_addsubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();
@@ -187,7 +187,7 @@ class lineitem_test extends \advanced_testcase {
      * @return object lti instance created
      */
     private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag,
-            ?string $subreviewurl = null, ?string $subreviewparams = null) : object {
+            ?string $subreviewurl = null, ?string $subreviewparams = null): object {
 
         $lti = ['course' => $course->id,
             'typeid' => $typeid,

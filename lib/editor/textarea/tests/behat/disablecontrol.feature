@@ -18,7 +18,7 @@ Feature: Text area with enable/disable function.
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Control Enable/Disable Text area"
+    And I click on "Control Enable/Disable Text area" "link" in the "region-main" "region"
 
   @javascript
   Scenario: Check disable Text area editor.

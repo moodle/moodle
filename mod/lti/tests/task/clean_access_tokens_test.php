@@ -24,7 +24,7 @@ namespace mod_lti\task;
  * @copyright 2019 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class clean_access_tokens_test extends \advanced_testcase {
+final class clean_access_tokens_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -32,13 +32,14 @@ class clean_access_tokens_test extends \advanced_testcase {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Test the cleanup task.
      */
-    public function test_cleanup_task() {
+    public function test_cleanup_task(): void {
         global $DB;
 
         $time = time();

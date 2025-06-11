@@ -276,7 +276,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
 
     protected function valid_answer_message($answer) {
         if (!$answer) {
-            return get_string('mustenteraformulaorstar', 'qtype_numerical');
+            return get_string('mustenteraformulaorstar', 'qtype_calculated');
         } else {
             return qtype_calculated_find_formula_errors($answer);
         }

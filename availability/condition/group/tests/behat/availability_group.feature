@@ -108,3 +108,49 @@ Feature: availability_group
     When I am on the "C1" "Course" page logged in as "student1"
     Then I should see "Not available unless: You belong to G-One"
     And I should not see "G-Un"
+
+  @javascript
+  Scenario: Condition using a hidden group
+    Given the following "groups" exist:
+      | name         | course | idnumber | visibility |
+      | Hidden Group | C1     | GA       | 3          |
+    And I log in as "teacher1"
+    And I add a page activity to course "Course 1" section "1"
+    And I expand all fieldsets
+
+    # Page P1 any group.
+    And I am on the "P1" "page activity editing" page
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And "Group" "button" should exist in the "Add restriction..." "dialogue"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
+    And I set the field "Group" to "(Any group)"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I click on "Save and return to course" "button"
+
+    # Page P2 with hidden group.
+    And I am on the "P2" "page activity editing" page
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
+    And I set the field "Group" to "Hidden Group"
+    And I click on "Save and return to course" "button"
+
+    # Log back in as student.
+    When I am on the "Course 1" "course" page logged in as "student1"
+
+    # No pages should appear yet.
+    Then I should not see "P1" in the "region-main" "region"
+    And I should not see "P2" in the "region-main" "region"
+    And I should not see "Hidden Group"
+
+    # Add to groups and log out/in again.
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | GA    |
+    And I am on "Course 1" course homepage
+
+    # P1 (any groups) and P2 should show. The user should not see the hidden group mentioned anywhere.
+    And I should see "P1" in the "region-main" "region"
+    And I should see "P2" in the "region-main" "region"
+    And I should not see "Hidden Group"

@@ -27,6 +27,9 @@ $string['pluginname'] = 'Forecast report';
 $string['forecast:view'] = 'View your own grade report';
 $string['tablesummary'] = 'The table is arranged as a list of graded items including categories of graded items. When items are in a category they will be indicated as such.';
 
+$string['gradeitem'] = 'Grade item';
+$string['grade'] = 'Grade';
+
 // settings
 $string['enabled_for_students'] = 'Enable for students';
 $string['enabled_for_students_desc'] = 'Enable students to view this report?';

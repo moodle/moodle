@@ -7,28 +7,23 @@
 * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
 */
 class AdminerPlugin extends Adminer {
-	/** @access protected */
-	var $plugins;
+	protected $plugins;
 
-	function _findRootClass($class) { // is_subclass_of(string, string) is available since PHP 5.0.3
-		do {
-			$return = $class;
-		} while ($class = get_parent_class($class));
-		return $return;
-	}
-
-	/** Register plugins
-	* @param array object instances or null to register all classes starting by 'Adminer'
-	*/
-	function __construct($plugins) {
+	/**
+	 * Registers plugins.
+	 * @param array $plugins Object instances or null to register all classes starting by 'Adminer'.
+	 */
+	function __construct(array $plugins = null)
+	{
 		if ($plugins === null) {
-			$plugins = array();
+			$plugins = [];
 			foreach (get_declared_classes() as $class) {
-				if (preg_match('~^Adminer.~i', $class) && strcasecmp($this->_findRootClass($class), 'Adminer')) { //! can use interface
+				if (preg_match('~^Adminer.~i', $class) && !is_subclass_of($class, 'Adminer')) { //! can use interface
 					$plugins[$class] = new $class;
 				}
 			}
 		}
+
 		$this->plugins = $plugins;
 		//! it is possible to use ReflectionObject to find out which plugins defines which methods at once
 	}
@@ -79,6 +74,11 @@ class AdminerPlugin extends Adminer {
 	}
 
 	function dumpOutput() {
+		$args = func_get_args();
+		return $this->_appendPlugin(__FUNCTION__, $args);
+	}
+
+	function editRowPrint($table, $fields, $row, $update) {
 		$args = func_get_args();
 		return $this->_appendPlugin(__FUNCTION__, $args);
 	}
@@ -250,7 +250,7 @@ class AdminerPlugin extends Adminer {
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
 
-	function selectColumnsPrint($select, $columns) {
+	function selectColumnsPrint($select,$columns) {
 		$args = func_get_args();
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
@@ -335,7 +335,7 @@ class AdminerPlugin extends Adminer {
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
 
-	function editInput($table, $field, $attrs, $value) {
+	function editInput($table, $field, $attrs, $value, $function) {
 		$args = func_get_args();
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}

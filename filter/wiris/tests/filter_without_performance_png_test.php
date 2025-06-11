@@ -36,8 +36,6 @@ require_once($CFG->dirroot . '/filter/wiris/filter.php');
  * @package MOODLE_39_STABLE/filter/wiris/tests
  */
 final class filter_without_performance_png_test extends advanced_testcase {
-
-
     /**
      * @var filter_wiris The WIRIS filter instance.
      */

@@ -38,17 +38,17 @@ class ADOdbLoadBalancer
     /**
      * @var bool|array    All connections to each database.
      */
-    protected $connections = false;
+    protected $connections = [];
 
     /**
      * @var bool|array    Just connections to the write capable database.
      */
-    protected $connections_write = false;
+    protected $connections_write = [];
 
     /**
      * @var bool|array    Just connections to the readonly database.
      */
-    protected $connections_readonly = false;
+    protected $connections_readonly = [];
 
     /**
      * @var array    Counts of all connections and their types.
@@ -73,12 +73,12 @@ class ADOdbLoadBalancer
     /**
      * @var bool    Session variables that must be maintained across all connections, ie: SET TIME ZONE.
      */
-    protected $session_variables = false;
+    protected $session_variables = [];
 
     /**
      * @var bool    Called immediately after connecting to any DB.
      */
-    protected $user_defined_session_init_sql = false;
+    protected $user_defined_session_init_sql = [];
 
 
     /**
@@ -403,7 +403,7 @@ class ADOdbLoadBalancer
      */
     private function executeSessionVariables($adodb_obj = false)
     {
-        if (is_array($this->session_variables)) {
+        if (is_array($this->session_variables) && count($this->session_variables) > 0) {
             $sql = '';
             foreach ($this->session_variables as $name => $value) {
                 // $sql .= 'SET SESSION '. $name .' '. $value;

@@ -24,9 +24,10 @@ use html_writer;
 use lang_string;
 use moodle_url;
 use stdClass;
+use theme_config;
 use core_course_category;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{category, text};
+use core_reportbuilder\local\filters\{category, select, text};
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 
@@ -40,14 +41,14 @@ use core_reportbuilder\local\report\filter;
 class course_category extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'context' => 'ccctx',
-            'course_categories' => 'cc',
+            'context',
+            'course_categories',
         ];
     }
 
@@ -100,11 +101,19 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
+            ->add_join($this->get_context_join())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->add_callback(static function(?string $name, stdClass $category): string {
-                return empty($category->id) ? '' :
-                    core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
+                if (empty($category->id)) {
+                    return '';
+                }
+
+                context_helper::preload_from_record($category);
+                $context = context_coursecat::instance($category->id);
+
+                return format_string($category->name, true, ['context' => $context]);
             })
             ->set_is_sortable(true);
 
@@ -191,6 +200,35 @@ class course_category extends base {
                 return format_text($description, $category->descriptionformat, ['context' => $context->id]);
             });
 
+        // Theme column.
+        $columns[] = (new column(
+            'theme',
+            new lang_string('theme'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tablealias}.theme")
+            ->set_is_sortable(true)
+            ->add_callback(static function (?string $theme): string {
+                if ((string) $theme === '') {
+                    return '';
+                }
+
+                return get_string('pluginname', "theme_{$theme}");
+            });
+
+        // Course count column.
+        $columns[] = (new column(
+            'coursecount',
+            new lang_string('coursecount', 'core_course'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_fields("{$tablealias}.coursecount")
+            ->set_is_sortable(true);
+
         return $columns;
     }
 
@@ -235,6 +273,22 @@ class course_category extends base {
         ))
             ->add_joins($this->get_joins());
 
+        // Theme filter.
+        $filters[] = (new filter(
+            select::class,
+            'theme',
+            new lang_string('theme'),
+            $this->get_entity_name(),
+            "{$tablealias}.theme",
+        ))
+            ->set_options_callback(static function(): array {
+                return array_map(
+                    fn(theme_config $theme) => $theme->get_theme_name(),
+                    get_list_of_themes(),
+                );
+            })
+            ->add_joins($this->get_joins());
+
         return $filters;
     }
 
@@ -243,7 +297,7 @@ class course_category extends base {
      *
      * @return string
      */
-    private function get_context_join(): string {
+    public function get_context_join(): string {
         $coursecategories = $this->get_table_alias('course_categories');
         $context = $this->get_table_alias('context');
         return "LEFT JOIN {context} {$context} ON {$context}.instanceid = {$coursecategories}.id

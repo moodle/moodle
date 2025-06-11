@@ -27,7 +27,7 @@ use tool_moodlenet\local\url;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class remote_resource_test extends \advanced_testcase {
+final class remote_resource_test extends \advanced_testcase {
 
     /**
      * Test getters.
@@ -37,7 +37,7 @@ class remote_resource_test extends \advanced_testcase {
      * @param string $metadata the resource metadata like name, description, etc.
      * @param string $expectedextension the extension we expect to find when querying the remote resource.
      */
-    public function test_getters($url, $metadata, $expectedextension) {
+    public function test_getters($url, $metadata, $expectedextension): void {
         $this->resetAfterTest();
 
         $remoteres = new remote_resource(new \curl(), new url($url), $metadata);
@@ -53,10 +53,10 @@ class remote_resource_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function remote_resource_data_provider() {
+    public static function remote_resource_data_provider(): array {
         return [
             'With filename and extension' => [
-                $this->getExternalTestFileUrl('/test.html'),
+                self::getExternalTestFileUrl('/test.html'),
                 (object) [
                     'name' => 'Test html file',
                     'description' => 'Full description of the html file'
@@ -77,9 +77,9 @@ class remote_resource_test extends \advanced_testcase {
     /**
      * Test confirming the network based operations of a remote_resource.
      */
-    public function test_network_features() {
-        $url = $this->getExternalTestFileUrl('/test.html');
-        $nonexistenturl = $this->getExternalTestFileUrl('/test.htmlzz');
+    public function test_network_features(): void {
+        $url = self::getExternalTestFileUrl('/test.html');
+        $nonexistenturl = self::getExternalTestFileUrl('/test.htmlzz');
 
         $remoteres = new remote_resource(
             new \curl(),

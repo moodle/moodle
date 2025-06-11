@@ -31,12 +31,12 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/capability/locallib.php'
 /**
  * Tests for the capability overview helper functions.
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     /**
      * Test the function that gets the data - simple case.
      */
-    public function test_tool_capability_calculate_role_data() {
+    public function test_tool_capability_calculate_role_data(): void {
         global $DB;
 
         $data = tool_capability_calculate_role_data('mod/quiz:attempt', get_all_roles());
@@ -58,7 +58,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test the function that gets the data - simple case.
      */
-    public function test_tool_capability_calculate_role_data_orphan_contexts() {
+    public function test_tool_capability_calculate_role_data_orphan_contexts(): void {
         global $DB;
         $this->resetAfterTest();
 

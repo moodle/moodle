@@ -16,9 +16,9 @@
 
 namespace core_cache\output;
 
-use cache_factory;
-use cache_store;
 use context;
+use core_cache\factory as cache_factory;
+use core_cache\store as cache_store;
 use core_collator;
 use html_table;
 use html_table_cell;
@@ -36,7 +36,6 @@ use single_select;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
-
     /**
      * Displays store summaries.
      *
@@ -48,7 +47,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function store_instance_summariers(array $storeinstancesummaries, array $storepluginsummaries) {
         $table = new html_table();
-        $table->head = array(
+        $table->head = [
             get_string('storename', 'cache'),
             get_string('plugin', 'cache'),
             get_string('storeready', 'cache'),
@@ -57,8 +56,8 @@ class renderer extends \plugin_renderer_base {
             get_string('supports', 'cache'),
             get_string('locking', 'cache') . ' ' . $this->output->help_icon('locking', 'cache'),
             get_string('actions', 'cache'),
-        );
-        $table->colclasses = array(
+        ];
+        $table->colclasses = [
             'storename',
             'plugin',
             'storeready',
@@ -66,42 +65,42 @@ class renderer extends \plugin_renderer_base {
             'modes',
             'supports',
             'locking',
-            'actions'
-        );
-        $table->data = array();
+            'actions',
+        ];
+        $table->data = [];
 
         $defaultstoreactions = get_string('defaultstoreactions', 'cache');
 
         foreach ($storeinstancesummaries as $name => $storesummary) {
             $htmlactions = cache_factory::get_administration_display_helper()->get_store_instance_actions($name, $storesummary);
-            $modes = array();
+            $modes = [];
             foreach ($storesummary['modes'] as $mode => $enabled) {
                 if ($enabled) {
-                    $modes[] = get_string('mode_'.$mode, 'cache');
+                    $modes[] = get_string('mode_' . $mode, 'cache');
                 }
             }
 
-            $supports = array();
+            $supports = [];
             foreach ($storesummary['supports'] as $support => $enabled) {
                 if ($enabled) {
-                    $supports[] = get_string('supports_'.$support, 'cache');
+                    $supports[] = get_string('supports_' . $support, 'cache');
                 }
             }
 
             $info = '';
             if (!empty($storesummary['default'])) {
-                $info = $this->output->pix_icon('i/info', $defaultstoreactions, '', array('class' => 'icon'));
+                $info = $this->output->pix_icon('i/info', $defaultstoreactions, '', ['class' => 'icon']);
             }
 
             $isready = $storesummary['isready'] && $storesummary['requirementsmet'];
-            $readycell = new html_table_cell;
+            $readycell = new html_table_cell();
             if ($isready) {
                 $readycell->text = $this->output->pix_icon('i/valid', '1');
             }
 
             $storename = $storesummary['name'];
             if (!empty($storesummary['default'])) {
-                $storename = get_string('store_'.$storesummary['name'], 'cache');
+                $storename = get_string('store_' . $storesummary['name'], 'cache');
             }
             if (!$isready && (int)$storesummary['mappings'] > 0) {
                 $readycell->text = $this->output->help_icon('storerequiresattention', 'cache');
@@ -113,24 +112,24 @@ class renderer extends \plugin_renderer_base {
                 $lock = get_string($storesummary['lock']['name'], 'cache');
             }
 
-            $row = new html_table_row(array(
+            $row = new html_table_row([
                 $storename,
-                get_string('pluginname', 'cachestore_'.$storesummary['plugin']),
+                get_string('pluginname', 'cachestore_' . $storesummary['plugin']),
                 $readycell,
                 $storesummary['mappings'],
                 join(', ', $modes),
                 join(', ', $supports),
                 $lock,
-                $info.join(', ', $htmlactions)
-            ));
-            $row->attributes['class'] = 'store-'.$name;
+                $info . join(', ', $htmlactions),
+            ]);
+            $row->attributes['class'] = 'store-' . $name;
             if ($storesummary['default']) {
                 $row->attributes['class'] .= ' default-store';
             }
             $table->data[] = $row;
         }
 
-        $html  = html_writer::start_tag('div', array('id' => 'core-cache-store-summaries'));
+        $html  = html_writer::start_tag('div', ['id' => 'core-cache-store-summaries']);
         $html .= $this->output->heading(get_string('storesummaries', 'cache'), 3);
         $html .= html_writer::table($table);
         $html .= html_writer::end_tag('div');
@@ -146,55 +145,55 @@ class renderer extends \plugin_renderer_base {
      */
     public function store_plugin_summaries(array $storepluginsummaries) {
         $table = new html_table();
-        $table->head = array(
+        $table->head = [
             get_string('plugin', 'cache'),
             get_string('storeready', 'cache'),
             get_string('stores', 'cache'),
             get_string('modes', 'cache'),
             get_string('supports', 'cache'),
             get_string('actions', 'cache'),
-        );
-        $table->colclasses = array(
+        ];
+        $table->colclasses = [
             'plugin',
             'storeready',
             'stores',
             'modes',
             'supports',
-            'actions'
-        );
-        $table->data = array();
+            'actions',
+        ];
+        $table->data = [];
 
         foreach ($storepluginsummaries as $name => $plugin) {
             $htmlactions = cache_factory::get_administration_display_helper()->get_store_plugin_actions($name, $plugin);
 
-            $modes = array();
+            $modes = [];
             foreach ($plugin['modes'] as $mode => $enabled) {
                 if ($enabled) {
-                    $modes[] = get_string('mode_'.$mode, 'cache');
+                    $modes[] = get_string('mode_' . $mode, 'cache');
                 }
             }
 
-            $supports = array();
+            $supports = [];
             foreach ($plugin['supports'] as $support => $enabled) {
                 if ($enabled) {
-                    $supports[] = get_string('supports_'.$support, 'cache');
+                    $supports[] = get_string('supports_' . $support, 'cache');
                 }
             }
 
-            $row = new html_table_row(array(
+            $row = new html_table_row([
                 $plugin['name'],
                 ($plugin['requirementsmet']) ? $this->output->pix_icon('i/valid', '1') : '',
                 $plugin['instances'],
                 join(', ', $modes),
                 join(', ', $supports),
-                join(', ', $htmlactions)
-            ));
+                join(', ', $htmlactions),
+            ]);
 
-            $row->attributes['class'] = 'plugin-'.$name;
+            $row->attributes['class'] = 'plugin-' . $name;
             $table->data[] = $row;
         }
 
-        $html  = html_writer::start_tag('div', array('id' => 'core-cache-plugin-summaries'));
+        $html  = html_writer::start_tag('div', ['id' => 'core-cache-plugin-summaries']);
         $html .= $this->output->heading(get_string('pluginsummaries', 'cache'), 3);
         $html .= html_writer::table($table);
         $html .= html_writer::end_tag('div');
@@ -212,7 +211,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function definition_summaries(array $definitionsummaries, context $context) {
         $table = new html_table();
-        $table->head = array(
+        $table->head = [
             get_string('definition', 'cache'),
             get_string('mode', 'cache'),
             get_string('component', 'cache'),
@@ -220,9 +219,9 @@ class renderer extends \plugin_renderer_base {
             get_string('mappings', 'cache'),
             get_string('sharing', 'cache'),
             get_string('canuselocalstore', 'cache'),
-            get_string('actions', 'cache')
-        );
-        $table->colclasses = array(
+            get_string('actions', 'cache'),
+        ];
+        $table->colclasses = [
             'definition',
             'mode',
             'component',
@@ -230,9 +229,9 @@ class renderer extends \plugin_renderer_base {
             'mappings',
             'sharing',
             'canuselocalstore',
-            'actions'
-        );
-        $table->data = array();
+            'actions',
+        ];
+        $table->data = [];
 
         core_collator::asort_array_of_arrays_by_key($definitionsummaries, 'name');
 
@@ -242,7 +241,7 @@ class renderer extends \plugin_renderer_base {
             if (!empty($definition['mappings'])) {
                 $mapping = join(', ', $definition['mappings']);
             } else {
-                $mapping = '<em>'.$none.'</em>';
+                $mapping = '<em>' . $none . '</em>';
             }
 
             $uselocalcachecol = get_string('no');
@@ -252,27 +251,27 @@ class renderer extends \plugin_renderer_base {
                 }
             }
 
-            $row = new html_table_row(array(
+            $row = new html_table_row([
                 $definition['name'],
-                get_string('mode_'.$definition['mode'], 'cache'),
+                get_string('mode_' . $definition['mode'], 'cache'),
                 $definition['component'],
                 $definition['area'],
                 $mapping,
                 join(', ', $definition['selectedsharingoption']),
                 $uselocalcachecol,
-                join(', ', $htmlactions)
-            ));
-            $row->attributes['class'] = 'definition-'.$definition['component'].'-'.$definition['area'];
+                join(', ', $htmlactions),
+            ]);
+            $row->attributes['class'] = 'definition-' . $definition['component'] . '-' . $definition['area'];
             $table->data[] = $row;
         }
 
-        $html  = html_writer::start_tag('div', array('id' => 'core-cache-definition-summaries'));
+        $html  = html_writer::start_tag('div', ['id' => 'core-cache-definition-summaries']);
         $html .= $this->output->heading(get_string('definitionsummaries', 'cache'), 3);
         $html .= html_writer::table($table);
 
-        $url = new moodle_url('/cache/admin.php', array('action' => 'rescandefinitions', 'sesskey' => sesskey()));
+        $url = new moodle_url('/cache/admin.php', ['action' => 'rescandefinitions', 'sesskey' => sesskey()]);
         $link = html_writer::link($url, get_string('rescandefinitions', 'cache'));
-        $html .= html_writer::tag('div', $link, array('id' => 'core-cache-rescan-definitions'));
+        $html .= html_writer::tag('div', $link, ['id' => 'core-cache-rescan-definitions']);
 
         $html .= html_writer::end_tag('div');
         return $html;
@@ -289,30 +288,30 @@ class renderer extends \plugin_renderer_base {
      */
     public function mode_mappings($applicationstore, $sessionstore, $requeststore, moodle_url $editurl) {
         $table = new html_table();
-        $table->colclasses = array(
+        $table->colclasses = [
             'mode',
             'mapping',
-        );
-        $table->rowclasses = array(
+        ];
+        $table->rowclasses = [
             'mode_application',
             'mode_session',
-            'mode_request'
-        );
-        $table->head = array(
+            'mode_request',
+        ];
+        $table->head = [
             get_string('mode', 'cache'),
             get_string('mappings', 'cache'),
-        );
-        $table->data = array(
-            array(get_string('mode_'.cache_store::MODE_APPLICATION, 'cache'), $applicationstore),
-            array(get_string('mode_'.cache_store::MODE_SESSION, 'cache'), $sessionstore),
-            array(get_string('mode_'.cache_store::MODE_REQUEST, 'cache'), $requeststore)
-        );
+        ];
+        $table->data = [
+            [get_string('mode_' . cache_store::MODE_APPLICATION, 'cache'), $applicationstore],
+            [get_string('mode_' . cache_store::MODE_SESSION, 'cache'), $sessionstore],
+            [get_string('mode_' . cache_store::MODE_REQUEST, 'cache'), $requeststore],
+        ];
 
-        $html = html_writer::start_tag('div', array('id' => 'core-cache-mode-mappings'));
+        $html = html_writer::start_tag('div', ['id' => 'core-cache-mode-mappings']);
         $html .= $this->output->heading(get_string('defaultmappings', 'cache'), 3);
         $html .= html_writer::table($table);
         $link = html_writer::link($editurl, get_string('editmappings', 'cache'));
-        $html .= html_writer::tag('div', $link, array('class' => 'edit-link'));
+        $html .= html_writer::tag('div', $link, ['class' => 'edit-link']);
         $html .= html_writer::end_tag('div');
         return $html;
     }
@@ -327,45 +326,45 @@ class renderer extends \plugin_renderer_base {
      */
     public function lock_summaries(array $locks) {
         $table = new html_table();
-        $table->colclasses = array(
+        $table->colclasses = [
             'name',
             'type',
             'default',
             'uses',
-            'actions'
-        );
-        $table->rowclasses = array(
+            'actions',
+        ];
+        $table->rowclasses = [
             'lock_name',
             'lock_type',
             'lock_default',
             'lock_uses',
             'lock_actions',
-        );
-        $table->head = array(
+        ];
+        $table->head = [
             get_string('lockname', 'cache'),
             get_string('locktype', 'cache'),
             get_string('lockdefault', 'cache'),
             get_string('lockuses', 'cache'),
-            get_string('actions', 'cache')
-        );
-        $table->data = array();
+            get_string('actions', 'cache'),
+        ];
+        $table->data = [];
         $tick = $this->output->pix_icon('i/valid', '');
         foreach ($locks as $lock) {
-            $actions = array();
+            $actions = [];
             if ($lock['uses'] === 0 && !$lock['default']) {
-                $url = new moodle_url('/cache/admin.php', array('lock' => $lock['name'], 'action' => 'deletelock'));
+                $url = new moodle_url('/cache/admin.php', ['lock' => $lock['name'], 'action' => 'deletelock']);
                 $actions[] = html_writer::link($url, get_string('delete', 'cache'));
             }
-            $table->data[] = new html_table_row(array(
+            $table->data[] = new html_table_row([
                 new html_table_cell($lock['name']),
                 new html_table_cell($lock['type']),
                 new html_table_cell($lock['default'] ? $tick : ''),
                 new html_table_cell($lock['uses']),
-                new html_table_cell(join(' ', $actions))
-            ));
+                new html_table_cell(join(' ', $actions)),
+            ]);
         }
 
-        $html = html_writer::start_tag('div', array('id' => 'core-cache-lock-summary'));
+        $html = html_writer::start_tag('div', ['id' => 'core-cache-lock-summary']);
         $html .= $this->output->heading(get_string('locksummary', 'cache'), 3);
         $html .= html_writer::table($table);
         $html .= html_writer::end_tag('div');
@@ -377,13 +376,13 @@ class renderer extends \plugin_renderer_base {
      *
      * @return string
      */
-    public function additional_lock_actions() : string {
-        $url = new moodle_url('/cache/admin.php', array('action' => 'newlockinstance'));
+    public function additional_lock_actions(): string {
+        $url = new moodle_url('/cache/admin.php', ['action' => 'newlockinstance']);
         $select = new single_select($url, 'lock', cache_factory::get_administration_display_helper()->get_addable_lock_options());
         $select->label = get_string('addnewlockinstance', 'cache');
 
-        $html = html_writer::start_tag('div', array('id' => 'core-cache-lock-additional-actions'));
-        $html .= html_writer::tag('div', $this->output->render($select), array('class' => 'new-instance'));
+        $html = html_writer::start_tag('div', ['id' => 'core-cache-lock-additional-actions']);
+        $html .= html_writer::tag('div', $this->output->render($select), ['class' => 'new-instance']);
         $html .= html_writer::end_tag('div');
         return $html;
     }
@@ -400,14 +399,14 @@ class renderer extends \plugin_renderer_base {
      * @param array $notifications
      * @return string
      */
-    public function notifications(array $notifications = array()) {
+    public function notifications(array $notifications = []) {
         if (count($notifications) === 0) {
             // There are no notifications to render.
             return '';
         }
         $html = html_writer::start_div('notifications');
         foreach ($notifications as $notification) {
-            list($message, $notifysuccess) = $notification;
+            [$message, $notifysuccess] = $notification;
             $html .= $this->notification($message, ($notifysuccess) ? 'notifysuccess' : 'notifyproblem');
         }
         $html .= html_writer::end_div();
@@ -417,7 +416,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Creates the two tables which display on the usage page.
      *
-     * @param array $usage Usage information (from cache_helper::usage)
+     * @param array $usage Usage information (from \core_cache\helper::usage)
      * @return array Array of 2 tables (main and summary table)
      * @throws \coding_exception
      */
@@ -432,10 +431,10 @@ class renderer extends \plugin_renderer_base {
             get_string('usage_mean', 'cache'),
             get_string('usage_sd', 'cache'),
             get_string('usage_total', 'cache'),
-            get_string('usage_totalmargin', 'cache')];
+            get_string('usage_totalmargin', 'cache'), ];
         $table->align = [
             'left', 'left', 'left',
-            'right', 'right', 'right', 'right', 'right'
+            'right', 'right', 'right', 'right', 'right',
         ];
         $table->data = [];
 
@@ -445,7 +444,7 @@ class renderer extends \plugin_renderer_base {
             get_string('storename', 'cache'),
             get_string('plugin', 'cache'),
             get_string('usage_total', 'cache'),
-            get_string('usage_realtotal', 'cache')
+            get_string('usage_realtotal', 'cache'),
         ];
         $summarytable->align = [
             'left', 'left',
@@ -542,7 +541,7 @@ class renderer extends \plugin_renderer_base {
         $data = [
             'maintable' => \html_writer::table($maintable),
             'summarytable' => \html_writer::table($summarytable),
-            'samplesform' => $samplesform->render()
+            'samplesform' => $samplesform->render(),
         ];
 
         return $this->render_from_template('core_cache/usage', $data);

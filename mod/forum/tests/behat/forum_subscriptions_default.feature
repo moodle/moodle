@@ -28,11 +28,11 @@ Feature: A user can control their default discussion subscription settings
     Given I am on the "Test forum name" "forum activity" page logged in as student1
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
-    Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
+    Then "input[name=discussionsubscribe]:checked" "css_element" should exist
     And I am on the "Test forum name" "forum activity" page logged in as student2
     And I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
-    And "input[name=discussionsubscribe]:not([checked=checked])" "css_element" should exist
+    And "input[name=discussionsubscribe]:not(:checked)" "css_element" should exist
 
   Scenario: Replying to an existing discussion in an optional forum follows user preferences
     Given the following forum discussions exist in course "Course 1":
@@ -41,11 +41,11 @@ Feature: A user can control their default discussion subscription settings
     And I am on the "Test forum name" "forum activity" page logged in as student1
     And I follow "Test post subject"
     When I follow "Reply"
-    Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
+    Then "input[name=discussionsubscribe]:checked" "css_element" should exist
     And I am on the "Test forum name" "forum activity" page logged in as student2
     And I follow "Test post subject"
     And I follow "Reply"
-    And "input[name=discussionsubscribe]:not([checked=checked])" "css_element" should exist
+    And "input[name=discussionsubscribe]:not(:checked)" "css_element" should exist
 
   Scenario: Creating a new discussion in an automatic forum follows forum subscription
     Given I am on the "Test forum name" "forum activity editing" page logged in as admin
@@ -55,11 +55,11 @@ Feature: A user can control their default discussion subscription settings
     And I am on the "Test forum name" "forum activity" page logged in as student1
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
-    Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
+    Then "input[name=discussionsubscribe]:checked" "css_element" should exist
     And I am on the "Test forum name" "forum activity" page logged in as student2
     And I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
-    And "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
+    And "input[name=discussionsubscribe]:checked" "css_element" should exist
 
   Scenario: Replying to an existing discussion in an automatic forum follows forum subscription
     Given the following forum discussions exist in course "Course 1":
@@ -72,11 +72,11 @@ Feature: A user can control their default discussion subscription settings
     And I am on the "Test forum name" "forum activity" page logged in as student1
     And I follow "Test post subject"
     When I follow "Reply"
-    Then "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
+    Then "input[name=discussionsubscribe]:checked" "css_element" should exist
     And I am on the "Test forum name" "forum activity" page logged in as student2
     And I follow "Test post subject"
     And I follow "Reply"
-    And "input[name=discussionsubscribe]:not([checked=checked])" "css_element" should exist
+    And "input[name=discussionsubscribe]:not(:checked)" "css_element" should exist
 
   @javascript
   Scenario: Replying to an existing discussion in an automatic forum which has been unsubscribed from follows user preferences

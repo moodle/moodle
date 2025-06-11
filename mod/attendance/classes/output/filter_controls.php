@@ -47,7 +47,7 @@ class filter_controls implements renderable {
     public $nextcur;
     /** @var string  */
     public $curdatetxt;
-    /** @var boolean  */
+    /** @var bool  */
     public $reportcontrol;
     /** @var string  */
     private $urlpath;
@@ -114,7 +114,7 @@ class filter_controls implements renderable {
      * @param array $params
      * @return moodle_url
      */
-    public function url($params=array()) {
+    public function url($params=[]) {
         $params = array_merge($this->urlparams, $params);
 
         return new moodle_url($this->urlpath, $params);
@@ -133,7 +133,7 @@ class filter_controls implements renderable {
      * @param array $params
      * @return array
      */
-    public function url_params($params=array()) {
+    public function url_params($params=[]) {
         $params = array_merge($this->urlparams, $params);
 
         return $params;

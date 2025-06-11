@@ -23,7 +23,7 @@
 
 import $ from 'jquery';
 import selectors from 'core_contentbank/selectors';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 import {debounce} from 'core/utils';
 

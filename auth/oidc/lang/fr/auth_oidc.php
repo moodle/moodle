@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'Le plug-in OpenID Connect fournit une fonctionnalité SSO avec des fournisseurs d\'identité configurables.';
 
@@ -161,3 +164,6 @@ $string['ucp_disconnect_title'] = 'Déconnexion {$a}';
 $string['ucp_disconnect_details'] = 'Cette opération déconnectera votre compte Moodle de {$a}. Vous aurez besoin de créer un nom d\'utilisateur et un mot de passe pour vous connecter à Moodle.';
 $string['ucp_title'] = 'Gestion de {$a}';
 $string['ucp_o365accountconnected'] = 'Ce compte Microsoft 365 est déjà associé à un autre compte Moodle.';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

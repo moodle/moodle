@@ -1,6 +1,8 @@
 # Change log
 
 Date          Version   Comment
+2025/04/23    1.4.14    Support export of img/@alt attribute, not img/@longdesc (Dustin Jeffery); only require Moodle 3.9.
+2025/04/15    1.4.13    Fix PHP 8.2 and code styling issues.
 2023/02/15    1.4.12    Fix PHP 8 warnings.
 2021/08/31    1.4.11    Improve question import support.
 2021/08/21    1.4.10    Support import of Word questions, convert GIF images, manage access to import/export facilities.

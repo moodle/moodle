@@ -54,7 +54,7 @@ class provider implements
      * @param collection $items a reference to the collection to use to store the metadata.
      * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // The core_notes components utilises the shared mdl_post table.
         $items->add_database_table(
             'post',
@@ -78,7 +78,7 @@ class provider implements
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
 
         $contextlist = new contextlist();
@@ -95,9 +95,16 @@ class provider implements
                   FROM {context} c
             INNER JOIN {post} p ON p.courseid = c.instanceid AND c.contextlevel = :contextcoursewrittenby
                  WHERE p.module = 'notes'
-                   AND p.usermodified = :usermodified
-                 UNION
-                SELECT c.id
+                   AND p.usermodified = :usermodified";
+
+        $params = [
+            'contextcoursewrittenby'  => CONTEXT_COURSE,
+            'usermodified'            => $userid,
+        ];
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT c.id
                   FROM {context} c
             INNER JOIN {post} p ON p.courseid = c.instanceid AND c.contextlevel = :contextcoursewrittenfor
                  WHERE p.module = 'notes'
@@ -105,8 +112,6 @@ class provider implements
                    AND p.publishstate {$publishstatesql}";
 
         $params = [
-            'contextcoursewrittenby'  => CONTEXT_COURSE,
-            'usermodified'            => $userid,
             'contextcoursewrittenfor' => CONTEXT_COURSE,
             'userid'                  => $userid
         ];

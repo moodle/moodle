@@ -37,8 +37,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Handles upgrading instances of this block.
  *
@@ -46,26 +44,19 @@ defined('MOODLE_INTERNAL') || die();
  * @param object $block
  */
 function xmldb_block_course_summary_upgrade($oldversion, $block) {
-    global $CFG, $DB;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2021121600) {
-        // From Moodle 4.0, this block has been disabled by default in new installations.
-        // If the site has no instances of this block, it will disabled during the upgrading process too.
-        $totalcount = $DB->count_records('block_instances', ['blockname' => 'course_summary']);
-        if ($totalcount == 0) {
-            $DB->set_field('block', 'visible', 0, ['name' => 'course_summary']);
-        }
-
-        upgrade_block_savepoint(true, 2021121600, 'course_summary', false);
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

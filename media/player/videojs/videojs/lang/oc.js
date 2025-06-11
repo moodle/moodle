@@ -16,7 +16,7 @@ videojs.addLanguage('oc', {
   "Progress Bar": "Barra de progression",
   "progress bar timing: currentTime={1} duration={2}": "{1} sus {2}",
   "Fullscreen": "Ecran complèt",
-  "Non-Fullscreen": "Pas en ecran complèt",
+  "Exit Fullscreen": "Pas en ecran complèt",
   "Mute": "Copar lo son",
   "Unmute": "Restablir lo son",
   "Playback Rate": "Velocitat de lectura",
@@ -68,7 +68,7 @@ videojs.addLanguage('oc', {
   "Raised": "Naut",
   "Depressed": "Enfonsat",
   "Uniform": "Unifòrme",
-  "Dropshadow": "Ombrat",
+  "Drop shadow": "Ombrat",
   "Font Family": "Familha de polissa",
   "Proportional Sans-Serif": "Sans-Serif proporcionala",
   "Monospace Sans-Serif": "Monospace Sans-Serif",
@@ -83,5 +83,8 @@ videojs.addLanguage('oc', {
   "Caption Settings Dialog": "Fenèstra de paramètres de legenda",
   "Beginning of dialog window. Escape will cancel and close the window.": "Debuta de la fenèstra. Escapar anullarà e tamparà la fenèstra",
   "End of dialog window.": "Fin de la fenèstra.",
-  "{1} is loading.": "{1} es a cargar."
+  "{1} is loading.": "{1} es a cargar.",
+  "Exit Picture-in-Picture": "Sortir de la vidèo incrustada",
+  "Picture-in-Picture": "Vidèo incrustada",
+  "No content": "Cap de contengut"
 });

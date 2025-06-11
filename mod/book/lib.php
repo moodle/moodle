@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /**
  * Returns list of available numbering types
  * @return array
@@ -39,31 +41,6 @@ function book_get_numbering_types() {
         BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
         BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book')
     );
-}
-
-/**
- * Returns list of available navigation link types.
- *
- * @deprecated since Moodle 4.0. MDL-72376.
- * @return array
- */
-function book_get_nav_types() {
-    debugging("book_get_nav_types() is deprecated. There is no replacement. Navigation is now only next and previous.");
-    require_once(__DIR__.'/locallib.php');
-
-    return array (
-        BOOK_LINK_TOCONLY   => get_string('navtoc', 'mod_book'),
-        BOOK_LINK_IMAGE     => get_string('navimages', 'mod_book'),
-        BOOK_LINK_TEXT      => get_string('navtext', 'mod_book'),
-    );
-}
-
-/**
- * Returns list of available navigation link CSS classes.
- * @return array
- */
-function book_get_nav_classes() {
-    return array ('navtoc', 'navimages', 'navtext');
 }
 
 /**
@@ -166,7 +143,7 @@ function book_reset_userdata($data) {
 
     if (!empty($data->reset_book_tags)) {
         // Loop through the books and remove the tags from the chapters.
-        if ($books = $DB->get_records('book', array('course' => $data->courseid))) {
+        if ($books = $DB->get_records('book', ['course' => $data->courseid])) {
             foreach ($books as $book) {
                 if (!$cm = get_coursemodule_from_instance('book', $book->id)) {
                     continue;
@@ -177,11 +154,10 @@ function book_reset_userdata($data) {
             }
         }
 
-
         $status[] = [
             'component' => get_string('modulenameplural', 'book'),
-            'item' => get_string('tagsdeleted', 'book'),
-            'error' => false
+            'item' => get_string('removeallbooktags', 'book'),
+            'error' => false,
         ];
     }
 
@@ -191,10 +167,11 @@ function book_reset_userdata($data) {
 /**
  * The elements to add the course reset form.
  *
- * @param moodleform $mform
+ * @param MoodleQuickForm $mform
  */
 function book_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'bookheader', get_string('modulenameplural', 'book'));
+    $mform->addElement('static', 'bookdelete', get_string('delete'));
     $mform->addElement('checkbox', 'reset_book_tags', get_string('removeallbooktags', 'book'));
 }
 
@@ -215,14 +192,6 @@ function book_cron () {
  */
 function book_grades($bookid) {
     return null;
-}
-
-/**
- * @deprecated since Moodle 3.8
- */
-function book_scale_used() {
-    throw new coding_exception('book_scale_used() can not be used anymore. Plugins can implement ' .
-        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
@@ -730,12 +699,8 @@ function book_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_book_get_fontawesome_icon_map() {
     return [
-        'mod_book:chapter' => 'fa-bookmark-o',
-        'mod_book:nav_prev' => 'fa-arrow-left',
-        'mod_book:nav_sep' => 'fa-minus',
         'mod_book:add' => 'fa-plus',
-        'mod_book:nav_next' => 'fa-arrow-right',
-        'mod_book:nav_exit' => 'fa-arrow-up',
+        'mod_book:chapter' => 'fa-book-bookmark',
     ];
 }
 

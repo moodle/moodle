@@ -16,14 +16,14 @@ Feature: Edit a users password
     # We need to cancel/submit a form that has been modified.
     And I press "Create user"
 
-  Scenario: Sign out everywhere field is not present if user doesn't have active token
+  Scenario: Log out web apps field is not present if user doesn't have active token
     Given the following "users" exist:
       | username | firstname | lastname | email              |
       | user01   | User      | One      | user01@example.com |
     When I am on the "user01" "user > editing" page logged in as "admin"
-    Then "Sign out everywhere" "field" should not exist
+    Then "Log out of all web apps" "field" should not exist
 
-  Scenario Outline: Sign out everywhere field is present based on expiry of active token
+  Scenario Outline: Log out web apps field is present based on expiry of active token
     Given the following "users" exist:
       | username | firstname | lastname | email              |
       | user01   | User      | One      | user01@example.com |
@@ -34,7 +34,7 @@ Feature: Edit a users password
       | user   | service       | validuntil   |
       | user01 | mytestservice | <validuntil> |
     When I am on the "user01" "user > editing" page logged in as "admin"
-    Then "Sign out everywhere" "field" <shouldornot> exist
+    Then "Log out of all web apps" "field" <shouldornot> exist
     Examples:
       | validuntil     | shouldornot |
       | ## -1 month ## | should not  |

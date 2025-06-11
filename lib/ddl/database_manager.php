@@ -955,7 +955,7 @@ class database_manager {
      * @param array $options
      * @return array keyed by table name with array of difference messages as values
      */
-    public function check_database_schema(xmldb_structure $schema, array $options = null) {
+    public function check_database_schema(xmldb_structure $schema, ?array $options = null) {
         $alloptions = array(
             'extratables' => true,
             'missingtables' => true,

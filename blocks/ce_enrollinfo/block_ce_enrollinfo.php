@@ -56,7 +56,7 @@ class block_ce_enrollinfo extends block_base {
      * @return context
      */
     private function set_course_context() {
-        $this->course_context = context_course::instance($this->course->id);
+        $this->coursecontext = \context_course::instance($this->course->id);
     }
 
     /**

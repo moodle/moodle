@@ -81,10 +81,10 @@ function workshopform_rubric_pluginfile($course, $cm, $context, $filearea, array
  */
 class workshop_rubric_strategy implements workshop_strategy {
 
-    /** @const default number of dimensions to show */
+    /** @var default number of dimensions to show */
     const MINDIMS = 3;
 
-    /** @const number of dimensions to add */
+    /** @var number of dimensions to add */
     const ADDDIMS = 2;
 
     /** @var workshop the parent workshop instance */
@@ -245,7 +245,7 @@ class workshop_rubric_strategy implements workshop_strategy {
      * @param bool $editable
      * @param array $options
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true, $options=array()) {
+    public function get_assessment_form(?moodle_url $actionurl=null, $mode='preview', ?stdclass $assessment=null, $editable=true, $options=array()) {
         global $CFG;    // needed because the included files use it
         global $DB;
         require_once(__DIR__ . '/assessment_form.php');

@@ -16,10 +16,6 @@
 
 namespace assignfeedback_editpdf;
 
-use mod_assign_test_generator;
-use advanced_testcase;
-use ReflectionMethod;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,18 +26,17 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  *
  * @package    assignfeedback_editpdf
  * @category   test
- * @covers     \assignfeedback_editpdf\document_services
  * @copyright  2022 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \assignfeedback_editpdf\document_services
  */
-class document_services_test extends advanced_testcase {
-    use mod_assign_test_generator;
+final class document_services_test extends \advanced_testcase {
+    use \mod_assign_test_generator;
 
     /**
      * Test that the save file method saves the file.
-     * @covers ::save_file()
      */
-    public function test_save_file_saves_the_file() {
+    public function test_save_file_saves_the_file(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -50,12 +45,11 @@ class document_services_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
 
-        $method = new ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_file');
-        $method->setAccessible(true);
+        $method = new \ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_file');
 
         $filearea = document_services::TMP_ROTATED_JPG_FILEAREA;
         $content = 'some random content';
-        $tempfile = make_temp_directory('assignfeedback_editpdf') . DIRECTORY_SEPARATOR . 'mock.file';
+        $tempfile = make_request_directory() . DIRECTORY_SEPARATOR . 'mock.file';
         file_put_contents($tempfile, $content);
 
         // Invoke the method and confirm, that the file is saved.
@@ -70,9 +64,8 @@ class document_services_test extends advanced_testcase {
 
     /**
      * Test that save_rotated_image_file() method saves the file.
-     * @covers ::save_rotated_image_file()
      */
-    public function test_save_rotated_image_file_saves_the_file() {
+    public function test_save_rotated_image_file_saves_the_file(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -81,8 +74,7 @@ class document_services_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
 
-        $method = new ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_rotated_image_file');
-        $method->setAccessible(true);
+        $method = new \ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_rotated_image_file');
 
         $imagecontent = file_get_contents($CFG->dirroot . '/lib/filestorage/tests/fixtures/testimage.png');
         $imageresource = imagecreatefromstring($imagecontent);
@@ -98,10 +90,42 @@ class document_services_test extends advanced_testcase {
     }
 
     /**
-     * Test that get_combined_document_for_attempt() method rotates the image only once.
-     * @covers ::get_combined_document_for_attempt()
+     * Test that save_jpg_to_pdf() method safely rejects a non-JPEG file with a JPEG extension.
      */
-    public function test_get_combined_document_for_attempt_rotates_image() {
+    public function test_save_jpg_to_pdf_rejects_non_jpeg(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
+        ]);
+        $fileplugin = $assign->get_plugin_by_type('assignsubmission', 'file');
+        $generator->create_submission([
+            'userid' => $user->id,
+            'cmid' => $assign->get_course_module()->id,
+            'file' => 'mod/assign/feedback/editpdf/tests/fixtures/heic.jpg',
+        ]);
+        $submission = $assign->get_user_submission($user->id, false);
+        $files = $fileplugin->get_files($submission, $user);
+        $this->assertEquals('image/jpeg', $files['/heic.jpg']->get_mimetype());
+
+        // Invoke the save_jpg_to_pdf method expecting there to be no exceptions.
+        $method = new \ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_jpg_to_pdf');
+        $retfile = $method->invoke(null, $assign, $user->id, 1, $files['/heic.jpg']);
+        $this->assertNull($retfile);
+        $this->assertDebuggingCalled("Could not convert {$files['/heic.jpg']->get_contenthash()} jpg to pdf: " .
+            "TCPDF ERROR: [Image] Unable to get the size of the image: ", DEBUG_ALL);
+    }
+
+    /**
+     * Test that get_combined_document_for_attempt() method rotates the image only once.
+     */
+    public function test_get_combined_document_for_attempt_rotates_image(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 

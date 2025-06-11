@@ -18,7 +18,7 @@ Notifications are coupled with actions and provide instant feedback to the actio
 
 {{< example show_markup="false">}}
 <div class="alert alert-info alert-block fade in foo bar" role="alert" data-aria-autofocus="true" id="yui_3_17_2_1_1599746674354_24">
-    <button type="button" class="close" data-dismiss="alert">×</button>
+    <button type="button" class="btn-close" data-dismiss="alert">×</button>
     Hello
 </div>
 {{< /example >}}

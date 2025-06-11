@@ -31,7 +31,16 @@ use moodleform;
  *
  * @copyright 2020 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @deprecated since 4.5 MDL-79496. Table replaced with a report builder system report.
+ * @todo MDL-79909 This will be deleted in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: null,
+    since: '4.5',
+    reason: 'Filters replaced with a report builder system report',
+    mdl: 'MDL-79496',
+)]
 class token_filter extends moodleform {
 
     /**
@@ -51,9 +60,9 @@ class token_filter extends moodleform {
             $mform->setExpanded('tokenfilter', true);
         }
 
-        // Token.
-        $mform->addElement('text', 'token', get_string('token', 'core_webservice'), ['size' => 32]);
-        $mform->setType('token', PARAM_ALPHANUM);
+        // Token name.
+        $mform->addElement('text', 'name', get_string('tokenname', 'core_webservice'), ['size' => 32]);
+        $mform->setType('name', PARAM_TEXT);
 
         // User selector.
         $attributes = [

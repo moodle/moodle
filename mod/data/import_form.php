@@ -14,7 +14,8 @@ class mod_data_import_form extends moodleform {
         $dataid = $this->_customdata['dataid'];
         $backtourl = $this->_customdata['backtourl'];
 
-        $mform->addElement('filepicker', 'recordsfile', get_string('csvfile', 'data'));
+        $mform->addElement('filepicker', 'recordsfile', get_string('csvfile', 'data'),
+            null, ['accepted_types' => ['application/zip', 'text/csv']]);
 
         $delimiters = csv_import_reader::get_delimiter_list();
         $mform->addElement('select', 'fielddelimiter', get_string('fielddelimiter', 'data'), $delimiters);

@@ -210,12 +210,6 @@ if ($mform && $mform->is_cancelled()) {
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('nextcloud_service', 'tool_oauth2'));
 
-    // IMS Open Badges Connect template.
-    $docs = 'admin/tool/oauth2/issuers/imsobv2p1';
-    $params = ['action' => 'edittemplate', 'type' => 'imsobv2p1', 'sesskey' => sesskey(), 'docslink' => $docs];
-    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-    echo $renderer->single_button($addurl, get_string('imsobv2p1_service', 'tool_oauth2'));
-
     // Linkedin template.
     $docs = 'admin/tool/oauth2/issuers/linkedin';
     $params = ['action' => 'edittemplate', 'type' => 'linkedin', 'sesskey' => sesskey(), 'docslink' => $docs];
@@ -227,6 +221,12 @@ if ($mform && $mform->is_cancelled()) {
     $params = ['action' => 'edittemplate', 'type' => 'clever', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('clever_service', 'tool_oauth2'));
+
+    // MoodleNet template.
+    $docs = 'admin/tool/oauth2/issuers/moodlenet';
+    $params = ['action' => 'edittemplate', 'type' => 'moodlenet', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('moodlenet_service', 'tool_oauth2'));
 
     // Generic issuer.
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);

@@ -41,21 +41,26 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy/provider_test.php');
  *
  * @copyright  Microsoft, Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \assignsubmission_onenote\privacy\provider
  */
-class provider_test extends \mod_assign\privacy\provider_test {
+final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Quick test to make sure that get_metadata returns something.
+     *
+     * @covers \assignsubmission_onenote\privacy\provider::get_metadata
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('assignsubmission_onenote');
-        $collection = \assignsubmission_onenote\privacy\provider::get_metadata($collection);
+        $collection = provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
     }
 
     /**
      * Test that comments are exported for a user.
+     *
+     * @covers \assignsubmission_onenote\privacy\provider::export_submission_user_data
      */
-    public function test_export_submission_user_data() {
+    public function test_export_submission_user_data(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -74,7 +79,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
         // The student should have some text submitted.
         $exportdata = new assign_plugin_request_data($context, $assign, $submission, ['Attempt 1']);
-        \assignsubmission_onenote\privacy\provider::export_submission_user_data($exportdata);
+        provider::export_submission_user_data($exportdata);
         $exporteddata = $writer->get_data(['Attempt 1', get_string('privacy:path', 'assignsubmission_onenote')]);
         $this->assertEquals($assign->get_instance()->id, $exporteddata->assignment);
         $this->assertEquals($submission->id, $exporteddata->submission);
@@ -90,8 +95,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that all comments are deleted for this context.
+     *
+     * @covers \assignsubmission_onenote\privacy\provider::delete_submission_for_context
      */
-    public function test_delete_submission_for_context() {
+    public function test_delete_submission_for_context(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission.
         $course = $this->getDataGenerator()->create_course();
@@ -119,7 +126,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
         // Only need the context and assign object in this plugin for this operation.
         $requestdata = new assign_plugin_request_data($context, $assign);
-        \assignsubmission_onenote\privacy\provider::delete_submission_for_context($requestdata);
+        provider::delete_submission_for_context($requestdata);
         // This checks that there is no content for these submissions.
         $this->assertTrue($plugin->is_empty($submission));
         $this->assertTrue($plugin2->is_empty($submission2));
@@ -132,8 +139,9 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that the comments for a user are deleted.
+     * @covers \assignsubmission_onenote\privacy\provider::delete_submission_for_userid
      */
-    public function test_delete_submission_for_userid() {
+    public function test_delete_submission_for_userid(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission.
         $course = $this->getDataGenerator()->create_course();
@@ -161,7 +169,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
         // Need more data for this operation.
         $requestdata = new assign_plugin_request_data($context, $assign, $submission, [], $user1);
-        \assignsubmission_onenote\privacy\provider::delete_submission_for_userid($requestdata);
+        provider::delete_submission_for_userid($requestdata);
         // This checks that there is no content for the first submission.
         $this->assertTrue($plugin->is_empty($submission));
         // But there is for the second submission.
@@ -176,8 +184,9 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test deletion of all submissions for a context works.
+     * @covers \assignsubmission_onenote\privacy\provider::delete_submissions
      */
-    public function test_delete_submissions() {
+    public function test_delete_submissions(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -204,7 +213,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
         [$plugin1, $submission1] = $this->create_onenote_submission($assign1, $user1, $student1text);
         $student2text = 'Student two\'s text.';
         [$plugin2, $submission2] = $this->create_onenote_submission($assign1, $user2, $student2text);
-        $student3text = 'Student two\'s text.';
+        $student3text = 'Student three\'s text.';
         [$plugin3, $submission3] = $this->create_onenote_submission($assign1, $user3, $student3text);
         // Now for submissions in assignment two.
         $student3text2 = 'Student two\'s text for the second assignment.';
@@ -226,7 +235,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
         $requestdata = new assign_plugin_request_data($context1, $assign1);
         $requestdata->set_userids([$user1->id, $user2->id]);
         $requestdata->populate_submissions_and_grades();
-        \assignsubmission_onenote\privacy\provider::delete_submissions($requestdata);
+        provider::delete_submissions($requestdata);
 
         // There should only be one record left for assignment one.
         $data = $DB->get_records('assignsubmission_onenote', ['assignment' => $assign1->get_instance()->id]);
@@ -268,7 +277,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
             'filearea' => base::ASSIGNSUBMISSION_ONENOTE_FILEAREA,
             'itemid' => $submission->id,
             'filepath' => '/',
-            'filename' => 'OneNote_' . time() . '.zip'
+            'filename' => 'OneNote_' . time() . '.zip',
         ];
         // Save it.
         $fs->create_file_from_string($fileinfo, $submissiontext);

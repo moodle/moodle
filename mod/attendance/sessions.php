@@ -38,13 +38,13 @@ if (optional_param('deletehiddensessions', false, PARAM_TEXT)) {
 if (empty($pageparams->action)) {
     // The form on manage.php can submit with the "choose" option - this should be fixed in the long term,
     // but in the meantime show a useful error and redirect when it occurs.
-    $url = new moodle_url('/mod/attendance/view.php', array('id' => $id));
+    $url = new moodle_url('/mod/attendance/view.php', ['id' => $id]);
     redirect($url, get_string('invalidaction', 'mod_attendance'), 2);
 }
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -53,17 +53,17 @@ require_capability('mod/attendance:manageattendances', $context);
 
 $att = new mod_attendance_structure($att, $cm, $course, $context, $pageparams);
 
-$PAGE->set_url($att->url_sessions(array('action' => $pageparams->action)));
+$PAGE->set_url($att->url_sessions(['action' => $pageparams->action]));
 $PAGE->set_title($course->shortname. ": ".$att->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_cacheable(true);
 $PAGE->navbar->add($att->name);
 
-$formparams = array('course' => $course, 'cm' => $cm, 'modcontext' => $context, 'att' => $att);
+$formparams = ['course' => $course, 'cm' => $cm, 'modcontext' => $context, 'att' => $att];
 switch ($att->pageparams->action) {
     case mod_attendance_sessions_page_params::ACTION_ADD:
-        $url = $att->url_sessions(array('action' => mod_attendance_sessions_page_params::ACTION_ADD));
+        $url = $att->url_sessions(['action' => mod_attendance_sessions_page_params::ACTION_ADD]);
         $mform = new \mod_attendance\form\addsession($url, $formparams);
 
         if ($mform->is_cancelled()) {
@@ -93,7 +93,7 @@ switch ($att->pageparams->action) {
     case mod_attendance_sessions_page_params::ACTION_UPDATE:
         $sessionid = required_param('sessionid', PARAM_INT);
 
-        $url = $att->url_sessions(array('action' => mod_attendance_sessions_page_params::ACTION_UPDATE, 'sessionid' => $sessionid));
+        $url = $att->url_sessions(['action' => mod_attendance_sessions_page_params::ACTION_UPDATE, 'sessionid' => $sessionid]);
         $formparams['sessionid'] = $sessionid;
         $mform = new \mod_attendance\form\updatesession($url, $formparams);
 
@@ -121,7 +121,7 @@ switch ($att->pageparams->action) {
         $confirm   = optional_param('confirm', null, PARAM_INT);
 
         if (isset($confirm) && confirm_sesskey()) {
-            $att->delete_sessions(array($sessionid));
+            $att->delete_sessions([$sessionid]);
             attendance_update_users_grade($att);
             redirect($att->url_manage(), get_string('sessiondeleted', 'attendance'));
         }
@@ -134,7 +134,7 @@ switch ($att->pageparams->action) {
         $message .= html_writer::empty_tag('br');
         $message .= $sessinfo->description;
 
-        $params = array('action' => $att->pageparams->action, 'sessionid' => $sessionid, 'confirm' => 1, 'sesskey' => sesskey());
+        $params = ['action' => $att->pageparams->action, 'sessionid' => $sessionid, 'confirm' => 1, 'sesskey' => sesskey()];
 
         echo $OUTPUT->header();
         echo $OUTPUT->confirm($message, $att->url_sessions($params), $att->url_manage());
@@ -168,8 +168,8 @@ switch ($att->pageparams->action) {
         }
 
         $sessionsids = implode('_', $sessid);
-        $params = array('action' => $att->pageparams->action, 'sessionsids' => $sessionsids,
-                        'confirm' => 1, 'sesskey' => sesskey());
+        $params = ['action' => $att->pageparams->action, 'sessionsids' => $sessionsids,
+                        'confirm' => 1, 'sesskey' => sesskey(), ];
 
         echo $OUTPUT->header();
         echo $OUTPUT->confirm($message, $att->url_sessions($params), $att->url_manage());
@@ -181,7 +181,7 @@ switch ($att->pageparams->action) {
 
         $slist = !empty($sessid) ? implode('_', $sessid) : '';
 
-        $url = $att->url_sessions(array('action' => mod_attendance_sessions_page_params::ACTION_CHANGE_DURATION));
+        $url = $att->url_sessions(['action' => mod_attendance_sessions_page_params::ACTION_CHANGE_DURATION]);
         $formparams['ids'] = $slist;
         $mform = new mod_attendance\form\duration($url, $formparams);
 
@@ -214,7 +214,7 @@ switch ($att->pageparams->action) {
         $a->date = userdate($course->startdate);
         $message = get_string('confirmdeletehiddensessions', 'attendance', $a);
 
-        $params = array('action' => $att->pageparams->action, 'confirm' => 1, 'sesskey' => sesskey());
+        $params = ['action' => $att->pageparams->action, 'confirm' => 1, 'sesskey' => sesskey()];
         echo $OUTPUT->header();
         echo $OUTPUT->confirm($message, $att->url_sessions($params), $att->url_manage());
         echo $OUTPUT->footer();

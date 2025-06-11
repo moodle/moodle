@@ -20,6 +20,12 @@ Feature: A teacher can set a time limit for a lesson
     And the following "activities" exist:
       | activity | course | name        |
       | lesson   | C1     | Test lesson |
+    And the following "mod_lesson > page" exist:
+      | lesson      | qtype   | title            | content                     |
+      | Test lesson | content | Lesson page name | Single lesson page contents |
+    And the following "mod_lesson > answer" exist:
+      | page             | answer        | jumpto    |
+      | Lesson page name | Single button | This page |
     And I am on the "Test lesson" "lesson activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -27,12 +33,6 @@ Feature: A teacher can set a time limit for a lesson
       | timelimit[timeunit] | 1  |
       | timelimit[number]   | 10 |
     And I press "Save and display"
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | Lesson page name |
-      | Page contents | Single lesson page contents |
-      | Description | Single button |
-    And I press "Save page"
     When I am on the "Test lesson" "lesson activity" page logged in as student1
     Then I should see "You have 10 secs to finish the lesson."
     And I wait "3" seconds

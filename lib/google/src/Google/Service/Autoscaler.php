@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler extends Google_Service
 {
   /** View and manage your Google Compute Engine resources. */
@@ -309,6 +310,7 @@ class Google_Service_Autoscaler extends Google_Service
  *   $autoscalers = $autoscalerService->autoscalers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_Autoscalers_Resource extends Google_Service_Resource
 {
 
@@ -423,6 +425,7 @@ class Google_Service_Autoscaler_Autoscalers_Resource extends Google_Service_Reso
  *   $zoneOperations = $autoscalerService->zoneOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_ZoneOperations_Resource extends Google_Service_Resource
 {
 
@@ -488,6 +491,7 @@ class Google_Service_Autoscaler_ZoneOperations_Resource extends Google_Service_R
  *   $zones = $autoscalerService->zones;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_Zones_Resource extends Google_Service_Resource
 {
 
@@ -513,6 +517,7 @@ class Google_Service_Autoscaler_Zones_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_Autoscaler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -594,6 +599,7 @@ class Google_Service_Autoscaler_Autoscaler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_AutoscalerListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -631,6 +637,7 @@ class Google_Service_Autoscaler_AutoscalerListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_AutoscalingPolicy extends Google_Collection
 {
   protected $collection_key = 'customMetricUtilizations';
@@ -697,6 +704,7 @@ class Google_Service_Autoscaler_AutoscalingPolicy extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_AutoscalingPolicyCpuUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -714,6 +722,7 @@ class Google_Service_Autoscaler_AutoscalingPolicyCpuUtilization extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_AutoscalingPolicyCustomMetricUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -749,6 +758,7 @@ class Google_Service_Autoscaler_AutoscalingPolicyCustomMetricUtilization extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_AutoscalingPolicyLoadBalancingUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -766,6 +776,7 @@ class Google_Service_Autoscaler_AutoscalingPolicyLoadBalancingUtilization extend
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_DeprecationStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -819,6 +830,7 @@ class Google_Service_Autoscaler_DeprecationStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1028,6 +1040,7 @@ class Google_Service_Autoscaler_Operation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1047,6 +1060,7 @@ class Google_Service_Autoscaler_OperationError extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1082,6 +1096,7 @@ class Google_Service_Autoscaler_OperationErrorErrors extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1137,6 +1152,7 @@ class Google_Service_Autoscaler_OperationList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1174,6 +1190,7 @@ class Google_Service_Autoscaler_OperationWarnings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1200,6 +1217,7 @@ class Google_Service_Autoscaler_OperationWarningsData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_Zone extends Google_Collection
 {
   protected $collection_key = 'maintenanceWindows';
@@ -1301,6 +1319,7 @@ class Google_Service_Autoscaler_Zone extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_ZoneList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1356,6 +1375,7 @@ class Google_Service_Autoscaler_ZoneList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Autoscaler_ZoneMaintenanceWindows extends Google_Model
 {
   protected $internal_gapi_mappings = array(

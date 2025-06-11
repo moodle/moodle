@@ -31,6 +31,9 @@ global $CFG;
 
 require_once("$CFG->libdir/form/advcheckbox.php");
 
+// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase -- Parent class uses uppercase variable names.
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod -- Parent class uses uppercase method names.
+
 /**
  * Calendar form element. Provides checkbox to enable/disable calendar and options for sync behavior.
  */
@@ -50,15 +53,15 @@ class calendar extends \HTML_QuickForm_advcheckbox {
     /**
      * Constructor, accessed through __call constructor workaround.
      *
-     * @param string $elementName The name of the element.
-     * @param string $elementLabel The label of the element.
+     * @param string $elementname The name of the element.
+     * @param string $elementlabel The label of the element.
      * @param string $text Text that appears after the checkbox.
      * @param array $attributes Array of checkbox attributes.
      * @param array $customdata Array of form custom data.
      */
-    public function calendarconstruct($elementName = null, $elementLabel = null, $text = null, $attributes = null,
+    public function calendarconstruct($elementname = null, $elementlabel = null, $text = null, $attributes = null,
         $customdata = []) {
-        parent::__construct($elementName, $elementLabel, $text, $attributes, null);
+        parent::__construct($elementname, $elementlabel, $text, $attributes, null);
         $this->customdata = $customdata;
         $this->_type = 'advcheckbox';
     }
@@ -112,7 +115,7 @@ class calendar extends \HTML_QuickForm_advcheckbox {
      *
      * @return string html for help button
      */
-    function getHelpButton(){
+    public function getHelpButton() {
         return $this->_helpbutton;
     }
 
@@ -141,8 +144,8 @@ class calendar extends \HTML_QuickForm_advcheckbox {
         $checkboxonclick = 'if($(this).is(\':checked\')){$(this).parent().siblings().show();}else{$(this).parent().siblings()'.
             '.hide();}';
         $html = '<div>';
-        $html .= '<input type="checkbox" name="'.$checkboxname.'" onclick="'.$checkboxonclick.'" id="'.$checkboxid.'" '.
-            $checkboxchecked.'/>';
+        $html .= '<input type="checkbox" name="' . $checkboxname . '" onclick="' . $checkboxonclick . '" id="' . $checkboxid .
+                '" class="mr-2" ' . $checkboxchecked . '/>';
         $html .= \html_writer::label($this->_text, $checkboxid);
         $html .= '</div>';
 
@@ -152,8 +155,8 @@ class calendar extends \HTML_QuickForm_advcheckbox {
         $availableo365calendars = (isset($this->customdata['o365calendars'])) ? $this->customdata['o365calendars'] : [];
         $availcalid = $this->getAttribute('id').'_syncwith';
         $availcalname = $this->getName().'[syncwith]';
-        $html .= '<div style="'.$stylestr.'">';
-        $html .= \html_writer::label(get_string('ucp_syncwith_title', 'local_o365'), $availcalid);
+        $html .= '<div style="'.$stylestr.'" class="mb-2">';
+        $html .= \html_writer::label(get_string('ucp_syncwith_title', 'local_o365'), $availcalid, false, ['class' => 'mr-2']);
         $calselectopts = [];
         foreach ($availableo365calendars as $i => $info) {
             $calselectopts[$info['id']] = $info['name'];
@@ -176,10 +179,13 @@ class calendar extends \HTML_QuickForm_advcheckbox {
         $syncbehavid = $this->getAttribute('id').'_syncbehav';
         $syncbehavname = $this->getName().'[syncbehav]';
         $html .= '<div style="'.$stylestr.'">';
-        $html .= \html_writer::label(get_string('ucp_syncdir_title', 'local_o365'), $syncbehavid);
+        $html .= \html_writer::label(get_string('ucp_syncdir_title', 'local_o365'), $syncbehavid, false, ['class' => 'mr-2']);
         $html .= \html_writer::select($syncbehavior, $syncbehavname, $this->syncbehav, false, ['id' => $syncbehavid]);
         $html .= '</div>';
 
         return $html;
     }
 }
+
+// phpcs:enable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+// phpcs:enable moodle.NamingConventions.ValidFunctionName.LowercaseMethod

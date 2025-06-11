@@ -24,26 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfeedback'] = 'Přidat zpětnou vazbu';
+$string['addfeedbackhelp'] = 'Pokud chcete přidat svou zpětnou vazbu pro příspěvky studentů ve OneNote, klikněte na tlačítko výše. Později se sem můžete vrátit a uložit svou práci zpět do Moodlu.';
 $string['configmaxbytes'] = 'Maximální velikost OneNote';
 $string['countfiles'] = 'Soubory OneNote: {$a}';
 $string['default'] = 'Ve výchozím nastavení povoleno';
 $string['default_help'] = 'Je-li nastaveno, tato metoda zpětné vazby bude ve výchozím nastavení povolena pro všechny nové úkoly.';
 $string['enabled'] = 'Zpětná vazba OneNote';
 $string['enabled_help'] = 'Pokud je povoleno, učitel může při klasifikaci úkolů nahrávat stránky OneNote se zpětnou vazbou. Učitelé mohou přidávat anotace ke studentským příspěvkům ve formě OneNote  nebo nahrát zcela novou stránku OneNote.';
-$string['onenote'] = 'OneNote zpětné vazby';
+$string['feedbackdownloadfailed'] = 'Nelze stáhnout zpětnou vazbu z OneNote. Zkuste to znovu.';
+$string['feedbacklimitexceed'] = 'Vaše zpětná vazba překračuje povolený limit velikosti.';
+$string['feedbacknotstarted'] = 'Přidejte svou zpětnou vazbu pomocí OneNote a potom uložte změny.';
 $string['filesadded'] = 'Přidané zpětné vazby OneNote: {$a}';
 $string['maxbytes'] = 'Maximální velikost balíčku OneNote';
 $string['maxfiles'] = 'Maximální počet nahraných OneNote';
 $string['maximumsize'] = 'Maximální velikost balíčku OneNote';
 $string['moreusers'] = '{$a} více…';
 $string['nochanges'] = 'Žádné změny';
+$string['notsignedin'] = 'Před pokusem o uložení změn se nejprve přihlaste do OneNote.';
+$string['onenote'] = 'OneNote zpětné vazby';
 $string['pluginname'] = 'Zpětná vazba OneNote';
-$string['addfeedback'] = 'Přidat zpětnou vazbu';
-$string['addfeedbackhelp'] = 'Pokud chcete přidat svou zpětnou vazbu pro příspěvky studentů ve OneNote, klikněte na tlačítko výše. Později se sem můžete vrátit a uložit svou práci zpět do Moodlu.';
 $string['signinhelp1'] = 'Klikněte na tlačítko výše a přihlaste se do OneNote, abyste ve OneNote mohli přidat zpětnou vazbu k příspěvkům studentů.';
 $string['signinhelp2'] = 'Kliknutím na tlačítko výše se přihlásíte do OneNote, pokud chcete zpětnou vazbu zobrazit tam.';
 $string['viewfeedback'] = 'Zobrazit zpětnou vazbu';
-$string['feedbackdownloadfailed'] = 'Nelze stáhnout zpětnou vazbu z OneNote. Zkuste to znovu.';
-$string['notsignedin'] = 'Před pokusem o uložení změn se nejprve přihlaste do OneNote.';
-$string['feedbacknotstarted'] = 'Přidejte svou zpětnou vazbu pomocí OneNote a potom uložte změny.';
-$string['feedbacklimitexceed'] = 'Vaše zpětná vazba překračuje povolený limit velikosti.';

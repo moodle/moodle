@@ -79,7 +79,7 @@ trait logging_trait {
     protected function log_start($message, $depth = 0) {
         $this->log($message, $depth);
 
-        if (defined('MDL_PERFTOLOG') && MDL_PERFTOLOG) {
+        if (MDL_PERFTOLOG) {
             $this->tracestats->$depth = [
                 'mem' => memory_get_usage(),
                 'time' => microtime(),

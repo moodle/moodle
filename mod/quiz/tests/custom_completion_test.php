@@ -24,8 +24,8 @@ use core_completion\cm_completion_details;
 use grade_item;
 use mod_quiz\completion\custom_completion;
 use question_engine;
-use quiz;
-use quiz_attempt;
+use mod_quiz\quiz_settings;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_quiz\completion\custom_completion
  */
-class custom_completion_test extends advanced_testcase {
+final class custom_completion_test extends advanced_testcase {
 
     /**
      * Setup function for all tests.
@@ -113,7 +113,7 @@ class custom_completion_test extends advanced_testcase {
      * @param array $attemptoptions ['quiz'] => object, ['student'] => object, ['tosubmit'] => array, ['attemptnumber'] => int
      */
     private function do_attempt_quiz(array $attemptoptions) {
-        $quizobj = quiz::create($attemptoptions['quiz']->id);
+        $quizobj = quiz_settings::create((int) $attemptoptions['quiz']->id);
 
         // Start the passing attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -139,7 +139,7 @@ class custom_completion_test extends advanced_testcase {
      * Test checking the completion state of a quiz base on core's completionpassgrade criteria.
      * The quiz requires a passing grade to be completed.
      */
-    public function test_completionpass() {
+    public function test_completionpass(): void {
         list($students, $quiz, $cm) = $this->setup_quiz_for_testing_completion([
             'nbstudents' => 2,
             'qtype' => 'numerical',
@@ -194,7 +194,7 @@ class custom_completion_test extends advanced_testcase {
      * @covers ::get_state
      * @covers ::get_custom_rule_descriptions
      */
-    public function test_completionexhausted() {
+    public function test_completionexhausted(): void {
         list($students, $quiz, $cm) = $this->setup_quiz_for_testing_completion([
             'nbstudents' => 2,
             'qtype' => 'numerical',
@@ -272,7 +272,7 @@ class custom_completion_test extends advanced_testcase {
      * @covers ::get_state
      * @covers ::get_custom_rule_descriptions
      */
-    public function test_completionminattempts() {
+    public function test_completionminattempts(): void {
         list($students, $quiz, $cm) = $this->setup_quiz_for_testing_completion([
             'nbstudents' => 1,
             'qtype' => 'essay',
@@ -324,7 +324,7 @@ class custom_completion_test extends advanced_testcase {
      *
      * @covers ::get_defined_custom_rules
      */
-    public function test_get_defined_custom_rules() {
+    public function test_get_defined_custom_rules(): void {
         $rules = custom_completion::get_defined_custom_rules();
         $this->assertCount(2, $rules);
         $this->assertEquals(
@@ -338,7 +338,7 @@ class custom_completion_test extends advanced_testcase {
      *
      * @covers \update_moduleinfo
      */
-    public function test_update_moduleinfo() {
+    public function test_update_moduleinfo(): void {
         $this->setAdminUser();
         // We need lite cm object not a full cm because update_moduleinfo is not allow some properties to be updated.
         list($students, $quiz, $cm, $litecm) = $this->setup_quiz_for_testing_completion([
@@ -463,14 +463,15 @@ class custom_completion_test extends advanced_testcase {
     /**
      * Set up moduleinfo object sample data for quiz instance.
      *
-     * @param object $cm course-module instance
-     * @param object $quiz quiz instance data.
-     * @param object $course Course related data.
+     * @param cm_info $cm course-module instance
+     * @param stdClass $quiz quiz instance data.
+     * @param stdClass $course Course related data.
      * @param int $gradepass Grade to pass and completed completion.
      * @param string $grademethod grade attempt method.
-     * @return \stdClass
+     * @return stdClass
      */
-    private function prepare_module_info(object $cm, object $quiz, object $course, int $gradepass, string $grademethod): \stdClass {
+    private function prepare_module_info(cm_info $cm, stdClass $quiz, stdClass $course,
+            int $gradepass, string $grademethod): \stdClass {
         $grouping = $this->getDataGenerator()->create_grouping(['courseid' => $course->id]);
         // Module test values.
         $moduleinfo = new \stdClass();
@@ -484,6 +485,7 @@ class custom_completion_test extends advanced_testcase {
         $moduleinfo->modulename = 'quiz';
         $moduleinfo->quizpassword = '';
         $moduleinfo->cmidnumber = '';
+        $moduleinfo->maxmarksopen = 1;
         $moduleinfo->marksopen = 1;
         $moduleinfo->visible = 1;
         $moduleinfo->visibleoncoursepage = 1;

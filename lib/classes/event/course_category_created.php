@@ -72,15 +72,6 @@ class course_category_created extends base {
         return "The user with id '$this->userid' created the course category with id '$this->objectid'.";
     }
 
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'category', 'add', 'editcategory.php?id=' . $this->objectid, $this->objectid);
-    }
-
     public static function get_objectid_mapping() {
         // Categories are not backed up, so no need to map them on restore.
         return array('db' => 'course_categories', 'restore' => base::NOT_MAPPED);

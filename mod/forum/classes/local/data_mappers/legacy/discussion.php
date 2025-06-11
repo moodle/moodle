@@ -42,7 +42,7 @@ class discussion {
      * @param discussion_entity[] $authors The authors to convert.
      * @return stdClass[]
      */
-    public function to_legacy_objects(array $discussions) : array {
+    public function to_legacy_objects(array $discussions): array {
         return array_map(function(discussion_entity $discussion) {
             return (object) [
                 'id' => $discussion->get_id(),
@@ -69,7 +69,7 @@ class discussion {
      * @param discussion_entity $discussion The discussion to convert.
      * @return stdClass
      */
-    public function to_legacy_object(discussion_entity $discussion) : stdClass {
+    public function to_legacy_object(discussion_entity $discussion): stdClass {
         return $this->to_legacy_objects([$discussion])[0];
     }
 }

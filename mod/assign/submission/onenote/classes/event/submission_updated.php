@@ -25,9 +25,7 @@
 
 namespace assignsubmission_onenote\event;
 
-use coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * The assignsubmission_onenote submission_updated event class.
@@ -71,12 +69,12 @@ class submission_updated extends \mod_assign\event\submission_updated {
      * Custom validation.
      *
      * @return void
-     * @throws coding_exception
+     * @throws moodle_exception
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['filesubmissioncount'])) {
-            throw new coding_exception('The \'filesubmissioncount\' value must be set in other.');
+            throw new moodle_exception('erroremptyothervalue', 'assignsubmission_onenote');
         }
     }
 }

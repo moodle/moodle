@@ -81,7 +81,7 @@ class coursecat_proxy implements proxy_interface {
      *
      * @return \core_course_category
      */
-    public function get_proxied_instance() : \core_course_category {
+    public function get_proxied_instance(): \core_course_category {
         if (!$this->category) {
             $this->category = \core_course_category::get($this->id, IGNORE_MISSING, true);
         }

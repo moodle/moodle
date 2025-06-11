@@ -40,7 +40,7 @@ class test_indicator_discrete extends \core_analytics\local\indicator\discrete {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         // Using a string that exists and contains a corresponding '_help' string.
         return new \lang_string('allowstealthmodules');
     }

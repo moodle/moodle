@@ -22,16 +22,9 @@
     margin-bottom: 4px;
 }
 
-.mform .form-inline {
-    .form-control,
-    .custom-select {
-        max-width: 100%;
-    }
-    textarea.form-control {
-        width: 100%;
-    }
-    .form-group {
-        margin: 0.1rem 0.25rem 0.1rem 0;
+.mform .d-flex {
+    .fitem {
+        margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
     }
     br + label {
         justify-content: flex-start;
@@ -40,9 +33,21 @@
     }
 }
 
-.unresponsive.mform .form-inline,
-.unresponsive.mform .form-inline label {
-    display: inline-flex;
+// Override the default bootstrap form-control width.
+.d-flex {
+    & > .form-control {
+        width: auto;
+        max-width: 100%;
+    }
+    & > textarea.form-control {
+        width: 100%;
+    }
+}
+
+// Override the default bootstrap custom-select width.
+.custom-select {
+    width: auto;
+    max-width: 100%;
 }
 
 #jump-to-activity.custom-select {
@@ -91,14 +96,6 @@ input#id_externalurl {
     display: block;
 }
 
-.form-item .form-inline {
-    display: inline;
-}
-
-.form-inline label:not(.sr-only):not(.accesshide) + select {
-    margin-left: 0.5rem;
-}
-
 .formsettingheading .form-horizontal {
     color: $text-muted;
 }
@@ -137,7 +134,7 @@ input#id_externalurl {
     font-size: $font-size-lg;
     line-height: $line-height-base * 2;
     border: 0;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $forms-adminsettings-border-bottom-color;
 }
 
 // I think this could be avoided (or at least tidied up) ifr
@@ -203,10 +200,6 @@ div#dateselector-calendar-panel {
     z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
 }
 
-fieldset.coursesearchbox label {
-    display: inline;
-}
-
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
@@ -219,13 +212,9 @@ fieldset.coursesearchbox label {
     display: none;
 }
 
-.availability-field {
-    label {
-        display: inline-flex;
-    }
-    .availability-group label {
-        vertical-align: top;
-    }
+.availability-field img {
+    width: 16px;
+    height: 16px;
 }
 
 .availability-eye {
@@ -279,14 +268,14 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-suggestions {
     position: absolute;
-    background-color: white;
+    background-color: $forms-autocomplete-bg;
     border: $border-width solid $input-border-color;
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
     margin: $dropdown-spacer 0 0;
     padding: $dropdown-padding-y 0;
-    z-index: 2;
+    z-index: 3;
 }
 
 .form-autocomplete-suggestions li {
@@ -295,11 +284,26 @@ fieldset.coursesearchbox label {
     margin: 0;
     cursor: pointer;
     color: $body-color;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    white-space: normal;
     &:hover,
     &:focus,
     &[aria-selected="true"] {
         background-color: $dropdown-link-active-bg;
         color: $dropdown-link-active-color;
+    }
+    &[aria-disabled="true"] {
+        pointer-events: none;
+        color: $custom-select-disabled-color;
+        background-color: $custom-select-disabled-bg;
+    }
+    &.suggestions-heading {
+        pointer-events: none;
+        font-weight: bold;
+        color: $body-color;
+        background-color: $body-bg;
+        padding-left: calc(#{$dropdown-item-padding-x} / 2);
     }
     &::before {
         content: "\200B";
@@ -388,21 +392,7 @@ textarea[data-auto-rows] {
     }
 }
 
-/** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
-.form-inline {
-    @include media-breakpoint-up(md) {
-        .col-md-9,
-        .col-md-3 {
-            label {
-                margin-left: 1rem;
-            }
-            margin-bottom: 1rem;
-            width: auto;
-        }
-    }
-}
-
-[data-fieldtype="modgrade"] .form-group {
+[data-fieldtype="modgrade"] .fitem {
     padding-bottom: $input-padding-y;
 }
 
@@ -426,9 +416,10 @@ textarea[data-auto-rows] {
 }
 
 // The autocomplete popup needs a display:block container to correctly position to popup.
-.form-inline[data-fieldtype="autocomplete"],
-.form-inline[data-fieldtype="tags"] {
-    display: block;
+.felement[data-fieldtype="autocomplete"],
+.felement[data-fieldtype="tags"] {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+    position: static;
 }
 
 // Show editor at 100% width by default.
@@ -439,18 +430,6 @@ textarea[data-auto-rows] {
 @include media-breakpoint-up(md) {
     .mform fieldset .fcontainer.collapseable .col-form-label {
         padding-left: ($spacer * 2.5);
-    }
-}
-
-@include media-breakpoint-up(sm) {
-    .mform {
-        .form-inline {
-            .fdefaultcustom {
-                label {
-                    justify-content: initial;
-                }
-            }
-        }
     }
 }
 
@@ -497,6 +476,34 @@ textarea[data-auto-rows] {
             .form-inset-item {
                 right: 0;
             }
+        }
+    }
+}
+
+// For form elements aligned to the left with no padding (e.g. Completion conditions activity settings).
+.form-check {
+    &.left-indented {
+        padding-left: 0;
+    }
+}
+
+// Remove the margins that come with the icon.
+.toggle-sensitive-btn .icon {
+    margin-right: 0;
+}
+
+// Input group elements display border radius depending on the proximity of other elements.
+// This corrects border radius of the input when 'small screen only' mode hides the toggle button.
+@media (min-width: 576px) {
+    .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > {
+        .form-control:not(:last-child) {
+            @include border-radius($input-border-radius);
+        }
+        .form-control-lg:not(:last-child) {
+            @include border-radius($input-border-radius-lg);
+        }
+        .input-group-append .toggle-sensitive-btn {
+            display: none;
         }
     }
 }

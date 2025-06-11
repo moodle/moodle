@@ -29,12 +29,12 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_date_test extends \restore_date_testcase {
+final class restore_date_test extends \restore_date_testcase {
 
     /**
      * Test restore dates.
      */
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB, $USER;
 
         $gg = $this->getDataGenerator()->get_plugin_generator('mod_forum');

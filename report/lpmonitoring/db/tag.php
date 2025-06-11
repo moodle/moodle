@@ -25,11 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tagareas = array(
-    array(
+$tagareas = [
+    [
         'itemtype' => 'competency_plan',
         'component' => 'report_lpmonitoring',
         'callback' => 'report_lpmonitoring_get_tagged_records',
         'callbackfile' => '/report/lpmonitoring/locallib.php',
-    ),
-);
+    ],
+];

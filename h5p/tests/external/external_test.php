@@ -32,11 +32,9 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use core_h5p\external;
-use core_h5p\file_storage;
 use core_h5p\local\library\autoloader;
 
 /**
@@ -48,7 +46,7 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.8
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     protected function setUp(): void {
         parent::setUp();
@@ -58,7 +56,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * test_get_trusted_h5p_file description
      */
-    public function test_get_trusted_h5p_file() {
+    public function test_get_trusted_h5p_file(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -86,7 +84,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the WS.
         $result = external::get_trusted_h5p_file($url->out(false), 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on files and none on warnings.
         $this->assertCount(1, $result['files']);
         $this->assertCount(0, $result['warnings']);
@@ -103,14 +101,14 @@ class external_test extends externallib_advanced_testcase {
     /**
      * test_h5p_invalid_url description
      */
-    public function test_h5p_invalid_url() {
+    public function test_h5p_invalid_url(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
         // Create an empty url.
         $urlempty = '';
         $result = external::get_trusted_h5p_file($urlempty, 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on warnings and none on files.
         $this->assertCount(0, $result['files']);
         $this->assertCount(1, $result['warnings']);
@@ -121,7 +119,7 @@ class external_test extends externallib_advanced_testcase {
         // Create a non-local URL.
         $urlnonlocal = 'http://www.google.com/pluginfile.php/644/block_html/content/arithmetic-quiz-1-1.h5p';
         $result = external::get_trusted_h5p_file($urlnonlocal, 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on warnings and none on files.
         $this->assertCount(0, $result['files']);
         $this->assertCount(1, $result['warnings']);
@@ -133,7 +131,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * test_h5p_file_not_found description
      */
-    public function test_h5p_file_not_found() {
+    public function test_h5p_file_not_found(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -149,7 +147,7 @@ class external_test extends externallib_advanced_testcase {
         );
         // Call the ws.
         $result = external::get_trusted_h5p_file($filenotfoundurl->out(), 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on warnings and none on files.
         $this->assertCount(0, $result['files']);
         $this->assertCount(1, $result['warnings']);
@@ -162,7 +160,7 @@ class external_test extends externallib_advanced_testcase {
      * Test the request to get_trusted_h5p_file
      * using webservice/pluginfile.php as url param.
      */
-    public function test_allow_webservice_pluginfile_in_url_param() {
+    public function test_allow_webservice_pluginfile_in_url_param(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -189,7 +187,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the WS.
         $result = external::get_trusted_h5p_file($url->out(), 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
 
         // Check info export file to compare with the ws's results.
         $this->assertEquals($deployedfile['filepath'], $result['files'][0]['filepath']);
@@ -204,7 +202,7 @@ class external_test extends externallib_advanced_testcase {
      * Test the request to get_trusted_h5p_file
      * using tokenpluginfile.php as url param.
      */
-    public function test_allow_tokenluginfile_in_url_param() {
+    public function test_allow_tokenluginfile_in_url_param(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -234,7 +232,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the WS.
         $result = external::get_trusted_h5p_file($url->out(false), 0, 0, 0, 0);
-        $result = \external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
+        $result = \core_external\external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on files and none on warnings.
         $this->assertCount(1, $result['files']);
         $this->assertCount(0, $result['warnings']);

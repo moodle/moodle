@@ -10,42 +10,36 @@ Feature: Completion pass grade  view activity completion in the forum activity
       | student1 | Vinnie    | Student1 | student1@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "course enrolments" exist:
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Settings" in current page administration
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
     And the following "activity" exists:
       | activity | forum         |
       | course   | C1            |
       | idnumber | mh1           |
       | name     | Music history |
-    And I am on the "Music history" "forum activity editing" page
+    And I am on the "Music history" "forum activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Whole forum grading > Type            | Point                                             |
-      | Whole forum grading > Grade to pass   | 50                                                |
-      | Completion tracking                   | Show activity as complete when conditions are met |
-      | Require view                          | 1                                                 |
-      | Require grade                         | Whole forum                                       |
-      | completionpostsenabled                | 1                                                 |
-      | completionpassgrade                   | 1                                                 |
-      | completionposts                       | 2                                                 |
-      | completiondiscussionsenabled          | 1                                                 |
-      | completiondiscussions                 | 1                                                 |
-      | completionrepliesenabled              | 1                                                 |
-      | completionreplies                     | 1                                                 |
+      | Whole forum grading > Type            | Point       |
+      | Whole forum grading > Grade to pass   | 50          |
+      | Add requirements                      | 1           |
+      | View the activity                     | 1           |
+      | Receive a grade                       | 1           |
+      | Passing grade                         | 1           |
+      | completiongradeitemnumber             | Whole forum |
+      | completionpostsenabled                | 1           |
+      | completionposts                       | 2           |
+      | completiondiscussionsenabled          | 1           |
+      | completiondiscussions                 | 1           |
+      | completionrepliesenabled              | 1           |
+      | completionreplies                     | 1           |
     And I press "Save and display"
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Forum module displays completion conditions to teachers
     Given I am on the "Music history" "forum activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Start discussions: 1" completion condition
@@ -55,7 +49,7 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And "Music history" should have the "Receive a passing grade" completion condition
 
   @javascript
-  Scenario: View automatic completion items as a failing student
+  Scenario: Student cannot complete a forum activity if one of the conditions are not met
     Given I am on the "Music history" "forum activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Start discussions: 1" completion condition of "Music history" is displayed as "todo"
@@ -99,7 +93,7 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
 
   @javascript
-  Scenario: View automatic completion items as a passing student
+  Scenario: Student can complete a forum activity when all conditions are met
     Given I am on the "Music history" "forum activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Start discussions: 1" completion condition of "Music history" is displayed as "todo"

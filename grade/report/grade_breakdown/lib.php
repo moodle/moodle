@@ -38,6 +38,11 @@ class grade_report_grade_breakdown extends grade_report {
     // id of the current grade chosen
     var $currentgrade;
 
+    // BEGIN LSU To avoid "creation of dynamic property" warning
+    public $caps;
+    public $grade_selector;
+    // END LSU To avoid "creation of dynamic property" warning
+
     /**
      * This is a view only report
      */

@@ -44,7 +44,7 @@ class database_logger implements task_logger {
      *
      * @return  bool
      */
-    public static function is_configured() : bool {
+    public static function is_configured(): bool {
         return true;
     }
 
@@ -91,7 +91,7 @@ class database_logger implements task_logger {
      *
      * @return  bool
      */
-    public static function has_log_report() : bool {
+    public static function has_log_report(): bool {
         return true;
     }
 
@@ -101,7 +101,7 @@ class database_logger implements task_logger {
      * @param   string      $classname The task class to fetch for
      * @return  \moodle_url
      */
-    public static function get_url_for_task_class(string $classname) : \moodle_url {
+    public static function get_url_for_task_class(string $classname): \moodle_url {
         global $CFG;
 
         return new \moodle_url("/{$CFG->admin}/tasklogs.php", [

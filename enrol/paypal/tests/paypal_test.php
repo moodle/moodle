@@ -24,7 +24,7 @@ namespace enrol_paypal;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class paypal_test extends \advanced_testcase {
+final class paypal_test extends \advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
@@ -40,14 +40,14 @@ class paypal_test extends \advanced_testcase {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
 
-    public function test_basics() {
+    public function test_basics(): void {
         $this->assertFalse(enrol_is_enabled('paypal'));
         $plugin = enrol_get_plugin('paypal');
         $this->assertInstanceOf('enrol_paypal_plugin', $plugin);
         $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_paypal', 'expiredaction'));
     }
 
-    public function test_sync_nothing() {
+    public function test_sync_nothing(): void {
         $this->resetAfterTest();
 
         $this->enable_plugin();
@@ -57,13 +57,13 @@ class paypal_test extends \advanced_testcase {
         $paypalplugin->sync(new \null_progress_trace());
     }
 
-    public function test_expired() {
+    public function test_expired(): void {
         global $DB;
         $this->resetAfterTest();
 
-        /** @var enrol_paypal_plugin $paypalplugin  */
+        /** @var \enrol_paypal_plugin $paypalplugin  */
         $paypalplugin = enrol_get_plugin('paypal');
-        /** @var enrol_manual_plugin $manualplugin  */
+        /** @var \enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -170,7 +170,7 @@ class paypal_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 

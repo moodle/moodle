@@ -28,14 +28,13 @@ use context_system;
  * @copyright  2022 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stored_file_test extends advanced_testcase {
+final class stored_file_test extends advanced_testcase {
 
     /**
      * Test that the rotate_image() method does not rotate
      * an image that is not supposed to be rotated.
-     * @covers ::rotate_image()
      */
-    public function test_rotate_image_does_not_rotate_image() {
+    public function test_rotate_image_does_not_rotate_image(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -62,9 +61,8 @@ class stored_file_test extends advanced_testcase {
     /**
      * Test that the rotate_image() method rotates an image
      * that is supposed to be rotated.
-     * @covers ::rotate_image()
      */
-    public function test_rotate_image_rotates_image() {
+    public function test_rotate_image_rotates_image(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -91,4 +89,32 @@ class stored_file_test extends advanced_testcase {
         $this->assertEquals(1200, $size['width']);
         $this->assertEquals(297, $size['height']);
     }
+
+    /**
+     * Ensure that get_content_file_handle returns a valid file handle.
+     */
+    public function test_get_psr_stream(): void {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $filename = 'testimage.jpg';
+        $filepath = $CFG->dirroot . '/lib/filestorage/tests/fixtures/' . $filename;
+        $filerecord = [
+            'contextid' => context_system::instance()->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        ];
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_pathname($filerecord, $filepath);
+
+        $stream = $file->get_psr_stream();
+        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
+        $this->assertEquals(file_get_contents($filepath), $stream->getContents());
+        $this->assertFalse($stream->isWritable());
+        $stream->close();
+    }
+
 }

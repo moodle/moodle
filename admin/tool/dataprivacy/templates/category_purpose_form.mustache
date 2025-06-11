@@ -62,7 +62,7 @@
 <form method="post" action="{{actionurl}}" id="category_purpose_form">
     <input type="hidden" value="{{contextlevel}}" id="contextlevel" />
     {{#modemodule}}
-    <div class="form-group">
+    <div class="mb-3">
         <label for="activity">{{#str}}activitymodule{{/str}}</label>
         {{^newactivitydefaults}}
             <input type="hidden" id="activity" value="{{#activityoptions}}{{#selected}}{{name}}{{/selected}}{{/activityoptions}}" />
@@ -74,7 +74,7 @@
         </select>
     </div>
     {{/modemodule}}
-    <div class="form-group">
+    <div class="mb-3">
         <label for="category">{{#str}}category, tool_dataprivacy{{/str}}</label>
         <select class="form-control" id="category">
         {{#categoryoptions}}
@@ -82,7 +82,7 @@
         {{/categoryoptions}}
         </select>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="purpose">{{#str}}purpose, tool_dataprivacy{{/str}}</label>
         <select class="form-control" id="purpose">
         {{#purposeoptions}}

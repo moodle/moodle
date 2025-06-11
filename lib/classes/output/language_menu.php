@@ -33,9 +33,8 @@ namespace core\output;
  * @copyright  2021 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class language_menu implements \renderable, \templatable {
-
-    /** @var moodle_page $page the moodle page that the languague menu belongs to */
+class language_menu implements renderable, templatable {
+    /** @var \moodle_page $page the moodle page that the languague menu belongs to */
     protected $page;
 
     /** @var string current language code */
@@ -47,7 +46,7 @@ class language_menu implements \renderable, \templatable {
     /**
      * Language menu constructor.
      *
-     * @param moodle_page $page the moodle page that the languague menu belongs to.
+     * @param \moodle_page $page the moodle page that the languague menu belongs to.
      */
     public function __construct($page) {
         $this->page = $page;
@@ -67,7 +66,7 @@ class language_menu implements \renderable, \templatable {
             return false;
         }
 
-        if ($this->page->course != SITEID and !empty($this->page->course->lang)) {
+        if ($this->page->course != SITEID && !empty($this->page->course->lang)) {
             // Do not show lang menu if language forced.
             return false;
         }
@@ -151,7 +150,7 @@ class language_menu implements \renderable, \templatable {
             if ($langparam) {
                 $attributes = [
                     'data-lang' => $langparam,
-                    'lang' => $langparam,
+                    'lang' => get_html_lang_attribute_value($langparam),
                 ];
             }
             $lang = new \action_menu_link_secondary($node['url'], null, $node['title'], $attributes);
@@ -175,5 +174,4 @@ class language_menu implements \renderable, \templatable {
         $singleselect->class = 'langmenu';
         return $singleselect->export_for_template($output);
     }
-
 }

@@ -1,4 +1,4 @@
-@mod @mod_assign @core_outcome @javascript
+@mod @mod_assign @core_outcome
 Feature: Outcome grading
   In order to give an outcome to my student
   As a teacher
@@ -31,10 +31,10 @@ Feature: Outcome grading
     And I click on "#add" "css_element"
     And I log out
 
+  @javascript
   Scenario: Giving an outcome to a student
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a assign activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name                     | Test assignment name        |
       | ID number                           | Test assignment name        |
       | Description                         | Test assignment description |
@@ -46,17 +46,17 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student 0" "table_row"
+    And I go to "Student 0" "Test assignment name" activity advanced grading page
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
     And I click on "Edit settings" "link"
     When I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
+  @javascript
   Scenario: Giving an outcome to a group submission
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -72,8 +72,7 @@ Feature: Outcome grading
       | student0 | G1    |
       | student1 | G1    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a assign activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name                     | Test assignment name        |
       | Description                         | Test assignment description |
       | ID number                           | Test assignment name        |
@@ -87,24 +86,24 @@ Feature: Outcome grading
       | Online text | My online text |
     And I press "Save changes"
     When I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student 0" "table_row"
+    And I go to "Student 0" "Test assignment name" activity advanced grading page
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
     And I set the following fields to these values:
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Disappointing" in the "Student 0" "table_row"

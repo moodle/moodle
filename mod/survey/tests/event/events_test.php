@@ -31,19 +31,23 @@ namespace mod_survey\event;
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
+        // Survey module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('survey', 1);
     }
 
     /**
      * Test report downloaded event.
      */
-    public function test_report_downloaded() {
+    public function test_report_downloaded(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -69,16 +73,13 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_survey\event\report_downloaded', $event);
         $this->assertEquals(\context_module::instance($survey->cmid), $event->get_context());
         $this->assertEquals($survey->id, $event->objectid);
-        $url = new \moodle_url('/mod/survey/download.php', array('id' => $survey->cmid, 'type' => 'xls'));
-        $expected = array($course->id, "survey", "download", $url->out(), $survey->id, $survey->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test report viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -103,15 +104,12 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_survey\event\report_viewed', $event);
         $this->assertEquals(\context_module::instance($survey->cmid), $event->get_context());
         $this->assertEquals($survey->id, $event->objectid);
-        $expected = array($course->id, "survey", "view report", 'report.php?id=' . $survey->cmid, $survey->id, $survey->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
-        $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test response submitted event.
      */
-    public function test_response_submitted() {
+    public function test_response_submitted(): void {
         // There is no proper API to call to generate chapters for a book, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -136,8 +134,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_survey\event\response_submitted', $event);
         $this->assertEquals(\context_module::instance($survey->cmid), $event->get_context());
         $this->assertEquals($survey->id, $event->other['surveyid']);
-        $expected = array($course->id, "survey", "submit", 'view.php?id=' . $survey->cmid, $survey->id, $survey->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

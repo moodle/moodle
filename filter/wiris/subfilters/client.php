@@ -28,7 +28,6 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_wiris_client extends \core_filters\text_filter {
-
     /**
      * Set any context-specific configuration for this filter.
      *

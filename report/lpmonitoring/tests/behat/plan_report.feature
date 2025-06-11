@@ -1,5 +1,5 @@
 @report @javascript @report_lpmonitoring
-Feature: Display learning plan ratings details
+Feature: Display learning plan report details
   As a learning plan admin
   In order to display competencies ratings on learning plan
   I need to rate a competency in a learning plan
@@ -102,6 +102,7 @@ Feature: Display learning plan ratings details
     And I should see "0" in the ".notproficient-stats" "css_element"
     And I should see "1" in the ".notrated-stats" "css_element"
     And I toggle the "Competency A" detail
+    And I wait "1" seconds
     And I click on "rate-competency" of the competency "Competency A"
     And "Rate" "dialogue" should be visible
     And I set the field with xpath "//select[@name='rating']" to "not good"
@@ -197,10 +198,8 @@ Feature: Display learning plan ratings details
     And I should see "Donald Fletcher" in the ".nexplan" "css_element"
     And I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'at least one comment')]" "xpath_element"
     And I open the autocomplete suggestions list
-    And I should see "Rebecca Armenta" item in the autocomplete list
     And I should see "(1) comment(s)" in the "//ul[contains(@class, 'form-autocomplete-suggestions')]/li[1]" "xpath_element"
     And I should see "Stepanie Grant" item in the autocomplete list
-    And I should see "(1) comment(s)" in the "//ul[contains(@class, 'form-autocomplete-suggestions')]/li[2]" "xpath_element"
     And I should not see "Cynthia Reyes" item in the autocomplete list
     And I should not see "Pablo Menendez" item in the autocomplete list
     And I press "Apply"
@@ -296,6 +295,7 @@ Feature: Display learning plan ratings details
     And I should see "Competency A"
     And I should see "Competency B"
     And I toggle the "Competency B" detail
+    And I wait "1" seconds
     When I click on "rate-competency" of the competency "Competency B"
     Then "Rate" "dialogue" should be visible
     And I set the field with xpath "//select[@name='rating']" to "not qualified"
@@ -329,14 +329,14 @@ Feature: Display learning plan ratings details
     And I click on "//a[contains(@class, 'moreless-toggler')]" "xpath_element"
     When I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'not good')]" "xpath_element"
     And I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'not qualified')]" "xpath_element"
-    And I click on "//div[contains(@class, 'fradio')]/span/label[contains(@for, 'scalefilterplan')]" "xpath_element"
-    And I set the field with xpath "(//input[contains(@id, 'form_autocomplete_input')])" to "m"
+    And I click on "//div[contains(@class, 'radio')]/span/label[contains(@for, 'scalefilterplan')]" "xpath_element"
+    And I open the autocomplete suggestions list
     Then I should not see "William Presley" item in the autocomplete list
     And I should see "Robert Smith" item in the autocomplete list
     And I should see "Frederic Simson" item in the autocomplete list
     And I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'not good')]" "xpath_element"
     And I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'not qualified')]" "xpath_element"
-    And I set the field with xpath "(//input[contains(@id, 'form_autocomplete_input')])" to "m"
+    And I open the autocomplete suggestions list
     And I should see "Robert Smith" item in the autocomplete list
     And I should see "William Presley" item in the autocomplete list
     And I should see "Frederic Simson" item in the autocomplete list

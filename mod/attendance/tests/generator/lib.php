@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore the sniff for this file for nullable types since the super method of
+// create_instance is not yet rewritten and mod_attendance_generator::create_instance must have an identical signature.
+// phpcs:disable PHPCompatibility.FunctionDeclarations.RemovedImplicitlyNullableParam.Deprecated
+
 /**
  * mod_attendance data generator
  *
@@ -37,7 +41,7 @@ class mod_attendance_generator extends testing_module_generator {
      * Create new attendance module instance
      *
      * @param array|stdClass $record
-     * @param array $options
+     * @param null|array $options
      * @return stdClass mod_attendance_structure
      */
     public function create_instance($record = null, array $options = null) {

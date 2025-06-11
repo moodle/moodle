@@ -66,12 +66,12 @@ export const init = () => {
             event.preventDefault(); // prevent the default form submission
 
             // Let's get the lock value
-            const lock = document.getElementById('id_lockcourses');
-            const selected_lock = lock.options[lock.selectedIndex];
-            const selectedLockValue = selected_lock.value;
+            // const lock = document.getElementById('id_lockcourses');
+            // const selected_lock = lock.options[lock.selectedIndex];
+            // const selectedLockValue = selected_lock.value;
 
             const hide = document.getElementById('id_hidecourses');
-            const selected_hide = lock.options[hide.selectedIndex];
+            const selected_hide = hide.options[hide.selectedIndex];
             const selectedHideValue = selected_hide.value;
             const inputs = form.querySelectorAll('input.course_hider_toggle');
 
@@ -79,7 +79,7 @@ export const init = () => {
             const inputValues = [];
 
             formData.append("btnexecute", true);
-            formData.append("lock", selectedLockValue);
+            // formData.append("lock", selectedLockValue);
             formData.append("hide", selectedHideValue);
             inputs.forEach((input) => {
                 if (input.checked) {

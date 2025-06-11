@@ -35,14 +35,15 @@ require_once 'cc_manifest.php';
 class cc_organization implements cc_i_organization {
 
 
-    public   $title         = null;
-    public   $identifier    = null;
-    public   $structure     = null;
-    public   $itemlist      = null;
-    private  $metadata      = null;
-    private  $sequencing    = null;
+    public $title         = null;
+    public $identifier    = null;
+    public $structure     = null;
+    public $itemlist      = null;
+    private $metadata      = null;
+    private $sequencing    = null;
 
-
+    /** @var bool true if empty, otherwise false. */
+    protected $isempty;
 
     public function __construct($node=null, $doc=null) {
         if (is_object($node) && is_object($doc)) {
@@ -131,16 +132,17 @@ class cc_organization implements cc_i_organization {
 class cc_item implements cc_i_item  {
 
 
-    public  $identifier     = null;
-    public  $identifierref  = null;
-    public  $isvisible      = null;
-    public  $title          = null;
-    public  $parameters     = null;
-    public  $childitems     = null;
+    public $identifier     = null;
+    public $identifierref  = null;
+    public $isvisible      = null;
+    public $title          = null;
+    public $parameters     = null;
+    public $childitems     = null;
     private $parentItem     = null;
     private $isempty        = true;
 
-
+    /** @var mixed node structure. */
+    public $structure;
 
     public function __construct($node=null,$doc=null) {
         if (is_object($node)) {

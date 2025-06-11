@@ -26,6 +26,7 @@ namespace block_comments\privacy;
 use core_privacy\local\metadata\collection;
 use block_comments\privacy\provider;
 use core_privacy\local\request\approved_userlist;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var stdClass A student who is only enrolled in course1. */
     protected $student1;
@@ -54,6 +55,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
     protected function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -83,7 +85,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Posts a comment on a given context.
      *
      * @param string $text The comment's text.
-     * @param context $context The context on which we want to put the comment.
+     * @param \context $context The context on which we want to put the comment.
      */
     protected function add_comment($text, \context $context) {
         $args = new \stdClass;
@@ -103,9 +105,9 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Creates a comments block on a context.
      *
-     * @param context $context The context on which we want to put the block.
-     * @return block_base The created block instance.
-     * @throws coding_exception
+     * @param \context $context The context on which we want to put the block.
+     * @return \block_base The created block instance.
+     * @throws \coding_exception
      */
     protected function add_comments_block_in_context(\context $context) {
         global $DB;
@@ -168,7 +170,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('block_comments');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -184,7 +186,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when user had not posted any comments..
      */
-    public function test_get_contexts_for_userid_no_comment() {
+    public function test_get_contexts_for_userid_no_comment(): void {
         $this->setUser($this->student1);
         $coursecontext1 = \context_course::instance($this->course1->id);
         $this->add_comment('New comment', $coursecontext1);
@@ -197,7 +199,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $coursecontext1 = \context_course::instance($this->course1->id);
         $coursecontext2 = \context_course::instance($this->course2->id);
 
@@ -216,7 +218,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data() when the user has not posted any comments.
      */
-    public function test_export_for_context_no_comment() {
+    public function test_export_for_context_no_comment(): void {
         $coursecontext1 = \context_course::instance($this->course1->id);
         $coursecontext2 = \context_course::instance($this->course2->id);
 
@@ -235,7 +237,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         $coursecontext1 = \context_course::instance($this->course1->id);
         $coursecontext2 = \context_course::instance($this->course2->id);
 
@@ -253,7 +255,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $coursecontext1 = \context_course::instance($this->course1->id);
@@ -297,7 +299,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context() when there are also comments from other plugins.
      */
-    public function test_delete_data_for_all_users_in_context_with_comments_from_other_plugins() {
+    public function test_delete_data_for_all_users_in_context_with_comments_from_other_plugins(): void {
         global $DB;
 
         $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -359,7 +361,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $coursecontext1 = \context_course::instance($this->course1->id);
@@ -413,7 +415,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user() when there are also comments from other plugins.
      */
-    public function test_delete_data_for_user_with_comments_from_other_plugins() {
+    public function test_delete_data_for_user_with_comments_from_other_plugins(): void {
         global $DB;
 
         $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -472,7 +474,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test that only users within a course context are fetched.
      * @group qtesttt
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'block_comments';
 
         $coursecontext1 = \context_course::instance($this->course1->id);
@@ -509,7 +511,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'block_comments';
 
         $coursecontext1 = \context_course::instance($this->course1->id);
@@ -550,7 +552,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user() when there are also comments from other plugins.
      */
-    public function test_delete_data_for_users_with_comments_from_other_plugins() {
+    public function test_delete_data_for_users_with_comments_from_other_plugins(): void {
         $component = 'block_comments';
 
         $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');

@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * A check result class
- *
- * @package    core
- * @category   check
- * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core\check;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * A check object returns a result object
@@ -33,6 +23,8 @@ defined('MOODLE_INTERNAL') || die();
  * 'details' which is computationally expensive then extend this and overide
  * the get_details() method so that it is only called when it will be needed.
  *
+ * @package    core
+ * @category   check
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -92,9 +84,9 @@ class result implements \renderable {
     const CRITICAL = 'critical';
 
     /**
-     * @var string $state - state
+     * @var string $status - status
      */
-    protected $state = self::UNKNOWN;
+    protected $status = self::UNKNOWN;
 
     /**
      * @var string summary - should be roughly 1 line of plain text and may change depending on the state.
@@ -110,23 +102,9 @@ class result implements \renderable {
     protected $details = '';
 
     /**
-     * Get the check reference label
-     *
-     * @return string must be globally unique
-     */
-    public function get_ref(): string {
-        $ref = $this->get_component();
-        if (!empty($ref)) {
-            $ref .= '_';
-        }
-        $ref .= $this->get_id();
-        return $ref;
-    }
-
-    /**
      * Constructor
      *
-     * @param int $status code
+     * @param string $status code
      * @param string $summary a 1 liner summary
      * @param string $details as a html chunk
      */
@@ -164,8 +142,8 @@ class result implements \renderable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
         return array(

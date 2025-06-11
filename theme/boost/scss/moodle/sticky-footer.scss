@@ -11,12 +11,44 @@ body {
     position: fixed;
     right: 0;
     left: 0;
-    height: $navbar-height + 1px;
-    bottom: -$navbar-height;
+    height: $stickyfooter-height;
+    bottom: calc(#{$stickyfooter-height} * -1);
     transition: bottom .5s;
-    z-index: $zindex-dropdown;
-    overflow: hidden;
+    z-index: $zindex-fixed;
     box-shadow: 0 0 1rem rgba($black, .15);
+    font-size: calc(#{$font-size-base} * 1.10);
+    // Adjust sticky footer width to the main content area.
+    .sticky-footer-content {
+        @include media-breakpoint-up(md) {
+            .pagelayout-standard &,
+            body.limitedwidth.uses-drawers & {
+                max-width: $course-content-maxwidth;
+            }
+            body.mediumwidth.uses-drawers & {
+                max-width: $medium-content-maxwidth;
+            }
+        }
+    }
+    // Adjust sticky footer width when drawers are open.
+    .sticky-footer-content-wrapper {
+        @include transition(0.2s);
+        @include media-breakpoint-up(lg) {
+            .drawers {
+                padding: 0 3rem;
+            }
+            .show-drawer-left & {
+                margin-left: $drawer-left-width;
+                padding: 0 3rem 0 1rem;
+            }
+            .show-drawer-right & {
+                margin-right: $drawer-right-width;
+                padding: 0 1rem 0 3rem;
+            }
+            .show-drawer-right.show-drawer-left & {
+                padding: 0 1rem;
+            }
+        }
+    }
 }
 
 .hasstickyfooter .stickyfooter {
@@ -29,6 +61,9 @@ body {
     margin-bottom: map-get($spacers, 1);
 }
 
+.stickyfooter .btn {
+    font-size: calc(#{$font-size-base} * 1.10);
+}
 
 /* Breakpoints fixes. */
 

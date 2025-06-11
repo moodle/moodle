@@ -39,7 +39,7 @@ class mod_attendance_observer {
     public static function course_content_deleted(\core\event\course_content_deleted $event) {
         global $DB;
 
-        $attids = array_keys($DB->get_records('attendance', array('course' => $event->objectid), '', 'id'));
+        $attids = array_keys($DB->get_records('attendance', ['course' => $event->objectid], '', 'id'));
         $sessids = array_keys($DB->get_records_list('attendance_sessions', 'attendanceid', $attids, '', 'id'));
         if (attendance_existing_calendar_events_ids($sessids)) {
             attendance_delete_calendar_events($sessids);

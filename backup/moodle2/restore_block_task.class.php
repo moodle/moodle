@@ -176,7 +176,7 @@ abstract class restore_block_task extends restore_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         throw new coding_exception('define_decode_contents() method needs to be overridden in each subclass of restore_block_task');
     }
 
@@ -184,7 +184,7 @@ abstract class restore_block_task extends restore_task {
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         throw new coding_exception('define_decode_rules() method needs to be overridden in each subclass of restore_block_task');
     }
 

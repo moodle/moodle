@@ -1,7 +1,3 @@
-.jsenabled .tox-tinymce-aux {
-    z-index: 1000;
-}
-
 .jsenabled .tox-shadowhost.tox-fullscreen,
 .jsenabled .tox.tox-tinymce.tox-fullscreen {
     z-index: 1050;

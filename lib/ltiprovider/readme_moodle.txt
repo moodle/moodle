@@ -67,3 +67,12 @@ In case of any changes we may need to update
 enrol/lti/classes/data_connector.php
 enrol/lti/db/install.xml
 enrol/lti/db/upgrade.php
+
+* MDL-78144 PHP 8.2 compliance.
+  To temporarily prevent the PHP 8.2 warning about the deprecation of dynamic properties,
+  the #[\AllowDynamicProperties] attribute was added on top of the classes.
+  Below is a handy command to add the attribute above the class line:
+  ```
+  cd lib/ltiprovider/src
+  for file in `find . -name '*.php' `; do sed -i '/^class /i #[\\AllowDynamicProperties]' $file; done
+  ```

@@ -1,0 +1,130 @@
+name: Moodle Plugin CI for auth_oidc
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - 'MOODLE_*_STABLE'
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: 'root'
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
+          MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
+          MYSQL_INNODB_FILE_PER_TABLE: "1"
+          MYSQL_INNODB_FILE_FORMAT: "Barracuda"
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+
+    strategy:
+      fail-fast: false
+      matrix:
+        moodle-branch: ['MOODLE_405_STABLE']
+        php: [8.1, 8.2, 8.3]
+        database: [pgsql, mariadb]
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
+      - name: Install moodle-plugin-ci
+        run: |
+          mkdir -p ./extra-plugins
+          git clone -b $MOODLE_BRANCH https://github.com/microsoft/moodle-auth_oidc.git ./extra-plugins/auth_oidc || git clone https://github.com/microsoft/moodle-auth_oidc.git ./extra-plugins/auth_oidc
+          git clone -b $MOODLE_BRANCH https://github.com/microsoft/moodle-local_o365.git ./extra-plugins/local_o365 || git clone https://github.com/microsoft/moodle-local_o365.git ./extra-plugins/local_o365
+          git clone -b $MOODLE_BRANCH https://github.com/microsoft/moodle-local_onenote.git ./extra-plugins/local_onenote || git clone https://github.com/microsoft/moodle-local_onenote.git ./extra-plugins/local_onenote
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --extra-plugins ./extra-plugins
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+          SHELLOPTS: errexit:nounset:xtrace
+
+      - name: PHP Lint
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phplint
+
+      - name: PHP Mess Detector
+        continue-on-error: true
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpmd
+
+      - name: Moodle Code Checker
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpcs --max-warnings 0
+
+      - name: Moodle PHPDoc Checker
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpdoc --max-warnings 0
+
+      - name: Validating
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci validate
+
+      - name: Check upgrade savepoints
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci savepoints
+
+      - name: Mustache Lint
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci mustache
+
+      - name: Grunt
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
+
+      - name: PHPUnit tests
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpunit
+
+      - name: Behat features
+        id: behat
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci behat --profile chrome
+
+      - name: Cleanup after behat
+        if: ${{ always() }}
+        run: |
+          sudo pkill -f chrome
+          sudo pkill -f chromedriver
+
+      - name: Mark cancelled jobs as failed.
+        if: ${{ cancelled() }}
+        run: exit 1

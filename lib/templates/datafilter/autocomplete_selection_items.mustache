@@ -42,10 +42,10 @@
 }}
 {{#items}}
     <span role="option" data-value="{{value}}" aria-selected="true"
-            class="badge badge-secondary clickable text-wrap text-break line-height-4 m-1">
-        {{{label}}}<i class="icon fa fa-times pl-2 mr-0"></i>
+            class="badge bg-secondary text-dark clickable text-wrap text-break line-height-4 m-1">
+        {{{label}}}<i class="icon fa fa-times ps-2 me-0"></i>
     </span>
 {{/items}}
 {{^items}}
-    <span class="mb-3 mr-1">{{noSelectionString}}</span>
+    <span class="mb-3 me-1">{{noSelectionString}}</span>
 {{/items}}

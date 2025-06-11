@@ -54,10 +54,10 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
         $q->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
 
         $q->answers = array(
-            13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0),
-            14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
+            13 => new \qtype_calculated\qtype_calculated_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0),
+            14 => new \qtype_calculated\qtype_calculated_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
                     FORMAT_HTML, 0),
-            17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
+            17 => new \qtype_calculated\qtype_calculated_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
         );
         foreach ($q->answers as $answer) {
             $answer->correctanswerlength = 2;
@@ -204,6 +204,13 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
         $form->definition[18] = '1-0-a';
         $form->definition[19] = '1-0-b';
         $form->definition[20] = '1-0-a';
+
+        $form->hint = [
+            [
+                'text' => 'Add',
+                'format' => FORMAT_HTML,
+            ],
+        ];
 
         $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 

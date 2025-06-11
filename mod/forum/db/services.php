@@ -48,17 +48,6 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
-    'mod_forum_get_forum_discussions_paginated' => array(
-        'classname' => 'mod_forum_external',
-        'methodname' => 'get_forum_discussions_paginated',
-        'classpath' => 'mod/forum/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Returns a list of forum discussions optionally sorted and paginated.',
-        'type' => 'read',
-        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-
     'mod_forum_get_forum_discussions' => array(
         'classname' => 'mod_forum_external',
         'methodname' => 'get_forum_discussions',

@@ -26,7 +26,7 @@ require_login();
 
 // Ensure only the site admin accesses this page.
 if (!is_siteadmin($USER->id)) {
-    print_error('need_permission', 'block_backadel');
+    moodle_exception('need_permission', 'block_backadel');
 }
 
 // Page Setup.

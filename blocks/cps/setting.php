@@ -32,13 +32,13 @@ $id = optional_param('id', $USER->id, PARAM_INT);
 $reset = optional_param('reset', 0, PARAM_INT);
 
 if (!cps_setting::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_setting::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_setting::name());
 }
 
 $user = $DB->get_record('user', array('id' => $id), '*', MUST_EXIST);
 
 if ($user->id != $USER->id and !is_siteadmin($USER->id)) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $s = ues::gen_str('block_cps');

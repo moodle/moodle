@@ -131,7 +131,7 @@ class google_docs {
                 'url' => "{$gdoc->link[0]->attributes()->href}",
                 'source' => $source,
                 'date'   => strtotime($gdoc->updated),
-                'thumbnail' => (string) $OUTPUT->image_url(file_extension_icon($title, 32))
+                'thumbnail' => (string) $OUTPUT->image_url(file_extension_icon($title))
             );
         }
         core_date::set_default_server_timezone();
@@ -250,7 +250,7 @@ class google_oauth extends oauth2_client {
      * @param string $url The URL to request
      * @param array $options
      * @param mixed $acceptheader Not used.
-     * @return bool
+     * @return string
      */
     protected function request($url, $options = array(), $acceptheader = 'application/json') {
         return parent::request($url, $options, false);

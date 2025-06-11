@@ -32,7 +32,7 @@ require_login();
 $templateid = optional_param('templateid', null, PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);
 $context = context::instance_by_id($pagecontextid);
-$urlparams = array('pagecontextid' => $pagecontextid);
+$urlparams = ['pagecontextid' => $pagecontextid];
 if (!empty($templateid)) {
     $template = \core_competency\api::read_template($templateid);
 }

@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/type/ddwtos/edit_ddwtos_form.php');
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_form_test extends \advanced_testcase {
+final class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *
@@ -68,11 +68,10 @@ class edit_form_test extends \advanced_testcase {
     /**
      * Test the form shows the right number of groups of choices.
      */
-    public function test_number_of_choice_groups() {
+    public function test_number_of_choice_groups(): void {
         list($form) = $this->get_form('qtype_ddwtos_edit_form');
         // Use reflection to get the protected property we need.
         $property = new \ReflectionProperty('qtype_ddwtos_edit_form', '_form');
-        $property->setAccessible(true);
         $mform = $property->getValue($form);
         $choices = $mform->getElement('choices[0]');
         $groupoptions = $choices->_elements[1];
@@ -82,7 +81,7 @@ class edit_form_test extends \advanced_testcase {
     /**
      * Test the form correctly validates the HTML allowed in choices.
      */
-    public function test_choices_validation() {
+    public function test_choices_validation(): void {
         list($form, $category) = $this->get_form('qtype_ddwtos_edit_form');
 
         $submitteddata = [

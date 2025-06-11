@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_snap/featured_categories
+
+
+    Example context (json):
+    {
+        "heading": "My title",
+        "cards" : [
+            {
+                "number" : "1",
+                "url" : "http://someurl.local",
+                "coverimageurl" : "http://someurl.local",
+                "title" : "Super cool category!"
+            }
+        ],
+        "browseallurl" : "http://someurl.local",
+        "editurl" : "http://someurl.local"
+    }
+}}
+<div id="snap-featured-categories" class="text-center">
+    <h2 class="snap-featured-categories-heading">{{heading}}</h2>
+    <div class="row text-center">
+
+        {{#cards}}
+        {{> theme_snap/featured_category }}
+        {{/cards}}
+
+    </div>
+
+    {{#browseallurl}}
+    <p class="text-center"><a id="browse-all-categories-featured" aria-label="{{#str}}browseallcategories, theme_snap{{/str}}" href="{{browseallurl}}" class="btn btn-primary">{{#str}}featuredcategoriesbrowseall, theme_snap{{/str}}</a></p>
+    {{/browseallurl}}
+
+    {{#editurl}}
+    <p class="text-center"><a href="{{editurl}}" class="btn btn-primary">{{#str}}featuredcategoriesedit, theme_snap{{/str}}</a></p>
+    {{/editurl}}
+
+</div>

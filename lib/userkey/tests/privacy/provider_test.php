@@ -36,11 +36,11 @@ use core_userkey\privacy\provider;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Export for a user with no keys in the specified instance will not have any data exported.
      */
-    public function test_export_userkeys_no_keys() {
+    public function test_export_userkeys_no_keys(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -56,7 +56,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where no instance is specified.
      */
-    public function test_export_userkeys_basic_key() {
+    public function test_export_userkeys_basic_key(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -70,6 +70,7 @@ class provider_test extends provider_testcase {
 
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -92,7 +93,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where additional data is specified.
      */
-    public function test_export_userkeys_complex_key() {
+    public function test_export_userkeys_complex_key(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -107,6 +108,7 @@ class provider_test extends provider_testcase {
         // Export all keys in core_tests.
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -129,7 +131,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where no instance is specified.
      */
-    public function test_export_userkeys_basic_key_without_filter() {
+    public function test_export_userkeys_basic_key_without_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -143,6 +145,7 @@ class provider_test extends provider_testcase {
 
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -165,7 +168,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with a key against a script where additional data is specified.
      */
-    public function test_export_userkeys_complex_key_with_filter() {
+    public function test_export_userkeys_complex_key_with_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -179,11 +182,13 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');
@@ -209,7 +214,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for a user with keys against multiple scripts where additional data is specified.
      */
-    public function test_export_userkeys_multiple_complex_key_with_filter() {
+    public function test_export_userkeys_multiple_complex_key_with_filter(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -224,11 +229,13 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');
@@ -262,7 +269,7 @@ class provider_test extends provider_testcase {
     /**
      * Export for keys against multiple users.
      */
-    public function test_export_userkeys_multiple_users() {
+    public function test_export_userkeys_multiple_users(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -278,11 +285,13 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');
@@ -312,7 +321,7 @@ class provider_test extends provider_testcase {
     /**
      * Delete for all users in a script.
      */
-    public function test_delete_all_userkeys_in_script() {
+    public function test_delete_all_userkeys_in_script(): void {
         global $DB;
         $this->resetAfterTest();
 

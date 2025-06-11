@@ -351,13 +351,13 @@ class summary_table extends table_sql {
         ];
 
         // Add relevant filter params.
-        foreach ($this->exportfilterdata as $name => $data) {
-            if (is_array($data)) {
-                foreach ($data as $key => $value) {
+        foreach ($this->exportfilterdata as $name => $filterdata) {
+            if (is_array($filterdata)) {
+                foreach ($filterdata as $key => $value) {
                     $params["{$name}[{$key}]"] = $value;
                 }
             } else {
-                $params[$name] = $data;
+                $params[$name] = $filterdata;
             }
         }
 
@@ -370,14 +370,14 @@ class summary_table extends table_sql {
     }
 
     /**
-     * Override the default implementation to set a decent heading level.
+     * Override the default implementation to set a notification.
      *
      * @return void.
      */
     public function print_nothing_to_display(): void {
         global $OUTPUT;
 
-        echo $OUTPUT->notification(get_string('nothingtodisplay'), \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
     }
 
     /**
@@ -568,7 +568,22 @@ class summary_table extends table_sql {
             $privaterepliesparams['privatereplyfrom'] = $USER->id;
         }
 
-        list($enrolleduserssql, $enrolledusersparams) = get_enrolled_sql($this->get_context());
+        if ($this->iscoursereport) {
+            $course = get_course($this->courseid);
+            $groupmode = groups_get_course_groupmode($course);
+        } else {
+            $cm = \cm_info::create($this->cms[0]);
+            $groupmode = $cm->effectivegroupmode;
+        }
+
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $this->get_context())) {
+            $groups = groups_get_all_groups($this->courseid, $USER->id, 0, 'g.id');
+            $groupids = array_column($groups, 'id');
+        } else {
+            $groupids = [];
+        }
+
+        [$enrolleduserssql, $enrolledusersparams] = get_enrolled_sql($this->get_context(), '', $groupids);
         $this->sql->params += $enrolledusersparams;
 
         $queryattachments = 'SELECT COUNT(fi.id) AS attcount, fi.itemid AS postid, fi.userid
@@ -721,7 +736,7 @@ class summary_table extends table_sql {
                 $orderby = " ORDER BY {$sort}";
             }
         } else {
-            $selectfields = 'COUNT(u.id)';
+            $selectfields = 'COUNT(DISTINCT u.id)';
         }
 
         $sql = "SELECT {$selectfields}
@@ -747,7 +762,7 @@ class summary_table extends table_sql {
         foreach ($readers as $reader) {
 
             // If reader is not a sql_internal_table_reader and not legacy store then return.
-            if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
+            if (!($reader instanceof \core\log\sql_internal_table_reader)) {
                 continue;
             }
             $logreader = $reader;
@@ -770,14 +785,8 @@ class summary_table extends table_sql {
 
         $this->create_log_summary_temp_table();
 
-        if ($this->logreader instanceof logstore_legacy\log\store) {
-            $logtable = 'log';
-            // Anonymous actions are never logged in legacy log.
-            $nonanonymous = '';
-        } else {
-            $logtable = $this->logreader->get_internal_log_table_name();
-            $nonanonymous = 'AND anonymous = 0';
-        }
+        $logtable = $this->logreader->get_internal_log_table_name();
+        $nonanonymous = 'AND anonymous = 0';
 
         // Apply dates filter if applied.
         $datewhere = $this->sql->filterbase['dateslog'] ?? '';

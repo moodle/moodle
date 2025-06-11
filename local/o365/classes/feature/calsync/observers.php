@@ -75,8 +75,8 @@ class observers {
                 'userid' => $userid,
                 'other' => [
                     'caltype' => 'course',
-                    'caltypeid' => $courseid
-                ]
+                    'caltypeid' => $courseid,
+                ],
             ];
             $event = \local_o365\event\calendar_unsubscribed::create($eventdata);
             $event->trigger();

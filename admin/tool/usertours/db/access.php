@@ -24,13 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
     'tool/usertours:managetours' => [
         'captype' => 'write',
         'riskbitmask' => RISK_XSS,
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW,
-        ]
+        ],
     ],
-);
+];

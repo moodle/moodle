@@ -17,6 +17,7 @@
 namespace tool_mobile;
 
 use externallib_advanced_testcase;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,36 +35,44 @@ require_once($CFG->dirroot . '/webservice/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_plugins_supporting_mobile.
      * This is a very basic test because currently there aren't plugins supporting Mobile in core.
      */
-    public function test_get_plugins_supporting_mobile() {
+    public function test_get_plugins_supporting_mobile(): void {
         $result = external::get_plugins_supporting_mobile();
-        $result = \external_api::clean_returnvalue(external::get_plugins_supporting_mobile_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_plugins_supporting_mobile_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertArrayHasKey('plugins', $result);
         $this->assertTrue(is_array($result['plugins']));
     }
 
-    public function test_get_public_config() {
+    public function test_get_public_config(): void {
         global $CFG, $SITE, $OUTPUT;
 
         $this->resetAfterTest(true);
         $result = external::get_public_config();
-        $result = \external_api::clean_returnvalue(external::get_public_config_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
 
         // Test default values.
         $context = \context_system::instance();
-        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
-        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+        [$authinstructions] = \core_external\util::format_text(
+            $CFG->auth_instructions,
+            FORMAT_MOODLE,
+            $context->id
+        );
+        [$maintenancemessage] = \core_external\util::format_text(
+            $CFG->maintenance_message,
+            FORMAT_MOODLE,
+            $context->id
+        );
 
         $expected = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->wwwroot,
-            'sitename' => external_format_string($SITE->fullname, $context->id, true),
+            'sitename' => \core_external\util::format_string($SITE->fullname, $context->id, true),
             'guestlogin' => $CFG->guestloginbutton,
             'rememberusername' => $CFG->rememberusername,
             'authloginviaemail' => $CFG->authloginviaemail,
@@ -93,7 +102,8 @@ class externallib_test extends externallib_advanced_testcase {
             'tool_mobile_qrcodetype' => get_config('tool_mobile', 'qrcodetype'),
             'supportpage' => $CFG->supportpage,
             'supportavailability' => $CFG->supportavailability,
-            'warnings' => array()
+            'warnings' => [],
+            'showloginform' => (int) get_config('core', 'showloginform'),
         );
         $this->assertEquals($expected, $result);
 
@@ -126,7 +136,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('auth_name', 'CAS', 'auth_cas');
         set_config('auth', 'oauth2,cas');
 
-        list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
+        list($authinstructions, $notusedformat) = \core_external\util::format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
@@ -148,7 +158,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = external::get_public_config();
-        $result = \external_api::clean_returnvalue(external::get_public_config_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
         // First check providers.
         $identityproviders = $result['identityproviders'];
         unset($result['identityproviders']);
@@ -167,14 +177,16 @@ class externallib_test extends externallib_advanced_testcase {
         $newurl = 'validimage.png';
         set_config('auth_logo', $newurl, 'auth_cas');
         $result = external::get_public_config();
-        $result = \external_api::clean_returnvalue(external::get_public_config_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
         $this->assertStringContainsString($newurl, $result['identityproviders'][1]['iconurl']);
     }
 
     /**
      * Test get_config
+     *
+     * @covers \tool_mobile\external::get_config
      */
-    public function test_get_config() {
+    public function test_get_config(): void {
         global $CFG, $SITE;
         require_once($CFG->dirroot . '/course/format/lib.php');
 
@@ -185,10 +197,14 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('supportemail', 'test@test.com');
 
         $result = external::get_config();
-        $result = \external_api::clean_returnvalue(external::get_config_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
         // SITE summary is null in phpunit which gets transformed to an empty string by format_text.
-        list($sitesummary, $unused) = external_format_text($SITE->summary, $SITE->summaryformat, \context_system::instance()->id);
+        [$sitesummary, $summaryformat] = \core_external\util::format_text(
+            $SITE->summary,
+            $SITE->summaryformat,
+            \context_system::instance()->id
+        );
 
         // Test default values.
         $context = \context_system::instance();
@@ -196,7 +212,7 @@ class externallib_test extends externallib_advanced_testcase {
             array('name' => 'fullname', 'value' => $SITE->fullname),
             array('name' => 'shortname', 'value' => $SITE->shortname),
             array('name' => 'summary', 'value' => $sitesummary),
-            array('name' => 'summaryformat', 'value' => FORMAT_HTML),
+            array('name' => 'summaryformat', 'value' => $summaryformat),
             array('name' => 'frontpage', 'value' => $CFG->frontpage),
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
             array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
@@ -215,6 +231,8 @@ class externallib_test extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
             array('name' => 'tool_mobile_autologinmintimebetweenreq', 'value' => 6 * MINSECS),
+            array('name' => 'tool_mobile_autologout', 'value' => get_config('tool_mobile', 'autologout')),
+            array('name' => 'tool_mobile_autologouttime', 'value' => get_config('tool_mobile', 'autologouttime')),
             array('name' => 'calendartype', 'value' => $CFG->calendartype),
             array('name' => 'calendar_site_timeformat', 'value' => $CFG->calendar_site_timeformat),
             array('name' => 'calendar_startwday', 'value' => $CFG->calendar_startwday),
@@ -239,6 +257,36 @@ class externallib_test extends externallib_advanced_testcase {
 
         $expected[] = ['name' => 'enabledashboard', 'value' => $CFG->enabledashboard];
         $expected[] = ['name' => 'customusermenuitems', 'value' => $CFG->customusermenuitems];
+        $expected[] = ['name' => 'timezone', 'value' => $CFG->timezone];
+        $expected[] = ['name' => 'forcetimezone', 'value' => $CFG->forcetimezone];
+
+        $expected[] = ['name' => 'searchengine', 'value' => $CFG->searchengine];
+        $expected[] = ['name' => 'searchenablecategories', 'value' => $CFG->searchenablecategories];
+        $expected[] = ['name' => 'searchdefaultcategory', 'value' => $CFG->searchdefaultcategory];
+        $expected[] = ['name' => 'searchhideallcategory', 'value' => $CFG->searchhideallcategory];
+        $expected[] = ['name' => 'searchmaxtopresults', 'value' => $CFG->searchmaxtopresults];
+        $expected[] = ['name' => 'searchbannerenable', 'value' => $CFG->searchbannerenable];
+        $expected[] = ['name' => 'searchbanner', 'value' => $CFG->searchbanner];
+
+        $expected[] = ['name' => 'tool_dataprivacy_contactdataprotectionofficer', 'value' => get_config('tool_dataprivacy', 'contactdataprotectionofficer')];
+        $expected[] = ['name' => 'tool_dataprivacy_showdataretentionsummary', 'value' => get_config('tool_dataprivacy', 'showdataretentionsummary')];
+
+        $expected[] = ['name' => 'useblogassociations', 'value' => $CFG->useblogassociations];
+        $expected[] = ['name' => 'bloglevel', 'value' => $CFG->bloglevel];
+        $expected[] = ['name' => 'blogusecomments', 'value' => $CFG->blogusecomments];
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($expected, $result['settings']);
+
+        // H5P custom CSS.
+        set_config('h5pcustomcss', '.debug { color: #fab; }', 'core_h5p');
+        \core_h5p\local\library\autoloader::register();
+        \core_h5p\file_storage::generate_custom_styles();
+        $result = external::get_config();
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
+
+        $customcss = \core_h5p\file_storage::get_custom_styles();
+        $expected[] = ['name' => 'h5pcustomcssurl', 'value' => $customcss['cssurl']->out() . '?ver=' . $customcss['cssversion']];
 
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
@@ -250,7 +298,7 @@ class externallib_test extends externallib_advanced_testcase {
         array_splice($expected, 11);
 
         $result = external::get_config('frontpagesettings');
-        $result = \external_api::clean_returnvalue(external::get_config_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
     }
@@ -258,7 +306,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_autologin_key.
      */
-    public function test_get_autologin_key() {
+    public function test_get_autologin_key(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -267,7 +315,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user);
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Check we got the private token.
         $this->assertTrue(isset($token->privatetoken));
@@ -284,7 +332,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setCurrentTimeStart();
         $result = external::get_autologin_key($token->privatetoken);
-        $result = \external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
         // Validate the key.
         $this->assertEquals(32, \core_text::strlen($result['key']));
         $key = $DB->get_record('user_private_key', array('value' => $result['key']));
@@ -302,7 +350,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing ws.
      */
-    public function test_get_autologin_key_missing_ws() {
+    public function test_get_autologin_key_missing_ws(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -323,7 +371,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing https.
      */
-    public function test_get_autologin_key_missing_https() {
+    public function test_get_autologin_key_missing_https(): void {
         global $CFG;
 
         // Fake the app.
@@ -344,7 +392,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing admin.
      */
-    public function test_get_autologin_key_missing_admin() {
+    public function test_get_autologin_key_missing_admin(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -362,7 +410,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key locked.
      */
-    public function test_get_autologin_key_missing_locked() {
+    public function test_get_autologin_key_missing_locked(): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -371,7 +419,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
         // Fake the app.
@@ -379,13 +427,13 @@ class externallib_test extends externallib_advanced_testcase {
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $result = external::get_autologin_key($token->privatetoken);
-        $result = \external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // Mock last time request.
         $mocktime = time() - 7 * MINSECS;
         set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
         $result = external::get_autologin_key($token->privatetoken);
-        $result = \external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // Change min time between requests to 3 minutes.
         set_config('autologinmintimebetweenreq', 3 * MINSECS, 'tool_mobile');
@@ -394,7 +442,7 @@ class externallib_test extends externallib_advanced_testcase {
         $mocktime = time() - (4 * MINSECS);
         set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
         $result = external::get_autologin_key($token->privatetoken);
-        $result = \external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // We just requested one token, we must wait.
         $this->expectException('moodle_exception');
@@ -405,7 +453,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing app_request.
      */
-    public function test_get_autologin_key_missing_app_request() {
+    public function test_get_autologin_key_missing_app_request(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -419,11 +467,11 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content.
      */
-    public function test_get_content() {
+    public function test_get_content(): void {
 
         $paramval = 16;
         $result = external::get_content('tool_mobile', 'test_view', array(array('name' => 'param1', 'value' => $paramval)));
-        $result = \external_api::clean_returnvalue(external::get_content_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_content_returns(), $result);
         $this->assertCount(1, $result['templates']);
         $this->assertCount(1, $result['otherdata']);
         $this->assertCount(2, $result['restrict']['users']);
@@ -442,19 +490,19 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content disabled.
      */
-    public function test_get_content_disabled() {
+    public function test_get_content_disabled(): void {
 
         $paramval = 16;
         $result = external::get_content('tool_mobile', 'test_view_disabled',
             array(array('name' => 'param1', 'value' => $paramval)));
-        $result = \external_api::clean_returnvalue(external::get_content_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_content_returns(), $result);
         $this->assertTrue($result['disabled']);
     }
 
     /**
      * Test get_content non existent function in valid component.
      */
-    public function test_get_content_non_existent_function() {
+    public function test_get_content_non_existent_function(): void {
 
         $this->expectException('coding_exception');
         $result = external::get_content('tool_mobile', 'test_blahblah');
@@ -463,7 +511,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content incorrect component.
      */
-    public function test_get_content_invalid_component() {
+    public function test_get_content_invalid_component(): void {
 
         $this->expectException('moodle_exception');
         $result = external::get_content('tool_mobile\hack', 'test_view');
@@ -472,13 +520,13 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content non existent component.
      */
-    public function test_get_content_non_existent_component() {
+    public function test_get_content_non_existent_component(): void {
 
         $this->expectException('moodle_exception');
         $result = external::get_content('tool_blahblahblah', 'test_view');
     }
 
-    public function test_call_external_functions() {
+    public function test_call_external_functions(): void {
         global $SESSION;
 
         $this->resetAfterTest(true);
@@ -501,14 +549,13 @@ class externallib_test extends externallib_advanced_testcase {
         // Setup WS token.
         $webservicemanager = new \webservice;
         $service = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         $_POST['wstoken'] = $token->token;
 
-        // Workaround for \external_api::call_external_function requiring sesskey.
+        // Workaround for external_api::call_external_function requiring sesskey.
         $_POST['sesskey'] = sesskey();
 
         // Call some functions.
-
         $requests = [
             [
                 'function' => 'core_course_get_courses_by_field',
@@ -530,19 +577,19 @@ class externallib_test extends externallib_advanced_testcase {
         $result = external::call_external_functions($requests);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(external::call_external_functions_returns(), $result);
+        $result = external_api::clean_returnvalue(external::call_external_functions_returns(), $result);
 
         // Only 3 responses, the 4th request is not executed because the 3rd throws an exception.
         $this->assertCount(3, $result['responses']);
 
         $this->assertFalse($result['responses'][0]['error']);
-        $coursedata = \external_api::clean_returnvalue(
+        $coursedata = external_api::clean_returnvalue(
             \core_course_external::get_courses_by_field_returns(),
             \core_course_external::get_courses_by_field('id', $course->id));
          $this->assertEquals(json_encode($coursedata), $result['responses'][0]['data']);
 
         $this->assertFalse($result['responses'][1]['error']);
-        $userdata = \external_api::clean_returnvalue(
+        $userdata = external_api::clean_returnvalue(
             \core_user_external::get_users_by_field_returns(),
             \core_user_external::get_users_by_field('id', [$user1->id]));
         $this->assertEquals(json_encode($userdata), $result['responses'][1]['data']);
@@ -624,7 +671,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login.
      */
-    public function test_get_tokens_for_qr_login() {
+    public function test_get_tokens_for_qr_login(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -638,14 +685,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Generate new tokens, the ones we expect to receive.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Fake the app.
         \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
                 'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
-        $result = \external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
 
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($token->token, $result['token']);
@@ -660,7 +707,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login ignore ip check.
      */
-    public function test_get_tokens_for_qr_login_ignore_ip_check() {
+    public function test_get_tokens_for_qr_login_ignore_ip_check(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -677,14 +724,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Generate new tokens, the ones we expect to receive.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Fake the app.
         \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
                 'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
-        $result = \external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
+        $result = external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
 
         $this->assertEmpty($result['warnings']);
         $this->assertEquals($token->token, $result['token']);
@@ -699,7 +746,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login ip check fails.
      */
-    public function test_get_tokens_for_qr_login_ip_check_mismatch() {
+    public function test_get_tokens_for_qr_login_ip_check_mismatch(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -716,7 +763,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Generate new tokens, the ones we expect to receive.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Fake the app.
         \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
@@ -730,7 +777,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing QR code enabled.
      */
-    public function test_get_tokens_for_qr_login_missing_enableqr() {
+    public function test_get_tokens_for_qr_login_missing_enableqr(): void {
         global $CFG, $USER;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -744,7 +791,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing ws.
      */
-    public function test_get_tokens_for_qr_login_missing_ws() {
+    public function test_get_tokens_for_qr_login_missing_ws(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -768,7 +815,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing https.
      */
-    public function test_get_tokens_for_qr_login_missing_https() {
+    public function test_get_tokens_for_qr_login_missing_https(): void {
         global $CFG, $USER;
 
         // Fake the app.
@@ -789,7 +836,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing admin.
      */
-    public function test_get_tokens_for_qr_login_missing_admin() {
+    public function test_get_tokens_for_qr_login_missing_admin(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -807,7 +854,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing app_request.
      */
-    public function test_get_tokens_for_qr_login_missing_app_request() {
+    public function test_get_tokens_for_qr_login_missing_app_request(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -821,14 +868,14 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key.
      */
-    public function test_validate_subscription_key_valid() {
+    public function test_validate_subscription_key_valid(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
         set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
 
         $result = external::validate_subscription_key($sitesubscriptionkey['key']);
-        $result = \external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertTrue($result['validated']);
     }
@@ -836,20 +883,20 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid first and then a valid one.
      */
-    public function test_validate_subscription_key_invalid_key_first() {
+    public function test_validate_subscription_key_invalid_key_first(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
         set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
 
         $result = external::validate_subscription_key('fakekey');
-        $result = \external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertFalse($result['validated']);
 
         // The valid one has been invalidated because the previous attempt.
         $result = external::validate_subscription_key($sitesubscriptionkey['key']);
-        $result = \external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertFalse($result['validated']);
     }
@@ -857,11 +904,11 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid.
      */
-    public function test_validate_subscription_key_invalid_key() {
+    public function test_validate_subscription_key_invalid_key(): void {
         $this->resetAfterTest(true);
 
         $result = external::validate_subscription_key('fakekey');
-        $result = \external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertFalse($result['validated']);
     }
@@ -869,14 +916,14 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid.
      */
-    public function test_validate_subscription_key_outdated() {
+    public function test_validate_subscription_key_outdated(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() - MINSECS, 'key' => complex_random_string(32)];
         set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
 
         $result = external::validate_subscription_key($sitesubscriptionkey['key']);
-        $result = \external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertFalse($result['validated']);
     }

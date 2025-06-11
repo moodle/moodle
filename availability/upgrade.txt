@@ -1,6 +1,25 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /availability/*.
 
 The information here is intended only for developers.
+
+=== 4.3 ===
+* The `availability_info templatable` no longer exports 'showmore' information, and any component rendering avaialable_info
+  should handle showmore/showless behaviour by itself.
+  That means that 'showmorelink', 'hidden' and 'abbreviate' won't be exported for template in the root element neither its child items,
+  and `core_availability/availability_more` module has beed deprecated
+
+=== 4.2 ===
+
+* The form for editing availability conditions now supports "private" conditions, that should not be shown
+  to users. If a "private" condition is selected (as determined by the condition plugin), the whole ruleset
+  will be forcibly set to "Hidden entirely if student doesn't meet the conditions".
+* The group condition plugin will now treat any rule containing a group with a visibility setting other than
+  `visibility:ALL` as private.
 
 === 4.0 ===
 

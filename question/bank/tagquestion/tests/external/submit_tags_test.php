@@ -29,13 +29,23 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submit_tags_test extends \externallib_advanced_testcase {
+final class submit_tags_test extends \externallib_advanced_testcase {
+
+    /** @var \stdClass course record. */
+    protected $course;
+
+    /** @var \stdClass user record. */
+    protected $student;
+
+    /** @var \stdClass user role record. */
+    protected $studentrole;
 
     /**
      * Set up for every test
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -54,7 +64,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * submit_tags_form should throw an exception when the question id doesn't match
      * a question.
      */
-    public function test_submit_tags_form_incorrect_question_id() {
+    public function test_submit_tags_form_incorrect_question_id(): void {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
         $questioncontext = \context::instance_by_id($qcat->contextid);
@@ -74,7 +84,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * submit_tags_form should throw an exception when the context id doesn't match
      * a context.
      */
-    public function test_submit_tags_form_incorrect_context_id() {
+    public function test_submit_tags_form_incorrect_context_id(): void {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
         $questioncontext = \context::instance_by_id($qcat->contextid);
@@ -92,7 +102,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
     /**
      * submit_tags_form should return false when tags are disabled.
      */
-    public function test_submit_tags_form_tags_disabled() {
+    public function test_submit_tags_form_tags_disabled(): void {
         global $CFG;
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -115,7 +125,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * submit_tags_form should return false if the user does not have any capability
      * to tag the question.
      */
-    public function test_submit_tags_form_no_tag_permissions() {
+    public function test_submit_tags_form_no_tag_permissions(): void {
         global $DB;
 
         $generator = $this->getDataGenerator();
@@ -151,7 +161,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * submit_tags_form should return false if the user only has the capability to
      * tag their own questions and the question is not theirs.
      */
-    public function test_submit_tags_form_tagmine_permission_non_owner_question() {
+    public function test_submit_tags_form_tagmine_permission_non_owner_question(): void {
         global $DB;
 
         $generator = $this->getDataGenerator();
@@ -192,7 +202,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      *
      * @return array Test cases
      */
-    public function get_submit_tags_form_testcases() {
+    public static function get_submit_tags_form_testcases(): array {
         return [
                 'course - course' => [
                         'editingcontext' => 'course',
@@ -274,7 +284,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * Course tags can only be set on a course category or system context question that
      * is being editing in a course context.
      *
-     * @dataProvider get_submit_tags_form_testcases()
+     * @dataProvider get_submit_tags_form_testcases
      * @param string $editingcontext The type of the context the question is being edited in
      * @param string $questioncontext The type of the context the question belongs to
      * @param string[] $questiontags The tag names to set as question tags
@@ -287,7 +297,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
             $questiontags,
             $coursetags,
             $expectcoursetags
-    ) {
+    ): void {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions($questioncontext);
         $coursecontext = \context_course::instance($course->id);

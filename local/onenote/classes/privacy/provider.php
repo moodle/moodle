@@ -27,19 +27,15 @@ namespace local_onenote\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
 
-if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
-    interface local_onenote_userlist extends \core_privacy\local\request\core_userlist_provider {
-    }
-} else {
-    interface local_onenote_userlist {
-    }
-
-    ;
+/**
+ * Interface for the local_onenote user list provider.
+ */
+interface local_onenote_userlist extends \core_privacy\local\request\core_userlist_provider {
 }
 
 /**
@@ -54,11 +50,11 @@ class provider
      * @param collection $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
-        $tables = ['local_onenote_user_sections' => ['user_id', 'course_id', 'section_id',],
-            'local_onenote_assign_pages' => ['user_id', 'assign_id', 'submission_student_page_id', 'feedback_student_page_id',
-                'submission_teacher_page_id', 'feedback_teacher_page_id', 'teacher_lastviewed', 'student_lastmodified',],];
+        $tables = ['local_onenote_user_sections' => ['user_id', 'course_id', 'section_id'],
+                'local_onenote_assign_pages' => ['user_id', 'assign_id', 'submission_student_page_id', 'feedback_student_page_id',
+                        'submission_teacher_page_id', 'feedback_teacher_page_id', 'teacher_lastviewed', 'student_lastmodified']];
 
         foreach ($tables as $table => $fields) {
             $fielddata = [];
@@ -77,7 +73,7 @@ class provider
      * @param int $userid The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
         if (self::user_has_onenote_data($userid)) {
             $contextlist->add_user_context($userid);
@@ -198,9 +194,9 @@ class provider
      * @param int $userid The user to get the map for.
      * @return array The table user map.
      */
-    protected static function get_table_user_map(int $userid) : array {
+    protected static function get_table_user_map(int $userid): array {
         $tables =
-            ['local_onenote_user_sections' => ['user_id' => $userid], 'local_onenote_assign_pages' => ['user_id' => $userid],];
+            ['local_onenote_user_sections' => ['user_id' => $userid], 'local_onenote_assign_pages' => ['user_id' => $userid]];
         return $tables;
     }
 }

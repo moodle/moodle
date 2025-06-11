@@ -28,14 +28,13 @@ use mod_data\local\importer\preset_importer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_data\local\importer\preset_importer
  */
-class preset_importer_test extends \advanced_testcase {
-
+final class preset_importer_test extends \advanced_testcase {
     /**
      * Data provider for build providers for test_needs_mapping and test_set_affected_fields.
      *
      * @return array[]
      */
-    public function preset_importer_provider(): array {
+    public static function preset_importer_provider(): array {
         // Image gallery preset is: ['title' => 'text', 'description' => 'textarea', 'image' => 'picture'];
 
         $titlefield = new \stdClass();
@@ -107,8 +106,8 @@ class preset_importer_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function needs_mapping_provider(): array {
-        $basedprovider = $this->preset_importer_provider();
+    public static function needs_mapping_provider(): array {
+        $basedprovider = static::preset_importer_provider();
 
         $basedprovider['Empty database / Empty importer']['needsmapping'] = false;
         $basedprovider['Empty database / Importer with fields']['needsmapping'] = false;
@@ -138,7 +137,7 @@ class preset_importer_test extends \advanced_testcase {
         array $newfields,
         string $pluginname,
         bool $expectedresult
-    ) {
+    ): void {
 
         global $USER;
 
@@ -182,8 +181,8 @@ class preset_importer_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function set_affected_provider(): array {
-        $basedprovider = $this->preset_importer_provider();
+    public static function set_affected_provider(): array {
+        $basedprovider = static::preset_importer_provider();
 
         $basedprovider['Empty database / Empty importer']['fieldstocreate'] = 0;
         $basedprovider['Empty database / Empty importer']['fieldstoremove'] = 0;
@@ -240,7 +239,7 @@ class preset_importer_test extends \advanced_testcase {
         int $fieldstocreate,
         int $fieldstoremove,
         int $fieldstoupdate
-    ) {
+    ): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -302,7 +301,7 @@ class preset_importer_test extends \advanced_testcase {
         int $fieldstocreate,
         int $fieldstoremove,
         int $fieldstoupdate
-    ) {
+    ): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -353,7 +352,7 @@ class preset_importer_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_field_names_provider(): array {
+    public static function get_field_names_provider(): array {
         return [
             'Empty list' => [
                 'fields' => [],
@@ -383,7 +382,7 @@ class preset_importer_test extends \advanced_testcase {
      * @param array $fields List of fields to get the names from.
      * @param string $expected The list of field names expected.
      */
-    public function test_get_field_names(array $fields, string $expected) {
+    public function test_get_field_names(array $fields, string $expected): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -417,7 +416,7 @@ class preset_importer_test extends \advanced_testcase {
      * @covers ::create_from_plugin_or_directory
      *
      */
-    public function test_create_from_plugin_or_directory() {
+    public function test_create_from_plugin_or_directory(): void {
 
         global $USER;
 

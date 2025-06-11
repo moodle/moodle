@@ -21,6 +21,7 @@ namespace core_reportbuilder;
 use context;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
+use core_reportbuilder\exception\source_invalid_exception;
 
 /**
  * Factory class for creating system report instances

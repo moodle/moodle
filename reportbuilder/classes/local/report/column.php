@@ -20,8 +20,7 @@ namespace core_reportbuilder\local\report;
 
 use coding_exception;
 use lang_string;
-use core_reportbuilder\local\helpers\aggregation;
-use core_reportbuilder\local\helpers\database;
+use core_reportbuilder\local\helpers\{aggregation, database, join_trait};
 use core_reportbuilder\local\aggregation\base;
 use core_reportbuilder\local\models\column as column_model;
 
@@ -33,6 +32,8 @@ use core_reportbuilder\local\models\column as column_model;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class column {
+
+    use join_trait;
 
     /** @var int Column type is integer */
     public const TYPE_INTEGER = 1;
@@ -55,23 +56,11 @@ final class column {
     /** @var int $index Column index within a report */
     private $index;
 
-    /** @var string $columnname Internal reference to name of column */
-    private $columnname;
-
-    /** @var lang_string $columntitle Used as a title for the column in reports */
-    private $columntitle;
-
     /** @var bool $hascustomcolumntitle Used to store if the column has been given a custom title */
     private $hascustomcolumntitle = false;
 
-    /** @var string $entityname Name of the entity this column belongs to */
-    private $entityname;
-
     /** @var int $type Column data type (one of the TYPE_* class constants) */
     private $type = self::TYPE_TEXT;
-
-    /** @var string[] $joins List of SQL joins for this column */
-    private $joins = [];
 
     /** @var array $fields */
     private $fields = [];
@@ -101,10 +90,16 @@ final class column {
     private $attributes = [];
 
     /** @var bool $available Used to know if column is available to the current user or not */
-    protected $available = true;
+    private $available = true;
+
+    /** @var bool $deprecated */
+    private $deprecated = false;
+
+    /** @var string $deprecatedmessage */
+    private $deprecatedmessage;
 
     /** @var column_model $persistent */
-    protected $persistent;
+    private $persistent;
 
     /**
      * Column constructor
@@ -123,10 +118,15 @@ final class column {
      *      this value should be the result of calling {@see get_entity_name}, however if creating columns inside reports directly
      *      it should be the name of the entity as passed to {@see \core_reportbuilder\local\report\base::annotate_entity}
      */
-    public function __construct(string $name, ?lang_string $title, string $entityname) {
-        $this->columnname = $name;
-        $this->columntitle = $title;
-        $this->entityname = $entityname;
+    public function __construct(
+        /** @var string Internal name of the column */
+        private string $name,
+        /** @var lang_string|null Title of the column used in reports */
+        private ?lang_string $title,
+        /** @var string Name of the entity this column belongs to */
+        private readonly string $entityname,
+    ) {
+
     }
 
     /**
@@ -136,7 +136,7 @@ final class column {
      * @return self
      */
     public function set_name(string $name): self {
-        $this->columnname = $name;
+        $this->name = $name;
         return $this;
     }
 
@@ -146,7 +146,7 @@ final class column {
      * @return mixed
      */
     public function get_name(): string {
-        return $this->columnname;
+        return $this->name;
     }
 
     /**
@@ -156,7 +156,7 @@ final class column {
      * @return self
      */
     public function set_title(?lang_string $title): self {
-        $this->columntitle = $title;
+        $this->title = $title;
         $this->hascustomcolumntitle = true;
         return $this;
     }
@@ -167,7 +167,7 @@ final class column {
      * @return string
      */
     public function get_title(): string {
-        return $this->columntitle ? (string) $this->columntitle : '';
+        return $this->title ? (string) $this->title : '';
     }
 
     /**
@@ -213,7 +213,8 @@ final class column {
      * Set the column type, if not called then the type will be assumed to be {@see TYPE_TEXT}
      *
      * The type of a column is used to cast the first column field passed to any callbacks {@see add_callback} as well as the
-     * aggregation options available for the column
+     * aggregation options available for the column. It should represent how the column content is returned from callbacks
+     *
      *
      * @param int $type
      * @return self
@@ -243,44 +244,6 @@ final class column {
      */
     public function get_type(): int {
         return $this->type;
-    }
-
-    /**
-     * Add join clause required for this column to join to existing tables/entities
-     *
-     * This is necessary in the case where {@see add_field} is selecting data from a table that isn't otherwise queried
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Add multiple join clauses required for this column, passing each to {@see add_join}
-     *
-     * Typically when defining columns in entities, you should pass {@see \core_reportbuilder\local\report\base::get_joins} to
-     * this method, so that all entity joins are included in the report when your column is added to it
-     *
-     * @param string[] $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return column joins
-     *
-     * @return string[]
-     */
-    public function get_joins(): array {
-        return array_values($this->joins);
     }
 
     /**
@@ -473,18 +436,20 @@ final class column {
     }
 
     /**
-     * Adds column callback (in the case there are multiple, they will be applied one after another)
+     * Adds column callback (in the case there are multiple, they will be called iteratively - the result of each passed
+     * along to the next in the chain)
      *
      * The callback should implement the following signature (where $value is the first column field, $row is all column
-     * fields, and $additionalarguments are those passed on from this method):
+     * fields, $additionalarguments are those passed to this method, and $aggregation indicates the current aggregation type
+     * being applied to the column):
+     *
+     * function($value, stdClass $row, $additionalarguments, ?string $aggregation): string
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is being aggregated.
-     * For entities that can to be left joined to a report, the first argument to their column callbacks must be nullable.
+     * if the column is part of a report source and is being aggregated. For entities that can be left joined to a report, the
+     * first argument of the callback must be nullable (as it should also be if the first column field is itself nullable).
      *
-     * function($value, stdClass $row[, $additionalarguments]): string
-     *
-     * @param callable $callable function that takes arguments ($value, \stdClass $row, $additionalarguments)
+     * @param callable $callable
      * @param mixed $additionalarguments
      * @return self
      */
@@ -679,15 +644,15 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
-        $value = self::get_default_value($values, $this->type);
+        $value = self::get_default_value($values, $this->get_type());
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if (!empty($this->aggregation)) {
-            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->type);
+            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->get_type());
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
-                $value = ($callable)($value, (object) $values, $arguments);
+                $value = ($callable)($value, (object) $values, $arguments, null);
             }
         }
 
@@ -733,6 +698,37 @@ final class column {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
+    }
+
+    /**
+     * Set deprecated state of the column, in which case it will still be shown when already present in existing reports but
+     * won't be available for selection in the report editor
+     *
+     * @param string $deprecatedmessage
+     * @return self
+     */
+    public function set_is_deprecated(string $deprecatedmessage = ''): self {
+        $this->deprecated = true;
+        $this->deprecatedmessage = $deprecatedmessage;
+        return $this;
+    }
+
+    /**
+     * Return deprecated state of the column
+     *
+     * @return bool
+     */
+    public function get_is_deprecated(): bool {
+        return $this->deprecated;
+    }
+
+    /**
+     * Return deprecated message of the column
+     *
+     * @return string
+     */
+    public function get_is_deprecated_message(): string {
+        return $this->deprecatedmessage;
     }
 
     /**

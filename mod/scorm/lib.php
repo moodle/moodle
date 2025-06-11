@@ -292,10 +292,9 @@ function scorm_delete_instance($id) {
 
     $result = true;
 
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
     // Delete any dependent records.
-    if (! $DB->delete_records('scorm_scoes_track', array('scormid' => $scorm->id))) {
-        $result = false;
-    }
+    scorm_delete_tracks($scorm->id);
     if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id))) {
         foreach ($scoes as $sco) {
             if (! $DB->delete_records('scorm_scoes_data', array('scoid' => $sco->id))) {
@@ -342,11 +341,10 @@ function scorm_delete_instance($id) {
  * user has done with a given particular instance of this module
  * Used for user activity reports.
  *
- * @global stdClass
- * @param int $course Course id
- * @param int $user User id
- * @param int $mod
- * @param int $scorm The scorm id
+ * @param stdClass $course Course object
+ * @param stdClass $user User
+ * @param stdClass $mod
+ * @param stdClass $scorm The scorm
  * @return mixed
  */
 function scorm_user_outline($course, $user, $mod, $scorm) {
@@ -595,29 +593,31 @@ function scorm_get_user_grades($scorm, $userid=0) {
 
     $grades = array();
     if (empty($userid)) {
-        $scousers = $DB->get_records_select('scorm_scoes_track', "scormid=? GROUP BY userid",
-                                            array($scorm->id), "", "userid,null");
-        if ($scousers) {
-            foreach ($scousers as $scouser) {
-                $grades[$scouser->userid] = new stdClass();
-                $grades[$scouser->userid]->id         = $scouser->userid;
-                $grades[$scouser->userid]->userid     = $scouser->userid;
-                $grades[$scouser->userid]->rawgrade = scorm_grade_user($scorm, $scouser->userid);
-            }
-        } else {
-            return false;
-        }
+        $sql = "SELECT DISTINCT userid
+                  FROM {scorm_attempt}
+                 WHERE scormid = ?";
+        $scousers = $DB->get_recordset_sql($sql, [$scorm->id]);
 
+        foreach ($scousers as $scouser) {
+            $grades[$scouser->userid] = new stdClass();
+            $grades[$scouser->userid]->id = $scouser->userid;
+            $grades[$scouser->userid]->userid = $scouser->userid;
+            $grades[$scouser->userid]->rawgrade = scorm_grade_user($scorm, $scouser->userid);
+        }
+        $scousers->close();
     } else {
-        $preattempt = $DB->get_records_select('scorm_scoes_track', "scormid=? AND userid=? GROUP BY userid",
-                                                array($scorm->id, $userid), "", "userid,null");
+        $preattempt = $DB->record_exists('scorm_attempt', ['scormid' => $scorm->id, 'userid' => $userid]);
         if (!$preattempt) {
             return false; // No attempt yet.
         }
         $grades[$userid] = new stdClass();
-        $grades[$userid]->id         = $userid;
-        $grades[$userid]->userid     = $userid;
+        $grades[$userid]->id = $userid;
+        $grades[$userid]->userid = $userid;
         $grades[$userid]->rawgrade = scorm_grade_user($scorm, $userid);
+    }
+
+    if (empty($grades)) {
+        return false;
     }
 
     return $grades;
@@ -772,10 +772,11 @@ function scorm_option2text($scorm) {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the scorm.
  *
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function scorm_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'scormheader', get_string('modulenameplural', 'scorm'));
+    $mform->addElement('static', 'scormdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_scorm', get_string('deleteallattempts', 'scorm'));
 }
 
@@ -820,30 +821,32 @@ function scorm_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function scorm_reset_userdata($data) {
-    global $CFG, $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     $componentstr = get_string('modulenameplural', 'scorm');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_scorm)) {
-        $scormssql = "SELECT s.id
-                         FROM {scorm} s
-                        WHERE s.course=?";
 
-        $DB->delete_records_select('scorm_scoes_track', "scormid IN ($scormssql)", array($data->courseid));
+        $scorms = $DB->get_recordset('scorm', ['course' => $data->courseid]);
+        foreach ($scorms as $scorm) {
+            scorm_delete_tracks($scorm->id);
+        }
+        $scorms->close();
 
         // Remove all grades from gradebook.
         if (empty($data->reset_gradebook_grades)) {
             scorm_reset_gradebook($data->courseid);
         }
 
-        $status[] = array('component' => $componentstr, 'item' => get_string('deleteallattempts', 'scorm'), 'error' => false);
+        $status[] = ['component' => $componentstr, 'item' => get_string('deleteallattempts', 'scorm'), 'error' => false];
     }
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
     shift_course_mod_dates('scorm', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
-    $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+    $status[] = ['component' => $componentstr, 'item' => get_string('date'), 'error' => false];
 
     return $status;
 }
@@ -1040,7 +1043,8 @@ function scorm_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_INTERACTIVECONTENT;
 
         default: return null;
     }
@@ -1297,7 +1301,7 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
         $mode = 'normal';
         if ($attempt == 1) {
             // Check if the user has any existing data or if this is really the first attempt.
-            $exists = $DB->record_exists('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+            $exists = $DB->record_exists('scorm_attempt', ['userid' => $userid, 'scormid' => $scorm->id]);
             if (!$exists) {
                 // No records yet - Attempt should == 1.
                 return;
@@ -1327,12 +1331,17 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     }
     $completionelement = $completionelements[$scormversion];
 
-    $sql = "SELECT sc.id, t.value
+    $sql = "SELECT sc.id, sub.value
               FROM {scorm_scoes} sc
-         LEFT JOIN {scorm_scoes_track} t ON sc.scorm = t.scormid AND sc.id = t.scoid
-                   AND t.element = ? AND t.userid = ? AND t.attempt = ?
-             WHERE sc.scormtype = 'sco' AND sc.scorm = ?";
-    $tracks = $DB->get_recordset_sql($sql, array($completionelement, $userid, $attempt, $scorm->id));
+         LEFT JOIN (SELECT v.scoid, v.value
+                      FROM {scorm_attempt} a
+                      JOIN {scorm_scoes_value} v ON a.id = v.attemptid
+                      JOIN {scorm_element} e on e.id = v.elementid AND e.element = :element
+                     WHERE a.userid = :userid AND a.attempt = :attempt AND a.scormid = :scormid) sub ON sub.scoid = sc.id
+             WHERE sc.scormtype = 'sco' AND sc.scorm = :scormid2";
+    $tracks = $DB->get_recordset_sql($sql, ['userid' => $userid, 'attempt' => $attempt,
+                                            'element' => $completionelement, 'scormid' => $scorm->id,
+                                            'scormid2' => $scorm->id]);
 
     foreach ($tracks as $track) {
         if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
@@ -1411,9 +1420,12 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array('package'), $filter);
 
     $updates->tracks = (object) array('updated' => false);
-    $select = 'scormid = ? AND userid = ? AND timemodified > ?';
-    $params = array($scorm->id, $USER->id, $from);
-    $tracks = $DB->get_records_select('scorm_scoes_track', $select, $params, '', 'id');
+    $sql = "SELECT v.id
+              FROM {scorm_scoes_value} v
+              JOIN {scorm_attempt} a ON a.id = v.attemptid
+             WHERE a.scormid = :scormid AND v.timemodified > :timemodified";
+    $params = ['scormid' => $scorm->id, 'timemodified' => $from, 'userid' => $USER->id];
+    $tracks = $DB->get_records_sql($sql ." AND a.userid = :userid", $params);
     if (!empty($tracks)) {
         $updates->tracks->updated = true;
         $updates->tracks->itemids = array_keys($tracks);
@@ -1421,21 +1433,21 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     // Now, teachers should see other students updates.
     if (has_capability('mod/scorm:viewreport', $cm->context)) {
-        $select = 'scormid = ? AND timemodified > ?';
-        $params = array($scorm->id, $from);
+        $params = ['scormid' => $scorm->id, 'timemodified' => $from];
 
         if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
             $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
             if (empty($groupusers)) {
                 return $updates;
             }
-            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
-            $select .= ' AND userid ' . $insql;
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
+            $sql .= ' AND userid ' . $insql;
             $params = array_merge($params, $inparams);
         }
 
         $updates->usertracks = (object) array('updated' => false);
-        $tracks = $DB->get_records_select('scorm_scoes_track', $select, $params, '', 'id');
+
+        $tracks = $DB->get_records_sql($sql, $params);
         if (!empty($tracks)) {
             $updates->usertracks->updated = true;
             $updates->usertracks->itemids = array_keys($tracks);
@@ -1449,20 +1461,20 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_scorm_get_fontawesome_icon_map() {
     return [
-        'mod_scorm:assetc' => 'fa-file-archive-o',
-        'mod_scorm:asset' => 'fa-file-archive-o',
+        'mod_scorm:asset' => 'fa-regular fa-file-zipper',
+        'mod_scorm:assetc' => 'fa-regular fa-file-zipper',
         'mod_scorm:browsed' => 'fa-book',
-        'mod_scorm:completed' => 'fa-check-square-o',
-        'mod_scorm:failed' => 'fa-times',
-        'mod_scorm:incomplete' => 'fa-pencil-square-o',
+        'mod_scorm:completed' => 'fa-regular fa-square-check',
+        'mod_scorm:failed' => 'fa-xmark',
+        'mod_scorm:incomplete' => 'fa-regular fa-pen-to-square',
         'mod_scorm:minus' => 'fa-minus',
-        'mod_scorm:notattempted' => 'fa-square-o',
+        'mod_scorm:notattempted' => 'fa-regular fa-square',
         'mod_scorm:passed' => 'fa-check',
         'mod_scorm:plus' => 'fa-plus',
-        'mod_scorm:popdown' => 'fa-window-close-o',
-        'mod_scorm:popup' => 'fa-window-restore',
+        'mod_scorm:popdown' => 'fa-regular fa-rectangle-xmark',
+        'mod_scorm:popup' => 'fa-regular fa-window-restore',
         'mod_scorm:suspend' => 'fa-pause',
-        'mod_scorm:wait' => 'fa-clock-o',
+        'mod_scorm:wait' => 'fa-spinner fa-spin',
     ];
 }
 
@@ -1790,7 +1802,7 @@ function mod_scorm_core_calendar_get_valid_event_timestart_range(\calendar_event
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_scorm_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_scorm_get_path_from_pluginfile(string $filearea, array $args): array {
     // SCORM never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 

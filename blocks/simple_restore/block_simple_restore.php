@@ -46,7 +46,7 @@ class block_simple_restore extends block_list {
     public function init() {
         global $COURSE;
         $this->title        = simple_restore_utils::_s('pluginname');
-        $this->archive_mode = $this->get_archive_mode($COURSE->id);
+        $this->archivemode = $this->get_archive_mode($COURSE->id);
     }
 
     /**
@@ -70,7 +70,7 @@ class block_simple_restore extends block_list {
     public function applicable_formats() {
         $site   = array('site' => true, 'course' => false, 'my' => true);
         $course = array('site' => false, 'course' => true, 'my' => false);
-        return $this->archive_mode ? $site : $course;
+        return $this->archivemode ? $site : $course;
     }
 
     /**
@@ -97,7 +97,7 @@ class block_simple_restore extends block_list {
         $this->content = $this->get_new_content_container();
 
         // Are we in archive mode or course context?
-        if ($this->archive_mode) {
+        if ($this->archivemode) {
             // We are in archive mode.
             $content = $this->get_site_content($COURSE);
         } else {

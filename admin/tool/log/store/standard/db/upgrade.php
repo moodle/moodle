@@ -22,45 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_logstore_standard_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions.
-
-    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-    if ($oldversion < 2022053000) {
-        // Define index relateduserid (not unique) to be added to logstore_standard_log.
-        $table = new xmldb_table('logstore_standard_log');
-
-        // Launch add key userid.
-        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Launch add key courseid.
-        $key = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Launch add key realuserid.
-        $key = new xmldb_key('realuserid', XMLDB_KEY_FOREIGN, ['realuserid'], 'user', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Launch add key relateduserid.
-        $key = new xmldb_key('relateduserid', XMLDB_KEY_FOREIGN, ['relateduserid'], 'user', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Standard savepoint reached.
-        upgrade_plugin_savepoint(true, 2022053000, 'logstore', 'standard');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

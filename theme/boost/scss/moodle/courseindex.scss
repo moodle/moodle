@@ -2,8 +2,8 @@ $courseindex-link-color: $list-group-action-color !default;
 $courseindex-link-color-selected: color-yiq($primary) !default;
 $courseindex-link-dimmed-color: $gray-600 !default;
 $courseindex-link-hover-color: black !default;
-$courseindex-item-dragging-bg: theme-color-level('info', -11) !default;
-$courseindex-item-dragging-border: theme-color-level('info', -9) !default;
+$courseindex-item-dragging-bg: shift-color($info, -90%) !default;
+$courseindex-item-dragging-border: shift-color($info, -70%) !default;
 $courseindex-item-active-border: $gray-300 !default;
 $courseindex-item-active-bg: $gray-100 !default;
 $courseindex-item-page-bg: $primary !default;
@@ -13,7 +13,8 @@ $courseindex-item-radius: $border-radius !default;
 $courseindex-item-current: $primary !default;
 
 @mixin courseindex-item-hover() {
-    @include hover-focus() {
+    &:hover,
+    &:focus {
         color: $courseindex-link-hover-color;
 
         .courseindex-link,
@@ -30,7 +31,19 @@ $courseindex-item-current: $primary !default;
             }
         }
         &.draggable {
-            cursor: pointer;
+            cursor: move;
+        }
+        &.pageitem,
+        .pageitem {
+            background-color: darken($courseindex-item-page-bg, 7.5%);
+            color: darken($courseindex-link-color-selected, 10%);
+            .courseindex-link,
+            .courseindex-chevron {
+                color: darken($courseindex-link-color-selected, 10%);
+                a {
+                    color: darken($courseindex-link-color-selected, 10%);
+                }
+            }
         }
     }
 }
@@ -60,7 +73,8 @@ $courseindex-item-current: $primary !default;
         .courseindex-link,
         .courseindex-chevron {
             color: $courseindex-link-color;
-            @include hover-focus() {
+            &:hover,
+            &:focus {
                 color: $courseindex-link-hover-color;
                 text-decoration: none;
             }
@@ -112,15 +126,6 @@ $courseindex-item-current: $primary !default;
             a {
                 color: $courseindex-link-color-selected;
             }
-
-            @include hover-focus() {
-                background-color: darken($courseindex-item-page-bg, 7.5%);
-                color: darken($courseindex-link-color-selected, 10%);
-                .courseindex-link,
-                .courseindex-chevron {
-                    color: darken($courseindex-link-color-selected, 10%);
-                }
-            }
         }
 
         // Completion.
@@ -159,6 +164,11 @@ $courseindex-item-current: $primary !default;
             .current-badge {
                 display: inline-block;
             }
+
+            /* Skip current badges in delegated sections. */
+            .delegated-section .current-badge {
+                display: none;
+            }
         }
 
         &.dropready .courseindex-item-content {
@@ -171,11 +181,14 @@ $courseindex-item-current: $primary !default;
                 padding-left: $courseindex-item-padding-x;
             }
         }
+        &.delegated-section {
+            width: 100%;
+        }
     }
 
     // General icons size.
     .icon {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     // Element visible only on editing mode.
@@ -189,7 +202,7 @@ $courseindex-item-current: $primary !default;
     }
 
     // Placeholders.
-    .media-list {
+    .placeholders {
         .rounded-circle {
             height: 1rem;
             width: 1rem;

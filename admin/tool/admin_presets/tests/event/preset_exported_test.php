@@ -25,12 +25,12 @@ namespace tool_admin_presets\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \tool_admin_presets\event\preset_exported
  */
-class preset_exported_test extends \advanced_testcase {
+final class preset_exported_test extends \advanced_testcase {
 
     /**
      * Test preset_exported event.
      */
-    public function test_preset_exported_event() {
+    public function test_preset_exported_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -55,7 +55,5 @@ class preset_exported_test extends \advanced_testcase {
         $this->assertInstanceOf('\tool_admin_presets\event\preset_exported', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($presetid, $event->objectid);
-        $expected = [0, 'tool_admin_presets', 'export', '', $presetid, 0];
-        $this->assertEventLegacyLogData($expected, $event);
     }
 }

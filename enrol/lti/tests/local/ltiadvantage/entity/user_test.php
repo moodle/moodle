@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\user
  */
-class user_test extends \advanced_testcase {
+final class user_test extends \advanced_testcase {
 
     /**
      * Test creation of a user instance using the factory method.
@@ -34,7 +34,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_create(array $args, array $expectations) {
+    public function test_create(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create(...array_values($args));
             $this->assertInstanceOf(user::class, $user);
@@ -64,7 +64,7 @@ class user_test extends \advanced_testcase {
      *
      * @return array the data for testing.
      */
-    public function create_data_provider(): array {
+    public static function create_data_provider(): array {
         global $CFG;
         return [
             'Valid create, only required args provided' => [
@@ -242,7 +242,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create_from_resource_link
      */
-    public function test_create_from_resource_link(array $args, array $expectations) {
+    public function test_create_from_resource_link(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create_from_resource_link(...array_values($args));
             $this->assertInstanceOf(user::class, $user);
@@ -272,7 +272,7 @@ class user_test extends \advanced_testcase {
      *
      * @return array the data for testing.
      */
-    public function create_from_resource_link_data_provider(): array {
+    public static function create_from_resource_link_data_provider(): array {
         global $CFG;
         return [
             'Valid creation, all args provided explicitly' => [
@@ -487,7 +487,7 @@ class user_test extends \advanced_testcase {
      * @param array $expectations the array of expectations
      * @covers ::__construct
      */
-    public function test_setters_and_getters(string $methodname, $arg, array $expectations) {
+    public function test_setters_and_getters(string $methodname, $arg, array $expectations): void {
         $user = $this->create_test_user();
         $setter = 'set_'.$methodname;
         $getter = 'get_'.$methodname;
@@ -511,7 +511,7 @@ class user_test extends \advanced_testcase {
      *
      * @return array the array of test data.
      */
-    public function setters_getters_data_provider(): array {
+    public static function setters_getters_data_provider(): array {
         global $CFG;
         return [
             'Testing set_resourcelinkid with valid id' => [
@@ -620,12 +620,12 @@ class user_test extends \advanced_testcase {
             ],
             'Testing set_maildisplay with a valid int: 2' => [
                 'methodname' => 'maildisplay',
-                'arg' => '1',
+                'arg' => '2',
                 'expectations' => [
                     'valid' => true,
                 ]
             ],
-            'Testing set_maildisplay with invalid int' => [
+            'Testing set_maildisplay with invalid int: -1' => [
                 'methodname' => 'maildisplay',
                 'arg' => '-1',
                 'expectations' => [
@@ -634,7 +634,7 @@ class user_test extends \advanced_testcase {
                     'exceptionmessage' => "Invalid maildisplay value '-1'. Must be in the range {0..2}."
                 ]
             ],
-            'Testing set_maildisplay with invalid int' => [
+            'Testing set_maildisplay with invalid int: 3' => [
                 'methodname' => 'maildisplay',
                 'arg' => '3',
                 'expectations' => [
@@ -659,7 +659,7 @@ class user_test extends \advanced_testcase {
                     'exceptionmessage' => 'Invalid lang value. Cannot be an empty string.'
                 ]
             ],
-            'Testing set_lang with an empty string' => [
+            'Testing set_lang with invalid lang code' => [
                 'methodname' => 'lang',
                 'arg' => 'ff',
                 'expectations' => [

@@ -25,9 +25,11 @@
 
 namespace local_o365\webservices;
 
-use \local_o365\webservices\exception as exception;
-
-defined('MOODLE_INTERNAL') || die();
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use local_o365\webservices\exception as exception;
+use moodle_exception;
 
 /**
  * Webservices utilities.
@@ -41,11 +43,12 @@ class utils {
      * @param int $coursemoduleid The course module ID.
      * @param int $courseid
      * @return array Whether we can proceed or not.
+     * @throws exception\invalidassignment If the assignment is not a OneNote assignment.
      */
     public static function verify_assignment($coursemoduleid, $courseid) {
         global $DB;
 
-        list($course, $module, $assign) = static::get_assignment_info($coursemoduleid, $courseid);
+        [$course, $module, $assign] = static::get_assignment_info($coursemoduleid, $courseid);
 
         require_capability('moodle/course:manageactivities', \context_module::instance($module->id));
 
@@ -67,23 +70,24 @@ class utils {
     /**
      * Get the external structure schema when returning information about an assignment.
      *
-     * @return \external_single_structure The return data schema.
+     * @return external_single_structure The return data schema.
      */
     public static function get_assignment_return_info_schema() {
         $params = [
-            'data' => new \external_multiple_structure(
-                new \external_single_structure([
-                    'course' => new \external_value(PARAM_INT, 'course id'),
-                    'coursemodule' => new \external_value(PARAM_INT, 'coursemodule id'),
-                    'name' => new \external_value(PARAM_TEXT, 'name'),
-                    'intro' => new \external_value(PARAM_TEXT, 'intro'),
-                    'section' => new \external_value(PARAM_INT, 'section'),
-                    'visible' => new \external_value(PARAM_INT, 'visible'),
-                    'instance' => new \external_value(PARAM_INT, 'instance id'),
+            'data' => new external_multiple_structure(
+                new external_single_structure([
+                    'course' => new external_value(PARAM_INT, 'course id'),
+                    'coursemodule' => new external_value(PARAM_INT, 'coursemodule id'),
+                    'name' => new external_value(PARAM_TEXT, 'name'),
+                    'intro' => new external_value(PARAM_TEXT, 'intro'),
+                    'section' => new external_value(PARAM_INT, 'section'),
+                    'visible' => new external_value(PARAM_INT, 'visible'),
+                    'instance' => new external_value(PARAM_INT, 'instance id'),
                 ])
             ),
         ];
-        return new \external_single_structure($params);
+
+        return new external_single_structure($params);
     }
 
     /**
@@ -92,6 +96,7 @@ class utils {
      * @param int $coursemoduleid The course module ID.
      * @param int $courseid The course id the module belongs to.
      * @return array Array of assignment information, following the same schema as get_assignment_info_schema.
+     * @throws moodle_exception
      */
     public static function get_assignment_info($coursemoduleid, $courseid) {
         global $DB;
@@ -106,6 +111,7 @@ class utils {
         if (empty($assign)) {
             throw new exception\assignnotfound();
         }
+
         return [$course, $module, $assign];
     }
 
@@ -117,7 +123,8 @@ class utils {
      * @return array Array of assignment information, following the same schema as get_assignment_info_schema.
      */
     public static function get_assignment_return_info($coursemoduleid, $courseid) {
-        list($course, $module, $assign) = static::get_assignment_info($coursemoduleid, $courseid);
+        [$course, $module, $assign] = static::get_assignment_info($coursemoduleid, $courseid);
+
         return [
             'course' => $course->id,
             'coursemodule' => $module->id,

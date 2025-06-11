@@ -43,7 +43,7 @@ interface packable {
      * @param  string $modeldir  The directory that contains the trained model.
      * @return string            The path to the directory that contains the exported model.
      */
-    public function export(string $uniqueid, string $modeldir) : string;
+    public function export(string $uniqueid, string $modeldir): string;
 
     /**
      * Imports the provided machine learning model.
@@ -53,5 +53,5 @@ interface packable {
      * @param  string $importdir The directory that contains the files to import.
      * @return bool Success
      */
-    public function import(string $uniqueid, string $modeldir, string $importdir) : bool;
+    public function import(string $uniqueid, string $modeldir, string $importdir): bool;
 }

@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class roles_backup_restore_test extends advanced_testcase {
+final class roles_backup_restore_test extends advanced_testcase {
 
     /**
      * Create a course where the (non-editing) Teacher role is overridden

@@ -1,4 +1,13 @@
-This files describes API changes in the quiz code.
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This files describes API changes in the URL code.
+
+=== 4.4 ===
+
+* A new admin setting "Allow URL variables" has been added, which allows/disallows the use of variables for URL resources. Variables enable you to pass internal information, such as the user's name, as part of the URL.
 
 === 4.0 ===
 

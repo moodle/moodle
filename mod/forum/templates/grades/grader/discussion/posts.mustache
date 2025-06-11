@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_grader_discussion_posts
+    @template mod_forum/grades/grader/discussion/posts
 
     Template to render a list of posts for a discussion.
 
@@ -38,7 +38,7 @@
         <div class="discussion-container">
             <div class="p-4">
                 <h3 class="d-inline-block m-0 h6 font-weight-bold">{{#str}} discussionstartedby, mod_forum, {{authorfullname}} {{/str}}</h3>
-                <p class="d-inline-block m-0 h6 font-weight-normal text-muted ml-1">
+                <p class="d-inline-block m-0 h6 font-weight-normal text-muted ms-1">
                     {{#userdate}} {{timecreated}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
                 </p>
                 <h2 class="mb-4 font-weight-bold">{{name}}</h2>

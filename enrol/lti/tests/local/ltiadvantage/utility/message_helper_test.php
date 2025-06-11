@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\utility;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\utility\message_helper
  */
-class message_helper_test extends \base_testcase {
+final class message_helper_test extends \base_testcase {
 
     /**
      * Test the static helper is_instructor_launch.
@@ -34,7 +34,7 @@ class message_helper_test extends \base_testcase {
      * @param bool $expected the expected return of is_instructor_launch() given the JWT data.
      * @covers ::is_instructor_launch
      */
-    public function test_is_instructor_launch(array $jwtdata, bool $expected) {
+    public function test_is_instructor_launch(array $jwtdata, bool $expected): void {
         $this->assertEquals($expected, message_helper::is_instructor_launch($jwtdata));
     }
 
@@ -43,7 +43,7 @@ class message_helper_test extends \base_testcase {
      *
      * @return array the array of test JWT data.
      */
-    public function message_roles_provider(): array {
+    public static function message_roles_provider(): array {
         return [
             'Roles claim present, includes learner role only' => [
                 'jwtdata' => [

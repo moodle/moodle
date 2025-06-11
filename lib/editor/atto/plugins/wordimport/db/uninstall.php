@@ -32,14 +32,14 @@ function xmldb_atto_wordimport_uninstall() {
     // Remove 'wordimport' from the toolbar editor_atto config variable.
     $toolbar = get_config('editor_atto', 'toolbar');
     if (strpos($toolbar, 'wordimport') !== false) {
-        $newgroups = array();
+        $newgroups = [];
         $groups = explode("\n", $toolbar);
         foreach ($groups as $group) {
             if (strpos($group, 'wordimport') !== false) {
                 // Remove the 'wordimport' item from the group.
                 $parts = explode('=', $group);
                 $items = explode(',', $parts[1]);
-                $newitems = array();
+                $newitems = [];
                 foreach ($items as $item) {
                     if (trim($item) != 'wordimport') {
                         $newitems[] = $item;

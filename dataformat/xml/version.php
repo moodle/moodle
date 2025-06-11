@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'dataformat_xml';
-$plugin->release   = '4.5';
-$plugin->version   = 2024100800;
+$plugin->release   = '5.0';
+$plugin->version   = 2025041400;
 $plugin->requires  = 2022112800; // Moodle 4.1 onwards.
 $plugin->maturity  = MATURITY_STABLE;

@@ -28,11 +28,13 @@ if ($hassiteconfig) {
     $pluginname = get_string('pluginname', 'local_adminer');
 
     $adminersecret = $CFG->local_adminer_secret ?? '';
+    $adminerdisabled = true;
     if ($adminersecret !== \local_adminer\util::DISABLED_SECRET) {
+        $adminerdisabled = false;
         $ADMIN->add('server', new admin_externalpage(
             'local_adminer',
             $pluginname,
-            new moodle_url('/local/adminer/index.php'),
+            \local_adminer\util::get_adminer_url(),
             'local/adminer:useadminer')
         );
     }
@@ -41,6 +43,14 @@ if ($hassiteconfig) {
     $ADMIN->add('localplugins', $settings);
 
     $configs = [];
+
+    if ($adminerdisabled) {
+        $configs[] = new admin_setting_heading(
+            'local_adminer_disabled_note',
+            '',
+            $OUTPUT->render_from_template('local_adminer/disabled_note', [])
+        );
+    }
 
     $templatecontext = [
         'disabledsecret' => \local_adminer\util::DISABLED_SECRET,

@@ -27,7 +27,6 @@ namespace report_lpmonitoring\external;
 use core\external\exporter;
 use renderer_base;
 use core_tag_tag;
-use core_competency\external\plan_exporter;
 use core_comment\external\comment_area_exporter;
 
 /**
@@ -45,29 +44,29 @@ class stats_plan_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'nbcompetenciesnotrated' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcompetenciesproficient' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcompetenciesnotproficient' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcompetenciestotal' => array(
-                'type' => PARAM_INT
-            ),
-            'nbcompetenciesrated' => array(
-                'type' => PARAM_INT
-            ),
-            'nbtags' => array(
-                'type' => PARAM_INT
-            ),
-            'commentarea' => array(
+        return [
+            'nbcompetenciesnotrated' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcompetenciesproficient' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcompetenciesnotproficient' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcompetenciestotal' => [
+                'type' => PARAM_INT,
+            ],
+            'nbcompetenciesrated' => [
+                'type' => PARAM_INT,
+            ],
+            'nbtags' => [
+                'type' => PARAM_INT,
+            ],
+            'commentarea' => [
                 'type' => comment_area_exporter::read_properties_definition(),
-            )
-        );
+            ],
+        ];
     }
 
     /**
@@ -83,7 +82,7 @@ class stats_plan_exporter extends exporter {
      */
     protected static function define_related() {
         // We cache the scale so it does not need to be retrieved from the framework every time.
-        return array('plan' => 'core_competency\\plan');
+        return ['plan' => 'core_competency\\plan'];
     }
 
     /**

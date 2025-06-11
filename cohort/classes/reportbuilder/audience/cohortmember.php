@@ -56,11 +56,10 @@ class cohortmember extends base {
     public function get_sql(string $usertablealias): array {
         global $DB;
 
-        $cm = database::generate_alias();
         $cohorts = $this->get_configdata()['cohorts'];
-        $prefix = database::generate_param_name() . '_';
-        [$insql, $inparams] = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, $prefix);
+        [$insql, $inparams] = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, database::generate_param_name('_'));
 
+        $cm = database::generate_alias();
         $join = "JOIN {cohort_members} {$cm}
                    ON ({$cm}.userid = {$usertablealias}.id)";
 

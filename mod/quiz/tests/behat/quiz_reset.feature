@@ -40,7 +40,7 @@ Feature: Quiz reset
     When I log in as "teacher1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all quiz attempts | 1 |
+        | All quiz attempts | 1 |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test quiz name" "mod_quiz > Grades report" page
@@ -52,7 +52,7 @@ Feature: Quiz reset
       | Test quiz name | student1 | 2        |
     When I log in as "teacher1"
     And I am on the "Course 1" "reset" page
-    And I set the field "Delete all user overrides" to "1"
+    And I set the field "All user overrides" to "1"
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test quiz name" "mod_quiz > User overrides" page
@@ -65,7 +65,7 @@ Feature: Quiz reset
     When I log in as "teacher1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all group overrides | 1 |
+        | All group overrides | 1 |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test quiz name" "mod_quiz > Group overrides" page

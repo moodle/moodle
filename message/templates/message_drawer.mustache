@@ -36,7 +36,8 @@
 {{< core/drawer}}
     {{$drawercontent}}
         <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
-            <div class="closewidget text-right pr-2">
+            <h2 class="sr-only">{{#str}} messagingcategory,admin {{/str}}</h2>
+            <div class="closewidget text-end pe-2">
                 <a class="text-dark btn-link" data-action="closedrawer" href="#"
                    title="{{#cleanstr}} closebuttontitle {{/cleanstr}}" aria-label="{{#cleanstr}} closebuttontitle {{/cleanstr}}"
                 >

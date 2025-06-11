@@ -97,5 +97,5 @@ abstract class activity_dates {
      *                 label - The label for the date
      *                 timestamp - The date
      */
-    protected abstract function get_dates(): array;
+    abstract protected function get_dates(): array;
 }

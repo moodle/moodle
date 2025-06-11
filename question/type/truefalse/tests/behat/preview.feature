@@ -26,7 +26,7 @@ Feature: Preview a Trtue/False question
     When I am on the "true-false-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I click on "True" "radio"
     And I press "Check"
     And I should see "This is the right answer."
@@ -37,7 +37,7 @@ Feature: Preview a Trtue/False question
     When I am on the "true-false-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I click on "False" "radio"
     And I press "Check"
     And I should see "This is the wrong answer."

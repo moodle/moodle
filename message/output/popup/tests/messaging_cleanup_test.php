@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/message/output/popup/tests/base.php');
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class messaging_cleanup_test extends \advanced_testcase {
+final class messaging_cleanup_test extends \advanced_testcase {
 
     // Helper trait for sending fake popup notifications.
     use message_popup_test_helper;
@@ -42,7 +42,7 @@ class messaging_cleanup_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_cleanup_all_notifications() {
+    public function test_cleanup_all_notifications(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -73,7 +73,7 @@ class messaging_cleanup_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_cleanup_read_notifications() {
+    public function test_cleanup_read_notifications(): void {
         global $DB;
 
         $this->resetAfterTest();

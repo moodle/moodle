@@ -28,6 +28,7 @@ use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
+use section_info;
 use stdClass;
 use url_select;
 
@@ -42,11 +43,15 @@ class sectionselector implements named_templatable, renderable {
 
     use courseformat_named_templatable;
 
+    /** @var string the indenter */
+    private const INDENTER = '&nbsp;&nbsp;&nbsp;&nbsp;';
     /** @var course_format the course format class */
     protected $format;
-
     /** @var sectionnavigation the main section navigation class */
     protected $navigation;
+
+    /** @var array $sectionmenu the sections indexed by url. */
+    protected $sectionmenu = [];
 
     /**
      * Constructor.
@@ -66,7 +71,7 @@ class sectionselector implements named_templatable, renderable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
@@ -78,25 +83,77 @@ class sectionselector implements named_templatable, renderable {
 
         $data = $this->navigation->export_for_template($output);
 
+        $this->sectionmenu[course_get_url($course)->out(false)] = get_string('maincoursepage');
+
         // Add the section selector.
-        $sectionmenu = [];
-        $sectionmenu[course_get_url($course)->out(false)] = get_string('maincoursepage');
-        $section = 1;
-        $numsections = $format->get_last_section_number();
-        while ($section <= $numsections) {
-            $thissection = $modinfo->get_section_info($section);
-            $url = course_get_url($course, $section);
-            if ($thissection->uservisible && $url && $section != $data->currentsection) {
-                $sectionmenu[$url->out(false)] = get_section_name($course, $section);
+        $allsections = $modinfo->get_section_info_all();
+        $disabledlink = $this->get_section_url($course, $allsections[$data->currentsection]);
+        $sectionwithchildren = [];
+        // First get any section with chidren (easier to process later in a regular loop).
+        foreach ($allsections as $section) {
+            if (!$section->uservisible) {
+                unset($allsections[$section->sectionnum]);
+                continue;
             }
-            $section++;
+            $sectiondelegated = $section->get_component_instance();
+            if ($sectiondelegated) {
+                unset($allsections[$section->sectionnum]);
+                $parentsection = $sectiondelegated->get_parent_section();
+                // If the section is delegated we need to get the parent section and add the section to the parent section array.
+                if ($parentsection) {
+                    $sectionwithchildren[$parentsection->sectionnum][] = $section;
+                }
+            }
         }
 
-        $select = new url_select($sectionmenu, '', ['' => get_string('jumpto')]);
+        foreach ($allsections as $section) {
+            $this->add_section_menu($format, $course, $section);
+            if (isset($sectionwithchildren[$section->sectionnum])) {
+                foreach ($sectionwithchildren[$section->sectionnum] as $subsection) {
+                    $this->add_section_menu($format, $course, $subsection, true);
+                }
+            }
+        }
+        $select = new url_select(
+            urls: $this->sectionmenu,
+            selected: '',
+            nothing: ['' => get_string('jumpto')],
+        );
+        // Disable the current section.
+        $select->set_option_disabled($disabledlink);
         $select->class = 'jumpmenu';
         $select->formid = 'sectionmenu';
 
         $data->selector = $output->render($select);
         return $data;
+    }
+
+    /**
+     * Add a section to the section menu.
+     *
+     * @param course_format $format
+     * @param stdClass $course
+     * @param section_info $section
+     * @param bool $indent
+     */
+    private function add_section_menu(
+        course_format $format,
+        stdClass $course,
+        section_info $section,
+        bool $indent = false
+    ) {
+        $url = $this->get_section_url($course, $section);
+        $indentation = $indent ? self::INDENTER : '';
+        $this->sectionmenu[$url] = $indentation . $format->get_section_name($section);
+    }
+
+    /**
+     * Get the section url.
+     * @param stdClass $course
+     * @param section_info $section
+     * @return string
+     */
+    private function get_section_url(stdClass $course, section_info $section): string {
+        return course_get_url($course, (object) $section, ['navigation' => true])->out(false);
     }
 }

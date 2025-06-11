@@ -39,31 +39,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_feedback_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-    if ($oldversion < 2022053000) {
-        // Define key courseid (foreign) to be added to feedback_completed.
-         $table = new xmldb_table('feedback_completed');
-         $key = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
-
-         // Launch add key courseid.
-         $dbman->add_key($table, $key);
-
-         // Feedback savepoint reached.
-         upgrade_mod_savepoint(true, 2022053000, 'feedback');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

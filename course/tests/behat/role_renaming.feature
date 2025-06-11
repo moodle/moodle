@@ -18,14 +18,11 @@ Feature: Rename roles in a course
       | teacher1 | C1     | editingteacher |
 
   Scenario: Teacher can rename roles
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Settings" in current page administration
-    And I should see "Role renaming"
+    Given I am on the "Course 1" "renameroles" page logged in as "teacher1"
     When I set the following fields to these values:
       | Your word for 'Teacher' | Lecturer |
       | Your word for 'Student' | Learner  |
-    And I press "Save and display"
+    And I press "Save"
     And I navigate to course participants
     Then I should see "Lecturer (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Learner (Student)" in the "Student 1" "table_row"
@@ -44,6 +41,5 @@ Feature: Rename roles in a course
       | moodle/course:renameroles | inherit        |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Settings" in current page administration
+    And I navigate to course participants
     Then I should not see "Role renaming"
-    And I should not see "Your word for 'Teacher'"

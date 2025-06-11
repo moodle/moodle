@@ -25,7 +25,7 @@ namespace mod_quiz\question\bank;
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_action_column extends \core_question\local\bank\action_column_base {
+class add_action_column extends \core_question\local\bank\column_base {
 
     /** @var string caches a lang string used repeatedly. */
     protected $stradd;
@@ -35,14 +35,29 @@ class add_action_column extends \core_question\local\bank\action_column_base {
         $this->stradd = get_string('addtoquiz', 'quiz');
     }
 
+    public function get_extra_classes(): array {
+        return ['iconcol'];
+    }
+
+    public function get_title(): string {
+        return '&#160;';
+    }
+
     public function get_name() {
         return 'addtoquizaction';
     }
 
     protected function display_content($question, $rowclasses) {
+        global $OUTPUT;
         if (!question_has_capability_on($question, 'use')) {
             return;
         }
-        $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_quiz_url($question->id));
+        $link = new \action_link(
+                $this->qbank->add_to_quiz_url($question->id),
+                '',
+                null,
+                ['title' => $this->stradd],
+                new \pix_icon('t/add', $this->stradd));
+        echo $OUTPUT->render($link);
     }
 }

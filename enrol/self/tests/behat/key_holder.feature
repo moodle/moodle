@@ -39,6 +39,6 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I press "Enrol me"
-    Then I should see "Topic 1"
+    Then I should see "New section"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"

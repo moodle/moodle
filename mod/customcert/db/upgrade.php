@@ -200,7 +200,7 @@ function xmldb_customcert_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022041903, 'customcert'); // Replace with the actual version number.
     }
 
-    if ($oldversion < 2022112802) {
+    if ($oldversion < 2023042403) {
         // Define index to be added to customcert_issues.
         $table = new xmldb_table('customcert_issues');
         $index = new xmldb_index('userid-customcertid', XMLDB_INDEX_NOTUNIQUE, ['userid', 'customcertid']);
@@ -210,19 +210,19 @@ function xmldb_customcert_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        upgrade_mod_savepoint(true, 2022112802, 'customcert'); // Replace with the actual version number.
+        upgrade_mod_savepoint(true, 2023042403, 'customcert'); // Replace with the actual version number.
     }
 
-    if ($oldversion < 2022112803) {
+    if ($oldversion < 2023042404) {
         $table = new xmldb_table('customcert_issues');
         $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         $dbman->add_key($table, $key);
 
-        upgrade_mod_savepoint(true, 2022112803, 'customcert');
+        upgrade_mod_savepoint(true, 2023042404, 'customcert');
     }
 
-    if ($oldversion < 2022112804) {
+    if ($oldversion < 2023042405) {
         // Changing precision of field verifyany on table customcert to (1).
         $table = new xmldb_table('customcert');
         $field = new xmldb_field('verifyany', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
@@ -232,10 +232,10 @@ function xmldb_customcert_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
         // Customcert savepoint reached.
-        upgrade_mod_savepoint(true, 2022112804, 'customcert');
+        upgrade_mod_savepoint(true, 2023042405, 'customcert');
     }
 
-    if ($oldversion < 2022112809) {
+    if ($oldversion < 2024042202) {
 
         // Define table customcert_email_task_prgrs to be created.
         $table = new xmldb_table('customcert_email_task_prgrs');
@@ -264,10 +264,10 @@ function xmldb_customcert_upgrade($oldversion) {
         }
 
         // Customcert savepoint reached.
-        upgrade_mod_savepoint(true, 2022112809, 'customcert');
+        upgrade_mod_savepoint(true, 2024042202, 'customcert');
     }
 
-    if ($oldversion < 2022112810) {
+    if ($oldversion < 2024042203) {
         $elements = $DB->get_records('customcert_elements', ['element' => 'date']);
 
         foreach ($elements as $element) {
@@ -283,10 +283,10 @@ function xmldb_customcert_upgrade($oldversion) {
         }
 
         // Customcert savepoint reached.
-        upgrade_mod_savepoint(true, 2022112810, 'customcert');
+        upgrade_mod_savepoint(true, 2024042203, 'customcert');
     }
 
-    if ($oldversion < 2022112812) {
+    if ($oldversion < 2024042205) {
         // Drop unused table customcert_email_task_prgrs.
         $table = new xmldb_table('customcert_email_task_prgrs');
 
@@ -295,7 +295,7 @@ function xmldb_customcert_upgrade($oldversion) {
         }
 
         // Customcert savepoint reached.
-        upgrade_mod_savepoint(true, 2022112812, 'customcert');
+        upgrade_mod_savepoint(true, 2024042205, 'customcert');
     }
 
     return true;

@@ -20,10 +20,10 @@ if (\core\session\manager::is_loggedinas()) {
 }
 
 if ($redirect) {
-    if ($id and $id != SITEID) {
+    if ($id && $id != SITEID) {
         $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=".$id;
     } else {
-        $SESSION->wantsurl = "$CFG->wwwroot/";
+        $SESSION->wantsurl = "$CFG->wwwroot/?redirect=1";
     }
 
     redirect(get_login_url());
@@ -90,4 +90,11 @@ $strloggedinas = get_string('loggedinas', '', $newfullname);
 $PAGE->set_title($strloggedinas);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strloggedinas);
-notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
+
+if ($course->id != SITEID) {
+    $returnurl = course_get_url($course);
+} else {
+    $returnurl = new moodle_url('/', ['redirect' => 1]);
+}
+
+notice($strloggedinas, $returnurl);

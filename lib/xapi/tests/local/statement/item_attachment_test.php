@@ -36,12 +36,12 @@ use core_xapi\xapi_exception;
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_attachment_test extends advanced_testcase {
+final class item_attachment_test extends advanced_testcase {
 
     /**
      * Test item creation.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $data = $this->get_generic_data();
         $item = item_attachment::create_from_data($data);
@@ -52,7 +52,7 @@ class item_attachment_test extends advanced_testcase {
     /**
      * return a generic data to create a valid item.
      *
-     * @return sdtClass the creation data
+     * @return \stdClass the creation data
      */
     private function get_generic_data(): \stdClass {
         return (object) [
@@ -94,7 +94,7 @@ class item_attachment_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_values_data() : array {
+    public static function invalid_values_data(): array {
         return [
             'No usageType attachment' => [
                 'usageType', null

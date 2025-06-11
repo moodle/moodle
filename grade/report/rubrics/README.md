@@ -1,8 +1,8 @@
 # Brickfield Advanced Grade Rubrics Report #
-Copyright (C) 2021 [Brickfield Education Labs](https://www.brickfield.ie/)
+Copyright (C) 2025 [Brickfield Education Labs](https://www.brickfield.ie/)
 
 ## What is the Rubrics report? ##
-The Rubrics report plugin allows teachers and managers to drill down past a student's overall advanced graded mark received, and to view all their students' grades and comments for all the criteria from the relevant rubric advanced grading.
+The Rubrics report plugin allows teachers and managers to view all their students' grades and comments for all the criteria from the relevant rubric advanced grading in one downloadable page.
 This is a course grade report which fits in with the navigation to standard Moodle course grade reports.
 
 ## Usage ##
@@ -28,7 +28,7 @@ On the Rubrics report, teachers can:
 Initial funding for this plugin was provided by the National Institute for Digital Learning at Dublin City University. Subsequent funding is by Brickfield Education Labs.
 
 ## Version support ##
-This plugin has been developed to work on Moodle releases 3.9, 3.10, 3.11, and 4.0.
+This plugin has been developed to work on Moodle releases 4.1, 4.3, 4.4, & 4.5.
 
 ## Development ##
 This Plugin has been developed and is maintained by Brickfield Education Labs.

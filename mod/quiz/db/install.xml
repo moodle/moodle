@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20211019" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20230804" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -19,17 +19,18 @@
         <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The behaviour to ask questions to use."/>
         <FIELD NAME="canredoquestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows students to redo any completed question within a quiz attempt."/>
         <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts a student is allowed."/>
-        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether subsequent attempts start from teh answer to the previous attempt (1) or start blank (0)."/>
+        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether subsequent attempts start from the answer to the previous attempt (1) or start blank (0)."/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="One of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST."/>
         <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Number of decimal points to use when displaying grades."/>
         <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="-1" SEQUENCE="false" COMMENT="Number of decimal points to use when displaying question grades. (-1 means use decimalpoints.)"/>
-        <FIELD NAME="reviewattempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. This is a bit field, decoded by the mod_quiz_display_options class. It is formed by ORing together the constants defined there."/>
-        <FIELD NAME="reviewcorrectness" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
-        <FIELD NAME="reviewmarks" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
-        <FIELD NAME="reviewspecificfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
-        <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
-        <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
-        <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewattempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. This is a bit field, decoded by the \mod_quiz\question\display_options class. It is formed by ORing together the constants defined there."/>
+        <FIELD NAME="reviewcorrectness" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review the correctness of the questions in their quiz attempts at various times. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewmaxmarks" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Works with reviewmarks to control whether users can see grades at various times. 0 here means no grade information is shown at all. If 1, student can see the number of marks available for this question, and reviewmarks applies. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewmarks" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Works with reviewmaxmarks to control whether users can see grades at various times. If reviewmaxmarks is 1, then this controls whether students can see the the mark they got for the question, in addition to the max. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewspecificfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to see the specific feedback in their quiz attempts. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to see the general feedback in their quiz attempts. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to see the right answer in their quiz attempts. A bit field, like reviewattempt."/>
+        <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to see the overall feedback in their quiz attempts. A bit field, like reviewattempt."/>
         <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How often to insert a page break when editing the quiz, or when shuffling the question order."/>
         <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" COMMENT="Any constraints on how the user is allowed to navigate around the quiz. Currently recognised values are 'free' and 'seq'."/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the parts of the question should be shuffled, in those question types that support it."/>
@@ -55,18 +56,36 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="quiz_grade_items" COMMENT="Where a quiz supports mulitple grades, this table stores what those grade items are.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Used to control the order of the grade items when they are displayed"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of this grade-item. PARAM_TEXT."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quizid-sortorder" UNIQUE="true" FIELDS="quizid, sortorder" COMMENT="The sortorder must be unique within the scope of one quiz."/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="quiz_slots" COMMENT="Stores the question used in a quiz, with the order, and for each question, which page it appears on, and the maximum mark (weight).">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Where this question comes in order in the list of questions in this quiz. Like question_attempts.slot."/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
         <FIELD NAME="page" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The page number that this questions appears on. If the question in slot n appears on page p, then the question in slot n+1 must appear on page p or p+1. Well, except that when a quiz is being created, there may be empty pages, which would cause the page number to jump here."/>
+        <FIELD NAME="displaynumber" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Stores customised question number such as 1.2, A1, B12. If this is null, the default number is used."/>
         <FIELD NAME="requireprevious" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Set to 1 when current question requires previous one to be answered first."/>
         <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" COMMENT="How many marks this question contributes to quiz.sumgrades."/>
+        <FIELD NAME="quizgradeitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If the quiz suports multiple sub-grades, which one this slot contributes, if any."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+        <KEY NAME="quizgradeitemid" TYPE="foreign" FIELDS="quizgradeitemid" REFTABLE="quiz_grade_items" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="quizid-slot" UNIQUE="true" FIELDS="quizid, slot"/>

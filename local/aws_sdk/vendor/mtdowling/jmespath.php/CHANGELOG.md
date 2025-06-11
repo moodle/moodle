@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2.8.0 - 2024-09-04
+
+* Add support for PHP 8.4.
+
+## 2.7.0 - 2023-08-15
+
+* Fixed flattening in arrays starting with null.
+* Drop support for HHVM and PHP earlier than 7.2.5.
+* Add support for PHP 8.1, 8.2, and 8.3.
+
 ## 2.6.0 - 2020-07-31
 
 * Support for PHP 8.0.

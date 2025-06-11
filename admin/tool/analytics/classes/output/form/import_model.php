@@ -42,7 +42,7 @@ class import_model extends \moodleform {
      *
      * @return null
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'settingsheader', get_string('importmodel', 'tool_analytics'));

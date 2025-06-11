@@ -1,12 +1,12 @@
 {{ partial "skippy" . }}
 
 <div class="container-fluid p-0 bg-white" data-region="componentlibrary">
-    <div class="row no-gutters flex-xl-nowrap">
+    <div class="row g-0 flex-xl-nowrap">
         <div class="col-md-3 col-xl-2 sidebar">
             <div class="controls d-flex justify-content-between">
                 <div class="simplesearchform w-100">
                     <form autocomplete="off" method="get" accept-charset="utf-8"
-                        class="mform form-inline simplesearchform p-2 justify-content-center">
+                        class="mform d-flex flex-wrap align-items-center simplesearchform p-2 justify-content-center">
                         <div class="input-group w-100" data-region="docsearch">
                             <label for="searchinput-componentlibrary">
                                 <span class="sr-only">Search component library</span>
@@ -18,7 +18,7 @@
                         </div>
                     </form>
                 </div>
-                <button class="btn bd-search-docs-toggle d-md-none p-0 ml-3" type="button" data-toggle="collapse"
+                <button class="btn bd-search-docs-toggle d-md-none p-0 ms-3" type="button" data-toggle="collapse"
                     data-target="#docssidebar" aria-controls="docssidebar" aria-expanded="false" aria-label="Toggle docs navigation">
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img" focusable="false">
                         <title>Menu</title>
@@ -30,9 +30,9 @@
             {{ partial "docs-sidebar" . }}
         </div>
         {{ if (eq .Page.Params.toc true) }}
-        <div class="col-md-7 col-xl-8 py-md-3 pl-md-3 pr-md-3 bd-content">
+        <div class="col-md-7 col-xl-8 py-md-3 ps-md-3 pe-md-3 bd-content">
         {{ else }}
-        <div class="col-md-9 col-xl-10 py-md-3 pl-md-5 pr-md-5 bd-content">
+        <div class="col-md-9 col-xl-10 py-md-3 ps-md-5 pe-md-5 bd-content">
         {{ end }}
             <h1 class="bd-title" id="content">{{ .Title | markdownify }}</h1>
             <p class="bd-lead">{{ .Page.Params.Description | markdownify }}</p>
@@ -53,7 +53,7 @@
             {{ if .Page.Params.tags }}
               {{ range .Page.Params.tags }}
 
-                  <div class="badge badge-info">{{.}}</div>
+                  <div class="badge bg-info text-white">{{.}}</div>
 
               {{ end }}
             {{ end }}

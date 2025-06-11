@@ -26,171 +26,171 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$functions = array(
+$functions = [
 
-    'mod_quiz_get_quizzes_by_courses' => array(
+    'mod_quiz_get_quizzes_by_courses' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_quizzes_by_courses',
         'description'   => 'Returns a list of quizzes in a provided list of courses,
                             if no list is provided all quizzes that the user can view will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_view_quiz' => array(
+    'mod_quiz_view_quiz' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'view_quiz',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_user_attempts' => array(
+    'mod_quiz_get_user_attempts' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_user_attempts',
         'description'   => 'Return a list of attempts for the given quiz and user.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_user_best_grade' => array(
+    'mod_quiz_get_user_best_grade' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_user_best_grade',
         'description'   => 'Get the best current grade for the given user on a quiz.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_combined_review_options' => array(
+    'mod_quiz_get_combined_review_options' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_combined_review_options',
         'description'   => 'Combines the review options from a number of different quiz attempts.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_start_attempt' => array(
+    'mod_quiz_start_attempt' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'start_attempt',
         'description'   => 'Starts a new attempt at a quiz.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_attempt_data' => array(
+    'mod_quiz_get_attempt_data' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_attempt_data',
         'description'   => 'Returns information for the given attempt page for a quiz attempt in progress.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_attempt_summary' => array(
+    'mod_quiz_get_attempt_summary' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_attempt_summary',
         'description'   => 'Returns a summary of a quiz attempt before it is submitted.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_save_attempt' => array(
+    'mod_quiz_save_attempt' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'save_attempt',
         'description'   => 'Processes save requests during the quiz.
                             This function is intended for the quiz auto-save feature.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_process_attempt' => array(
+    'mod_quiz_process_attempt' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'process_attempt',
         'description'   => 'Process responses during an attempt at a quiz and also deals with attempts finishing.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_attempt_review' => array(
+    'mod_quiz_get_attempt_review' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_attempt_review',
         'description'   => 'Returns review information for the given finished attempt, can be used by users or teachers.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:reviewmyattempts',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_view_attempt' => array(
+    'mod_quiz_view_attempt' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'view_attempt',
         'description'   => 'Trigger the attempt viewed event.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_view_attempt_summary' => array(
+    'mod_quiz_view_attempt_summary' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'view_attempt_summary',
         'description'   => 'Trigger the attempt summary viewed event.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:attempt',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_view_attempt_review' => array(
+    'mod_quiz_view_attempt_review' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'view_attempt_review',
         'description'   => 'Trigger the attempt reviewed event.',
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:reviewmyattempts',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_quiz_feedback_for_grade' => array(
+    'mod_quiz_get_quiz_feedback_for_grade' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_quiz_feedback_for_grade',
         'description'   => 'Get the feedback text that should be show to a student who got the given grade in the given quiz.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_quiz_access_information' => array(
+    'mod_quiz_get_quiz_access_information' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_quiz_access_information',
         'description'   => 'Return access information for a given quiz.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_attempt_access_information' => array(
+    'mod_quiz_get_attempt_access_information' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_attempt_access_information',
         'description'   => 'Return access information for a given attempt in a quiz.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_quiz_get_quiz_required_qtypes' => array(
+    'mod_quiz_get_quiz_required_qtypes' => [
         'classname'     => 'mod_quiz_external',
         'methodname'    => 'get_quiz_required_qtypes',
         'description'   => 'Return the potential question types that would be required for a given quiz.',
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
     'mod_quiz_set_question_version' => [
         'classname'     => 'mod_quiz\external\submit_question_version',
@@ -199,4 +199,108 @@ $functions = array(
         'capabilities'  => 'mod/quiz:view',
         'ajax'          => true,
     ],
-);
+
+    'mod_quiz_reopen_attempt' => [
+        'classname' => 'mod_quiz\external\reopen_attempt',
+        'description' => 'Re-open an attempt that is currently in the never submitted state.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:reopenattempts',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_get_reopen_attempt_confirmation' => [
+        'classname' => 'mod_quiz\external\get_reopen_attempt_confirmation',
+        'description' => 'Verify it is OK to re-open a given quiz attempt, and if so, return a suitable confirmation message.',
+        'type' => 'read',
+        'capabilities' => 'mod/quiz:reopenattempts',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_add_random_questions' => [
+        'classname'     => 'mod_quiz\external\add_random_questions',
+        'description'   => 'Add a number of random questions to a quiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manage',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_update_filter_condition' => [
+        'classname'     => 'mod_quiz\external\update_filter_condition',
+        'description'   => 'Update filter condition for a random question slot.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manage',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_save_overrides' => [
+        'classname'     => 'mod_quiz\external\save_overrides',
+        'description'   => 'Update or insert quiz overrides',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_delete_overrides' => [
+        'classname'     => 'mod_quiz\external\delete_overrides',
+        'description'   => 'Delete quiz overrides',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_get_overrides' => [
+        'classname'     => 'mod_quiz\external\get_overrides',
+        'description'   => 'Get quiz overrides',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_create_grade_items' => [
+        'classname' => 'mod_quiz\external\create_grade_items',
+        'description' => 'Create quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_delete_grade_items' => [
+        'classname' => 'mod_quiz\external\delete_grade_items',
+        'description' => 'Delete quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_update_grade_items' => [
+        'classname' => 'mod_quiz\external\update_grade_items',
+        'description' => 'Update quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_update_slots' => [
+        'classname' => 'mod_quiz\external\update_slots',
+        'description' => 'Update the properties of slots in a quiz. All slots must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_get_edit_grading_page_data' => [
+        'classname' => 'mod_quiz\external\get_edit_grading_page_data',
+        'description' => 'Get the data required to re-render the Quiz grading setup page',
+        'type' => 'read',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_create_grade_item_per_section' => [
+        'classname' => 'mod_quiz\external\create_grade_item_per_section',
+        'description' => 'For a quiz with no grade items yet, create a grade item for each section, with the questions in that section assigned.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+];

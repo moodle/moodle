@@ -114,7 +114,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
     }
 }
 
-if ($mode == UPDATE_ALL_LANG) {
+if ($mode == UPDATE_ALL_LANG && confirm_sesskey()) {
     core_php_time_limit::raise();
     $controller->update_all_installed_languages();
 }
@@ -230,11 +230,4 @@ foreach ($availablelangs as $alang) {
 $renderable = new \tool_langimport\output\langimport_page($installedlangs, $options, $uninstallurl, $updateurl, $installurl);
 $output = $PAGE->get_renderer('tool_langimport');
 echo $output->render($renderable);
-
-$PAGE->requires->strings_for_js(array('uninstallconfirm', 'uninstall', 'selectlangs', 'noenglishuninstall'),
-                                'tool_langimport');
-$PAGE->requires->yui_module('moodle-core-languninstallconfirm',
-                            'Y.M.core.languninstallconfirm.init',
-                             array(array('uninstallUrl' => $uninstallurl->out()))
-                            );
 echo $OUTPUT->footer();

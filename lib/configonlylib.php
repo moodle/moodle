@@ -205,3 +205,60 @@ function min_get_slash_argument($clean = true) {
     }
     return $relativepath;
 }
+
+/**
+ * Get the lowest possible currently valid revision number.
+ *
+ * This is based on the current Moodle version.
+ *
+ * @return int Unix timestamp
+ */
+function min_get_minimum_revision(): int {
+    static $timestamp = null;
+    // Days that will be deducted.
+    // Avoids errors when date comparisons are made at time of packaging for next release.
+    $tolerancedays = 2;
+
+    if ($timestamp === null) {
+        global $CFG;
+        require("{$CFG->dirroot}/version.php");
+        // Get YYYYMMDD from version.
+        $datestring = floor($version / 100);
+        // Parse the date components.
+        $year = intval(substr($datestring, 0, 4));
+        $month = intval(substr($datestring, 4, 2));
+        $day = intval(substr($datestring, 6, 2)) - $tolerancedays;
+        // Return converted GMT Unix timestamp.
+        $timestamp = gmmktime(0, 0, 0, $month, $day, $year);
+    }
+
+    return $timestamp;
+}
+
+/**
+ * Get the highest possible currently valid revision number.
+ *
+ * This is based on the current time, allowing for a small amount of clock skew between servers.
+ *
+ * Future values beyond the clock skew are not allowed to avoid the possibility of cache poisoning.
+ *
+ * @return int
+ */
+function min_get_maximum_revision(): int {
+    return time() + 60;
+}
+
+/**
+ * Helper function to determine if the given revision number is valid.
+ *
+ * @param int $revision A numeric revision to check for validity
+ * @return bool Whether the revision is valid
+ */
+function min_is_revision_valid_and_current(int $revision): bool {
+    // Invalid revision.
+    if ($revision <= 0) {
+        return false;
+    }
+    // Check revision is within range.
+    return $revision >= min_get_minimum_revision() && $revision <= min_get_maximum_revision();
+}

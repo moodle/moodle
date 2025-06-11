@@ -24,27 +24,71 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+use auth_oidc\jwt;
+use auth_oidc\utils;
 
 // IdP types.
-CONST AUTH_OIDC_IDP_TYPE_AZURE_AD = 1;
-CONST AUTH_OIDC_IDP_TYPE_MICROSOFT = 2;
-CONST AUTH_OIDC_IDP_TYPE_OTHER = 3;
-
-// Azure AD / Microsoft endpoint version.
-CONST AUTH_OIDC_AAD_ENDPOINT_VERSION_UNKNOWN = 0;
-CONST AUTH_OIDC_AAD_ENDPOINT_VERSION_1 = 1;
-CONST AUTH_OIDC_AAD_ENDPOINT_VERSION_2 = 2;
-
-// OIDC application authentication method.
-CONST AUTH_OIDC_AUTH_METHOD_SECRET = 1;
-CONST AUTH_OIDC_AUTH_METHOD_CERTIFICATE = 2;
+/**
+ * Microsoft Entra ID identity provider type.
+ */
+const AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID = 1;
 
 /**
- * Initialize custom icon.
+ * Microsoft Identity Platform identity provider type.
+ */
+const AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM = 2;
+
+/**
+ * Other identity provider type.
+ */
+const AUTH_OIDC_IDP_TYPE_OTHER = 3;
+
+// Microsoft Entra ID / Microsoft endpoint version.
+/**
+ * Unknown Microsoft endpoint version.
+ */
+const AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_UNKNOWN = 0;
+
+/**
+ * Microsoft endpoint version 1.
+ */
+const AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_1 = 1;
+
+/**
+ * Microsoft endpoint version 2.
+ */
+const AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_2 = 2;
+
+// OIDC application authentication method.
+/**
+ * OIDC application authentication method using secret.
+ */
+const AUTH_OIDC_AUTH_METHOD_SECRET = 1;
+
+/**
+ * OIDC application authentication method using certificate.
+ */
+const AUTH_OIDC_AUTH_METHOD_CERTIFICATE = 2;
+
+// OIDC application auth certificate source.
+/**
+ * OIDC application authentication certificate source from text.
+ */
+const AUTH_OIDC_AUTH_CERT_SOURCE_TEXT = 1;
+
+/**
+ * OIDC application authentication certificate source from file.
+ */
+const AUTH_OIDC_AUTH_CERT_SOURCE_FILE = 2;
+
+/**
+ * Initialize custom icon for OIDC authentication.
  *
- * @param $filefullname
- * @return false|void
+ * This function sets up a custom icon for the OIDC plugin by creating necessary directories
+ * and copying the file into the specified location in Moodle's data directory.
+ *
+ * @param string $filefullname Full name of the custom icon file.
+ * @return bool False if the file is missing or is a directory; void otherwise.
  */
 function auth_oidc_initialize_customicon($filefullname) {
     global $CFG;
@@ -54,7 +98,7 @@ function auth_oidc_initialize_customicon($filefullname) {
     $fullpath = "/{$systemcontext->id}/auth_oidc/customicon/0{$file}";
 
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!($file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
         return false;
     }
     $pixpluginsdir = 'pix_plugins/auth/oidc/0';
@@ -148,6 +192,7 @@ function auth_oidc_get_tokens_with_empty_ids() {
         $item = new stdClass();
         $item->id = $record->id;
         $item->oidcusername = $record->oidcusername;
+        $item->useriditifier = $record->useridentifier;
         $item->moodleusername = $record->username;
         $item->userid = 0;
         $item->oidcuniqueid = $record->oidcuniqid;
@@ -173,7 +218,7 @@ function auth_oidc_get_tokens_with_mismatched_usernames() {
     $mismatchedtokens = [];
 
     $sql = 'SELECT tok.id AS id, tok.userid AS tokenuserid, tok.username AS tokenusername, tok.oidcusername AS oidcusername,
-                   tok.oidcuniqid as oidcuniqid, u.id AS muserid, u.username AS musername
+                   tok.useridentifier, tok.oidcuniqid as oidcuniqid, u.id AS muserid, u.username AS musername
               FROM {auth_oidc_token} tok
               JOIN {user} u ON u.id = tok.userid
              WHERE tok.userid != 0
@@ -183,6 +228,7 @@ function auth_oidc_get_tokens_with_mismatched_usernames() {
         $item = new stdClass();
         $item->id = $record->id;
         $item->oidcusername = $record->oidcusername;
+        $item->useridentifier = $record->useridentifier;
         $item->userid = $record->muserid;
         $item->oidcuniqueid = $record->oidcuniqid;
         $item->matchingstatus = get_string('mismatched', 'auth_oidc');
@@ -202,7 +248,7 @@ function auth_oidc_get_tokens_with_mismatched_usernames() {
  *
  * @param int $tokenid
  */
-function auth_oidc_delete_token(int $tokenid) {
+function auth_oidc_delete_token(int $tokenid): void {
     global $DB;
 
     if (auth_oidc_is_local_365_installed()) {
@@ -210,16 +256,16 @@ function auth_oidc_delete_token(int $tokenid) {
                   FROM {local_o365_objects} obj
                   JOIN {auth_oidc_token} tok ON obj.o365name = tok.username
                   JOIN {user} u ON obj.moodleid = u.id
-                 WHERE type = :type AND tok.id = :tokenid';
+                 WHERE obj.type = :type AND tok.id = :tokenid';
         if ($objectrecord = $DB->get_record_sql($sql, ['type' => 'user', 'tokenid' => $tokenid], IGNORE_MULTIPLE)) {
             // Delete record from local_o365_objects.
-            $DB->get_records('local_o365_objects', ['id' => $objectrecord->id]);
+            $DB->delete_records('local_o365_objects', ['id' => $objectrecord->id]);
 
             // Delete record from local_o365_token.
             $DB->delete_records('local_o365_token', ['user_id' => $objectrecord->userid]);
 
             // Delete record from local_o365_connections.
-            $DB->delete_records_select('local_o365_connections', 'muserid = :userid OR LOWER(aadupn) = :email',
+            $DB->delete_records_select('local_o365_connections', 'muserid = :userid OR LOWER(entraidupn) = :email',
                 ['userid' => $objectrecord->userid, 'email' => $objectrecord->email]);
         }
     }
@@ -236,6 +282,7 @@ function auth_oidc_get_remote_fields() {
     if (auth_oidc_is_local_365_installed()) {
         $remotefields = [
             '' => get_string('settings_fieldmap_feild_not_mapped', 'auth_oidc'),
+            'bindingusernameclaim' => get_string('settings_fieldmap_field_bindingusernameclaim', 'auth_oidc'),
             'objectId' => get_string('settings_fieldmap_field_objectId', 'auth_oidc'),
             'userPrincipalName' => get_string('settings_fieldmap_field_userPrincipalName', 'auth_oidc'),
             'displayName' => get_string('settings_fieldmap_field_displayName', 'auth_oidc'),
@@ -293,6 +340,7 @@ function auth_oidc_get_remote_fields() {
     } else {
         $remotefields = [
             '' => get_string('settings_fieldmap_feild_not_mapped', 'auth_oidc'),
+            'bindingusernameclaim' => get_string('settings_fieldmap_field_bindingusernameclaim', 'auth_oidc'),
             'objectId' => get_string('settings_fieldmap_field_objectId', 'auth_oidc'),
             'userPrincipalName' => get_string('settings_fieldmap_field_userPrincipalName', 'auth_oidc'),
             'givenName' => get_string('settings_fieldmap_field_givenName', 'auth_oidc'),
@@ -367,6 +415,10 @@ function auth_oidc_get_field_mappings() {
  * @return array
  */
 function auth_oidc_apply_default_email_mapping() {
+    $existingsetting = get_config('auth_oidc', 'field_map_email');
+    if ($existingsetting != 'mail') {
+        add_to_config_log('field_map_email', $existingsetting, 'mail', 'auth_oidc');
+    }
     set_config('field_map_email', 'mail', 'auth_oidc');
 
     $authoidcconfig = get_config('auth_oidc');
@@ -401,7 +453,7 @@ function auth_oidc_apply_default_email_mapping() {
  * @param array $customfields list of custom profile fields
  */
 function auth_oidc_display_auth_lock_options($settings, $auth, $userfields, $helptext, $mapremotefields, $updateremotefields,
-    $customfields = array()) {
+    $customfields = []) {
     global $DB;
 
     // Introductory explanation and help text.
@@ -521,18 +573,19 @@ function auth_oidc_get_all_user_fields() {
 }
 
 /**
- * Determine the endpoint version of the given Azure AD / Microsoft authorization or token endpoint.
+ * Determine the endpoint version of the given Microsoft Entra ID / Microsoft authorization or token endpoint.
  *
- * @return int
+ * @param string $endpoint The URL of the endpoint to be checked.
+ * @return int The version of the Microsoft endpoint (1 or 2) or unknown.
  */
 function auth_oidc_determine_endpoint_version(string $endpoint) {
-    $endpointversion = AUTH_OIDC_AAD_ENDPOINT_VERSION_UNKNOWN;
+    $endpointversion = AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_UNKNOWN;
 
     if (strpos($endpoint, 'https://login.microsoftonline.com/') === 0) {
         if (strpos($endpoint, 'oauth2/v2.0/') !== false) {
-            $endpointversion = AUTH_OIDC_AAD_ENDPOINT_VERSION_2;
+            $endpointversion = AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_2;
         } else if (strpos($endpoint, 'oauth2') !== false) {
-            $endpointversion = AUTH_OIDC_AAD_ENDPOINT_VERSION_1;
+            $endpointversion = AUTH_OIDC_MICROSOFT_ENDPOINT_VERSION_1;
         }
     }
 
@@ -570,8 +623,25 @@ function auth_oidc_is_setup_complete() {
             }
             break;
         case AUTH_OIDC_AUTH_METHOD_CERTIFICATE:
-            if (empty($pluginconfig->clientcert) || empty($pluginconfig->clientprivatekey)) {
-                return false;
+            if (!isset($pluginconfig->clientcertsource)) {
+                $existingclientcertsource = get_config('auth_oidc', 'clientcertsource');
+                if ($existingclientcertsource != AUTH_OIDC_AUTH_CERT_SOURCE_TEXT) {
+                    add_to_config_log('clientcertsource', $existingclientcertsource, AUTH_OIDC_AUTH_CERT_SOURCE_TEXT, 'auth_oidc');
+                }
+                set_config('clientcertsource', AUTH_OIDC_AUTH_CERT_SOURCE_TEXT, 'auth_oidc');
+                $pluginconfig->clientcertsource = AUTH_OIDC_AUTH_CERT_SOURCE_TEXT;
+            }
+            switch ($pluginconfig->clientcertsource) {
+                case AUTH_OIDC_AUTH_CERT_SOURCE_FILE:
+                    if (!utils::get_certpath() || !utils::get_keypath()) {
+                        return false;
+                    }
+                    break;
+                case AUTH_OIDC_AUTH_CERT_SOURCE_TEXT:
+                    if (empty($pluginconfig->clientcert) || empty($pluginconfig->clientprivatekey)) {
+                        return false;
+                    }
+                    break;
             }
             break;
     }
@@ -592,11 +662,11 @@ function auth_oidc_get_idp_type_name() {
     $idptypename = '';
 
     switch (get_config('auth_oidc', 'idptype')) {
-        case AUTH_OIDC_IDP_TYPE_AZURE_AD:
-            $idptypename = get_string('idp_type_azuread', 'auth_oidc');
+        case AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID:
+            $idptypename = get_string('idp_type_microsoft_entra_id', 'auth_oidc');
             break;
-        case AUTH_OIDC_IDP_TYPE_MICROSOFT:
-            $idptypename = get_string('idp_type_microsoft', 'auth_oidc');
+        case AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM:
+            $idptypename = get_string('idp_type_microsoft_identity_platform', 'auth_oidc');
             break;
         case AUTH_OIDC_IDP_TYPE_OTHER:
             $idptypename = get_string('idp_type_other', 'auth_oidc');
@@ -624,4 +694,79 @@ function auth_oidc_get_client_auth_method_name() {
     }
 
     return $authmethodname;
+}
+
+/**
+ * Return the name of the configured binding username claim.
+ *
+ * @return string
+ */
+function auth_oidc_get_binding_username_claim(): string {
+    $bindingusernameclaim = get_config('auth_oidc', 'bindingusernameclaim');
+
+    if (empty($bindingusernameclaim)) {
+        $bindingusernameclaim = 'auto';
+    } else if ($bindingusernameclaim === 'custom') {
+        $bindingusernameclaim = get_config('auth_oidc', 'customclaimname');
+    } else if (!in_array($bindingusernameclaim, ['auto', 'preferred_username', 'email', 'upn', 'unique_name', 'sub', 'oid',
+        'samaccountname'])) {
+        $bindingusernameclaim = 'auto';
+    }
+
+    return $bindingusernameclaim;
+}
+
+/**
+ * Return the claims that presents in the existing tokens.
+ *
+ * @return array
+ * @throws moodle_exception
+ */
+function auth_oidc_get_existing_claims(): array {
+    global $DB;
+
+    $sql = 'SELECT *
+              FROM {auth_oidc_token}
+          ORDER BY expiry DESC';
+    $tokenrecord = $DB->get_record_sql($sql, null, IGNORE_MULTIPLE);
+
+    $tokenclaims = [];
+
+    if ($tokenrecord) {
+        $excludedclaims = ['appid', 'appidacr', 'app_displayname', 'ipaddr', 'scp', 'tenant_region_scope', 'ver', 'aud', 'iss',
+            'iat', 'nbf', 'exp', 'idtyp', 'plantf', 'xms_tcdt', 'xms_tdbr', 'amr', 'nonce', 'tid', 'acct', 'acr', 'signin_state',
+            'wids'];
+
+        foreach (['idtoken', 'token'] as $tokenkey) {
+            $decodedtoken = jwt::decode($tokenrecord->$tokenkey);
+            if (is_array($decodedtoken) && count($decodedtoken) > 1) {
+                foreach ($decodedtoken[1] as $claim => $value) {
+                    if (!in_array($claim, $excludedclaims) && (is_string($value) || is_numeric($value)) &&
+                        !in_array($claim, $tokenclaims)) {
+                        $tokenclaims[] = $claim;
+                    }
+                }
+            }
+        }
+
+        asort($tokenclaims);
+    }
+
+    return $tokenclaims;
+}
+
+/**
+ * Return if the user sync feature in local_o365 plugin is enabled.
+ *
+ * @return bool|void
+ */
+function auth_oidc_is_user_sync_enabled() {
+    global $CFG;
+
+    if (auth_oidc_is_local_365_installed()) {
+        require_once($CFG->dirroot . '/local/o365/classes/feature/usersync/main.php');
+        return local_o365\feature\usersync\main::is_enabled();
+    }
+
+    return false;
 }

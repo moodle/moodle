@@ -41,7 +41,7 @@ require_once(__DIR__ . '/local/ltiadvantage/lti_advantage_testcase.php');
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \lti_advantage_testcase {
+final class lib_test extends \lti_advantage_testcase {
 
     /**
      * Test set up.
@@ -49,6 +49,7 @@ class lib_test extends \lti_advantage_testcase {
      * This is executed before running any tests in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -56,7 +57,7 @@ class lib_test extends \lti_advantage_testcase {
     /**
      * Test for enrol_lti_plugin::delete_instance().
      */
-    public function test_delete_instance() {
+    public function test_delete_instance(): void {
         global $DB;
 
         // Create tool enrolment instance.
@@ -126,7 +127,7 @@ class lib_test extends \lti_advantage_testcase {
      *
      * @covers \enrol_lti_plugin::delete_instance
      */
-    public function test_delete_instance_lti_advantage() {
+    public function test_delete_instance_lti_advantage(): void {
         global $DB;
         // Setup.
         [
@@ -171,7 +172,7 @@ class lib_test extends \lti_advantage_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $DB, $PAGE;
         $this->resetAfterTest();
 
@@ -222,7 +223,7 @@ class lib_test extends \lti_advantage_testcase {
      *
      * @covers \enrol_lti_pre_course_module_delete
      */
-    public function test_course_module_deletion() {
+    public function test_course_module_deletion(): void {
         // Create two modules and publish them.
         $course = $this->getDataGenerator()->create_course();
         $mod = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);

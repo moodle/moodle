@@ -94,7 +94,7 @@ class import_ui extends backup_ui {
      * @param array $params
      * @return backup_ui_stage_initial|backup_ui_stage_schema|backup_ui_stage_confirmation|backup_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params = null) {
+    protected function initialise_stage($stage = null, ?array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_PRECHECK, PARAM_INT);
         }
@@ -150,7 +150,7 @@ class import_ui_stage_precheck extends backup_ui_stage {
      * @param backup_ui $ui
      * @param array $params
      */
-    public function __construct(backup_ui $ui, array $params = null) {
+    public function __construct(backup_ui $ui, ?array $params = null) {
         $this->stage = import_ui::STAGE_PRECHECK;
         parent::__construct($ui, $params);
     }
@@ -160,7 +160,7 @@ class import_ui_stage_precheck extends backup_ui_stage {
      *
      * @param base_moodleform|null $form
      */
-    public function process(base_moodleform $form = null) {
+    public function process(?base_moodleform $form = null) {
         // Dummy functions. We don't have to do anything here.
         return;
     }
@@ -207,7 +207,7 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
 
     /**
      * Initialises the stages moodleform
-     * @return moodleform
+     * @return base_moodleform
      */
     protected function initialise_stage_form() {
         $form = parent::initialise_stage_form();

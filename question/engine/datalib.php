@@ -62,7 +62,7 @@ class question_engine_data_mapper {
     /**
      * @param moodle_database $db a database connectoin. Defaults to global $DB.
      */
-    public function __construct(moodle_database $db = null) {
+    public function __construct(?moodle_database $db = null) {
         if (is_null($db)) {
             global $DB;
             $this->db = $DB;
@@ -149,6 +149,7 @@ class question_engine_data_mapper {
 
     /**
      * Helper method used by insert_question_attempt_step and update_question_attempt_step
+     *
      * @param question_attempt_step $step the step to store.
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
@@ -158,7 +159,7 @@ class question_engine_data_mapper {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
-        $record->state = (string) $step->get_state();
+        $record->state = $step->get_state()?->__toString();
         $record->fraction = $step->get_fraction();
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
@@ -1175,11 +1176,11 @@ ORDER BY
     }
 
     /**
-     * Return a subquery that computes the sum of the marks for all the questions
-     * in a usage. Which useage to compute the sum for is controlled bu the $qubaid
+     * Return a sub-query that computes the sum of the marks for all the questions
+     * in a usage. Which usage to compute the sum for is controlled by the $qubaid
      * parameter.
      *
-     * See {@link quiz_update_all_attempt_sumgrades()} for an example of the usage of
+     * See {@see \mod_quiz\grade_calculator::recompute_all_attempt_sumgrades()} for an example of the usage of
      * this method.
      *
      * This method may be called publicly.
@@ -1212,7 +1213,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@link quiz_attempts_report_table::add_latest_state_join()}.
+     * {@see \mod_quiz\local\reports\attempts_report_table::add_latest_state_join()}.
      *
      * This method may be called publicly.
      *
@@ -1251,7 +1252,13 @@ ORDER BY
             ) {$alias}", $qubaids->from_where_params());
     }
 
-    protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
+    /**
+     * Get the subquery which selects the latest step for each question_attempt.
+     *
+     * @param string $questionattemptid column alias for the column to join on which is question_attempt.id.
+     * @return string SQL fragment to include in the query. Has not placeholders.
+     */
+    public function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
         return "(
                 SELECT MAX(sequencenumber)
                 FROM {question_attempt_steps}
@@ -1676,13 +1683,13 @@ class question_file_saver implements question_response_files {
      *
      * @param int $draftitemid the draft area to save the files from.
      * @param string $component the component for the file area to save into.
-     * @param string $filearea the name of the file area to save into.
+     * @param string $uncleanedfilearea the name of the file area to save into - but before it has been cleaned up.
      * @param string $text optional content containing file links.
      */
-    public function __construct($draftitemid, $component, $filearea, $text = null) {
+    public function __construct($draftitemid, $component, $uncleanedfilearea, $text = null) {
         $this->draftitemid = $draftitemid;
         $this->component = $component;
-        $this->filearea = $filearea;
+        $this->filearea = self::clean_file_area_name($uncleanedfilearea);
         $this->value = $this->compute_value($draftitemid, $text);
     }
 
@@ -1744,6 +1751,29 @@ class question_file_saver implements question_response_files {
     public function save_files($itemid, $context) {
         file_save_draft_area_files($this->draftitemid, $context->id,
                 $this->component, $this->filearea, $itemid);
+    }
+
+    /**
+     * Clean up a possible file area name to ensure that it matches the required rules.
+     *
+     * @param string $uncleanedfilearea the proposed file area name (e.g. 'response_-attachments').
+     * @return string a similar valid file area name. E.g: response_attachments.
+     */
+    public static function clean_file_area_name(string $uncleanedfilearea): string {
+        $filearea = $uncleanedfilearea;
+        if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+            // Only lowercase ascii letters, numbers and underscores are allowed.
+            // Remove the invalid character in the filearea string.
+            $filearea = preg_replace('~[^a-z0-9_]~', '', core_text::strtolower($filearea));
+            // Replace multiple underscore to a single underscore.
+            $filearea = preg_replace('~_+~', '_', $filearea);
+            // If, after attempted cleaning, the filearea is not valid, throw a clear error to avoid subtle bugs.
+            if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+                throw new coding_exception('Name ' . $filearea .
+                    ' cannot be used with question_file_saver because it does not match the rules for file area names');
+            }
+        }
+        return $filearea;
     }
 
     /**
@@ -1876,27 +1906,27 @@ abstract class qubaid_condition {
      * @param string $alias
      * @return string SQL fragment.
      */
-    public abstract function from_question_attempts($alias);
+    abstract public function from_question_attempts($alias);
 
     /** @return string the SQL that needs to go in the where clause. */
-    public abstract function where();
+    abstract public function where();
 
     /**
      * @return array the params needed by a query that uses
      * {@link from_question_attempts()} and {@link where()}.
      */
-    public abstract function from_where_params();
+    abstract public function from_where_params();
 
     /**
      * @return string SQL that can use used in a WHERE qubaid IN (...) query.
      * This method returns the "IN (...)" part.
      */
-    public abstract function usage_id_in();
+    abstract public function usage_id_in();
 
     /**
      * @return array the params needed by a query that uses {@link usage_id_in()}.
      */
-    public abstract function usage_id_in_params();
+    abstract public function usage_id_in_params();
 
     /**
      * @return string 40-character hash code that uniquely identifies the combination of properties and class name of this qubaid

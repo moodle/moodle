@@ -16,9 +16,8 @@ Feature: Manage payment accounts
     And I choose "Edit" in the open action menu
     And I set the field "Account name" to "NewName"
     And I press "Save changes"
-    And I should see "PayPal" in the "NewName" "table_row"
     And I should not see "TestAccount"
-    And I log out
+    And I should see "PayPal" in the "NewName" "table_row"
 
   @javascript
   Scenario: Configuring gateways on payment accounts
@@ -37,9 +36,8 @@ Feature: Manage payment accounts
       | Secret     | Test        |
       | Enable     | 1           |
     And I press "Save changes"
-    And I should see "PayPal" in the "Account1" "table_row"
     And I should not see "Not available" in the "Account1" "table_row"
-    And I log out
+    And I should see "PayPal" in the "Account1" "table_row"
 
   @javascript
   Scenario: Deleting payment accounts
@@ -51,10 +49,9 @@ Feature: Manage payment accounts
     And I navigate to "Payments > Payment accounts" in site administration
     And I open the action menu in "Account1" "table_row"
     And I choose "Delete or archive" in the open action menu
-    And I click on "Yes" "button" in the "Confirmation" "dialogue"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Account1"
     And I should see "Account2"
-    And I log out
 
   @javascript
   Scenario: Archiving and restoring accounts
@@ -73,7 +70,7 @@ Feature: Manage payment accounts
     And I navigate to "Payments > Payment accounts" in site administration
     And I open the action menu in "Account1" "table_row"
     And I choose "Delete or archive" in the open action menu
-    And I click on "Yes" "button" in the "Confirmation" "dialogue"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Account1"
     And I should see "Account2"
     And I follow "Show archived"

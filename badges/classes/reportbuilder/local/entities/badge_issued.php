@@ -34,12 +34,14 @@ use core_reportbuilder\local\report\{column, filter};
 class badge_issued extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['badge_issued' => 'bi'];
+    protected function get_default_tables(): array {
+        return [
+            'badge_issued',
+        ];
     }
 
     /**

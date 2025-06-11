@@ -79,16 +79,6 @@ class report_viewed extends \core\event\base {
     }
 
     /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'scorm', 'report', 'report.php?id=' . $this->contextinstanceid .
-                '&mode=' . $this->other['mode'], $this->other['scormid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

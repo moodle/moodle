@@ -26,7 +26,7 @@ use enrol_lti\helper;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\published_resource_repository
  */
-class published_resource_repository_test extends \advanced_testcase {
+final class published_resource_repository_test extends \advanced_testcase {
     /**
      * Get a list of published resources for testing.
      *
@@ -98,7 +98,7 @@ class published_resource_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all_for_user
      */
-    public function test_find_all_for_user() {
+    public function test_find_all_for_user(): void {
         $this->resetAfterTest();
         [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4] = $this->generate_published_resources();
 
@@ -131,7 +131,7 @@ class published_resource_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all_by_ids_for_user
      */
-    public function test_find_all_by_ids_for_user() {
+    public function test_find_all_by_ids_for_user(): void {
         $this->resetAfterTest();
         [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $tool, $tool2, $tool3, $tool4] =
             $this->generate_published_resources();
@@ -164,7 +164,7 @@ class published_resource_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all_for_user
      */
-    public function test_find_all_for_user_no_permissions() {
+    public function test_find_all_for_user_no_permissions(): void {
         $this->resetAfterTest();
         global $DB;
         [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $modtool, $mod2tool]

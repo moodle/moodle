@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper to load strings from string_manager and perform HTML escaping on them.
- *
- * @package    core
- * @category   output
- * @copyright  2021 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
 use Mustache_LambdaHelper;
@@ -30,12 +21,12 @@ use Mustache_LambdaHelper;
 /**
  * This class will load language strings in a template.
  *
+ * @package core
  * @copyright  2021 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      4.0
  */
 class mustache_clean_string_helper {
-
     /** @var mustache_string_helper A string helper instance that is being used internally for fetching strings */
     private $stringhelper;
 
@@ -53,7 +44,7 @@ class mustache_clean_string_helper {
      *
      * {{#cleanstr}}activity{{/cleanstr}}
      * {{#cleanstr}}actionchoice, core, {{#str}}delete{{/str}}{{/cleanstr}} (Together with the str helper)
-     * {{#cleanstr}}addinganewto, core, {"what":"This", "to":"That"}{{/cleanstr}} (Complex $a)
+     * {{#cleanstr}}uploadrenamedchars, core, {"oldname":"Old", "newname":"New"}{{/cleanstr}} (Complex $a)
      *
      * The args are comma separated and only the first is required.
      * The last is a $a argument for get string. For complex data here, use JSON.

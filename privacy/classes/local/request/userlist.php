@@ -44,7 +44,7 @@ class userlist extends userlist_base {
      * @param   array   $params The set of SQL parameters
      * @return  $this
      */
-    public function add_from_sql(string $fieldname, string $sql, array $params) : userlist {
+    public function add_from_sql(string $fieldname, string $sql, array $params): userlist {
         global $DB;
 
         // Able to guess a field name.
@@ -65,7 +65,7 @@ class userlist extends userlist_base {
      * @param   int     $userid
      * @return  $this
      */
-    public function add_user(int $userid) : userlist {
+    public function add_user(int $userid): userlist {
         $this->add_users([$userid]);
 
         return $this;
@@ -77,7 +77,7 @@ class userlist extends userlist_base {
      * @param   int[]   $userids
      * @return  $this
      */
-    public function add_users(array $userids) : userlist {
+    public function add_users(array $userids): userlist {
         global $DB;
 
         if (!empty($userids)) {
@@ -96,7 +96,7 @@ class userlist extends userlist_base {
      * @param   string  $component the frankenstyle component name.
      * @return  $this
      */
-    public function set_component($component) : userlist_base {
+    public function set_component($component): userlist_base {
         parent::set_component($component);
 
         return $this;

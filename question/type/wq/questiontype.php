@@ -24,7 +24,7 @@ class qtype_wq extends question_type {
 
     protected $base;
 
-    public function __construct(question_type $base = null) {
+    public function __construct(?question_type $base = null) {
         $this->base = $base;
     }
 

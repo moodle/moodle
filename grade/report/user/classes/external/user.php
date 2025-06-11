@@ -16,25 +16,22 @@
 
 namespace gradereport_user\external;
 
-use external_api;
 use context_course;
 use core_user;
-use external_description;
-use external_format_value;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use grade_plugin_return;
 use graded_users_iterator;
 use moodle_exception;
 use stdClass;
 use gradereport_user\report\user as user_report;
 
-defined('MOODLE_INTERNAL') || die;
-
-require_once($CFG->libdir.'/externallib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 
 /**
@@ -91,7 +88,8 @@ class user extends external_api {
             core_user::require_active_user($user);
             // Check if we can view the user group (if any).
             // When userid == 0, we are retrieving all the users, we'll check then if a groupid is required.
-            if (!groups_user_groups_visible($course, $user->id)) {
+            // User are always in their own group, also when they don't have groups.
+            if ($userid != $USER->id && !groups_user_groups_visible($course, $user->id)) {
                 throw new moodle_exception('notingroup');
             }
         }
@@ -110,21 +108,24 @@ class user extends external_api {
             throw new moodle_exception('nopermissiontoviewgrades', 'error');
         }
 
-        if (!empty($groupid)) {
-            // Determine is the group is visible to user.
-            if (!groups_group_visible($groupid, $course)) {
-                throw new moodle_exception('notingroup');
-            }
-        } else {
-            // Check to see if groups are being used here.
-            if ($groupmode = groups_get_course_groupmode($course)) {
-                $groupid = groups_get_course_group($course);
-                // Determine is the group is visible to user (this is particullary for the group 0).
+        // User are always in their own group, also when they don't have groups.
+        if ($userid != $USER->id) {
+            if (!empty($groupid)) {
+                // Determine if the group is visible to user.
                 if (!groups_group_visible($groupid, $course)) {
                     throw new moodle_exception('notingroup');
                 }
             } else {
-                $groupid = 0;
+                // Check to see if groups are being used here.
+                if ($groupmode = groups_get_course_groupmode($course)) {
+                    $groupid = groups_get_course_group($course);
+                    // Determine if the group is visible to the user (this is particularly for group 0).
+                    if (!groups_group_visible($groupid, $course)) {
+                        throw new moodle_exception('notingroup');
+                    }
+                } else {
+                    $groupid = 0;
+                }
             }
         }
 
@@ -475,7 +476,7 @@ class user extends external_api {
         foreach ($gradeitems as $gradeitem) {
             if (isset($gradeitem['feedback']) && isset($gradeitem['feedbackformat'])) {
                 list($gradeitem['feedback'], $gradeitem['feedbackformat']) =
-                    external_format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
+                    \core_external\util::format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
             }
         }
 
@@ -508,7 +509,7 @@ class user extends external_api {
                                 new external_single_structure(
                                     [
                                         'id' => new external_value(PARAM_INT, 'Grade item id'),
-                                        'itemname' => new external_value(PARAM_CLEANHTML, 'Grade item name'),
+                                        'itemname' => new external_value(PARAM_RAW, 'Grade item name'),
                                         'itemtype' => new external_value(PARAM_ALPHA, 'Grade item type'),
                                         'itemmodule' => new external_value(PARAM_PLUGIN, 'Grade item module'),
                                         'iteminstance' => new external_value(PARAM_INT, 'Grade item instance'),

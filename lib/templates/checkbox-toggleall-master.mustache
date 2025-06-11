@@ -34,21 +34,21 @@
         "classes": "p-1",
         "selectall": "Select all",
         "deselectall": "Deselect all",
-        "labelclasses": "badge badge-info"
+        "labelclasses": "badge bg-info text-white"
     }
 }}
-<input id="{{id}}" name="{{name}}" type="checkbox" {{#classes}}class="{{.}}"{{/classes}} value="{{value}}"
-       data-action="toggle"
-       data-toggle="master"
-       data-togglegroup="{{togglegroup}}"
-       data-toggle-selectall="{{selectall}}"
-       data-toggle-deselectall="{{deselectall}}"
-       {{#checked}}checked="checked"{{/checked}}
-/>
-{{#label}}
-    <label for="{{id}}" class="{{labelclasses}}">{{.}}</label>
-{{/label}}
-
+<div class="form-check">
+    <input id="{{id}}" name="{{name}}" type="checkbox" class="{{classes}}" value="{{value}}"
+           aria-labelledby="{{id}}-label"
+           data-action="toggle"
+           data-toggle="master"
+           data-togglegroup="{{togglegroup}}"
+           data-toggle-selectall="{{selectall}}"
+           data-toggle-deselectall="{{deselectall}}"
+           {{#checked}}checked="checked"{{/checked}}
+    />
+    <label id="{{id}}-label" for="{{id}}" class="form-check-label d-block pe-2 {{labelclasses}}">{{label}}</label>
+</div>
 {{#js}}
     require(['core/checkbox-toggleall'], function(ToggleAll) {
         ToggleAll.init();

@@ -66,6 +66,8 @@ abstract class question_behaviour_attempt_updater {
     protected $qsession;
     /** @var array the question states for the session to be upgraded. */
     protected $qstates;
+    /** @var stdClass */
+    protected $startstate;
 
     /**
      * @var int counts the question_steps as they are converted to
@@ -99,7 +101,7 @@ abstract class question_behaviour_attempt_updater {
         $this->qeupdater = null;
     }
 
-    protected abstract function behaviour_name();
+    abstract protected function behaviour_name();
 
     public function get_converted_qa() {
         $this->initialise_qa();
@@ -229,8 +231,8 @@ abstract class question_behaviour_attempt_updater {
         $this->unexpected_event($state);
     }
 
-    protected abstract function process6($step, $state);
-    protected abstract function process7($step, $state);
+    abstract protected function process6($step, $state);
+    abstract protected function process7($step, $state);
 
     protected function process8($step, $state) {
         return $this->process6($step, $state);
@@ -336,6 +338,7 @@ abstract class question_behaviour_attempt_updater {
 
 
 class qbehaviour_deferredfeedback_converter extends question_behaviour_attempt_updater {
+
     protected function behaviour_name() {
         return 'deferredfeedback';
     }
@@ -398,6 +401,7 @@ class qbehaviour_manualgraded_converter extends question_behaviour_attempt_updat
 
 
 class qbehaviour_informationitem_converter extends question_behaviour_attempt_updater {
+
     protected function behaviour_name() {
         return 'informationitem';
     }

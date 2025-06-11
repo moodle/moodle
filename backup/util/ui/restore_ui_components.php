@@ -363,6 +363,15 @@ class restore_course_search extends restore_search_base {
     public function set_include_currentcourse() {
         $this->includecurrentcourse = true;
     }
+
+    /**
+     * Get the current course id
+     *
+     * @return int
+     */
+    public function get_current_course_id(): int {
+        return $this->currentcourseid;
+    }
 }
 
 /**

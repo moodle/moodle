@@ -1,0 +1,167 @@
+/* Styles for the initial layout of the question. */
+
+/* Ensure container covers the draggable items. */
+.que.ordering div.answer.ordering {
+    overflow: auto;
+}
+
+.que.ordering .sortablelist {
+    float: left;
+    list-style-type: none;
+    margin: 0 0 0 8px;
+}
+.que.ordering .sortablelist.active {
+    border: 1px dotted #333;
+    border-radius: 4px;
+}
+
+.que.ordering .sortablelist li {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+    list-style-type: none;
+    margin: 4px;
+}
+
+.que.ordering .sortablelist li .grip {
+    opacity: 0.45;
+}
+
+.que.ordering .sortablelist li.sortableitem {
+    position: relative;
+    cursor: move;
+    margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
+}
+
+.que.ordering .sortablelist li.sortableitem:first-of-type [data-action="move-backward"],
+.que.ordering .sortablelist li.sortableitem:last-of-type [data-action="move-forward"] {
+    visibility: hidden;
+}
+
+.que.ordering .sortableitem .btn.btn-icon {
+    height: 32px;
+    width: 32px;
+    border-radius: 0.5rem;
+}
+
+.que.ordering .sortablelist.numbering123 li,
+.que.ordering .sortablelist.numberingabc li,
+.que.ordering .sortablelist.numberingABCD li,
+.que.ordering .sortablelist.numberingiii li,
+.que.ordering .sortablelist.numberingIIII li {
+    margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
+}
+
+.que.ordering .sortablelist.numberingnone li {
+    list-style-type: none;
+    margin-left: 0;
+}
+.que.ordering .sortablelist.numbering123 li {
+    list-style-type: decimal;
+}
+.que.ordering .sortablelist.numberingabc li {
+    list-style-type: lower-alpha;
+}
+.que.ordering .sortablelist.numberingABCD li {
+    list-style-type: upper-alpha;
+}
+.que.ordering .sortablelist.numberingiii li {
+    list-style-type: lower-roman;
+}
+.que.ordering .sortablelist.numberingIIII li {
+    list-style-type: upper-roman;
+}
+
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Better define 'row' of item for horizontal list. */
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.que.ordering .sortablelist.vertical li {
+    min-height: 18px;
+}
+
+/* Styles for when things are being dragged. */
+.que.ordering.dragproxy {
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+}
+.que.ordering.dragproxy .sortablelist {
+    margin: 0;
+    padding: 0;
+    float: none;
+}
+.que.ordering.dragproxy .sortablelist li {
+    margin: 0;
+    padding: 6px 0 6px 12px;
+    width: 100%;
+}
+.que.ordering.dragproxy .sortablelist li.horizontal {
+    float: none;
+}
+.item-moving {
+    box-shadow: 3px 3px 4px #000;
+}
+.current-drop {
+    visibility: hidden;
+}
+
+
+/* Styles for feedback. */
+.que.ordering .sortablelist.notactive li.correct {
+    background-color: #dff4d8; /* light green */
+    border-color: #9f6; /* gentle green */
+}
+.que.ordering .sortablelist.notactive li.partial66 {
+    background-color: #dff4d8; /* light green */
+    border-color: #f90; /* dark  orange */
+}
+.que.ordering .sortablelist.notactive li.partial33 {
+    background-color: #ffebcc; /* light orange */
+    border-color: #f90; /* dark orange */
+}
+.que.ordering .sortablelist.notactive li.partial00 {
+    background-color: #fdd; /* light red */
+    border-color: #f90; /* dark orange */
+}
+.que.ordering .sortablelist.notactive li.incorrect {
+    background-color: #fdd; /* light red */
+    border-color: #ff7373; /* gentle red */
+}
+/*
+    Force containing DIV to cover the floating LI elements
+    Note: if you add "overflow:auto;  to "ol.correctorder"
+    then the numbers for the <LI> elements disappear !!
+*/
+.que.ordering div.rightanswer {
+    overflow: auto;
+}
+.que.ordering div.rightanswer ol.correctorder {
+    padding-inline-start: 16px;
+}
+.que.ordering div.rightanswer ol.correctorder.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+.que.ordering div.rightanswer ol.correctorder li.horizontal {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+.que.ordering div.rightanswer ol.correctorder li.vertical {
+    margin-left: 24px;
+}
+
+/* the width restriction can be limited to editors for draggable items
+   by inserting "fieldset:nth-child(n+4)" before "div.feditor" */
+#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor {
+    max-width: 480px;
+}

@@ -16,7 +16,7 @@
 
 /**
  * Test auto configuration class.
- * @author    Guy Thomas <citricity@gmail.com>
+ * @author    Guy Thomas <dev@citri.city>
  * @copyright Copyright (c) 2017 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,7 +24,13 @@ namespace tool_ally;
 
 use tool_ally\auto_config;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @group     tool_ally
+ * @group     ally
+ */
 class auto_config_test extends \advanced_testcase {
+
     public function test_auto_config() {
         global $DB;
 

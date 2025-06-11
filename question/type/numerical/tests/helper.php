@@ -164,6 +164,13 @@ class qtype_numerical_test_helper extends question_test_helper {
         $form->qtype = 'numerical';
         $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
+        $form->hint = [
+            [
+                'text' => 'Just over 3',
+                'format' => FORMAT_HTML,
+            ],
+        ];
+
         return $form;
     }
 
@@ -178,8 +185,16 @@ class qtype_numerical_test_helper extends question_test_helper {
      */
     public function get_numerical_question_form_data_pi3tries() {
         $form = $this->get_numerical_question_form_data_pi();
-        $form->hint[0]['text'] = 'First hint';
-        $form->hint[1]['text'] = 'Second hint';
+        $form->hint = [
+            [
+                'text' => 'First hint',
+                'format' => FORMAT_HTML,
+            ],
+            [
+                'text' => 'Second hint',
+                'format' => FORMAT_HTML,
+            ],
+        ];
         return $form;
     }
 

@@ -51,7 +51,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_plugintype_link('fileconverter', [], 'privacy:metadata:plugintypefileconverter');
         return $collection;
     }
@@ -62,7 +62,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return \contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
+    public static function get_contexts_for_userid(int $userid): \core_privacy\local\request\contextlist {
         // We cannot associate files with a particular user as it would require to know all the details about
         // the source file, which only the component owning it knows about. And, the 'usermodified' attribute
         // of the conversion class is not an identifier of data ownership, merely that this user was logged in

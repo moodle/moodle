@@ -195,7 +195,7 @@ class portfolio_format_image extends portfolio_format_file {
     /**
      * Return all mimetypes that use image.gif (eg all images)
      *
-     * @return string
+     * @return array
      */
     public static function mimetypes() {
         return file_get_typegroup('type', 'image');
@@ -493,7 +493,7 @@ class portfolio_format_leap2a extends portfolio_format_rich {
      * @param stdclass $user user information object
      * @return portfolio_format_leap2a_writer
      */
-    public static function leap2a_writer(stdclass $user=null) {
+    public static function leap2a_writer(?stdclass $user=null) {
         global $CFG;
         if (empty($user)) {
             global $USER;

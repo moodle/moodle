@@ -43,13 +43,38 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
+
+    /** @var \stdClass course record. */
+    protected \stdClass $course;
+
+    /** @var \stdClass activity record. */
+    protected \stdClass $scorm;
+
+    /** @var \core\context\module context instance. */
+    protected \core\context\module $context;
+
+    /** @var \stdClass */
+    protected \stdClass $cm;
+
+    /** @var \stdClass user record. */
+    protected \stdClass $student;
+
+    /** @var \stdClass user record. */
+    protected \stdClass $teacher;
+
+    /** @var \stdClass a fieldset object, false or exception if error not found. */
+    protected \stdClass $studentrole;
+
+    /** @var \stdClass a fieldset object, false or exception if error not found. */
+    protected \stdClass $teacherrole;
 
     /**
      * Set up for every test
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -74,7 +99,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_scorm_check_mode() {
+    public function test_scorm_check_mode(): void {
         global $CFG;
 
         $newattempt = 'on';
@@ -116,7 +141,7 @@ class lib_test extends \advanced_testcase {
      * Test scorm_view
      * @return void
      */
-    public function test_scorm_view() {
+    public function test_scorm_view(): void {
         global $CFG;
 
         // Trigger and capture the event.
@@ -141,7 +166,7 @@ class lib_test extends \advanced_testcase {
      * Test scorm_get_availability_status and scorm_require_available
      * @return void
      */
-    public function test_scorm_check_and_require_available() {
+    public function test_scorm_check_and_require_available(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -254,11 +279,11 @@ class lib_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_scorm_get_last_completed_attempt() {
+    public function test_scorm_get_last_completed_attempt(): void {
         $this->assertEquals(1, scorm_get_last_completed_attempt($this->scorm->id, $this->student->id));
     }
 
-    public function test_scorm_core_calendar_provide_event_action_open() {
+    public function test_scorm_core_calendar_provide_event_action_open(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -290,7 +315,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_scorm_core_calendar_provide_event_action_closed() {
+    public function test_scorm_core_calendar_provide_event_action_closed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -315,7 +340,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_scorm_core_calendar_provide_event_action_open_in_future() {
+    public function test_scorm_core_calendar_provide_event_action_open_in_future(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -347,7 +372,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_scorm_core_calendar_provide_event_action_with_different_user_as_admin() {
+    public function test_scorm_core_calendar_provide_event_action_with_different_user_as_admin(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -380,7 +405,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_scorm_core_calendar_provide_event_action_no_time_specified() {
+    public function test_scorm_core_calendar_provide_event_action_no_time_specified(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -411,7 +436,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_scorm_core_calendar_provide_event_action_already_completed() {
+    public function test_scorm_core_calendar_provide_event_action_already_completed(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -442,7 +467,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_scorm_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_scorm_core_calendar_provide_event_action_already_completed_for_user(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -509,7 +534,7 @@ class lib_test extends \advanced_testcase {
      * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
      * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
      */
-    public function test_mod_scorm_completion_get_active_rule_descriptions() {
+    public function test_mod_scorm_completion_get_active_rule_descriptions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -566,7 +591,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unkown event type should not change the scorm instance.
      */
-    public function test_mod_scorm_core_calendar_event_timestart_updated_unknown_event() {
+    public function test_mod_scorm_core_calendar_event_timestart_updated_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -609,7 +634,7 @@ class lib_test extends \advanced_testcase {
      * A SCORM_EVENT_TYPE_OPEN event should update the timeopen property of
      * the scorm activity.
      */
-    public function test_mod_scorm_core_calendar_event_timestart_updated_open_event() {
+    public function test_mod_scorm_core_calendar_event_timestart_updated_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -670,7 +695,7 @@ class lib_test extends \advanced_testcase {
      * A SCORM_EVENT_TYPE_CLOSE event should update the timeclose property of
      * the scorm activity.
      */
-    public function test_mod_scorm_core_calendar_event_timestart_updated_close_event() {
+    public function test_mod_scorm_core_calendar_event_timestart_updated_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -730,7 +755,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unkown event type should not have any limits
      */
-    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_unknown_event() {
+    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -768,7 +793,7 @@ class lib_test extends \advanced_testcase {
     /**
      * The open event should be limited by the scorm's timeclose property, if it's set.
      */
-    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_open_event() {
+    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -815,7 +840,7 @@ class lib_test extends \advanced_testcase {
     /**
      * The close event should be limited by the scorm's timeopen property, if it's set.
      */
-    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_close_event() {
+    public function test_mod_scorm_core_calendar_get_valid_event_timestart_range_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -862,7 +887,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create a SCORM.
      */
-    public function test_creation_with_no_calendar_capabilities() {
+    public function test_creation_with_no_calendar_capabilities(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);

@@ -32,7 +32,7 @@ $password = required_param('password', PARAM_RAW);
 /** @var cm_info $cm */
 list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 
-$url = new moodle_url('/availability/condition/password/ajax.php', ['id' => $cm->id]);
+$url = new \core\url('/availability/condition/password/ajax.php', ['id' => $cm->id]);
 $PAGE->set_url($url);
 
 require_login($course, false);

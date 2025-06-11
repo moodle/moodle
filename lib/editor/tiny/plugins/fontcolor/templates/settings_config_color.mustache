@@ -1,0 +1,134 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_configtext
+
+    Admin text setting template.
+    From a config setting of a field (with name, id, value, size, readonly and forceltr
+    a list of textfields for column name and value is used here. The original field is kept
+    as a hidden text field with an arbitrary value. The extacted list of color names and
+    values are the real input fields to the user. Therefore these get an suffix to the
+    original field name and id.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - form element id
+    * header.name - headline for color name column
+    * header.value - headline for color value column
+    * size - element size
+    * forceltr - always display as ltr
+    * readonly - bool
+    * colors - consists of two objects, name and value that are used
+               to build the input field for the color name
+               and the input field for the color hex value.
+               See example for more details.
+
+    Example context (json):
+    {
+        "forceltr": true,
+        "header": {
+            "name": "Headline of left column (name of color)",
+            "value": "Headline of right column (value of color)"
+        },
+        "id": "created_id_of_settings_field",
+        "name": "created_name_of_settings_field",
+        "readonly": false,
+        "size": 15,
+        "colors": [
+            {
+                "name": {
+                    "id": "created_id_of_settings_field_name_1",
+                    "last": false,
+                    "name": "created_name_of_settings_field_name_1",
+                    "value": "Name of first color"
+                },
+                "value": {
+                    "id": "created_id_of_settings_field_value_1",
+                    "last": false,
+                    "name": "created_name_of_settings_field_value_1",
+                    "value": "hex code of first color"
+                }
+            },
+            {
+                "name": {
+                    "id": "created_id_of_settings_field_name_4",
+                    "last": true,
+                    "name": "screated_name_of_settings_field_name_4",
+                    "value": ""
+                },
+                "value": {
+                    "id": "created_id_of_settings_field_value_4",
+                    "last": true,
+                    "name": "created_name_of_settings_field_value_4",
+                    "value": ""
+                }
+            }
+        ]
+    }
+
+}}
+{{!
+    Setting configtext.
+}}
+<div class="row">
+    <div class="col-sm-5 d-none d-md-block">
+        {{header.name}}
+    </div>
+    <div class="col-sm-7 d-none d-md-block">
+        {{header.value}}
+    </div>
+</div>
+<input name="{{name}}" type="hidden" value="{{value}}">
+
+<div class="{{name}}">
+{{#colors}}
+    <div class="row color-row align-items-end">
+        <div class="form-text defaultsnext col-10 col-md-5">
+            <label class="d-md-none" for="{{name.id}}">{{header.name}}</label>
+            <input type="text" name="{{name.name}}" value="{{name.value}}" id="{{name.id}}"
+                   class="form-control {{#forceltr}}text-ltr{{/forceltr}}{{#name.invalid}} is-invalid{{/name.invalid}}" {{#readonly}}disabled{{/readonly}}>
+        </div>
+        <div class="form-text defaultsnext col-10 col-md-5">
+            <label class="d-md-none" for="{{value.id}}">{{header.value}}</label>
+            <input type="text" name="{{value.name}}" value="{{value.value}}" id="{{value.id}}"
+                   class="form-control {{#forceltr}}text-ltr{{/forceltr}}{{#value.invalid}} is-invalid{{/value.invalid}}" {{#readonly}}disabled{{/readonly}}>
+        </div>
+        {{#name.last}}
+            <div class="form-text defaultsnext col-2">
+                <button class="btn btn-primary add" style="width: 2.3rem;">+</button>
+            </div>
+        {{/name.last}}
+        {{^name.last}}
+            <div class="form-text defaultsnext col-2">
+                <button class="btn btn-primary del" style="width: 2.3rem;">-</button>
+            </div>
+        {{/name.last}}
+    </div>
+{{/colors}}
+</div>
+
+{{#js}}
+require(
+[
+    'tiny_fontcolor/color-settings',
+],
+function(
+    ColorSettings
+) {
+    ColorSettings.init('{{name}}');
+});
+{{/js}}

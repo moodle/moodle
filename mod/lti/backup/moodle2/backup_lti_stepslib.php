@@ -146,6 +146,12 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'state'
         ));
 
+        $lticoursevisible = new backup_nested_element('lticoursevisible', ['id'], [
+            'typeid',
+            'courseid',
+            'coursevisible',
+        ]);
+
         // Build the tree
         $lti->add_child($ltitype);
         $ltitype->add_child($ltitypesconfigs);
@@ -156,6 +162,7 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
         $ltitoolsettings->add_child($ltitoolsetting);
         $lti->add_child($ltisubmissions);
         $ltisubmissions->add_child($ltisubmission);
+        $lti->add_child($lticoursevisible);
 
         // Define sources.
         $ltirecord = $DB->get_record('lti', ['id' => $this->task->get_activityid()]);
@@ -192,6 +199,9 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
         if ($userinfo) {
             $ltisubmission->set_source_table('lti_submission', array('ltiid' => backup::VAR_ACTIVITYID));
         }
+
+        $lticoursevisibledata = $this->retrieve_lti_coursevisible($ltirecord);
+        $lticoursevisible->set_source_array($lticoursevisibledata ? [$lticoursevisibledata] : []);
 
         // Define id annotations
         $ltitype->annotate_ids('user', 'createdby');
@@ -237,5 +247,19 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
         }
 
         return $record;
+    }
+
+    /**
+     * Retrieves a record from {lti_coursevisible} table associated with the current type
+     *
+     * @param stdClass $ltirecord record from {lti} table
+     * @return mixed
+     */
+    protected function retrieve_lti_coursevisible(stdClass $ltirecord): mixed {
+        global $DB;
+        if (!$ltirecord->typeid) {
+            return null;
+        }
+        return $DB->get_record('lti_coursevisible', ['typeid' => $ltirecord->typeid, 'courseid' => $ltirecord->course]);
     }
 }

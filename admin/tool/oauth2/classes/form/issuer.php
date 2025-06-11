@@ -66,7 +66,7 @@ class issuer extends persistent {
      * @param array $ajaxformdata
      */
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
-                                $editable = true, array $ajaxformdata = null) {
+                                $editable = true, ?array $ajaxformdata = null) {
         // The type variable defines, if we are in the creation process of a standard issuer.
         if (array_key_exists('type', $customdata)) {
             $this->type = $customdata['type'];
@@ -179,7 +179,8 @@ class issuer extends persistent {
         $mform->hideIf('acceptrisk', 'requireconfirmation', 'checked');
 
 
-        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
+        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1'
+                || $this->type == 'moodlenet' || $issuer->get('servicetype') == 'moodlenet') {
             $mform->addRule('baseurl', null, 'required', null, 'client');
         } else {
             $mform->addRule('clientid', null, 'required', null, 'client');

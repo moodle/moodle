@@ -205,3 +205,7 @@
     border-color: var(--primary);
     color: var(--primary);
 }
+
+#page-mod-data-preset .generaltable {
+    margin-bottom: 10rem;
+}

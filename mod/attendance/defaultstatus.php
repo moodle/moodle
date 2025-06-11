@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/mod/attendance/locallib.php');
 $action         = optional_param('action', null, PARAM_INT);
 $statusid       = optional_param('statusid', null, PARAM_INT);
 admin_externalpage_setup('managemodules');
-$url = new moodle_url('/mod/attendance/defaultstatus.php', array('statusid' => $statusid, 'action' => $action));
+$url = new moodle_url('/mod/attendance/defaultstatus.php', ['statusid' => $statusid, 'action' => $action]);
 
 // Check sesskey if we are performing an action.
 if (!empty($action)) {
@@ -44,8 +44,9 @@ echo $OUTPUT->heading(get_string('defaultstatus', 'mod_attendance'));
 $tabmenu = attendance_print_settings_tabs('defaultstatus');
 echo $tabmenu;
 
+// phpcs:disable moodle.Commenting.TodoComment
 // TODO: Would be good to combine this code block with the one in preferences to avoid duplication.
-$errors = array();
+$errors = [];
 switch ($action) {
     case mod_attendance_preferences_page_params::ACTION_ADD:
         $newacronym         = optional_param('newacronym', null, PARAM_TEXT);
@@ -122,7 +123,8 @@ switch ($action) {
                 $availablebeforesession[$id] = 0;
             }
             $errors[$id] = attendance_update_status($status, $acronym[$id], $description[$id], $grade[$id],
-                                             null, null, null, $studentavailability[$id], $availablebeforesession[$id], $setunmarked);
+                                             null, null, null, $studentavailability[$id], $availablebeforesession[$id],
+                                             $setunmarked);
         }
         echo $OUTPUT->notification(get_string('eventstatusupdated', 'attendance'), 'success');
 

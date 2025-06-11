@@ -32,6 +32,8 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
  * It extends XMLDBgenerator so everything can be
  * overridden as needed to generate correct SQL.
  *
+ * @property mysqli_native_moodle_database $mdb
+ *
  * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
@@ -538,7 +540,7 @@ class mysql_sql_generator extends sql_generator {
      * @param xmldb_table $xmldb_table The xmldb_table object instance.
      * @return array Array of SQL statements to add one comment to the table.
      */
-    function getCommentSQL ($xmldb_table) {
+    function getCommentSQL($xmldb_table) {
         $comment = '';
 
         if ($xmldb_table->getComment()) {
@@ -636,7 +638,10 @@ class mysql_sql_generator extends sql_generator {
             '_filename', 'admin', 'cume_dist', 'dense_rank', 'empty', 'except', 'first_value', 'grouping', 'groups',
             'json_table', 'lag', 'last_value', 'lead', 'nth_value', 'ntile',
             'of', 'over', 'percent_rank', 'persist', 'persist_only', 'rank', 'recursive', 'row_number',
-            'system', 'window'
+            'system', 'window',
+            // Added in Amazon Aurora MySQL version 3.06.0:
+            // https://docs.aws.amazon.com/AmazonRDS/latest/AuroraMySQLReleaseNotes/AuroraMySQL.Updates.3060.html .
+            'accept', 'aws_bedrock_invoke_model', 'aws_sagemaker_invoke_endpoint', 'content_type', 'timeout_ms',
         );
         return $reserved_words;
     }

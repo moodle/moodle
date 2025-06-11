@@ -13,12 +13,14 @@ Feature: Test duplicating a quiz containing a Regexp question
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name            | template |
-      | Test questions   | regexp | regularshortanswer-001 | frenchflag |
+      | Test questions   | regexp | regexp-001 | frenchflag |
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
-      | regularshortanswer-001 | 1 |
+      | regexp-001 | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   @javascript
   Scenario: Backup and restore a course containing a Regexp question
@@ -30,9 +32,9 @@ Feature: Test duplicating a quiz containing a Regexp question
       | Schema | Course name       | Course 2 |
       | Schema | Course short name | C2       |
     And I am on the "Course 2" "core_question > course question bank" page
-    And I choose "Edit question" action for "regularshortanswer-001" in the question bank
+    And I choose "Edit question" action for "regexp-001" in the question bank
     Then the following fields match these values:
-      | Question name        | regularshortanswer-001                            |
+      | Question name        | regexp-001                            |
       | Question text        | What are the colours of the French flag?          |
       | General feedback     | General feedback: OK.                             |
       | Default mark         | 1                                                 |

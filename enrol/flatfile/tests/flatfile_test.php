@@ -35,7 +35,7 @@ use enrol_flatfile\task\flatfile_sync_task;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class flatfile_test extends \advanced_testcase {
+final class flatfile_test extends \advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
@@ -51,14 +51,14 @@ class flatfile_test extends \advanced_testcase {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
 
-    public function test_basics() {
+    public function test_basics(): void {
         $this->assertFalse(enrol_is_enabled('flatfile'));
         $plugin = enrol_get_plugin('flatfile');
         $this->assertInstanceOf('enrol_flatfile_plugin', $plugin);
         $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_flatfile', 'expiredaction'));
     }
 
-    public function test_sync_nothing() {
+    public function test_sync_nothing(): void {
         $this->resetAfterTest();
 
         $this->disable_plugin();
@@ -70,13 +70,13 @@ class flatfile_test extends \advanced_testcase {
         $flatfileplugin->sync(new \null_progress_trace());
     }
 
-    public function test_sync() {
+    public function test_sync(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
-        /** @var enrol_flatfile_plugin $flatfileplugin  */
+        /** @var \enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var enrol_manual_plugin $manualplugin  */
+        /** @var \enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -277,15 +277,15 @@ class flatfile_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('user_enrolments', array('userid'=>$user1->id, 'enrolid'=>$maninstance1->id)));
     }
 
-    public function test_notification() {
+    public function test_notification(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
         $this->preventResetByRollback();
 
-        /** @var enrol_flatfile_plugin $flatfileplugin  */
+        /** @var \enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var enrol_manual_plugin $manualplugin  */
+        /** @var \enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -364,13 +364,13 @@ class flatfile_test extends \advanced_testcase {
         $this->assertEquals($admin->id, $messages[4]->useridfrom);
     }
 
-    public function test_expired() {
+    public function test_expired(): void {
         global $DB;
         $this->resetAfterTest();
 
-        /** @var enrol_flatfile_plugin $flatfileplugin  */
+        /** @var \enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var enrol_manual_plugin $manualplugin  */
+        /** @var \enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -480,7 +480,7 @@ class flatfile_test extends \advanced_testcase {
     /**
      * Flatfile enrolment sync task test.
      */
-    public function test_flatfile_sync_task() {
+    public function test_flatfile_sync_task(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -511,7 +511,7 @@ class flatfile_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */
-    public function test_get_user_enrolment_actions() {
+    public function test_get_user_enrolment_actions(): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();
 

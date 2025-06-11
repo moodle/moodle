@@ -42,7 +42,7 @@ class post {
      * @param post_entity[] $posts The posts to convert.
      * @return stdClass[]
      */
-    public function to_legacy_objects(array $posts) : array {
+    public function to_legacy_objects(array $posts): array {
         return array_map(function(post_entity $post) {
             return (object) [
                 'id' => $post->get_id(),
@@ -73,7 +73,7 @@ class post {
      * @param post_entity $post The post to convert.
      * @return stdClass
      */
-    public function to_legacy_object(post_entity $post) : stdClass {
+    public function to_legacy_object(post_entity $post): stdClass {
         return $this->to_legacy_objects([$post])[0];
     }
 }

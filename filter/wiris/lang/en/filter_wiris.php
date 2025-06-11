@@ -57,7 +57,7 @@ $string['failure'] = 'FAILURE';
 $string['filter_standalone'] = 'MathType filter only';
 $string['filter_standalonedesc'] = 'You will be able to display existing formulas but creation of new formulas is not available. It also removes the warning message.';
 $string['filtername'] = 'MathType by WIRIS';
-$string['furtherinformation'] = 'For further information see our documentation page';
+$string['furtherinformation'] = 'For further information see our <a href="http://www.wiris.com/plugins/docs/moodle/troubleshooting?utm_source=moodle&utm_medium=referral">documentation page </a>';
 $string['havesameversion'] = 'have the same version';
 $string['imageformat'] = 'Image format';
 $string['imageformat_help'] = 'Specifies image format (svg or png).';
@@ -114,10 +114,4 @@ $string['wirispluginfilterfor'] = 'MathType filter and MathType for';
 $string['wirispluginfor'] = 'MathType for';
 $string['wirispluginforatto'] = 'MathType for Atto';
 $string['wirispluginfortinymce'] = 'MathType for TinyMCE';
-
-
-
-
 $string['yes'] = 'Yes';
-
-

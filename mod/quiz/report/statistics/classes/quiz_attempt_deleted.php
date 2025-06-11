@@ -25,6 +25,8 @@ use quiz_statistics\task\recalculate;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.4 MDL-80099.
+ * @todo Final deprecation in Moodle 4.8 MDL-80956.
  */
 class quiz_attempt_deleted {
     /**
@@ -32,8 +34,11 @@ class quiz_attempt_deleted {
      *
      * @param int $quizid The quiz the attempt belongs to.
      * @return void
+     * @deprecated Since Moodle 4.4 MDL-80099.
      */
     public static function callback(int $quizid): void {
+        debugging('quiz_statistics\quiz_attempt_deleted callback class has been deprecated in favour of ' .
+            'the quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted hook callback.', DEBUG_DEVELOPER);
         recalculate::queue_future_run($quizid);
     }
 }

@@ -36,7 +36,7 @@ use enrol_meta\privacy\provider;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Enable enrol_meta plugin.
@@ -51,7 +51,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -83,7 +83,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that user data is exported correctly.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -103,6 +103,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $approvedcontextlist = new approved_contextlist($user1, 'enrol_meta', $contextlist->get_contextids());
         provider::export_user_data($approvedcontextlist);
         foreach ($contextlist as $context) {
+            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $data = $writer->get_data([
                 get_string('pluginname', 'enrol_meta'),
@@ -122,7 +123,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -162,7 +163,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -208,7 +209,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -258,7 +259,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();

@@ -17,15 +17,14 @@
 /**
  * Store performance test run + output script.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../config.php');
-require_once($CFG->dirroot.'/lib/adminlib.php');
-require_once($CFG->dirroot.'/cache/locallib.php');
+require_once($CFG->dirroot . '/lib/adminlib.php');
 
 $count = optional_param('count', 100, PARAM_INT);
 $count = min($count, 100000);
@@ -34,15 +33,15 @@ $count = max($count, 0);
 admin_externalpage_setup('cachetestperformance');
 
 $applicationtable = new html_table();
-$applicationtable->head = array(
+$applicationtable->head = [
     get_string('plugin', 'cache'),
     get_string('result', 'cache'),
     get_string('set', 'cache'),
     get_string('gethit', 'cache'),
     get_string('getmiss', 'cache'),
     get_string('delete', 'cache'),
-);
-$applicationtable->data = array();
+];
+$applicationtable->data = [];
 $sessiontable = clone($applicationtable);
 $requesttable = clone($applicationtable);
 
@@ -58,48 +57,47 @@ $strtested = new lang_string('tested', 'cache');
 $strnotready = new lang_string('storenotready', 'cache');
 
 foreach (core_component::get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => $path) {
-
-    $class = 'cachestore_'.$plugin;
-    $plugin = get_string('pluginname', 'cachestore_'.$plugin);
+    $class = 'cachestore_' . $plugin;
+    $plugin = get_string('pluginname', 'cachestore_' . $plugin);
 
     if (!class_exists($class) || !method_exists($class, 'initialise_test_instance') || !$class::are_requirements_met()) {
-        $applicationtable->data[] = array($plugin, $strinvalidplugin, '-', '-', '-', '-');
-        $sessiontable->data[] = array($plugin, $strinvalidplugin, '-', '-', '-', '-');
-        $requesttable->data[] = array($plugin, $strinvalidplugin, '-', '-', '-', '-');
+        $applicationtable->data[] = [$plugin, $strinvalidplugin, '-', '-', '-', '-'];
+        $sessiontable->data[] = [$plugin, $strinvalidplugin, '-', '-', '-', '-'];
+        $requesttable->data[] = [$plugin, $strinvalidplugin, '-', '-', '-', '-'];
         continue;
     }
 
     if (!$class::is_supported_mode(cache_store::MODE_APPLICATION)) {
-        $applicationtable->data[] = array($plugin, $strunsupportedmode, '-', '-', '-', '-');
+        $applicationtable->data[] = [$plugin, $strunsupportedmode, '-', '-', '-', '-'];
     } else {
         $store = $class::initialise_test_instance($application);
         if ($store === false) {
-            $applicationtable->data[] = array($plugin, $struntestable, '-', '-', '-', '-');
+            $applicationtable->data[] = [$plugin, $struntestable, '-', '-', '-', '-'];
         } else if (!$store->is_ready()) {
-            $applicationtable->data[] = array($plugin, $strnotready, '-', '-', '-', '-');
+            $applicationtable->data[] = [$plugin, $strnotready, '-', '-', '-', '-'];
         } else {
-            $result = array($plugin, $strtested, 0, 0, 0);
+            $result = [$plugin, $strtested, 0, 0, 0];
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->set('key'.$i, 'test data '.$i);
+                $store->set('key' . $i, 'test data ' . $i);
             }
             $result[2] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('key'.$i);
+                $store->get('key' . $i);
             }
             $result[3] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('fake'.$i);
+                $store->get('fake' . $i);
             }
             $result[4] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->delete('key'.$i);
+                $store->delete('key' . $i);
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $applicationtable->data[] = $result;
@@ -108,36 +106,36 @@ foreach (core_component::get_plugin_list_with_file('cachestore', 'lib.php', true
     }
 
     if (!$class::is_supported_mode(cache_store::MODE_SESSION)) {
-        $sessiontable->data[] = array($plugin, $strunsupportedmode, '-', '-', '-', '-');
+        $sessiontable->data[] = [$plugin, $strunsupportedmode, '-', '-', '-', '-'];
     } else {
         $store = $class::initialise_test_instance($session);
         if ($store === false) {
-            $sessiontable->data[] = array($plugin, $struntestable, '-', '-', '-', '-');
+            $sessiontable->data[] = [$plugin, $struntestable, '-', '-', '-', '-'];
         } else if (!$store->is_ready()) {
-            $sessiontable->data[] = array($plugin, $strnotready, '-', '-', '-', '-');
+            $sessiontable->data[] = [$plugin, $strnotready, '-', '-', '-', '-'];
         } else {
-            $result = array($plugin, $strtested, 0, 0, 0);
+            $result = [$plugin, $strtested, 0, 0, 0];
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->set('key'.$i, 'test data '.$i);
+                $store->set('key' . $i, 'test data ' . $i);
             }
             $result[2] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('key'.$i);
+                $store->get('key' . $i);
             }
             $result[3] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('fake'.$i);
+                $store->get('fake' . $i);
             }
             $result[4] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->delete('key'.$i);
+                $store->delete('key' . $i);
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $sessiontable->data[] = $result;
@@ -146,52 +144,51 @@ foreach (core_component::get_plugin_list_with_file('cachestore', 'lib.php', true
     }
 
     if (!$class::is_supported_mode(cache_store::MODE_REQUEST)) {
-        $requesttable->data[] = array($plugin, $strunsupportedmode, '-', '-', '-', '-');
+        $requesttable->data[] = [$plugin, $strunsupportedmode, '-', '-', '-', '-'];
     } else {
         $store = $class::initialise_test_instance($request);
         if ($store === false) {
-            $requesttable->data[] = array($plugin, $struntestable, '-', '-', '-', '-');
+            $requesttable->data[] = [$plugin, $struntestable, '-', '-', '-', '-'];
         } else if (!$store->is_ready()) {
-            $requesttable->data[] = array($plugin, $strnotready, '-', '-', '-', '-');
+            $requesttable->data[] = [$plugin, $strnotready, '-', '-', '-', '-'];
         } else {
-            $result = array($plugin, $strtested, 0, 0, 0);
+            $result = [$plugin, $strtested, 0, 0, 0];
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->set('key'.$i, 'test data '.$i);
+                $store->set('key' . $i, 'test data ' . $i);
             }
             $result[2] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('key'.$i);
+                $store->get('key' . $i);
             }
             $result[3] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->get('fake'.$i);
+                $store->get('fake' . $i);
             }
             $result[4] = sprintf('%01.4f', microtime(true) - $start);
 
             $start = microtime(true);
             for ($i = 0; $i < $count; $i++) {
-                $store->delete('key'.$i);
+                $store->delete('key' . $i);
             }
             $result[5] = sprintf('%01.4f', microtime(true) - $start);
             $requesttable->data[] = $result;
             $store->instance_deleted();
         }
     }
-
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('storeperformance', 'cache', $count));
 
-$possiblecounts = array(1, 10, 100, 500, 1000, 5000, 10000, 50000, 100000);
-$links = array();
+$possiblecounts = [1, 10, 100, 500, 1000, 5000, 10000, 50000, 100000];
+$links = [];
 foreach ($possiblecounts as $pcount) {
-    $links[] = html_writer::link(new moodle_url($PAGE->url, array('count' => $pcount)), $pcount);
+    $links[] = html_writer::link(new moodle_url($PAGE->url, ['count' => $pcount]), $pcount);
 }
 echo $OUTPUT->box_start('generalbox performance-test-counts');
 echo get_string('requestcount', 'cache', join(', ', $links));

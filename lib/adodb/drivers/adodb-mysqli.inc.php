@@ -167,6 +167,14 @@ class ADODB_mysqli extends ADOConnection {
 		if(!extension_loaded("mysqli")) {
 			return null;
 		}
+		// Check for a function that only exists in mysqlnd
+		if (!function_exists('mysqli_stmt_get_result')) {
+			// @TODO This will be treated as if the mysqli extension were not available
+			// This could be misleading, so we output an additional error message.
+			// We should probably throw a specific exception instead.
+			$this->outp("MySQL Native Driver (msqlnd) required");
+			return null;
+		}
 		$this->_connectionID = @mysqli_init();
 
 		if (is_null($this->_connectionID)) {
@@ -932,7 +940,7 @@ class ADODB_mysqli extends ADOConnection {
 
 		$SQL = "SELECT column_name, column_type
 				  FROM information_schema.columns
-				 WHERE table_schema='{$this->databaseName}'
+				 WHERE table_schema='{$this->database}'
 				   AND table_name='$table'";
 
 		$schemaArray = $this->getAssoc($SQL);
@@ -1017,7 +1025,6 @@ class ADODB_mysqli extends ADOConnection {
 	{
 //		$this->_connectionID = $this->mysqli_resolve_link($this->_connectionID);
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 
 		if ($this->_connectionID) {
 			$result = @mysqli_select_db($this->_connectionID, $dbName);
@@ -1092,16 +1099,6 @@ class ADODB_mysqli extends ADOConnection {
 		return array($sql,$stmt);
 	}
 
-	/**
-	 * Execute SQL
-	 *
-	 * @param string     $sql      SQL statement to execute, or possibly an array
-	 *                             holding prepared statement ($sql[0] will hold sql text)
-	 * @param array|bool $inputarr holds the input data to bind to.
-	 *                             Null elements will be set to null.
-	 *
-	 * @return ADORecordSet|bool
-	 */
 	public function execute($sql, $inputarr = false)
 	{
 		if ($this->fnExecute) {
@@ -1118,6 +1115,10 @@ class ADODB_mysqli extends ADOConnection {
 
 		if (!is_array($inputarr)) {
 			$inputarr = array($inputarr);
+		}
+		else {
+			//remove alphanumeric placeholders
+			$inputarr = array_values($inputarr);
 		}
 
 		if (!is_array($sql)) {
@@ -1143,8 +1144,10 @@ class ADODB_mysqli extends ADOConnection {
 					}
 					$bulkTypeArray[] = $typeArray;
 				}
+				$currentBulkBind = $this->bulkBind;
 				$this->bulkBind = false;
 				$ret = $this->_execute($sql, $bulkTypeArray);
+				$this->bulkBind = $currentBulkBind;
 			} else {
 				$typeArray = $this->getBindParamWithType($inputarr);
 				$ret = $this->_execute($sql, $typeArray);
@@ -1186,14 +1189,14 @@ class ADODB_mysqli extends ADOConnection {
 	}
 
 	/**
-	* Return the query id.
-	*
-	* @param string|array $sql
-	* @param array $inputarr
-	*
-	* @return bool|mysqli_result
+	 * Execute a query.
+	 *
+	 * @param string|array $sql        Query to execute.
+	 * @param array        $inputarr   An optional array of parameters.
+	 *
+	 * @return mysqli_result|bool
 	*/
-	function _query($sql, $inputarr)
+	function _query($sql, $inputarr = false)
 	{
 		global $ADODB_COUNTRECS;
 		// Move to the next recordset, or return false if there is none. In a stored proc
@@ -1202,6 +1205,14 @@ class ADODB_mysqli extends ADOConnection {
 		// return value of the stored proc (ie the number of rows affected).
 		// Commented out for reasons of performance. You should retrieve every recordset yourself.
 		//	if (!mysqli_next_result($this->connection->_connectionID))	return false;
+
+		// When SQL is empty, mysqli_query() throws exception on PHP 8 (#945)
+		if (!$sql) {
+			if ($this->debug) {
+				ADOConnection::outp("Empty query");
+			}
+			return false;
+		}
 
 		if (is_array($sql)) {
 
@@ -1307,6 +1318,10 @@ class ADODB_mysqli extends ADOConnection {
 
 				$ret = mysqli_stmt_execute($stmt);
 
+				// Store error code and message
+				$this->_errorCode = $stmt->errno;
+				$this->_errorMsg = $stmt->error;
+
 				/*
 				* Did we throw an error?
 				*/
@@ -1332,6 +1347,10 @@ class ADODB_mysqli extends ADOConnection {
 			*/
 			$this->usePreparedStatement   = false;
 			$this->useLastInsertStatement = false;
+
+			// Reset error code and message
+			$this->_errorCode = 0;
+			$this->_errorMsg = '';
 		}
 
 		/*
@@ -1373,10 +1392,13 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorMsg()
 	{
-		if (empty($this->_connectionID))
-			$this->_errorMsg = @mysqli_connect_error();
-		else
-			$this->_errorMsg = @mysqli_error($this->_connectionID);
+		if (!$this->_errorMsg) {
+			if (empty($this->_connectionID)) {
+				$this->_errorMsg = mysqli_connect_error();
+			} else {
+				$this->_errorMsg = $this->_connectionID->error ?? $this->_connectionID->connect_error;
+			}
+		}
 		return $this->_errorMsg;
 	}
 
@@ -1387,10 +1409,14 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorNo()
 	{
-		if (empty($this->_connectionID))
-			return @mysqli_connect_errno();
-		else
-			return @mysqli_errno($this->_connectionID);
+		if (!$this->_errorCode) {
+			if (empty($this->_connectionID)) {
+				$this->_errorCode = mysqli_connect_errno();
+			} else {
+				$this->_errorCode = $this->_connectionID->errno ?? $this->_connectionID->connect_errno;
+			}
+		}
+		return $this->_errorCode;
 	}
 
 	/**
@@ -1440,6 +1466,9 @@ class ADODB_mysqli extends ADOConnection {
 		return $this->charSet ?: false;
 	}
 
+	/**
+	 * @deprecated 5.21.0 Use {@see setConnectionParameter()} instead
+	 */
 	function setCharSet($charset)
 	{
 		if (!$this->_connectionID || !method_exists($this->_connectionID,'set_charset')) {

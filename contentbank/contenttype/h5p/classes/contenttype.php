@@ -82,7 +82,7 @@ class contenttype extends \core_contentbank\contenttype {
     public function get_icon(\core_contentbank\content $content): string {
         global $OUTPUT, $DB;
 
-        $iconurl = $OUTPUT->image_url('f/h5p-64', 'moodle')->out(false);
+        $iconurl = $OUTPUT->image_url('f/h5p')->out(false);
         $file = $content->get_file();
         if (!empty($file)) {
             $h5p = \core_h5p\api::get_content_from_pathnamehash($file->get_pathnamehash());
@@ -110,7 +110,7 @@ class contenttype extends \core_contentbank\contenttype {
      * @return array
      */
     protected function get_implemented_features(): array {
-        return [self::CAN_UPLOAD, self::CAN_EDIT, self::CAN_DOWNLOAD];
+        return [self::CAN_UPLOAD, self::CAN_EDIT, self::CAN_DOWNLOAD, self::CAN_COPY];
     }
 
     /**

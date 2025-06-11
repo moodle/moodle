@@ -25,12 +25,13 @@
 
 namespace mod_folder\event;
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -40,7 +41,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating a folder, so the unit test will simply create
      * and trigger the event and ensure the legacy log data is returned as expected.
      */
-    public function test_folder_updated() {
+    public function test_folder_updated(): void {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id));
@@ -64,9 +65,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_folder\event\folder_updated', $event);
         $this->assertEquals(\context_module::instance($folder->cmid), $event->get_context());
         $this->assertEquals($folder->id, $event->objectid);
-        $expected = array($course->id, 'folder', 'edit', 'edit.php?id=' . $folder->cmid, $folder->id, $folder->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
-        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -75,7 +73,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating a folder, so the unit test will simply create
      * and trigger the event and ensure the legacy log data is returned as expected.
      */
-    public function test_all_files_downloaded() {
+    public function test_all_files_downloaded(): void {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id));

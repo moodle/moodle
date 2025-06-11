@@ -29,7 +29,7 @@ Feature: Preview a Regexp question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "saverestart"
     And I set the field with xpath "//div[@class='qtext']//input[contains(@id, '1_answer')]" to "cat"
     And I press "Check"
     Then I should see "The best answer."
@@ -41,7 +41,7 @@ Feature: Preview a Regexp question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "saverestart"
     And I set the field with xpath "//div[@class='answer']//input[contains(@id, '1_answer')]" to "it's blue, white and red"
     And I press "Check"
     Then I should see "The best answer."
@@ -63,7 +63,7 @@ Feature: Preview a Regexp question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "saverestart"
     And I set the field with xpath "//div[@class='answer']//input[contains(@id, '1_answer')]" to "they are blue, white, red"
     And I press "Check"
     Then I should see "An acceptable answer."
@@ -86,7 +86,7 @@ Feature: Preview a Regexp question
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
       | rightanswer | 0 |
-    And I press "Start again with these options"
+    And I press "saverestart"
     And I set the field with xpath "//div[@class='answer']//input[contains(@id, '1_answer')]" to "it's white and red"
     And I press "Check"
     Then I should see "Misplaced words"

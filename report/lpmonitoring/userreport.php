@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../../config.php');
 
 $userid = required_param('userid', PARAM_INT);
 $context = context_user::instance($userid);
-$user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+$user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
 require_login();
 \core_competency\api::require_enabled();
@@ -36,7 +36,7 @@ if (!\core_competency\plan::can_read_user($userid)) {
     throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
 }
 
-$urlparams = array('userid' => $userid);
+$urlparams = ['userid' => $userid];
 
 $url = new moodle_url('/report/lpmonitoring/userreport.php', $urlparams);
 $title = get_string('pluginname', 'report_lpmonitoring');
@@ -48,8 +48,6 @@ if (!$iscurrentuser) {
     $PAGE->navigation->set_userid_for_parent_checks($user->id);
 }
 
-// Set css.
-$PAGE->requires->css('/report/lpmonitoring/style/checkbox.css');
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('report');
 $PAGE->set_url($url);
@@ -57,7 +55,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 // Create the appropriate breadcrumb.
-$navigationnode = array('url' => $url, 'name' => $title);
+$navigationnode = ['url' => $url, 'name' => $title];
 $PAGE->add_report_nodes($user->id, $navigationnode);
 
 $output = $PAGE->get_renderer('report_lpmonitoring');

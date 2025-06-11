@@ -31,12 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      *  Verify that a collection of metadata is returned for this component and that it just links to an external location.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('portfolio_mahara');
         $collection = \portfolio_mahara\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);

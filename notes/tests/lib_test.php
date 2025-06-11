@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/notes/lib.php');
  * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * @var stdClass The user.
@@ -52,6 +52,7 @@ class lib_test extends \advanced_testcase {
     private $tree;
 
     public function setUp(): void {
+        parent::setUp();
         $this->user = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();
@@ -61,7 +62,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation() {
+    public function test_core_notes_myprofile_navigation(): void {
         global $USER;
 
         // Set up the test.
@@ -75,14 +76,13 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('notes', $nodes->getValue($this->tree));
     }
 
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation_as_guest() {
+    public function test_core_notes_myprofile_navigation_as_guest(): void {
         global $USER;
 
         $this->setGuestUser();
@@ -92,14 +92,13 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('notes', $nodes->getValue($this->tree));
     }
 
     /**
      * Tests the core_notes_myprofile_navigation() function.
      */
-    public function test_core_notes_myprofile_navigation_notes_disabled() {
+    public function test_core_notes_myprofile_navigation_notes_disabled(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -112,7 +111,6 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('notes', $nodes->getValue($this->tree));
     }
 }

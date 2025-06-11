@@ -18,6 +18,7 @@ namespace core_backup;
 
 use backup;
 use core_backup_external;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -36,13 +37,14 @@ require_once($CFG->dirroot . '/backup/externallib.php');
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Set up tasks for all tests.
      */
     protected function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         $this->resetAfterTest(true);
 
@@ -57,7 +59,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test getting course copy progress.
      */
-    public function test_get_copy_progress() {
+    public function test_get_copy_progress(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -90,7 +92,7 @@ class externallib_test extends externallib_advanced_testcase {
         $returnvalue = core_backup_external::get_copy_progress($params);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnvalue = \external_api::clean_returnvalue(core_backup_external::get_copy_progress_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_backup_external::get_copy_progress_returns(), $returnvalue);
 
         $this->assertEquals(\backup::STATUS_AWAITING, $returnvalue[0]['status']);
         $this->assertEquals(0, $returnvalue[0]['progress']);
@@ -111,7 +113,7 @@ class externallib_test extends externallib_advanced_testcase {
         $params = array('copies' => $copydetails);
         $returnvalue = core_backup_external::get_copy_progress($params);
 
-        $returnvalue = \external_api::clean_returnvalue(core_backup_external::get_copy_progress_returns(), $returnvalue);
+        $returnvalue = external_api::clean_returnvalue(core_backup_external::get_copy_progress_returns(), $returnvalue);
 
         $this->assertEquals(\backup::STATUS_FINISHED_OK, $returnvalue[0]['status']);
         $this->assertEquals(1, $returnvalue[0]['progress']);
@@ -123,7 +125,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test ajax submission of course copy process.
      */
-    public function test_submit_copy_form() {
+    public function test_submit_copy_form(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -160,7 +162,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $returnvalue = core_backup_external::submit_copy_form($jsonformdata);
 
-        $returnjson = \external_api::clean_returnvalue(core_backup_external::submit_copy_form_returns(), $returnvalue);
+        $returnjson = external_api::clean_returnvalue(core_backup_external::submit_copy_form_returns(), $returnvalue);
         $copyids = json_decode($returnjson, true);
 
         $backuprec = $DB->get_record('backup_controllers', array('backupid' => $copyids['backupid']));

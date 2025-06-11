@@ -32,7 +32,7 @@ class mod_attendance_manage_page_params extends mod_attendance_page_with_filter_
     /**
      * mod_attendance_manage_page_params constructor.
      */
-    public function  __construct() {
+    public function __construct() {
         $this->selectortype = mod_attendance_page_with_filter_controls::SELECTOR_SESS_TYPE;
     }
 
@@ -41,6 +41,6 @@ class mod_attendance_manage_page_params extends mod_attendance_page_with_filter_
      * @return array
      */
     public function get_significant_params() {
-        return array();
+        return [];
     }
 }

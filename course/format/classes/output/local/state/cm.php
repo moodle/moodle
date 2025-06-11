@@ -18,6 +18,7 @@ namespace core_courseformat\output\local\state;
 
 use core_courseformat\base as course_format;
 use completion_info;
+use core_courseformat\sectiondelegate;
 use renderer_base;
 use section_info;
 use cm_info;
@@ -32,37 +33,26 @@ require_once($CFG->libdir . '/completionlib.php');
 /**
  * Contains the ajax update course module structure.
  *
- * @package   core_course
+ * @package   core_courseformat
  * @copyright 2021 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cm implements renderable {
-
-    /** @var course_format the course format class */
-    protected $format;
-
-    /** @var section_info the course section class */
-    protected $section;
-
-    /** @var bool if cmitem HTML content must be exported as well */
-    protected $exportcontent;
-
-    /** @var cm_info the course module to display */
-    protected $cm;
-
     /**
      * Constructor.
-     *
-     * @param course_format $format the course format
-     * @param section_info $section the section data
-     * @param cm_info $cm the course module data
-     * @param bool $exportcontent = false if pre-rendered cmitem must be exported.
      */
-    public function __construct(course_format $format, section_info $section, cm_info $cm, bool $exportcontent = false) {
-        $this->format = $format;
-        $this->section = $section;
-        $this->cm = $cm;
-        $this->exportcontent = $exportcontent;
+    public function __construct(
+        /** @var course_format $format The course format. */
+        protected course_format $format,
+        /** @var section_info $section The section data. */
+        protected section_info $section,
+        /** @var cm_info $cm The course module data. */
+        protected cm_info $cm,
+        /** @var bool $exportcontent False if pre-rendered cmitem HTML content must be exported. */
+        protected bool $exportcontent = false,
+        /** @var ?bool $istrackeduser If is_tracked_user is pre-computed for this CM's course, it can be provided here. */
+        protected ?bool $istrackeduser = null,
+    ) {
     }
 
     /**
@@ -72,28 +62,36 @@ class cm implements renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
-        global $USER, $CFG;
-        require_once($CFG->libdir . '/externallib.php');
+        global $CFG, $USER;
 
         $format = $this->format;
         $section = $this->section;
         $cm = $this->cm;
         $course = $format->get_course();
+        $delegatedsectioninfo = $cm->get_delegated_section_info();
 
         $data = (object)[
             'id' => $cm->id,
             'anchor' => "module-{$cm->id}",
-            'name' => external_format_string($cm->name, $cm->context, true),
+            'name' => \core_external\util::format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
             'stealth' => $cm->is_stealth(),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,
             'hascmrestrictions' => $this->get_has_restrictions(),
+            'modname' => get_string('pluginname', 'mod_' . $cm->modname),
+            'indent' => ($format->uses_indentation()) ? $cm->indent : 0,
+            'groupmode' => $cm->groupmode,
             'module' => $cm->modname,
             'plugin' => 'mod_' . $cm->modname,
-            'indent' => ($format->uses_indentation()) ? $cm->indent : 0,
+            // Activities with delegate section has some restriction to prevent structure loops.
+            'hasdelegatedsection' => !empty($delegatedsectioninfo),
         ];
+
+        if (!empty($delegatedsectioninfo)) {
+            $data->delegatesectionid = $delegatedsectioninfo->id;
+        }
 
         // Check the user access type to this cm.
         $info = new info_module($cm);
@@ -111,11 +109,14 @@ class cm implements renderable {
 
         // Completion status.
         $completioninfo = new completion_info($course);
-        $data->istrackeduser = $completioninfo->is_tracked_user($USER->id);
+        $data->istrackeduser = $this->istrackeduser ?? $completioninfo->is_tracked_user($USER->id);
         if ($data->istrackeduser && $completioninfo->is_enabled($cm)) {
-            $completiondata = $completioninfo->get_data($cm);
-            $data->completionstate = $completiondata->completionstate;
+            $completiondata = new \core_completion\cm_completion_details($completioninfo, $cm, $USER->id, false);
+            $data->completionstate = $completiondata->get_overall_completion();
+            $data->isoverallcomplete = $completiondata->is_overall_complete();
         }
+
+        $data->allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
 
         return $data;
     }

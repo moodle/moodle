@@ -36,7 +36,7 @@ use core\plugininfo\paygw;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends advanced_testcase {
+final class helper_test extends advanced_testcase {
 
     protected function enable_paypal_gateway(): bool {
         if (!array_key_exists('paypal', \core_component::get_plugin_list('paygw'))) {
@@ -45,7 +45,7 @@ class helper_test extends advanced_testcase {
         return true;
     }
 
-    public function test_create_account() {
+    public function test_create_account(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -54,7 +54,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('Test 1', $DB->get_field('payment_accounts', 'name', ['id' => $account->get('id')]));
     }
 
-    public function test_update_account_details() {
+    public function test_update_account_details(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -66,7 +66,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('Edited name', $DB->get_field('payment_accounts', 'name', ['id' => $account->get('id')]));
     }
 
-    public function test_update_account_gateways() {
+    public function test_update_account_gateways(): void {
         global $DB;
         if (!$this->enable_paypal_gateway()) {
             $this->markTestSkipped('Paypal payment gateway plugin not found');
@@ -93,7 +93,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('T3', $DB->get_field('payment_gateways', 'config', ['id' => $gateway->get('id')]));
     }
 
-    public function test_delete_account() {
+    public function test_delete_account(): void {
         global $DB;
         if (!$this->enable_paypal_gateway()) {
             $this->markTestSkipped('Paypal payment gateway plugin not found');
@@ -110,7 +110,7 @@ class helper_test extends advanced_testcase {
         $this->assertEmpty($DB->get_records('payment_gateways', ['id' => $gateway->get('id')]));
     }
 
-    public function test_archive_restore_account() {
+    public function test_archive_restore_account(): void {
         global $DB, $USER;
         $this->resetAfterTest();
 
@@ -137,7 +137,7 @@ class helper_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_rounded_cost_provider(): array {
+    public static function get_rounded_cost_provider(): array {
         return [
             'IRR 0 surcharge' => [5.345, 'IRR', 0, 5],
             'IRR 12% surcharge' => [5.345, 'IRR', 12, 6],
@@ -151,7 +151,7 @@ class helper_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_cost_as_string_provider(): array {
+    public static function get_cost_as_string_provider(): array {
         return [
             'IRR 0 surcharge' => [5.345, 'IRR', 0, 'IRR'."\xc2\xa0".'5'],
             'IRR 12% surcharge' => [5.345, 'IRR', 12, 'IRR'."\xc2\xa0".'6'],
@@ -169,7 +169,7 @@ class helper_test extends advanced_testcase {
      * @param float $surcharge
      * @param string $expected
      */
-    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected) {
+    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected): void {
         $this->assertEquals($expected, helper::get_rounded_cost($amount, $currency, $surcharge));
     }
 
@@ -182,7 +182,7 @@ class helper_test extends advanced_testcase {
      * @param float $surcharge
      * @param string $expected
      */
-    public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected) {
+    public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected): void {
         // Some old ICU versions have a bug, where they don't follow the CLDR and they are
         // missing the non-breaking-space between the currency abbreviation and the value.
         // i.e. it returns AUD50 instead of AU\xc2\xa050). See the following issues @ ICU:
@@ -190,7 +190,7 @@ class helper_test extends advanced_testcase {
         // - https://unicode-org.atlassian.net/browse/ICU-8853
         // - https://unicode-org.atlassian.net/browse/ICU-8840
         // It has been detected that versions prior to ICU-61.1 / ICU-62.1 come with this
-        // problem. Noticeably Travis images (as of December 2021) use buggy ICU-60.1.
+        // problem. Noticeably some CI images (as of December 2021) use buggy ICU-60.1.
         // So, here, we are going to dynamically verify the behaviour and skip the
         // test when buggy one is found. No need to apply this to code as dar as the real
         // formatting is not critical for the functionality (just small glitch).

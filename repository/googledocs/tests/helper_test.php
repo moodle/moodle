@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \repository_googledocs_testcase {
+final class helper_test extends \repository_googledocs_testcase {
 
     /**
      * Test build_node_path().
@@ -40,7 +40,7 @@ class helper_test extends \repository_googledocs_testcase {
      * @param string $rootpath The path to append the node on
      * @param string $expected The expected node path
      */
-    public function test_build_node_path(string $id, string $name, string $rootpath, string $expected) {
+    public function test_build_node_path(string $id, string $name, string $rootpath, string $expected): void {
         // Assert that the returned node path is equal to the expected one.
         $this->assertEquals($expected, helper::build_node_path($id, $name, $rootpath));
     }
@@ -50,7 +50,7 @@ class helper_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function build_node_path_provider(): array {
+    public static function build_node_path_provider(): array {
 
         $rootid = \repository_googledocs::REPOSITORY_ROOT_ID;
         $mydriveid = \repository_googledocs::MY_DRIVE_ROOT_ID;
@@ -95,7 +95,7 @@ class helper_test extends \repository_googledocs_testcase {
      * @param string $node The node string to extract information from
      * @param array $expected The expected array containing the information about the node
      */
-    public function test_explode_node_path(string $node, array $expected) {
+    public function test_explode_node_path(string $node, array $expected): void {
         // Assert that the returned array is equal to the expected one.
         $this->assertEquals($expected, helper::explode_node_path($node));
     }
@@ -105,7 +105,7 @@ class helper_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function explode_node_path_provider(): array {
+    public static function explode_node_path_provider(): array {
 
         $rootid = \repository_googledocs::REPOSITORY_ROOT_ID;
 
@@ -140,7 +140,7 @@ class helper_test extends \repository_googledocs_testcase {
      * @param string $nodepath The node path string
      * @param string $expected The expected browser class
      */
-    public function test_get_browser(string $nodepath, string $expected) {
+    public function test_get_browser(string $nodepath, string $expected): void {
         // The service (rest API) object is required by get_browser(), but not being used to determine which browser
         // object should be returned. Therefore, we can simply mock this object in this test.
         $servicemock = $this->createMock(rest::class);
@@ -155,7 +155,7 @@ class helper_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function get_browser_provider(): array {
+    public static function get_browser_provider(): array {
 
         $rootid = \repository_googledocs::REPOSITORY_ROOT_ID;
         $mydriveid = \repository_googledocs::MY_DRIVE_ROOT_ID;
@@ -192,7 +192,7 @@ class helper_test extends \repository_googledocs_testcase {
      * @param \stdClass $gdcontent The Google Drive content (file/folder) object
      * @param string $expected The expected content node class
      */
-    public function test_get_node(\stdClass $gdcontent, string $expected) {
+    public function test_get_node(\stdClass $gdcontent, string $expected): void {
         // The path is required by get_content_node(), but not being used to determine which content node
         // object should be returned. Therefore, we can just generate a dummy path.
         $path = \repository_googledocs::REPOSITORY_ROOT_ID . '|Google+Drive|' .
@@ -208,17 +208,16 @@ class helper_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function get_node_provider(): array {
-
+    public static function get_node_provider(): array {
         return [
             'The content object represents a Google Drive folder.' =>
                 [
-                    $this->create_google_drive_folder_object('e3b0c44298fc1c149', 'Folder', ''),
+                    self::create_google_drive_folder_object('e3b0c44298fc1c149', 'Folder', ''),
                     \repository_googledocs\local\node\folder_node::class,
                 ],
             'The content object represents a Google Drive file.' =>
                 [
-                    $this->create_google_drive_file_object('de04d58dc5ccc', 'File.pdf',
+                    self::create_google_drive_file_object('de04d58dc5ccc', 'File.pdf',
                         'application/pdf'),
                     \repository_googledocs\local\node\file_node::class,
                 ],
@@ -232,7 +231,7 @@ class helper_test extends \repository_googledocs_testcase {
      * @param \Exception $exception The exception thrown by the API call
      * @param \Exception $expected The expected exception thrown by request()
      */
-    public function test_request_exception(\Exception $exception, \Exception $expected) {
+    public function test_request_exception(\Exception $exception, \Exception $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(rest::class);
 
@@ -253,7 +252,7 @@ class helper_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function request_exception_provider(): array {
+    public static function request_exception_provider(): array {
 
         return [
             'The API call throws exception (status: 403; message: Access Not Configured).' =>

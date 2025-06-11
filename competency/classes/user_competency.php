@@ -216,7 +216,7 @@ class user_competency extends persistent {
     /**
      * Get the context.
      *
-     * @return context The context.
+     * @return \context The context.
      */
     public function get_context() {
         return context_user::instance($this->get('userid'));
@@ -485,7 +485,7 @@ class user_competency extends persistent {
      * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
      * @return \core_competency\user_competency[]
      */
-    public static function get_multiple($userid, array $competenciesorids = null) {
+    public static function get_multiple($userid, ?array $competenciesorids = null) {
         global $DB;
 
         $params = array();

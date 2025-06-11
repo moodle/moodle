@@ -529,6 +529,15 @@ $capabilities = array(
         )
     ),
 
+    'moodle/user:viewprofilepictures' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
+        ],
+    ],
+
     'moodle/user:viewalldetails' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
@@ -779,6 +788,20 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
+    ),
+
+    'moodle/cohort:configurecustomfields' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+
+    'moodle/group:configurecustomfields' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
     ),
 
     'moodle/course:create' => array(
@@ -1151,6 +1174,17 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/course:viewhiddengroups' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'READ',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
@@ -2581,6 +2615,47 @@ $capabilities = array(
         ]
     ],
 
+    // Allow users to copy content.
+    'moodle/contentbank:copyanycontent' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+        ]
+    ],
+
+    // Allow users to copy content.
+    'moodle/contentbank:copycontent' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ]
+    ],
+
+    'moodle/contentbank:configurecustomfields' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
+    'moodle/contentbank:changelockedcustomfields' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
     // Allow users to download course content.
     'moodle/course:downloadcoursecontent' => [
         'captype' => 'read',
@@ -2638,6 +2713,13 @@ $capabilities = array(
         ],
     ],
 
+    // Allow users to view all custom reports.
+    'moodle/reportbuilder:viewall' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [],
+    ],
+
     // Allow users to create/edit their own custom reports.
     'moodle/reportbuilder:edit' => [
         'captype' => 'write',
@@ -2662,5 +2744,70 @@ $capabilities = array(
         'riskbitmap' => RISK_PERSONAL,
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],
+    ],
+
+    // Allow users to share activities to MoodleNet.
+    'moodle/moodlenet:shareactivity' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
+    ],
+
+    // Allow users to configure course communication rooms.
+    'moodle/course:configurecoursecommunication' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
+    ],
+
+    // Allow users to share courses to MoodleNet.
+    'moodle/moodlenet:sharecourse' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
+    ],
+
+    // Allow users to edit course welcome messages.
+    'moodle/course:editcoursewelcomemessage' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
+    // Set a users acceptance of the AI policy.
+    'moodle/ai:fetchanyuserpolicystatus' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    // Set a users acceptance of the AI policy.
+    'moodle/ai:acceptpolicy' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    // Get a users acceptance of the AI policy.
+    'moodle/ai:fetchpolicy' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
     ],
 );

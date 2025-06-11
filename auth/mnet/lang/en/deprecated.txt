@@ -1,6 +1,0 @@
-privacy:metadata:mnet_external:aim,auth_mnet
-privacy:metadata:mnet_external:icq,auth_mnet
-privacy:metadata:mnet_external:msn,auth_mnet
-privacy:metadata:mnet_external:skype,auth_mnet
-privacy:metadata:mnet_external:url,auth_mnet
-privacy:metadata:mnet_external:yahoo,auth_mnet

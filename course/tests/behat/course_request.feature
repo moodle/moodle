@@ -29,7 +29,7 @@ Feature: Users can request and approve courses
       | Course short name | Mynewcourse   |
       | Supporting information | pretty please |
     And I press "Request a course"
-    And I should see "Your course request has been saved successfully."
+    And I should see "Course request submitted."
     And I press "Continue"
     And I am on course index
     And I should not see "My new course"

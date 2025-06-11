@@ -42,7 +42,7 @@ use core_competency\external\plan_exporter;
 class user_report_page implements renderable, templatable {
 
     /** @var array|\core_competency\plan[] $plans List of plans. */
-    protected $plans = array();
+    protected $plans = [];
 
     /** @var int|null $userid Userid. */
     protected $userid = null;
@@ -69,10 +69,10 @@ class user_report_page implements renderable, templatable {
         $data->cmcompgradingenabled = \report_lpmonitoring\api::is_cm_comptency_grading_enabled();
 
         // Attach standard objects as mustache can not parse \core_competency\plan objects.
-        $data->plans = array();
+        $data->plans = [];
         if ($this->plans) {
             foreach ($this->plans as $plan) {
-                $exporter = new plan_exporter($plan, array('template' => $plan->get_template()));
+                $exporter = new plan_exporter($plan, ['template' => $plan->get_template()]);
                 $record = $exporter->export($output);
                 $data->plans[] = $record;
             }

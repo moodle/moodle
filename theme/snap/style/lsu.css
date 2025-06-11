@@ -1,0 +1,107 @@
+/* BEGIN LSU Course Card Quick Links. */
+.cc_quick_link {
+    padding: 5px;
+    background-color: white;
+    border-radius: 5px;
+    background-color: rgba(255,255,255,0.75);
+    position: absolute;
+    top: 2px;
+    left: 3px;
+}
+
+.course-listitem .cc_quick_link {
+    left: 16px !important;
+}
+
+.cc_quick_link_icon {
+    padding: 3px;
+    opacity: 1.0;
+}
+
+.cc_quick_link_icon:hover {
+    transform-origin: 50% 50% !important;
+    transition: 0.1s ease-out;
+    -moz-transform: scale(1.2);
+    /* Firefox */
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(1.2);
+    /* Opera */
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(1.2);
+    /* Safari And Chrome */
+    -webkit-transform-origin: 0 0;
+    transform: scale(1.2);
+    /* Standard Property */
+    transform-origin: 0 0;
+    /* Standard Property */
+}
+/* END LSU Course Card Quick Links. */
+
+/* BEGIN LSU Course Size. */
+#snap-show-course-size {
+    background-color: white;
+    width: 20em;
+    padding: 0.5em;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: calc(-0.5em - 1px);
+    border-top: 1px solid #3a1867;
+    border-left: 1px solid #3a1867;
+    border-right: 1px solid #3a1867;
+}
+
+#snap-show-course-size .progress {
+    width: 100% !important;
+    border-radius: 1em;
+}
+
+#snap-show-course-size .fg-danger,
+#snap-show-course-size .bg-danger,
+#snap-show-course-size .fg-excessive,
+#snap-show-course-size .bg-excessive {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#snap-show-course-size .bg-excessive {
+  animation: cycler 5s infinite;
+}
+
+@-webkit-keyframes cycler {
+  0% {
+    background-color: #660000;
+  }
+  50% {
+    background-color: #ff0000;
+  }
+  100% {
+    background-color: #660000;
+  }
+}
+
+#snap-show-course-size .fg-warning,
+#snap-show-course-size .bg-warning {
+    color: #000000;
+    font-weight: 600;
+    background-color: #fdd023 !important;
+}
+
+#snap-show-course-size .fg-success,
+#snap-show-course-size .bg-success {
+    color: #ffffff;
+    font-weight: 600;
+}
+/* END LSU Course Size. */
+
+/* BEGIN LSU Page Mast. */
+#page-header {
+  background-image: linear-gradient(to bottom,#ffffff,rgba(58,24,103,.0625));
+  border-bottom: 1px solid #3a1867;
+}
+
+.theme-snap #snap-coverimagecontrol>label.btn-secondary.btn-sm {
+  background-color: white;
+  border: 1px solid #3a1867;
+  border-radius: 0.5em;
+}
+/* END LSU Page Mast. */
+

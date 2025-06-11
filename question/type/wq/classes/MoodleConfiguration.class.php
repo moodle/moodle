@@ -48,6 +48,18 @@ class MoodleConfiguration implements com_wiris_quizzes_api_Configuration {
                 return $quizzeshandurl;
             }
         }
+        if ($key == 'quizzes.calc.url') {
+            $quizzescalcurl = get_config('qtype_wq', 'quizzescalcurl');
+            if (isset($quizzescalcurl) && !empty($quizzescalcurl)) {
+                return $quizzescalcurl;
+            }
+        }
+        if ($key == 'quizzes.graph.url') {
+            $quizzesgraphurl = get_config('qtype_wq', 'quizzesgraphurl');
+            if (isset($quizzesgraphurl) && !empty($quizzesgraphurl)) {
+                return $quizzesgraphurl;
+            }
+        }
         if ($key == 'quizzes.wirislauncher.url') {
             $quizzeswirislauncherurl = get_config('qtype_wq', 'quizzeswirislauncherurl');
             if (isset($quizzeswirislauncherurl) && !empty($quizzeswirislauncherurl)) {
@@ -72,7 +84,12 @@ class MoodleConfiguration implements com_wiris_quizzes_api_Configuration {
         if ($key == 'quizzes.httpproxy.pass' && $moodleproxyenabled && $proxypassenabled) {
             return $CFG->proxypassword;
         }
-
+        if ($key == 'quizzes.maxconnections') {
+            $maxconnectionsdisabled = get_config('qtype_wq', 'maxconnections_disabled');
+            if ($maxconnectionsdisabled) {
+                return '-1';
+            }
+        }
         if ($key == 'quizzes.cache.dir') {
             return $CFG->dataroot . '/filter/wiris/cache';
         }

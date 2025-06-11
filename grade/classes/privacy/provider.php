@@ -33,6 +33,7 @@ use grade_item;
 use grade_grade;
 use grade_scale;
 use stdClass;
+use core_grades\privacy\grade_grade_with_history;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
@@ -59,7 +60,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         // Tables without 'real' user information.
         $collection->add_database_table('grade_outcomes', [
@@ -140,7 +141,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
+    public static function get_contexts_for_userid(int $userid): \core_privacy\local\request\contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
 
         // Add where we modified outcomes.
@@ -169,39 +170,80 @@ class provider implements
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {context} ctx
-         LEFT JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND (
-                   (goh.courseid > 0 AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1)
-                OR ((goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid1)
-            )
-         LEFT JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2 AND (
-                   gch.courseid = ctx.instanceid
-               AND ctx.contextlevel = :courselevel2
-            )
-         LEFT JOIN {grade_items_history} gih ON gih.loggeduser = :userid3 AND (
-                   gih.courseid = ctx.instanceid
-               AND ctx.contextlevel = :courselevel3
-            )
-         LEFT JOIN {scale_history} sh
-                ON (sh.userid = :userid4 OR sh.loggeduser = :userid5)
-               AND (
-                       (sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4)
-                    OR (sh.courseid = 0 AND ctx.id = :syscontextid2)
-            )
-             WHERE goh.id IS NOT NULL
-                OR gch.id IS NOT NULL
-                OR gih.id IS NOT NULL
-                OR sh.id IS NOT NULL";
+              JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND goh.courseid > 0
+               AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1";
+        $params = [
+            'courselevel1' => CONTEXT_COURSE,
+            'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1
+               AND (goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid1";
         $params = [
             'syscontextid1' => SYSCONTEXTID,
-            'syscontextid2' => SYSCONTEXTID,
             'courselevel1' => CONTEXT_COURSE,
-            'courselevel2' => CONTEXT_COURSE,
-            'courselevel3' => CONTEXT_COURSE,
-            'courselevel4' => CONTEXT_COURSE,
             'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2
+               AND gch.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel2";
+        $params = [
+            'courselevel2' => CONTEXT_COURSE,
             'userid2' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_items_history} gih ON gih.loggeduser = :userid3
+               AND gih.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel3";
+        $params = [
+            'courselevel3' => CONTEXT_COURSE,
             'userid3' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.userid = :userid4
+               AND sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4";
+        $params = [
+            'courselevel4' => CONTEXT_COURSE,
             'userid4' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.loggeduser = :userid5
+               AND sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4";
+        $params = [
+            'courselevel4' => CONTEXT_COURSE,
+            'userid5' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.userid = :userid4 AND sh.courseid = 0 AND ctx.id = :syscontextid2";
+        $params = [
+            'syscontextid2' => SYSCONTEXTID,
+            'userid4' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.loggeduser = :userid5 AND sh.courseid = 0 AND ctx.id = :syscontextid2";
+        $params = [
+            'syscontextid2' => SYSCONTEXTID,
             'userid5' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
@@ -543,6 +585,7 @@ class provider implements
                 get_string('feedbackhistoryfiles', 'core_grades')
             ];
             foreach ($data as $key => $grades) {
+                /** @var grade_grade_with_history */
                 $gg = $grades['gradeobject'];
                 writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
                     GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
@@ -676,6 +719,7 @@ class provider implements
                 get_string('feedbackhistoryfiles', 'core_grades')
             ];
             foreach ($data as $key => $grades) {
+                /** @var grade_grade_with_history */
                 $gg = $grades['gradeobject'];
                 writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
                     GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
@@ -1037,11 +1081,10 @@ class provider implements
         $prefix = $ishistory ? 'ggh_' : 'gg_';
         $ggrecord = static::extract_record($record, $prefix);
         if ($ishistory) {
-            // The grade history is not a real grade_grade so we remove the ID.
-            $historyid = $ggrecord->id;
-            unset($ggrecord->id);
+            $gg = new grade_grade_with_history($ggrecord, false);
+        } else {
+            $gg = new grade_grade($ggrecord, false);
         }
-        $gg = new grade_grade($ggrecord, false);
 
         // There is a grade item in the record.
         if (!empty($record->gi_id)) {
@@ -1054,10 +1097,6 @@ class provider implements
             $scalerec = static::extract_record($record, 'sc_');
             $gi->scale = new grade_scale($scalerec, false);
             $gi->scale->load_items();
-        }
-
-        if ($ishistory) {
-            $gg->historyid = $historyid;
         }
 
         return $gg;
@@ -1197,9 +1236,15 @@ class provider implements
         $timemodified = $gg->timemodified ? transform::datetime($gg->timemodified) : null;
         $timecreated = $gg->timecreated ? transform::datetime($gg->timecreated) : $timemodified; // When null we use timemodified.
 
-        $filearea = $ishistory ? GRADE_HISTORY_FEEDBACK_FILEAREA : GRADE_FEEDBACK_FILEAREA;
-        $itemid = $ishistory ? $gg->historyid : $gg->id;
-        $subpath = $ishistory ? get_string('feedbackhistoryfiles', 'core_grades') : get_string('feedbackfiles', 'core_grades');
+        if ($gg instanceof grade_grade_with_history) {
+            $filearea = GRADE_HISTORY_FEEDBACK_FILEAREA;
+            $itemid = $gg->historyid;
+            $subpath = get_string('feedbackhistoryfiles', 'core_grades');
+        } else {
+            $filearea = GRADE_FEEDBACK_FILEAREA;
+            $itemid = $gg->id;
+            $subpath = get_string('feedbackfiles', 'core_grades');
+        }
 
         $pathtofiles = [
             get_string('grades', 'core_grades'),
@@ -1236,7 +1281,7 @@ class provider implements
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    protected static function delete_files(array $itemids, bool $ishistory, array $userids = null) {
+    protected static function delete_files(array $itemids, bool $ishistory, ?array $userids = null) {
         global $DB;
 
         list($iteminnsql, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
@@ -1272,7 +1317,11 @@ class provider implements
         $grades = $DB->get_recordset_sql($sql, $params);
         foreach ($grades as $grade) {
             $gg = static::extract_grade_grade_from_record($grade, $ishistory);
-            $fileitemid = ($ishistory) ? $gg->historyid : $gg->id;
+            if ($gg instanceof grade_grade_with_history) {
+                $fileitemid = $gg->historyid;
+            } else {
+                $fileitemid = $gg->id;
+            }
             $fs->delete_area_files($gg->get_context()->id, GRADE_FILE_COMPONENT, $filearea, $fileitemid);
         }
         $grades->close();

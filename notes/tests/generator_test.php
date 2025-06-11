@@ -31,10 +31,10 @@ namespace core_notes;
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /** Test create_instance method */
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -56,7 +56,7 @@ class generator_test extends \advanced_testcase {
     }
 
     /** Test Exceptions thrown by create_instance method */
-    public function test_create_instance_exceptions() {
+    public function test_create_instance_exceptions(): void {
         $this->resetAfterTest();
 
         $gen = $this->getDataGenerator()->get_plugin_generator('core_notes');

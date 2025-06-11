@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/themeselector/theme_preview_modal
+
+    This template renders the modal for the selected theme.
+
+    Example context (json):
+    {
+        "name": "Boost",
+        "choose": "boost",
+        "image": "http://moodlesite/theme/image.php?theme=boost&image=screenshot&component=theme",
+        "description": "Boost is a modern highly-customisable theme...",
+        "current": true,
+        "actionurl": "http://moodlesite/admin/themeselector.php",
+        "sesskey": "123XYZ"
+    }
+}}
+<div>
+    <div>
+        <img
+            src="{{image}}"
+            alt=""
+            id="modal-theme-preview-{{choose}}"
+            class="w-100 mb-3">
+    </div>
+    <div class="d-flex">
+        <div class="flex-grow-1">
+            <p><strong>{{#str}}themepreviewdescription, moodle, {{name}}{{/str}}</strong></p>
+        </div>
+        <div class="d-flex align-items-end flex-column">
+        {{#current}}
+            <strong><span class="text-success">{{#str}}currenttheme, moodle{{/str}}</span></strong>
+            {{#definedinconfig}}
+                <div class="alert alert-info p-1">{{#str}}configoverride, admin{{/str}}</div>
+            {{/definedinconfig}}
+        {{/current}}
+        </div>
+    </div>
+    <p>{{description}}</p>
+    {{#actionurl}}
+        <form method="post" action="{{actionurl}}" id="modal-theme-select-form-{{choose}}">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="choose" value="{{choose}}">
+        </form>
+    {{/actionurl}}
+</div>

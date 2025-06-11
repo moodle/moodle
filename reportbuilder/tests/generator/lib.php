@@ -16,6 +16,7 @@
 
 declare(strict_types=1);
 
+use core\{clock, di};
 use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\report as helper;
 use core_reportbuilder\local\helpers\schedule as schedule_helper;
@@ -51,6 +52,12 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'source\' property');
         }
 
+        // Report tags.
+        $tags = $record['tags'] ?? '';
+        if (!is_array($tags)) {
+            $record['tags'] = preg_split('/\s*,\s*/', $tags, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         // Include default setup unless specifically disabled in passed record.
         $default = (bool) ($record['default'] ?? true);
 
@@ -84,7 +91,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = array_intersect_key($record, column::properties_definition())) {
+        if ($properties = column::properties_filter((object) $record)) {
             $column->set_many($properties)->update();
         }
 
@@ -112,7 +119,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = array_intersect_key($record, filter::properties_definition())) {
+        if ($properties = filter::properties_filter((object) $record)) {
             $filter->set_many($properties)->update();
         }
 
@@ -140,7 +147,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = array_intersect_key($record, filter::properties_definition())) {
+        if ($properties = filter::properties_filter((object) $record)) {
             $condition->set_many($properties)->update();
         }
 
@@ -202,12 +209,9 @@ class core_reportbuilder_generator extends component_generator_base {
             $record['message'] = $record['name'] . ' message';
         }
         if (!array_key_exists('timescheduled', $record)) {
-            $record['timescheduled'] = usergetmidnight(time() + DAYSECS);
+            $record['timescheduled'] = usergetmidnight(di::get(clock::class)->time() + DAYSECS);
         }
 
-        // Time to use as comparison against current date (null means current time).
-        $timenow = $record['timenow'] ?? null;
-
-        return schedule_helper::create_schedule((object) $record, $timenow);
+        return schedule_helper::create_schedule((object) $record);
     }
 }

@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class object_must_have_embeded_test
  */
-class object_must_have_embed_test extends all_checks {
+final class object_must_have_embed_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'object_must_have_embed';
 
@@ -66,7 +66,7 @@ EOD;
     /**
      * Test for missing embed element within object element.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'object');
     }
@@ -74,7 +74,7 @@ EOD;
     /**
      * Test for present embed element within object element.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

@@ -31,7 +31,7 @@ use core_privacy\local\request\writer;
 use core_privacy\tests\request\approved_contextlist;
 use core_privacy\tests\provider_testcase;
 use quizaccess_seb\privacy\provider;
-use quizaccess_seb\quiz_settings;
+use quizaccess_seb\seb_quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,7 +43,7 @@ require_once(__DIR__ . '/../test_helper_trait.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
     use \quizaccess_seb_test_helper_trait;
 
     /**
@@ -62,7 +62,7 @@ class provider_test extends provider_testcase {
 
         $template = $this->create_template();
 
-        $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $quizsettings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
 
         // Modify settings so usermodified is updated. This is the user data we are testing for.
         $quizsettings->set('requiresafeexambrowser', \quizaccess_seb\settings_provider::USE_SEB_TEMPLATE);
@@ -74,7 +74,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that the module context for a user who last modified the module is retrieved.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->setup_test_data();
 
         $contexts = provider::get_contexts_for_userid($this->user->id);
@@ -85,7 +85,7 @@ class provider_test extends provider_testcase {
     /**
      * That that no module context is found for a user who has not modified any quiz settings.
      */
-    public function test_get_no_contexts_for_userid() {
+    public function test_get_no_contexts_for_userid(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -97,7 +97,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is exported in format expected.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);
@@ -109,7 +109,7 @@ class provider_test extends provider_testcase {
         // per table, like postgres and mysql do, rendering this useless. In any
         // case better to have the situation covered by some DBs,
         // like sqlsrv or oracle than by none).
-        $this->getDataGenerator()->create_module('label', array('course' => $this->course->id));
+        $this->getDataGenerator()->create_module('label', ['course' => $this->course->id]);
 
         $contextlist = provider::get_contexts_for_userid($this->user->id);
         $approvedcontextlist = new approved_contextlist(
@@ -119,6 +119,7 @@ class provider_test extends provider_testcase {
         );
 
         writer::reset();
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         provider::export_user_data($approvedcontextlist);
@@ -126,7 +127,7 @@ class provider_test extends provider_testcase {
         $index = '1'; // Get first data returned from the quizsettings table metadata.
         $data = $writer->get_data([
             get_string('pluginname', 'quizaccess_seb'),
-            quiz_settings::TABLE,
+            seb_quiz_settings::TABLE,
             $index,
         ]);
         $this->assertNotEmpty($data);
@@ -142,7 +143,7 @@ class provider_test extends provider_testcase {
         $index = '2'; // There should not be more than one instance with data.
         $data = $writer->get_data([
             get_string('pluginname', 'quizaccess_seb'),
-            quiz_settings::TABLE,
+            seb_quiz_settings::TABLE,
             $index,
         ]);
         $this->assertEmpty($data);
@@ -159,7 +160,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that a userlist with module context is populated by usermodified user.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->setup_test_data();
 
         // Create empty userlist with quiz module context.
@@ -173,18 +174,18 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a list of users.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->setup_test_data();
 
         $approveduserlist = new approved_userlist(\context_module::instance($this->quiz->cmid),
                 'quizaccess_seb', [$this->user->id]);
 
         // Test data exists.
-        $this->assertNotEmpty(quiz_settings::get_record(['quizid' => $this->quiz->id]));
+        $this->assertNotEmpty(seb_quiz_settings::get_record(['quizid' => $this->quiz->id]));
 
         // Test data is deleted.
         provider::delete_data_for_users($approveduserlist);
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $this->assertEmpty($record->get('usermodified'));
 
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
@@ -194,7 +195,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a list of contexts.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);
@@ -202,11 +203,11 @@ class provider_test extends provider_testcase {
                 'quizaccess_seb', [$context->id]);
 
         // Test data exists.
-        $this->assertNotEmpty(quiz_settings::get_record(['quizid' => $this->quiz->id]));
+        $this->assertNotEmpty(seb_quiz_settings::get_record(['quizid' => $this->quiz->id]));
 
         // Test data is deleted.
         provider::delete_data_for_user($approvedcontextlist);
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $this->assertEmpty($record->get('usermodified'));
 
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
@@ -216,13 +217,13 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is deleted for a single context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         $this->setup_test_data();
 
         $context = \context_module::instance($this->quiz->cmid);
 
         // Test data exists.
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
         $this->assertNotEmpty($record->get('usermodified'));
         $this->assertNotEmpty($template->get('usermodified'));
@@ -230,7 +231,7 @@ class provider_test extends provider_testcase {
         // Test data is deleted.
         provider::delete_data_for_all_users_in_context($context);
 
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
         $this->assertEmpty($record->get('usermodified'));
         $this->assertEmpty($template->get('usermodified'));

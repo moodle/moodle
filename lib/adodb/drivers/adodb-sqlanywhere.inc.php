@@ -116,7 +116,7 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
   $conn->Execute('INSERT INTO blobtable (id, blobcol) VALUES (1, null)');
   $conn->UpdateBlob('blobtable','blobcol',$blob,'id=1');
  */
-  function UpdateBlob($table,$column,&$val,$where,$blobtype='BLOB')
+  function updateBlob($table, $column, $val, $where, $blobtype = 'BLOB')
   {
    $blobVarName = 'hold_blob';
    $this->create_blobvar($blobVarName);

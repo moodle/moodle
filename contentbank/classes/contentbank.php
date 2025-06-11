@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Content bank class
- *
- * @package    core_contentbank
- * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_contentbank;
 
 use core_plugin_manager;
@@ -103,7 +95,7 @@ class contentbank {
      * @param context $context Optional context to check (default null)
      * @return array The array with all the extensions supported and the supporting plugin names.
      */
-    public function load_context_supported_extensions(context $context = null): array {
+    public function load_context_supported_extensions(?context $context = null): array {
         $extensionscache = \cache::make('core', 'contentbank_context_extensions');
 
         $contextextensions = $extensionscache->get($context->id);
@@ -132,7 +124,7 @@ class contentbank {
      * @param context $context   Optional context to check (default null)
      * @return string A string with all the extensions supported.
      */
-    public function get_supported_extensions_as_string(context $context = null) {
+    public function get_supported_extensions_as_string(?context $context = null) {
         $supported = $this->load_context_supported_extensions($context);
         $extensions = array_keys($supported);
         return implode(',', $extensions);
@@ -159,7 +151,7 @@ class contentbank {
      * @param context $context $context     Optional context to check (default null)
      * @return string contenttype name supports the file extension or null if the extension is not supported by any allowed plugin.
      */
-    public function get_extension_supporter(string $extension, context $context = null): ?string {
+    public function get_extension_supporter(string $extension, ?context $context = null): ?string {
         $supporters = $this->load_context_supported_extensions($context);
         if (array_key_exists($extension, $supporters)) {
             return $supporters[$extension];
@@ -246,8 +238,11 @@ class contentbank {
         $courses = $coursescache->get($userid);
 
         if ($categories === false || $courses === false) {
+            // Required fields for preloading the context record.
+            $contextfields = 'ctxid, ctxpath, ctxdepth, ctxlevel, ctxinstance, ctxlocked';
+
             list($categories, $courses) = get_user_capability_contexts($capability, true, $userid, true,
-                'shortname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'shortname', 'name');
+                "fullname, {$contextfields}", "name, {$contextfields}", 'fullname', 'name');
             $categoriescache->set($userid, $categories);
             $coursescache->set($userid, $courses);
         }
@@ -258,8 +253,6 @@ class contentbank {
     /**
      * Create content from a file information.
      *
-     * @throws file_exception If file operations fail
-     * @throws dml_exception if the content creation fails
      * @param \context $context Context where to upload the file and content.
      * @param int $userid Id of the user uploading the file.
      * @param stored_file $file The file to get information from
@@ -337,7 +330,7 @@ class contentbank {
      *
      * @return string[] List of content types where the user has permission to access the feature.
      */
-    public function get_contenttypes_with_capability_feature(string $feature, \context $context = null, bool $enabled = true): array {
+    public function get_contenttypes_with_capability_feature(string $feature, ?\context $context = null, bool $enabled = true): array {
         $contenttypes = [];
         // Check enabled content types or all of them.
         if ($enabled) {

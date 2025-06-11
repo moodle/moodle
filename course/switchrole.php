@@ -36,16 +36,6 @@ $id         = required_param('id', PARAM_INT);
 $switchrole = optional_param('switchrole', -1, PARAM_INT);
 $returnurl  = optional_param('returnurl', '', PARAM_LOCALURL);
 
-if (strpos($returnurl, '?') === false) {
-    // Looks like somebody did not set proper page url, better go to course page.
-    $returnurl = new moodle_url('/course/view.php', array('id' => $id));
-} else {
-    if (strpos($returnurl, $CFG->wwwroot) !== 0) {
-        $returnurl = $CFG->wwwroot.$returnurl;
-    }
-    $returnurl  = clean_param($returnurl, PARAM_LOCALURL);
-}
-
 $PAGE->set_url('/course/switchrole.php', array('id'=>$id, 'switchrole'=>$switchrole));
 
 if ($switchrole >= 0) {
@@ -112,4 +102,4 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
     exit;
 }
 
-redirect($returnurl);
+redirect(new moodle_url($returnurl));

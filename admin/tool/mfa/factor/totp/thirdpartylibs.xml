@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>extlib/OTPHP</location>
+    <name>OTPHP</name>
+    <version>11.3.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/Spomky-Labs/otphp</repository>
+  </library>
+  <library>
+    <location>extlib/ParagonIE/ConstantTime</location>
+    <name>Constant-Time Encoding</name>
+    <version>2.1.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/paragonie/constant_time_encoding</repository>
+  </library>
+</libraries>

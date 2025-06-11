@@ -23,20 +23,25 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_o365;
+
+use advanced_testcase;
+use local_o365\feature\usersync\main;
+use local_o365\oauth2\token;
+use local_o365\rest\unified;
+use local_o365\tests\mockhttpclient;
 
 /**
  * Tests \local_o365\feature\usersync\main.
  *
  * @group local_o365
  * @group office365
- * @codeCoverageIgnore
  */
-class local_o365_usersync_testcase extends \advanced_testcase {
+final class usersync_test extends advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() : void {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
@@ -44,30 +49,31 @@ class local_o365_usersync_testcase extends \advanced_testcase {
     /**
      * Get a mock token object to use when constructing the API client.
      *
-     * @return \local_o365\oauth2\token The mock token object.
+     * @return token The mock token object.
      */
     protected function get_mock_clientdata() {
-        $oidcconfig = (object)[
+        $oidcconfig = (object) [
             'clientid' => 'clientid',
             'clientsecret' => 'clientsecret',
             'authendpoint' => 'http://example.com/auth',
-            'tokenendpoint' => 'http://example.com/token'
+            'tokenendpoint' => 'http://example.com/token',
         ];
 
         $clientdata = new \local_o365\oauth2\clientdata($oidcconfig->clientid, $oidcconfig->clientsecret,
-                $oidcconfig->authendpoint, $oidcconfig->tokenendpoint);
+            $oidcconfig->authendpoint, $oidcconfig->tokenendpoint);
+
         return $clientdata;
     }
 
     /**
      * Get a mock token object to use when constructing the API client.
      *
-     * @return \local_o365\oauth2\token The mock token object.
+     * @return token The mock token object.
      */
     protected function get_mock_token() {
-        $httpclient = new \local_o365\tests\mockhttpclient();
+        $httpclient = new mockhttpclient();
 
-        $tokenrec = (object)[
+        $tokenrec = (object) [
             'token' => 'token',
             'expiry' => time() + 1000,
             'refreshtoken' => 'refreshtoken',
@@ -77,40 +83,41 @@ class local_o365_usersync_testcase extends \advanced_testcase {
         ];
 
         $clientdata = $this->get_mock_clientdata();
-        $token = new \local_o365\oauth2\token($tokenrec->token, $tokenrec->expiry, $tokenrec->refreshtoken,
-                $tokenrec->scope, $tokenrec->tokenresource, $tokenrec->user_id, $clientdata, $httpclient);
+        $token = new token($tokenrec->token, $tokenrec->expiry, $tokenrec->refreshtoken,
+            $tokenrec->scope, $tokenrec->tokenresource, $tokenrec->user_id, $clientdata, $httpclient);
+
         return $token;
     }
 
     /**
-     * Get sample Azure AD userdata.
+     * Get sample Microsoft Entra ID userdata.
      *
      * @param int $i A counter to generate unique data.
-     * @return array Array of Azure AD user data.
+     * @return array Array of Microsoft Entra ID user data.
      */
-    protected function get_aad_userinfo($i = 0) {
+    protected function get_entra_id_userinfo($i = 0) {
         return [
             'odata.type' => 'Microsoft.WindowsAzure.ActiveDirectory.User',
             'objectType' => 'User',
-            'objectId' => '00000000-0000-0000-0000-00000000000'.$i,
-            'id' => '00000000-0000-0000-0000-00000000000'.$i,
+            'objectId' => '00000000-0000-0000-0000-00000000000' . $i,
+            'id' => '00000000-0000-0000-0000-00000000000' . $i,
             'city' => 'Toronto',
             'country' => ($i == 3) ? 'Canada' : 'CA',
             'department' => 'Dev',
             'givenName' => 'Test',
-            'userPrincipalName' => 'testuser'.$i.'@example.onmicrosoft.com',
-            'mail' => 'testuser'.$i.'@example.onmicrosoft.com',
-            'surname' => 'User'.$i,
+            'mail' => 'testuser' . $i . '@example.onmicrosoft.com',
+            'surname' => 'User' . $i,
             'preferredLanguage' => ($i == 3) ? 'sa-IN' : 'en-US',
+            'userPrincipalName' => 'testuser' . $i . '@example.onmicrosoft.com',
         ];
     }
 
     /**
-     * Dataprovider for test_create_user_from_aaddata.
+     * Dataprovider for test_create_user_from_entra_id_data.
      *
      * @return array Array of test parameters.
      */
-    public function dataprovider_create_user_from_aaddata() {
+    public static function dataprovider_create_user_from_entra_id_data(): array {
         global $CFG;
         $tests = [];
 
@@ -124,9 +131,12 @@ class local_o365_usersync_testcase extends \advanced_testcase {
                 'country' => 'CA',
                 'department' => 'Dev',
                 'givenName' => 'Test',
-                'userPrincipalName' => 'testuser1@example.onmicrosoft.com',
                 'mail' => 'testuser1@example.onmicrosoft.com',
                 'surname' => 'User1',
+                'userPrincipalName' => 'testuser1@example.onmicrosoft.com',
+                'useridentifier' => 'testuser1@example.onmicrosoft.com',
+                'useridentifierlower' => 'testuser1@example.onmicrosoft.com',
+                'upnsplit0' => 'testuser1',
             ],
             [
                 'auth' => 'oidc',
@@ -153,9 +163,12 @@ class local_o365_usersync_testcase extends \advanced_testcase {
                 'country' => 'CA',
                 'department' => 'Dev',
                 'givenName' => 'Test',
-                'userPrincipalName' => 'testuser2@example.onmicrosoft.com',
                 'mail' => 'testuser2@example.onmicrosoft.com',
                 'surname' => 'User2',
+                'userPrincipalName' => 'testuser2@example.onmicrosoft.com',
+                'useridentifier' => 'testuser2@example.onmicrosoft.com',
+                'useridentifierlower' => 'testuser2@example.onmicrosoft.com',
+                'upnsplit0' => 'testuser2',
             ],
             [
                 'auth' => 'oidc',
@@ -181,9 +194,12 @@ class local_o365_usersync_testcase extends \advanced_testcase {
                 'id' => '00000000-0000-0000-0000-000000000003',
                 'department' => 'Dev',
                 'givenName' => 'Test',
-                'userPrincipalName' => 'testuser3@example.onmicrosoft.com',
                 'mail' => 'testuser3@example.onmicrosoft.com',
                 'surname' => 'User3',
+                'userPrincipalName' => 'testuser3@example.onmicrosoft.com',
+                'useridentifier' => 'testuser3@example.onmicrosoft.com',
+                'useridentifierlower' => 'testuser3@example.onmicrosoft.com',
+                'upnsplit0' => 'testuser3',
             ],
             [
                 'auth' => 'oidc',
@@ -208,9 +224,12 @@ class local_o365_usersync_testcase extends \advanced_testcase {
                 'objectId' => '00000000-0000-0000-0000-000000000004',
                 'id' => '00000000-0000-0000-0000-000000000004',
                 'givenName' => 'Test',
-                'userPrincipalName' => 'testuser4@example.onmicrosoft.com',
                 'mail' => 'testuser4@example.onmicrosoft.com',
                 'surname' => 'User4',
+                'userPrincipalName' => 'testuser4@example.onmicrosoft.com',
+                'useridentifier' => 'testuser4@example.onmicrosoft.com',
+                'useridentifierlower' => 'testuser4@example.onmicrosoft.com',
+                'upnsplit0' => 'testuser4',
             ],
             [
                 'auth' => 'oidc',
@@ -232,21 +251,23 @@ class local_o365_usersync_testcase extends \advanced_testcase {
     }
 
     /**
-     * Test create_user_from_aaddata method.
+     * Test create_user_from_entra_id_data method.
      *
-     * @dataProvider dataprovider_create_user_from_aaddata
-     * @param array $aaddata The Azure AD user data to create the user from.
+     * @dataProvider dataprovider_create_user_from_entra_id_data
+     * @param array $entraiddata The Microsoft Entra ID user data to create the user from.
      * @param array $expecteduser The expected user data to be created.
+     * @covers \local_o365\feature\usersync\main::create_user_from_entra_id_data
      */
-    public function test_create_user_from_aaddata($aaddata, $expecteduser) {
+    public function test_create_user_from_entra_id_data($entraiddata, $expecteduser): void {
         global $DB;
-        $httpclient = new \local_o365\tests\mockhttpclient();
-        $clientdata = $this->get_mock_clientdata();
-        $apiclient = new \local_o365\feature\usersync\main($clientdata, $httpclient);
-        $apiclient->create_user_from_aaddata($aaddata, []);
 
-        $userparams = ['auth' => 'oidc', 'username' => $aaddata['mail'], 'firstname' => $aaddata['givenName'],
-            'lastname' => $aaddata['surname']];
+        $httpclient = new mockhttpclient();
+        $clientdata = $this->get_mock_clientdata();
+        $usersync = new main($clientdata, $httpclient);
+        $usersync->create_user_from_entra_id_data($entraiddata, []);
+
+        $userparams = ['auth' => 'oidc', 'username' => $entraiddata['mail'], 'firstname' => $entraiddata['givenName'],
+            'lastname' => $entraiddata['surname']];
         $this->assertTrue($DB->record_exists('user', $userparams));
         $createduser = $DB->get_record('user', $userparams);
 
@@ -257,59 +278,63 @@ class local_o365_usersync_testcase extends \advanced_testcase {
 
     /**
      * Test sync_users method when creating users.
+     *
+     * @covers \local_o365\feature\usersync\main::sync_users
      */
-    public function test_sync_users_create() {
+    public function test_sync_users_create(): void {
         global $CFG, $DB;
-        set_config('aadsync', 'create', 'local_o365');
+
+        set_config('usersync', 'create', 'local_o365');
         for ($i = 1; $i <= 2; $i++) {
             $muser = [
                 'auth' => 'oidc',
                 'deleted' => '0',
                 'mnethostid' => $CFG->mnet_localhost_id,
-                'username' => 'testuser'.$i.'@example.onmicrosoft.com',
+                'username' => 'testuser' . $i . '@example.onmicrosoft.com',
                 'firstname' => 'Test',
-                'lastname' => 'User'.$i,
-                'email' => 'testuser'.$i.'@example.onmicrosoft.com',
-                'lang' => 'en'
+                'lastname' => 'User' . $i,
+                'email' => 'testuser' . $i . '@example.onmicrosoft.com',
+                'lang' => 'en',
             ];
-            $muser['id'] = $DB->insert_record('user', (object)$muser);
+            $muser['id'] = $DB->insert_record('user', (object) $muser);
 
             $token = [
-                'oidcuniqid' => '00000000-0000-0000-0000-00000000000'.$i,
+                'oidcuniqid' => '00000000-0000-0000-0000-00000000000' . $i,
                 'authcode' => '000',
-                'username' => 'testuser'.$i.'@example.onmicrosoft.com',
+                'username' => 'testuser' . $i . '@example.onmicrosoft.com',
                 'userid' => $muser['id'],
                 'scope' => 'test',
-                'tokenresource' => \local_o365\rest\unified::get_tokenresource(),
+                'tokenresource' => unified::get_tokenresource(),
                 'token' => '000',
                 'expiry' => '9999999999',
-                'refreshtoken' => 'fsdfsdf'.$i,
-                'idtoken' => 'sdfsdfsdf'.$i,
+                'refreshtoken' => 'fsdfsdf' . $i,
+                'idtoken' => 'sdfsdfsdf' . $i,
             ];
-            $DB->insert_record('auth_oidc_token', (object)$token);
+            $DB->insert_record('auth_oidc_token', (object) $token);
         }
 
         $response = [
             'value' => [
-                $this->get_aad_userinfo(1),
-                $this->get_aad_userinfo(3),
+                $this->get_entra_id_userinfo(1),
+                $this->get_entra_id_userinfo(3),
             ],
         ];
         $response = json_encode($response);
         $clientdata = $this->get_mock_clientdata();
-        $httpclient = new \local_o365\tests\mockhttpclient();
+        $httpclient = new mockhttpclient();
         $httpclient->set_response($response);
 
-        $apiclient = new \local_o365\rest\unified($this->get_mock_token(), $httpclient);
-        $usersync = new \local_o365\feature\usersync\main($clientdata, $httpclient);
+        $apiclient = new unified($this->get_mock_token(), $httpclient);
+        $usersync = new main($clientdata, $httpclient);
         $users = $apiclient->get_users();
-        $usersync->sync_users($users['value']);
+        $usersync->sync_users($users);
 
         $existinguser = ['auth' => 'oidc', 'username' => 'testuser1@example.onmicrosoft.com'];
         $this->assertTrue($DB->record_exists('user', $existinguser));
 
         $createduser = ['auth' => 'oidc', 'username' => 'testuser3@example.onmicrosoft.com'];
         $this->assertTrue($DB->record_exists('user', $createduser));
+
         $createduser = $DB->get_record('user', $createduser);
         $this->assertEquals('Test', $createduser->firstname);
         $this->assertEquals('User3', $createduser->lastname);

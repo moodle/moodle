@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class table_td_should_not_merge_test
  */
-class table_td_should_not_merge_test extends all_checks {
+final class table_td_should_not_merge_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_td_should_not_merge';
 
@@ -125,7 +125,7 @@ EOD;
     /**
      * Test for rowspan and colspan
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertNotEmpty($results);
 
@@ -136,7 +136,7 @@ EOD;
     /**
      * Test for rowspan and colspan
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

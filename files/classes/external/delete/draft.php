@@ -28,15 +28,14 @@ namespace core_files\external\delete;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use context_user;
 
 /**
@@ -53,7 +52,7 @@ class draft extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.10
      */
-    public static function execute_parameters() : external_function_parameters {
+    public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
             [
                 'draftitemid' => new external_value(PARAM_INT, 'Item id of the draft file area'),
@@ -77,7 +76,7 @@ class draft extends external_api {
      * @return array of warnings and parent paths of the files deleted
      * @since Moodle 3.10
      */
-    public static function execute(int $draftitemid, array $files) : array {
+    public static function execute(int $draftitemid, array $files): array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/repository/lib.php');
 
@@ -104,7 +103,7 @@ class draft extends external_api {
      * @return external_single_structure
      * @since Moodle 3.10
      */
-    public static function execute_returns() : external_single_structure {
+    public static function execute_returns(): external_single_structure {
         return new external_single_structure(
             [
                 'parentpaths' => new external_multiple_structure(

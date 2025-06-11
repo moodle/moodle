@@ -26,15 +26,11 @@
 
 namespace core_form;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir.'/externallib.php');
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Implements the external functions provided by the core_form subsystem.
@@ -48,7 +44,7 @@ class external extends external_api {
     /**
      * Describes the input paramaters of the get_filetypes_browser_data external function.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_filetypes_browser_data_parameters() {
         return new external_function_parameters([
@@ -80,7 +76,7 @@ class external extends external_api {
     /**
      * Describes the output of the get_filetypes_browser_data external function.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_filetypes_browser_data_returns() {
 

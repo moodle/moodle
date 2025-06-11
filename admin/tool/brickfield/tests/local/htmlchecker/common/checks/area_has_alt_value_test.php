@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class area_has_alt_value_testcase
  */
-class area_has_alt_value_test extends all_checks {
+final class area_has_alt_value_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'area_has_alt_value';
 
@@ -64,7 +64,7 @@ EOD;
     /**
      * Test for area tags containing an alt value
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'area');
 

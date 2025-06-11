@@ -24,26 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfeedback'] = 'Aggiungi feedback';
+$string['addfeedbackhelp'] = 'Fai clic sul pulsante precedente per aggiungere il tuo feedback per il compito dello studente in OneNote. Puoi tornare qui in seguito per salvare nuovamente il lavoro in Moodle.';
 $string['configmaxbytes'] = 'Dimensione massima OneNote';
 $string['countfiles'] = 'OneNote: {$a}';
 $string['default'] = 'Abilitato per default';
 $string['default_help'] = 'Se impostato, questo metodo di feedback sarà abilitato per default per tutti i nuovi compiti.';
 $string['enabled'] = 'Feedback OneNote';
 $string['enabled_help'] = 'Il docente sarà in grado di caricare pagine OneNote con feedback durante la valutazione dei compiti. I docenti possono scegliere di annotare il compito OneNote dello studente o caricare una pagina OneNote completamente nuova.';
-$string['onenote'] = 'Blocchi note OneNote di feedback';
+$string['feedbackdownloadfailed'] = 'Impossibile scaricare il feedback da OneNote. Riprova.';
+$string['feedbacklimitexceed'] = 'La dimensione del feedback supera il limite accettabile.';
+$string['feedbacknotstarted'] = 'Aggiungere il feedback utilizzando OneNote, quindi salvare le modifiche.';
 $string['filesadded'] = 'Blocchi note OneNote di feedback aggiunti: {$a}';
 $string['maxbytes'] = 'Dimensione massima del pacchetto OneNote';
 $string['maxfiles'] = 'Numero massimo di blocchi note OneNote';
 $string['maximumsize'] = 'Dimensione massima del pacchetto OneNote';
 $string['moreusers'] = '{$a} ulteriori...';
 $string['nochanges'] = 'Nessuna modifica';
+$string['notsignedin'] = 'Accedere a OneNote prima di provare a salvare le modifiche.';
+$string['onenote'] = 'Blocchi note OneNote di feedback';
 $string['pluginname'] = 'Feedback OneNote';
-$string['addfeedback'] = 'Aggiungi feedback';
-$string['addfeedbackhelp'] = 'Fai clic sul pulsante precedente per aggiungere il tuo feedback per il compito dello studente in OneNote. Puoi tornare qui in seguito per salvare nuovamente il lavoro in Moodle.';
 $string['signinhelp1'] = 'Fai clic sul pulsante precedente per accedere a OneNote e aggiungere lì il tuo feedback al compito dello studente.';
 $string['signinhelp2'] = 'Faci clic sul pulsante precedente per accedere a OneNote se desideri visualizzare lì il feedback.';
 $string['viewfeedback'] = 'Visualizza feedback';
-$string['feedbackdownloadfailed'] = 'Impossibile scaricare il feedback da OneNote. Riprova.';
-$string['notsignedin'] = 'Accedere a OneNote prima di provare a salvare le modifiche.';
-$string['feedbacknotstarted'] = 'Aggiungere il feedback utilizzando OneNote, quindi salvare le modifiche.';
-$string['feedbacklimitexceed'] = 'La dimensione del feedback supera il limite accettabile.';

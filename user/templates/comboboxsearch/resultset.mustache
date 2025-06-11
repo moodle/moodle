@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/comboboxsearch/resultset
+
+    Wrapping template for returned result items.
+
+    Context variables required for this template:
+    * instance - The instance ID of the combo box.
+    * users - Our returned users to render.
+    * found - Count of the found users.
+    * total - Total count of users within this report.
+    * selectall - Whether to show the select all option.
+    * searchterm - The entered text to find these results.
+    * hasusers - Allow the handling where no users exist for the returned search term.
+
+    Example context (json):
+    {
+        "instance": 25,
+        "users": [
+            {
+                "id": 2,
+                "fullname": "Foo bar",
+                "profileimageurl": "http://foo.bar/pluginfile.php/79/user/icon/boost/f1?rev=7630",
+                "matchingField": "<span class=\"font-weight-bold\">Foo</span> bar",
+                "matchingFieldName": "Fullname"
+            },
+            {
+                "id": 3,
+                "fullname": "Bar Foo",
+                "profileimageurl": "http://foo.bar/pluginfile.php/80/user/icon/boost/f1?rev=7631",
+                "matchingField": "Bar <span class=\"font-weight-bold\">Foo</span>",
+                "matchingFieldName": "Fullname"
+            }
+        ],
+        "matches": 20,
+        "selectall": true,
+        "searchterm": "Foo",
+        "hasresults": true
+    }
+}}
+{{<core/local/comboboxsearch/resultset}}
+    {{$listid}}user{{/listid}}
+    {{$results}}
+        {{#users}}
+            {{>core_user/comboboxsearch/resultitem}}
+        {{/users}}
+    {{/results}}
+    {{$selectall}}
+        {{#selectall}}
+            <li
+                id="result-row-{{instance}}-0"
+                class="w-100 p-1 border-top bottom-0 position-sticky dropdown-item d-flex small p-3"
+                role="option"
+                {{! The data-short-text attribute is provided so that aria.js would use it rather than the whole content. }}
+                data-short-text="{{searchterm}}"
+                data-value="0"
+            >
+                {{#str}}viewallresults, core, {{matches}}{{/str}}
+            </li>
+        {{/selectall}}
+    {{/selectall}}
+    {{$listclasses}}mh-100{{/listclasses}}
+{{/core/local/comboboxsearch/resultset}}

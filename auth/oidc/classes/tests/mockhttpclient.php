@@ -25,7 +25,7 @@
 
 namespace auth_oidc\tests;
 
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * A mock HTTP client allowing set responses.
@@ -67,7 +67,7 @@ class mockhttpclient extends \auth_oidc\httpclient {
      * @param array $options Additional curl options.
      * @return string The set response.
      */
-    protected function request($url, $options = array()) {
+    protected function request($url, $options = []) {
         if (isset($this->mockresponse[$this->curresponse])) {
             $response = $this->mockresponse[$this->curresponse];
             $this->curresponse++;
@@ -75,7 +75,7 @@ class mockhttpclient extends \auth_oidc\httpclient {
         } else {
             $this->curresponse = 0;
             if (!isset($this->mockresponse[$this->curresponse])) {
-                throw new \moodle_exception('No responses available.');
+                throw new moodle_exception('error_no_response_available', 'auth_oidc');
             }
             return $this->mockresponse[$this->curresponse];
         }

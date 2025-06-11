@@ -52,7 +52,7 @@ class entry extends \core_search\base_mod {
      * @param \context|null $context Optional context to restrict scope of returned results
      * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
 
         list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
@@ -373,7 +373,7 @@ class entry extends \core_search\base_mod {
      * @param string $fieldtype
      * @return string|null It will return the class name or null if the field type is not available.
      */
-    protected function get_field_class_name($fieldtype) {
+    protected function get_field_class_name(string $fieldtype): ?string {
         global $CFG;
 
         $fieldtype = trim($fieldtype);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/essayautograde/db" VERSION="20140113" COMMENT="XMLDB file for Moodle question/type/essayautograde"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="qtype_essayautograde_options" COMMENT="Extra options for essayautograde questions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
+        <FIELD NAME="responseformat" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="editor" SEQUENCE="false" COMMENT="The type of input area students should be given for their response."/>
+        <FIELD NAME="responserequired" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Nonzero if an inline text response is optional"/>
+        <FIELD NAME="responsefieldlines" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="15" SEQUENCE="false" COMMENT="Approximate height, in lines, of the input box the students should be given for their response."/>
+        <FIELD NAME="minwordlimit" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Minimum number of words"/>
+        <FIELD NAME="maxwordlimit" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum number of words"/>
+        <FIELD NAME="attachments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether, and how many, attachments a student is allowed to include with their response. -1 means unlimited."/>
+        <FIELD NAME="attachmentsrequired" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attachments that should be required"/>
+        <FIELD NAME="graderinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading."/>
+        <FIELD NAME="graderinfoformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for graderinfo."/>
+        <FIELD NAME="aiassistant" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The AI assistant, if any, used to generate feedback and a preliminary grade."/>
+        <FIELD NAME="aipercent" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The percentage contribution of the AI grade to the total question grade."/>
+        <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
+        <FIELD NAME="responsetemplateformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsetemplate."/>
+        <FIELD NAME="responsesample" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The sample to pre-populate student's response field during attempt."/>
+        <FIELD NAME="responsesampleformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsesample."/>
+        <FIELD NAME="allowsimilarity" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="10" SEQUENCE="false" COMMENT="Maximum allowable level of similarity between a response and the response template or response sample"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Maximum size of attached files in bytes."/>
+        <FIELD NAME="filetypeslist" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="file types that may be submitted with response"/>
+        <FIELD NAME="enableautograde" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Nonzero if auto-grading is enabled"/>
+        <FIELD NAME="itemtype" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Numeric code to represent the type of countable items to look for in the essay text"/>
+        <FIELD NAME="itemcount" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number of countable items expected to be present in the essay text."/>
+        <FIELD NAME="showfeedback" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the actionable feedback be shown on the grading and review pages?"/>
+        <FIELD NAME="showcalculation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the grade calculation be shown on the grading and review pages?"/>
+        <FIELD NAME="showtextstats" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the text statistics be shown on the grading and review pages?"/>
+        <FIELD NAME="textstatitems" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A comma separted list of auto-feedback items to be displayed"/>
+        <FIELD NAME="showgradebands" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the grade bands be shown on the grading and review pages?"/>
+        <FIELD NAME="addpartialgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the target phrases be shown on the grading and review pages?"/>
+        <FIELD NAME="showtargetphrases" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the target phrases be shown on the grading and review pages?"/>
+        <FIELD NAME="errorcmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course module ID of a Glossary or Database containing a list of common errors"/>
+        <FIELD NAME="errorpercent" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The penalty to be deducted for each error that is found in the response"/>
+        <FIELD NAME="errorfullmatch" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the common errors be matched only as whole words?"/>
+        <FIELD NAME="errorcasesensitive" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the common errors be matched sensitive to upper and lower case?"/>
+        <FIELD NAME="errorignorebreaks" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should line breaks and white space be ignored when matching the common errors?"/>
+        <FIELD NAME="correctfeedback" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any correct response."/>
+        <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="incorrectfeedback" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any incorrect response."/>
+        <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="partiallycorrectfeedback" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any partially correct response."/>
+        <FIELD NAME="partiallycorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="questionid" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class migrate_message_data_test extends \advanced_testcase {
+final class migrate_message_data_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -38,13 +38,14 @@ class migrate_message_data_test extends \advanced_testcase {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Test migrating legacy messages.
      */
-    public function test_migrating_messages() {
+    public function test_migrating_messages(): void {
         global $DB;
 
         // Create users to test with.
@@ -180,7 +181,7 @@ class migrate_message_data_test extends \advanced_testcase {
     /**
      * Test migrating legacy notifications.
      */
-    public function test_migrating_notifications() {
+    public function test_migrating_notifications(): void {
         global $DB;
 
         // Create users to test with.
@@ -264,7 +265,7 @@ class migrate_message_data_test extends \advanced_testcase {
     /**
      * Test migrating a legacy message that contains null as the format.
      */
-    public function test_migrating_message_null_format() {
+    public function test_migrating_message_null_format(): void {
         global $DB;
 
         // Create users to test with.
@@ -292,7 +293,7 @@ class migrate_message_data_test extends \advanced_testcase {
     /**
      * Test migrating a legacy notification that contains null as the format.
      */
-    public function test_migrating_notification_null_format() {
+    public function test_migrating_notification_null_format(): void {
         global $DB;
 
         // Create users to test with.
@@ -320,7 +321,7 @@ class migrate_message_data_test extends \advanced_testcase {
     /**
      * Test migrating a legacy message that a user sent to themselves then deleted.
      */
-    public function test_migrating_message_deleted_message_sent_to_self() {
+    public function test_migrating_message_deleted_message_sent_to_self(): void {
         global $DB;
 
         // Create user to test with.

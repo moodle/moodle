@@ -62,16 +62,6 @@ abstract class tool_generator_backend {
     protected $progress;
 
     /**
-     * @var int Epoch time at which last dot was displayed
-     */
-    protected $lastdot;
-
-    /**
-     * @var int Epoch time at which last percentage was displayed
-     */
-    protected $lastpercentage;
-
-    /**
      * @var int Epoch time at which current step (current set of dots) started
      */
     protected $starttime;
@@ -80,6 +70,24 @@ abstract class tool_generator_backend {
      * @var int Size code (index in the above arrays)
      */
     protected $size;
+
+    /**
+     * @var progress_bar progressbar
+     */
+    protected $progressbar;
+
+    /**
+     * @var string Part of the language string.
+     */
+    protected $langstring;
+    /**
+     * @var string Module for the language string.
+     */
+    protected $module;
+    /**
+     * @var string|object|array|int Optional language string parameters.
+     */
+    protected $aparam;
 
     /**
      * Generic generator class
@@ -122,78 +130,56 @@ abstract class tool_generator_backend {
 
     /**
      * Displays information as part of progress.
+     *
      * @param string $langstring Part of langstring (after progress_)
      * @param mixed $a Optional lang string parameters
      * @param bool $leaveopen If true, doesn't close LI tag (ready for dots)
+     * @param string $module module for language string
      */
-    protected function log($langstring, $a = null, $leaveopen = false) {
+    public function log(string $langstring, $a = null, bool $leaveopen = false, string $module = 'tool_generator'): void {
         if (!$this->progress) {
             return;
         }
-        if (CLI_SCRIPT) {
-            echo '* ';
-        } else {
-            echo html_writer::start_tag('li');
-        }
-        echo get_string('progress_' . $langstring, 'tool_generator', $a);
-        if (!$leaveopen) {
-            if (CLI_SCRIPT) {
-                echo "\n";
-            } else {
-                echo html_writer::end_tag('li');
-            }
-        } else {
-            echo ': ';
-            $this->lastdot = time();
-            $this->lastpercentage = $this->lastdot;
-            $this->starttime = microtime(true);
-        }
+
+        $this->langstring = $langstring;
+        $this->module = $module;
+        $this->aparam = $a;
+
+        $this->starttime = microtime(true);
+        $this->progressbar = new progress_bar();
+        $this->progressbar->create();
     }
 
     /**
      * Outputs dots. There is up to one dot per second. Once a minute, it
      * displays a percentage.
+     *
      * @param int $number Number of completed items
      * @param int $total Total number of items to complete
      */
-    protected function dot($number, $total) {
+    public function dot(int $number, int $total): void {
         if (!$this->progress) {
             return;
         }
         $now = time();
-        if ($now == $this->lastdot) {
-            return;
-        }
-        $this->lastdot = $now;
-        if (CLI_SCRIPT) {
-            echo '.';
-        } else {
-            echo ' . ';
-        }
-        if ($now - $this->lastpercentage >= 30) {
-            echo round(100.0 * $number / $total, 1) . '%';
-            $this->lastpercentage = $now;
-        }
 
         // Update time limit so PHP doesn't time out.
         if (!CLI_SCRIPT) {
             core_php_time_limit::raise(120);
         }
+        $status = get_string('progress_' . $this->langstring, $this->module, $number);
+        $this->progressbar->update($number, $total, $status);
     }
 
     /**
      * Ends a log string that was started using log function with $leaveopen.
      */
-    protected function end_log() {
+    public function end_log(): void {
         if (!$this->progress) {
             return;
         }
-        echo get_string('done', 'tool_generator', round(microtime(true) - $this->starttime, 1));
-        if (CLI_SCRIPT) {
-            echo "\n";
-        } else {
-            echo html_writer::end_tag('li');
-        }
+        $status = get_string('progress_' . $this->langstring, $this->module, $this->aparam);
+        $done = get_string('done', 'tool_generator', round(microtime(true) - $this->starttime, 1));
+        $this->progressbar->update_full(100, $status . ' - ' . $done);
     }
-
 }

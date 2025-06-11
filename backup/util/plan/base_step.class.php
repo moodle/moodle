@@ -29,8 +29,10 @@
  */
 abstract class base_step implements executable, loggable {
 
-    protected $name;      // One simple name for identification purposes
-    protected $task;      // Task this is part of
+    /** @var string One simple name for identification purposes */
+    protected $name;
+    /** @var base_task|null Task this is part of */
+    protected $task;
 
     /**
      * Constructor - instantiates one object of this class

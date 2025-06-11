@@ -38,8 +38,8 @@ class com_wiris_plugin_asyncimpl_CreateImageMethod {
 		$lang = com_wiris_system_PropertiesTools::getProperty($this->param, "lang", "en");
 		try {
 			$this->render->plugin->newAsyncTextService()->mathml2accessible($this->mml, $lang, $this->param, $this->step2_getAccessibility_step2_);
-		}catch(Exception $Â»e) {
-			$_ex_ = ($Â»e instanceof HException) ? $Â»e->e : $Â»e;
+		}catch(Exception $Ã¯¿½e) {
+			$_ex_ = ($Ã¯¿½e instanceof HException) ? $Ã¯¿½e->e : $Ã¯¿½e;
 			$ex = $_ex_;
 			{
 				$this->step3();
@@ -80,12 +80,12 @@ class com_wiris_plugin_asyncimpl_CreateImageMethod {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->Â»dynamics[$m]) && is_callable($this->Â»dynamics[$m]))
-			return call_user_func_array($this->Â»dynamics[$m], $a);
+		else if(isset($this->Ã¯¿½dynamics[$m]) && is_callable($this->Ã¯¿½dynamics[$m]))
+			return call_user_func_array($this->Ã¯¿½dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call Â»'.$m.'Â»');
+			throw new HException('Unable to call Ã¯¿½'.$m.'Ã¯¿½');
 	}
 	function __toString() { return 'com.wiris.plugin.asyncimpl.CreateImageMethod'; }
 }

@@ -47,11 +47,25 @@
         >
             {{#pix}} e/cancel, core {{/pix}}
         </button>
+        <a
+            href="{{{ config.homeurl }}}"
+            title="{{{ sitename }}}"
+            data-region="site-home-link"
+            class="aabtn text-reset d-flex align-items-center py-1 h-100 d-md-none"
+        >
+            {{$drawerheading}}{{/drawerheading}}
+        </a>
+        <div class="drawerheadercontent hidden">
+            {{$drawerheadercontent}}{{/drawerheadercontent}}
+        </div>
     </div>
     <div class="drawercontent drag-container" data-usertour="scroller">
         {{$drawercontent}}{{/drawercontent}}
     </div>
 </div>
 {{#js}}
-require(['theme_boost/drawers']);
+M.util.js_pending('theme_boost/drawers:load');
+require(['theme_boost/drawers'], function() {
+    M.util.js_complete('theme_boost/drawers:load');
+});
 {{/js}}

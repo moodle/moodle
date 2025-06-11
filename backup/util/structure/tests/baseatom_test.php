@@ -36,12 +36,12 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class baseatom_test extends \basic_testcase {
+final class baseatom_test extends \basic_testcase {
 
     /**
      * Correct base_atom_tests
      */
-    function test_base_atom() {
+    function test_base_atom(): void {
         $name_with_all_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';
         $value_to_test = 'Some <value> to test';
 
@@ -80,7 +80,7 @@ class baseatom_test extends \basic_testcase {
     /**
      * Throwing exception base_atom tests
      */
-    function test_base_atom_exceptions() {
+    function test_base_atom_exceptions(): void {
         // empty names
         try {
             $instance = new mock_base_atom('');

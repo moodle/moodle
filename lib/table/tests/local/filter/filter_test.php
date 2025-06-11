@@ -30,7 +30,7 @@ use InvalidArgumentException;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core_table\local\filter\filter
  */
-class filter_test extends advanced_testcase {
+final class filter_test extends advanced_testcase {
     /**
      * Test that the constructor correctly handles a number of conditions.
      *
@@ -57,7 +57,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function constructor_provider(): array {
+    public static function constructor_provider(): array {
         return [
             'Name without values' => [['keyword'], filter::JOINTYPE_DEFAULT, []],
             'Name with valid join type ANY' => [[
@@ -147,7 +147,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function constructor_invalid_join_provider(): array {
+    public static function constructor_invalid_join_provider(): array {
         return [
             'Too low' => [-1],
             'Too high' => [4],
@@ -255,7 +255,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function filter_value_provider(): array {
+    public static function filter_value_provider(): array {
         return [
             'Empty' => [[], 0],
             'Single value' => [[10], 1],

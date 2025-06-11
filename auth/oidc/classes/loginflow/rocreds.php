@@ -25,6 +25,8 @@
 
 namespace auth_oidc\loginflow;
 
+use auth_oidc\utils;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/auth/oidc/lib.php');
@@ -60,8 +62,8 @@ class rocreds extends base {
     /**
      * Provides a hook into the login page.
      *
-     * @param object &$frm Form object.
-     * @param object &$user User object.
+     * @param stdClass $frm Form object.
+     * @param stdClass $user User object.
      * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
@@ -120,8 +122,8 @@ class rocreds extends base {
             $failurereason = AUTH_LOGIN_UNAUTHORISED;
 
             // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                    'reason' => $failurereason)));
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $username,
+                    'reason' => $failurereason]]);
             $event->trigger();
 
             debugging('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
@@ -159,13 +161,13 @@ class rocreds extends base {
         // Make request.
         $tokenparams = $client->rocredsrequest($oidcusername, $password);
         if (!empty($tokenparams) && isset($tokenparams['token_type']) && $tokenparams['token_type'] === 'Bearer') {
-            list($oidcuniqid, $idtoken) = $this->process_idtoken($tokenparams['id_token']);
+            [$oidcuniqid, $idtoken] = $this->process_idtoken($tokenparams['id_token']);
 
             // Check restrictions.
             $passed = $this->checkrestrictions($idtoken);
             if ($passed !== true) {
                 $errstr = 'User prevented from logging in due to restrictions.';
-                \auth_oidc\utils::debug($errstr, 'handleauthresponse', $idtoken);
+                utils::debug($errstr, __METHOD__, $idtoken);
                 return false;
             }
 
@@ -176,7 +178,7 @@ class rocreds extends base {
                 $originalupn = null;
                 if (auth_oidc_is_local_365_installed()) {
                     $apiclient = \local_o365\utils::get_api();
-                    $userdetails = $apiclient->get_user($oidcuniqid, true);
+                    $userdetails = $apiclient->get_user($oidcuniqid);
                     if (!is_null($userdetails) && isset($userdetails['userPrincipalName']) &&
                         stripos($userdetails['userPrincipalName'], '#EXT#') !== false) {
                         $originalupn = $userdetails['userPrincipalName'];

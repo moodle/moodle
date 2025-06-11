@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/modal_copytoclipboard
+
+    This template renders a modal. The body contains a readonly input text field.
+    The Footer contains a button "Copy to clipboard" that copies the content
+    of the text field into the clipboard.
+    The purpose of the dialog element is to copy a permalink of a section into
+    the clipboard. Thus, the header of the modal dialog contains the label "Permalink".
+
+    Example context (json):
+    {
+        "text": "content for the input field that is being copied to the clipboard"
+    }
+}}
+{{< core/modal }}
+    {{$title}}{{#str}} copytoclipboard, core {{/str}}{{/title}}
+    {{$body}}
+        {{^useTextArea}}
+        <input type="text" id="directionlink-modal-{{uniqid}}" class="form-control bg-white" readonly {{!
+            }} value="{{{text}}}"{{!
+        }}/>
+        {{/useTextArea}}
+        {{#useTextArea}}
+        <textarea id="directionlink-modal-{{uniqid}}" class="form-control bg-white" readonly {{!
+            }}>{{{text}}}</textarea>
+        {{/useTextArea}}
+    {{/body}}
+    {{$footer}}
+        <a {{!
+            }} href="#" {{!
+            }} class="btn btn-primary" {{!
+            }} data-action="copytoclipboard" {{!
+            }} data-clipboard-target="#directionlink-modal-{{uniqid}}" {{!
+            }} data-clipboard-success-message="{{#quote}}{{#str}} textcopiedtoclipboard, core {{/str}}{{/quote}}" {{!
+        }}>
+            {{#pix}} t/copy, core, {{#str}} copytoclipboard, core {{/str}} {{/pix}}
+            {{#str}} copytoclipboard, core {{/str}}
+        </a>
+    {{/footer}}
+{{/ core/modal }}

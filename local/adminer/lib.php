@@ -31,7 +31,13 @@
  * @return string HTML for the navbar
  */
 function local_adminer_render_navbar_output() {
-    global $OUTPUT;
+    global $OUTPUT, $CFG;
+
+    $adminersecret = $CFG->local_adminer_secret ?? '';
+    if ($adminersecret === \local_adminer\util::DISABLED_SECRET) {
+        return '';
+    }
+
 
     if (!has_capability('local/adminer:useadminer', context_system::instance())) {
         return '';

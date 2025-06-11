@@ -82,31 +82,6 @@ class assessable_submitted extends base {
     }
 
     /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename = 'assign';
-        $eventdata->cmid = $this->contextinstanceid;
-        $eventdata->itemid = $this->objectid;
-        $eventdata->courseid = $this->courseid;
-        $eventdata->userid = $this->userid;
-        $eventdata->params = array('submission_editable' => $this->other['submission_editable']);
-        return $eventdata;
-    }
-
-    /**
-     * Return the legacy event name.
-     *
-     * @return string
-     */
-    public static function get_legacy_eventname() {
-        return 'assessable_submitted';
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
@@ -124,17 +99,6 @@ class assessable_submitted extends base {
         $this->data['objecttable'] = 'assign_submission';
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
-        $this->set_legacy_logdata('submit for grading', $this->assign->format_submission_for_log($submission));
-        return parent::get_legacy_logdata();
     }
 
     /**

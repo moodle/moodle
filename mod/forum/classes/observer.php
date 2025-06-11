@@ -125,10 +125,20 @@ class mod_forum_observer {
 
         $course = $event->get_record_snapshot('course', $event->objectid);
         $format = course_get_format($course);
+        $courseformat = $format->get_format();
+
+        $forumformat = '';
         if ($format->supports_news() && !empty($course->newsitems)) {
+            $forumformat = 'news';
+        } else if ($courseformat === 'social') {
+            $forumformat = 'social';
+        }
+
+        if ($forumformat) {
             require_once($CFG->dirroot . '/mod/forum/lib.php');
-            // Auto create the announcements forum.
-            forum_get_course_forum($event->objectid, 'news');
+
+            // Auto-create the course forum if necessary.
+            forum_get_course_forum($event->objectid, $forumformat);
         }
     }
 
@@ -143,10 +153,20 @@ class mod_forum_observer {
 
         $course = $event->get_record_snapshot('course', $event->objectid);
         $format = course_get_format($course);
+        $courseformat = $format->get_format();
+
+        $forumformat = '';
         if ($format->supports_news() && !empty($course->newsitems)) {
+            $forumformat = 'news';
+        } else if ($courseformat === 'social') {
+            $forumformat = 'social';
+        }
+
+        if ($forumformat) {
             require_once($CFG->dirroot . '/mod/forum/lib.php');
-            // Auto create the announcements forum.
-            forum_get_course_forum($event->objectid, 'news');
+
+            // Auto-create the course forum if necessary.
+            forum_get_course_forum($event->objectid, $forumformat);
         }
     }
 }

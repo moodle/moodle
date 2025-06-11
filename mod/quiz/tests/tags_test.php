@@ -17,7 +17,7 @@
 namespace mod_quiz;
 
 use mod_quiz\question\bank\qbank_helper;
-use quiz;
+use mod_quiz\quiz_settings;
 
 /**
  * Test the restore of random question tags.
@@ -28,8 +28,8 @@ use quiz;
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tags_test extends \advanced_testcase {
-    public function test_restore_random_question_by_tag() {
+final class tags_test extends \advanced_testcase {
+    public function test_restore_random_question_by_tag(): void {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
@@ -56,7 +56,7 @@ class tags_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = quiz::create($quiz->instance);
+        $quizobj = quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?

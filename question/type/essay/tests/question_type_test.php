@@ -31,15 +31,17 @@ require_once($CFG->dirroot . '/question/type/essay/questiontype.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = new qtype_essay();
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        parent::tearDown();
     }
 
     protected function get_test_question_data() {
@@ -49,20 +51,20 @@ class question_type_test extends \advanced_testcase {
         return $q;
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'essay');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertFalse($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = $this->get_test_question_data();
         $this->assertEquals(0, $this->qtype->get_random_guess_score($q));
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = $this->get_test_question_data();
         $this->assertEquals(array(), $this->qtype->get_possible_responses($q));
 

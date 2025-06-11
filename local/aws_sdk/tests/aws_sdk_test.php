@@ -114,7 +114,7 @@ class aws_sdk_test extends \advanced_testcase {
                     'credentials' => [
                         'key'    => 'Foo',
                         'secret' => 'Hodor',
-                    ]
+                    ],
                 ],
             ],
         ];

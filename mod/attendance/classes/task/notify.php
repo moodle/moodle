@@ -61,14 +61,14 @@ class notify extends \core\task\scheduled_task {
         // Note: this returns all users for these sessions - even if the users attendance wasn't changed
         // since last time we ran, before sending a notification we check to see if the users have
         // updated attendance logs since last time they were notified.
-        $records = attendance_get_users_to_notify(array(), $orderby, true);
-        $sentnotifications = array();
-        $thirdpartynotifications = array();
+        $records = attendance_get_users_to_notify([], $orderby, true);
+        $sentnotifications = [];
+        $thirdpartynotifications = [];
         $numsentusers = 0;
         $numsentthird = 0;
         foreach ($records as $record) {
             if (empty($sentnotifications[$record->userid])) {
-                $sentnotifications[$record->userid] = array();
+                $sentnotifications[$record->userid] = [];
             }
 
             if (!empty($record->emailuser)) {
@@ -83,14 +83,14 @@ class notify extends \core\task\scheduled_task {
                               FROM {attendance_log} l
                               JOIN {attendance_sessions} s ON s.id = l.sessionid
                              WHERE s.attendanceid = ? AND studentid = ? AND timetaken > ?";
-                        if (!$DB->record_exists_sql($sql, array($record->aid, $record->userid, $record->timesent))) {
+                        if (!$DB->record_exists_sql($sql, [$record->aid, $record->userid, $record->timesent])) {
                             continue; // Skip this record and move to the next user.
                         }
                     }
 
                     // Convert variables in emailcontent.
                     $record = attendance_template_variables($record);
-                    $user = $DB->get_record('user', array('id' => $record->userid));
+                    $user = $DB->get_record('user', ['id' => $record->userid]);
                     $from = \core_user::get_noreply_user();
                     $oldforcelang = force_current_language($user->lang);
 
@@ -104,7 +104,7 @@ class notify extends \core\task\scheduled_task {
                 }
             }
             // Only send one warning to this user from each attendance in this run. - flag any higher percent notifications as sent.
-            $thirdpartyusers = array();
+            $thirdpartyusers = [];
             if (!empty($record->thirdpartyemails)) {
                 $sendto = explode(',', $record->thirdpartyemails);
                 $record->percent = round($record->percent * 100)."%";
@@ -120,7 +120,7 @@ class notify extends \core\task\scheduled_task {
                     // Check user is allowed to receive warningemails.
                     if (has_capability('mod/attendance:warningemails', $context, $senduser)) {
                         if (empty($thirdpartynotifications[$senduser])) {
-                            $thirdpartynotifications[$senduser] = array();
+                            $thirdpartynotifications[$senduser] = [];
                         }
                         if (!isset($thirdpartynotifications[$senduser][$record->aid . '_' . $record->userid])) {
                             $thirdpartynotifications[$senduser][$record->aid . '_' . $record->userid]
@@ -142,7 +142,7 @@ class notify extends \core\task\scheduled_task {
         }
         if (!empty($thirdpartynotifications)) {
             foreach ($thirdpartynotifications as $sendid => $notifications) {
-                $user = $DB->get_record('user', array('id' => $sendid));
+                $user = $DB->get_record('user', ['id' => $sendid]);
                 if (empty($user) || !empty($user->deleted)) {
                     // Clean this user up and remove from the notification list.
                     $warnings = $DB->get_records_list('attendance_warning', 'id', $thirdpartyusers[$sendid]);

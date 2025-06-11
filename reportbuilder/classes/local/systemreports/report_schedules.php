@@ -91,7 +91,10 @@ class report_schedules extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        return permission::can_view_reports_list();
+        $reportid = $this->get_parameter('reportid', 0, PARAM_INT);
+        $report = report::get_record(['id' => $reportid], MUST_EXIST);
+
+        return permission::can_edit_report($report);
     }
 
     /**
@@ -307,7 +310,12 @@ class report_schedules extends system_report {
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
-            ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
+            [
+                'data-action' => 'schedule-delete',
+                'data-schedule-id' => ':id',
+                'data-schedule-name' => ':name',
+                'class' => 'text-danger',
+            ],
             false,
             new lang_string('deleteschedule', 'core_reportbuilder')
         ))

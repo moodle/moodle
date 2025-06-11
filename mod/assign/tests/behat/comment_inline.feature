@@ -32,8 +32,9 @@ Feature: In an assignment, teachers can edit a students submission inline
       | Test assignment name  | student1  | I'm the student first submission  |
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I change window size to "large"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    And I change window size to "medium"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
       | Feedback comments | I'm the teacher feedback |

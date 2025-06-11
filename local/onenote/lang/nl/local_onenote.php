@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Language strings
  *
@@ -21,6 +22,10 @@
  * @copyright Microsoft, Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'Microsoft OneNote';
 $string['submissiontitle'] = 'Inzending: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
 $string['feedbacktitle'] = 'Feedback: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
@@ -28,3 +33,6 @@ $string['connction_error'] = 'Kan geen verbinding maken met OneNote. Wacht even 
 $string['onenote_page_error'] = 'Kan de OneNote-pagina voor deze inzending of feedback niet openen.';
 $string['error_noapiavailable'] = 'Er is geen OneNote API beschikbaar. Als je de Microsoft 365-pluginset gebruikt, hebben we geen contact kunnen maken met OneNote.';
 $string['notebookname'] = 'Moodle Notebook';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

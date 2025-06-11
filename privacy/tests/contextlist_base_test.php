@@ -36,7 +36,7 @@ use \core_privacy\local\request\contextlist_base;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\contextlist_base
  */
-class contextlist_base_test extends advanced_testcase {
+final class contextlist_base_test extends advanced_testcase {
     /**
      * Ensure that get_contextids returns the list of unique contextids.
      *
@@ -46,7 +46,7 @@ class contextlist_base_test extends advanced_testcase {
      * @param   int     $count Expected count
      * @covers ::get_contextids
      */
-    public function test_get_contextids($input, $expected, $count) {
+    public function test_get_contextids($input, $expected, $count): void {
         $uit = new test_contextlist_base();
         $uit->set_contextids($input);
 
@@ -64,7 +64,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_contextids_provider() {
+    public static function get_contextids_provider(): array {
         return [
             'basic' => [
                 [1, 2, 3, 4, 5],
@@ -89,7 +89,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @covers ::get_contexts
      */
-    public function test_get_contexts() {
+    public function test_get_contexts(): void {
         global $DB;
 
         $contexts = [];
@@ -120,7 +120,7 @@ class contextlist_base_test extends advanced_testcase {
      * @param   int     $count Expected count
      * @covers ::count
      */
-    public function test_countable($input, $expected, $count) {
+    public function test_countable($input, $expected, $count): void {
         $uit = new test_contextlist_base();
         $uit->set_contextids($input);
 
@@ -136,7 +136,7 @@ class contextlist_base_test extends advanced_testcase {
      * @covers ::rewind
      * @covers ::valid
      */
-    public function test_context_iteration() {
+    public function test_context_iteration(): void {
         global $DB;
 
         $allcontexts = $DB->get_records('context');
@@ -158,7 +158,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @covers ::current
      */
-    public function test_current_context_one_context() {
+    public function test_current_context_one_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -187,7 +187,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @covers ::current
      */
-    public function test_current_context_two_contexts() {
+    public function test_current_context_two_contexts(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -224,7 +224,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @covers ::get_contexts
      */
-    public function test_get_contexts_all_deleted() {
+    public function test_get_contexts_all_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -251,7 +251,7 @@ class contextlist_base_test extends advanced_testcase {
      *
      * @covers ::get_contexts
      */
-    public function test_get_contexts_one_deleted() {
+    public function test_get_contexts_one_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

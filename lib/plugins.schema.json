@@ -1,0 +1,43 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://moodle.org/apis.schema.json",
+    "title": "Standard Plugins",
+    "description": "Moodle standard and removed plugins",
+    "type": "object",
+    "properties": {
+        "standard": {
+            "description": "The list of plugins installed with a standard Moodle install",
+            "$ref": "#/$defs/plugintypes"
+        },
+        "deleted": {
+            "description": "The list of plugins that were previously inlcuded as standard with a Moodle install",
+            "$ref": "#/$defs/plugintypes"
+        }
+    },
+    "required": [
+        "standard",
+        "deleted"
+    ],
+    "$defs": {
+        "plugintypes": {
+            "description": "A list of Moodle plugin types",
+            "type": "object",
+            "patternProperties": {
+                "^[a-z][a-z0-9]*$": {
+                    "$ref": "#/$defs/plugintype"
+                }
+            }
+        },
+        "plugintype": {
+            "description": "A list of Moodle plugins in a plugin type",
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/pluginname"
+            }
+        },
+        "pluginname": {
+            "type": "string",
+            "pattern": "^([a-z][a-z0-9_]*)?[a-z0-9]+$"
+        }
+    }
+}

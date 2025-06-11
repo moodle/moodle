@@ -14,29 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tour helper.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours;
 
+use coding_exception;
 use core\output\inplace_editable;
-use tool_usertours\local\clientside_filter\clientside_filter;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Tour helper.
  *
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_usertours
  */
 class helper {
-
     /**
      * @var MOVE_UP
      */
@@ -66,7 +56,7 @@ class helper {
      * @param   int     $stepid     The step ID.
      * @param   int     $targettype The type of step.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public static function get_edit_step_link($tourid, $stepid = null, $targettype = null) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -88,7 +78,7 @@ class helper {
      * @param   int     $tourid     The tour ID.
      * @param   int     $direction  The direction to move in
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public static function get_move_tour_link($tourid, $direction = self::MOVE_DOWN) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -107,7 +97,7 @@ class helper {
      * @param   int     $stepid     The step ID.
      * @param   int     $direction  The direction to move in
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public static function get_move_step_link($stepid, $direction = self::MOVE_DOWN) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -126,7 +116,7 @@ class helper {
      * @param   int         $tourid     The ID of the tour to attach this step to.
      * @param   int         $targettype The type of target.
      *
-     * @return  moodle_url              The required URL.
+     * @return  \moodle_url             The required URL.
      */
     public static function get_new_step_link($tourid, $targettype = null) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -141,7 +131,7 @@ class helper {
      * Get the link used to view the tour.
      *
      * @param   int         $tourid     The ID of the tour to display.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_view_tour_link($tourid) {
         return new \moodle_url('/admin/tool/usertours/configure.php', [
@@ -154,21 +144,21 @@ class helper {
      * Get the link used to reset the tour state for all users.
      *
      * @param   int         $tourid     The ID of the tour to display.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_reset_tour_for_all_link($tourid) {
         return new \moodle_url('/admin/tool/usertours/configure.php', [
-                'id'        => $tourid,
-                'action'    => manager::ACTION_RESETFORALL,
-                'sesskey'   => sesskey(),
-            ]);
+            'id'        => $tourid,
+            'action'    => manager::ACTION_RESETFORALL,
+            'sesskey'   => sesskey(),
+        ]);
     }
 
     /**
      * Get the link used to edit the tour.
      *
      * @param   int         $tourid     The ID of the tour to edit.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_edit_tour_link($tourid = null) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -186,7 +176,7 @@ class helper {
     /**
      * Get the link used to import the tour.
      *
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_import_tour_link() {
         $link = new \moodle_url('/admin/tool/usertours/configure.php', [
@@ -200,13 +190,13 @@ class helper {
      * Get the link used to export the tour.
      *
      * @param   int         $tourid     The ID of the tour to export.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_export_tour_link($tourid) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php', [
-                'action'    => manager::ACTION_EXPORTTOUR,
-                'id'        => $tourid,
-            ]);
+            'action'    => manager::ACTION_EXPORTTOUR,
+            'id'        => $tourid,
+        ]);
 
         return $link;
     }
@@ -215,12 +205,12 @@ class helper {
      * Get the link used to duplicate the tour.
      *
      * @param   int         $tourid     The ID of the tour to duplicate.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_duplicate_tour_link($tourid) {
         $link = new \moodle_url('/admin/tool/usertours/configure.php', [
-                'action'    => manager::ACTION_DUPLICATETOUR,
-                'id'        => $tourid,
+            'action'    => manager::ACTION_DUPLICATETOUR,
+            'id'        => $tourid,
         ]);
 
         return $link;
@@ -230,20 +220,20 @@ class helper {
      * Get the link used to delete the tour.
      *
      * @param   int         $tourid     The ID of the tour to delete.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_delete_tour_link($tourid) {
         return new \moodle_url('/admin/tool/usertours/configure.php', [
-                'id'        => $tourid,
-                'action'    => manager::ACTION_DELETETOUR,
-                'sesskey'   => sesskey(),
-            ]);
+            'id'        => $tourid,
+            'action'    => manager::ACTION_DELETETOUR,
+            'sesskey'   => sesskey(),
+        ]);
     }
 
     /**
      * Get the link for listing tours.
      *
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_list_tour_link() {
         $link = new \moodle_url('/admin/tool/usertours/configure.php');
@@ -262,18 +252,17 @@ class helper {
      * @param   array       $options        Display options.
      * @return  string
      */
-    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = array()) {
+    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = []) {
         global $OUTPUT;
 
         return $OUTPUT->action_icon(
-                $url,
-                new \pix_icon($icon, $alt, $iconcomponent, [
-                        'title' => $alt,
-                    ]),
-                null,
-                $options
-                );
-
+            $url,
+            new \pix_icon($icon, $alt, $iconcomponent, [
+                'title' => $alt,
+            ]),
+            null,
+            $options
+        );
     }
 
     /**
@@ -282,7 +271,7 @@ class helper {
      * @param   array       $options        Display options.
      * @return  string
      */
-    public static function get_filler_icon($options = array()) {
+    public static function get_filler_icon($options = []) {
         global $OUTPUT;
 
         return \html_writer::span(
@@ -295,14 +284,14 @@ class helper {
      * Get the link for deleting steps.
      *
      * @param   int         $stepid     The ID of the step to display.
-     * @return  moodle_url              The URL.
+     * @return  \moodle_url             The URL.
      */
     public static function get_delete_step_link($stepid) {
         return new \moodle_url('/admin/tool/usertours/configure.php', [
-                'action'    => manager::ACTION_DELETESTEP,
-                'id'        => $stepid,
-                'sesskey'   => sesskey(),
-            ]);
+            'action'    => manager::ACTION_DELETESTEP,
+            'id'        => $stepid,
+            'sesskey'   => sesskey(),
+        ]);
     }
 
     /**
@@ -314,16 +303,16 @@ class helper {
     public static function render_tourname_inplace_editable(tour $tour): inplace_editable {
         $name = format_text(static::get_string_from_input($tour->get_name()), FORMAT_HTML);
         return new inplace_editable(
-                'tool_usertours',
-                'tourname',
-                $tour->get_id(),
-                true,
-                \html_writer::link(
-                    $tour->get_view_link(),
-                    $name
-                ),
-                $tour->get_name()
-            );
+            'tool_usertours',
+            'tourname',
+            $tour->get_id(),
+            true,
+            \html_writer::link(
+                $tour->get_view_link(),
+                $name
+            ),
+            $tour->get_name()
+        );
     }
 
     /**
@@ -335,13 +324,13 @@ class helper {
     public static function render_tourdescription_inplace_editable(tour $tour): inplace_editable {
         $description = format_text(static::get_string_from_input($tour->get_description()), FORMAT_HTML);
         return new inplace_editable(
-                'tool_usertours',
-                'tourdescription',
-                $tour->get_id(),
-                true,
-                $description,
-                $tour->get_description()
-            );
+            'tool_usertours',
+            'tourdescription',
+            $tour->get_id(),
+            true,
+            $description,
+            $tour->get_description()
+        );
     }
 
     /**
@@ -364,15 +353,15 @@ class helper {
         }
 
         $editable = new inplace_editable(
-                'tool_usertours',
-                'tourenabled',
-                $tour->get_id(),
-                true,
-                $OUTPUT->pix_icon($icon, $alt, 'moodle', [
-                        'title' => $alt,
-                    ]),
-                $value
-            );
+            'tool_usertours',
+            'tourenabled',
+            $tour->get_id(),
+            true,
+            $OUTPUT->pix_icon($icon, $alt, 'moodle', [
+                'title' => $alt,
+            ]),
+            $value
+        );
 
         $editable->set_type_toggle();
         return $editable;
@@ -388,16 +377,16 @@ class helper {
         $title = format_text(static::get_string_from_input($step->get_title()), FORMAT_HTML);
 
         return new inplace_editable(
-                'tool_usertours',
-                'stepname',
-                $step->get_id(),
-                true,
-                \html_writer::link(
-                    $step->get_edit_link(),
-                    $title
-                ),
-                $step->get_title()
-            );
+            'tool_usertours',
+            'stepname',
+            $step->get_id(),
+            true,
+            \html_writer::link(
+                $step->get_edit_link(),
+                $title
+            ),
+            $step->get_title()
+        );
     }
 
     /**
@@ -408,7 +397,7 @@ class helper {
     public static function get_tours() {
         global $DB;
 
-        $tours = $DB->get_records('tool_usertours_tours', array(), 'sortorder ASC');
+        $tours = $DB->get_records('tool_usertours_tours', [], 'sortorder ASC');
         $return = [];
         foreach ($tours as $tour) {
             $return[$tour->id] = tour::load_from_record($tour);
@@ -435,7 +424,7 @@ class helper {
     public static function get_tour_from_sortorder($sortorder) {
         global $DB;
 
-        $tour = $DB->get_record('tool_usertours_tours', array('sortorder' => $sortorder));
+        $tour = $DB->get_record('tool_usertours_tours', ['sortorder' => $sortorder]);
         return tour::load_from_record($tour);
     }
 
@@ -460,7 +449,7 @@ class helper {
         $index = 0;
         foreach ($tours as $tour) {
             if ($tour->sortorder != $index) {
-                $DB->set_field('tool_usertours_tours', 'sortorder', $index, array('id' => $tour->id));
+                $DB->set_field('tool_usertours_tours', 'sortorder', $index, ['id' => $tour->id]);
             }
             $index++;
         }
@@ -508,7 +497,7 @@ class helper {
     public static function get_step_from_sortorder($tourid, $sortorder) {
         global $DB;
 
-        $step = $DB->get_record('tool_usertours_steps', array('tourid' => $tourid, 'sortorder' => $sortorder));
+        $step = $DB->get_record('tool_usertours_steps', ['tourid' => $tourid, 'sortorder' => $sortorder]);
         return step::load_from_record($step);
     }
 
@@ -538,24 +527,45 @@ class helper {
         if ($tours) {
             $filters = static::get_all_clientside_filters();
 
-            $tourdetails = array_map(function($tour) use ($filters) {
+            $tourdetails = array_map(function ($tour) use ($filters) {
                 return [
-                        'tourId' => $tour->get_id(),
-                        'startTour' => $tour->should_show_for_user(),
-                        'filtervalues' => $tour->get_client_filter_values($filters),
+                    'tourId' => $tour->get_id(),
+                    'startTour' => $tour->should_show_for_user(),
+                    'filtervalues' => $tour->get_client_filter_values($filters),
                 ];
             }, $tours);
 
-            $filternames = [];
-            foreach ($filters as $filter) {
-                    $filternames[] = $filter::get_filter_name();
-            }
+            $filternames = self::get_clientside_filter_module_names($filters);
 
             $PAGE->requires->js_call_amd('tool_usertours/usertours', 'init', [
-                    $tourdetails,
-                    $filternames,
+                $tourdetails,
+                $filternames,
             ]);
         }
+    }
+
+    /**
+     * Get the JS module names for the filters.
+     *
+     * @param array $filters
+     * @return array
+     * @throws coding_exception
+     */
+    public static function get_clientside_filter_module_names(array $filters): array {
+        $filternames = [];
+        foreach ($filters as $filter) {
+            if ($component = \core_component::get_component_from_classname($filter)) {
+                $filternames[] = sprintf(
+                    "%s/filter_%s",
+                    $component,
+                    $filter::get_filter_name(),
+                );
+            } else {
+                throw new \coding_exception("Could not determine component for filter class {$filter}");
+            }
+        }
+
+        return $filternames;
     }
 
     /**
@@ -564,13 +574,18 @@ class helper {
      * @return  array
      */
     public static function get_all_filters() {
-        $filters = \core_component::get_component_classes_in_namespace('tool_usertours', 'local\filter');
-        $filters = array_keys($filters);
+        $hook = new hook\before_serverside_filter_fetch(array_keys(
+            \core_component::get_component_classes_in_namespace('tool_usertours', 'local\filter')
+        ));
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
-        $filters = array_filter($filters, function($filterclass) {
-            $rc = new \ReflectionClass($filterclass);
-            return $rc->isInstantiable();
-        });
+        $filters = array_filter(
+            $hook->get_filter_list(),
+            function ($filterclass) {
+                $rc = new \ReflectionClass($filterclass);
+                return $rc->isInstantiable();
+            }
+        );
 
         $filters = array_merge($filters, static::get_all_clientside_filters());
 
@@ -583,13 +598,18 @@ class helper {
      * @return  array
      */
     public static function get_all_clientside_filters() {
-        $filters = \core_component::get_component_classes_in_namespace('tool_usertours', 'local\clientside_filter');
-        $filters = array_keys($filters);
+        $hook = new hook\before_clientside_filter_fetch(array_keys(
+            \core_component::get_component_classes_in_namespace('tool_usertours', 'local\clientside_filter')
+        ));
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
-        $filters = array_filter($filters, function($filterclass) {
-            $rc = new \ReflectionClass($filterclass);
-            return $rc->isInstantiable();
-        });
+        $filters = array_filter(
+            $hook->get_filter_list(),
+            function ($filterclass) {
+                $rc = new \ReflectionClass($filterclass);
+                return $rc->isInstantiable();
+            }
+        );
 
         return $filters;
     }

@@ -42,9 +42,9 @@ require_once($CFG->libdir.'/moodlelib.php');
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class string_manager_standard_test extends \advanced_testcase {
+final class string_manager_standard_test extends \advanced_testcase {
 
-    public function test_string_manager_instance() {
+    public function test_string_manager_instance(): void {
         $this->resetAfterTest();
 
         $otherroot = __DIR__.'/fixtures/langtest';
@@ -52,7 +52,7 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertInstanceOf('core_string_manager', $stringman);
     }
 
-    public function test_get_language_dependencies() {
+    public function test_get_language_dependencies(): void {
         $this->resetAfterTest();
 
         $otherroot = __DIR__.'/fixtures/langtest';
@@ -76,18 +76,18 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertSame(array('bb', 'bc'), $stringman->get_language_dependencies('bc'));
     }
 
-    public function test_deprecated_strings() {
+    public function test_deprecated_strings(): void {
         $stringman = get_string_manager();
 
         // Check non-deprecated string.
         $this->assertFalse($stringman->string_deprecated('hidden', 'grades'));
 
         // Check deprecated string, make sure to update once that chosen below is finally removed.
-        $this->assertTrue($stringman->string_deprecated('coursepage', 'core_admin'));
-        $this->assertTrue($stringman->string_exists('coursepage', 'core_admin'));
+        $this->assertTrue($stringman->string_deprecated('selectdevice', 'core_admin'));
+        $this->assertTrue($stringman->string_exists('selectdevice', 'core_admin'));
         $this->assertDebuggingNotCalled();
-        $this->assertEquals('Course page', get_string('coursepage', 'core_admin'));
-        $this->assertDebuggingCalled('String [coursepage,core_admin] is deprecated. '.
+        $this->assertEquals('Select device', get_string('selectdevice', 'core_admin'));
+        $this->assertDebuggingCalled('String [selectdevice,core_admin] is deprecated. '.
             'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
             'Please refer to https://moodledev.io/general/projects/api/string-deprecation');
     }
@@ -97,14 +97,12 @@ class string_manager_standard_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_deprecated_strings_provider() {
+    public static function get_deprecated_strings_provider(): array {
         global $CFG;
 
-        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, array());
+        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, []);
         $allstrings = $teststringman->get_all_deprecated_strings();
-        return array_map(function($string) {
-            return [$string];
-        }, $allstrings);
+        return array_map(fn ($string): array => [$string], $allstrings);
     }
 
     /**
@@ -115,7 +113,7 @@ class string_manager_standard_test extends \advanced_testcase {
      * @dataProvider get_deprecated_strings_provider
      * @param   string      $string     The string to be tested
      */
-    public function test_validate_deprecated_strings_files($string) {
+    public function test_validate_deprecated_strings_files($string): void {
         $stringman = get_string_manager();
 
         $result = preg_match('/^(.*),(.*)$/', $string, $matches);
@@ -136,7 +134,7 @@ class string_manager_standard_test extends \advanced_testcase {
     /**
      * Test for $CFG->langlist (without installation of additional languages)
      */
-    public function test_get_list_of_translations() {
+    public function test_get_list_of_translations(): void {
         $this->resetAfterTest();
         $stringman = get_string_manager();
 
@@ -162,7 +160,7 @@ class string_manager_standard_test extends \advanced_testcase {
     /**
      * Test {@see core_string_manager_standard::get_list_of_countries()} under different conditions.
      */
-    public function test_get_list_of_countries() {
+    public function test_get_list_of_countries(): void {
 
         $this->resetAfterTest();
         $stringman = get_string_manager();

@@ -14,8 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A javascript module to handle user AJAX actions.
  *
- * @module     core_course/repository
+ * @module     core_course/local/activitychooser/repository
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,13 +27,15 @@ import ajax from 'core/ajax';
  *
  * @method activityModules
  * @param {Number} courseid What course to fetch the modules for
+ * @param {Number} sectionnum What course section to fetch the modules for
  * @return {object} jQuery promise
  */
-export const activityModules = (courseid) => {
+export const activityModules = (courseid, sectionnum) => {
     const request = {
         methodname: 'core_course_get_course_content_items',
         args: {
             courseid: courseid,
+            sectionnum: sectionnum,
         },
     };
     return ajax.call([request])[0];

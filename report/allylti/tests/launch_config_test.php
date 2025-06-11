@@ -30,6 +30,8 @@ use report_allylti\local\launch_config;
  *
  * @package    report_allylti
  * @copyright  Copyright (c) 2016 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group      report_allylti
+ * @group      ally
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class launch_config_test extends \basic_testcase {

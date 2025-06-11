@@ -26,7 +26,7 @@ use enrol_lti\local\ltiadvantage\entity\application_registration;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\context_repository
  */
-class context_repository_test extends \advanced_testcase {
+final class context_repository_test extends \advanced_testcase {
     /**
      * Helper to create test context objects for use with the repository tests.
      *
@@ -85,7 +85,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_new() {
+    public function test_save_new(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();
@@ -101,7 +101,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_existing() {
+    public function test_save_existing(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();
@@ -125,7 +125,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_unique_constraints_not_met() {
+    public function test_save_unique_constraints_not_met(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $context2 = clone $context;
@@ -143,7 +143,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::exists
      */
-    public function test_exists() {
+    public function test_exists(): void {
         $this->resetAfterTest();
         $contextrepo = new context_repository();
         $context = $this->create_test_context();
@@ -158,7 +158,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::find
      */
-    public function test_find() {
+    public function test_find(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();
@@ -175,7 +175,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_contextid
      */
-    public function test_find_by_contextid() {
+    public function test_find_by_contextid(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();
@@ -193,7 +193,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::delete
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();
@@ -211,7 +211,7 @@ class context_repository_test extends \advanced_testcase {
      *
      * @covers ::delete_by_deployment
      */
-    public function test_delete_by_deployment() {
+    public function test_delete_by_deployment(): void {
         $this->resetAfterTest();
         $context = $this->create_test_context();
         $contextrepo = new context_repository();

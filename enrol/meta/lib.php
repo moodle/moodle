@@ -114,7 +114,7 @@ class enrol_meta_plugin extends enrol_plugin {
      * @param array $fields instance fields
      * @return int id of last instance, null if can not be created
      */
-    public function add_instance($course, array $fields = null) {
+    public function add_instance($course, ?array $fields = null) {
         global $CFG;
 
         require_once("$CFG->dirroot/enrol/meta/locallib.php");
@@ -383,6 +383,142 @@ class enrol_meta_plugin extends enrol_plugin {
         return $errors;
     }
 
+    /**
+     * Check if data is valid for a given enrolment plugin
+     *
+     * @param array $enrolmentdata enrolment data to validate.
+     * @param int|null $courseid Course ID.
+     * @return array Errors
+     */
+    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
+        global $DB;
+
+        $errors = parent::validate_enrol_plugin_data($enrolmentdata, $courseid);
+
+        if (isset($enrolmentdata['addtogroup'])) {
+            $addtogroup = $enrolmentdata['addtogroup'];
+            if (($addtogroup == 1) || ($addtogroup == 0)) {
+                if (isset($enrolmentdata['groupname'])) {
+                    $errors['erroraddtogroupgroupname'] =
+                        new lang_string('erroraddtogroupgroupname', 'group');
+                }
+            } else {
+                $errors['erroraddtogroup'] =
+                    new lang_string('erroraddtogroup', 'group');
+            }
+        }
+
+        if ($courseid) {
+            $enrolmentdata = $this->fill_enrol_custom_fields($enrolmentdata, $courseid);
+
+            if (isset($enrolmentdata['groupname']) && $enrolmentdata['groupname']) {
+                $groupname = $enrolmentdata['groupname'];
+                if (!groups_get_group_by_name($courseid, $groupname)) {
+                    $errors['errorinvalidgroup'] =
+                        new lang_string('errorinvalidgroup', 'group', $groupname);
+                }
+            }
+        }
+
+        if (!isset($enrolmentdata['metacoursename'])) {
+            $errors['missingmandatoryfields'] =
+                new lang_string('missingmandatoryfields', 'tool_uploadcourse',
+                    'metacoursename');
+        } else {
+            $metacoursename = $enrolmentdata['metacoursename'];
+            $metacourseid = $DB->get_field('course', 'id', ['shortname' => $metacoursename]);
+
+            if (!$metacourseid) {
+                $errors['unknownmetacourse'] =
+                    new lang_string('unknownmetacourse', 'enrol_meta', $metacoursename);
+            }
+
+            if ($courseid && ($courseid == $metacourseid)) {
+                $errors['samemetacourse'] =
+                    new lang_string('samemetacourse', 'enrol_meta', $metacoursename);
+            }
+        }
+        return $errors;
+    }
+
+    /**
+     * Fill custom fields data for a given enrolment plugin.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return array Updated enrolment data with custom fields info.
+     */
+    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid): array {
+        global $DB;
+
+        $metacoursename = $enrolmentdata['metacoursename'];
+        $enrolmentdata['customint1'] =
+            $DB->get_field('course', 'id', ['shortname' => $metacoursename]);
+
+        if (isset($enrolmentdata['addtogroup'])) {
+            if ($enrolmentdata['addtogroup'] == 0) {
+                $enrolmentdata['customint2'] = 0;
+            } else if ($enrolmentdata['addtogroup'] == 1) {
+                $enrolmentdata['customint2'] = ENROL_META_CREATE_GROUP;
+            }
+        } else if (isset($enrolmentdata['groupname'])) {
+            $enrolmentdata['customint2'] = groups_get_group_by_name($courseid, $enrolmentdata['groupname']);
+        }
+        return $enrolmentdata + [
+            'customint1' => null,
+            'customint2' => null,
+        ];
+    }
+
+    /**
+     * Check if enrolment plugin is supported in csv course upload.
+     *
+     * @return bool
+     */
+    public function is_csv_upload_supported(): bool {
+        return true;
+    }
+
+    /**
+     * Finds matching instances for a given course.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return stdClass|null Matching instance
+     */
+    public function find_instance(array $enrolmentdata, int $courseid): ?stdClass {
+        global $DB;
+        $instances = enrol_get_instances($courseid, false);
+
+        $instance = null;
+        if (isset($enrolmentdata['metacoursename'])) {
+            $metacourseid = $DB->get_field('course', 'id', ['shortname' => $enrolmentdata['metacoursename']]);
+            if ($metacourseid) {
+                foreach ($instances as $i) {
+                    if ($i->enrol == 'meta' && $i->customint1 == $metacourseid) {
+                        $instance = $i;
+                        break;
+                    }
+                }
+            }
+        }
+        return $instance;
+    }
+
+    /**
+     * Add new instance of enrol plugin with custom settings,
+     * called when adding new instance manually or when adding new course.
+     * Used for example on course upload.
+     *
+     * Not all plugins support this.
+     *
+     * @param stdClass $course Course object
+     * @param array|null $fields instance fields
+     * @return int|null id of new instance or null if not supported
+     */
+    public function add_custom_instance(stdClass $course, ?array $fields = null): ?int {
+        return $this->add_instance($course, $fields);
+    }
 
     /**
      * Restore instance and map settings.

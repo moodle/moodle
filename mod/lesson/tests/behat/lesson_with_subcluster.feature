@@ -22,122 +22,40 @@ Feature: In a lesson activity, students can see questions in random order and a 
     And I log in as "teacher1"
 
   Scenario: Lesson with subcluster
-    Given I am on the "Lesson with subcluster" "lesson activity" page
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select edit type "Expanded"
-    And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][2]" "xpath_element"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 1 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][4]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 2 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][5]" "xpath_element"
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | This page mark the the beginning of the subcluster it should not be seen by students |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][6]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 3 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][7]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 4 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][8]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 5 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add an end of branch" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][9]" "xpath_element"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][10]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 6 |
-      | Page contents | Question from cluster |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][11]" "xpath_element"
-    And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][12]" "xpath_element"
-    And I set the following fields to these values:
-      | Page title | Third page name |
-      | Page contents | Content page after cluster |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson                 | qtype        | title            | content                                                     |
+      | Lesson with subcluster | content      | First page name  | First page contents                                         |
+      | Lesson with subcluster | cluster      | Cluster          | Cluster                                                     |
+      | Lesson with subcluster | multichoice  | Question 1       | Question from cluster                                       |
+      | Lesson with subcluster | multichoice  | Question 2       | Question from cluster                                       |
+      | Lesson with subcluster | content      | Second page name | Beginning of the subcluster, should not be seen by students |
+      | Lesson with subcluster | multichoice  | Question 3       | Question from cluster                                       |
+      | Lesson with subcluster | multichoice  | Question 4       | Question from cluster                                       |
+      | Lesson with subcluster | multichoice  | Question 5       | Question from cluster                                       |
+      | Lesson with subcluster | endofbranch  | End of branch    | End of branch                                               |
+      | Lesson with subcluster | multichoice  | Question 6       | Question from cluster                                       |
+      | Lesson with subcluster | endofcluster | End of cluster   | End of cluster                                              |
+      | Lesson with subcluster | content      | Third page name  | Content page after cluster                                  |
+    And the following "mod_lesson > answers" exist:
+      | page             | answer           | response | jumpto                           | score |
+      | First page name  | Next page        |          | Next page                        | 0     |
+      | Cluster          |                  |          | Unseen question within a cluster | 0     |
+      | Question 1       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 1       | Incorrect answer | Bad      | This page                        | 0     |
+      | Question 2       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 2       | Incorrect answer | Bad      | This page                        | 0     |
+      | Second page name | Next page        |          | Next page                        | 0     |
+      | Question 3       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 3       | Incorrect answer | Bad      | This page                        | 0     |
+      | Question 4       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 4       | Incorrect answer | Bad      | This page                        | 0     |
+      | Question 5       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 5       | Incorrect answer | Bad      | This page                        | 0     |
+      | End of branch    |                  |          | Second page name                 | 0     |
+      | Question 6       | Correct answer   | Good     | Cluster                          | 1     |
+      | Question 6       | Incorrect answer | Bad      | This page                        | 0     |
+      | End of cluster   |                  |          | Next page                        | 0     |
+      | Third page name  | Next page        |          | Next page                        | 0     |
     When I am on the "Lesson with subcluster" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"

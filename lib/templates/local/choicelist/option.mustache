@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/choicelist/option
+
+    Default template for a choicelist option.
+
+    Any mustache can user this template to render options in a custom choicelist wrapper.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * optionuniqid String - unique option id.
+    * value String - option value.
+    * name String - options name.
+    * optionnumber Number - option number.
+
+    Example context (json):
+    {
+        "value": "value2",
+        "name": "Second option",
+        "description": "Second option description",
+        "icon": {
+            "extraclasses": "",
+            "attributes": [
+                {"name": "src", "value": "../../../pix/help.svg"},
+                {"name": "alt", "value": "Help icon"}
+            ]
+        },
+        "hasicon": true,
+        "optionnumber": 2,
+        "optionuniqid": "option2uniqid",
+        "selected": true
+    }
+}}
+<div
+    class="d-flex flex-row align-items-start p-2 mb-1 {{!
+        }} position-relative rounded dropdown-item-outline {{!
+        }} {{#disabled}} dimmed_text {{/disabled}} {{!
+        }} {{#selected}} border bg-primary-light selected {{/selected}}"
+    data-optionnumber="{{optionnumber}}"
+    data-selected="{{selected}}"
+    data-selected-classes = "border bg-primary-light selected"
+>
+    <div class="option-select-indicator">
+        <span class="{{^selected}} d-none {{/selected}}" data-for="checkedIcon">
+            {{#pix}} i/checkedcircle, core, {{#str}} selected, form {{/str}} {{/pix}}
+        </span>
+        <span class="{{#selected}} d-none {{/selected}}" data-for="uncheckedIcon">
+            {{#pix}} i/uncheckedcircle{{/pix}}
+        </span>
+    </div>
+    {{#icon}}
+    <div class="option-icon">
+        {{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}
+    </div>
+    {{/icon}}
+    <div class="option-name">
+        <a
+            class="stretched-link text-wrap font-weight-bold {{!
+                }} {{^disabled}} text-dark {{/disabled}} {{!
+                }} {{#disabled}} disabled {{/disabled}} {{!
+                }} {{#selected}} selected {{/selected}}"
+            role="option"
+            {{#selected}} aria-selected="true" {{/selected}}
+            {{#description}} aria-describedby="{{optionuniqid}}" {{/description}}
+            data-value="{{value}}"
+            {{#hasurl}} href="{{{url}}}" {{/hasurl}}
+            {{! If there is no url, supose JS will handle it somehow. }}
+            {{^hasurl}} href="#" {{/hasurl}}
+            {{#disabled}} tabindex="-1" {{/disabled}}
+            {{#extras}}
+                {{attribute}}="{{value}}"
+            {{/extras}}
+        >
+            {{name}}
+        </a>
+        {{#description}}
+        <div
+            id="{{optionuniqid}}"
+            class="option-description small text-muted text-wrap">
+            {{{description}}}
+        </div>
+        {{/description}}
+    </div>
+</div>

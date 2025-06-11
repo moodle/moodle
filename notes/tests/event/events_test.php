@@ -33,7 +33,7 @@ namespace core_notes\event;
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var  stdClass A note object. */
     private $eventnote;
@@ -43,6 +43,7 @@ class events_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -59,7 +60,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event note_deleted.
      */
-    public function test_note_deleted_event() {
+    public function test_note_deleted_event(): void {
         // Delete a note.
         $sink = $this->redirectEvents();
         note_delete($this->eventnote);
@@ -81,15 +82,13 @@ class events_test extends \advanced_testcase {
         $logurl = new \moodle_url('index.php',
                 array('course' => $this->eventnote->courseid, 'user' => $this->eventnote->userid));
         $logurl->set_anchor('note-' . $this->eventnote->id);
-        $arr = array($this->eventnote->courseid, 'notes', 'delete', $logurl, 'delete note');
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event note_created.
      */
-    public function test_note_created_event() {
+    public function test_note_created_event(): void {
 
         // Delete a note.
         $sink = $this->redirectEvents();
@@ -107,20 +106,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
         $this->assertEquals(NOTES_STATE_SITE, $event->other['publishstate']);
-
-        // Test legacy data.
-        $logurl = new \moodle_url('index.php',
-            array('course' => $note->courseid, 'user' => $note->userid));
-        $logurl->set_anchor('note-' . $note->id);
-        $arr = array($note->courseid, 'notes', 'add', $logurl, 'add note');
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event note_updated.
      */
-    public function test_note_updated_event() {
+    public function test_note_updated_event(): void {
 
         // Delete a note.
         $sink = $this->redirectEvents();
@@ -138,13 +130,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
         $this->assertEquals(NOTES_STATE_DRAFT, $event->other['publishstate']);
-
-        // Test legacy data.
-        $logurl = new \moodle_url('index.php',
-            array('course' => $note->courseid, 'user' => $note->userid));
-        $logurl->set_anchor('note-' . $note->id);
-        $arr = array($note->courseid, 'notes', 'update', $logurl, 'update note');
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -154,7 +139,7 @@ class events_test extends \advanced_testcase {
      * It's not possible to use the moodle API to simulate the viewing of notes, so here we
      * simply create the event and trigger it.
      */
-    public function test_notes_viewed() {
+    public function test_notes_viewed(): void {
         $coursecontext = \context_course::instance($this->eventnote->courseid);
         // Trigger event for notes viewed.
         $event = \core\event\notes_viewed::create(array(
@@ -170,9 +155,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\core\event\notes_viewed', $event);
         $this->assertEquals($coursecontext, $event->get_context());
-        $expected = array($this->eventnote->courseid, 'notes', 'view', 'index.php?course=' .
-                $this->eventnote->courseid.'&amp;user=' . $this->eventnote->userid, 'view notes');
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

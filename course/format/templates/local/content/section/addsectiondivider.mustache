@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/section/addsectiondivider
+
+    Displays the add section divider inside a section.
+
+    Example context (json):
+    {
+        "showaddsection": true,
+        "id": 42,
+        "insertafter": true,
+        "num": 0,
+        "addsections": {
+            "url": "#",
+            "title": "Add section",
+            "newsection": 3
+        }
+    }
+}}
+{{#showaddsection}}
+<div class="changenumsections bulk-hidden {{^canaddsection}}disabled{{/canaddsection}}" data-region="section-addsection">
+    {{#addsections}}
+    {{< core_courseformat/local/content/divider}}
+        {{$extraclasses}}always-hidden mt-2{{/extraclasses}}
+        {{$content}}
+            <a href="{{{url}}}"
+               class="btn add-content section-modchooser section-modchooser-link d-flex justify-content-center align-items-center p-1 icon-no-margin
+                    {{^canaddsection}}disabled{{/canaddsection}}"
+                data-add-sections="{{title}}"
+                data-new-sections="{{newsection}}"
+                data-action="addSection"
+                {{#insertafter}} data-id="{{id}}" {{/insertafter}}
+                title="{{#canaddsection}}{{title}}{{/canaddsection}}{{^canaddsection}}{{#str}}sectionaddmax, core_courseformat{{/str}}{{/canaddsection}}"
+            >
+                {{#pix}} t/add, core {{/pix}}
+            </a>
+        {{/content}}
+    {{/ core_courseformat/local/content/divider}}
+    {{/addsections}}
+</div>
+{{/showaddsection}}

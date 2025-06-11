@@ -173,8 +173,8 @@ class enrol_meta_handler {
             $ue->userid = $userid;
             $ue->enrolid = $instance->id;
             $ue->status = $parentstatus;
-            if ($instance->customint2) {
-                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->id);
+            if ($instance->customint2 && $group = $DB->get_record('groups', ['id' => $instance->customint2])) {
+                groups_add_member($group, $userid, 'enrol_meta', $instance->id);
             }
         }
 
@@ -301,9 +301,9 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
     $params['courseid'] = $courseid;
     $sql = "SELECT pue.userid, e.id AS enrolid, MIN(pue.status + pe.status) AS status,
-                      MIN(CASE WHEN (pue.status + pe.status = 0) THEN pue.timestart ELSE 9999999999 END) AS timestart,
+                      MIN(CASE WHEN (pue.status + pe.status = 0) THEN pue.timestart ELSE " . SQL_INT_MAX . " END) AS timestart,
                       MAX(CASE WHEN (pue.status + pe.status = 0) THEN
-                                (CASE WHEN pue.timeend = 0 THEN 9999999999 ELSE pue.timeend END)
+                                (CASE WHEN pue.timeend = 0 THEN " . SQL_INT_MAX . " ELSE pue.timeend END)
                                 ELSE 0 END) AS timeend
               FROM {user_enrolments} pue
               JOIN {enrol} pe ON (pe.id = pue.enrolid AND pe.enrol <> 'meta' AND pe.enrol $enabled)
@@ -341,13 +341,13 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
         // Again, we use the fact that active=0 and disabled/suspended=1. Only when MIN(pue.status + pe.status)=0 the enrolment is active:
         $ue->status = ($ue->status == ENROL_USER_ACTIVE + ENROL_INSTANCE_ENABLED) ? ENROL_USER_ACTIVE : ENROL_USER_SUSPENDED;
         // Timeend 9999999999 was used instead of 0 in the "MAX()" function:
-        $ue->timeend = ($ue->timeend == 9999999999) ? 0 : (int)$ue->timeend;
+        $ue->timeend = ($ue->timeend == SQL_INT_MAX) ? 0 : (int)$ue->timeend;
         // Timestart 9999999999 is only possible when there are no active enrolments:
-        $ue->timestart = ($ue->timestart == 9999999999) ? 0 : (int)$ue->timestart;
+        $ue->timestart = ($ue->timestart == SQL_INT_MAX) ? 0 : (int)$ue->timestart;
 
         $meta->enrol_user($instance, $ue->userid, null, $ue->timestart, $ue->timeend, $ue->status);
-        if ($instance->customint2) {
-            groups_add_member($instance->customint2, $ue->userid, 'enrol_meta', $instance->id);
+        if ($instance->customint2 && $group = $DB->get_record('groups', ['id' => $instance->customint2])) {
+            groups_add_member($group, $ue->userid, 'enrol_meta', $instance->id);
         }
         if ($verbose) {
             mtrace("  enrolling: $ue->userid ==> $instance->courseid");
@@ -418,9 +418,9 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     // the start and end time.
     $sql = "SELECT ue.userid, ue.enrolid,
                    MIN(xpue.status + xpe.status) AS pstatus,
-                   MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) AS ptimestart,
+                   MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE " . SQL_INT_MAX . " END) AS ptimestart,
                    MAX(CASE WHEN (xpue.status + xpe.status = 0) THEN
-                                 (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                                 (CASE WHEN xpue.timeend = 0 THEN " . SQL_INT_MAX . " ELSE xpue.timeend END)
                             ELSE 0 END) AS ptimeend
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' $onecourse)
@@ -431,17 +431,18 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
             HAVING (MIN(xpue.status + xpe.status) = 0 AND MIN(ue.status) > 0)
                    OR (MIN(xpue.status + xpe.status) > 0 AND MIN(ue.status) = 0)
                    OR ((CASE WHEN
-                                  MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) = 9999999999
-                             THEN 0
-                             ELSE
-                                  MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END)
-                              END) <> MIN(ue.timestart))
+                            MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE " . SQL_INT_MAX . " END) = " .
+                                SQL_INT_MAX . "
+                        THEN 0
+                        ELSE
+                            MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE " . SQL_INT_MAX . " END)
+                        END) <> MIN(ue.timestart))
                    OR ((CASE
                          WHEN MAX(CASE WHEN (xpue.status + xpe.status = 0)
-                                       THEN (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
-                                       ELSE 0 END) = 9999999999
+                                       THEN (CASE WHEN xpue.timeend = 0 THEN " . SQL_INT_MAX . " ELSE xpue.timeend END)
+                                       ELSE 0 END) = " . SQL_INT_MAX . "
                          THEN 0 ELSE MAX(CASE WHEN (xpue.status + xpe.status = 0)
-                                              THEN (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                                              THEN (CASE WHEN xpue.timeend = 0 THEN " . SQL_INT_MAX . " ELSE xpue.timeend END)
                                               ELSE 0 END)
                           END) <> MAX(ue.timeend))";
     $rs = $DB->get_recordset_sql($sql, $params);
@@ -451,8 +452,8 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
         }
         $instance = $instances[$ue->enrolid];
         $ue->pstatus = ($ue->pstatus == ENROL_USER_ACTIVE + ENROL_INSTANCE_ENABLED) ? ENROL_USER_ACTIVE : ENROL_USER_SUSPENDED;
-        $ue->ptimeend = ($ue->ptimeend == 9999999999) ? 0 : (int)$ue->ptimeend;
-        $ue->ptimestart = ($ue->ptimestart == 9999999999) ? 0 : (int)$ue->ptimestart;
+        $ue->ptimeend = ($ue->ptimeend == SQL_INT_MAX) ? 0 : (int)$ue->ptimeend;
+        $ue->ptimestart = ($ue->ptimestart == SQL_INT_MAX) ? 0 : (int)$ue->ptimestart;
 
         if ($ue->pstatus == ENROL_USER_ACTIVE and (!$ue->ptimeend || $ue->ptimeend > time())
                 and !$syncall and $unenrolaction != ENROL_EXT_REMOVED_UNENROL) {

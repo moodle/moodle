@@ -97,7 +97,7 @@ $string['debug_mode_enabled_help'] = 'Enables debug mode, which prints additiona
 
 $string['compatibility_settings'] = 'Compatibility settings';
 $string['compatibility_settings_text'] = '';
-$string['filtercodes_compatibility_enabled'] = 'Compatibility with Filter Codes filter';
+$string['filtercodes_compatibility_enabled'] = 'FilterCodes compatibility';
 $string['filtercodes_compatibility_enabled_help'] = 'The Filter Codes filter is not compatible with certain WirisQuizzes features if the option "Escape tags" is selected. Enabling this option solves the compatibility problem. Do not enable it in any other situation.';
 
 $string['privacy:metadata:qtype_wq'] = 'Information about user\'s correct answer for a given WirisQuizzes question type';
@@ -111,3 +111,15 @@ $string['log_server_errors_help'] = 'Extensively log errors coming from the Wiri
 
 $string['corruptquestion_edit'] = 'WARNING: This question was corrupted and its mathematical data was lost from the database. We have tried to restore everything we could, but you need to rebuild the CalcMe algorithm if your question had one, and any custom input options and validation options. Contact with your administrator for further information.';
 $string['corruptquestion_attempt'] = 'The question {$a->questionname} was corrupted and could not be loaded. Please contact with your teacher so they can fix it.';
+
+$string['quizzescalcurl'] = 'CalcMe URL';
+$string['quizzescalcurl_help'] = 'URL where to load the CalcMe web app.';
+
+$string['quizzesgraphurl'] = 'Graph tool URL';
+$string['quizzesgraphurl_help'] = 'URL where to load the tool used for graph rendering and graphical answer questions.';
+
+$string['maxconnections_disabled'] = 'Disable max connections protection';
+$string['maxconnections_disabled_help'] = 'Disables the protection mechanism that limits the number of concurrent connections to the WirisQuizzes server. Only enable this setting if your usage of WirisQuizzes reaches the concurrency limit and be mindful that your infrastructure will need to handle the increased number of concurrent connections to our server.';
+
+$string['mathjax_compatibity'] = 'MathJax compatibility';
+$string['mathjax_compatibity_help'] = '(Experimental) Enables compatibility with MathJax. This option is only needed if you want to use MathJax instead of MathType to render LaTeX formulas in WirisQuizzes questions. Formulas created with MathType or WirisQuizzes will still be rendered by MathType. For the best performance, we recommend using MathType to render all formulas.';

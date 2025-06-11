@@ -73,13 +73,4 @@ class role_allow_switch_updated extends base {
     public function get_url() {
         return new \moodle_url('/admin/roles/allow.php', array('mode' => 'switch'));
     }
-
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'role', 'edit allow switch', 'admin/roles/allow.php?mode=switch');
-    }
 }

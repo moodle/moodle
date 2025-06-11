@@ -23,7 +23,7 @@ Feature: Check H5P tools information is correct
     And I should see "Disable" in the "H5P scheduled task" "table_row"
 
   @javascript
-  Scenario: H5P atto button.
+  Scenario: H5P editor button.
     Given I log in as "admin"
     When I navigate to "H5P > H5P overview" in site administration
     Then I should see "Enable" in the "Insert H5P button" "table_row"

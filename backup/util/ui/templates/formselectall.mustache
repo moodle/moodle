@@ -1,0 +1,131 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_backup/formselectall
+
+    Template that renders the "Select All/None" controls on the backup/restore UI.
+
+    Example context (json):
+    {
+        "withuserdata": true,
+        "modules": [
+            {
+                "modname": "assign",
+                "heading": "Assignments"
+            },
+            {
+                "modname": "book",
+                "heading": "Books"
+            }
+        ]
+    }
+}}
+<div class="grouped_settings section_level">
+    <div id="backup_selectors_included" class="include_setting section_level">
+        <div class="fitem fitem_fcheckbox backup_selector">
+            <div class="fitemtitle">{{#str}} select {{/str}}</div>
+            <div class="felement">
+                <a
+                    data-mdl-action="selectall"
+                    data-mdl-type="include"
+                    href="#"
+                >{{#str}} all {{/str}}</a> /
+                <a
+                    data-mdl-action="selectnone"
+                    data-mdl-type="include"
+                    href="#"
+                >{{#str}} none {{/str}}</a>
+                (<a
+                    class="collapsed showmore-container"
+                    id="mod_select_links_toggler"
+                    data-toggle="collapse"
+                    href="#mod_select_links"
+                    aria-expanded="false"
+                    aria-controls="mod_select_links"
+                >{{!
+                    }}<span class="collapsed-content">{{#str}} showtypes, backup {{/str}}</span>{{!
+                    }}<span class="expanded-content">{{#str}} hidetypes, backup {{/str}}</span>{{!
+                }}</a>)
+            </div>
+        </div>
+    </div>
+    {{#withuserdata}}
+    <div id="backup_selectors_userdata" class="normal_setting">
+        <div class="fitem fitem_fcheckbox backup_selector">
+            <div class="fitemtitle">Select</div>
+            <div class="felement">
+                <a
+                    data-mdl-action="selectall"
+                    data-mdl-type="userdata"
+                    href="#"
+                >{{#str}} all {{/str}}</a> /
+                <a
+                    data-mdl-action="selectnone"
+                    data-mdl-type="userdata"
+                    href="#"
+                >{{#str}} none {{/str}}</a>
+            </div>
+        </div>
+    </div>
+    {{/withuserdata}}
+    <div id="mod_select_links" class="collapse" style="">
+        {{#modules}}
+        <div class="grouped_settings section_level">
+            <div id="backup_selectors_mod_{{modname}}" class="include_setting section_level">
+                <div class="fitem fitem_fcheckbox backup_selector">
+                    <div class="fitemtitle">{{heading}}</div>
+                    <div class="felement">
+                        <a
+                            data-mdl-action="selectall"
+                            data-mdl-type="include"
+                            data-mdl-mod="{{modname}}"
+                            href="#"
+                        >{{#str}} all {{/str}}</a> /
+                        <a
+                            data-mdl-action="selectnone"
+                            data-mdl-type="include"
+                            data-mdl-mod="{{modname}}"
+                            href="#"
+                        >{{#str}} none {{/str}}</a>
+                    </div>
+                </div>
+            </div>
+            {{#withuserdata}}
+            <div class="normal_setting">
+                <div id="backup_selectors_userdata-mod_{{modname}}" class="fitem fitem_fcheckbox backup_selector">
+                    <div class="fitemtitle">{{heading}}</div>
+                    <div class="felement">
+                        <a
+                            data-mdl-action="selectall"
+                            data-mdl-type="userdata"
+                            data-mdl-mod="{{modname}}"
+                            href="#"
+                        >{{#str}} all {{/str}}</a> /
+                        <a
+                            data-mdl-action="selectnone"
+                            data-mdl-type="userdata"
+                            data-mdl-mod="{{modname}}"
+                            href="#"
+                        >{{#str}} none {{/str}}</a>
+                    </div>
+                </div>
+            </div>
+            {{/withuserdata}}
+        </div>
+        {{/modules}}
+    </div>
+</div>

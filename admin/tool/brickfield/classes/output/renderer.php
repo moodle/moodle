@@ -76,7 +76,6 @@ class renderer extends plugin_renderer_base {
                 $label = $tool->get_toolshortname();
             }
             $tab = new tabobject($idprefix . $toolname, $link, $label);
-            $tab->extraclass = isset($extraclass[$toolname]) ? $extraclass[$toolname] : null;
             $tabs[] = $tab;
         }
         return $this->render(new tabtree($tabs, $idprefix . $filter->tab));
@@ -158,7 +157,7 @@ class renderer extends plugin_renderer_base {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public function analysisbutton(int $courseid) : string {
+    public function analysisbutton(int $courseid): string {
         $link = new moodle_url(accessibility::get_plugin_url(), [
             'action' => 'requestanalysis',
             'courseid' => $courseid
@@ -170,7 +169,7 @@ class renderer extends plugin_renderer_base {
             $link,
             get_string('schedule:requestanalysis', manager::PLUGINNAME),
             'post',
-            true,
+            \single_button::BUTTON_PRIMARY,
             ['class' => $classname]
         );
 

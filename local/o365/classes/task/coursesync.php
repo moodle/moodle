@@ -25,15 +25,15 @@
 
 namespace local_o365\task;
 
+use core\task\scheduled_task;
 use local_o365\feature\coursesync\main;
 use local_o365\utils;
-
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * Create any needed groups in Microsoft 365.
  */
-class coursesync extends \core\task\scheduled_task {
+class coursesync extends scheduled_task {
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -49,6 +49,12 @@ class coursesync extends \core\task\scheduled_task {
      * @return bool|void
      */
     public function execute() {
+        global $SESSION;
+
+        $SESSION->o365_groups_not_exist = [];
+        $SESSION->o365_newly_created_groups = [];
+        $SESSION->o365_users_not_exist = [];
+
         if (utils::is_connected() !== true) {
             return false;
         }
@@ -60,13 +66,21 @@ class coursesync extends \core\task\scheduled_task {
 
         try {
             $graphclient = utils::get_api();
-        } catch (\Exception $e) {
+        } catch (moodle_exception $e) {
             utils::debug('Exception: ' . $e->getMessage(), __METHOD__, $e);
             return false;
         }
 
         $coursesync = new main($graphclient, true);
         $coursesync->sync_courses();
-        $coursesync->update_teams_cache();
+        if ($coursesync->update_teams_cache()) {
+            $coursesync->cleanup_teams_connections();
+        }
+        $coursesync->cleanup_course_connection_records();
+
+        if (utils::update_groups_cache($graphclient, 1)) {
+            $coursesync->save_not_found_groups();
+            utils::clean_up_not_found_groups();
+        }
     }
 }

@@ -29,16 +29,27 @@
  */
 class backup_nested_element extends base_nested_element implements processable {
 
-    protected $var_array; // To be used in case we pass one in-memory structure
+    /** @var array To be used in case we pass one in-memory structure */
+    protected $var_array;
+    /** @var string */
     protected $table;     // Table (without prefix) to fetch records from
+    /** @var string */
     protected $tablesortby; // The field to sort by when using the table methods
+    /** @var string */
     protected $sql;       // Raw SQL to fetch records from
+    /** @var mixed */
     protected $params;    // Unprocessed params as specified in the set_source() call
+    /** @var array */
     protected $procparams;// Processed (path resolved) params array
+    /** @var array */
     protected $aliases;   // Define DB->final element aliases
+    /** @var array */
     protected $fileannotations;   // array of file areas to be searched by file annotations
+    /** @var int */
     protected $counter;   // Number of instances of this element that have been processed
+    /** @var array */
     protected $results;  // Logs the results we encounter during the process.
+    /** @var stdClass[] */
     protected $logs;     // Some log messages that could be retrieved later.
 
     /**

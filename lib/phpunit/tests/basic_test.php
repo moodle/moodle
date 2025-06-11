@@ -16,6 +16,8 @@
 
 namespace core;
 
+use phpunit_util;
+
 /**
  * Test basic_testcase extra features and PHPUnit Moodle integration.
  *
@@ -24,7 +26,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class basic_test extends \basic_testcase {
+final class basic_test extends \basic_testcase {
     protected $testassertexecuted = false;
 
     protected function setUp(): void {
@@ -40,7 +42,7 @@ class basic_test extends \basic_testcase {
      * Tests that bootstrapping has occurred correctly
      * @return void
      */
-    public function test_bootstrap() {
+    public function test_bootstrap(): void {
         global $CFG;
 
         // The httpswwwroot has been deprecated, we keep it as an alias for backwards compatibility with plugins only.
@@ -53,7 +55,7 @@ class basic_test extends \basic_testcase {
      * This is just a verification if I understand the PHPUnit assert docs right --skodak
      * @return void
      */
-    public function test_assert_behaviour() {
+    public function test_assert_behaviour(): void {
         // Arrays.
         $a = array('a', 'b', 'c');
         $b = array('a', 'c', 'b');
@@ -118,7 +120,7 @@ class basic_test extends \basic_testcase {
      * Make sure there are no sloppy Windows line endings
      * that would break our tests.
      */
-    public function test_lineendings() {
+    public function test_lineendings(): void {
         $string = <<<STRING
 a
 b
@@ -130,7 +132,7 @@ STRING;
     /**
      * Make sure asserts in setUp() do not create problems.
      */
-    public function test_setup_assert() {
+    public function test_setup_assert(): void {
         $this->assertTrue($this->testassertexecuted);
         $this->testassertexecuted = false;
     }
@@ -138,50 +140,241 @@ STRING;
     /**
      * Test assert Tag
      */
-    public function test_assert_tag() {
+    public function test_assert_tag(): void {
         // This should succeed.
         self::assertTag(['id' => 'testid'], "<div><span id='testid'></span></div>");
         $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);
         self::assertTag(['id' => 'testid'], "<div><div>");
     }
 
-    // Uncomment following tests to see logging of unexpected changes in global state and database.
-    /*
-        public function test_db_modification() {
-            global $DB;
-            $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
+    /**
+     * Tests for assertEqualsIgnoringWhitespace.
+     *
+     * @param string $expected
+     * @param string $actual
+     * @param bool $expectationvalid
+     * @dataProvider equals_ignoring_whitespace_provider
+     */
+    public function test_assertEqualsIgnoringWhitespace( // phpcs:ignore
+        string $expected,
+        string $actual,
+        bool $expectationvalid,
+    ): void {
+        if (!$expectationvalid) {
+            $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);
         }
+        self::assertEqualsIgnoringWhitespace($expected, $actual);
+    }
 
-        public function test_cfg_modification() {
-            global $CFG;
-            $CFG->xx = 'yy';
-            unset($CFG->admin);
-            $CFG->rolesactive = 0;
-        }
+    /**
+     * Data provider for assertEqualsIgnoringWhitespace tests
+     *
+     * @return array
+     */
+    public static function equals_ignoring_whitespace_provider(): array {
+        return [
+            'equal' => ['a b c', 'a b c', true],
+            'equal with whitespace' => ["a b c", "a\nb c", true],
+            'equal with extra whitespace' => ["a b c", "a\nb  c", true],
+            'whitespace missing' => ["ab c", "a\nb  c", false],
+            'not equal' => ['a b c', 'a b d', false],
+            'various space types' => [
+                implode(' ', [
+                    '20', // Regular space.
+                    "a0", // No-Break Space (NBSP).
+                    "80", // Ogham Space Mark.
+                    "0", // En Quad.
+                    "1", // Em Quad.
+                    "2", // En Space.
+                    "3", // Em Space.
+                    "4", // Three-Per-Em Space.
+                    "5", // Four-Per-Em Space.
+                    "6", // Six-Per-Em Space.
+                    "7", // Figure Space.
+                    "8", // Punctuation Space.
+                    "9", // Thin Space.
+                    "0a", // Hair Space.
+                    "2f", // Narrow No-Break Space (NNBSP).
+                    "5f", // Medium Mathematical Space.
+                    "3000", // Ideographic Space.
+                    ".",
+                ]),
+                implode('', [
+                    // All space chars taken from https://www.compart.com/en/unicode/category/Zs.
+                    "20\u{0020}", // Regular space.
+                    "a0\u{00a0}", // No-Break Space (NBSP).
+                    "80\u{1680}", // Ogham Space Mark.
+                    "0\u{2000}", // En Quad.
+                    "1\u{2001}", // Em Quad.
+                    "2\u{2002}", // En Space.
+                    "3\u{2003}", // Em Space.
+                    "4\u{2004}", // Three-Per-Em Space.
+                    "5\u{2005}", // Four-Per-Em Space.
+                    "6\u{2006}", // Six-Per-Em Space.
+                    "7\u{2007}", // Figure Space.
+                    "8\u{2008}", // Punctuation Space.
+                    "9\u{2009}", // Thin Space.
+                    "0a\u{200a}", // Hair Space.
+                    "2f\u{202f}", // Narrow No-Break Space (NNBSP).
+                    "5f\u{205f}", // Medium Mathematical Space.
+                    "3000\u{3000}", // Ideographic Space.
+                    ".",
+                ]),
+                true,
+            ],
+        ];
+    }
 
-        public function test_user_modification() {
-            global $USER;
-            $USER->id = 10;
-        }
+    /**
+     * Test that a database modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_db_modification(): void {
+        global $DB;
+        $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
 
-        public function test_course_modification() {
-            global $COURSE;
-            $COURSE->id = 10;
-        }
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
 
-        public function test_all_modifications() {
-            global $DB, $CFG, $USER, $COURSE;
-            $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
-            $CFG->xx = 'yy';
-            unset($CFG->admin);
-            $CFG->rolesactive = 0;
-            $USER->id = 10;
-            $COURSE->id = 10;
-        }
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected database modification');
+        phpunit_util::reset_all_data(true);
+    }
 
-        public function test_transaction_problem() {
-            global $DB;
-            $DB->start_delegated_transaction();
-        }
-    */
+    /**
+     * Test that a $CFG modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_cfg_modification(): void {
+        global $CFG;
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/rolesactive.*xx value.*removal.*admin/ms'); // 3 messages matched.
+        phpunit_util::reset_all_data(true);
+    }
+
+    /**
+     * Test that a $USER modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_user_modification(): void {
+        global $USER;
+        $USER->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected change of $USER');
+        phpunit_util::reset_all_data(true);
+    }
+
+    /**
+     * Test that a $COURSE modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_course_modification(): void {
+        global $COURSE;
+        $COURSE->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected change of $COURSE');
+        phpunit_util::reset_all_data(true);
+    }
+
+    /**
+     * Test that all modifications are detected together.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_all_modifications(): void {
+        global $DB, $CFG, $USER, $COURSE;
+        $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        $USER->id = 10;
+        $COURSE->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/resetting.*rolesactive.*new.*removal.*USER.*COURSE/ms'); // 6 messages matched.
+        phpunit_util::reset_all_data(true);
+    }
+
+    /**
+     * Test that an open transaction are managed ok by the reset code (silently rolled back).
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_transaction_problem(): void {
+        global $DB, $COURSE;
+        $originalname = $DB->get_field('course', 'fullname', ['id' => $COURSE->id]); // Normally "PHPUnit test site".
+        $changedname = 'Ongoing transaction test site';
+
+        // Start a transaction and make some database changes.
+        $DB->start_delegated_transaction();
+        $DB->set_field('course', 'fullname', $changedname, ['id' => $COURSE->id]);
+
+        // Assert that the transaction is open and the changes were made.
+        $this->assertTrue($DB->is_transaction_started());
+        $this->assertEquals($changedname, $DB->get_field('course', 'fullname', ['id' => $COURSE->id]));
+
+        phpunit_util::reset_all_data(false); // We don't want to detect/warn on database changes for this test.
+
+        // Assert that the transaction is now closed and the changes were rolled back.
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertEquals($originalname, $DB->get_field('course', 'fullname', ['id' => $COURSE->id]));
+    }
 }

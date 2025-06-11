@@ -17,8 +17,10 @@
 namespace core_enrol;
 
 use core_enrol_external;
+use core_external\external_api;
 use enrol_user_enrolment_form;
 use externallib_advanced_testcase;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,12 +38,12 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.4
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * dataProvider for test_get_enrolled_users_visibility().
      */
-    public function get_enrolled_users_visibility_provider() {
+    public static function get_enrolled_users_visibility_provider(): array {
         return array(
             'Course without groups, default behavior (not filtering by cap, group, active)' =>
             array(
@@ -230,7 +232,7 @@ class externallib_test extends externallib_advanced_testcase {
                 ),
             ),
 
-            'Course with separate groups, filtering by withcapability (having moodle/role:review)' =>
+            'Course with separate groups, filtering by withcapability (having moodle/role:review & moodle/course:bulkmessaging)' =>
             array(
                 'settings' => array(
                     'coursegroupmode' => SEPARATEGROUPS,
@@ -254,7 +256,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @dataProvider get_enrolled_users_visibility_provider
      */
-    public function test_get_enrolled_users_visibility($settings, $results) {
+    public function test_get_enrolled_users_visibility($settings, $results): void {
 
         global $USER;
 
@@ -326,8 +328,9 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->expectExceptionMessage($exception['message']);
             } else {
                 // Failed, only canview and exception are supported.
-                $this->markTestIncomplete('Incomplete, only canview and exception are supported');
+                throw new \coding_exception('Incomplete, only canview and exception are supported');
             }
+
             // Switch to the user and assign the role.
             $this->setUser(${$user});
             role_assign($roleid, $USER->id, $coursecontext);
@@ -348,7 +351,7 @@ class externallib_test extends externallib_advanced_testcase {
             $enrolledusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
             // We need to execute the return values cleaning process to simulate the web service server.
-            $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+            $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
             // We are only interested in ids to check visibility.
             $viewed = array();
@@ -364,7 +367,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Verify get_enrolled_users() returned users according to their status.
      */
-    public function test_get_enrolled_users_active_suspended() {
+    public function test_get_enrolled_users_active_suspended(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -405,7 +408,7 @@ class externallib_test extends externallib_advanced_testcase {
         $suspendedusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $suspendedusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $suspendedusers);
+        $suspendedusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $suspendedusers);
         $this->assertCount(2, $suspendedusers);
 
         foreach ($suspendedusers as $suspendeduser) {
@@ -420,7 +423,7 @@ class externallib_test extends externallib_advanced_testcase {
         $activeusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $activeusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $activeusers);
+        $activeusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $activeusers);
         $this->assertCount(4, $activeusers);
 
         foreach ($activeusers as $activeuser) {
@@ -434,7 +437,7 @@ class externallib_test extends externallib_advanced_testcase {
         $allusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $allusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $allusers);
+        $allusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $allusers);
         $this->assertCount(6, $allusers);
 
         // Active and suspended. Test exception is thrown.
@@ -453,7 +456,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_users_courses
      */
-    public function test_get_users_courses() {
+    public function test_get_users_courses(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/completion/criteria/completion_criteria_self.php');
 
@@ -462,8 +465,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         $timenow = time();
         $coursedata1 = array(
-            'fullname'         => '<b>Course 1</b>',                // Adding tags here to check that external_format_string works.
-            'shortname'         => '<b>Course 1</b>',               // Adding tags here to check that external_format_string works.
+            // Adding tags here to check that \core_external\util::format_string works.
+            'fullname'         => '<b>Course 1</b>',
+            // Adding tags here to check that \core_external\util::format_string works.
+            'shortname'         => '<b>Course 1</b>',
             'summary'          => 'Lightwork Course 1 description',
             'summaryformat'    => FORMAT_MOODLE,
             'lang'             => 'en',
@@ -523,19 +528,25 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         // Check we retrieve the good total number of enrolled users.
         $this->assertEquals(2, count($enrolledincourses));
 
         // We need to format summary and summaryformat before to compare them with those values returned by the webservice.
-        list($course1->summary, $course1->summaryformat) =
-             external_format_text($course1->summary, $course1->summaryformat, $contexts[$course1->id]->id, 'course', 'summary', 0);
+        [$course1->summary, $course1->summaryformat] = \core_external\util::format_text(
+            $course1->summary,
+            $course1->summaryformat,
+            $contexts[$course1->id],
+            'course',
+            'summary',
+            0
+        );
 
         // Check there are no differences between $course1 properties and course values returned by the webservice
         // only for those fields listed in the $coursedata1 array.
-        $course1->fullname = external_format_string($course1->fullname, $contexts[$course1->id]->id);
-        $course1->shortname = external_format_string($course1->shortname, $contexts[$course1->id]->id);
+        $course1->fullname = \core_external\util::format_string($course1->fullname, $contexts[$course1->id]->id);
+        $course1->shortname = \core_external\util::format_string($course1->shortname, $contexts[$course1->id]->id);
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
                 foreach ($coursedata1 as $fieldname => $value) {
@@ -553,6 +564,8 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($courseenrol['isfavourite']);
                 $this->assertEquals(2, $courseenrol['enrolledusercount']);
                 $this->assertEquals($course1->timemodified, $courseenrol['timemodified']);
+                $url = "https://www.example.com/moodle/pluginfile.php/{$contexts[$course1->id]->id}/course/generated/course.svg";
+                $this->assertEquals($url, $courseenrol['courseimage']);
             } else {
                 // Check language pack. Should be empty since an incorrect one was used when creating the course.
                 $this->assertEmpty($courseenrol['lang']);
@@ -567,12 +580,14 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertFalse($courseenrol['isfavourite']);
                 $this->assertEquals(1, $courseenrol['enrolledusercount']);
                 $this->assertEquals($course2->timemodified, $courseenrol['timemodified']);
+                $url = "https://www.example.com/moodle/pluginfile.php/{$contexts[$course2->id]->id}/course/generated/course.svg";
+                $this->assertEquals($url, $courseenrol['courseimage']);
             }
         }
 
         // Check that returnusercount works correctly.
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, false);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         foreach ($enrolledincourses as $courseenrol) {
             $this->assertFalse(isset($courseenrol['enrolledusercount']));
         }
@@ -581,7 +596,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(2, count($enrolledincourses));
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
@@ -604,7 +619,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($otherstudent);
 
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(1, count($enrolledincourses));
 
         $this->assertEquals($timenow, $enrolledincourses[0]['lastaccess']); // I can see this, not hidden.
@@ -613,7 +628,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Change some global profile visibility fields.
         $CFG->hiddenuserfields = 'lastaccess';
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         $this->assertEquals(0, $enrolledincourses[0]['lastaccess']); // I can't see this, hidden by global setting.
     }
@@ -696,7 +711,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_users_courses with mathjax in the name.
      */
-    public function test_get_users_courses_with_mathjax() {
+    public function test_get_users_courses_with_mathjax(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -728,16 +743,22 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         // Check that the amount of courses is the right one.
         $this->assertCount(1, $enrolledincourses);
 
         // Filter the values to compare them with the returned ones.
-        $course->fullname = external_format_string($course->fullname, $context->id);
-        $course->shortname = external_format_string($course->shortname, $context->id);
-        list($course->summary, $course->summaryformat) =
-             external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
+        $course->fullname = \core_external\util::format_string($course->fullname, $context->id);
+        $course->shortname = \core_external\util::format_string($course->shortname, $context->id);
+        [$course->summary, $course->summaryformat] = \core_external\util::format_text(
+            $course->summary,
+            $course->summaryformat,
+            $context,
+            'course',
+            'summary',
+            0
+        );
 
         // Compare the values.
         $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['fullname']);
@@ -751,7 +772,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_course_enrolment_methods
      */
-    public function test_get_course_enrolment_methods() {
+    public function test_get_course_enrolment_methods(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -789,7 +810,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check if information is returned.
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course1->id);
-        $enrolmentmethods = \external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
                                                             $enrolmentmethods);
         // Enrolment information is currently returned by self enrolment plugin, so count == 1.
         // This should be changed as we implement get_enrol_info() for other enrolment plugins.
@@ -807,7 +828,7 @@ class externallib_test extends externallib_advanced_testcase {
                                                                 'customint6' => 1,
                                                                 'password' => 'test'));
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course2->id);
-        $enrolmentmethods = \external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
                                                             $enrolmentmethods);
         $this->assertCount(1, $enrolmentmethods);
 
@@ -857,7 +878,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_enrolled_users from core_enrol_external without additional
      * parameters.
      */
-    public function test_get_enrolled_users_without_parameters() {
+    public function test_get_enrolled_users_without_parameters(): void {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_setup($capability);
 
@@ -865,7 +886,7 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -875,7 +896,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users from core_enrol_external with some parameters set.
      */
-    public function test_get_enrolled_users_with_parameters() {
+    public function test_get_enrolled_users_with_parameters(): void {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_setup($capability);
 
@@ -887,7 +908,7 @@ class externallib_test extends externallib_advanced_testcase {
         ));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set, we should only get the 3rd result, which is $user3.
         $this->assertCount(1, $enrolledusers);
@@ -900,7 +921,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users last course access.
      */
-    public function test_get_enrolled_users_including_lastcourseaccess() {
+    public function test_get_enrolled_users_including_lastcourseaccess(): void {
         global $DB;
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_setup($capability);
@@ -908,7 +929,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -927,7 +948,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->insert_record('user_lastaccess', $lastaccess);
 
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -940,7 +961,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_enrolled_users from core_enrol_external with capability to
      * viewparticipants removed.
      */
-    public function test_get_enrolled_users_without_capability() {
+    public function test_get_enrolled_users_without_capability(): void {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_setup($capability);
 
@@ -992,7 +1013,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users_with_capability without additional paramaters.
      */
-    public function test_get_enrolled_users_with_capability_without_parameters() {
+    public function test_get_enrolled_users_with_capability_without_parameters(): void {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_with_capability_setup($capability);
 
@@ -1009,7 +1030,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0];
@@ -1021,7 +1042,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users_with_capability
      */
-    public function test_get_enrolled_users_with_capability_with_parameters () {
+    public function test_get_enrolled_users_with_capability_with_parameters(): void {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_with_capability_setup($capability);
 
@@ -1042,7 +1063,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0]['users'];
@@ -1054,7 +1075,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users last course access.
      */
-    public function test_get_enrolled_users_with_capability_including_lastcourseaccess() {
+    public function test_get_enrolled_users_with_capability_including_lastcourseaccess(): void {
         global $DB;
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_with_capability_setup($capability);
@@ -1070,7 +1091,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0];
@@ -1092,7 +1113,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check the result set.
         $expecteduserlist = $result[0];
@@ -1104,7 +1125,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * dataProvider for test_submit_user_enrolment_form().
      */
-    public function submit_user_enrolment_form_provider() {
+    public static function submit_user_enrolment_form_provider(): array {
         $now = new \DateTime();
 
         $nextmonth = clone($now);
@@ -1173,13 +1194,13 @@ class externallib_test extends externallib_advanced_testcase {
      * @param bool $validationerror The validationerror we are expecting to receive from the webservice.
      * @dataProvider submit_user_enrolment_form_provider
      */
-    public function test_submit_user_enrolment_form($customdata, $expectedresult, $validationerror) {
+    public function test_submit_user_enrolment_form($customdata, $expectedresult, $validationerror): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
         $datagen = $this->getDataGenerator();
 
-        /** @var enrol_manual_plugin $manualplugin */
+        /** @var \enrol_manual_plugin $manualplugin */
         $manualplugin = enrol_get_plugin('manual');
 
         $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
@@ -1234,7 +1255,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $querystring = http_build_query($formdata, '', '&');
 
-        $result = \external_api::clean_returnvalue(
+        $result = external_api::clean_returnvalue(
                 core_enrol_external::submit_user_enrolment_form_returns(),
                 core_enrol_external::submit_user_enrolment_form($querystring)
         );
@@ -1252,13 +1273,13 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test for core_enrol_external::unenrol_user_enrolment().
      */
-    public function test_unenerol_user_enrolment() {
+    public function test_unenerol_user_enrolment(): void {
         global $DB;
 
         $this->resetAfterTest(true);
         $datagen = $this->getDataGenerator();
 
-        /** @var enrol_manual_plugin $manualplugin */
+        /** @var \enrol_manual_plugin $manualplugin */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotNull($manualplugin);
 
@@ -1299,13 +1320,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Invalid data by passing invalid ueid.
         $data = core_enrol_external::unenrol_user_enrolment(101010);
-        $data = \external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
         $this->assertFalse($data['result']);
         $this->assertNotEmpty($data['errors']);
 
         // Valid data.
         $data = core_enrol_external::unenrol_user_enrolment($ueid);
-        $data = \external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
         $this->assertTrue($data['result']);
         $this->assertEmpty($data['errors']);
 
@@ -1317,13 +1338,13 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test for core_enrol_external::test_search_users().
      */
-    public function test_search_users() {
+    public function test_search_users(): void {
         global $DB;
 
         $this->resetAfterTest(true);
         $datagen = $this->getDataGenerator();
 
-        /** @var enrol_manual_plugin $manualplugin */
+        /** @var \enrol_manual_plugin $manualplugin */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotNull($manualplugin);
 
@@ -1400,6 +1421,71 @@ class externallib_test extends externallib_advanced_testcase {
         // Search for invalid first name.
         $result = core_enrol_external::search_users($course1->id, 'yada yada', true, 0, 30);
         $this->assertCount(0, $result);
+    }
+
+    /**
+     * Test for core_enrol_external::search_users() when group mode is active.
+     * @covers ::search_users
+     */
+    public function test_search_users_groupmode(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $datagen = $this->getDataGenerator();
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'teacher'], MUST_EXIST);
+
+        $course = $datagen->create_course();
+
+        $student1 = $datagen->create_and_enrol($course);
+        $student2 = $datagen->create_and_enrol($course);
+        $student3 = $datagen->create_and_enrol($course);
+        $teacher1 = $datagen->create_and_enrol($course, 'teacher');
+        $teacher2 = $datagen->create_and_enrol($course, 'teacher');
+        $teacher3 = $datagen->create_and_enrol($course, 'teacher');
+        $teacher4 = $datagen->create_and_enrol($course, 'editingteacher');
+
+        // Create 2 groups.
+        $group1 = $datagen->create_group(['courseid' => $course->id]);
+        $group2 = $datagen->create_group(['courseid' => $course->id]);
+
+        // Add the users to the groups.
+        $datagen->create_group_member(['groupid' => $group1->id, 'userid' => $student1->id]);
+        $datagen->create_group_member(['groupid' => $group2->id, 'userid' => $student2->id]);
+        $datagen->create_group_member(['groupid' => $group2->id, 'userid' => $student3->id]);
+        $datagen->create_group_member(['groupid' => $group1->id, 'userid' => $teacher1->id]);
+        $datagen->create_group_member(['groupid' => $group2->id, 'userid' => $teacher1->id]);
+        $datagen->create_group_member(['groupid' => $group1->id, 'userid' => $teacher2->id]);
+
+        // Create the forum.
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record, ['groupmode' => SEPARATEGROUPS]);
+        $contextid = $DB->get_field('context', 'id', ['instanceid' => $forum->cmid, 'contextlevel' => CONTEXT_MODULE]);
+
+        $this->setUser($teacher1);
+        $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
+        $this->assertCount(5, $result);
+
+        $this->setUser($teacher2);
+        $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
+        $this->assertCount(3, $result);
+
+        $this->setUser($teacher3);
+        $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
+        $this->assertCount(0, $result);
+
+        $this->setUser($teacher4);
+        $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
+        $this->assertCount(7, $result);
+
+        // Now change the group mode to no groups.
+        set_coursemodule_groupmode($forum->cmid, NOGROUPS);
+        $this->setUser($teacher1);
+        $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
+        $this->assertCount(7, $result);
     }
 
     /**

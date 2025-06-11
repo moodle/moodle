@@ -121,7 +121,7 @@ final class libxml_errors_mgr {
         libxml_clear_errors();
     }
 
-    private function collect_errors ($filename=''){
+    private function collect_errors($filename=''){
         $errors = libxml_get_errors();
         static $error_types = array(
         LIBXML_ERR_ERROR => 'Error'
@@ -210,7 +210,6 @@ class cc_validate_type {
      * @return boolean
      */
     public function validate($element) {
-        $this->last_error = null;
         $celement   = realpath($element);
         $cvalidator = realpath($this->location.DIRECTORY_SEPARATOR.$this->type);
         $result = (empty($celement) || empty($cvalidator));

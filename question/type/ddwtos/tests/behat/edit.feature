@@ -27,6 +27,7 @@ Feature: Test editing a drag and drop into text questions
     And I should see "Choice [[1]]"
     And I should see "Choice [[2]]"
     And I should see "Choice [[3]]"
+    And I should see "Write the answers to be dragged into the gaps. You can include extra answers to increase difficulty." in the "Choices" "fieldset"
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"

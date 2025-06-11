@@ -70,14 +70,11 @@ Feature: The activity results block displays students in groups low scores as sc
     And I am on "Course 1" course homepage
 
   Scenario: Try to configure the block on the course page to show 1 low score
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 3" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I am on the "Course 1" course page logged in as student5
@@ -85,14 +82,11 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Average" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using full names
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 2" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
@@ -106,14 +100,11 @@ Feature: The activity results block displays students in groups low scores as sc
   Scenario: Try to configure the block on the course page to show multiple high scores using ID numbers
     Given the following config values are set as admin:
       | showuseridentity | idnumber,email |
-    And I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    And I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_nameformat | Display only ID numbers |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
@@ -126,14 +117,11 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Average" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using anonymous names
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_nameformat | Anonymous results |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"

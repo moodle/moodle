@@ -1,0 +1,61 @@
+.tiny_cloze .tiny_cloze_fraction {
+    max-width: fit-content;
+}
+.tiny_cloze img {
+    cursor: pointer;
+    width: 0.8rem;
+}
+.tiny_cloze .col-2 label {
+    margin-top: 0.5rem;
+}
+.tiny_cloze .error {
+    border-color: red;
+}
+
+.tiny_cloze .msg-error {
+    color: red;
+}
+
+.tiny_cloze_answers {
+    overflow-x: hidden;
+}
+
+.tiny_cloze_qtype {
+    overflow: auto;
+    position: relative;
+}
+
+.tiny_cloze_qtype .tiny_cloze_summary {
+    display: none;
+    left: 175px;
+    position: absolute;
+    top: 0;
+}
+
+.tiny_cloze_qtype input[type="radio"]:focus {
+    box-shadow: none;
+}
+
+.tiny_cloze_qtype input[type="radio"]:checked + label .tiny_cloze_summary {
+    display: inline;
+}
+
+input.tiny_cloze_marks.form-control {
+    width: 4em;
+}
+
+.tiny_cloze_answers .form-group img {
+    margin-top: .5rem;
+}
+
+.tiny_cloze_answers .form-group .icon_smallicon {
+    margin-right: 0.25rem;
+}
+
+.tiny_cloze_answers li:first-child .tiny_cloze_up {
+    display: none;
+}
+
+.tiny_cloze_answers li:last-child .tiny_cloze_down {
+    display: none;
+}

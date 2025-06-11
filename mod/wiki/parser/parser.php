@@ -44,16 +44,20 @@ defined('MOODLE_INTERNAL') || die();
  * @package mod_wiki
  */
 class wiki_parser_proxy {
-    private static $parsers = array();
-    private static $basepath = "";
+    /**
+     * @var array $parsers Array of parser instances
+     */
+    private static $parsers = [];
 
-    public static function parse(&$string, $type, $options = array()) {
-
-        if (empty(self::$basepath)) {
-            global $CFG;
-            self::$basepath = $CFG->dirroot . '/mod/wiki/parser/';
-        }
-
+    /**
+     * Parse a string using a specific parser
+     *
+     * @param string $string The string to parse
+     * @param string $type The parser type
+     * @param array $options The parser options
+     * @return mixed The parsed string or false if the parser type is not found
+     */
+    public static function parse(&$string, $type, $options = []) {
         $type = strtolower($type);
         self::$parsers[$type] = null; // Reset the current parser because it may have other options.
         if (self::create_parser_instance($type)) {
@@ -86,8 +90,14 @@ class wiki_parser_proxy {
     }
 
     private static function create_parser_instance($type) {
+        global $CFG;
+        $type = clean_param($type, PARAM_ALPHA);
         if (empty(self::$parsers[$type])) {
-            include_once(self::$basepath . "markups/$type.php");
+            $path = "$CFG->dirroot/mod/wiki/parser/markups/$type.php";
+            if (!file_exists($path)) {
+                throw new moodle_exception("Parser type $type not found");
+            }
+            include_once($path);
             $class = strtolower($type) . "_parser";
             if (class_exists($class)) {
                 self::$parsers[$type] = new $class;
@@ -207,7 +217,7 @@ abstract class generic_parser {
      * Rules processing function & callback
      */
 
-    protected final function rules(&$text, $rules = null) {
+    final protected function rules(&$text, $rules = null) {
         if ($rules === null) {
             $rules = array('except' => array());
         } else if (is_array($rules) && count($rules) > 1) {

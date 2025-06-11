@@ -36,10 +36,15 @@ class ADODB_pdo_sqlsrv extends ADODB_pdo
 		$parentDriver->fmtDate = "'Y-m-d'";
 	}
 
-	function BeginTrans()
+	function setTransactionMode( $transaction_mode )
 	{
-		$returnval = parent::BeginTrans();
-		return $returnval;
+		$this->_transmode  = $transaction_mode;
+		if (empty($transaction_mode)) {
+			$this->_connectionID->query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+			return;
+		}
+		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
+		$this->_connectionID->query("SET TRANSACTION ".$transaction_mode);
 	}
 
 	function MetaColumns($table, $normalize = true)
@@ -54,8 +59,7 @@ class ADODB_pdo_sqlsrv extends ADODB_pdo
 
 	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
-		$ret = ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
-		return $ret;
+		return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 	}
 
 	function ServerInfo()
@@ -167,15 +171,5 @@ class ADORecordSet_array_pdo_sqlsrv extends ADORecordSet_array_pdo
 
 		return $o;
 	}
-	
-	function SetTransactionMode( $transaction_mode )
-	{
-		$this->_transmode  = $transaction_mode;
-		if (empty($transaction_mode)) {
-			$this->_connectionID->query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
-			return;
-		}
-		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
-		$this->_connectionID->query("SET TRANSACTION ".$transaction_mode);
-	}
+
 }

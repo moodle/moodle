@@ -46,8 +46,8 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dateselector_test extends \advanced_testcase {
-    /** @var MoodleQuickForm Keeps reference of dummy form object */
+final class dateselector_test extends \advanced_testcase {
+    /** @var \MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
     /** @var array test fixtures */
     private $testvals;
@@ -124,7 +124,7 @@ class dateselector_test extends \advanced_testcase {
     /**
      * Testcase to check exportvalue
      */
-    public function test_exportvalue() {
+    public function test_exportvalue(): void {
         global $USER;
         $testvals = $this->testvals;
 
@@ -146,7 +146,7 @@ class dateselector_test extends \advanced_testcase {
     /**
      * Testcase to check onQuickformEvent
      */
-    public function test_onquickformevent() {
+    public function test_onquickformevent(): void {
         global $USER;
         $testvals = $this->testvals;
         // Get dummy form for data.
@@ -184,7 +184,7 @@ class temp_form_date extends moodleform {
     }
     /**
      * Returns form reference
-     * @return MoodleQuickForm
+     * @return \MoodleQuickForm
      */
     public function getform() {
         $mform = $this->_form;

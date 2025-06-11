@@ -23,18 +23,19 @@ Feature: View activity completion information in the Workshop activity
         | workshop | Music history | C1     | 1                  | 2          | 1              |
     And I am on the "Music history" "workshop activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Require grade       | Submission                                        |
+      | Receive a grade       | Submission                                        |
+      | Any grade             | 1                                                 |
     And I press "Save and return to course"
     And I edit assessment form in workshop "Music history" as:
       | id_description__idx_0_editor | Aspect1 |
     And I change phase in workshop "Music history" to "Submission phase"
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: The workshop module displays automatic completion conditions to teachers
     Given I am on the "Music history" "workshop activity" page
     Then "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items as a student
+  Scenario: Students can complete a workshop activity by achieving a passing grade
     Given I am on the "Music history" "workshop activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
@@ -65,11 +66,11 @@ Feature: View activity completion information in the Workshop activity
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the workshop activity as done but a teacher cannot
     Given I am on the "Music history" "workshop activity" page
     And I am on the "Music history" "workshop activity editing" page
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view
     And the manual completion button for "Music history" should be disabled

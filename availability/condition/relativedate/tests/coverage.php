@@ -18,14 +18,24 @@
  * Unit tests for the relative date condition.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Unit tests for the relative date condition.
+ *
+ * @package   availability_relativedate
+ * @copyright eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 return new class extends phpunit_coverage_info {
     /** @var array The list of folders relative to the plugin root to include in coverage generation. */
     protected $includelistfolders = ['classes'];
+    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
+    protected $excludelistfiles = ['version.php', 'lib.php'];
 };

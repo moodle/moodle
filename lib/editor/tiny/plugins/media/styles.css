@@ -33,3 +33,47 @@ iframe.mm_iframe {
     font-weight: 600;
     color: red;
 }
+
+.tiny_image_form .tiny_image_dropzone_container {
+    height: 200px;
+}
+
+.tiny_image_form .tiny_image_dropzone_container .dropzone-label {
+    font-size: 1.25rem;
+}
+
+.tiny_image_form .tiny_image_loader_container {
+    height: 200px;
+}
+
+.tiny_image_form  .tiny_image_preview_box {
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.tiny_image_form .tiny_image_deleteicon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    padding: 4px 5px 5px 9px;
+}
+
+.tiny_image_form .tiny_image_deleteicon .fa-trash {
+    color: #1d2125;
+}
+
+
+@media (max-width: 767px) {
+    .tiny_image_form .tiny_image_properties_col {
+        padding: 0;
+    }
+}

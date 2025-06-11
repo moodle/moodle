@@ -816,7 +816,12 @@ class Enum {
 	}
 }
 
-error_reporting(E_ALL & ~E_STRICT);
+if (PHP_VERSION_ID >= 70400) {
+  error_reporting(E_ALL);
+}
+else {
+  error_reporting(E_ALL & ~E_STRICT);
+}
 set_error_handler('_hx_error_handler', E_ALL);
 set_exception_handler('_hx_exception_handler');
 

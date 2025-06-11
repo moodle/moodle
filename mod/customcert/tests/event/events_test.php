@@ -31,7 +31,7 @@ namespace mod_customcert\event;
  * @copyright 2023 Mark Nelson <mdjnelson@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -238,7 +238,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers \mod_customcert\template::save_page
      */
-    public function test_updating_a_page() {
+    public function test_updating_a_page(): void {
         $template = \mod_customcert\template::create('Test name', \context_system::instance()->id);
         $pageid = $template->add_page();
 
@@ -273,7 +273,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers \mod_customcert\element::save_form_elements
      */
-    public function test_save_form_elements_insert() {
+    public function test_save_form_elements_insert(): void {
         $template = \mod_customcert\template::create('Test name', \context_system::instance()->id);
         $page1id = $template->add_page();
 
@@ -303,7 +303,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers \mod_customcert\element::save_form_elements
      */
-    public function test_save_form_elements_update() {
+    public function test_save_form_elements_update(): void {
         global $DB;
 
         $template = \mod_customcert\template::create('Test name', \context_system::instance()->id);
@@ -343,7 +343,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers \mod_customcert\element::copy_to_template
      */
-    public function test_copy_to_template() {
+    public function test_copy_to_template(): void {
         global $DB;
 
         $template = \mod_customcert\template::create('Test name', \context_system::instance()->id);

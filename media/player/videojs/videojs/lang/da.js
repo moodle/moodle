@@ -9,7 +9,7 @@ videojs.addLanguage('da', {
   "Loaded": "Indlæst",
   "Progress": "Status",
   "Fullscreen": "Fuldskærm",
-  "Non-Fullscreen": "Luk fuldskærm",
+  "Exit Fullscreen": "Luk fuldskærm",
   "Mute": "Uden lyd",
   "Unmute": "Med lyd",
   "Playback Rate": "Afspilningsrate",

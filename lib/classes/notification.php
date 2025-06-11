@@ -145,7 +145,7 @@ class notification {
     /**
      * Fetch all of the notifications in the stack and clear the stack.
      *
-     * @return array All of the notifications in the stack
+     * @return \core\output\notification[] All of the notifications in the stack
      */
     public static function fetch() {
         global $SESSION;

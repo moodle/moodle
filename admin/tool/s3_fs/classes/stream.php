@@ -44,7 +44,7 @@ class stream {
             throw new \file_exception('storedfilecannotread', '', $path);
         }
 
-        return \GuzzleHttp\Psr7\stream_for($resource);
+        return \GuzzleHttp\Psr7\Utils::streamFor($resource);
     }
 
     /**
@@ -52,6 +52,6 @@ class stream {
      * @return StreamInterface
      */
     public static function from_string($string) {
-        return \GuzzleHttp\Psr7\stream_for($string);
+        return \GuzzleHttp\Psr7\Utils::streamFor($string);
     }
 }

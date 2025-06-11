@@ -36,7 +36,7 @@ class launch_cache_session implements ICache {
      * @param string $key the launch id.
      * @return array|null the launch data.
      */
-    public function getLaunchData($key): ?array {
+    public function getLaunchData(string $key): ?array {
         global $SESSION;
         if (isset($SESSION->enrol_lti_launch[$key])) {
             return unserialize($SESSION->enrol_lti_launch[$key]);

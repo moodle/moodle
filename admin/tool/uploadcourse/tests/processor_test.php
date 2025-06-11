@@ -30,11 +30,12 @@ require_once($CFG->libdir . '/csvlib.class.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor_test extends \advanced_testcase {
+final class processor_test extends \advanced_testcase {
 
-    public function test_basic() {
+    public function test_basic(): void {
         global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $content = array(
             "shortname,fullname,summary",
@@ -58,7 +59,7 @@ class processor_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('course', array('shortname' => 'c2')));
     }
 
-    public function test_restore_template_course() {
+    public function test_restore_template_course(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -94,7 +95,7 @@ class processor_test extends \advanced_testcase {
         $this->assertTrue($found);
     }
 
-    public function test_restore_restore_file() {
+    public function test_restore_restore_file(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -109,11 +110,11 @@ class processor_test extends \advanced_testcase {
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
-        $options = array(
+        $options = [
             'mode' => tool_uploadcourse_processor::MODE_CREATE_NEW,
-            'restorefile' => __DIR__ . '/fixtures/backup.mbz',
-            'templatecourse' => 'DoesNotExist'  // Restorefile takes priority.
-        );
+            'restorefile' => self::get_fixture_path(__NAMESPACE__, 'backup.mbz'),
+            'templatecourse' => 'DoesNotExist',  // Restorefile takes priority.
+        ];
         $defaults = array('category' => '1');
 
         $p = new tool_uploadcourse_processor($cir, $options, $defaults);
@@ -131,9 +132,10 @@ class processor_test extends \advanced_testcase {
         $this->assertTrue($found);
     }
 
-    public function test_shortname_template() {
+    public function test_shortname_template(): void {
         global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $content = array(
             "shortname,fullname,summary,idnumber",
@@ -156,7 +158,7 @@ class processor_test extends \advanced_testcase {
         $this->assertEquals('ID123: Course 1', $c->shortname);
     }
 
-    public function test_empty_csv() {
+    public function test_empty_csv(): void {
         $this->resetAfterTest(true);
 
         $content = array();
@@ -171,7 +173,7 @@ class processor_test extends \advanced_testcase {
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 
-    public function test_not_enough_columns() {
+    public function test_not_enough_columns(): void {
         $this->resetAfterTest(true);
 
         $content = array(
@@ -189,7 +191,7 @@ class processor_test extends \advanced_testcase {
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 
-    public function test_preview() {
+    public function test_preview(): void {
         global $DB;
         $this->resetAfterTest(true);
 

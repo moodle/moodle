@@ -31,7 +31,12 @@ namespace core_question\local\bank;
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class column_base {
+abstract class column_base extends view_component {
+
+    /**
+     * @var string A separator for joining column attributes together into a unique ID string.
+     */
+    const ID_SEPARATOR = '-';
 
     /**
      * @var view $qbank the question bank view we are helping to render.
@@ -41,20 +46,22 @@ abstract class column_base {
     /** @var bool determine whether the column is td or th. */
     protected $isheading = false;
 
-    /**
-     * Constructor.
-     * @param view $qbank the question bank view we are helping to render.
-     */
-    public function __construct(view $qbank) {
-        $this->qbank = $qbank;
-        $this->init();
-    }
+    /** @var bool determine whether the column is visible */
+    public $isvisible = true;
 
     /**
-     * A chance for subclasses to initialise themselves, for example to load lang strings,
-     * without having to override the constructor.
+     * Return an instance of this column, based on the column name.
+     *
+     * In the case of the base class, we don't actually use the column name since the class represents one specific column.
+     * However, sub-classes may use the column name as an additional constructor to the parameter.
+     *
+     * @param view $view Question bank view
+     * @param string $columnname The column name for this instance, as returned by {@see get_column_name()}
+     * @param bool $ingoremissing Whether to ignore if the class does not exist.
+     * @return column_base|null An instance of this class.
      */
-    protected function init(): void {
+    public static function from_column_name(view $view, string $columnname, bool $ingoremissing = false): ?column_base {
+        return new static($view);
     }
 
     /**
@@ -94,8 +101,11 @@ abstract class column_base {
 
     /**
      * Output the column header cell.
+     *
+     * @param column_action_base[] $columnactions A list of column actions to include in the header.
+     * @param string $width A CSS width property value.
      */
-    public function display_header(): void {
+    public function display_header(array $columnactions = [], string $width = ''): void {
         global $PAGE;
         $renderer = $PAGE->get_renderer('core_question', 'bank');
 
@@ -103,7 +113,7 @@ abstract class column_base {
         $data['sortable'] = true;
         $data['extraclasses'] = $this->get_classes();
         $sortable = $this->is_sortable();
-        $name = get_class($this);
+        $name = str_replace('\\', '__', get_class($this));
         $title = $this->get_title();
         $tip = $this->get_title_tip();
         $links = [];
@@ -129,6 +139,17 @@ abstract class column_base {
         $help = $this->help_icon();
         if ($help) {
             $data['help'] = $help->export_for_template($renderer);
+        }
+
+        $data['colname'] = $this->get_column_name();
+        $data['columnid'] = $this->get_column_id();
+        $data['name'] = $title;
+        $data['class'] = $name;
+        $data['width'] = $width;
+        if (!empty($columnactions)) {
+            $actions = array_map(fn($columnaction) => $columnaction->get_action_menu_link($this), $columnactions);
+            $actionmenu = new \action_menu($actions);
+            $data['actionmenu'] = $actionmenu->export_for_template($renderer);
         }
 
         echo $renderer->render_column_header($data);
@@ -160,19 +181,20 @@ abstract class column_base {
 
     /**
      * Get a link that changes the sort order, and indicates the current sort state.
-     * @param string $sort the column to sort on.
+     *
+     * @param string $sortname the column to sort on.
      * @param string $title the link text.
      * @param string $tip the link tool-tip text. If empty, defaults to title.
      * @param bool $defaultreverse whether the default sort order for this column is descending, rather than ascending.
      * @return string
      */
-    protected function make_sort_link($sort, $title, $tip, $defaultreverse = false): string {
+    protected function make_sort_link($sortname, $title, $tip, $defaultreverse = false): string {
         global $PAGE;
         $sortdata = [];
-        $currentsort = $this->qbank->get_primary_sort_order($sort);
+        $currentsort = $this->qbank->get_primary_sort_order($sortname);
         $newsortreverse = $defaultreverse;
         if ($currentsort) {
-            $newsortreverse = $currentsort > 0;
+            $newsortreverse = $currentsort == SORT_ASC;
         }
         if (!$tip) {
             $tip = $title;
@@ -185,28 +207,31 @@ abstract class column_base {
 
         $link = $title;
         if ($currentsort) {
-            $link .= $this->get_sort_icon($currentsort < 0);
+            $link .= $this->get_sort_icon($currentsort == SORT_DESC);
         }
 
-        $sortdata['sorturl'] = $this->qbank->new_sort_url($sort, $newsortreverse);
+        $sortdata['sorturl'] = $this->qbank->new_sort_url($sortname, $newsortreverse);
+        $sortdata['sortname'] = $sortname;
         $sortdata['sortcontent'] = $link;
         $sortdata['sorttip'] = $tip;
+        $sortdata['sortorder'] = $newsortreverse ? SORT_DESC : SORT_ASC;
         $renderer = $PAGE->get_renderer('core_question', 'bank');
         return $renderer->render_column_sort($sortdata);
 
     }
 
     /**
-     * Get an icon representing the corrent sort state.
+     * Get an icon representing the current sort state.
+     *
      * @param bool $reverse sort is descending, not ascending.
      * @return string HTML image tag.
      */
     protected function get_sort_icon($reverse): string {
         global $OUTPUT;
         if ($reverse) {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', ['class' => 'iconsort']);
+            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'));
         } else {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', ['class' => 'iconsort']);
+            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'));
         }
     }
 
@@ -229,7 +254,10 @@ abstract class column_base {
      */
     protected function display_start($question, $rowclasses): void {
         $tag = 'td';
-        $attr = ['class' => $this->get_classes()];
+        $attr = [
+            'class' => $this->get_classes(),
+            'data-columnid' => $this->get_column_id(),
+        ];
         if ($this->isheading) {
             $tag = 'th';
             $attr['scope'] = 'row';
@@ -268,12 +296,39 @@ abstract class column_base {
     }
 
     /**
+     * Return a unique ID for this column object.
+     *
+     * This is constructed using the class name and get_column_name(), which must be unique.
+     *
+     * The combination of these attributes allows the object to be reconstructed, by splitting the ID into its constituent
+     * parts then calling {@see from_column_name()}, like this:
+     * [$class, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+     * $column = $class::from_column_name($qbank, $columnname);
+     * Including 2 as the $limit parameter for explode() is a good idea for safely, in case a plugin defines a column with the
+     * ID_SEPARATOR in the column name.
+     *
+     * @return string The column ID.
+     */
+    final public function get_column_id(): string {
+        return implode(self::ID_SEPARATOR, [static::class, $this->get_column_name()]);
+    }
+
+    /**
      * Any extra class names you would like applied to every cell in this column.
      *
      * @return array
      */
     public function get_extra_classes(): array {
         return [];
+    }
+
+    /**
+     * Return the default column width in pixels.
+     *
+     * @return int
+     */
+    public function get_default_width(): int {
+        return 120;
     }
 
     /**
@@ -297,30 +352,10 @@ abstract class column_base {
         echo \html_writer::end_tag($tag);
     }
 
-    /**
-     * Return an array 'table_alias' => 'JOIN clause' to bring in any data that
-     * this column required.
-     *
-     * The return values for all the columns will be checked. It is OK if two
-     * columns join in the same table with the same alias and identical JOIN clauses.
-     * If to columns try to use the same alias with different joins, you get an error.
-     * The only table included by default is the question table, which is aliased to 'q'.
-     *
-     * It is importnat that your join simply adds additional data (or NULLs) to the
-     * existing rows of the query. It must not cause additional rows.
-     *
-     * @return array 'table_alias' => 'JOIN clause'
-     */
     public function get_extra_joins(): array {
         return [];
     }
 
-    /**
-     * Use table alias 'q' for the question table, or one of the
-     * ones from get_extra_joins. Every field requested must specify a table prefix.
-     *
-     * @return array fields required.
-     */
     public function get_required_fields(): array {
         return [];
     }
@@ -428,4 +463,16 @@ abstract class column_base {
         }
     }
 
+    /**
+     * Output the column with an example value.
+     *
+     * By default, this will call $this->display() using whatever dummy data is passed in. Columns can override this
+     * to provide example output without requiring valid data.
+     *
+     * @param \stdClass $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    public function display_preview(\stdClass $question, string $rowclasses): void {
+        $this->display($question, $rowclasses);
+    }
 }

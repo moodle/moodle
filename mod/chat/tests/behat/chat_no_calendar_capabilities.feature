@@ -14,6 +14,7 @@ Feature: Chat with no calendar capabilites
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And I enable "chat" "mod" plugin
     And the following "activity" exists:
       | activity                      | chat                  |
       | course                        | C1                    |

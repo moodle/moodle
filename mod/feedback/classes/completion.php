@@ -15,16 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_completion
- *
- * @package   mod_feedback
- * @copyright 2016 Marina Glancy
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * Collects information and methods about feedback completion (either complete.php or show_entries.php)
  *
  * @package   mod_feedback
@@ -92,6 +82,11 @@ class mod_feedback_completion extends mod_feedback_structure {
                 $params['userid'] = $nonanonymouseuserid;
             }
             $this->completed = $DB->get_record('feedback_completed', $params, '*', MUST_EXIST);
+
+            if (!groups_user_groups_visible($this->feedback->course, $this->completed->userid, $cm)) {
+                throw new moodle_exception('nopermissiontoshow');
+            }
+
             $this->courseid = $this->completed->courseid;
         }
     }
@@ -553,13 +548,9 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $SESSION, $DB, $USER;
 
         $feedbackcompleted = $this->find_last_completed();
+        // If no record is found, change false to null for safe use in feedback_save_tmp_values.
+        $feedbackcompleted = !$feedbackcompleted ? null : $feedbackcompleted;
         $feedbackcompletedtmp = $this->get_current_completed_tmp();
-
-        if (feedback_check_is_switchrole()) {
-            // We do not actually save anything if the role is switched, just delete temporary values.
-            $this->delete_completedtmp();
-            return;
-        }
 
         // Save values.
         $completedid = feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted);
@@ -579,19 +570,6 @@ class mod_feedback_completion extends mod_feedback_structure {
         if ((isloggedin() || $USER->id != $this->userid) && $completion->is_enabled($this->cm) &&
                 $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->feedback->completionsubmit) {
             $completion->update_state($this->cm, COMPLETION_COMPLETE, $this->userid);
-        }
-    }
-
-    /**
-     * Deletes the temporary completed and all related temporary values
-     */
-    protected function delete_completedtmp() {
-        global $DB;
-
-        if ($completedtmp = $this->get_current_completed_tmp()) {
-            $DB->delete_records('feedback_valuetmp', ['completed' => $completedtmp->id]);
-            $DB->delete_records('feedback_completedtmp', ['id' => $completedtmp->id]);
-            $this->completedtmp = null;
         }
     }
 

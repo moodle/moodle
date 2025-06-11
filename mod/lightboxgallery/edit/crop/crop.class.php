@@ -77,7 +77,7 @@ class edit_crop extends edit_base {
 
         if ($width > 0 && $height > 0) {
             $cropped = $this->imageobj->create_new_image($width, $height);
-            imagecopybicubic($cropped, $this->imageobj->image, 0, 0, $x1, $y1, $width, $height, $width, $height);
+            imagecopyresampled($cropped, $this->imageobj->image, 0, 0, $x1, $y1, $width, $height, $width, $height);
             $this->imageobj->save_image($cropped);
         }
     }

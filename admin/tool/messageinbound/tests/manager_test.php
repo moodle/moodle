@@ -31,10 +31,11 @@ use tool_messageinbound\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends provider_testcase {
+final class manager_test extends provider_testcase {
 
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
         $this->resetAfterTest();
 
         // Pretend the system is enabled.
@@ -43,7 +44,7 @@ class manager_test extends provider_testcase {
         $CFG->messageinbound_domain = 'example.com';
     }
 
-    public function test_tidy_old_verification_failures() {
+    public function test_tidy_old_verification_failures(): void {
         global $DB;
 
         $now = time();

@@ -81,7 +81,7 @@ switch ($config->type) {
 }
 
 if ($import && $module) {
-    confirm_sesskey();
+    require_sesskey();
 
     $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($importinfo->get_resource(), $module, $strategy);
     if (is_null($handlerinfo)) {

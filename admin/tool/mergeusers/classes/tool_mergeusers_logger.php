@@ -61,7 +61,7 @@ class tool_mergeusers_logger {
             if (CLI_SCRIPT) {
                 cli_error($msg);
             } else {
-                print_error($msg, null, new moodle_url('/admin/tool/mergeusers/index.php'));
+                moodle_exception($msg, null, new moodle_url('/admin/tool/mergeusers/index.php'));
             }
         }
     }

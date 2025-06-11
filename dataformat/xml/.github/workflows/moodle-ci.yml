@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:14
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -22,12 +22,12 @@ jobs:
         include:
           - php: '8.0'
             moodle-branch: 'MOODLE_401_STABLE'
-          - php: '8.1'
-            moodle-branch: 'MOODLE_403_STABLE'
           - php: '8.2'
             moodle-branch: 'MOODLE_404_STABLE'
           - php: '8.3'
             moodle-branch: 'MOODLE_405_STABLE'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_500_STABLE'
 
     steps:
       - name: Check out repository code

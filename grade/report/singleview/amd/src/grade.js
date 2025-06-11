@@ -14,101 +14,50 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A small modal to search grade items within the gradebook.
+ * Allow the user to search for grades within the singleview report.
  *
- * @module    gradereport_singleview
- * @copyright 2022 Mathew May <mathew.solutions>
+ * @module    gradereport_singleview/grade
+ * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import GradeItemSearch from 'core_grades/comboboxsearch/grade';
 
-import Pending from 'core/pending';
-import * as Templates from 'core/templates';
-import * as Repository from 'core_grades/searchwidget/repository';
-import * as WidgetBase from 'core_grades/searchwidget/basewidget';
-import $ from 'jquery';
-import * as Selectors from 'core_grades/searchwidget/selectors';
-
-/**
- * Our entry point into starting to build the search widget.
- * It'll eventually, based upon the listeners, open the search widget and allow filtering.
- *
- * @method init
- */
-export const init = () => {
-    const pendingPromise = new Pending();
-    registerListenerEvents();
-    pendingPromise.resolve();
+// Define our standard lookups.
+const selectors = {
+    component: '.grade-search',
+    courseid: '[data-region="courseid"]',
 };
+const component = document.querySelector(selectors.component);
 
-/**
- * Register grade item search widget related event listeners.
- *
- * @method registerListenerEvents
- */
-const registerListenerEvents = () => {
-    let {bodyPromiseResolver, bodyPromise} = WidgetBase.promisesAndResolvers();
-    const dropdownMenuContainer = document.querySelector(Selectors.elements.getSearchWidgetDropdownSelector('grade'));
+export default class GradeItems extends GradeItemSearch {
 
-    // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
-    $(Selectors.elements.getSearchWidgetSelector('grade')).on('show.bs.dropdown', async(e) => {
-        const courseID = e.relatedTarget.dataset.courseid;
-        // Display a loading icon in the dropdown menu container until the body promise is resolved.
-        await WidgetBase.showLoader(dropdownMenuContainer);
+    courseID = component.querySelector(selectors.courseid).dataset.courseid;
 
-        // If an error occurs while fetching the data, display the error within the modal.
-        const data = await Repository.gradeitemFetch(courseID).catch(async(e) => {
-            const errorTemplateData = {
-                'errormessage': e.message
-            };
-            bodyPromiseResolver(
-                await Templates.render('core_grades/searchwidget/error', errorTemplateData)
-            );
-        });
+    /**
+     * Construct the class.
+     *
+     * @param {string} baseUrl The base URL for the page.
+     */
+    constructor(baseUrl) {
+        super();
+        this.baseUrl = baseUrl;
+    }
 
-        // Early return if there is no module data.
-        if (data === []) {
-            return;
-        }
+    static init(baseUrl) {
+        return new GradeItems(baseUrl);
+    }
 
-        await WidgetBase.init(
-            dropdownMenuContainer,
-            bodyPromise,
-            data.gradeitems,
-            searchGradeitems()
-        );
-
-        // Resolvers for passed functions in the modal creation.
-        bodyPromiseResolver(Templates.render('gradereport_singleview/gradesearch_body', []));
-    });
-
-    // Handle the 'hide.bs.dropdown' event (Fired when the dropdown menu is being closed).
-    $(Selectors.elements.getSearchWidgetSelector('grade')).on('hide.bs.dropdown', () => {
-        // Reset the state once the grade item menu dropdown is closed.
-        dropdownMenuContainer.innerHTML = '';
-    });
-};
-
-/**
- * Define how we want to search and filter grade items when the user decides to input a search value.
- *
- * @method registerListenerEvents
- * @returns {function(): function(*, *): (*)}
- */
-const searchGradeitems = () => {
-    return () => {
-        return (modules, searchTerm) => {
-            if (searchTerm === '') {
-                return modules;
-            }
-            searchTerm = searchTerm.toLowerCase();
-            const searchResults = [];
-            modules.forEach((module) => {
-                const moduleName = module.name.toLowerCase();
-                if (moduleName.includes(searchTerm)) {
-                    searchResults.push(module);
-                }
-            });
-            return searchResults;
-        };
-    };
-};
+    /**
+     * Build up the link that is dedicated to a particular result.
+     *
+     * @param {Number} gradeID The ID of the grade item selected.
+     * @returns {string|*}
+     */
+    selectOneLink(gradeID) {
+        const url = new URL(this.baseUrl);
+        url.searchParams.set('gradesearchvalue', this.getSearchTerm());
+        url.searchParams.set('item', 'grade');
+        url.searchParams.set('itemid', gradeID);
+        return url.toString();
+    }
+}

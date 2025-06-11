@@ -39,11 +39,11 @@ Feature: In a lesson, rich content should have annotations.
       | user     | course | role    |
       | student1 | C1     | student |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name             | intro                                     | introformat | course   | section |
+      | lesson   | Test lesson      | <p>This is a description for a lesson</p> | 1           | C1       | 1       |
     When I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name            | Test lesson |
-      | Description     | <p>This is a description for a lesson</p> |
     And I add 2 content pages to lesson "Test lesson"
     And I log out
     And I log in as "teacher1"

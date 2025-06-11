@@ -22,7 +22,7 @@ require_once('provider.php');
 require_login();
 
 if (!is_siteadmin($USER->id)) {
-    print_error('no_permission', 'local_lsu', '/my');
+    moodle_exception('no_permission', 'local_lsu', '/my');
 }
 
 $provider = new lsu_enrollment_provider();

@@ -20,7 +20,7 @@
  * This file is part of Moodle's cache API, affectionately called MUC.
  * It contains the components that are requried in order to use caching.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/cache/locallib.php');
+use core_cache\store;
 
 /**
  * Override the default cache configuration for our own maniacal purposes.
@@ -41,7 +41,6 @@ require_once($CFG->dirroot.'/cache/locallib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_config_testing extends cache_config_writer {
-
     /**
      * Creates the default configuration and saves it.
      *
@@ -57,7 +56,7 @@ class cache_config_testing extends cache_config_writer {
         // HACK ALERT.
         // We probably need to come up with a better way to create the default stores, or at least ensure 100% that the
         // default store plugins are protected from deletion.
-        $writer = new self;
+        $writer = new self();
         $writer->configstores = self::get_default_stores();
         $writer->configdefinitions = self::locate_definitions();
         $defaultapplication = 'default_application';
@@ -65,50 +64,50 @@ class cache_config_testing extends cache_config_writer {
         $appdefine = defined('TEST_CACHE_USING_APPLICATION_STORE') ? TEST_CACHE_USING_APPLICATION_STORE : false;
         if ($appdefine !== false && preg_match('/^[a-zA-Z][a-zA-Z0-9_]+$/', $appdefine)) {
             $expectedstore = $appdefine;
-            $file = $CFG->dirroot.'/cache/stores/'.$appdefine.'/lib.php';
-            $class = 'cachestore_'.$appdefine;
+            $file = $CFG->dirroot . '/cache/stores/' . $appdefine . '/lib.php';
+            $class = 'cachestore_' . $appdefine;
             if (file_exists($file)) {
                 require_once($file);
             }
             if (class_exists($class) && $class::ready_to_be_used_for_testing()) {
-                /* @var cache_store $class */
-                $writer->configstores['test_application'] = array(
+                /* @var store $class */
+                $writer->configstores['test_application'] = [
                     'name' => 'test_application',
                     'plugin' => $expectedstore,
                     'modes' => $class::get_supported_modes(),
                     'features' => $class::get_supported_features(),
-                    'configuration' => $class::unit_test_configuration()
-                );
+                    'configuration' => $class::unit_test_configuration(),
+                ];
 
                 $defaultapplication = 'test_application';
             }
         }
 
-        $writer->configmodemappings = array(
-            array(
-                'mode' => cache_store::MODE_APPLICATION,
+        $writer->configmodemappings = [
+            [
+                'mode' => store::MODE_APPLICATION,
                 'store' => $defaultapplication,
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_SESSION,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_SESSION,
                 'store' => 'default_session',
-                'sort' => -1
-            ),
-            array(
-                'mode' => cache_store::MODE_REQUEST,
+                'sort' => -1,
+            ],
+            [
+                'mode' => store::MODE_REQUEST,
                 'store' => 'default_request',
-                'sort' => -1
-            )
-        );
-        $writer->configlocks = array(
-            'default_file_lock' => array(
+                'sort' => -1,
+            ],
+        ];
+        $writer->configlocks = [
+            'default_file_lock' => [
                 'name' => 'cachelock_file_default',
                 'type' => 'cachelock_file',
                 'dir' => 'filelocks',
-                'default' => true
-            )
-        );
+                'default' => true,
+            ],
+        ];
 
         $factory = cache_factory::instance();
         // We expect the cache to be initialising presently. If its not then something has gone wrong and likely
@@ -135,13 +134,12 @@ class cache_config_testing extends cache_config_writer {
     protected static function get_config_file_path() {
         global $CFG;
         // We always use this path.
-        $configpath = $CFG->dataroot.'/muc/config.php';
+        $configpath = $CFG->dataroot . '/muc/config.php';
 
         if (!empty($CFG->altcacheconfigpath)) {
-
             // No need to check we are within a test here, this is the cache config class that gets used
             // only when one of those is true.
-            if  (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) {
+            if (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) {
                 // TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH has not being defined or is false, we want to use the default.
                 return $configpath;
             }
@@ -149,7 +147,7 @@ class cache_config_testing extends cache_config_writer {
             $path = $CFG->altcacheconfigpath;
             if (is_dir($path) && is_writable($path)) {
                 // Its a writable directory, thats fine. Convert it to a file.
-                $path = $CFG->altcacheconfigpath.'/cacheconfig.php';
+                $path = $CFG->altcacheconfigpath . '/cacheconfig.php';
             }
             if (is_readable($path)) {
                 $directory = dirname($configpath);
@@ -180,13 +178,13 @@ class cache_config_testing extends cache_config_writer {
     public function phpunit_add_definition($area, array $properties, $addmapping = true) {
         if (!array_key_exists('overrideclass', $properties)) {
             switch ($properties['mode']) {
-                case cache_store::MODE_APPLICATION:
+                case store::MODE_APPLICATION:
                     $properties['overrideclass'] = 'cache_phpunit_application';
                     break;
-                case cache_store::MODE_SESSION:
+                case store::MODE_SESSION:
                     $properties['overrideclass'] = 'cache_phpunit_session';
                     break;
-                case cache_store::MODE_REQUEST:
+                case store::MODE_REQUEST:
                     $properties['overrideclass'] = 'cache_phpunit_request';
                     break;
             }
@@ -194,13 +192,13 @@ class cache_config_testing extends cache_config_writer {
         $this->configdefinitions[$area] = $properties;
         if ($addmapping) {
             switch ($properties['mode']) {
-                case cache_store::MODE_APPLICATION:
+                case store::MODE_APPLICATION:
                     $this->phpunit_add_definition_mapping($area, 'default_application', 0);
                     break;
-                case cache_store::MODE_SESSION:
+                case store::MODE_SESSION:
                     $this->phpunit_add_definition_mapping($area, 'default_session', 0);
                     break;
-                case cache_store::MODE_REQUEST:
+                case store::MODE_REQUEST:
                     $this->phpunit_add_definition_mapping($area, 'default_request', 0);
                     break;
             }
@@ -219,7 +217,7 @@ class cache_config_testing extends cache_config_writer {
      * Removes the configured stores so that there are none available.
      */
     public function phpunit_remove_stores() {
-        $this->configstores = array();
+        $this->configstores = [];
     }
 
     /**
@@ -234,19 +232,31 @@ class cache_config_testing extends cache_config_writer {
         if (!$nativettl) {
             require_once(__DIR__ . '/cachestore_file_with_ttl_wrappers.php');
         }
-        $this->configstores[$name] = array(
+        $this->configstores[$name] = [
             'name' => $name,
             'plugin' => 'file',
-            'configuration' => array(
-                'path' => ''
-            ),
+            'configuration' => [
+                'path' => '',
+            ],
             'features' => 6,
             'modes' => 3,
             'mappingsonly' => false,
             'class' => $nativettl ? 'cachestore_file' : 'cachestore_file_with_ttl_wrappers',
             'default' => false,
-            'lock' => 'cachelock_file_default'
-        );
+            'lock' => 'cachelock_file_default',
+        ];
+    }
+
+    /**
+     * Hacks the in-memory configuration for a store.
+     *
+     * @param string $store Name of store to edit e.g. 'default_application'
+     * @param array $configchanges List of config changes
+     */
+    public function phpunit_edit_store_config(string $store, array $configchanges): void {
+        foreach ($configchanges as $name => $value) {
+            $this->configstores[$store]['configuration'][$name] = $value;
+        }
     }
 
     /**
@@ -255,16 +265,16 @@ class cache_config_testing extends cache_config_writer {
      * @param string $name
      */
     public function phpunit_add_session_store($name) {
-        $this->configstores[$name] = array(
+        $this->configstores[$name] = [
             'name' => $name,
             'plugin' => 'session',
-            'configuration' => array(),
+            'configuration' => [],
             'features' => 14,
             'modes' => 2,
             'default' => true,
             'class' => 'cachestore_session',
             'lock' => 'cachelock_file_default',
-        );
+        ];
     }
 
     /**
@@ -278,11 +288,11 @@ class cache_config_testing extends cache_config_writer {
      * @param int $sort
      */
     public function phpunit_add_definition_mapping($definition, $store, $sort) {
-        $this->configdefinitionmappings[] = array(
+        $this->configdefinitionmappings[] = [
             'store' => $store,
             'definition' => $definition,
-            'sort' => (int)$sort
-        );
+            'sort' => (int)$sort,
+        ];
     }
 
     /**
@@ -292,7 +302,7 @@ class cache_config_testing extends cache_config_writer {
      */
     public function get_site_identifier() {
         global $CFG;
-        return $CFG->wwwroot.'phpunit';
+        return $CFG->wwwroot . 'phpunit';
     }
 
     /**
@@ -351,7 +361,7 @@ class cache_phpunit_dummy_object extends stdClass implements cacheable_object {
      * @return array
      */
     public function prepare_to_cache() {
-        return array($this->property1.'_ptc', $this->property2.'_ptc', $this->propertytime);
+        return [$this->property1 . '_ptc', $this->property2 . '_ptc', $this->propertytime];
     }
     /**
      * Returns this object from the cache
@@ -365,9 +375,8 @@ class cache_phpunit_dummy_object extends stdClass implements cacheable_object {
             do {
                 $time = microtime(true);
             } while ($time == $data[2]);
-
         }
-        return new cache_phpunit_dummy_object(array_shift($data).'_wfc', array_shift($data).'_wfc', $time);
+        return new cache_phpunit_dummy_object(array_shift($data) . '_wfc', array_shift($data) . '_wfc', $time);
     }
 }
 
@@ -395,7 +404,7 @@ class cache_phpunit_dummy_datasource implements cache_data_source {
      * @return string
      */
     public function load_for_cache($key) {
-        return $key.' has no value really.';
+        return $key . ' has no value really.';
     }
 
     /**
@@ -405,9 +414,9 @@ class cache_phpunit_dummy_datasource implements cache_data_source {
      * @return array
      */
     public function load_many_for_cache(array $keys) {
-        $return = array();
+        $return = [];
         foreach ($keys as $key) {
-            $return[$key] = $key.' has no value really.';
+            $return[$key] = $key . ' has no value really.';
         }
         return $return;
     }
@@ -422,6 +431,10 @@ class cache_phpunit_dummy_datasource implements cache_data_source {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_phpunit_application extends cache_application {
+    #[\Override]
+    public function get_store() {
+        return parent::get_store();
+    }
 
     /**
      * Returns the class of the store immediately associated with this cache.
@@ -470,9 +483,13 @@ class cache_phpunit_application extends cache_application {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_phpunit_session extends cache_session {
-
     /** @var Static member used for emulating the behaviour of session_id() during the tests. */
     protected static $sessionidmockup = 'phpunitmockupsessionid';
+
+    #[\Override]
+    public function get_store() {
+        return parent::get_store();
+    }
 
     /**
      * Returns the class of the store immediately associated with this cache.
@@ -525,6 +542,10 @@ class cache_phpunit_session extends cache_session {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_phpunit_request extends cache_request {
+    #[\Override]
+    public function get_store() {
+        return parent::get_store();
+    }
 
     /**
      * Returns the class of the store immediately associated with this cache.

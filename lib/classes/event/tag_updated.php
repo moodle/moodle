@@ -74,28 +74,6 @@ class tag_updated extends base {
     }
 
     /**
-     * Set the legacy data used for add_to_log().
-     *
-     * @param array $logdata
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        if (isset($this->legacylogdata)) {
-            return $this->legacylogdata;
-        }
-
-        return array($this->courseid, 'tag', 'update', 'index.php?id='. $this->objectid, $this->other['name']);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

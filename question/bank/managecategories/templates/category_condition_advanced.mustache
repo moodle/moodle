@@ -1,0 +1,36 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/category_condition_advanced
+
+    @deprecated since Moodle 4.3
+    @todo Final deprecation on Moodle 4.7 MDL-78090
+
+    Example context (json):
+    {
+        "displaydata": [
+          {
+                "checked": "checked attribute"
+          }
+        ]
+    }
+}}
+<div class="category_condition_advanced">
+    <input type="hidden" name="recurse" value="0" id="recurse_off">
+    <input id="recurse_on" class="searchoptions me-1" type="checkbox" value="1" name="recurse" {{{checked}}}>
+    <label for="recurse_on">{{#str}} includesubcategories, question{{/str}}</label>
+</div>

@@ -18,18 +18,18 @@
  * Language strings.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['after'] = ' after ';
 $string['before'] = ' before ';
+$string['datecompletion'] = 'after completion of activity';
 $string['dateend'] = 'before course end date';
 $string['dateendafter'] = 'after course end date';
-$string['dateenrol'] = 'after user enrolment date';
 $string['dateendenrol'] = 'after enrolment method end date';
-$string['datecompletion'] = 'after completion of activity';
+$string['dateenrol'] = 'after user enrolment date';
 $string['datestart'] = 'after course start date';
 $string['datestartbefore'] = 'before course start date';
 $string['day'] = 'day';

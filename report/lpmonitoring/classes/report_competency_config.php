@@ -70,18 +70,18 @@ class report_competency_config extends \core\persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'competencyframeworkid' => array(
-                'type' => PARAM_INT
-            ),
-            'scaleid' => array(
-                'type' => PARAM_INT
-            ),
-            'scaleconfiguration' => array(
+        return [
+            'competencyframeworkid' => [
+                'type' => PARAM_INT,
+            ],
+            'scaleid' => [
+                'type' => PARAM_INT,
+            ],
+            'scaleconfiguration' => [
                 'type' => PARAM_RAW,
-                'default' => ''
-            )
-        );
+                'default' => '',
+            ],
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class report_competency_config extends \core\persistent {
      * @return \grade_scale
      */
     public function get_scale() {
-        $scale = \grade_scale::fetch(array('id' => $this->get('scaleid')));
+        $scale = \grade_scale::fetch(['id' => $this->get('scaleid')]);
         if ($scale) {
             $scale->load_items();
         }
@@ -106,9 +106,9 @@ class report_competency_config extends \core\persistent {
     protected function validate_competencyframeworkid($value) {
         global $DB;
 
-        $params = array(
-            'id' => $value
-        );
+        $params = [
+            'id' => $value,
+        ];
 
         if (!$DB->record_exists_select(competency_framework::TABLE, 'id = :id', $params)) {
             return new lang_string('invalidframework', 'report_lpmonitoring');
@@ -127,7 +127,7 @@ class report_competency_config extends \core\persistent {
         global $DB;
 
         // Always validate that the scale exists.
-        if (!$DB->record_exists_select('scale', 'id = :id', array('id' => $value))) {
+        if (!$DB->record_exists_select('scale', 'id = :id', ['id' => $value])) {
             return new lang_string('invalidscaleid', 'error');
         }
 
@@ -185,7 +185,7 @@ class report_competency_config extends \core\persistent {
         $sql = 'SELECT *
                   FROM {' . self::TABLE . '}
                  WHERE competencyframeworkid = ? AND scaleid = ?';
-        $params = array($frameworkid, $scaleid);
+        $params = [$frameworkid, $scaleid];
 
         $record = $DB->get_record_sql($sql, $params);
         if (!$record) {

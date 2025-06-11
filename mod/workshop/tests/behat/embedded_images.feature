@@ -10,17 +10,14 @@ Feature: Teachers can embed images into instructions and conclusion fields
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And the following "user private files" exist:
-      | user     | filepath                                   | filename       |
-      | teacher1 | mod/workshop/tests/fixtures/moodlelogo.png | moodlelogo.png |
+      | user     | filepath                                   |
+      | teacher1 | mod/workshop/tests/fixtures/moodlelogo.png |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the following "activities" exist:
       | activity | course | name                          |
       | workshop | C1     | Workshop with embedded images |
@@ -36,34 +33,34 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And I am on the "Workshop with embedded images" "workshop activity editing" page
     And I expand all fieldsets
     And I click on "Image" "button" in the "Instructions for submission" "form_row"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "How to submit"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it?" to "How to submit"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save and display"
     # Embed the image into Instructions for assessment.
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I click on "Image" "button" in the "Instructions for assessment" "form_row"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "How to assess"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it?" to "How to assess"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save and display"
     # Embed the image into Conclusion.
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I click on "Image" "button" in the "Conclusion" "form_row"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "Well done"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it?" to "Well done"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save and display"
     # Save the form and check the images are displayed in appropriate phases.
     And I change phase in workshop "Workshop with embedded images" to "Submission phase"

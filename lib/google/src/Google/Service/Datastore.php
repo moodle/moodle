@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Datastore extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -138,6 +139,7 @@ class Google_Service_Datastore extends Google_Service
  *   $datasets = $datastoreService->datasets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Datasets_Resource extends Google_Service_Resource
 {
 
@@ -237,6 +239,7 @@ class Google_Service_Datastore_Datasets_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_AllocateIdsRequest extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -256,6 +259,7 @@ class Google_Service_Datastore_AllocateIdsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_AllocateIdsResponse extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -285,6 +289,7 @@ class Google_Service_Datastore_AllocateIdsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_BeginTransactionRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -302,6 +307,7 @@ class Google_Service_Datastore_BeginTransactionRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_BeginTransactionResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -329,6 +335,7 @@ class Google_Service_Datastore_BeginTransactionResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_CommitRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -374,6 +381,7 @@ class Google_Service_Datastore_CommitRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_CommitResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -402,6 +410,7 @@ class Google_Service_Datastore_CommitResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_CompositeFilter extends Google_Collection
 {
   protected $collection_key = 'filters';
@@ -430,6 +439,7 @@ class Google_Service_Datastore_CompositeFilter extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Entity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -458,10 +468,12 @@ class Google_Service_Datastore_Entity extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_EntityProperties extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_EntityResult extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -480,6 +492,7 @@ class Google_Service_Datastore_EntityResult extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Filter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -508,6 +521,7 @@ class Google_Service_Datastore_Filter extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_GqlQuery extends Google_Collection
 {
   protected $collection_key = 'numberArgs';
@@ -555,6 +569,7 @@ class Google_Service_Datastore_GqlQuery extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_GqlQueryArg extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -591,6 +606,7 @@ class Google_Service_Datastore_GqlQueryArg extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Key extends Google_Collection
 {
   protected $collection_key = 'path';
@@ -620,6 +636,7 @@ class Google_Service_Datastore_Key extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_KeyPathElement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -655,6 +672,7 @@ class Google_Service_Datastore_KeyPathElement extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_KindExpression extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -672,6 +690,7 @@ class Google_Service_Datastore_KindExpression extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_LookupRequest extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -701,6 +720,7 @@ class Google_Service_Datastore_LookupRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_LookupResponse extends Google_Collection
 {
   protected $collection_key = 'missing';
@@ -750,6 +770,7 @@ class Google_Service_Datastore_LookupResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Mutation extends Google_Collection
 {
   protected $collection_key = 'upsert';
@@ -818,6 +839,7 @@ class Google_Service_Datastore_Mutation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_MutationResult extends Google_Collection
 {
   protected $collection_key = 'insertAutoIdKeys';
@@ -846,6 +868,7 @@ class Google_Service_Datastore_MutationResult extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_PartitionId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -872,6 +895,7 @@ class Google_Service_Datastore_PartitionId extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Property extends Google_Collection
 {
   protected $collection_key = 'listValue';
@@ -992,6 +1016,7 @@ class Google_Service_Datastore_Property extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_PropertyExpression extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1019,6 +1044,7 @@ class Google_Service_Datastore_PropertyExpression extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_PropertyFilter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1056,6 +1082,7 @@ class Google_Service_Datastore_PropertyFilter extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_PropertyOrder extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1083,6 +1110,7 @@ class Google_Service_Datastore_PropertyOrder extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_PropertyReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1100,6 +1128,7 @@ class Google_Service_Datastore_PropertyReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Query extends Google_Collection
 {
   protected $collection_key = 'projection';
@@ -1195,6 +1224,7 @@ class Google_Service_Datastore_Query extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_QueryResultBatch extends Google_Collection
 {
   protected $collection_key = 'entityResults';
@@ -1250,6 +1280,7 @@ class Google_Service_Datastore_QueryResultBatch extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_ReadOptions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1276,6 +1307,7 @@ class Google_Service_Datastore_ReadOptions extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_ResponseHeader extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1293,6 +1325,7 @@ class Google_Service_Datastore_ResponseHeader extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_RollbackRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1310,6 +1343,7 @@ class Google_Service_Datastore_RollbackRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_RollbackResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1328,6 +1362,7 @@ class Google_Service_Datastore_RollbackResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_RunQueryRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1376,6 +1411,7 @@ class Google_Service_Datastore_RunQueryRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_RunQueryResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1404,6 +1440,7 @@ class Google_Service_Datastore_RunQueryResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Datastore_Value extends Google_Collection
 {
   protected $collection_key = 'listValue';

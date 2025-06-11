@@ -339,7 +339,7 @@ class api {
      * @param array $extrafields Extra fields to be included in result
      * @return array of objects
      */
-    public static function get_user_minors($userid, array $extrafields = null) {
+    public static function get_user_minors($userid, ?array $extrafields = null) {
         global $DB;
 
         $ctxfields = context_helper::get_preload_record_columns_sql('c');
@@ -1034,7 +1034,9 @@ class api {
             }
         }
 
-        if ($user->policyagreed != $allresponded) {
+        // MDL-80973: At this point, the policyagreed value in DB could be 0 but $user->policyagreed could be 1 (as it was copied from $USER).
+        // So we need to ensure that the value in DB is set true if all policies were responded.
+        if ($user->policyagreed != $allresponded || $allresponded) {
             $user->policyagreed = $allresponded;
             $DB->set_field('user', 'policyagreed', $allresponded, ['id' => $user->id]);
         }

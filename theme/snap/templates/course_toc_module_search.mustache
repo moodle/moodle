@@ -1,0 +1,21 @@
+<form id="toc-search" onSubmit="return false;">
+    <input search-enabled="true" id="toc-search-input" type="text" aria-label="{{#str}}search{{/str}}" placeholder="{{#str}}search, theme_snap{{/str}}" autocomplete="off" />
+    <ul id="toc-search-results" class="list-unstyled" role="listbox" aria-label="search" aria-relevant="additions"></ul>
+    <label for="toc-search-input">{{#str}}search, theme_snap{{/str}}</label>
+    <ul role="listbox" id="toc-searchables" aria-hidden="true">
+        {{#modules}}
+            <li role=option data-id="{{cmid}}">
+                <a href="{{url}}" tabindex="0">
+                    <img src="{{iconurl}}" alt="" />
+                    <span class="sr-only">{{srinfo}}</span>
+                    {{{formattedname}}}
+                    {{^uservisible}}
+                    <span class="linkinfo">
+                        {{#str}}notpublished, theme_snap{{/str}}
+                    </span>
+                    {{/uservisible}}
+                </a>
+            </li>
+        {{/modules}}
+    </ul>
+</form>

@@ -85,7 +85,6 @@ class progressive_parser {
 
         $this->file     = null;
         $this->contents = null;
-        $this->procesor = null;
         $this->level    = 0;
         $this->path     = '';
         $this->accum    = '';

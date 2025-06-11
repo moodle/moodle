@@ -19,7 +19,7 @@ I need to change the settings on the filter wiris
     And the "mathjaxloader" filter is "off"
     And I log in as "admin"
 
-  @javascript @mtmoodle-18 @4.x @4.x_tinymce6 @4.x_filter 
+  @javascript @mtmoodle-18 @4.x @4.x_tinymce6 @5.x @5.x_tinymce6 @4.x_filter 
   Scenario: MTMOODLE-18 - Disable mathtype button and check that it is not visible 
     # set text editor to "atto HTML"
     And I follow "Preferences" in the user menu
@@ -38,7 +38,7 @@ I need to change the settings on the filter wiris
     Then I check "MathType" in "Page content" field "does not" exist in TinyMCE editor
     And I check "ChemType" in "Page content" field "does" exist in TinyMCE editor
 
-  @javascript @mtmoodle-19 @4.x @4.x_tinymce6 @4.x_filter
+  @javascript @mtmoodle-19 @4.x @4.x_tinymce6 @5.x @5.x_tinymce6 @4.x_filter
   Scenario: MTMOODLE-19 - Disable chemtype button and check that it is not visible
     # set text editor to "atto HTML"
     And I follow "Preferences" in the user menu
@@ -57,7 +57,7 @@ I need to change the settings on the filter wiris
     Then I check "MathType" in "Page content" field "does" exist in TinyMCE editor
     And I check "ChemType" in "Page content" field "does not" exist in TinyMCE editor
 
-  @javascript @mtmoodle-20 @4.x @4.x_tinymce6 @4.x_filter
+  @javascript @mtmoodle-20 @4.x @4.x_tinymce6 @5.x @5.x_tinymce6 @4.x_filter
   Scenario: MTMOODLE-20 - Set mathtype & chemtype buttons always active and disable MathType filter
     # set text editor to "atto HTML"
     And I follow "Preferences" in the user menu
@@ -78,7 +78,7 @@ I need to change the settings on the filter wiris
     Then I check "MathType" in "Page content" field "does" exist in TinyMCE editor
     Then I check "ChemType" in "Page content" field "does" exist in TinyMCE editor
 
-  @javascript @mtmoodle-97 @4.x @4.x_tinymce6 @4.x_filter
+  @javascript @mtmoodle-97 @4.x @4.x_tinymce6 @5.x @5.x_tinymce6 @4.x_filter
   Scenario: MTMOODLE-97 - Disable mathtype & chemtype buttons and disable MathType filter
     # set text editor to "atto HTML"
     And I follow "Preferences" in the user menu

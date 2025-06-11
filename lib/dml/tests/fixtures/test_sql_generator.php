@@ -29,6 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../../ddl/sql_generator.php');
 
+use xmldb_table;
+use xmldb_field;
+
 /**
  * Test SQL code generator class
  *
@@ -80,7 +83,7 @@ class test_sql_generator extends \sql_generator {
      * @param xmldb_table $xmldbtable The xmldb_table object instance.
      * @return array Array of SQL statements to add one comment to the table.
      */
-    function getCommentSQL ($xmldbtable) {
+    function getCommentSQL($xmldbtable) {
         return [];
     }
 

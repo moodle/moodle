@@ -25,7 +25,7 @@
 
 namespace mod_customcert;
 
-use external_api;
+use core_external\external_api;
 use advanced_testcase;
 
 /**
@@ -36,7 +36,7 @@ use advanced_testcase;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends advanced_testcase {
+final class external_test extends advanced_testcase {
 
     /**
      * Test set up.
@@ -50,7 +50,7 @@ class external_test extends advanced_testcase {
      *
      * @covers \external::delete_issue
      */
-    public function test_delete_issue() {
+    public function test_delete_issue(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -92,7 +92,7 @@ class external_test extends advanced_testcase {
      *
      * @covers \external::delete_issue
      */
-    public function test_delete_issue_no_login() {
+    public function test_delete_issue_no_login(): void {
         global $DB;
 
         // Create a course.
@@ -125,7 +125,7 @@ class external_test extends advanced_testcase {
      *
      * @covers \external::delete_issue
      */
-    public function test_delete_issue_no_capability() {
+    public function test_delete_issue_no_capability(): void {
         global $DB;
 
         // Create a course.

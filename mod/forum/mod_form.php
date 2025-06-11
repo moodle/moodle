@@ -205,10 +205,6 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('warnafter', 'warnafter', 'forum');
         $mform->hideIf('warnafter', 'blockperiod', 'eq', 0);
 
-        $coursecontext = context_course::instance($COURSE->id);
-        // To be removed (deprecated) with MDL-67526.
-        plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_forum');
-
 //-------------------------------------------------------------------------------
 
         // Add the whole forum grading options.
@@ -236,8 +232,6 @@ class mod_forum_mod_form extends moodleform_mod {
         $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
         $gradecatfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradecat');
         $gradepassfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradepass');
-        $sendstudentnotificationsfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber,
-                'sendstudentnotifications');
 
         // The advancedgradingmethod is different in that it is suffixed with an area name... which is not the
         // itemnumber.
@@ -308,13 +302,9 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setType($gradepassfieldname, PARAM_RAW);
         $mform->hideIf($gradepassfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
 
-        $mform->addElement(
-                'selectyesno',
-                $sendstudentnotificationsfieldname,
-                get_string('sendstudentnotificationsdefault', 'forum')
-        );
-        $mform->addHelpButton($sendstudentnotificationsfieldname, 'sendstudentnotificationsdefault', 'forum');
-        $mform->hideIf($sendstudentnotificationsfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+        $mform->addElement('selectyesno', 'grade_forum_notify', get_string('sendstudentnotificationsdefault', 'forum'));
+        $mform->addHelpButton('grade_forum_notify', 'sendstudentnotificationsdefault', 'forum');
+        $mform->hideIf('grade_forum_notify', "{$gradefieldname}[modgrade_type]", 'eq', 'none');
     }
 
     function definition_after_data() {
@@ -409,30 +399,36 @@ class mod_forum_mod_form extends moodleform_mod {
         }
     }
 
-    function data_preprocessing(&$default_values) {
-        parent::data_preprocessing($default_values);
+    public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
+
+        $suffix = $this->get_suffix();
+        $completiondiscussionsenabledel = 'completiondiscussionsenabled' . $suffix;
+        $completiondiscussionsel = 'completiondiscussions' . $suffix;
+        $completionrepliesenabledel = 'completionrepliesenabled' . $suffix;
+        $completionrepliesel = 'completionreplies' . $suffix;
+        $completionpostsel = 'completionposts' . $suffix;
+        $completionpostsenabledel = 'completionpostsenabled' . $suffix;
 
         // Set up the completion checkboxes which aren't part of standard data.
         // We also make the default value (if you turn on the checkbox) for those
         // numbers to be 1, this will not apply unless checkbox is ticked.
-        $default_values['completiondiscussionsenabled']=
-            !empty($default_values['completiondiscussions']) ? 1 : 0;
-        if (empty($default_values['completiondiscussions'])) {
-            $default_values['completiondiscussions']=1;
+        $defaultvalues[$completiondiscussionsenabledel] = !empty($defaultvalues[$completiondiscussionsel]) ? 1 : 0;
+        if (empty($defaultvalues[$completiondiscussionsel])) {
+            $defaultvalues[$completiondiscussionsel] = 1;
         }
-        $default_values['completionrepliesenabled']=
-            !empty($default_values['completionreplies']) ? 1 : 0;
-        if (empty($default_values['completionreplies'])) {
-            $default_values['completionreplies']=1;
+        $defaultvalues[$completionrepliesenabledel] = !empty($defaultvalues[$completionrepliesel]) ? 1 : 0;
+        if (empty($defaultvalues[$completionrepliesel])) {
+            $defaultvalues[$completionrepliesel] = 1;
         }
         // Tick by default if Add mode or if completion posts settings is set to 1 or more.
-        if (empty($this->_instance) || !empty($default_values['completionposts'])) {
-            $default_values['completionpostsenabled'] = 1;
+        if (empty($this->_instance) || !empty($defaultvalues[$completionpostsel])) {
+            $defaultvalues[$completionpostsenabledel] = 1;
         } else {
-            $default_values['completionpostsenabled'] = 0;
+            $defaultvalues[$completionpostsenabledel] = 0;
         }
-        if (empty($default_values['completionposts'])) {
-            $default_values['completionposts']=1;
+        if (empty($defaultvalues[$completionpostsel])) {
+            $defaultvalues[$completionpostsel] = 1;
         }
     }
 
@@ -442,36 +438,53 @@ class mod_forum_mod_form extends moodleform_mod {
      * @return array Array of string IDs of added items, empty array if none
      */
     public function add_completion_rules() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
-        $group=array();
-        $group[] =& $mform->createElement('checkbox', 'completionpostsenabled', '', get_string('completionposts','forum'));
-        $group[] =& $mform->createElement('text', 'completionposts', '', array('size'=>3));
-        $mform->setType('completionposts',PARAM_INT);
-        $mform->addGroup($group, 'completionpostsgroup', get_string('completionpostsgroup','forum'), array(' '), false);
-        $mform->disabledIf('completionposts','completionpostsenabled','notchecked');
+        $suffix = $this->get_suffix();
 
-        $group=array();
-        $group[] =& $mform->createElement('checkbox', 'completiondiscussionsenabled', '', get_string('completiondiscussions','forum'));
-        $group[] =& $mform->createElement('text', 'completiondiscussions', '', array('size'=>3));
-        $mform->setType('completiondiscussions',PARAM_INT);
-        $mform->addGroup($group, 'completiondiscussionsgroup', get_string('completiondiscussionsgroup','forum'), array(' '), false);
-        $mform->disabledIf('completiondiscussions','completiondiscussionsenabled','notchecked');
+        $group = [];
+        $completionpostsenabledel = 'completionpostsenabled' . $suffix;
+        $group[] =& $mform->createElement('checkbox', $completionpostsenabledel, '', get_string('completionposts', 'forum'));
+        $completionpostsel = 'completionposts' . $suffix;
+        $group[] =& $mform->createElement('text', $completionpostsel, '', ['size' => 3]);
+        $mform->setType($completionpostsel, PARAM_INT);
+        $completionpostsgroupel = 'completionpostsgroup' . $suffix;
+        $mform->addGroup($group, $completionpostsgroupel, '', ' ', false);
+        $mform->hideIf($completionpostsel, $completionpostsenabledel, 'notchecked');
 
-        $group=array();
-        $group[] =& $mform->createElement('checkbox', 'completionrepliesenabled', '', get_string('completionreplies','forum'));
-        $group[] =& $mform->createElement('text', 'completionreplies', '', array('size'=>3));
-        $mform->setType('completionreplies',PARAM_INT);
-        $mform->addGroup($group, 'completionrepliesgroup', get_string('completionrepliesgroup','forum'), array(' '), false);
-        $mform->disabledIf('completionreplies','completionrepliesenabled','notchecked');
+        $group = [];
+        $completiondiscussionsenabledel = 'completiondiscussionsenabled' . $suffix;
+        $group[] =& $mform->createElement(
+            'checkbox',
+            $completiondiscussionsenabledel,
+            '',
+            get_string('completiondiscussions', 'forum')
+        );
+        $completiondiscussionsel = 'completiondiscussions' . $suffix;
+        $group[] =& $mform->createElement('text', $completiondiscussionsel, '', ['size' => 3]);
+        $mform->setType($completiondiscussionsel, PARAM_INT);
+        $completiondiscussionsgroupel = 'completiondiscussionsgroup' . $suffix;
+        $mform->addGroup($group, $completiondiscussionsgroupel, '', ' ', false);
+        $mform->hideIf($completiondiscussionsel, $completiondiscussionsenabledel, 'notchecked');
 
-        return array('completiondiscussionsgroup','completionrepliesgroup','completionpostsgroup');
+        $group = [];
+        $completionrepliesenabledel = 'completionrepliesenabled' . $suffix;
+        $group[] =& $mform->createElement('checkbox', $completionrepliesenabledel, '', get_string('completionreplies', 'forum'));
+        $completionrepliesel = 'completionreplies' . $suffix;
+        $group[] =& $mform->createElement('text', $completionrepliesel, '', ['size' => 3]);
+        $mform->setType($completionrepliesel, PARAM_INT);
+        $completionrepliesgroupel = 'completionrepliesgroup' . $suffix;
+        $mform->addGroup($group, $completionrepliesgroupel, '', ' ', false);
+        $mform->hideIf($completionrepliesel, $completionrepliesenabledel, 'notchecked');
+
+        return [$completiondiscussionsgroupel, $completionrepliesgroupel, $completionpostsgroupel];
     }
 
-    function completion_rule_enabled($data) {
-        return (!empty($data['completiondiscussionsenabled']) && $data['completiondiscussions']!=0) ||
-            (!empty($data['completionrepliesenabled']) && $data['completionreplies']!=0) ||
-            (!empty($data['completionpostsenabled']) && $data['completionposts']!=0);
+    public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
+        return (!empty($data['completiondiscussionsenabled' . $suffix]) && $data['completiondiscussions' . $suffix] != 0) ||
+            (!empty($data['completionrepliesenabled' . $suffix]) && $data['completionreplies' . $suffix] != 0) ||
+            (!empty($data['completionpostsenabled' . $suffix]) && $data['completionposts' . $suffix] != 0);
     }
 
     /**
@@ -510,17 +523,19 @@ class mod_forum_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
-        // Turn off completion settings if the checkboxes aren't ticked
+        // Turn off completion settings if the checkboxes aren't ticked.
         if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completiondiscussionsenabled) || !$autocompletion) {
-                $data->completiondiscussions = 0;
+            $suffix = $this->get_suffix();
+            $completion = $data->{'completion' . $suffix};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{'completiondiscussionsenabled' . $suffix}) || !$autocompletion) {
+                $data->{'completiondiscussions' . $suffix} = 0;
             }
-            if (empty($data->completionrepliesenabled) || !$autocompletion) {
-                $data->completionreplies = 0;
+            if (empty($data->{'completionrepliesenabled' . $suffix}) || !$autocompletion) {
+                $data->{'completionreplies' . $suffix} = 0;
             }
-            if (empty($data->completionpostsenabled) || !$autocompletion) {
-                $data->completionposts = 0;
+            if (empty($data->{'completionpostsenabled' . $suffix}) || !$autocompletion) {
+                $data->{'completionposts' . $suffix} = 0;
             }
         }
     }

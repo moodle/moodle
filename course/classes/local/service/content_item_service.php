@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_course\local\exporters\course_content_items_exporter;
 use core_course\local\repository\content_item_readonly_repository_interface;
+use core_courseformat\sectiondelegate;
 
 /**
  * The content_item_service class, providing the api for interacting with content items.
@@ -234,9 +235,10 @@ class content_item_service {
      * @param \stdClass $user the user to check access for.
      * @param \stdClass $course the course to scope the content items to.
      * @param array $linkparams the desired section to return to.
+     * @param \section_info|null $section_info the section we want to fetch the modules for.
      * @return \stdClass[] the content items, scoped to a course.
      */
-    public function get_content_items_for_user_in_course(\stdClass $user, \stdClass $course, array $linkparams = []): array {
+    public function get_content_items_for_user_in_course(\stdClass $user, \stdClass $course, array $linkparams = [], ?\section_info $sectioninfo = null): array {
         global $PAGE;
 
         if (!has_capability('moodle/course:manageactivities', \context_course::instance($course->id), $user)) {
@@ -274,6 +276,16 @@ class content_item_service {
             // Check the parent module access for the user.
             return course_allowed_module($course, explode('_', $parents[$contentitem->get_component_name()])[1], $user);
         });
+
+        $format = course_get_format($course);
+        $maxsectionsreached = ($format->get_last_section_number() >= $format->get_max_sections());
+
+        // Now, check there is no delegated section into a delegated section.
+        if (is_null($sectioninfo) || $sectioninfo->is_delegated() || $maxsectionsreached) {
+            $availablecontentitems = array_filter($availablecontentitems, function($contentitem){
+                return !sectiondelegate::has_delegate_class($contentitem->get_component_name());
+            });
+        }
 
         // Add the link params to the link, if any have been provided.
         if (!empty($linkparams)) {
