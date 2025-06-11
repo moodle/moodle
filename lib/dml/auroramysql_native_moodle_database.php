@@ -68,7 +68,7 @@ class auroramysql_native_moodle_database extends mysqli_native_moodle_database {
      * @return string The db vendor name, usually the same as db family name.
      */
     public function get_dbvendor(): ?string {
-        return 'mysql';
+        return 'auroramysql';
     }
 
     /**
